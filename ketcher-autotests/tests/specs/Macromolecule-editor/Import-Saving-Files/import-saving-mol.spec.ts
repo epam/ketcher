@@ -15,6 +15,7 @@ import {
   MacroFileType,
   readFileContent,
   MonomerType,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -27,8 +28,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { pageReload } from '@utils/common/helpers';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
@@ -44,7 +45,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -243,7 +244,7 @@ test.describe('Import-Saving .mol Files', () => {
       const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
 
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await openFile('Molfiles-V2000/empty-file.mol', page);
       await expect(addToCanvasButton).toBeDisabled();
 
@@ -262,7 +263,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: System does not let uploading corrupted .mol file
     */
     const filename = 'Molfiles-V3000/corrupted-file.mol';
-
+    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(filename, page, undefined, true);
     await takeEditorScreenshot(page);
   });
@@ -478,7 +479,7 @@ test.describe('Import modified .mol files from external editor', () => {
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   const temporaryFailedTestsFileNames = [

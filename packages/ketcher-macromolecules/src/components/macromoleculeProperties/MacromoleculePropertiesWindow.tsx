@@ -30,7 +30,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -41,6 +41,7 @@ import { DropDown } from 'components/shared/dropDown';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 import { debounce, isNumber } from 'lodash';
 import * as d3 from 'd3';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 
@@ -183,6 +184,31 @@ const StyledBasicProperty = styled('div')<{ disabled?: boolean }>(
   }),
 );
 
+const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: '220px',
+    padding: '12px',
+    backgroundColor: 'white',
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: '0 1px 5px 0 #CCCCCC',
+    fontSize: 11,
+  },
+}));
+
+const HydrophobicityHintHeader = styled('div')(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+  fontSize: '12px',
+  fontWeight: '700',
+  color: '#585858',
+  borderBottom: '1px solid #585858',
+  paddingBottom: '8px',
+  marginBottom: '8px',
+}));
+
 const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
   paddingRight: '5px',
@@ -267,7 +293,7 @@ const StyledMonomersCountPanelItemName = styled('div')(() => ({
 interface BasicPropertyProps {
   name: string;
   value?: string | number;
-  hint?: string;
+  hint?: string | ReactNode;
   options?: string[];
   selectedOption?: string;
   disabled?: boolean;
@@ -328,9 +354,11 @@ const BasicProperty = (props: BasicPropertyProps) => {
       </BasicPropertyName>
       <BasicPropertyValue>{props.value}</BasicPropertyValue>
       {props.hint && (
-        <PropertyHintIconWrapper title={props.hint}>
-          <PropertyHintIcon name="about" />
-        </PropertyHintIconWrapper>
+        <StyledTooltip title={props.hint}>
+          <PropertyHintIconWrapper>
+            <PropertyHintIcon name="about" />
+          </PropertyHintIconWrapper>
+        </StyledTooltip>
       )}
       {props.options && props.selectedOption && props.onChangeOption && (
         <BasicPropertyDropdown
@@ -436,6 +464,28 @@ function lttb(xs, ys, threshold) {
   return { xs: sampledXs, ys: sampledYs };
 }
 
+const getNumberOfTicks = (_width: number) => {
+  if (_width > 360) {
+    return 5;
+  } else if (_width > 300) {
+    return 4;
+  } else if (_width > 240) {
+    return 3;
+  }
+  return 2;
+};
+
+const roundToMinNiceNumber = (number: number) => {
+  if (number < 10) {
+    return Math.floor(number);
+  } else if (number < 100) {
+    return Math.floor(number / 10) * 10;
+  } else if (number < 1000) {
+    return Math.floor(number / 50) * 50;
+  }
+  return Math.floor(number / 100) * 100;
+};
+
 const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const { data: initialData } = props;
   const data = lttb(
@@ -443,7 +493,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
     initialData,
     100,
   );
-
+  const [containerWidth, setContainerWidth] = useState(0);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
@@ -471,13 +521,62 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       .y((d) => yScale(d))
       .curve(d3.curveLinear);
 
-    const leftTickIndex = Math.floor((data.xs.length * 20) / 100);
     const svgContainer = d3.select(svgRef.current);
+    const maximumNumberOfTicks = getNumberOfTicks(width);
+    const distanceBetweenTicksForMaximumNumberOfTicks = roundToMinNiceNumber(
+      initialData.length / (maximumNumberOfTicks + 1),
+    );
+    let finalDistanceBetweenTicks = distanceBetweenTicksForMaximumNumberOfTicks;
+    let tickValues: number[];
+    if (distanceBetweenTicksForMaximumNumberOfTicks >= 1) {
+      let numberOfTicksWithMaximumCoverage = -Infinity;
+      let distanceBetweenTicksWithMaximumCoverage = -Infinity;
+      let maximumCoverage = -Infinity;
+
+      for (let i = 1; i <= maximumNumberOfTicks; i++) {
+        const numberOfTicks = i;
+        const distanceBetweenTicks = roundToMinNiceNumber(
+          initialData.length / (numberOfTicks + 1),
+        );
+        const coverage = Number(
+          (
+            distanceBetweenTicks *
+            ((numberOfTicks + 1) / initialData.length)
+          ).toFixed(2),
+        );
+
+        if (
+          coverage > maximumCoverage ||
+          (coverage === maximumCoverage &&
+            numberOfTicks > numberOfTicksWithMaximumCoverage)
+        ) {
+          numberOfTicksWithMaximumCoverage = numberOfTicks;
+          maximumCoverage = coverage;
+          distanceBetweenTicksWithMaximumCoverage = distanceBetweenTicks;
+        }
+      }
+
+      tickValues = Array.from(
+        { length: numberOfTicksWithMaximumCoverage },
+        (_, i) =>
+          data.xs.findLastIndex(
+            (xDataItem) =>
+              xDataItem <= (i + 1) * distanceBetweenTicksWithMaximumCoverage &&
+              xDataItem > i * distanceBetweenTicksWithMaximumCoverage,
+          ),
+      );
+      finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
+    } else {
+      tickValues = [
+        ...Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
+      ];
+      finalDistanceBetweenTicks = 1;
+    }
 
     const xAxis = d3
       .axisBottom(xScale)
-      .tickValues([leftTickIndex, data.xs.length - 1 - leftTickIndex])
-      .tickFormat((d) => data.xs[Number(d)]);
+      .tickValues(tickValues)
+      .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
 
     svgContainer
       .append('g')
@@ -520,7 +619,27 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       .attr('stroke', '#167782')
       .attr('stroke-width', 1)
       .attr('d', line);
-  }, [initialData]);
+  }, [initialData, containerWidth]);
+
+  // rerender the chart when the size of container changes
+  const resizeObserver = new ResizeObserver(
+    debounce((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width !== containerWidth) {
+          setContainerWidth(entry.contentRect.width);
+        }
+      }
+    }, 100),
+  );
+
+  useEffect(() => {
+    if (svgRef.current) {
+      resizeObserver.observe(svgRef.current);
+    }
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [svgRef, containerWidth]);
 
   return (
     <StyledHydrophobicityChartSvg ref={svgRef}></StyledHydrophobicityChartSvg>
@@ -560,7 +679,17 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
         </BasicPropertiesWrapper>
         <BasicProperty
           name="Hydrophobicity"
-          hint="The hydrophobicity is calculated using the method from Black S.D. and Mould D.R. (1991). Only amino acid natural analogues are used in the calculation."
+          hint={
+            <div>
+              <HydrophobicityHintHeader>
+                <div>y = Hydrophobicity score</div>
+                <div>x = Number of amino acid residues</div>
+              </HydrophobicityHintHeader>
+              The hydrophobicity is calculated using the method from{' '}
+              <i>Black S.D. and Mould D.R. (1991)</i>. Only amino acid natural
+              analogues are used in the calculation.
+            </div>
+          }
         />
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
@@ -835,7 +964,11 @@ export const MacromoleculePropertiesWindow = () => {
             <path d="M2 10H14" stroke="#333333" />
           </svg>
         </WindowDragControl>
-        <StyledCloseIcon name="close" onClick={closeWindow} />
+        <StyledCloseIcon
+          name="close"
+          onClick={closeWindow}
+          dataTestId="macromolecule-properties-close"
+        />
       </WindowControlsArea>
       <Header>
         {grossFormula}

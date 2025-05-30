@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
@@ -5,6 +6,7 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
+import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   handToolButton: Locator;
@@ -48,7 +50,9 @@ export const CommonLeftToolbar = (page: Page) => {
       await locators.handToolButton.click();
     },
 
-    async selectAreaSelectionTool(toolType: SelectionToolType) {
+    async selectAreaSelectionTool(
+      toolType: SelectionToolType = SelectionToolType.Rectangle,
+    ) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
         await locators.areaSelectionDropdownExpandButton.click();
         await page
@@ -69,6 +73,7 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       try {
+        await delay(0.2);
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',

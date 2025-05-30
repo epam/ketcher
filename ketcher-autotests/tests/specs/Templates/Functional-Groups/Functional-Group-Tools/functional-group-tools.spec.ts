@@ -8,15 +8,9 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  selectLeftPanelButton,
-  LeftPanelButton,
-  selectRingButton,
-  RingButton,
   resetCurrentTool,
-  selectLeftPanelToolClick,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   selectFunctionalGroups,
   moveOnAtom,
@@ -33,9 +27,19 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const X_DELTA = 300;
 
@@ -66,7 +70,7 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + X_DELTA;
@@ -167,13 +171,13 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/expanded-fg-CO2Et.mol', page);
 
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
     });
 
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -229,7 +233,7 @@ test.describe('Templates - Functional Group Tools', () => {
     const anyAtom = 1;
     await openFileAndAddToCanvas('Molfiles-V2000/expanded-fg-CO2Et.mol', page);
 
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
@@ -280,9 +284,9 @@ test.describe('Templates - Functional Group Tools', () => {
       await page.getByText('Remove Abbreviation').click();
     });
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await resetCurrentTool(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -393,7 +397,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await page.getByText('Boc').first().click();
     await CommonLeftToolbar(page).selectEraseTool();
 
@@ -422,7 +426,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await waitForRender(page, async () => {
@@ -431,7 +435,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await resetCurrentTool(page);
@@ -503,8 +507,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -528,7 +532,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',
@@ -645,7 +649,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: All FG's which contain symbols 'C2' are displayed on FG's window.
     All FG's which contain symbols 'Y' are displayed on FG's window.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('C');
@@ -654,7 +658,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await page.getByRole('banner').getByRole('button').click();
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('Y');
     await takeEditorScreenshot(page);
@@ -671,6 +675,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     test.setTimeout(timeout);
     const atomToolbar = RightToolbar(page);
     const commonLeftToolbar = CommonLeftToolbar(page);
+    const leftToolbar = LeftToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -684,38 +689,50 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await commonLeftToolbar.selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.Chain, page);
+    await leftToolbar.chain();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.ChargePlus, page);
+    await leftToolbar.chargePlus();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.ChargeMinus, page);
+    await leftToolbar.chargeMinus();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.S_Group, page);
+    await leftToolbar.sGroup();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.ReactionPlusTool, page);
+    await leftToolbar.selectRGroupTool(RGroupType.RGroupLabel);
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.ArrowOpenAngleTool, page);
+    await leftToolbar.selectArrowTool(ArrowType.ArrowOpenAngle);
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.ReactionMappingTool, page);
+    await leftToolbar.selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.R_GroupLabelTool, page);
-    await selectLeftPanelToolClick(LeftPanelButton.ShapeEllipse, page);
+    await leftToolbar.selectRGroupTool(RGroupType.RGroupLabel);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+
+    await leftToolbar.selectShapeTool(ShapeType.Ellipse);
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.AddText, page);
+    await leftToolbar.text();
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
@@ -764,7 +781,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-2931
     Description: FG is downloaded ('ketcher-fg-tmpls.sdf' file). File contains all FG's from library
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await pressButton(page, 'Save to SDF');
   });
@@ -934,7 +951,7 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
 });

@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -10,7 +11,6 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  openSettings,
   selectAllStructuresOnCanvas,
   openBondsSettingsSection,
 } from '@utils';
@@ -716,7 +716,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '79.8');
@@ -745,7 +745,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1.8');
@@ -773,7 +773,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
@@ -801,7 +801,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

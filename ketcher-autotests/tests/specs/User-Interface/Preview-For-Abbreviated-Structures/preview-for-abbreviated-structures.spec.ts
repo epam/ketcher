@@ -1,9 +1,9 @@
 import { Page, test } from '@playwright/test';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
-  selectRingButton,
   clickInTheMiddleOfTheScreen,
-  RingButton,
   selectFunctionalGroups,
   FunctionalGroups,
   moveMouseToTheMiddleOfTheScreen,
@@ -27,7 +27,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     // place a benzene ring in the middle of the screen
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -86,7 +86,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should show a preview following the mouse cursor', async ({ page }) => {
     const bondId = 2;
     const shift = 100;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     const bondPosition = await getBondByIndex(
       page,
       { type: BondType.SINGLE },
@@ -105,7 +105,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   }) => {
     const bondId = 2;
     const shift = 100;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     const bondPosition = await getBondByIndex(
       page,
       { type: BondType.SINGLE },

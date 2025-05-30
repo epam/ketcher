@@ -14,12 +14,12 @@ import {
 } from '@utils';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -71,7 +71,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -90,7 +90,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -131,7 +131,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -163,12 +163,12 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -183,7 +183,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -202,7 +202,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -220,7 +220,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -238,7 +238,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -252,7 +252,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -375,7 +375,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
     await IndigoFunctionsToolbar(page).cleanUp();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });

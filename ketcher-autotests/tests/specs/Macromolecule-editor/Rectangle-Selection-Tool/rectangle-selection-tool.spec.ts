@@ -23,8 +23,8 @@ import { Chem } from '@constants/monomers/Chem';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 /* eslint-disable no-magic-numbers */
 
@@ -59,7 +59,7 @@ test.describe('Rectangle Selection Tool', () => {
 
   test.afterEach(async () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
 
@@ -407,9 +407,9 @@ test.describe('Rectangle Selection Tool', () => {
     );
     await getMonomerLocator(page, Peptides._2Nal).hover();
     await dragMouseTo(x, y, page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -450,7 +450,7 @@ test.describe('Rectangle Selection Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 });

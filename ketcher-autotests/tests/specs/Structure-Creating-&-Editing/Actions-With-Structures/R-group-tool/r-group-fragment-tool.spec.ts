@@ -3,10 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  RingButton,
-  selectNestedTool,
-  RgroupTool,
   AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
@@ -14,7 +10,6 @@ import {
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
-  selectDropdownTool,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -25,14 +20,18 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function openRGroupModalForTopAtom(page: Page) {
-  await selectRingButton(RingButton.Benzene, page);
+  await selectRingButton(page, RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
-  await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+  await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
   const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
   await clickOnCanvas(page, x, y);
 
@@ -42,7 +41,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 const rGroupFromFile = 'R8';
 const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
-  await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+  await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
   await page.getByText(rGroupFromFile).click();
   for (const rgroup of rGroups) {
     await pressButton(page, rgroup);
@@ -129,7 +128,7 @@ test.describe('Open Ketcher', () => {
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
@@ -140,12 +139,12 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByTestId('OK').click();
     await resetCurrentTool(page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
@@ -204,10 +203,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1599
       Description: Define a structure with attachment points as R-Group member
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -253,16 +252,16 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
 
     await selectAllStructuresOnCanvas(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 

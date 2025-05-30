@@ -3,13 +3,13 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  openSettings,
   pressButton,
 } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Saving in .png files', () => {
     }) => {
       await openFileAndAddToCanvas(filename, page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -68,7 +68,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -87,7 +87,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -105,7 +105,7 @@ test.describe('Saving in .png files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -124,7 +124,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -143,7 +143,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -162,7 +162,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -180,13 +180,13 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2457
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );

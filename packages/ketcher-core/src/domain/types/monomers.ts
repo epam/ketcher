@@ -63,6 +63,7 @@ export type MonomerItemType = MonomerItemBase & {
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
+    modificationType?: string;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;

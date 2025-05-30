@@ -1,22 +1,19 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
 
 async function templateFromLAminoAcidsCategory(page: Page) {
   await openStructureLibrary(page);
@@ -27,7 +24,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 }
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
 
   const resetSettingsButton = page
     .getByTitle('Reset')
@@ -85,7 +82,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

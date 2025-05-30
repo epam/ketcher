@@ -17,19 +17,16 @@ import {
   openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   openStereochemistrySettingsSection,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
   resetZoomLevelToDefault,
-  RingButton,
   selectAllStructuresOnCanvas,
   selectCanvasArea,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
-  selectRingButton,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   setBondLengthValue,
@@ -47,7 +44,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -59,7 +56,10 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 declare global {
   interface Window {
@@ -79,7 +79,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -99,7 +99,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await selectRingButton(RingButton.Benzene, page);
+  await selectRingButton(page, RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -242,7 +242,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
   );
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.SVGDocument,
   );
@@ -315,7 +315,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await addMonomerToCenterOfCanvas(page, Presets.T);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 
   await selectSequenceLayoutModeTool(page);
   await keyboardTypeOnCanvas(page, 'UUU');
@@ -343,14 +343,14 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    * 7. Check if Bond length remains the same (80)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setBondLengthValue(page, '80');
   await pressButton(page, 'Apply');
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   const bondLengthValue = await getBondLengthValue(page);
   expect(bondLengthValue).toBe('80');
@@ -779,7 +779,7 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
     'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
   );
 
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -869,7 +869,7 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await openStereochemistrySettingsSection(page);
   await switchIgnoreTheChiralFlag(page);

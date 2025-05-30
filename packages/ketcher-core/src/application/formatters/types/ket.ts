@@ -169,6 +169,7 @@ export interface IKetMonomerTemplate {
   unresolved?: boolean;
   atoms: [];
   bonds: [];
+  modificationType?: string;
 }
 
 export interface IKetAmbiguousMonomerTemplate {

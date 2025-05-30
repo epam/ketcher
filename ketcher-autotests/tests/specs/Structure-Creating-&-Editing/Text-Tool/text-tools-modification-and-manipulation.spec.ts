@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  selectRing,
-  RingButton,
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -16,7 +14,9 @@ import {
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -41,9 +41,9 @@ async function moveStructureToNewPosition(page: Page) {
 }
 
 async function performUndoRedo(page: Page) {
-  await TopLeftToolbar(page).undo();
-  await TopLeftToolbar(page).redo();
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).undo();
 }
 
 test.describe('Text tools test cases', () => {
@@ -242,8 +242,8 @@ test.describe('Text tools test cases', () => {
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
@@ -262,8 +262,8 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
@@ -289,7 +289,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await waitForRender(page, async () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });

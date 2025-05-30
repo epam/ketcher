@@ -13,10 +13,8 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  selectDropdownTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
-  RingButton,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
@@ -36,17 +34,14 @@ import {
   hideLibrary,
   showLibrary,
 } from '@utils';
-import {
-  selectRingButton,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { goToFavoritesTab } from '@utils/macromolecules/library';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';
@@ -67,7 +62,11 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -302,16 +301,12 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/three-different-multi-tail-arrows.ket',
       page,
     );
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
@@ -331,7 +326,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
@@ -343,9 +338,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
       */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -360,10 +355,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in macromolecules mode
       */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Ket,
     );
@@ -378,9 +373,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again
       */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -400,9 +395,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: Clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard
       */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -533,7 +528,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -625,7 +620,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
@@ -1029,10 +1024,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takePageScreenshot(page);
   });
 });

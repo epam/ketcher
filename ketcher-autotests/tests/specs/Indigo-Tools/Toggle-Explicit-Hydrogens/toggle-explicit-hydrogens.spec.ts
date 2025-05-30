@@ -1,16 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  drawBenzeneRing,
-  selectRing,
-  RingButton,
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   clickOnCanvas,
 } from '@utils';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,7 +49,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, x, y);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);

@@ -1,9 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   waitForPageInit,
-  drawBenzeneRing,
   pressButton,
   copyAndPaste,
   takeEditorScreenshot,
@@ -16,14 +17,13 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   moveMouseAway,
-  openSettings,
   delay,
   clickOnCanvas,
   selectUndoByKeyboard,
 } from '@utils';
 
 async function resetSelectToolOff(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByTestId('reset-to-select-input-span').click();
   await page.getByTestId('off-option').click();
   await pressButton(page, 'Apply');
@@ -34,7 +34,7 @@ test('Verify Ketcher settings panel', async ({ page }) => {
   Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
   */
   await waitForPageInit(page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
   await takeEditorScreenshot(page);
 });
 
@@ -72,7 +72,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '17.8');
     await page.waitForTimeout(1000);
@@ -92,7 +92,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.8');
     await page.waitForTimeout(1000);
@@ -112,7 +112,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '10.8');
     await page.waitForTimeout(1000);
@@ -132,7 +132,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '1.1');
     await page.waitForTimeout(1000);
@@ -152,7 +152,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '9');
     await page.waitForTimeout(1000);
@@ -172,7 +172,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '2');
     await page.waitForTimeout(1000);
@@ -192,7 +192,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '18');
     await page.waitForTimeout(1000);
@@ -212,7 +212,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '1');
     await page.waitForTimeout(1000);
@@ -233,7 +233,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '17.83');
     await page.waitForTimeout(1000);
@@ -254,12 +254,13 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.83');
-    await page.waitForTimeout(1000);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -275,7 +276,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '21.89');
     await page.waitForTimeout(1000);
@@ -296,7 +297,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '0.45');
     await page.waitForTimeout(1000);
@@ -316,7 +317,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '14.5');
     await page.waitForTimeout(1000);
@@ -336,7 +337,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1.5');
     await page.waitForTimeout(1000);
@@ -356,7 +357,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '16.5');
     await page.waitForTimeout(1000);
@@ -376,7 +377,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '3.5');
     await page.waitForTimeout(1000);
@@ -396,7 +397,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '15');
     await page.waitForTimeout(1000);
@@ -416,7 +417,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1');
     await page.waitForTimeout(1000);
@@ -436,7 +437,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '36');
     await page.waitForTimeout(1000);
@@ -456,7 +457,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '2');
     await page.waitForTimeout(1000);
@@ -477,7 +478,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '14.58');
     await page.waitForTimeout(1000);
@@ -498,7 +499,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1.59');
     await page.waitForTimeout(1000);
@@ -519,7 +520,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '14.54');
     await page.waitForTimeout(1000);
@@ -540,7 +541,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '.35');
     await page.waitForTimeout(1000);
@@ -561,7 +562,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     const ReactionComponentMarginSize = page.getByText(
       'Reaction component margin size',
     );
@@ -590,7 +591,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '0.9');
     await page.waitForTimeout(1000);
@@ -613,7 +614,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '56.3');
     await page.waitForTimeout(1000);
@@ -636,7 +637,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '1.3');
     await page.waitForTimeout(1000);
@@ -659,7 +660,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '13');
     await page.waitForTimeout(1000);
@@ -682,7 +683,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '4');
     await page.waitForTimeout(1000);
@@ -705,7 +706,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '144');
     await page.waitForTimeout(1000);
@@ -728,7 +729,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '12');
     await page.waitForTimeout(1000);
@@ -752,7 +753,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '94.57');
     await page.waitForTimeout(1000);
@@ -776,7 +777,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '5.83');
     await page.waitForTimeout(1000);
@@ -800,7 +801,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '14.94');
     await page.waitForTimeout(1000);
@@ -824,7 +825,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '19.48');
     await page.waitForTimeout(1000);
@@ -847,7 +848,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '1000');
     await page.waitForTimeout(1000);
@@ -870,7 +871,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '1000');
     await page.waitForTimeout(1000);
@@ -893,7 +894,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '1000');
     await page.waitForTimeout(1000);
@@ -916,7 +917,7 @@ test.describe('General Settings', () => {
       'KET/layout-with-catalyst.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '1000');
     await page.waitForTimeout(1000);
@@ -940,7 +941,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '-17.8');
     const Apply = page.getByRole('button', { name: 'Apply' });
@@ -956,7 +957,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '-1.8');
     await moveMouseAway(page);
@@ -973,7 +974,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '-17.8');
     await moveMouseAway(page);
@@ -990,7 +991,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '-1');
     await moveMouseAway(page);
@@ -1005,7 +1006,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1020,7 +1021,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1035,7 +1036,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1052,7 +1053,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1069,7 +1070,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '-15.8');
     await moveMouseAway(page);
@@ -1086,7 +1087,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '-1.5');
     await moveMouseAway(page);
@@ -1103,7 +1104,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '-18.5');
     await moveMouseAway(page);
@@ -1120,7 +1121,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '-1.5');
     await moveMouseAway(page);
@@ -1137,7 +1138,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1154,7 +1155,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1171,7 +1172,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1188,7 +1189,7 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1206,7 +1207,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '-14.7');
     await moveMouseAway(page);
@@ -1224,7 +1225,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '-3.4');
     await moveMouseAway(page);
@@ -1242,7 +1243,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '-14.2');
     await moveMouseAway(page);
@@ -1260,7 +1261,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '-1.6');
     await moveMouseAway(page);
@@ -1278,7 +1279,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 value should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1296,7 +1297,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1314,7 +1315,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1332,7 +1333,7 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '0');
     await moveMouseAway(page);
@@ -1354,7 +1355,7 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1376,7 +1377,7 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1398,7 +1399,7 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1420,7 +1421,7 @@ test.describe('Negative cases for General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '1000.1');
     await moveMouseAway(page);

@@ -17,7 +17,6 @@ import {
   ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -37,6 +36,7 @@ import {
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -244,7 +244,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   } {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (CELL_WIDTH / 2) * cos;
+    const xOffset = (SnakeLayoutCellWidth / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {

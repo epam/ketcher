@@ -42,8 +42,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -64,7 +64,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   // await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   // await resetZoomLevelToDefault(page);
 });
 
@@ -425,13 +425,13 @@ test('Verify that changes made in the "Edit Connection Points" dialog can be und
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
@@ -633,7 +633,7 @@ test('Verify correct display and changing of connection points in the dialog for
 test('Verify behaviour when a non-bond is right-clicked', async () => {
   /* 
     Test case: #4905
-    Description: Nothing happen.
+    Description: Call context menu for empty selection.
     */
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
   await clickOnCanvas(page, 200, 200, { button: 'right' });
@@ -712,9 +712,9 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
   await CommonLeftToolbar(page).selectEraseTool();
   await page.mouse.click(517, 364);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 
@@ -747,9 +747,9 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
   await CommonLeftToolbar(page).selectEraseTool();
   await firstMonomer.click();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 

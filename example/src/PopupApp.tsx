@@ -1,9 +1,10 @@
-import 'ketcher-react/dist/index.css';
-
 import { useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Dialog } from '@mui/material';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
+
+import 'ketcher-react/dist/index.css';
+
 import { getStructServiceProvider } from './utils';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {

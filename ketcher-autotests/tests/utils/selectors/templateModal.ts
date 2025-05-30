@@ -6,24 +6,19 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  LeftPanelButton,
   Monomer,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  pressButton,
-  selectLeftPanelButton,
 } from '@utils';
 import {
   MonomerLocationTabs,
   goToMonomerLocationTab,
 } from '@utils/macromolecules/library';
-import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -248,7 +243,7 @@ export async function selectSaltsAndSolvents(
   page: Page,
 ) {
   // const amountOfSaltsAndSolvents = 124;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   const saltsButton = page
     .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
@@ -274,7 +269,7 @@ export async function selectFunctionalGroups(
   page: Page,
 ) {
   const amountOfFunctionalGroups = 62;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
@@ -292,7 +287,7 @@ export async function selectFunctionalGroup(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(functionalGroupName, page);
 }
@@ -344,22 +339,11 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   itemToChoose: TemplateLibrary,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);
   await clickInTheMiddleOfTheScreen(page);
-}
-/*
-  Function for selecting tool from left panel, click right mouse in the middle of canvas and take
-  screenshot
-  */
-export async function selectLeftPanelToolClick(
-  leftbutton: LeftPanelButton,
-  page: Page,
-) {
-  await selectLeftPanelButton(leftbutton, page);
-  await clickInTheMiddleOfTheScreen(page, 'right');
 }
 
 const COORDS_CLICK = {
@@ -405,21 +389,4 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
-}
-
-export async function selectAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  elements: ElementLabel[],
-) {
-  const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-  await periodicTableButton.click();
-  await page.getByText(selectlisting, { exact: true }).click();
-
-  for (const element of elements) {
-    await page.getByTestId(`${element}-button`).click();
-  }
-
-  await page.getByTestId('OK').click();
 }

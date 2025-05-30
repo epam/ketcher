@@ -17,7 +17,6 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { hasAntisenseChains, selectEditor } from 'state/common';
-import { ModeTypes } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -51,8 +50,7 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 export const SequenceSyncEditModeButton = () => {
   const editor = useAppSelector(selectEditor);
   const [isSequenceSyncEditMode, setIsSequenceSyncEditMode] = useState(true);
-  const layoutMode = useLayoutMode();
-  const isSequenceMode = layoutMode === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
 
   const handleClick = () => {

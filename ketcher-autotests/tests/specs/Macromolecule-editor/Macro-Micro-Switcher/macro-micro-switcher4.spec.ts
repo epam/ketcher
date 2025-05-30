@@ -32,8 +32,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -51,7 +51,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -280,7 +280,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
@@ -307,7 +307,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
@@ -339,7 +339,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.IDT,
   );
@@ -508,12 +508,12 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   }
 
   for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   }
 
   for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   }
 });

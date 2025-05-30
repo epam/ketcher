@@ -19,8 +19,6 @@ import {
   takePageScreenshot,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectRingButton,
-  RingButton,
   clickOnCanvas,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -45,10 +43,11 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 let page: Page;
 
@@ -69,7 +68,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -486,7 +485,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     for (let i = 0; i < 3; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -776,8 +775,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -806,26 +805,17 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getSymbolLocator(page, {
-      symbolAlias: 'A',
-      nodeIndexOverall: 1,
-    }).click();
     const symbolLocator = getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 1,
     });
+    await symbolLocator.click();
+
     await modifyInRnaBuilder(page, symbolLocator);
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await TopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {
@@ -856,7 +846,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       .getByText('1Nal')
       .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);
   });

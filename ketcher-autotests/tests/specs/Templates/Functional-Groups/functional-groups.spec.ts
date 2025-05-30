@@ -2,28 +2,21 @@ import { Page, test } from '@playwright/test';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  selectRing,
-  RingButton,
   moveMouseToTheMiddleOfTheScreen,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   drawFGAndDrag,
   pressTab,
   FILE_TEST_DATA,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   waitForRender,
   copyAndPaste,
   cutAndPaste,
-  selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
   selectAllStructuresOnCanvas,
@@ -35,8 +28,15 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -49,7 +49,7 @@ const anyAtom = 3;
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
@@ -202,8 +202,8 @@ test.describe('Functional Groups', () => {
 
     await saveToTemplates(page);
 
-    await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -313,7 +313,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -327,7 +327,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -341,7 +341,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -355,7 +355,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -384,7 +384,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -400,7 +400,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -415,7 +415,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -431,7 +431,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -447,7 +447,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

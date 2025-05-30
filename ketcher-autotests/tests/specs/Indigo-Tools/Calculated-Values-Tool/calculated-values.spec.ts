@@ -1,15 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   BondType,
   dragMouseTo,
-  selectRingButton,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
@@ -17,6 +16,7 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -153,7 +153,7 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
 

@@ -43,11 +43,13 @@ const config = {
       file: pkg.main,
       exports: 'named',
       format: 'cjs',
+      banner: `require('./index.css');`,
     },
     {
       file: pkg.module,
       exports: 'named',
       format: 'es',
+      banner: `import './index.css';`,
     },
   ],
   plugins: [

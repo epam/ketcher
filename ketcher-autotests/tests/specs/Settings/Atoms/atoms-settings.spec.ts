@@ -1,17 +1,19 @@
 import { Page, test } from '@playwright/test';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   pressButton,
-  drawBenzeneRing,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   resetCurrentTool,
-  selectRing,
-  RingButton,
   getAtomByIndex,
-  openSettings,
   clickOnCanvas,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
@@ -19,7 +21,7 @@ import { scrollSettingBar } from '@utils/scrollSettingBar';
 const DEFAULT_SCROLLBAR_DELAY = 150;
 
 async function setHydrogenLabelsOn(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Atoms', { exact: true }).click();
   await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
   await page.getByTestId('show-hydrogen-labels-input-span').click();
@@ -34,7 +36,7 @@ async function selectExtendedTableElements(page: Page, element: string) {
   await page.getByRole('button', { name: 'Add', exact: true }).click();
 }
 async function atomDefaultSettings(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('General', { exact: true }).click();
   await page.getByText('Atoms', { exact: true }).click();
   // await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
@@ -120,7 +122,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

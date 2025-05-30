@@ -79,6 +79,10 @@ export const RulerArea = () => {
     let inputPosition = translateValueWithZoomAndDrag + 10;
 
     const canvasWidth = editor?.canvas.width.baseVal.value;
+    if (canvasWidth === 0) {
+      return [inputPosition, handlePosition];
+    }
+
     const canvasContainer = editor?.canvas.parentElement;
     const scrollLeft = canvasContainer?.scrollLeft || 0;
     const visibleLeftEdge = scrollLeft;

@@ -19,6 +19,10 @@ class KetcherProvider {
     this.ketcherInstances.set(instance.id, instance);
   }
 
+  addKetcherInstanceWithId(instance: Ketcher, customId: string) {
+    this.ketcherInstances.set(customId, instance);
+  }
+
   removeKetcherInstance(id) {
     this.ketcherInstances.delete(id);
   }

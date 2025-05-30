@@ -24,7 +24,7 @@ import { upperFirst } from 'lodash/fp';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
-import { KetcherLogger, ketcherProvider } from 'ketcher-core';
+import { KetcherLogger, ketcherProvider, Ketcher } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
 
@@ -153,7 +153,28 @@ class StructEditor extends Component {
     const prevKetcher = this.props.prevKetcherId
       ? ketcherProvider.getKetcher(this.props.prevKetcherId)
       : undefined;
-    const ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
+
+    let ketcher;
+
+    try {
+      ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
+    } catch (e) {
+      // If ketcher instance doesn't exist (e.g., for Template Editor), create one
+      if (this.props.ketcherId && !ketcher) {
+        const mainKetcher = ketcherProvider.getKetcher(); // Get main ketcher instance
+        if (mainKetcher) {
+          ketcher = new Ketcher(
+            mainKetcher.structService,
+            mainKetcher.formatterFactory,
+          );
+          // Add the ketcher instance with our custom ketcherId
+          ketcherProvider.addKetcherInstanceWithId(
+            ketcher,
+            this.props.ketcherId,
+          );
+        }
+      }
+    }
 
     this.editor = new Editor(
       this.props.ketcherId,
@@ -164,13 +185,18 @@ class StructEditor extends Component {
       { ...this.props.serverSettings },
       prevKetcher?.editor,
     );
-    ketcher.addEditor(this.editor);
-    if (ketcher?.editor.macromoleculeConvertionError) {
-      this.props.onShowMacromoleculesErrorMessage(
-        ketcher.editor.macromoleculeConvertionError,
-      );
-      ketcher.editor.clearMacromoleculeConvertionError();
+
+    // Only add editor to ketcher if we have a valid ketcher instance
+    if (ketcher) {
+      ketcher.addEditor(this.editor);
+      if (ketcher?.editor.macromoleculeConvertionError) {
+        this.props.onShowMacromoleculesErrorMessage(
+          ketcher.editor.macromoleculeConvertionError,
+        );
+        ketcher.editor.clearMacromoleculeConvertionError();
+      }
     }
+
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 

@@ -31,6 +31,7 @@ import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
 import { css } from '@emotion/react';
 import { Button } from '@mui/material';
+import { ketcherProvider, KetcherLogger } from 'ketcher-core';
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -205,8 +206,24 @@ class Attach extends Component {
     super();
     this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
     this.tmpl = initTmpl(props.tmpl);
+    // Create a unique ketcherId for Template Editor to avoid conflicts with main editor
+    this.templateKetcherId = `template-editor-${Date.now()}`;
     onInit(this.tmpl.struct.name, this.tmpl.props);
     this.onResult = this.onResult.bind(this);
+  }
+
+  componentWillUnmount() {
+    if (this.templateKetcherId) {
+      try {
+        ketcherProvider.removeKetcherInstance(this.templateKetcherId);
+      } catch (e) {
+        KetcherLogger.warn(
+          'Failed to remove Template Editor ketcher instance:',
+          this.templateKetcherId,
+          e,
+        );
+      }
+    }
   }
 
   onResult() {
@@ -284,6 +301,7 @@ class Attach extends Component {
             <Editor>
               <StructEditor
                 className="structEditor"
+                ketcherId={this.templateKetcherId}
                 struct={struct}
                 onAttachEdit={onAttachEdit}
                 tool="attach"

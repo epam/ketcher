@@ -17,7 +17,7 @@
 import { BaseCallProps, BaseProps } from '../../../modal.types';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
-import { fromSgroupDeletion } from 'ketcher-core';
+import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any;
@@ -26,8 +26,8 @@ interface RemoveFGProps extends BaseProps {
 type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
-  const { getKetcherInstance } = useAppContext();
-  const editor = getKetcherInstance().editor as any;
+  const { ketcherId } = useAppContext();
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
   const { fgIds } = props;
 
   const remove = function () {

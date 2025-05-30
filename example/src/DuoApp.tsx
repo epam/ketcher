@@ -14,7 +14,7 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
     if (button) acc[button] = { hidden: true };
 
     return acc;
-  }, {});
+  }, {} as { [val: string]: { hidden: boolean } });
 };
 
 const DuoApp = () => {
@@ -22,13 +22,19 @@ const DuoApp = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [structServiceProvider, setStructServiceProvider] =
+  const [structServiceProvider1, setStructServiceProvider1] =
     useState<StructServiceProvider | null>(null);
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider);
+    getStructServiceProvider().then(setStructServiceProvider1);
   }, []);
 
-  if (!structServiceProvider) {
+  const [structServiceProvider2, setStructServiceProvider2] =
+    useState<StructServiceProvider | null>(null);
+  useEffect(() => {
+    getStructServiceProvider().then(setStructServiceProvider2);
+  }, []);
+
+  if (!structServiceProvider1 || !structServiceProvider2) {
     return <div>Loading...</div>;
   }
 
@@ -43,7 +49,7 @@ const DuoApp = () => {
           }}
           buttons={hiddenButtonsConfig}
           staticResourcesUrl={process.env.PUBLIC_URL}
-          structServiceProvider={structServiceProvider}
+          structServiceProvider={structServiceProvider1}
           onInit={(ketcher: Ketcher) => {
             window.ketcher = ketcher;
 
@@ -80,7 +86,7 @@ const DuoApp = () => {
           }}
           buttons={hiddenButtonsConfig}
           staticResourcesUrl={process.env.PUBLIC_URL}
-          structServiceProvider={structServiceProvider}
+          structServiceProvider={structServiceProvider2}
           onInit={(ketcher: Ketcher) => {
             window.ketcher = ketcher;
 

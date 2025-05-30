@@ -50,7 +50,7 @@ async function drawStructureAndDoubleClickOnBond(
 
 async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  const customQueryInput = page.getByTestId('custom-query-value');
+  const customQueryInput = page.getByTestId('bond-custom-query');
   await expect(customQueryInput).toHaveValue(expectedValue);
 }
 

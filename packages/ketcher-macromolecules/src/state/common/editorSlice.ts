@@ -41,6 +41,8 @@ export const molarMeasurementUnitToNumber = {
 };
 
 interface EditorState {
+  ketcherId: string;
+  isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
   editorLayoutMode: LayoutMode | undefined;
@@ -55,6 +57,8 @@ interface EditorState {
 }
 
 const initialState: EditorState = {
+  ketcherId: '',
+  isReady: null,
   activeTool: 'select',
   editor: undefined,
   editorLayoutMode: undefined,
@@ -76,6 +80,18 @@ export const editorSlice: Slice<EditorState> = createSlice({
   name: 'editor',
   initialState,
   reducers: {
+    init: (state) => {
+      state.isReady = false;
+    },
+    initKetcherId: (state, action: PayloadAction<string>) => {
+      state.ketcherId = action.payload;
+    },
+    initSuccess: (state) => {
+      state.isReady = true;
+    },
+    initFailure: (state) => {
+      state.isReady = false;
+    },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
@@ -85,6 +101,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
     createEditor: (
       state,
       action: PayloadAction<{
+        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
@@ -160,6 +177,10 @@ export const editorSlice: Slice<EditorState> = createSlice({
 });
 
 export const {
+  init,
+  initSuccess,
+  initFailure,
+  initKetcherId,
   selectTool,
   setPosition,
   createEditor,
@@ -185,6 +206,10 @@ export const selectEditorPosition = (
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
+
+export const selectKetcherId = (state: RootState): string => {
+  return state.editor.ketcherId;
+};
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;

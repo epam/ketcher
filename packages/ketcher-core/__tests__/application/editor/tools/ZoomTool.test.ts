@@ -9,10 +9,11 @@ describe('Zoom Tool', () => {
   const zoomed = jest.fn();
 
   beforeEach(() => {
-    window.SVGElement.prototype.getBBox = () => ({
-      width: 20,
-      height: 30,
-    });
+    window.SVGElement.prototype.getBBox = () =>
+      ({
+        width: 20,
+        height: 30,
+      } as DOMRect);
     canvas = createPolymerEditorCanvas();
     Object.defineProperty(canvas, 'width', {
       value: {

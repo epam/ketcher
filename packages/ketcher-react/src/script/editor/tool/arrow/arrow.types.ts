@@ -1,9 +1,11 @@
 import { Tool } from '../Tool';
-import { Vec2 } from 'domain/entities';
-import { Action } from 'application/editor';
+import {
+  Vec2,
+  MultitailArrowReferencePosition,
+  Action,
+  MULTITAIL_ARROW_KEY,
+} from 'ketcher-core';
 import { ClosestItemWithMap } from '../../shared/closest.types';
-import { MultitailArrowReferencePosition } from 'application/render';
-import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export type ArrowAddTool = Required<
   Pick<Tool, 'mousemove' | 'mouseup' | 'mousedown'>

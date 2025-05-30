@@ -1,9 +1,9 @@
 # Table of Contents
 
-- [Ketcher Overview](https://github.com/epam/ketcher/blob/master/documentation/help.md#ketcher-overview)
+- [Ketcher Overview](#ketcher-overview)
 - [Ketcher Molecules Mode](https://github.com/epam/ketcher/blob/master/documentation/help.md#ketcher-molecules-mode)
-     - [3D Viewer](https://github.com/epam/ketcher/blob/master/documentation/help.md#ketcher-molecules-mode)
-     - [Drawing Atoms](https://github.com/epam/ketcher/blob/master/documentation/help.md#ketcher-molecules-mode)
+     - [3D Viewer](#ketcher-molecules-mode)
+     - [Drawing Atoms](#ketcher-molecules-mode)
      - [Drawing Bonds](https://github.com/epam/ketcher/blob/master/documentation/help.md#drawing-bonds)
      - [Drawing R-Groups](https://github.com/epam/ketcher/blob/master/documentation/help.md#drawing-r-groups)
      - [Marking S-Groups](https://github.com/epam/ketcher/blob/master/documentation/help.md#marking-s-groups)

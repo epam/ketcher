@@ -496,6 +496,13 @@ export class CoreEditor {
 
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
         const command = new Command();
         const history = new EditorHistory(this);
 
@@ -506,6 +513,13 @@ export class CoreEditor {
 
     this.events.toggleLineLengthHighlighting.add(
       (value: boolean, currentPosition = 0) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
         if (value) {
           this.transientDrawingView.showLineLengthHighlight({
             currentPosition,

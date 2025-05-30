@@ -972,41 +972,31 @@ export class SequenceMode extends BaseMode {
         selectionStartNode instanceof BackBoneSequenceNode ||
         selectionEndNode instanceof BackBoneSequenceNode
       ) {
-        const bbNode =
+        const backBoneSequenceNode =
           selectionStartNode instanceof BackBoneSequenceNode
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
 
-        const maybeBond = this.getPolymerBondToDeleteFromBackboneNode(bbNode);
+        const polymerBondToDelete =
+          this.getPolymerBondToDeleteFromBackboneNode(backBoneSequenceNode);
 
-        if (!(maybeBond instanceof PolymerBond)) return;
-
-        const polymerBondToDelete = maybeBond;
+        if (!polymerBondToDelete) {
+          return;
+        }
 
         modelChanges.merge(
           editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
         );
 
-        if (strandType === STRAND_TYPE.SENSE) {
-          const orphanPhosphate =
-            polymerBondToDelete.firstMonomer instanceof Phosphate
-              ? polymerBondToDelete.firstMonomer
-              : polymerBondToDelete.secondMonomer;
+        const orphanPhosphate =
+          polymerBondToDelete.firstMonomer instanceof Phosphate
+            ? polymerBondToDelete.firstMonomer
+            : polymerBondToDelete.secondMonomer;
 
-          if (orphanPhosphate instanceof Phosphate) {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteDrawingEntity(
-                orphanPhosphate,
-              ),
-            );
-          }
-        } else {
-          const orphanSugar = bbNode.secondConnectedNode?.firstMonomerInNode;
-          if (orphanSugar instanceof Sugar) {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteDrawingEntity(orphanSugar),
-            );
-          }
+        if (orphanPhosphate instanceof Phosphate) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(orphanPhosphate),
+          );
         }
 
         return;

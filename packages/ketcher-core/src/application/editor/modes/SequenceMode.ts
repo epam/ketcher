@@ -1259,7 +1259,7 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Backspace'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Left);
+          this.deleteSelection();
         },
       },
       'turn-off-edit-mode': {

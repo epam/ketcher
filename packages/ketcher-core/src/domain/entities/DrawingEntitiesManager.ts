@@ -2656,7 +2656,7 @@ export class DrawingEntitiesManager {
     return bond;
   }
 
-  private deleteBond(bond: Bond) {
+  private deleteBond(bond: Bond, needToDeleteDisconnectedAtoms = true) {
     const command = new Command();
 
     command.addOperation(
@@ -2675,6 +2675,28 @@ export class DrawingEntitiesManager {
       ),
     );
 
+    const firstAtom = bond.firstAtom;
+    const secondAtom = bond.secondAtom;
+    [firstAtom, secondAtom].forEach((atom) => {
+      // Clean-up the bond from the atoms
+      atom.bonds = atom.bonds.filter(
+        (atomBond) => !(atomBond instanceof Bond && atomBond.id === bond.id),
+      );
+
+      if (
+        !needToDeleteDisconnectedAtoms ||
+        !atom.bonds.every((atomBond) => atomBond instanceof MonomerToAtomBond)
+      ) {
+        return;
+      }
+
+      this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+        if (monomerToAtomBond.atom !== atom || monomerToAtomBond.selected) {
+          return;
+        }
+        command.merge(this.deleteAtom(atom, true));
+      });
+    });
     return command;
   }
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import styled from '@emotion/styled';
 import { Input, Icon } from 'ketcher-react';
 
@@ -23,9 +24,10 @@ export const MonomerLibraryContainer = styled.div`
   height: calc(100% - 16px);
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme.ketcher.color.background.primary};
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
   box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
   border-radius: 4px;
+  z-index: ${({ theme }) => theme.ketcher.zIndex.toolbar};
 `;
 
 export const MonomerLibraryHeader = styled.div`
@@ -43,13 +45,13 @@ export const MonomerLibraryInputContainer = styled.div`
   gap: 4px;
   align-items: center;
   padding: 4px;
-  background-color: ${(props) =>
-    props.theme.ketcher.color.input.background.default};
+  background-color: ${({ theme }) =>
+    theme.ketcher.color.input.background.default};
   border-radius: 4px;
 
   &:hover,
   &:has(input:focus) {
-    outline: ${(props) => props.theme.ketcher.outline.selected.small};
+    outline: ${({ theme }) => theme.ketcher.outline.selected.small};
   }
 `;
 
@@ -71,7 +73,7 @@ export const MonomerLibraryToggle = styled.button`
 export const MonomerLibrarySearchIcon = styled(Icon)`
   height: 16px;
   width: 16px;
-  color: ${(props) => props.theme.ketcher.color.text.secondary};
+  color: ${({ theme }) => theme.ketcher.color.text.secondary};
 `;
 
 export const MonomerLibraryInput = styled(Input)`

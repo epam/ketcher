@@ -1,7 +1,7 @@
 // <reference types="react-scripts" />
 /* eslint-disable no-var, no-use-before-define */
-declare module '*.less' {
-  const classes: { [className: string]: string };
+declare module '*.module.less' {
+  const classes: { [key: string]: string };
   export default classes;
 }
 

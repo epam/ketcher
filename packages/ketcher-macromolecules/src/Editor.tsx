@@ -23,6 +23,8 @@ import {
   BaseMonomer,
   CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
   SequenceMode,
@@ -46,6 +48,7 @@ import {
   selectEditor,
   selectIsHandToolSelected,
   setContextMenuActive,
+  setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -101,6 +104,9 @@ import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMono
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -267,6 +273,27 @@ function Editor({
     };
   }, [editor]);
 
+  useEffect(() => {
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
@@ -308,6 +335,7 @@ function Editor({
 
         <Layout.Main>
           <EditorEvents />
+          <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"

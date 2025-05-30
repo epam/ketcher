@@ -6,3 +6,4 @@ export * from './image';
 export * from './multitailArrow';
 export * from './chains';
 export * from './monomers';
+export * from './layout';

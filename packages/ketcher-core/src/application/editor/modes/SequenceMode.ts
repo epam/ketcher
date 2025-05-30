@@ -980,11 +980,22 @@ export class SequenceMode extends BaseMode {
         const polymerBondToDelete =
           this.getPolymerBondToDeleteFromBackboneNode(backBoneSequenceNode);
 
-        if (polymerBondToDelete) {
+        if (!polymerBondToDelete) {
+          return;
+        }
+
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
+        );
+
+        const orphanPhosphate =
+          polymerBondToDelete.firstMonomer instanceof Phosphate
+            ? polymerBondToDelete.firstMonomer
+            : polymerBondToDelete.secondMonomer;
+
+        if (orphanPhosphate instanceof Phosphate) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deletePolymerBond(
-              polymerBondToDelete,
-            ),
+            editor.drawingEntitiesManager.deleteMonomer(orphanPhosphate),
           );
         }
 

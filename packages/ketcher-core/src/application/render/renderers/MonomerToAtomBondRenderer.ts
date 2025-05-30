@@ -1,3 +1,4 @@
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
@@ -24,6 +25,47 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       this.editorSettings,
     );
 
+    // If the atom's label is not visible,
+    // return the start and end positions without further adjustments.
+    if (
+      this.monomerToAtomBond.atom.baseRenderer instanceof AtomRenderer &&
+      !this.monomerToAtomBond.atom.baseRenderer.isLabelVisible
+    ) {
+      return {
+        startPosition: startPositionInPixels,
+        endPosition: endPositionInPixels,
+      };
+    }
+
+    const atomRect =
+      this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+
+    if (atomRect) {
+      // Get the atom rectangle dimensions
+      const atomWidth = atomRect.width;
+      const atomHeight = atomRect.height;
+
+      // Estimate the atom radius (approximating the atom as a circle)
+      const atomRadius = Math.min(atomWidth, atomHeight) / 2;
+
+      // Calculate direction vector from start to end
+      const directionX = endPositionInPixels.x - startPositionInPixels.x;
+      const directionY = endPositionInPixels.y - startPositionInPixels.y;
+      const distance = Math.sqrt(
+        directionX * directionX + directionY * directionY,
+      );
+
+      // Normalize the direction vector
+      const normalizedDirectionX = directionX / distance;
+      const normalizedDirectionY = directionY / distance;
+
+      // Adjust end position to stop at the atom edge
+      endPositionInPixels.x =
+        endPositionInPixels.x - normalizedDirectionX * atomRadius;
+      endPositionInPixels.y =
+        endPositionInPixels.y - normalizedDirectionY * atomRadius;
+    }
+
     return {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
@@ -31,6 +73,13 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
   }
 
   show() {
+    // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
+    const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
+    if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
+      setTimeout(() => this.show(), 10);
+      return;
+    }
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])

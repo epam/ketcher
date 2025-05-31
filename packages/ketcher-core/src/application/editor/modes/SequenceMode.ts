@@ -843,6 +843,31 @@ export class SequenceMode extends BaseMode {
     editorHistory.update(modelChanges);
   }
 
+  private getPolymerBondToDeleteFromBackboneNode(
+    node: BackBoneSequenceNode,
+  ): PolymerBond | undefined {
+    const firstConnected = node.firstConnectedNode;
+    const secondConnected = node.secondConnectedNode;
+
+    if (
+      firstConnected instanceof Nucleotide &&
+      firstConnected.lastMonomerInNode?.attachmentPointsToBonds?.R2 instanceof
+        PolymerBond
+    ) {
+      return firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
+    }
+
+    if (
+      secondConnected instanceof Nucleotide &&
+      secondConnected.firstMonomerInNode?.attachmentPointsToBonds?.R1 instanceof
+        PolymerBond
+    ) {
+      return secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
+    }
+
+    return undefined;
+  }
+
   private handleNodesDeletion(
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
@@ -915,10 +940,6 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
-      const previouseNodeInBackbone =
-        strandType === STRAND_TYPE.SENSE
-          ? nodeBeforeSelection
-          : nodeAfterSelection;
 
       // Сase delete A (for sense) and empty node (for antisense) in sync mode:
       // G | A | G
@@ -954,11 +975,11 @@ export class SequenceMode extends BaseMode {
           selectionStartNode instanceof BackBoneSequenceNode
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
-        const polymerBondToDelete =
-          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
-            .attachmentPointsToBonds.R2;
 
-        if (!(polymerBondToDelete instanceof PolymerBond)) {
+        const polymerBondToDelete =
+          this.getPolymerBondToDeleteFromBackboneNode(backBoneSequenceNode);
+
+        if (!polymerBondToDelete) {
           return;
         }
 
@@ -966,11 +987,14 @@ export class SequenceMode extends BaseMode {
           editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
         );
 
-        if (previouseNodeInBackbone instanceof Nucleotide) {
+        const orphanPhosphate =
+          polymerBondToDelete.firstMonomer instanceof Phosphate
+            ? polymerBondToDelete.firstMonomer
+            : polymerBondToDelete.secondMonomer;
+
+        if (orphanPhosphate instanceof Phosphate) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(
-              previouseNodeInBackbone.lastMonomerInNode,
-            ),
+            editor.drawingEntitiesManager.deleteMonomer(orphanPhosphate),
           );
         }
 
@@ -1233,20 +1257,23 @@ export class SequenceMode extends BaseMode {
       }
     };
 
+    const deleteHandler = (direction: Direction) => {
+      if (this.isEditInRNABuilderMode) return;
+      if (SequenceRenderer.selections.length > 0) {
+        this.deleteSelection();
+      } else {
+        deleteNode(direction);
+      }
+    };
+
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Right);
-        },
+        handler: () => deleteHandler(Direction.Right),
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Left);
-        },
+        handler: () => deleteHandler(Direction.Left),
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

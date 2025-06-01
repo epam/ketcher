@@ -434,8 +434,16 @@ export async function setSettingsOptions(
   options: { option: AllSettingsOptions; value?: string }[],
 ) {
   const optionsToSectionMap = createOptionToSectionMap();
+  const hasFontOption = options.some(
+    (entry) => entry.option === GeneralSetting.Font,
+  );
 
-  await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+  if (hasFontOption) {
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+  } else {
+    await TopRightToolbar(page).Settings();
+  }
+
   let openedSection = SettingsSection.General;
 
   for (const { option, value } of options.sort((a, b) =>

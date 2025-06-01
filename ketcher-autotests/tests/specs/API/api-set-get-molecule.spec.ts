@@ -1,8 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   FILE_TEST_DATA,
@@ -11,7 +12,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  pressButton,
   readFileContent,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -25,20 +25,6 @@ import {
   enableDearomatizeOnLoad,
   setMolecule,
 } from '@utils/formats';
-import { scrollSettingBar } from '@utils/scrollSettingBar';
-
-async function applyIgnoreChiralFlag(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Stereochemistry', { exact: true }).click();
-  await scrollSettingBar(page, 80);
-  await page
-    .locator('label')
-    .filter({ hasText: 'Ignore the chiral flag' })
-    .locator('div >> span, span')
-    .first()
-    .click();
-  await pressButton(page, 'Apply');
-}
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -790,7 +776,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const MolV2000File = await readFileContent(
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
-    await applyIgnoreChiralFlag(page);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await waitForSpinnerFinishedWork(
       page,
       async () => await setMolecule(page, MolV2000File),
@@ -818,7 +804,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, MolV2000File),
     );
     await takeEditorScreenshot(page);
-    await applyIgnoreChiralFlag(page);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await takeEditorScreenshot(page);
   });
 });

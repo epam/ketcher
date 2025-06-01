@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export enum SettingsSection {
   General = 'General-accordion',
   Stereochemistry = 'Stereochemistry-accordion',
@@ -8,15 +9,8 @@ export enum SettingsSection {
   OptionsForDebugging = 'Options for Debugging-accordion',
 }
 
-// export enum ControlType {
-//   Combobox,
-//   Editbox,
-//   Switcher,
-//   Colorpicker,
-// }
-
 export enum GeneralSetting {
-  ResetToSelectTool = 'reset-to-select',
+  ResetToSelectTool = 'reset-to-select-input-span',
   RotationStep = 'rotation-step-input-span',
   ShowValenceWarnings = 'show-valence-warnings-input-span',
   AtomColoring = 'atom-coloring-input-span',
@@ -32,11 +26,11 @@ export enum GeneralSetting {
 
 export enum StereochemistrySetting {
   ShowTheStereoFlags = 'show-stereo-flags-input-span',
-  LabelDisplayAtStereogenicCenters = 'stereo-label-style',
+  LabelDisplayAtStereogenicCenters = 'stereo-label-style-input-span',
   AbsoluteCenterColor = 'colorOfAbsoluteCenters-color-picker-preview',
   ANDCentersColor = 'colorOfAndCenters-color-picker-preview',
   ORCentersColor = 'colorOfOrCenters-color-picker-preview',
-  ColorStereogenicCenters = 'color-stereogenic-centers',
+  ColorStereogenicCenters = 'color-stereogenic-centers-input-span',
   AutoFadeAndOrCenterLabels = 'auto-fade-of-stereo-labels-input-span',
   TextOfAbsoluteFlag = 'abs-flag-label-input-span',
   TextOfANDFlag = 'and-flag-label-input-span',
@@ -49,7 +43,7 @@ export enum AtomsSetting {
   DisplayCarbonExplicitly = 'carbon-explicitly-input-span',
   DisplayCharge = 'show-charge-input-span',
   DisplayValence = 'show-valence-input-span',
-  ShowHydrogenLabels = 'show-hydrogen-labels',
+  ShowHydrogenLabels = 'show-hydrogen-labels-input-span',
 }
 
 export enum BondsSetting {
@@ -86,79 +80,11 @@ export enum OptionsForDebuggingSetting {
   ShowLoopIds = 'show-loop-ids-input-span',
 }
 
-// export const optionToSectionMap = new Map<string, SettingsSection>([
-//   [GeneralSetting.ResetToSelectTool, SettingsSection.General],
-//   [GeneralSetting.RotationStep, SettingsSection.General],
-//   [GeneralSetting.ShowValenceWarnings, SettingsSection.General],
-//   [GeneralSetting.AtomColoring, SettingsSection.General],
-//   [GeneralSetting.Font, SettingsSection.General],
-//   [GeneralSetting.FontSize, SettingsSection.General],
-//   [GeneralSetting.FontSizeUnits, SettingsSection.General],
-//   [GeneralSetting.SubFontSize, SettingsSection.General],
-//   [GeneralSetting.SubFontSizeUnits, SettingsSection.General],
-//   [GeneralSetting.ReactionComponentMarginSize, SettingsSection.General],
-//   [GeneralSetting.ReactionComponentMarginSizeUnits, SettingsSection.General],
-//   [GeneralSetting.ImageResolution, SettingsSection.General],
-//   [StereochemistrySetting.ShowTheStereoFlagsSettings, Section.Stereochemistry],
-//   [
-//     StereochemistrySetting.LabelDisplayAtStereogenicCenters,
-//     SettingsSection.Stereochemistry,
-//   ],
-//   [StereochemistrySetting.AbsoluteCenterColor, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.ANDCentersColor, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.ORCentersColor, SettingsSection.Stereochemistry],
-//   [
-//     StereochemistrySetting.ColorStereogenicCenters,
-//     SettingsSection.Stereochemistry,
-//   ],
-//   [
-//     StereochemistrySetting.AutoFadeAndOrCenterLabels,
-//     SettingsSection.Stereochemistry,
-//   ],
-//   [StereochemistrySetting.TextOfAbsoluteFlag, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.TextOfANDFlag, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.TextOfORFlag, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.TextOfMixedFlag, SettingsSection.Stereochemistry],
-//   [StereochemistrySetting.IgnoreTheChiralFlag, SettingsSection.Stereochemistry],
-//   [AtomsSetting.DisplayCarbonExplicitly, SettingsSection.Atoms],
-//   [AtomsSetting.DisplayCharge, SettingsSection.Atoms],
-//   [AtomsSetting.DisplayValence, SettingsSection.Atoms],
-//   [AtomsSetting.ShowHydrogenLabels, SettingsSection.Atoms],
-//   [BondsSetting.AromaticBondsAsCircle, SettingsSection.Bonds],
-//   [BondsSetting.BondLength, SettingsSection.Bonds],
-//   [BondsSetting.BondLengthUnits, SettingsSection.Bonds],
-//   [BondsSetting.BondSpacing, SettingsSection.Bonds],
-//   [BondsSetting.BondThickness, SettingsSection.Bonds],
-//   [BondsSetting.BondThicknessUnits, SettingsSection.Bonds],
-//   [BondsSetting.StereoWedgeBondWidth, SettingsSection.Bonds],
-//   [BondsSetting.StereoWedgeBondWidthUnits, SettingsSection.Bonds],
-//   [BondsSetting.HashSpacing, SettingsSection.Bonds],
-//   [BondsSetting.HashSpacingUnits, SettingsSection.Bonds],
-//   [ServerSetting.SmartLayout, SettingsSection.Server],
-//   [ServerSetting.IgnoreStereochemistryErrors, SettingsSection.Server],
-//   [ServerSetting.IgnorePseudoatomsAtMass, SettingsSection.Server],
-//   [ServerSetting.AddRsitesAtMassCalculation, SettingsSection.Server],
-//   [ServerSetting.AddIsotopesAtMassCalculation, SettingsSection.Server],
-//   [ThreeDViewerSetting.DisplayMode, SettingsSection.ThreeDViewer],
-//   [ThreeDViewerSetting.BackgroundColor, SettingsSection.ThreeDViewer],
-//   [ThreeDViewerSetting.LabelColoring, SettingsSection.ThreeDViewer],
-//   [OptionsForDebuggingSetting.ShowAtomIds, SettingsSection.OptionsForDebugging],
-//   [
-//     OptionsForDebuggingSetting.ShowBondsIds,
-//     SettingsSection.OptionsForDebugging,
-//   ],
-//   [
-//     OptionsForDebuggingSetting.ShowHalfBondsIds,
-//     SettingsSection.OptionsForDebugging,
-//   ],
-//   [OptionsForDebuggingSetting.ShowLoopIds, SettingsSection.OptionsForDebugging],
-// ]);
-
 export enum MeasurementUnit {
-  Px = 'px',
-  Cx = 'cm',
-  Pt = 'pt',
-  Inch = 'inch',
+  Px = 'px-option',
+  Cm = 'cm-option',
+  Pt = 'pt-option',
+  Inch = 'inch-option',
 }
 
 export enum ResetToSelectToolOption {
@@ -227,29 +153,6 @@ export enum LabelColoringOption {
   Black = 'Black-option',
 }
 
-// export interface ISettingOption {
-//   testId:
-//     | GeneralSetting
-//     | StereochemistrySetting
-//     | AtomsSetting
-//     | BondsSetting
-//     | ServerSetting
-//     | ThreeDViewerSetting
-//     | OptionsForDebuggingSetting;
-//   controlType: ControlType;
-//   valuesEnum?:
-//     | typeof MeasurementUnit
-//     | typeof ResetToSelectToolOption
-//     | typeof FontOption
-//     | typeof ImageResolutionOption
-//     | typeof LabelDisplayAtStereogenicCentersOption
-//     | typeof ColorStereogenicCentersOption
-//     | typeof ShowHydrogenLabelsOption
-//     | typeof DisplayModeOption
-//     | typeof BackgroundColorOption
-//     | typeof LabelColoringOption;
-// }
-
 export type AllSettingsOptions =
   | GeneralSetting
   | StereochemistrySetting
@@ -264,6 +167,7 @@ export const comboBoxOptions: AllSettingsOptions[] = [
   GeneralSetting.Font,
   GeneralSetting.FontSizeUnits,
   GeneralSetting.SubFontSizeUnits,
+  GeneralSetting.ReactionComponentMarginSizeUnits,
   GeneralSetting.ImageResolution,
   StereochemistrySetting.LabelDisplayAtStereogenicCenters,
   StereochemistrySetting.ColorStereogenicCenters,
@@ -272,7 +176,22 @@ export const comboBoxOptions: AllSettingsOptions[] = [
   BondsSetting.BondThicknessUnits,
   BondsSetting.StereoWedgeBondWidthUnits,
   BondsSetting.HashSpacingUnits,
+  ThreeDViewerSetting.DisplayMode,
+  ThreeDViewerSetting.BackgroundColor,
+  ThreeDViewerSetting.LabelColoring,
 ];
+
+export type ComboBoxValue =
+  | MeasurementUnit
+  | ResetToSelectToolOption
+  | FontOption
+  | ImageResolutionOption
+  | LabelDisplayAtStereogenicCentersOption
+  | ColorStereogenicCentersOption
+  | ShowHydrogenLabelsOption
+  | DisplayModeOption
+  | BackgroundColorOption
+  | LabelColoringOption;
 
 export const switcherOptions: AllSettingsOptions[] = [
   GeneralSetting.ShowValenceWarnings,
@@ -289,267 +208,48 @@ export const switcherOptions: AllSettingsOptions[] = [
   ServerSetting.IgnorePseudoatomsAtMass,
   ServerSetting.AddRsitesAtMassCalculation,
   ServerSetting.AddIsotopesAtMassCalculation,
-  ThreeDViewerSetting.DisplayMode,
   OptionsForDebuggingSetting.ShowAtomIds,
   OptionsForDebuggingSetting.ShowBondsIds,
   OptionsForDebuggingSetting.ShowHalfBondsIds,
   OptionsForDebuggingSetting.ShowLoopIds,
 ];
 
-// export interface ISettingSection {
-//   testId: SettingsSection;
-//   options: ISettingOption[];
-// }
+export const editboxOptions: AllSettingsOptions[] = [
+  GeneralSetting.RotationStep,
+  GeneralSetting.FontSize,
+  GeneralSetting.SubFontSize,
+  GeneralSetting.ReactionComponentMarginSize,
+  StereochemistrySetting.TextOfAbsoluteFlag,
+  StereochemistrySetting.TextOfANDFlag,
+  StereochemistrySetting.TextOfORFlag,
+  StereochemistrySetting.TextOfMixedFlag,
+  BondsSetting.BondLength,
+  BondsSetting.BondSpacing,
+  BondsSetting.BondThickness,
+  BondsSetting.StereoWedgeBondWidth,
+  BondsSetting.HashSpacing,
+];
 
-// export const generalSection: ISettingSection = {
-//   testId: SettingsSection.General,
-//   options: [
-//     {
-//       testId: GeneralSetting.ResetToSelectTool,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: ResetToSelectToolOption,
-//     },
-//     {
-//       testId: GeneralSetting.RotationStep,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: GeneralSetting.ShowValenceWarnings,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: GeneralSetting.AtomColoring,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: GeneralSetting.Font,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: FontOption,
-//     },
-//     {
-//       testId: GeneralSetting.FontSize,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: GeneralSetting.FontSizeUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//     {
-//       testId: GeneralSetting.SubFontSize,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: GeneralSetting.SubFontSizeUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//     {
-//       testId: GeneralSetting.ReactionComponentMarginSize,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: GeneralSetting.ImageResolution,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: ImageResolutionOption,
-//     },
-//   ],
-// };
+export type ComboBoxOptionEntry = {
+  option: (typeof comboBoxOptions)[number];
+  value: ComboBoxValue;
+};
 
-// export const stereochemistrySection: ISettingSection = {
-//   testId: SettingsSection.Stereochemistry,
-//   options: [
-//     {
-//       testId: StereochemistrySetting.ShowTheStereoFlags,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: StereochemistrySetting.LabelDisplayAtStereogenicCenters,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: LabelDisplayAtStereogenicCentersOption,
-//     },
-//     {
-//       testId: StereochemistrySetting.AbsoluteCenterColor,
-//       controlType: ControlType.Colorpicker,
-//     },
-//     {
-//       testId: StereochemistrySetting.ANDCentersColor,
-//       controlType: ControlType.Colorpicker,
-//     },
-//     {
-//       testId: StereochemistrySetting.ORCentersColor,
-//       controlType: ControlType.Colorpicker,
-//     },
-//     {
-//       testId: StereochemistrySetting.ColorStereogenicCenters,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: ColorStereogenicCentersOption,
-//     },
-//     {
-//       testId: StereochemistrySetting.AutoFadeAndOrCenterLabels,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: StereochemistrySetting.TextOfAbsoluteFlag,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: StereochemistrySetting.TextOfANDFlag,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: StereochemistrySetting.TextOfORFlag,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: StereochemistrySetting.TextOfMixedFlag,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: StereochemistrySetting.IgnoreTheChiralFlag,
-//       controlType: ControlType.Switcher,
-//     },
-//   ],
-// };
+export type SwitcherOptionEntry = {
+  option: (typeof switcherOptions)[number];
+  // value is not needed for switcher options, as they are boolean
+};
 
-// export const atomsSection: ISettingSection = {
-//   testId: SettingsSection.Atoms,
-//   options: [
-//     {
-//       testId: AtomsSetting.DisplayCarbonExplicitly,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: AtomsSetting.DisplayCharge,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: AtomsSetting.DisplayValence,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: AtomsSetting.ShowHydrogenLabels,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: ShowHydrogenLabelsOption,
-//     },
-//   ],
-// };
-
-// export const bondsSection: ISettingSection = {
-//   testId: SettingsSection.Bonds,
-//   options: [
-//     {
-//       testId: BondsSetting.AromaticBondsAsCircle,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: BondsSetting.BondLength,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: BondsSetting.BondLengthUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//     {
-//       testId: BondsSetting.BondSpacing,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: BondsSetting.BondThickness,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: BondsSetting.BondThicknessUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//     {
-//       testId: BondsSetting.StereoWedgeBondWidth,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: BondsSetting.StereoWedgeBondWidthUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//     {
-//       testId: BondsSetting.HashSpacing,
-//       controlType: ControlType.Editbox,
-//     },
-//     {
-//       testId: BondsSetting.HashSpacingUnits,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: MeasurementUnit,
-//     },
-//   ],
-// };
-
-// export const serverSection: ISettingSection = {
-//   testId: SettingsSection.Server,
-//   options: [
-//     {
-//       testId: ServerSetting.SmartLayout,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: ServerSetting.IgnoreStereochemistryErrors,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: ServerSetting.IgnorePseudoatomsAtMass,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: ServerSetting.AddRsitesAtMassCalculation,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: ServerSetting.AddIsotopesAtMassCalculation,
-//       controlType: ControlType.Switcher,
-//     },
-//   ],
-// };
-
-// export const threeDViewerSection: ISettingSection = {
-//   testId: SettingsSection.ThreeDViewer,
-//   options: [
-//     {
-//       testId: ThreeDViewerSetting.DisplayMode,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: DisplayModeOption,
-//     },
-//     {
-//       testId: ThreeDViewerSetting.BackgroundColor,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: BackgroundColorOption,
-//     },
-//     {
-//       testId: ThreeDViewerSetting.LabelColoring,
-//       controlType: ControlType.Combobox,
-//       valuesEnum: LabelColoringOption,
-//     },
-//   ],
-// };
-
-// export const optionsForDebuggingSection: ISettingSection = {
-//   testId: SettingsSection.OptionsForDebugging,
-//   options: [
-//     {
-//       testId: OptionsForDebuggingSetting.ShowAtomIds,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: OptionsForDebuggingSetting.ShowBondsIds,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: OptionsForDebuggingSetting.ShowHalfBondsIds,
-//       controlType: ControlType.Switcher,
-//     },
-//     {
-//       testId: OptionsForDebuggingSetting.ShowLoopIds,
-//       controlType: ControlType.Switcher,
-//     },
-//   ],
-// };
+export type EditboxOptionEntry = {
+  option: (typeof editboxOptions)[number];
+  value: string;
+};
+export type OtherOptionEntry = {
+  option: Exclude<
+    AllSettingsOptions,
+    | (typeof comboBoxOptions)[number]
+    | (typeof switcherOptions)[number]
+    | (typeof editboxOptions)[number]
+  >;
+  value?: string;
+};

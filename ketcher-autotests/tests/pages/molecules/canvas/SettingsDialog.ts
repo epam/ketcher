@@ -1,18 +1,28 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,
   AtomsSetting,
   BondsSetting,
+  ComboBoxOptionEntry,
   comboBoxOptions,
+  ComboBoxValue,
+  EditboxOptionEntry,
+  editboxOptions,
   GeneralSetting,
   OptionsForDebuggingSetting,
+  OtherOptionEntry,
   ServerSetting,
   SettingsSection,
   StereochemistrySetting,
+  SwitcherOptionEntry,
   switcherOptions,
   ThreeDViewerSetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { TopRightToolbar } from '../TopRightToolbar';
+import { delay } from '@utils/canvas';
+import { waitForRender } from '@utils/common';
 
 type GeneralSectionLocators = {
   generalSection: Locator;
@@ -105,7 +115,7 @@ type SettingsDialogLocators = {
   threeDViewerSection: Locator & ThreeDViewerSectionLocators;
   optionsForDebuggingSection: Locator & OptionsForDebuggingSectionLocators;
   setACSSettingsButton: Locator;
-  applyFileButton: Locator;
+  applyButton: Locator;
   cancelButton: Locator;
 };
 
@@ -275,8 +285,8 @@ export const SettingsDialog = (page: Page) => {
       'Options for Debugging-accordion',
     ) as Locator & typeof optionsForDebuggingSection,
     setACSSettingsButton: page.getByTestId('acs-style-button'),
-    applyFileButton: page.getByTestId('Cancel'),
-    cancelButton: page.getByTestId('OK'),
+    applyButton: page.getByTestId('OK'),
+    cancelButton: page.getByTestId('Cancel'),
   };
 
   return {
@@ -288,29 +298,43 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async apply() {
-      await locators.applyFileButton.click();
+      await waitForRender(page, async () => {
+        await locators.applyButton.click();
+      });
     },
 
     async cancel() {
       await locators.cancelButton.click();
     },
 
-    async openSection(section: SettingsSection) {
-      await getElement(section).click();
+    async setACSSettings() {
+      await locators.setACSSettingsButton.click();
     },
 
-    async setOptionValue(option: AllSettingsOptions, value: string) {
+    async openSection(section: SettingsSection) {
+      await getElement(section).click();
+      // Wait for section to open
+      await delay(0.2);
+    },
+
+    async setOptionValue(option: AllSettingsOptions, value = '') {
       if (Object.values(comboBoxOptions).includes(option)) {
         await getElement(option).click();
         await getElement(value).click();
       } else if (Object.values(switcherOptions).includes(option)) {
-        await getElement(option).fill(value);
+        await getElement(option).click({ force: true });
       } else {
-        await getElement(option).click();
+        await getElement(option).fill(value);
       }
     },
 
-    async resetSettingsValuesToDefault() {
+    async getOptionValue(
+      option: (typeof editboxOptions)[number],
+    ): Promise<string | null> {
+      return await getElement(option).inputValue();
+    },
+
+    async reset() {
       await locators.resetButton.click();
     },
   };
@@ -318,7 +342,7 @@ export const SettingsDialog = (page: Page) => {
 
 let cachedMap: Map<string, SettingsSection> | null = null;
 
-function createEnumToSectionMap(): Map<string, SettingsSection> {
+function createOptionToSectionMap(): Map<string, SettingsSection> {
   if (cachedMap) return cachedMap;
   const map = new Map<string, SettingsSection>();
 
@@ -350,10 +374,27 @@ function createEnumToSectionMap(): Map<string, SettingsSection> {
 
 export async function setSettingsOption(
   page: Page,
+  option: (typeof comboBoxOptions)[number],
+  value: ComboBoxValue,
+): Promise<void>;
+
+export async function setSettingsOption(
+  page: Page,
+  option: (typeof switcherOptions)[number],
+): Promise<void>;
+
+export async function setSettingsOption(
+  page: Page,
   option: AllSettingsOptions,
-  value: string,
+  value?: string,
+): Promise<void>;
+
+export async function setSettingsOption(
+  page: Page,
+  option: AllSettingsOptions,
+  value = '',
 ) {
-  const optionsToSectionMap = createEnumToSectionMap();
+  const optionsToSectionMap = createOptionToSectionMap();
   const section = optionsToSectionMap.get(option);
 
   if (option === GeneralSetting.Font) {
@@ -367,18 +408,31 @@ export async function setSettingsOption(
     await SettingsDialog(page).openSection(section);
   }
   await SettingsDialog(page).setOptionValue(option, value);
+  await SettingsDialog(page).apply();
 }
+
+export function setSettingsOptions(
+  page: Page,
+  options: (
+    | ComboBoxOptionEntry
+    | SwitcherOptionEntry
+    | EditboxOptionEntry
+    | OtherOptionEntry
+  )[],
+): Promise<void>;
 
 export async function setSettingsOptions(
   page: Page,
-  options: { option: AllSettingsOptions; value: string }[],
+  options: { option: AllSettingsOptions; value?: string }[],
 ) {
-  const optionsToSectionMap = createEnumToSectionMap();
+  const optionsToSectionMap = createOptionToSectionMap();
 
   await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
   let openedSection = SettingsSection.General;
 
-  for (const { option, value } of options) {
+  for (const { option, value } of options.sort((a, b) =>
+    a.option.localeCompare(b.option),
+  )) {
     const section = optionsToSectionMap.get(option) || SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);
@@ -387,6 +441,43 @@ export async function setSettingsOptions(
     }
     await SettingsDialog(page).setOptionValue(option, value);
   }
+  await SettingsDialog(page).apply();
+}
+
+export async function getSettingsOptionValue(
+  page: Page,
+  option: (typeof editboxOptions)[number],
+): Promise<string | null> {
+  const optionsToSectionMap = createOptionToSectionMap();
+  const section = optionsToSectionMap.get(option);
+
+  if (option === GeneralSetting.Font) {
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+  } else {
+    await TopRightToolbar(page).Settings();
+  }
+
+  if (section && section !== SettingsSection.General) {
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(section);
+  }
+  const optionValue = SettingsDialog(page).getOptionValue(option);
+  await SettingsDialog(page).cancel();
+
+  return optionValue;
+}
+
+export async function setACSSettings(page: Page) {
+  await TopRightToolbar(page).Settings();
+  await SettingsDialog(page).setACSSettings();
+  await SettingsDialog(page).apply();
+  await page.getByRole('button', { name: 'OK' }).click();
+}
+
+export async function resetSettingsValuesToDefault(page: Page) {
+  await TopRightToolbar(page).Settings();
+  await SettingsDialog(page).reset();
+  await SettingsDialog(page).apply();
 }
 
 export type SettingsDialogLocatorsType = ReturnType<typeof SettingsDialog>;

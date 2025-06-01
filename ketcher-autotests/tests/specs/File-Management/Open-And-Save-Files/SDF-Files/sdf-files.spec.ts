@@ -1,18 +1,19 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import {
+  BondsSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  setACSSettings,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  setBondLengthOptionUnit,
-  setBondLengthValue,
-  pressButton,
-  setHashSpacingOptionUnit,
-  setHashSpacingValue,
-  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -385,11 +386,11 @@ test('The Bond length setting with px option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setBondLengthOptionUnit(page, 'px-option');
-  await setBondLengthValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
+    { option: BondsSetting.BondLength, value: '79.8' },
+  ]);
+
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
@@ -415,11 +416,13 @@ test('The Hash spacing setting with px option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'px-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Px,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -444,11 +447,13 @@ test('The Hash spacing setting with px option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'px-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Px,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -473,11 +478,13 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'cm-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Cm,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -502,11 +509,13 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'cm-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Cm,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -531,11 +540,13 @@ test('The Hash spacing setting with inch option is applied and it should be save
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'inch-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Inch,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -560,11 +571,14 @@ test('The Hash spacing setting with inch option is applied and it should be save
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setHashSpacingOptionUnit(page, 'inch-option');
-  await setHashSpacingValue(page, '79.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    {
+      option: BondsSetting.HashSpacingUnits,
+      value: MeasurementUnit.Inch,
+    },
+    { option: BondsSetting.HashSpacing, value: '79.8' },
+  ]);
+
   await takeEditorScreenshot(page);
   await verifyFileExport(
     page,
@@ -590,11 +604,11 @@ test('The Bond length setting with pt option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await openBondsSettingsSection(page);
-  await setBondLengthOptionUnit(page, 'pt-option');
-  await setBondLengthValue(page, '29.8');
-  await pressButton(page, 'Apply');
+  await setSettingsOptions(page, [
+    { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
+    { option: BondsSetting.BondLength, value: '29.8' },
+  ]);
+
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
@@ -622,10 +636,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await pressButton(page, 'Set ACS Settings');
-  await pressButton(page, 'Apply');
-  await pressButton(page, 'OK');
+  await setACSSettings(page);
   await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 
@@ -653,10 +664,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await TopRightToolbar(page).Settings();
-  await pressButton(page, 'Set ACS Settings');
-  await pressButton(page, 'Apply');
-  await pressButton(page, 'OK');
+  await setACSSettings(page);
   await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 

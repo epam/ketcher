@@ -16,9 +16,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   pressButton,
-  openBondsSettingsSection,
-  scrollToDownInSetting,
-  setHashSpacingValue,
   takeMonomerLibraryScreenshot,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
@@ -42,7 +39,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BondsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -432,11 +430,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setHashSpacingValue(page, '10');
-    await pressButton(page, 'Apply');
+    await setSettingsOption(page, BondsSetting.HashSpacing, '10');
     await takeEditorScreenshot(page);
   });
 

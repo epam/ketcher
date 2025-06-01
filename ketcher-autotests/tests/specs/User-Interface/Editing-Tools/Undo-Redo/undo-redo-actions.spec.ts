@@ -37,9 +37,13 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  GeneralSetting,
+  ResetToSelectToolOption,
+} from '@tests/pages/constants/settingsDialog/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -752,11 +756,11 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await page.getByTestId('reset-to-select-input-span').click();
-    await page.getByRole('option', { name: 'off' }).click();
-    await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
+    await setSettingsOption(
+      page,
+      GeneralSetting.ResetToSelectTool,
+      ResetToSelectToolOption.Off,
+    );
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);

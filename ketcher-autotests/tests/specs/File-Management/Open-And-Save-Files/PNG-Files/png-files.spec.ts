@@ -3,13 +3,12 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  pressButton,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { setACSSettings } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -180,10 +179,7 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2457
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).saveFile();

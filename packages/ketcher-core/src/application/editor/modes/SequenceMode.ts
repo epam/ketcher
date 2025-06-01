@@ -843,57 +843,17 @@ export class SequenceMode extends BaseMode {
     editorHistory.update(modelChanges);
   }
 
-  private getPolymerBondToDeleteFromBackboneNode(
-    node: BackBoneSequenceNode,
-  ): PolymerBond | undefined {
-    const firstConnected = node.firstConnectedNode;
-    const secondConnected = node.secondConnectedNode;
-
-    if (
-      firstConnected instanceof Nucleotide &&
-      firstConnected.lastMonomerInNode?.attachmentPointsToBonds?.R2 instanceof
-        PolymerBond
-    ) {
-      return firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
-    }
-
-    if (
-      secondConnected instanceof Nucleotide &&
-      secondConnected.firstMonomerInNode?.attachmentPointsToBonds?.R1 instanceof
-        PolymerBond
-    ) {
-      return secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
-    }
-
-    return undefined;
-  }
-
   private handleNodesDeletion(
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
-    let isPhosphateAdditionalyDeleted = false;
-    selections.forEach((selectionRange) => {
-      selectionRange.forEach((nodeSelection) => {
-        const twoStrandedNode = nodeSelection.node;
-        if (twoStrandedNode.senseNode) {
-          modelChanges.merge(
-            this.deleteHydrogenBondsForNode(twoStrandedNode.senseNode),
-          );
-        }
-        if (twoStrandedNode.antisenseNode) {
-          modelChanges.merge(
-            this.deleteHydrogenBondsForNode(twoStrandedNode.antisenseNode),
-          );
-        }
-      });
 
+    selections.forEach((selectionRange) => {
       const selectionStartTwoStrandedNode = selectionRange[0].node;
       const selectionEndTwoStrandedNode =
         selectionRange[selectionRange.length - 1].node;
-
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,
@@ -902,6 +862,7 @@ export class SequenceMode extends BaseMode {
         selectionEndTwoStrandedNode,
         strandType,
       );
+      let isPhosphateAdditionalyDeleted = false;
 
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
         selectionStartTwoStrandedNode,
@@ -936,7 +897,6 @@ export class SequenceMode extends BaseMode {
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
-
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -955,51 +915,15 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
+      const previouseNodeInBackbone =
+        strandType === STRAND_TYPE.SENSE
+          ? nodeBeforeSelection
+          : nodeAfterSelection;
 
-      if (strandType === STRAND_TYPE.ANTISENSE) {
-        if (selectionStartNode instanceof Nucleotide) {
-          modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(
-              selectionStartNode.lastMonomerInNode as BaseMonomer,
-            ),
-          );
-
-          selectionStartNode.monomers.forEach((mon) => {
-            if (!(mon instanceof Phosphate)) {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.deleteMonomer(mon),
-              );
-            }
-          });
-
-          const partnerTwoStrandedNode = selectionStartTwoStrandedNode;
-          const partnerSenseNode = partnerTwoStrandedNode.senseNode;
-          if (partnerSenseNode instanceof Nucleotide) {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteMonomer(
-                partnerSenseNode.lastMonomerInNode as BaseMonomer,
-              ),
-            );
-          }
-
-          Array.from(editor.drawingEntitiesManager.monomers.values()).forEach(
-            (monosh) => {
-              if (
-                monosh instanceof Phosphate &&
-                monosh.attachmentPointsToBonds.R1 === null &&
-                monosh.attachmentPointsToBonds.R2 === null
-              ) {
-                modelChanges.merge(
-                  editor.drawingEntitiesManager.deleteMonomer(monosh),
-                );
-              }
-            },
-          );
-
-          return;
-        }
-      }
-
+      // Сase delete A (for sense) and empty node (for antisense) in sync mode:
+      // G | A | G
+      // C |   | C
+      // Antisense should not create bond between C and C
       if (
         strandType === STRAND_TYPE.ANTISENSE &&
         ((selectionStartNode instanceof EmptySequenceNode &&
@@ -1018,6 +942,10 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
+      // Сase delete "-":
+      // G | - | G
+      // C |   | C
+      // Sense should break bond between G and G. Chain should be broken into two parts.
       if (
         selectionStartNode instanceof BackBoneSequenceNode ||
         selectionEndNode instanceof BackBoneSequenceNode
@@ -1026,11 +954,11 @@ export class SequenceMode extends BaseMode {
           selectionStartNode instanceof BackBoneSequenceNode
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
-
         const polymerBondToDelete =
-          this.getPolymerBondToDeleteFromBackboneNode(backBoneSequenceNode);
+          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
+            .attachmentPointsToBonds.R2;
 
-        if (!polymerBondToDelete) {
+        if (!(polymerBondToDelete instanceof PolymerBond)) {
           return;
         }
 
@@ -1038,13 +966,11 @@ export class SequenceMode extends BaseMode {
           editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
         );
 
-        const orphanPhosphate =
-          polymerBondToDelete.firstMonomer instanceof Phosphate
-            ? polymerBondToDelete.firstMonomer
-            : polymerBondToDelete.secondMonomer;
-        if (orphanPhosphate instanceof Phosphate) {
+        if (previouseNodeInBackbone instanceof Nucleotide) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(orphanPhosphate),
+            editor.drawingEntitiesManager.deleteMonomer(
+              previouseNodeInBackbone.lastMonomerInNode,
+            ),
           );
         }
 
@@ -1080,11 +1006,13 @@ export class SequenceMode extends BaseMode {
           (!nodeAfterSelection ||
             nodeAfterSelection instanceof EmptySequenceNode)
         ) {
+          // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeBeforeSelection.lastMonomerInNode,
             ),
           );
+          // TODO get rid of this boolean
           isPhosphateAdditionalyDeleted = true;
         }
 
@@ -1135,11 +1063,13 @@ export class SequenceMode extends BaseMode {
           (!nodeBeforeSelection ||
             nodeBeforeSelection instanceof EmptySequenceNode)
         ) {
+          // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeAfterSelection.lastMonomerInNode,
             ),
           );
+          // TODO get rid of this boolean
           isPhosphateAdditionalyDeleted = true;
         }
 
@@ -1303,23 +1233,20 @@ export class SequenceMode extends BaseMode {
       }
     };
 
-    const deleteHandler = (direction: Direction) => {
-      if (this.isEditInRNABuilderMode) return;
-      if (SequenceRenderer.selections.length > 0) {
-        this.deleteSelection();
-      } else {
-        deleteNode(direction);
-      }
-    };
-
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => deleteHandler(Direction.Right),
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          deleteNode(Direction.Right);
+        },
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => deleteHandler(Direction.Left),
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          deleteNode(Direction.Left);
+        },
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

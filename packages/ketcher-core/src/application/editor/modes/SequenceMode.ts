@@ -877,6 +877,20 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
+      selectionRange.forEach((nodeSelection) => {
+        const twoStrandedNode = nodeSelection.node;
+        if (twoStrandedNode.senseNode) {
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(twoStrandedNode.senseNode),
+          );
+        }
+        if (twoStrandedNode.antisenseNode) {
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(twoStrandedNode.antisenseNode),
+          );
+        }
+      });
+
       const selectionStartTwoStrandedNode = selectionRange[0].node;
       const selectionEndTwoStrandedNode =
         selectionRange[selectionRange.length - 1].node;
@@ -888,6 +902,7 @@ export class SequenceMode extends BaseMode {
         selectionEndTwoStrandedNode,
         strandType,
       );
+
       let isPhosphateAdditionalyDeleted = false;
 
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
@@ -923,6 +938,7 @@ export class SequenceMode extends BaseMode {
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
+
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -942,10 +958,35 @@ export class SequenceMode extends BaseMode {
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
 
-      // Сase delete A (for sense) and empty node (for antisense) in sync mode:
-      // G | A | G
-      // C |   | C
-      // Antisense should not create bond between C and C
+      if (strandType === STRAND_TYPE.ANTISENSE) {
+        if (selectionStartNode instanceof Nucleotide) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(
+              selectionStartNode.lastMonomerInNode as BaseMonomer,
+            ),
+          );
+          selectionStartNode.monomers.forEach((mon) => {
+            if (!(mon instanceof Phosphate)) {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deleteMonomer(mon),
+              );
+            }
+          });
+
+          const partnerTwoStrandedNode = selectionStartTwoStrandedNode;
+          const partnerSenseNode = partnerTwoStrandedNode.senseNode;
+          if (partnerSenseNode instanceof Nucleotide) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(
+                partnerSenseNode.lastMonomerInNode as BaseMonomer,
+              ),
+            );
+          }
+
+          return;
+        }
+      }
+
       if (
         strandType === STRAND_TYPE.ANTISENSE &&
         ((selectionStartNode instanceof EmptySequenceNode &&
@@ -964,10 +1005,6 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
-      // Сase delete "-":
-      // G | - | G
-      // C |   | C
-      // Sense should break bond between G and G. Chain should be broken into two parts.
       if (
         selectionStartNode instanceof BackBoneSequenceNode ||
         selectionEndNode instanceof BackBoneSequenceNode
@@ -1037,7 +1074,6 @@ export class SequenceMode extends BaseMode {
               nodeBeforeSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
           isPhosphateAdditionalyDeleted = true;
         }
 
@@ -1094,7 +1130,6 @@ export class SequenceMode extends BaseMode {
               nodeAfterSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
           isPhosphateAdditionalyDeleted = true;
         }
 

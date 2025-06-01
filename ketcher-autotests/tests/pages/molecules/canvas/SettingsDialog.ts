@@ -335,7 +335,9 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async reset() {
-      await locators.resetButton.click();
+      if (await locators.resetButton.isEnabled()) {
+        await locators.resetButton.click();
+      }
     },
   };
 };
@@ -409,6 +411,12 @@ export async function setSettingsOption(
   }
   await SettingsDialog(page).setOptionValue(option, value);
   await SettingsDialog(page).apply();
+
+  // to close "To fully apply these changes, you need to apply the layout." dialog
+  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
+  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
+    await page.getByRole('button', { name: 'OK' }).click();
+  }
 }
 
 export function setSettingsOptions(
@@ -442,6 +450,12 @@ export async function setSettingsOptions(
     await SettingsDialog(page).setOptionValue(option, value);
   }
   await SettingsDialog(page).apply();
+
+  // to close "To fully apply these changes, you need to apply the layout." dialog
+  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
+  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
+    await page.getByRole('button', { name: 'OK' }).click();
+  }
 }
 
 export async function getSettingsOptionValue(
@@ -471,7 +485,11 @@ export async function setACSSettings(page: Page) {
   await TopRightToolbar(page).Settings();
   await SettingsDialog(page).setACSSettings();
   await SettingsDialog(page).apply();
-  await page.getByRole('button', { name: 'OK' }).click();
+
+  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
+  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
+    await page.getByRole('button', { name: 'OK' }).click();
+  }
 }
 
 export async function resetSettingsValuesToDefault(page: Page) {

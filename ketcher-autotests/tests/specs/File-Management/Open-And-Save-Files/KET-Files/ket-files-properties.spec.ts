@@ -274,7 +274,6 @@ test.describe('Ket files', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '47.8' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -306,7 +305,6 @@ test.describe('Ket files', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '7.8' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -333,7 +331,6 @@ test.describe('Ket files', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '3.8' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -360,7 +357,6 @@ test.describe('Ket files', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '7.8' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 

@@ -1215,7 +1215,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '47.8' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(

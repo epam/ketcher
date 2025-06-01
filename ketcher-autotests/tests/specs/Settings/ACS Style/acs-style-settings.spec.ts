@@ -34,7 +34,6 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await resetSettingsValuesToDefault(page);
@@ -58,7 +57,6 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
-    await page.getByRole('button', { name: 'OK' }).click();
     await takeEditorScreenshot(page);
     await resetSettingsValuesToDefault(page);
   });

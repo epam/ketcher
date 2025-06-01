@@ -663,7 +663,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '30.3' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -687,7 +686,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '0.9' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -711,7 +709,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '56.3' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -735,7 +732,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '1.3' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -759,7 +755,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '13' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -783,7 +778,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '4' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -807,7 +801,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '144' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -831,7 +824,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '12' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -856,7 +848,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '94.57' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -881,7 +872,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '5.83' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -906,7 +896,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '14.94' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -931,7 +920,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '19.48' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -955,7 +943,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '1000' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -979,7 +966,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '1000' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -1003,7 +989,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '1000' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -1027,7 +1012,6 @@ test.describe('General Settings', () => {
       },
       { option: GeneralSetting.ReactionComponentMarginSize, value: '1000' },
     ]);
-    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });

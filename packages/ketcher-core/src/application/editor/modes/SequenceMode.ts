@@ -875,7 +875,7 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
-
+    let isPhosphateAdditionalyDeleted = false;
     selections.forEach((selectionRange) => {
       selectionRange.forEach((nodeSelection) => {
         const twoStrandedNode = nodeSelection.node;
@@ -894,6 +894,7 @@ export class SequenceMode extends BaseMode {
       const selectionStartTwoStrandedNode = selectionRange[0].node;
       const selectionEndTwoStrandedNode =
         selectionRange[selectionRange.length - 1].node;
+
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,
@@ -902,8 +903,6 @@ export class SequenceMode extends BaseMode {
         selectionEndTwoStrandedNode,
         strandType,
       );
-
-      let isPhosphateAdditionalyDeleted = false;
 
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
         selectionStartTwoStrandedNode,
@@ -965,6 +964,7 @@ export class SequenceMode extends BaseMode {
               selectionStartNode.lastMonomerInNode as BaseMonomer,
             ),
           );
+
           selectionStartNode.monomers.forEach((mon) => {
             if (!(mon instanceof Phosphate)) {
               modelChanges.merge(
@@ -982,6 +982,20 @@ export class SequenceMode extends BaseMode {
               ),
             );
           }
+
+          Array.from(editor.drawingEntitiesManager.monomers.values()).forEach(
+            (monosh) => {
+              if (
+                monosh instanceof Phosphate &&
+                monosh.attachmentPointsToBonds.R1 === null &&
+                monosh.attachmentPointsToBonds.R2 === null
+              ) {
+                modelChanges.merge(
+                  editor.drawingEntitiesManager.deleteMonomer(monosh),
+                );
+              }
+            },
+          );
 
           return;
         }
@@ -1029,7 +1043,6 @@ export class SequenceMode extends BaseMode {
           polymerBondToDelete.firstMonomer instanceof Phosphate
             ? polymerBondToDelete.firstMonomer
             : polymerBondToDelete.secondMonomer;
-
         if (orphanPhosphate instanceof Phosphate) {
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(orphanPhosphate),
@@ -1068,7 +1081,6 @@ export class SequenceMode extends BaseMode {
           (!nodeAfterSelection ||
             nodeAfterSelection instanceof EmptySequenceNode)
         ) {
-          // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeBeforeSelection.lastMonomerInNode,
@@ -1124,7 +1136,6 @@ export class SequenceMode extends BaseMode {
           (!nodeBeforeSelection ||
             nodeBeforeSelection instanceof EmptySequenceNode)
         ) {
-          // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeAfterSelection.lastMonomerInNode,

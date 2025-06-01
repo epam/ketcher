@@ -8,8 +8,10 @@ import {
 import {
   setACSSettings,
   setSettingsOptions,
+  SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -396,14 +398,17 @@ test.describe('Ket files', () => {
   informational message displayed: "To fully apply these changes, you need to apply the layout."
   */
       await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-      await setSettingsOptions(page, [
-        {
-          option: GeneralSetting.ReactionComponentMarginSizeUnits,
-          value: MeasurementUnit.Px,
-        },
-        { option: GeneralSetting.ReactionComponentMarginSize, value: '47.8' },
-      ]);
-      await takeEditorScreenshot(page);
+      await TopRightToolbar(page).Settings();
+      await SettingsDialog(page).setOptionValue(
+        GeneralSetting.ReactionComponentMarginSize,
+        '47.8',
+      );
+      await SettingsDialog(page).apply();
+
+      const youNeedToApplyTheLayoutDialog = page.getByText(
+        'To fully apply these changes, you need to apply the layout.',
+      );
+      await expect(youNeedToApplyTheLayoutDialog).toBeVisible();
     },
   );
 });

@@ -2,7 +2,6 @@
 import { test } from '@playwright/test';
 import { SettingsSection } from '@tests/pages/constants/settingsDialog/Constants';
 import {
-  resetSettingsValuesToDefault,
   setACSSettings,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
@@ -34,9 +33,9 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
+    await page.getByRole('button', { name: 'OK' }).click();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await resetSettingsValuesToDefault(page);
   });
 
   test('Verify default settings after clicking ACS Style button and after that on Reset', async ({
@@ -57,7 +56,7 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
+    await page.getByRole('button', { name: 'OK' }).click();
     await takeEditorScreenshot(page);
-    await resetSettingsValuesToDefault(page);
   });
 });

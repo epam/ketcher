@@ -44,12 +44,7 @@ export class FlexMode extends BaseMode {
     }
 
     command.merge(
-      editor.drawingEntitiesManager.applySnakeLayout(
-        editor.canvas.width.baseVal.value,
-        true,
-        true,
-        true,
-      ),
+      editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
     );
 
     command.setUndoOperationsByPriority();

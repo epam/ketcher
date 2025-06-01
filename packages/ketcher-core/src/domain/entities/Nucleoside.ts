@@ -17,8 +17,8 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { CELL_WIDTH } from './DrawingEntitiesManager';
 import { KetMonomerClass } from 'application/formatters';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleoside {
   constructor(
@@ -66,7 +66,7 @@ export class Nucleoside {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, CELL_WIDTH + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
       ),
     );
     const modelChanges = new Command();

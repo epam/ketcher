@@ -16,8 +16,8 @@ import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { KetMonomerClass } from 'application/formatters';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleotide {
   constructor(
@@ -85,7 +85,7 @@ export class Nucleotide {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, CELL_WIDTH + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
       ),
     );
 
@@ -97,7 +97,7 @@ export class Nucleotide {
         rnaBasePosition: bottomItemPosition,
         phosphate: phosphateLibraryItem,
         phosphatePosition: topLeftItemPosition.add(
-          Coordinates.canvasToModel(new Vec2(CELL_WIDTH, 0)),
+          Coordinates.canvasToModel(new Vec2(SnakeLayoutCellWidth, 0)),
         ),
       });
 

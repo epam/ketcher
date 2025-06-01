@@ -185,6 +185,7 @@ export type EditorTheme = {
   };
   zIndex: {
     base: number;
+    toolbar: number;
     sticky: number;
     overlay: number;
     modal: number;

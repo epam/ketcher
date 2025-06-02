@@ -125,7 +125,7 @@ export const CDXStructuresViewer = ({
             {structList.map((value, index) => (
               <MenuItem
                 key={value + index}
-                data-testid={'cdx-structure-' + index}
+                data-testid={`cdx-structure-${index + 1}`}
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >

@@ -1,4 +1,13 @@
 import { Page, Locator } from '@playwright/test';
+import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
+import { CommonTopLeftToolbar } from '../common/CommonTopLeftToolbar';
+import { openFile } from '@utils/files';
+
+export enum Action {
+  AddToCanvas = 'AddToCanvas',
+  OpenAsNewProject = 'OpenAsNewProject',
+  Cancel = 'Cancel',
+}
 
 type OpenPPTXFileDialogLocators = {
   closeWindowButton: Locator;
@@ -23,32 +32,62 @@ export const OpenPPTXFileDialog = (page: Page) => {
     },
 
     async pressAddToCanvasButton() {
-      await locators.addToCanvasButton.click();
+      await waitForSpinnerFinishedWork(page, async () => {
+        await locators.addToCanvasButton.click();
+      });
     },
 
     async pressOpenAsNewProjectButton() {
-      await locators.openAsNewProjectButton.click();
+      await waitForSpinnerFinishedWork(page, async () => {
+        await locators.openAsNewProjectButton.click();
+      });
     },
 
     async pressCancelButton() {
-      await locators.cancelButton.click();
+      await waitForSpinnerFinishedWork(page, async () => {
+        await locators.cancelButton.click();
+      });
     },
   };
 };
 
-export async function selectStructureInPPTXDialog(
+export async function selectStructure(
   page: Page,
-  id: number,
-  action?: 'AddToCanvas' | 'OpenAsNewProject' | 'Cancel',
+  options: {
+    Structure: number;
+    action?: Action;
+  },
 ) {
-  await page.getByTestId(`cdx-structure-${id}`).click();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await page.getByTestId(`cdx-structure-${options.Structure}`).click();
+  });
   const dialog = OpenPPTXFileDialog(page);
-  if (action === 'AddToCanvas') {
+  if (options.action === Action.AddToCanvas) {
     await dialog.pressAddToCanvasButton();
-  } else if (action === 'OpenAsNewProject') {
+  } else if (options.action === Action.OpenAsNewProject) {
     await dialog.pressOpenAsNewProjectButton();
-  } else if (action === 'Cancel') {
+  } else if (options.action === Action.Cancel) {
     await dialog.pressCancelButton();
+  }
+}
+
+export async function openPPTXFile(
+  page: Page,
+  filePath: string,
+  options?: {
+    Structure?: number;
+    action?: Action;
+  },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await openFile(filePath, page);
+  });
+  if (options?.Structure !== undefined) {
+    await selectStructure(page, {
+      Structure: options.Structure,
+      action: options.action,
+    });
   }
 }
 

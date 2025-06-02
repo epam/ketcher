@@ -84,6 +84,13 @@ export const CommonTopRightToolbar = (page: Page) => {
         goToPeptides?: boolean;
       } = { enableFlexMode: true, goToPeptides: true },
     ) {
+      await page.evaluate(() => {
+        // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window._ketcher_isChainLengthRulerDisabled = true;
+      });
+
       const switcher = locators.ketcherModeSwitcherCombobox;
       expect(switcher).toBeVisible();
       await switcher.click();
@@ -104,7 +111,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
 
       await page.evaluate(() => {
-        // Temporary solution to disable autozoom for the polymer editor in e2e tests
+        // Temporary solution to disable autozoom for the macro editor in e2e tests
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         window._ketcher_isAutozoomDisabled = true;

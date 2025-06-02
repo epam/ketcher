@@ -51,12 +51,16 @@ import {
   DrawingEntitiesManager,
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
-  CELL_WIDTH,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { DOMSubscription } from 'subscription';
-import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
+import {
+  EditorLineLength,
+  initHotKeys,
+  KetcherLogger,
+  keyNorm,
+} from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
@@ -72,6 +76,8 @@ import { SelectLayoutModeOperation } from 'application/editor/operations/polymer
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import { getAminoAcidsToModify } from 'domain/helpers/monomers';
+import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -485,6 +491,43 @@ export class CoreEditor {
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
         this.onModifyAminoAcids(monomers, modificationType);
+      },
+    );
+
+    this.events.setEditorLineLength.add(
+      (lineLengthUpdate: Partial<EditorLineLength>) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
+        const command = new Command();
+        const history = new EditorHistory(this);
+
+        command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
+        history.update(command);
+      },
+    );
+
+    this.events.toggleLineLengthHighlighting.add(
+      (value: boolean, currentPosition = 0) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
+        if (value) {
+          this.transientDrawingView.showLineLengthHighlight({
+            currentPosition,
+          });
+        } else {
+          this.transientDrawingView.hideLineLengthHighlight();
+        }
+        this.transientDrawingView.update();
       },
     );
   }
@@ -1030,12 +1073,7 @@ export class CoreEditor {
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(
-          this.canvas.width.baseVal.value,
-          true,
-          true,
-          false,
-        ),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
@@ -1078,8 +1116,8 @@ export class CoreEditor {
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
       false,
-      MONOMER_START_X_POSITION - CELL_WIDTH / 4,
-      MONOMER_START_Y_POSITION - CELL_WIDTH / 4,
+      MONOMER_START_X_POSITION - SnakeLayoutCellWidth / 4,
+      MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
   }

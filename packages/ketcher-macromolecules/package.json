@@ -116,5 +116,19 @@
   },
   "files": [
     "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.modern.js",
+      "require": "./dist/index.js"
+    },
+    "./dist/index.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  },
+  "sideEffects": [
+    "*.css",
+    "dist/index.css"
   ]
 }

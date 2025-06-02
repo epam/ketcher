@@ -272,6 +272,7 @@ export const defaultTheme: EditorTheme = {
   },
   zIndex: {
     base: 0,
+    toolbar: 10,
     sticky: 100,
     overlay: 200,
     modal: 1000,

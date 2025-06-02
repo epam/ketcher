@@ -19,7 +19,6 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { CoreEditor } from 'application/editor/internal';
-import { SequenceMode, SnakeMode } from 'application/editor/modes';
 import {
   SequencePointer,
   SequenceRenderer,
@@ -31,22 +30,14 @@ export class ReinitializeModeOperation implements Operation {
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
-    if (
-      editor.mode instanceof SequenceMode ||
-      editor.mode instanceof SnakeMode
-    ) {
-      editor.mode.initialize(false);
-    }
+
+    editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
-    if (
-      editor.mode instanceof SequenceMode ||
-      editor.mode instanceof SnakeMode
-    ) {
-      editor.mode.initialize(false);
-    }
+
+    editor.mode.initialize(false);
   }
 }
 

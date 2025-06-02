@@ -661,12 +661,59 @@ class ReAtom extends ReObject {
     }
 
     if (atom.cip) {
-      this.cip = util.drawCIPLabel({
-        atomOrBond: atom,
-        position: atom.pp,
-        restruct: render.ctab,
-        visel: this.visel,
+      const paper = render.paper;
+      const options = render.options;
+      const ps = Scale.modelToCanvas(this.a.pp, options);
+
+      const cipText = paper.text(ps.x, ps.y, `(${this.a.cip})`).attr({
+        font: options.font,
+        'font-size': Math.floor(options.fontszInPx * 0.8),
+        'pointer-events': 'none',
       });
+      const cipTextBBox = cipText.getBBox();
+
+      const rect = paper
+        .rect(
+          cipTextBBox.x - 1,
+          cipTextBBox.y - 1,
+          cipTextBBox.width + 2,
+          cipTextBBox.height + 2,
+          3,
+          3,
+        )
+        .attr({ stroke: 'none' });
+
+      const cipGroup = paper.set();
+      cipGroup.push(rect, cipText);
+      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
+
+      let t = 3;
+      const dir = this.bisectLargestSector(render.ctab.molecule);
+      for (let i = 0; i < this.visel.exts.length; ++i) {
+        t = Math.max(
+          t,
+          util.shiftRayBox(ps, dir, this.visel.exts[i].translate(ps)),
+        );
+      }
+      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(cipTextBBox));
+      const shiftDir = dir.scaled(3 + t);
+
+      console.log('cip', this.a.cip);
+      console.log('visel.exts', this.visel.exts);
+      console.log('final t', t);
+      console.log('shiftDir', shiftDir);
+
+      pathAndRBoxTranslate(cipGroup, cipGroupRelBox, shiftDir.x, shiftDir.y);
+
+      render.ctab.addReObjectPath(
+        LayerMap.additionalInfo,
+        this.visel,
+        cipGroup,
+        ps,
+        true,
+      );
+
+      this.cip = { path: cipGroup, text: cipText, rectangle: rect };
     }
 
     if (this.showLabel && this.showInfoLabel) {

@@ -11,7 +11,6 @@ import {
   clickOnCanvas,
   dragMouseTo,
   moveOnAtom,
-  pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
@@ -28,7 +27,6 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 export async function openEditDialogForTemplate(
@@ -325,12 +323,6 @@ export async function screenshotBetweenUndoRedoInMacro(page: Page) {
   await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
   await CommonTopLeftToolbar(page).redo();
-}
-
-export async function resetAllSettingsToDefault(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await pressButton(page, 'Reset');
-  await pressButton(page, 'Apply');
 }
 
 export async function addSingleMonomerToCanvas(

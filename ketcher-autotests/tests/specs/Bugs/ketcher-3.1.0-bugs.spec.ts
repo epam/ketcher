@@ -55,19 +55,13 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { Bases } from '@constants/monomers/Bases';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 let page: Page;
-
-async function setRotationStep(page: Page, value: string) {
-  await TopRightToolbar(page).Settings();
-  await page.getByTestId('rotationStep-input').click();
-  await page.getByTestId('rotationStep-input').fill(value);
-  await page.getByTestId('OK').click();
-}
 
 test.describe('Ketcher bugs in 3.1.0', () => {
   test.beforeAll(async ({ browser }) => {
@@ -262,16 +256,15 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 1. Toggle to Molecules mode
      * 2. Put three Benzene rings on the canvas
      * 3. Change any parameter at Settings (Rotation Step in my case)
-     * 4. Press Apply button
-     * 5. Press Undo button
-     * 6. Take a screenshot
+     * 4. Press Undo button
+     * 5. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);
-    await setRotationStep(page, '20');
+    await setSettingsOption(page, GeneralSetting.RotationStep, '20');
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
     }

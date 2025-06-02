@@ -1,18 +1,21 @@
 /* eslint-disable no-magic-numbers */
 import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
+import {
+  BondsSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  setACSSettings,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  setBondLengthOptionUnit,
-  setBondLengthValue,
-  pressButton,
   selectAllStructuresOnCanvas,
-  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -716,11 +719,11 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '79.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
+      { option: BondsSetting.BondLength, value: '79.8' },
+    ]);
+
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -745,11 +748,11 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setBondLengthOptionUnit(page, 'cm-option');
-    await setBondLengthValue(page, '1.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
+      { option: BondsSetting.BondLength, value: '1.8' },
+    ]);
+
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -773,10 +776,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -801,10 +801,7 @@ test.describe('Open and Save file', () => {
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(

@@ -81,7 +81,6 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -93,6 +92,12 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { setSettingsOptions } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  AtomsSetting,
+  BondsSetting,
+  ShowHydrogenLabelsOption,
+} from '@tests/pages/constants/settingsDialog/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -123,27 +128,6 @@ async function addToFavoritesMonomers(page: Page) {
     Phosphates.bP,
     Chem.Test_6_Ch,
   ]);
-}
-
-async function setAtomAndBondSettings(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Atoms', { exact: true }).click();
-  await page.getByText('Terminal and Hetero').click();
-  await page.getByTestId('On-option').click();
-  await page.getByText('Bonds', { exact: true }).click();
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as' })
-    .getByRole('textbox')
-    .nth(2)
-    .click();
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as' })
-    .getByRole('textbox')
-    .nth(2)
-    .fill('05');
-  await page.getByTestId('OK').click();
 }
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
@@ -890,7 +874,16 @@ test.describe('Macro-Micro-Switcher', () => {
     After closing the ticket, should update the screenshots.
     */
       await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
-      await setAtomAndBondSettings(page);
+      await setSettingsOptions(page, [
+        {
+          option: AtomsSetting.ShowHydrogenLabels,
+          value: ShowHydrogenLabelsOption.TerminalAndHetero,
+        },
+        {
+          option: BondsSetting.BondThickness,
+          value: '05',
+        },
+      ]);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);

@@ -687,17 +687,28 @@ class ReAtom extends ReObject {
       cipGroup.push(rect, cipText);
       const cipGroupRelBox = util.relBox(cipGroup.getBBox());
 
-      let t = 3;
-      const dir = this.bisectLargestSector(render.ctab.molecule);
+      let baseDistance = 3;
+      const direction = this.bisectLargestSector(render.ctab.molecule);
       for (let i = 0; i < this.visel.exts.length; ++i) {
-        t = Math.max(
-          t,
-          util.shiftRayBox(ps, dir, this.visel.exts[i].translate(ps)),
+        baseDistance = Math.max(
+          baseDistance,
+          util.shiftRayBox(ps, direction, this.visel.exts[i].translate(ps)),
         );
       }
-      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(cipTextBBox));
-      const shiftDir = dir.scaled(3 + t);
-      pathAndRBoxTranslate(cipGroup, cipGroupRelBox, shiftDir.x, shiftDir.y);
+      const shiftDistance =
+        baseDistance +
+        util.shiftRayBox(
+          ps,
+          direction.negated(),
+          Box2Abs.fromRelBox(cipTextBBox),
+        );
+      const shiftVector = direction.scaled(3 + shiftDistance);
+      pathAndRBoxTranslate(
+        cipGroup,
+        cipGroupRelBox,
+        shiftVector.x,
+        shiftVector.y,
+      );
 
       render.ctab.addReObjectPath(
         LayerMap.additionalInfo,

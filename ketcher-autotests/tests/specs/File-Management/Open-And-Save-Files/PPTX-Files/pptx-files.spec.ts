@@ -12,7 +12,7 @@ import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  structure: {
+  numberOf: {
     Structure: number;
   } = { Structure: 1 },
 ) {
@@ -21,7 +21,7 @@ async function openPPTXFileAndValidateStructurePreview(
     await openFile(filePath, page);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (structure.Structure !== 1) {
+  if (numberOf.Structure !== 1) {
     await openPPTXFileDialog.selectStructure(structure);
   }
   await takeEditorScreenshot(page);

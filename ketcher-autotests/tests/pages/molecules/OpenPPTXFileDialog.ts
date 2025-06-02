@@ -46,14 +46,10 @@ export const OpenPPTXFileDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
 
-    async selectStructure(structure?: { Structure: number }) {
-      if (structure) {
-        await waitForSpinnerFinishedWork(page, async () => {
-          await page
-            .getByTestId(`cdx-structure-${structure.Structure}`)
-            .click();
-        });
-      }
+    async selectStructure(numberOf: { Structure: number }) {
+      await waitForSpinnerFinishedWork(page, async () => {
+        await page.getByTestId(`cdx-structure-${numberOf.Structure}`).click();
+      });
     },
   };
 };
@@ -61,7 +57,7 @@ export const OpenPPTXFileDialog = (page: Page) => {
 export async function openPPTXFile(
   page: Page,
   filePath: string,
-  structure: {
+  numberOf: {
     Structure: number;
   } = { Structure: 1 },
   action: Action,
@@ -71,8 +67,8 @@ export async function openPPTXFile(
     await openFile(filePath, page);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (structure.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(structure);
+  if (numberOf.Structure !== 1) {
+    await openPPTXFileDialog.selectStructure(numberOf);
   }
   if (action === Action.AddToCanvas) {
     await openPPTXFileDialog.pressAddToCanvasButton();

@@ -1092,9 +1092,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
-     * For now it is not possible to calculate properties for Peptides if Phosphate is missing in mixed chain
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2902
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1114,8 +1111,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2904
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -1134,8 +1129,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(

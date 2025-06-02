@@ -274,29 +274,38 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
   });
 });
 
-test(`Case 8: There is no bond in the Sequence mode`, async () => {
-  /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 8
-   * Bug: https://github.com/epam/ketcher/issues/4439
-   * Description: There is no bond in the Sequence mode
-   * Scenario:
-   * 1. Load from HELM chain connected to side chain
-   * 2. Switch to Sequence mode
-   * 3. Take a screenshot to validate the bond should be shown
-   */
-  await selectSequenceLayoutModeTool(page);
+test(
+  `Case 8: There is no bond in the Sequence mode`,
+  { tag: ['@IncorrectResultBecauseOfBug'] },
+  async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 8
+     * Bug: https://github.com/epam/ketcher/issues/4439
+     * Description: There is no bond in the Sequence mode
+     * Scenario:
+     * 1. Load from HELM chain connected to side chain
+     * 2. Switch to Sequence mode
+     * 3. Take a screenshot to validate the bond should be shown
+     * WARNING: This test is failing because of the bugs:
+     * https://github.com/epam/Indigo/issues/2966
+     * https://github.com/epam/Indigo/issues/2968
+     * https://github.com/epam/Indigo/issues/2964
+     */
+    test.fail();
+    await selectSequenceLayoutModeTool(page);
 
-  await pasteFromClipboardAndAddToMacromoleculesCanvas(
-    page,
-    MacroFileType.HELM,
-    'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
-  );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
+    );
 
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
-});
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  },
+);
 
 test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of the sequence, where there is a phosphate, the cursor does not blink`, async () => {
   /*

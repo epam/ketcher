@@ -7,6 +7,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
+import assert from 'assert';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -472,127 +473,60 @@ export class AtomRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textBBox = cipText?.node()?.getBBox();
-    if (textBBox) {
-      cipGroup
-        ?.insert('rect', 'text')
-        .attr('x', textBBox.x - 1)
-        .attr('y', textBBox.y - 1)
-        .attr('width', textBBox.width + 2)
-        .attr('height', textBBox.height + 2)
-        .attr('rx', 3)
-        .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+    assert(textBBox);
 
-      const direction = this.bisectLargestSector();
+    cipGroup
+      ?.insert('rect', 'text')
+      .attr('x', textBBox.x - 1)
+      .attr('y', textBBox.y - 1)
+      .attr('width', textBBox.width + 2)
+      .attr('height', textBBox.height + 2)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', '#f5f5f5');
 
-      let distance = 3;
+    const modifiedTextBBox = {
+      x: this.scaledPosition.x - textBBox.width / 2,
+      y: this.scaledPosition.y - textBBox.height / 2,
+      width: textBBox.width,
+      height: textBBox.height,
+    };
+    const direction = this.bisectLargestSector();
 
-      // Get box for atom elements to avoid overlapping
-      // const atomPos = this.scaledPosition;
-
-      // Check all atom visual elements and compute shift
-      // const allNodes = this.rootElement?.node()?.childNodes;
-      // if (allNodes?.length) {
-      //   for (let i = 0; i < allNodes.length; i++) {
-      //     const elemBox = (allNodes[i] as SVGElement).getBBox();
-      //     if (elemBox) {
-      //       const elemBBox = {
-      //         x: elemBox.x + atomPos.x,
-      //         y: elemBox.y + atomPos.y,
-      //         width: elemBox.width,
-      //         height: elemBox.height,
-      //       };
-      //       const boxObj = new Box2Abs(
-      //         new Vec2(elemBBox.x, elemBBox.y),
-      //         new Vec2(
-      //           elemBBox.x + elemBBox.width,
-      //           elemBBox.y + elemBBox.height,
-      //         ),
-      //       );
-      //       distance = Math.max(
-      //         distance,
-      //         util.shiftRayBox(atomPos, dir, boxObj),
-      //       );
-      //     }
-      //   }
-      // }
-
-      // Add additional shift for the CIP label box itself
-      // const cipBox = new Box2Abs(
-      //   new Vec2(box.x, box.y),
-      //   new Vec2(box.x + box.width, box.y + box.height),
-      // );
-      distance += util.shiftRayBox(
+    const baseDistance = 3;
+    const shiftDistance =
+      baseDistance +
+      util.shiftRayBox(
         this.scaledPosition,
         direction.negated(),
-        Box2Abs.fromRelBox(textBBox),
+        Box2Abs.fromRelBox(modifiedTextBBox),
       );
+    const shiftVector = direction.scaled(3 + shiftDistance);
 
-      // Apply the calculated shift
-      const shift = direction.scaled(3 + distance);
-      const newX = this.scaledPosition.x + shift.x;
-      const newY = this.scaledPosition.y + shift.y;
+    const cipGroupBBox = cipGroup?.node()?.getBBox();
+    assert(cipGroupBBox);
 
-      cipGroup?.attr('transform', `translate(${newX}, ${newY})`);
+    const cipPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x - cipGroupBBox?.width / 2,
+        shiftVector.y + +cipGroupBBox?.height / 2,
+      ),
+    );
 
-      // Raise the CIP label to avoid being covered by bonds
-      // setTimeout(() => {
-      //   cipGroup?.raise();
-      // }, 0);
-    }
+    cipGroup?.attr(
+      'transform',
+      `translate(${cipPosition.x}, ${cipPosition.y})`,
+    );
   }
 
   private bisectLargestSector(): Vec2 {
-    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const { neighborAngle, largestAngle } =
+      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
+        this.atom,
+      );
 
-    // const atomId = this.atom.id;
-    // if (atomId === null) {
-    //   return new Vec2(0, 1);
-    // } // Default direction if atom not found
-
-    // Get all half-edges connected to this atom
-    const halfEdges = viewModel.atomsToHalfEdges.get(this.atom) || [];
-
-    if (halfEdges.length === 0) {
-      return new Vec2(0, 1);
-    } // Default for isolated atom
-
-    if (halfEdges.length === 1) {
-      // For terminal atoms with one bond, place perpendicular to that bond
-      const direction = halfEdges[0].direction;
-      return new Vec2(-direction.y, direction.x).normalized();
-    }
-
-    // Sort all adjacent bonds by angle
-    const angles = halfEdges
-      .map((he) => {
-        const angle = Math.atan2(he.direction.y, he.direction.x);
-        return angle < 0 ? angle + 2 * Math.PI : angle;
-      })
-      .sort((a, b) => a - b);
-
-    // Find the largest angle gap
-    let maxGap = angles[0] + 2 * Math.PI - angles[angles.length - 1];
-    let gapStartIdx = angles.length - 1;
-
-    for (let i = 0; i < angles.length - 1; i++) {
-      const gap = angles[i + 1] - angles[i];
-      if (gap > maxGap) {
-        maxGap = gap;
-        gapStartIdx = i;
-      }
-    }
-
-    // Calculate the bisector angle
-    const startAngle = angles[gapStartIdx];
-    const endAngle =
-      gapStartIdx === angles.length - 1
-        ? angles[0] + 2 * Math.PI
-        : angles[gapStartIdx + 1];
-    const bisectorAngle = startAngle + (endAngle - startAngle) / 2;
-
-    // Return vector pointing in the bisector direction
-    return new Vec2(Math.cos(bisectorAngle), Math.sin(bisectorAngle));
+    const bisectAngle = neighborAngle + largestAngle / 2;
+    return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));
   }
 
   public move() {

@@ -697,12 +697,6 @@ class ReAtom extends ReObject {
       }
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(cipTextBBox));
       const shiftDir = dir.scaled(3 + t);
-
-      console.log('cip', this.a.cip);
-      console.log('visel.exts', this.visel.exts);
-      console.log('final t', t);
-      console.log('shiftDir', shiftDir);
-
       pathAndRBoxTranslate(cipGroup, cipGroupRelBox, shiftDir.x, shiftDir.y);
 
       render.ctab.addReObjectPath(

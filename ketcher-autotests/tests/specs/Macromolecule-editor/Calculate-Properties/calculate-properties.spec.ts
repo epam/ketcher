@@ -929,7 +929,7 @@ test.describe('Calculate Properties tests', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -961,7 +961,7 @@ test.describe('Calculate Properties tests', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[dR](A)}|RNA2{[dR](T)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);

@@ -291,7 +291,7 @@ test(
      * https://github.com/epam/Indigo/issues/2968
      * https://github.com/epam/Indigo/issues/2964
      */
-    test.fail();
+    test.fail(true, 'This test is expected to fail due to a known issue.');
     await selectSequenceLayoutModeTool(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

@@ -22,7 +22,7 @@ async function openPPTXFileAndValidateStructurePreview(
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
   if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(structure);
+    await openPPTXFileDialog.selectStructure(numberOf);
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();

@@ -929,7 +929,7 @@ test.describe('Calculate Properties tests', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -961,7 +961,7 @@ test.describe('Calculate Properties tests', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[dR](A)}|RNA2{[dR](T)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -1092,9 +1092,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
-     * For now it is not possible to calculate properties for Peptides if Phosphate is missing in mixed chain
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2902
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1114,8 +1111,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2904
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -1134,8 +1129,6 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro - Flex
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
-     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
-     * After fix we need to update screenshot
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(

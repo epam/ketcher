@@ -291,20 +291,16 @@ test(
      * https://github.com/epam/Indigo/issues/2968
      * https://github.com/epam/Indigo/issues/2964
      */
-    test.fail(true, 'This test is expected to fail due to a known issue.');
 
-    expect(false).toBe(true);
-
-    return;
+    test.fail();
 
     await selectSequenceLayoutModeTool(page);
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
-    );
-
+    // await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    //   page,
+    //   MacroFileType.HELM,
+    //   'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
+    // );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

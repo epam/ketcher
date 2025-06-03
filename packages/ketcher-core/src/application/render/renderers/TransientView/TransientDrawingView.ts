@@ -7,6 +7,14 @@ import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
 import { DistanceSnapView, DistanceSnapViewParams } from './DistanceSnapView';
+import {
+  ModifyAminoAcidsView,
+  ModifyAminoAcidsViewParams,
+} from './ModifyAminoAcidsView';
+import {
+  LineLengthHighlightView,
+  LineLengthHighlightViewParams,
+} from './LineLengthHighlightView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -24,12 +32,14 @@ export class TransientDrawingView {
 
   constructor() {
     const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
-    this.topLayer = canvas
-      .append('g')
-      .attr('class', 'transient-views-top-layer');
     this.defaultLayer = canvas
       .append('g')
       .attr('class', 'transient-views-layer');
+
+    this.topLayer = canvas
+      .append('g')
+      .attr('class', 'transient-views-top-layer');
+    this.topLayer.raise();
   }
 
   private addView<P>(viewName, viewData: ViewData<P>) {
@@ -117,6 +127,30 @@ export class TransientDrawingView {
 
   public hideDistanceSnap() {
     this.removeView(DistanceSnapView.viewName);
+  }
+
+  public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
+    this.addView(ModifyAminoAcidsView.viewName, {
+      show: ModifyAminoAcidsView.show,
+      topLayer: true,
+      params,
+    });
+  }
+
+  public hideModifyAminoAcidsView() {
+    this.removeView(ModifyAminoAcidsView.viewName);
+  }
+
+  public showLineLengthHighlight(params: LineLengthHighlightViewParams) {
+    this.addView(LineLengthHighlightView.viewName, {
+      show: LineLengthHighlightView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideLineLengthHighlight() {
+    this.removeView(LineLengthHighlightView.viewName);
   }
 
   public clear() {

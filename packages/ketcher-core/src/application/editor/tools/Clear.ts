@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { isSequenceMode } from 'application/editor/modes';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
@@ -25,11 +25,10 @@ class ClearTool implements BaseTool {
     this.editor = editor;
     this.history = new EditorHistory(editor);
     const mode = editor.mode;
-    const isCurrentModeSequence = isSequenceMode(mode);
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
 
-    if (isCurrentModeSequence) {
+    if (mode.modeName === 'sequence-layout-mode') {
       modelChanges.addOperation(new ReinitializeModeOperation());
     }
 

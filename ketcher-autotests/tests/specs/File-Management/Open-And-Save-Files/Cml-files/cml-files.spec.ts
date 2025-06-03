@@ -1,19 +1,19 @@
 import { Page, test } from '@playwright/test';
+import {
+  BondsSetting,
+  GeneralSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  setACSSettings,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  setReactionMarginSizeOptionUnit,
-  setBondLengthOptionUnit,
-  setBondLengthValue,
-  pressButton,
-  setReactionMarginSizeValue,
-  setHashSpacingOptionUnit,
-  setHashSpacingValue,
-  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -447,11 +447,13 @@ test.describe('CML files', () => {
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '67.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondLengthUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.BondLength, value: '67.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -478,11 +480,13 @@ test.describe('CML files', () => {
     The Hash spacing setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setHashSpacingOptionUnit(page, 'pt-option');
-    await setHashSpacingValue(page, '54.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Pt,
+      },
+      { option: BondsSetting.HashSpacing, value: '54.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -507,12 +511,13 @@ test.describe('CML files', () => {
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '1.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Cm,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '1.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -539,10 +544,7 @@ test.describe('CML files', () => {
   After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(

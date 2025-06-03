@@ -15,14 +15,28 @@
  ***************************************************************************/
 
 import { KetcherLogger } from './KetcherLogger';
+import { LayoutMode } from 'application/editor';
 
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
+
+export type EditorLineLength = Record<
+  Exclude<LayoutMode, 'flex-layout-mode'>,
+  number
+>;
+
+const DefaultEditorLineLength: EditorLineLength = {
+  'sequence-layout-mode': 30,
+  'snake-layout-mode': 0,
+};
+
+export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 interface SavedSettings {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectionTool?: any;
   disableCustomQuery?: boolean;
+  editorLineLength?: EditorLineLength;
 }
 
 interface SavedOptions {
@@ -51,6 +65,7 @@ export class SettingsManager {
     if (!settings) {
       return;
     }
+
     localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
@@ -95,6 +110,32 @@ export class SettingsManager {
     this.saveSettings({
       ...settings,
       selectionTool,
+    });
+  }
+
+  static get editorLineLength(): EditorLineLength {
+    const { editorLineLength } = this.getSettings();
+    return { ...DefaultEditorLineLength, ...editorLineLength };
+  }
+
+  static set editorLineLength(newEditorLineLength: Partial<EditorLineLength>) {
+    const settings = this.getSettings();
+    const previousEditorLineLength =
+      settings.editorLineLength || DefaultEditorLineLength;
+    const editorLineLength = {
+      ...previousEditorLineLength,
+      ...newEditorLineLength,
+    };
+
+    window.dispatchEvent(
+      new CustomEvent<EditorLineLength>(SetEditorLineLengthAction, {
+        detail: editorLineLength,
+      }),
+    );
+
+    this.saveSettings({
+      ...settings,
+      editorLineLength,
     });
   }
 

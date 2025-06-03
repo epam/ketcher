@@ -17,8 +17,10 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
-  LayoutMode,
-  SingleChainMacromoleculeProperties,
+  type LayoutMode,
+  SettingsManager,
+  type EditorLineLength,
+  type SingleChainMacromoleculeProperties,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
@@ -38,12 +40,11 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
-// TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
-  isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
   editorLayoutMode: LayoutMode | undefined;
+  editorLineLength: EditorLineLength;
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
@@ -54,10 +55,10 @@ interface EditorState {
 }
 
 const initialState: EditorState = {
-  isReady: null,
   activeTool: 'select',
   editor: undefined,
   editorLayoutMode: undefined,
+  editorLineLength: SettingsManager.editorLineLength,
   preview: {
     type: PreviewType.Monomer,
     monomer: undefined,
@@ -71,26 +72,16 @@ const initialState: EditorState = {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
 };
 
-export const editorSlice: Slice = createSlice({
+export const editorSlice: Slice<EditorState> = createSlice({
   name: 'editor',
   initialState,
   reducers: {
-    init: (state) => {
-      state.isReady = false;
-    },
-    initSuccess: (state) => {
-      state.isReady = true;
-    },
-    initFailure: (state) => {
-      state.isReady = false;
-    },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
     },
-
     createEditor: (
       state,
       action: PayloadAction<{
@@ -106,18 +97,23 @@ export const editorSlice: Slice = createSlice({
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
       });
 
+      // TODO: Figure out proper typing here and below
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       state.editor = editor;
       action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
-      state.editorLayoutMode = state.editor.mode.modeName;
-      state.editor.switchToMicromolecules();
+      state.editorLayoutMode = state.editor?.mode.modeName;
+      state.editor?.switchToMicromolecules();
       state.editor = undefined;
     },
     showPreview: (
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       state.preview = action.payload || { monomer: undefined, style: '' };
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
@@ -151,13 +147,19 @@ export const editorSlice: Slice = createSlice({
     ) => {
       state.oligonucleotidesMeasurementUnit = action.payload;
     },
+    setEditorLineLength: (
+      state,
+      action: PayloadAction<Partial<EditorLineLength>>,
+    ) => {
+      state.editorLineLength = {
+        ...state.editorLineLength,
+        ...action.payload,
+      };
+    },
   },
 });
 
 export const {
-  init,
-  initSuccess,
-  initFailure,
   selectTool,
   setPosition,
   createEditor,
@@ -169,9 +171,9 @@ export const {
   setMacromoleculesProperties,
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,
+  setEditorLineLength,
 } = editorSlice.actions;
 
-export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
   state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
@@ -180,8 +182,6 @@ export const selectEditorPosition = (
   state: RootState,
 ): PresetPosition | undefined => state.editor.position;
 // TODO: Specify the types.
-// export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
-//   state.editor.isReady;
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
@@ -227,5 +227,8 @@ export const selectOligonucleotidesMeasurementUnit = (state: RootState) =>
 
 export const selectMonomers = (state: RootState) =>
   state.editor.editor?.drawingEntitiesManager?.monomers;
+
+export const selectEditorLineLength = (state: RootState): EditorLineLength =>
+  state.editor.editorLineLength;
 
 export const editorReducer = editorSlice.reducer;

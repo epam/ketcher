@@ -1088,17 +1088,6 @@ export class SequenceMode extends BaseMode {
         }
 
         if (
-          selectionStartNode instanceof Nucleotide ||
-          selectionStartNode instanceof Nucleoside
-        ) {
-          modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(
-              selectionStartNode.lastMonomerInNode,
-            ),
-          );
-        }
-
-        if (
           nodeAfterSelection instanceof Nucleoside &&
           (nodeBeforeSelection instanceof Nucleotide ||
             nodeBeforeSelection instanceof Nucleoside)

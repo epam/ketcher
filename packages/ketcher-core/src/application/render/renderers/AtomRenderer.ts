@@ -5,11 +5,18 @@ import { CoreEditor } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
+import { Box2Abs, Vec2 } from 'domain/entities';
+import util from '../util';
+import assert from 'assert';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
+  private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+
+  private cipLabelElementBBox?: SVGRect;
+  private cipTextElementBBox?: SVGRect;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -300,10 +307,6 @@ export class AtomRenderer extends BaseRenderer {
     return textElement;
   }
 
-  private get cipElementId() {
-    return `cip-atom-${this.atom.id}`;
-  }
-
   public appendSelection() {
     if (!this.selectionElement) {
       const selectionContourElement = this.appendSelectionContour();
@@ -317,13 +320,13 @@ export class AtomRenderer extends BaseRenderer {
         .attr('class', 'dynamic-element');
     }
 
-    this.canvas?.select(`#${this.cipElementId} rect`)?.attr('fill', '#57FF8F');
+    this.cipLabelElement?.select('rect')?.attr('fill', '#57FF8F');
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
-    this.canvas?.select(`#${this.cipElementId} rect`)?.attr('fill', '#f5f5f5');
+    this.cipLabelElement?.select('rect')?.attr('fill', '#F5F5F5');
   }
 
   public drawSelection() {
@@ -448,53 +451,95 @@ export class AtomRenderer extends BaseRenderer {
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
-    this.appendStereochemistry();
+    this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }
 
-  private appendStereochemistry() {
+  private appendCIPLabel() {
     const cipValue = this.atom.properties.cip;
 
     if (!cipValue) {
       return;
     }
 
-    const cipGroup = this.canvas?.append('g')?.attr('id', this.cipElementId);
+    this.cipLabelElement = this.canvas
+      ?.append('g')
+      ?.attr('id', `cip-atom-${this.atom.id}`);
 
-    const cipText = cipGroup
+    const cipTextElement = this.cipLabelElement
       ?.append('text')
       .text(`(${cipValue})`)
       .attr('font-family', 'Arial')
-      .attr('font-size', '13px')
+      .attr('font-size', '10px')
       .attr('pointer-events', 'none');
 
-    const textNode = cipText?.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      const rectWidth = box.width + 2;
-      const rectHeight = box.height + 2;
+    this.cipTextElementBBox = cipTextElement?.node()?.getBBox();
+    assert(this.cipTextElementBBox);
 
-      cipGroup
-        ?.insert('rect', 'text')
-        .attr('x', box.x)
-        .attr('y', box.y)
-        .attr('width', rectWidth)
-        .attr('height', rectHeight)
-        .attr('rx', 3)
-        .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+    const { x, y, width, height } = this.cipTextElementBBox;
 
-      cipGroup?.attr(
-        'transform',
-        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+    this.cipLabelElement
+      ?.insert('rect', 'text')
+      .attr('x', x - 1)
+      .attr('y', y - 1)
+      .attr('width', width + 2)
+      .attr('height', height + 2)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', '#f5f5f5');
+
+    this.cipLabelElementBBox = this.cipLabelElement?.node()?.getBBox();
+
+    this.positionCIPLabel();
+  }
+
+  private positionCIPLabel() {
+    if (!this.cipTextElementBBox || !this.cipLabelElementBBox) {
+      return;
+    }
+
+    const { width, height } = this.cipTextElementBBox;
+
+    const modifiedTextBBox = {
+      x: this.scaledPosition.x - width / 2,
+      y: this.scaledPosition.y - height / 2,
+      width,
+      height,
+    };
+    const direction = this.bisectLargestSector();
+
+    const baseDistance = 3;
+    const shiftDistance =
+      baseDistance +
+      util.shiftRayBox(
+        this.scaledPosition,
+        direction.negated(),
+        Box2Abs.fromRelBox(modifiedTextBBox),
+      );
+    const shiftVector = direction.scaled(3 + shiftDistance);
+
+    const cipPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x - this.cipLabelElementBBox.width / 2,
+        shiftVector.y + this.cipLabelElementBBox.height / 2,
+      ),
+    );
+
+    this.cipLabelElement?.attr(
+      'transform',
+      `translate(${cipPosition.x}, ${cipPosition.y})`,
+    );
+  }
+
+  private bisectLargestSector(): Vec2 {
+    const { neighborAngle, largestAngle } =
+      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
+        this.atom,
       );
 
-      // TODO: Hack to avoid overlapping with bonds as they're rendered later. Won't be needed once smart positioning is implemented
-      setTimeout(() => {
-        cipGroup?.raise();
-      }, 0);
-    }
+    const bisectAngle = neighborAngle + largestAngle / 2;
+    return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));
   }
 
   public move() {
@@ -503,21 +548,12 @@ export class AtomRenderer extends BaseRenderer {
       `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
     );
 
-    this.canvas
-      ?.select(`#${this.cipElementId}`)
-      ?.attr(
-        'transform',
-        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
-      );
-
-    setTimeout(() => {
-      this.canvas?.select(`#${this.cipElementId}`).raise();
-    }, 0);
+    this.positionCIPLabel();
   }
 
   public remove() {
     this.removeSelection();
-    this.canvas.select(`#${this.cipElementId}`).remove();
+    this.cipLabelElement?.remove();
     super.remove();
   }
 

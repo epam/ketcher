@@ -292,6 +292,37 @@ export class ViewModel {
     };
   }
 
+  /*
+   * Finds the largest angular gap between consecutive bonds around an atom by sorting bond angles,
+   * calculating angular differences between adjacent bonds (including wraparound from last to first),
+   * and returning both the largest gap size and the angle of the bond that precedes it.
+   */
+  public getLargestSectorFromAtomNeighbours(atom: Atom) {
+    const atomHalfEdges = this.atomsToHalfEdges.get(atom);
+    if (!atomHalfEdges || atomHalfEdges.length === 0) {
+      KetcherLogger.warn(`No half-edges found for atom ${atom.id}`);
+      return { neighborAngle: 0, largestAngle: 0 };
+    }
+
+    const angles = atomHalfEdges.map((halfEdge) => halfEdge.angle);
+    angles.sort((a, b) => a - b);
+    const largeAngles: number[] = [];
+    for (let i = 0; i < angles.length - 1; ++i) {
+      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
+    }
+    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    let largestAngle = 0;
+    let neighborAngle = -Math.PI / 2;
+    for (let i = 0; i < angles.length; ++i) {
+      if (largeAngles[i] > largestAngle) {
+        largestAngle = largeAngles[i];
+        neighborAngle = angles[i];
+      }
+    }
+
+    return { neighborAngle, largestAngle };
+  }
+
   private clearState() {
     this.halfEdges.clear();
     this.loops.clear();

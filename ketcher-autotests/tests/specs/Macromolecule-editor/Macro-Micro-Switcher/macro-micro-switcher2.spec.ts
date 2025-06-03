@@ -67,6 +67,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -104,10 +105,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     test.slow();
     await addToFavoritesMonomers(page);
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await showLibrary(page);
+    await Library(page).showLibrary();
     await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });

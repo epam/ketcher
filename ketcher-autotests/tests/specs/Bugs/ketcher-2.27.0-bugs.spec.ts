@@ -41,6 +41,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BondsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -465,8 +466,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill('J');
+    await Library(page).setSearchValue('J');
     await takeMonomerLibraryScreenshot(page);
   });
 

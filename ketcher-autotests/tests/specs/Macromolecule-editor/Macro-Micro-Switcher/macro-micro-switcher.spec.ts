@@ -42,7 +42,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
   MacroFileType,
   selectAllStructuresOnCanvas,
@@ -98,6 +97,7 @@ import {
   BondsSetting,
   ShowHydrogenLabelsOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 const topLeftCorner = {
   x: -325,
@@ -230,10 +230,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await takePageScreenshot(page);
-    expect(page.getByTestId('show-monomer-library')).toBeVisible();
-    await showLibrary(page);
+    expect(Library(page).showLibraryButton).toBeVisible();
+    await Library(page).showLibrary();
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {

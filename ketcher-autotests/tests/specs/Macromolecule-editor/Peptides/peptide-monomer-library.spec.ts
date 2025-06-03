@@ -25,6 +25,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,13 +60,12 @@ test.describe('Peptide library testing', () => {
   });
 
   test('Backspace deletes characters in input', async ({ page }) => {
-    const input = page.getByTestId('monomer-library-input');
     const anyText = 'AspO';
-    await input.fill(anyText);
-    await expect(await input.inputValue()).toBe('AspO');
-    await input.press('Backspace');
-    await input.press('Backspace');
-    await expect(await input.inputValue()).toBe('As');
+    await Library(page).setSearchValue(anyText);
+    expect(await Library(page).getSearchValue()).toBe('AspO');
+    await Library(page).searchEditbox.press('Backspace');
+    await Library(page).searchEditbox.press('Backspace');
+    expect(await Library(page).getSearchValue()).toBe('As');
   });
 
   test('Validate that Monomers is getting removed from favourites when clicking star sign', async ({

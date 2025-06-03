@@ -430,6 +430,7 @@ export const RnaEditorExpanded = ({
               : newPreset?.name
           }
           placeholder="Name your structure"
+          data-testid="name-your-structure-editbox"
           disabled={isSequenceEditInRNABuilderMode}
           onChange={onChangeName}
         />
@@ -446,6 +447,7 @@ export const RnaEditorExpanded = ({
                   : newPreset?.name
               }
               placeholder="Name your structure"
+              data-testid="name-your-structure-editbox"
               disabled={isSequenceEditInRNABuilderMode}
               onChange={onChangeName}
             />

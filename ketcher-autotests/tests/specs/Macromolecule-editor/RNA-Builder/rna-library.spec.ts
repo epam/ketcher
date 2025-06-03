@@ -64,6 +64,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -1247,8 +1248,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill('No monomers and presets');
+    await Library(page).setSearchValue('No monomers and presets');
     await takeMonomerLibraryScreenshot(page);
 
     await chooseTab(page, Tabs.Rna);
@@ -1301,10 +1301,10 @@ test.describe('RNA Library', () => {
      *  Case 16:
      *    Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)
      */
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await takePageScreenshot(page);
 
-    await showLibrary(page);
+    await Library(page).showLibrary();
     await takePageScreenshot(page);
   });
 
@@ -1417,8 +1417,7 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
 
     // Case 25
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill('SMCC');
+    await Library(page).setSearchValue('SMCC');
     await takeMonomerLibraryScreenshot(page);
 
     // Reset to default
@@ -1448,16 +1447,6 @@ test.describe('RNA Library', () => {
     issueNumber?: string;
     // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
     pageReloadNeeded?: boolean;
-  }
-
-  async function searchMonomerByName(page: Page, monomerName: string) {
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill(monomerName);
-  }
-
-  async function blurMonomerSearchInput(page: Page) {
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    rnaLibrarySearch.blur();
   }
 
   const IDTSearchStrings: ISearchString[] = [
@@ -1547,13 +1536,13 @@ test.describe('RNA Library', () => {
           await toggleRnaBuilderAccordion(page);
         }
 
-        await searchMonomerByName(page, IDTSearchString.SearchString);
+        await Library(page).setSearchValue(IDTSearchString.SearchString);
         await goToMonomerLocationTab(
           page,
           IDTSearchString.ResultMonomerLocationTab,
         );
 
-        await blurMonomerSearchInput(page);
+        await Library(page).searchEditbox.blur();
         await takeMonomerLibraryScreenshot(page);
 
         // Test should be skipped if related bug exists
@@ -1693,15 +1682,14 @@ test.describe('RNA Library', () => {
         2. Switch to monomer's tab to see it
         3. Take screenshot of the library to make sure search works
       */
-        await searchMonomerByName(
-          page,
+        await Library(page).setSearchValue(
           AmbiguousMonomersSearchString.SearchString,
         );
         await goToMonomerLocationTab(
           page,
           AmbiguousMonomersSearchString.ResultMonomerLocationTab,
         );
-        await blurMonomerSearchInput(page);
+        await Library(page).searchEditbox.blur();
         await takeMonomerLibraryScreenshot(page);
 
         // Test should be skipped if related bug exists

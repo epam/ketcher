@@ -834,4 +834,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Case 31: Moving of selected microstructures on macro canvas works correct', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5659
+     * Description: Moving of selected microstructures on macro canvas works correct
+     * Scenario:
+     * 1. Open Ketcher and switch to Macro mode - Flex
+     * 2. Load a file with microstructures on macro canvas
+     * 3. Select all (press Ctrl+A)
+     * 4. Move selected structures to the right
+     * 5. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bond properties are not implemented.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await page
+      .locator('g')
+      .filter({ hasText: /^NH2$/ })
+      .locator('rect')
+      .nth(1)
+      .hover();
+    await dragMouseTo(600, 350, page);
+    await takeEditorScreenshot(page);
+  });
 });

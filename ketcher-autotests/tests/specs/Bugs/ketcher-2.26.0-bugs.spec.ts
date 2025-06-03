@@ -7,10 +7,6 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  openBondsSettingsSection,
-  scrollToDownInSetting,
-  setBondThicknessOptionUnit,
-  setBondThicknessValue,
   pressButton,
   clickInTheMiddleOfTheScreen,
   enableViewOnlyModeBySetOptions,
@@ -23,9 +19,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   clickOnAtom,
-  setBondLengthValue,
-  setBondSpacingValue,
-  resetAllSettingsToDefault,
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
   selectSequenceLayoutModeTool,
@@ -57,18 +50,28 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { switchToPeptideMode } from '@utils/macromolecules/sequence';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-
-async function setHighResolution(page: Page) {
-  await page.getByText('low').click();
-  await page.getByTestId('high-option').click();
-}
+import {
+  setSettingsOptions,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  BondsSetting,
+  GeneralSetting,
+  ImageResolutionOption,
+  MeasurementUnit,
+  SettingsSection,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -139,20 +142,27 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await drawBenzeneRing(page);
     await TopRightToolbar(page).Settings();
-    await setHighResolution(page);
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setBondThicknessOptionUnit(page, 'px-option');
-    await setBondThicknessValue(page, '2.6');
+    await SettingsDialog(page).setOptionValue(
+      GeneralSetting.ImageResolution,
+      ImageResolutionOption.High,
+    );
+    await SettingsDialog(page).apply();
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondThicknessUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.BondThickness, value: '2.6' },
+    ]);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
     await SaveStructureDialog(page).cancel();
-    await resetAllSettingsToDefault(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).reset();
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -166,7 +176,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Activate the "3D Viewer"
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
-    const applyButton = page.getByTestId('miew-modal-button');
+    const applyButton = MiewDialog(page).applyButton;
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
@@ -193,8 +203,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
+    await SettingsDialog(page).setACSSettings();
+    await SettingsDialog(page).apply();
     await pressButton(page, 'OK');
     await takeEditorScreenshot(page);
   });
@@ -234,14 +244,16 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setBondThicknessOptionUnit(page, 'px-option');
-    await setBondThicknessValue(page, '6');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondThicknessUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.BondThickness, value: '6' },
+    ]);
     await takeEditorScreenshot(page);
-    await resetAllSettingsToDefault(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).reset();
   });
 
   test('Case 7: Correct stereo-label placement for (E) and (Z)', async () => {
@@ -273,8 +285,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Go to Setting - Bond section
      */
     await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
+    await SettingsDialog(page).openSection(SettingsSection.Bonds);
+    await page.mouse.wheel(0, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -496,18 +508,17 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await drawBenzeneRing(page);
     await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setBondLengthValue(page, '50');
-    await scrollToDownInSetting(page);
-    await setBondSpacingValue(page, '50');
-    await pressButton(page, 'Apply');
+    await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
+    await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
+    await SettingsDialog(page).apply();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
     await SaveStructureDialog(page).cancel();
-    await resetAllSettingsToDefault(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).reset();
   });
 
   test('Case 18: Single up bond is being painted over correctly', async () => {
@@ -626,7 +637,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Press Settings
      * 3. Check that the button name is "Set ACS Settings"
      */
-    const setACSSettings = page.getByTestId('acs-style-button');
+    const setACSSettings = SettingsDialog(page).setACSSettingsButton;
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await expect(setACSSettings).toBeVisible();
@@ -751,6 +762,76 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 28: Cursor position is correct when editing sequence in Macro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5725
+     * Description: Cursor position is correct when editing sequence in Macro mode.
+     * Scenario:
+     * 1. Open Ketcher and switch to Macro mode
+     * 2. Add a sequence of monomers to the canvas
+     * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
+    await page.keyboard.press('Escape');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 7,
+    }).dblclick();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5686
+     * Description: Bonds between micro and macro structures can be selected and deleted in Macro mode
+     * Scenario:
+     * 1. Open Ketcher and switch to Macro mode
+     * 2. Open a file with a macro structure that has bonds to micro structures
+     * 3. Select all structures on the canvas
+     * 4. Delete the selected structures
+     * 5. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bonds between micro and macro structures can be selected and deleted.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5673
+     * Description: Micro structures connected to polymer chains are shown on Sequence mode canvas
+     * Scenario:
+     * 1. Open Ketcher and switch to Macro mode - Flex
+     * 2. Open a file with a macro structure that has bonds to micro structures
+     * 3. Switch to Macro mode - Sequence
+     * 4. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

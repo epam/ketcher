@@ -264,6 +264,7 @@ export class DrawingEntitiesManager {
     const initialMonomer = this.monomers.get(monomer.id);
     if (!initialMonomer) return monomer;
     initialMonomer.monomerItem = monomerItemNew;
+    initialMonomer.recalculateAttachmentPoints();
     this.monomers.set(monomer.id, initialMonomer);
     return initialMonomer;
   }

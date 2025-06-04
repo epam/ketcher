@@ -17,30 +17,26 @@
 import { configureStore, Store } from '@reduxjs/toolkit';
 import { editorReducer } from 'state/common';
 import { libraryReducer } from 'state/library';
-import createSagaMiddleware from 'redux-saga';
-import { rootSaga } from 'state/rootSaga';
 import { modalReducer } from 'state/modal';
 import { rnaBuilderReducer } from 'state/rna-builder';
+import { macromoleculePropertiesApi } from '../hooks/useRecalculateMacromoleculeProperties';
 
 export function configureAppStore(preloadedState = {}) {
-  const sagaMiddleware = createSagaMiddleware();
-
   const store: Store = configureStore({
     reducer: {
       editor: editorReducer,
       modal: modalReducer,
       library: libraryReducer,
       rnaBuilder: rnaBuilderReducer,
+      [macromoleculePropertiesApi.reducerPath]:
+        macromoleculePropertiesApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        thunk: false,
         serializableCheck: false,
-      }).concat(sagaMiddleware),
+      }).concat(macromoleculePropertiesApi.middleware),
     preloadedState,
   });
-
-  sagaMiddleware.run(rootSaga);
 
   return store;
 }

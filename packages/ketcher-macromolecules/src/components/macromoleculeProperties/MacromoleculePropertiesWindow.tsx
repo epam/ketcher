@@ -14,26 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   MolarMeasurementUnit,
   selectEditor,
-  selectIsMacromoleculesPropertiesWindowOpened,
-  selectOligonucleotidesMeasurementUnit,
-  selectOligonucleotidesValue,
-  selectUnipositiveIonsMeasurementUnit,
-  selectUnipositiveIonsValue,
   setMacromoleculesPropertiesWindowVisibility,
-  setOligonucleotidesMeasurementUnit,
-  setOligonucleotidesValue,
-  setUnipositiveIonsMeasurementUnit,
-  setUnipositiveIonsValue,
 } from 'state/common';
 import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import {
   Chain,
   ChainsCollection,
@@ -47,7 +45,7 @@ import {
 import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
 import { useGetMacromoleculePropertiesQuery } from '../../hooks/useRecalculateMacromoleculeProperties';
-import { isNumber } from 'lodash';
+import { debounce, isNumber } from 'lodash';
 import * as d3 from 'd3';
 import { TextInputField } from 'components/shared/textInputField';
 import { useDispatch, useSelector } from 'react-redux';
@@ -405,7 +403,30 @@ interface PeptidePropertiesProps {
   isError: boolean;
 }
 
-type DnaRnaPropertiesProps = PeptidePropertiesProps;
+type MacromoleculePropertiesState = {
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
+  oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
+  unipositiveIonsValue: number;
+  oligonucleotidesValue: number;
+};
+
+type MacromoleculePropertiesAction =
+  | {
+      type: 'SET_UNIPOSITIVE_IONS_MEASUREMENT_UNIT';
+      payload: MolarMeasurementUnit;
+    }
+  | {
+      type: 'SET_OLIGONUCLEOTIDES_MEASUREMENT_UNIT';
+      payload: MolarMeasurementUnit;
+    }
+  | { type: 'SET_UNIPOSITIVE_IONS_VALUE'; payload: number }
+  | { type: 'SET_OLIGONUCLEOTIDES_VALUE'; payload: number };
+
+type DnaRnaPropertiesProps = PeptidePropertiesProps & {
+  macroPropsState: MacromoleculePropertiesState;
+  macroPropsDispatch: Dispatch<MacromoleculePropertiesAction>;
+  debouncedMacroPropsDispatch: Dispatch<MacromoleculePropertiesAction>;
+};
 
 interface HydrophobicityChartProps {
   data: number[];
@@ -621,32 +642,50 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
 };
 
 const RnaProperties = (props: DnaRnaPropertiesProps) => {
-  const dispatch = useAppDispatch();
-  const unipositiveIonsMeasurementUnit = useAppSelector(
-    selectUnipositiveIonsMeasurementUnit,
+  const { macroPropsState, macroPropsDispatch, debouncedMacroPropsDispatch } =
+    props;
+
+  const {
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
+    unipositiveIonsValue,
+    oligonucleotidesValue,
+  } = macroPropsState;
+
+  const [unipositiveIonsInputValue, setUnipositiveIonsInputValue] =
+    useState(unipositiveIonsValue);
+  const [oligonucleotidesInputValue, setOligonucleotidesInputValue] = useState(
+    oligonucleotidesValue,
   );
-  const oligonucleotidesMeasurementUnit = useAppSelector(
-    selectOligonucleotidesMeasurementUnit,
-  );
-  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
-  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const onChangeUnipositiveIonsMeasurementUnit = (option: string) => {
-    dispatch(setUnipositiveIonsMeasurementUnit(option as MolarMeasurementUnit));
+    macroPropsDispatch({
+      type: 'SET_UNIPOSITIVE_IONS_MEASUREMENT_UNIT',
+      payload: option as MolarMeasurementUnit,
+    });
   };
 
   const onChangeOligonucleotidesMeasurementUnit = (option: string) => {
-    dispatch(
-      setOligonucleotidesMeasurementUnit(option as MolarMeasurementUnit),
-    );
+    macroPropsDispatch({
+      type: 'SET_OLIGONUCLEOTIDES_MEASUREMENT_UNIT',
+      payload: option as MolarMeasurementUnit,
+    });
   };
 
   const onChangeUnipositiveIonsValue = (value: number) => {
-    dispatch(setUnipositiveIonsValue(value));
+    debouncedMacroPropsDispatch({
+      type: 'SET_UNIPOSITIVE_IONS_VALUE',
+      payload: value,
+    });
+    setUnipositiveIonsInputValue(value);
   };
 
   const onChangeOligonucleotidesValue = (value: number) => {
-    dispatch(setOligonucleotidesValue(value));
+    debouncedMacroPropsDispatch({
+      type: 'SET_OLIGONUCLEOTIDES_VALUE',
+      payload: value,
+    });
+    setOligonucleotidesInputValue(value);
   };
 
   return props.isError ? (
@@ -672,19 +711,19 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
         <BasicPropertiesWrapper>
           <BasicProperty
             name="[Unipositive Ions]"
-            value={unipositiveIonsValue}
+            value={unipositiveIonsInputValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={unipositiveIonsMeasurementUnit}
-            disabled={!isNumber(props.macromoleculesProperties.Tm)}
+            // disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
           />
           <BasicProperty
             name="[Oligonucleotides]"
-            value={oligonucleotidesValue}
+            value={oligonucleotidesInputValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={oligonucleotidesMeasurementUnit}
-            disabled={!isNumber(props.macromoleculesProperties.Tm)}
+            // disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
           />
@@ -729,22 +768,41 @@ const calculateMassMeasurementUnit = (mass?: number) => {
     : MassMeasurementUnit.MDa;
 };
 
-export const MacromoleculePropertiesWindow = () => {
+const initialMacromoleculePropertiesState: MacromoleculePropertiesState = {
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
+  oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
+  unipositiveIonsValue: 140,
+  oligonucleotidesValue: 200,
+};
+
+const macromoleculePropertiesReducer = (
+  state: MacromoleculePropertiesState,
+  action: MacromoleculePropertiesAction,
+): MacromoleculePropertiesState => {
+  switch (action.type) {
+    case 'SET_UNIPOSITIVE_IONS_MEASUREMENT_UNIT':
+      return { ...state, unipositiveIonsMeasurementUnit: action.payload };
+    case 'SET_OLIGONUCLEOTIDES_MEASUREMENT_UNIT':
+      return { ...state, oligonucleotidesMeasurementUnit: action.payload };
+    case 'SET_UNIPOSITIVE_IONS_VALUE':
+      return { ...state, unipositiveIonsValue: action.payload };
+    case 'SET_OLIGONUCLEOTIDES_VALUE':
+      return { ...state, oligonucleotidesValue: action.payload };
+    default:
+      return state;
+  }
+};
+
+type MacromoleculePropertiesWindowProps = {
+  open?: boolean;
+};
+
+export const MacromoleculePropertiesWindow = ({
+  open,
+}: MacromoleculePropertiesWindowProps) => {
   const dispatch = useDispatch();
 
   const editor = useSelector(selectEditor);
-  const unipositiveIonsMeasurementUnit = useSelector(
-    selectUnipositiveIonsMeasurementUnit,
-  );
-  const oligonucleotidesMeasurementUnit = useSelector(
-    selectOligonucleotidesMeasurementUnit,
-  );
-  const unipositiveIonsValue = useSelector(selectUnipositiveIonsValue);
-  const oligonucleotidesValue = useSelector(selectOligonucleotidesValue);
-
-  const isMacromoleculesPropertiesWindowOpened = useSelector(
-    selectIsMacromoleculesPropertiesWindowOpened,
-  );
 
   // TODO: Used to kick off the data fetching when the selection changes, find a better way to handle this
   const [selectionCount, setSelectionCount] = useState(0);
@@ -797,10 +855,6 @@ export const MacromoleculePropertiesWindow = () => {
     );
   }, [drawingEntitiesManager]);
 
-  const skipDataFetch =
-    !isMacromoleculesPropertiesWindowOpened ||
-    !allMonomersConnectedByCovalentOrHydrogenBonds;
-
   const serializedKet = useMemo(() => {
     const ketSerializer = new KetSerializer();
     return ketSerializer.serialize(
@@ -811,6 +865,23 @@ export const MacromoleculePropertiesWindow = () => {
     );
   }, [drawingEntitiesManager]);
 
+  const [propertiesState, propertiesDispatch] = useReducer(
+    macromoleculePropertiesReducer,
+    initialMacromoleculePropertiesState,
+  );
+
+  const debouncedPropertiesDispatch = useCallback(
+    debounce(propertiesDispatch, 500),
+    [],
+  );
+
+  const {
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
+    unipositiveIonsValue,
+    oligonucleotidesValue,
+  } = propertiesState;
+
   const { data: macromoleculesProperties } = useGetMacromoleculePropertiesQuery(
     {
       serializedKet,
@@ -820,7 +891,7 @@ export const MacromoleculePropertiesWindow = () => {
       oligonucleotidesMeasurementUnit,
     },
     {
-      skip: skipDataFetch,
+      skip: !open || !allMonomersConnectedByCovalentOrHydrogenBonds,
     },
   );
 
@@ -906,7 +977,11 @@ export const MacromoleculePropertiesWindow = () => {
     );
   }, [firstMacromoleculesProperties?.mass, massMeasurementUnit]);
 
-  return isMacromoleculesPropertiesWindowOpened ? (
+  if (!open) {
+    return null;
+  }
+
+  return (
     <StyledWrapper
       hasError={
         (selectedTabIndex === PROPERTIES_TABS.PEPTIDES &&
@@ -970,6 +1045,9 @@ export const MacromoleculePropertiesWindow = () => {
               testId: 'rna-properties-tab',
               props: {
                 macromoleculesProperties: firstMacromoleculesProperties,
+                macroPropsState: propertiesState,
+                macroPropsDispatch: propertiesDispatch,
+                debouncedMacroPropsDispatch: debouncedPropertiesDispatch,
                 isError: hasNucleotidesTabError,
               },
             },
@@ -977,5 +1055,5 @@ export const MacromoleculePropertiesWindow = () => {
         />
       </TabsWrapper>
     </StyledWrapper>
-  ) : null;
+  );
 };

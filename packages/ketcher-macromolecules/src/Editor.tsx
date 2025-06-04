@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
@@ -44,6 +44,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  selectIsMacromoleculesPropertiesWindowOpened,
   setContextMenuActive,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
@@ -164,6 +165,9 @@ function Editor({
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
+  const isMacromoleculesPropertiesWindowOpened = useSelector(
+    selectIsMacromoleculesPropertiesWindowOpened,
+  );
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -335,7 +339,9 @@ function Editor({
         </Layout.Right>
 
         <Layout.Bottom>
-          <MacromoleculePropertiesWindow />
+          <MacromoleculePropertiesWindow
+            open={isMacromoleculesPropertiesWindowOpened}
+          />
         </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (

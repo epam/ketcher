@@ -36,17 +36,17 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         endPosition: endPositionInPixels,
       };
     }
-
     const atomRect =
       this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+    const monomerRect =
+      this.monomerToAtomBond.monomer.renderer?.rootBoundingClientRect;
 
-    if (atomRect) {
-      // Get the atom rectangle dimensions
+    if (atomRect && monomerRect) {
       const atomWidth = atomRect.width;
       const atomHeight = atomRect.height;
 
       // Estimate the atom radius (approximating the atom as a circle)
-      const atomRadius = Math.min(atomWidth, atomHeight) / 2;
+      let atomRadius = Math.min(atomWidth, atomHeight) / 2;
 
       // Calculate direction vector from start to end
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
@@ -54,6 +54,21 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       const distance = Math.sqrt(
         directionX * directionX + directionY * directionY,
       );
+
+      // Bond adjustment according to atom size
+      let xAdjustment = 0;
+      let radiusAdjustment = 0;
+
+      if (atomWidth > 30) {
+        xAdjustment = atomRect.x < monomerRect.x ? 10 : -10;
+        radiusAdjustment = 3;
+      } else if (atomWidth > 20) {
+        xAdjustment = atomRect.x < monomerRect.x ? 8 : -8;
+        radiusAdjustment = 2;
+      }
+
+      endPositionInPixels.x += xAdjustment;
+      atomRadius += radiusAdjustment;
 
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;

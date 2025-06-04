@@ -53,6 +53,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.monomerItem = { ...monomerItem };
     this.monomerItem.expanded = monomerItem.expanded;
     this.recalculateAttachmentPoints();
+    this.monomerItem.attachmentPoints =
+      this.monomerItem.attachmentPoints ||
+      this.getMonomerDefinitionAttachmentPoints();
     this.chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;
@@ -632,8 +635,5 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
 
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
-    this.monomerItem.attachmentPoints =
-      this.monomerItem.attachmentPoints ||
-      this.getMonomerDefinitionAttachmentPoints();
   }
 }

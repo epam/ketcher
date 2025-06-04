@@ -19,33 +19,38 @@ import {
   MolarMeasurementUnit,
   selectEditor,
   selectIsMacromoleculesPropertiesWindowOpened,
-  selectMacromoleculesProperties,
   selectOligonucleotidesMeasurementUnit,
   selectOligonucleotidesValue,
   selectUnipositiveIonsMeasurementUnit,
   selectUnipositiveIonsValue,
   setMacromoleculesPropertiesWindowVisibility,
   setOligonucleotidesMeasurementUnit,
+  setOligonucleotidesValue,
   setUnipositiveIonsMeasurementUnit,
   setUnipositiveIonsValue,
-  setOligonucleotidesValue,
 } from 'state/common';
 import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Chain,
+  ChainsCollection,
+  getAllConnectedMonomersRecursively,
+  KetSerializer,
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
   SingleChainMacromoleculeProperties,
+  Struct,
 } from 'ketcher-core';
 import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
-import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
-import { debounce, isNumber } from 'lodash';
+import { useGetMacromoleculePropertiesQuery } from '../../hooks/useRecalculateMacromoleculeProperties';
+import { isNumber } from 'lodash';
 import * as d3 from 'd3';
 import { TextInputField } from 'components/shared/textInputField';
+import { useDispatch, useSelector } from 'react-redux';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 
@@ -724,96 +729,122 @@ const calculateMassMeasurementUnit = (mass?: number) => {
     : MassMeasurementUnit.MDa;
 };
 
-let selectEntitiesHandler: () => void;
-
 export const MacromoleculePropertiesWindow = () => {
-  const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
-  const macromoleculesProperties = useAppSelector(
-    selectMacromoleculesProperties,
-  );
-  const unipositiveIonsMeasurementUnit = useAppSelector(
+  const dispatch = useDispatch();
+
+  const editor = useSelector(selectEditor);
+  const unipositiveIonsMeasurementUnit = useSelector(
     selectUnipositiveIonsMeasurementUnit,
   );
-  const oligonucleotidesMeasurementUnit = useAppSelector(
+  const oligonucleotidesMeasurementUnit = useSelector(
     selectOligonucleotidesMeasurementUnit,
   );
-  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
-  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
+  const unipositiveIonsValue = useSelector(selectUnipositiveIonsValue);
+  const oligonucleotidesValue = useSelector(selectOligonucleotidesValue);
 
-  const firstMacromoleculesProperties:
-    | SingleChainMacromoleculeProperties
-    | undefined = macromoleculesProperties?.[0];
+  const isMacromoleculesPropertiesWindowOpened = useSelector(
+    selectIsMacromoleculesPropertiesWindowOpened,
+  );
+
+  // TODO: Used to kick off the data fetching when the selection changes, find a better way to handle this
+  const [selectionCount, setSelectionCount] = useState(0);
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    const handleSelectionChange = () => {
+      // TODO: Debounce this
+      setSelectionCount((previousValue) => previousValue + 1);
+    };
+
+    editor.events.selectEntities.add(handleSelectionChange);
+    return () => {
+      editor.events.selectEntities.remove(handleSelectionChange);
+    };
+  }, [editor]);
+
+  const drawingEntitiesManager = useMemo(() => {
+    if (!editor) {
+      return;
+    }
+
+    const selectionManager = editor.drawingEntitiesManager.filterSelection();
+    return selectionManager.hasDrawingEntities
+      ? selectionManager
+      : editor.drawingEntitiesManager;
+  }, [selectionCount, editor]);
+
+  const allMonomersConnectedByCovalentOrHydrogenBonds = useMemo(() => {
+    if (!drawingEntitiesManager) {
+      return false;
+    }
+
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
+
+    const firstMonomer = chainsCollection.firstNode?.monomer;
+    const chainsLength = chainsCollection.chains.reduce(
+      (acc: number, chain: Chain) => acc + chain.monomers.length,
+      0,
+    );
+
+    return (
+      !firstMonomer ||
+      chainsLength <= getAllConnectedMonomersRecursively(firstMonomer).length
+    );
+  }, [drawingEntitiesManager]);
+
+  const skipDataFetch =
+    !isMacromoleculesPropertiesWindowOpened ||
+    !allMonomersConnectedByCovalentOrHydrogenBonds;
+
+  const serializedKet = useMemo(() => {
+    const ketSerializer = new KetSerializer();
+    return ketSerializer.serialize(
+      new Struct(),
+      drawingEntitiesManager,
+      undefined,
+      false,
+    );
+  }, [drawingEntitiesManager]);
+
+  const { data: macromoleculesProperties } = useGetMacromoleculePropertiesQuery(
+    {
+      serializedKet,
+      unipositiveIonsValue,
+      unipositiveIonsMeasurementUnit,
+      oligonucleotidesValue,
+      oligonucleotidesMeasurementUnit,
+    },
+    {
+      skip: skipDataFetch,
+    },
+  );
+
+  const firstMacromoleculesProperties = macromoleculesProperties?.[0];
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
     PROPERTIES_TABS.PEPTIDES,
   );
-  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
-    calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
-  );
-
-  const isMacromoleculesPropertiesWindowOpened = useAppSelector(
-    selectIsMacromoleculesPropertiesWindowOpened,
-  );
-  const recalculateMacromoleculeProperties =
-    useRecalculateMacromoleculeProperties();
-  const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-  const recalculateMacromoleculePropertiesRef = useRef<
-    (shouldSkip?: boolean) => void
-  >(recalculateMacromoleculeProperties);
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculePropertiesRef.current(shouldSkip);
-    }, 500),
-    [],
-  );
-
-  useEffect(() => {
-    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
-    };
-  }, [recalculateMacromoleculeProperties]);
-
-  useEffect(() => {
-    if (
-      selectEntitiesHandler &&
-      editor.events.selectEntities.hasHandler(selectEntitiesHandler)
-    ) {
-      editor.events.selectEntities.remove(selectEntitiesHandler);
-    }
-
-    selectEntitiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
-    };
-
-    editor?.events.selectEntities.add(selectEntitiesHandler);
-
-    return () => {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
-    };
-  }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
-
-  useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
-  }, [
-    unipositiveIonsMeasurementUnit,
-    oligonucleotidesMeasurementUnit,
-    unipositiveIonsValue,
-    oligonucleotidesValue,
-    skipDataFetch,
-    debouncedRecalculateMacromoleculeProperties,
-  ]);
-
   useEffect(() => {
     setSelectedTabIndex(
       hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides')
         ? PROPERTIES_TABS.RNA
         : PROPERTIES_TABS.PEPTIDES,
     );
+  }, [firstMacromoleculesProperties]);
+
+  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
+    calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
+  );
+  useEffect(() => {
     setMassMeasurementUnit(
       calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
     );
-  }, [firstMacromoleculesProperties]);
+  }, [firstMacromoleculesProperties?.mass]);
 
   const onTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);

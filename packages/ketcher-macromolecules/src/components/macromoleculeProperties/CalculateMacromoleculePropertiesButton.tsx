@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   selectIsMacromoleculesPropertiesWindowOpened,
   toggleMacromoleculesPropertiesWindowVisibility,
@@ -22,8 +21,8 @@ import {
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
-import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
+import { useDispatch, useSelector } from 'react-redux';
 
 const StyledButton = styled(Button)<{ isActive?: boolean }>(
   ({ theme, isActive }) => ({
@@ -50,21 +49,14 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 );
 
 export const CalculateMacromoleculePropertiesButton = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
-  const isMacromoleculesPropertiesWindowOpened = useAppSelector(
+  const isMacromoleculesPropertiesWindowOpened = useSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
 
-  const recalculateMacromoleculeProperties =
-    useRecalculateMacromoleculeProperties();
-
   const handleClick = async () => {
-    const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-    await recalculateMacromoleculeProperties(skipDataFetch);
-
     dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
-
     blurActiveElement();
   };
 

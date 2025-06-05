@@ -1,7 +1,11 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  Icon,
+  IconName,
+} from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { BaseMonomer } from 'ketcher-core';
@@ -39,13 +43,13 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'copy',
       title: 'Copy',
-      icon: <Icon name="copyMenu" />,
+      icon: <Icon name={'copyMenu' as IconName} />,
       disabled: !isClickOnMonomer,
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
-      icon: <Icon name="pasteNavBar" />,
+      icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: isClickOnMonomer,
       separator: false,
     },
@@ -83,7 +87,7 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'delete',
       title: 'Delete',
-      icon: <Icon name="deleteMenu" />,
+      icon: <Icon name={'deleteMenu' as IconName} />,
       disabled: !isClickOnMonomer,
     },
   ];

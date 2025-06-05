@@ -1,7 +1,11 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  Icon,
+  IconName,
+} from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -105,13 +109,13 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.copy,
       title: 'Copy',
-      icon: <Icon name="copyMenu" />,
+      icon: <Icon name={'copyMenu' as IconName} />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
-      icon: <Icon name="pasteNavBar" />,
+      icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: false,
     },
     {
@@ -220,7 +224,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.delete,
       title: 'Delete',
       disabled: selectedMonomers?.length === 0,
-      icon: <Icon name="deleteMenu" />,
+      icon: <Icon name={'deleteMenu' as IconName} />,
     },
   ];
 

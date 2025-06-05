@@ -14,7 +14,7 @@ interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
-  icon?: React.ReactNode;
+  icon?: ReactElement;
   disabled?:
     | boolean
     | (({

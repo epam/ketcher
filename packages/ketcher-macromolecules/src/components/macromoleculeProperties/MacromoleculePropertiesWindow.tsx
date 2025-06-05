@@ -34,7 +34,14 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useCallback, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,

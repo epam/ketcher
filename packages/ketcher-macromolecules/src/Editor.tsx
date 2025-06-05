@@ -244,6 +244,8 @@ function Editor({
     editor?.events.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
         setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
 
         // TODO separate by two events
         if (editor.mode instanceof SequenceMode) {

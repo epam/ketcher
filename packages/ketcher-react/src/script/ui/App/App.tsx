@@ -99,7 +99,7 @@ const App = (props: Props) => {
         <RightToolbarContainer className={classes.right} />
 
         <AppClipArea />
-        <AppModalContainer />
+        <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
       </div>
     </ThemeProvider>

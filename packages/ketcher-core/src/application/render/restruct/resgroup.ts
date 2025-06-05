@@ -105,7 +105,8 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SUP': {
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.name;
+          SGroupdrawBracketsOptions.lowerIndexText =
+            sgroup.data.name || sgroup.data.class;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           break;

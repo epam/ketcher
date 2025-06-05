@@ -112,6 +112,7 @@ export class SGroup {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
+      nucleotideComponent: '',
       subscript: '',
       expanded: undefined,
       // data s-group fields
@@ -365,7 +366,9 @@ export class SGroup {
   }
 
   public get isSuperatomWithoutLabel() {
-    return this.type === SGroup.TYPES.SUP && !this.data.name;
+    return (
+      this.type === SGroup.TYPES.SUP && !this.data.name && !this.data.class
+    );
   }
 
   public get isMonomer() {

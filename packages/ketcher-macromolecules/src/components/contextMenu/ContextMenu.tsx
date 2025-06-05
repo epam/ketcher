@@ -14,6 +14,7 @@ interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
+  icon?: React.ReactNode;
   disabled?:
     | boolean
     | (({
@@ -61,6 +62,7 @@ const assembleMenuItems = (
       {
         name,
         title,
+        icon,
         hidden,
         disabled,
         isMenuTitle,
@@ -99,6 +101,7 @@ const assembleMenuItems = (
             }}
             onMouseOut={() => onMouseOut?.(name)}
           >
+            {icon && <span className="context-menu-icon">{icon}</span>}
             <span>{title}</span>
           </Item>
         );

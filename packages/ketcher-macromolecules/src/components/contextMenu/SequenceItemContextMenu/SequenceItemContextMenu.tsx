@@ -1,7 +1,7 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
@@ -105,50 +105,14 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.copy,
       title: 'Copy',
+      icon: <Icon name="copyMenu" />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
+      icon: <Icon name="pasteNavBar" />,
       disabled: false,
-      separator: true,
-    },
-    {
-      name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
-      title: 'Create RNA antisense strand',
-      disabled: isAntisenseCreationDisabled(selectedMonomers),
-      hidden: () =>
-        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
-    },
-    {
-      name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
-      title: 'Create DNA antisense strand',
-      disabled: isAntisenseCreationDisabled(selectedMonomers),
-      hidden: () =>
-        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
-    },
-    {
-      name: SequenceItemContextMenuNames.modifyInRnaBuilder,
-      title: 'Modify in RNA Builder...',
-      disabled:
-        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return (
-          !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleoelement
-        );
-      },
-    },
-    {
-      name: SequenceItemContextMenuNames.modifyAminoAcids,
-      title: 'Modify amino acids',
-      disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
-      subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
       name: SequenceItemContextMenuNames.editSequence,
@@ -166,6 +130,21 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.startNewSequence,
       title: 'Start new sequence',
       disabled: false,
+      separator: true,
+    },
+    {
+      name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
+      title: 'Create RNA antisense strand',
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
+    },
+    {
+      name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
+      title: 'Create DNA antisense strand',
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.establishHydrogenBond,
@@ -191,7 +170,7 @@ export const SequenceItemContextMenu = ({
     },
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
-      title: 'Delete Hydrogen Bonds',
+      title: 'Remove hydrogen bonds',
       separator: true,
       disabled: ({
         props,
@@ -215,9 +194,33 @@ export const SequenceItemContextMenu = ({
       },
     },
     {
+      name: SequenceItemContextMenuNames.modifyInRnaBuilder,
+      title: 'Modify in RNA Builder...',
+      disabled:
+        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return (
+          !props?.sequenceItemRenderer ||
+          !menuProps?.isSelectedAtLeastOneNucleoelement
+        );
+      },
+    },
+    {
+      name: SequenceItemContextMenuNames.modifyAminoAcids,
+      title: 'Modify amino acids',
+      disabled: false,
+      hidden: !modifyAminoAcidsMenuItems.length,
+      subMenuItems: modifyAminoAcidsMenuItems,
+    },
+    {
       name: SequenceItemContextMenuNames.delete,
       title: 'Delete',
       disabled: selectedMonomers?.length === 0,
+      icon: <Icon name="deleteMenu" />,
     },
   ];
 

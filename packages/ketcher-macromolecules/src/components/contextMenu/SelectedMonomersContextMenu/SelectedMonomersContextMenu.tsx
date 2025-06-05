@@ -1,7 +1,7 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { BaseMonomer } from 'ketcher-core';
@@ -26,6 +26,7 @@ export const SelectedMonomersContextMenu = ({
   contextMenuEvent,
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
+  const isClickOnMonomer = selectedMonomers.length > 0;
   const editor = useAppSelector(selectEditor);
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
@@ -38,7 +39,15 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'copy',
       title: 'Copy',
-      disabled: selectedMonomers?.length === 0,
+      icon: <Icon name="copyMenu" />,
+      disabled: !isClickOnMonomer,
+    },
+    {
+      name: SequenceItemContextMenuNames.paste,
+      title: 'Paste',
+      icon: <Icon name="pasteNavBar" />,
+      disabled: isClickOnMonomer,
+      separator: false,
     },
     {
       name: 'create_antisense_rna_chain',
@@ -74,7 +83,8 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'delete',
       title: 'Delete',
-      disabled: selectedMonomers?.length === 0,
+      icon: <Icon name="deleteMenu" />,
+      disabled: !isClickOnMonomer,
     },
   ];
 

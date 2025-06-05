@@ -21,16 +21,20 @@ import {
   selectIsMacromoleculesPropertiesWindowOpened,
   selectMacromoleculesProperties,
   selectOligonucleotidesMeasurementUnit,
+  selectOligonucleotidesValue,
   selectUnipositiveIonsMeasurementUnit,
+  selectUnipositiveIonsValue,
   setMacromoleculesPropertiesWindowVisibility,
   setOligonucleotidesMeasurementUnit,
   setUnipositiveIonsMeasurementUnit,
+  setUnipositiveIonsValue,
+  setOligonucleotidesValue,
 } from 'state/common';
 import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -41,6 +45,7 @@ import { DropDown } from 'components/shared/dropDown';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 import { debounce, isNumber } from 'lodash';
 import * as d3 from 'd3';
+import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 
@@ -210,6 +215,25 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
   zIndex: 1, // needed because tabs below are shifted up and overlaps the dropdown element to match the design
 }));
 
+const inputClassName = 'text-input-field-input';
+
+const BasicPropertyInput = styled(TextInputField)(() => ({
+  margin: 0,
+
+  [`.${inputClassName}`]: {
+    width: '60px',
+    '::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0,
+    },
+    '::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0,
+    },
+    MozAppearance: 'textfield',
+  },
+}));
+
 const StyledMonomersCountPanel = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(8, 1fr)',
@@ -272,6 +296,7 @@ interface BasicPropertyProps {
   selectedOption?: string;
   disabled?: boolean;
   onChangeOption?: (option: string) => void;
+  onChangeValue?: (value: number) => void;
 }
 
 interface MonomersCountPanelProps {
@@ -326,7 +351,18 @@ const BasicProperty = (props: BasicPropertyProps) => {
         {props.name}
         {props.value !== undefined && ':'}
       </BasicPropertyName>
-      <BasicPropertyValue>{props.value}</BasicPropertyValue>
+      {props.onChangeValue ? (
+        <BasicPropertyInput
+          value={props.value ?? ''}
+          id={`macromolecule-property-${props.name}`}
+          type="number"
+          min={0}
+          inputClassName={inputClassName}
+          onChange={(value) => props?.onChangeValue?.(Number(value))}
+        />
+      ) : (
+        <BasicPropertyValue>{props.value}</BasicPropertyValue>
+      )}
       {props.hint && (
         <PropertyHintIconWrapper title={props.hint}>
           <PropertyHintIcon name="about" />
@@ -587,6 +623,8 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   const oligonucleotidesMeasurementUnit = useAppSelector(
     selectOligonucleotidesMeasurementUnit,
   );
+  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
+  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const onChangeUnipositiveIonsMeasurementUnit = (option: string) => {
     dispatch(setUnipositiveIonsMeasurementUnit(option as MolarMeasurementUnit));
@@ -596,6 +634,14 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
     dispatch(
       setOligonucleotidesMeasurementUnit(option as MolarMeasurementUnit),
     );
+  };
+
+  const onChangeUnipositiveIonsValue = (value: number) => {
+    dispatch(setUnipositiveIonsValue(value));
+  };
+
+  const onChangeOligonucleotidesValue = (value: number) => {
+    dispatch(setOligonucleotidesValue(value));
   };
 
   return props.isError ? (
@@ -621,19 +667,21 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
         <BasicPropertiesWrapper>
           <BasicProperty
             name="[Unipositive Ions]"
-            value={140}
+            value={unipositiveIonsValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
+            onChangeValue={onChangeUnipositiveIonsValue}
           />
           <BasicProperty
             name="[Oligonucleotides]"
-            value={200}
+            value={oligonucleotidesValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
+            onChangeValue={onChangeOligonucleotidesValue}
           />
         </BasicPropertiesWrapper>
       </RnaBasicPropertiesWrapper>
@@ -676,6 +724,8 @@ const calculateMassMeasurementUnit = (mass?: number) => {
     : MassMeasurementUnit.MDa;
 };
 
+let selectEntitiesHandler: () => void;
+
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -688,6 +738,8 @@ export const MacromoleculePropertiesWindow = () => {
   const oligonucleotidesMeasurementUnit = useAppSelector(
     selectOligonucleotidesMeasurementUnit,
   );
+  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
+  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   const firstMacromoleculesProperties:
     | SingleChainMacromoleculeProperties
@@ -703,26 +755,35 @@ export const MacromoleculePropertiesWindow = () => {
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
-
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-  const debouncedRecalculateMacromoleculePropertiesRef = useRef<
+  const recalculateMacromoleculePropertiesRef = useRef<
     (shouldSkip?: boolean) => void
   >(recalculateMacromoleculeProperties);
+  const debouncedRecalculateMacromoleculeProperties = useCallback(
+    debounce((shouldSkip?: boolean) => {
+      recalculateMacromoleculePropertiesRef.current(shouldSkip);
+    }, 500),
+    [],
+  );
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculePropertiesRef.current = debounce(
-      (shouldSkip?: boolean) => {
-        recalculateMacromoleculeProperties(shouldSkip);
-      },
-      500,
-    );
+    recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
+      recalculateMacromoleculeProperties(shouldSkip);
+    };
   }, [recalculateMacromoleculeProperties]);
 
   useEffect(() => {
-    const selectEntitiesHandler = () => {
-      debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
+    if (
+      selectEntitiesHandler &&
+      editor.events.selectEntities.hasHandler(selectEntitiesHandler)
+    ) {
+      editor.events.selectEntities.remove(selectEntitiesHandler);
+    }
+
+    selectEntitiesHandler = () => {
+      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
     };
 
     editor?.events.selectEntities.add(selectEntitiesHandler);
@@ -730,14 +791,17 @@ export const MacromoleculePropertiesWindow = () => {
     return () => {
       editor?.events.selectEntities.remove(selectEntitiesHandler);
     };
-  }, [editor, skipDataFetch]);
+  }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
+    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
+    unipositiveIonsValue,
+    oligonucleotidesValue,
     skipDataFetch,
+    debouncedRecalculateMacromoleculeProperties,
   ]);
 
   useEffect(() => {

@@ -78,6 +78,7 @@ import { ReinitializeModeOperation } from 'application/editor/operations';
 import { getAminoAcidsToModify } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { blurActiveElement } from '../../utilities/dom';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -866,12 +867,16 @@ export class CoreEditor {
 
   public unsubscribeEvents() {
     for (const eventName in this.events) {
+      this.events[eventName].handlers.forEach((handler) => {
+        this.events[eventName].remove(handler);
+      });
       this.events[eventName].handlers = [];
     }
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
+    this.canvas.removeEventListener('mousedown', blurActiveElement);
   }
 
   get trackedDomEvents() {
@@ -930,6 +935,8 @@ export class CoreEditor {
   }
 
   private domEventSetup() {
+    this.canvas.addEventListener('mousedown', blurActiveElement);
+
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];

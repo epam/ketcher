@@ -12,7 +12,9 @@ import {
   molarMeasurementUnitToNumber,
   selectEditor,
   selectOligonucleotidesMeasurementUnit,
+  selectOligonucleotidesValue,
   selectUnipositiveIonsMeasurementUnit,
+  selectUnipositiveIonsValue,
   setMacromoleculesProperties,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
@@ -26,6 +28,8 @@ export const useRecalculateMacromoleculeProperties = () => {
   const oligonucleotidesMeasurementUnit = useAppSelector(
     selectOligonucleotidesMeasurementUnit,
   );
+  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
+  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   return async (shouldSkip?: boolean) => {
     if (!editor || shouldSkip) {
@@ -73,9 +77,11 @@ export const useRecalculateMacromoleculeProperties = () => {
         },
         {
           upc:
-            140 / molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
+            unipositiveIonsValue /
+            molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
           nac:
-            200 / molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
+            oligonucleotidesValue /
+            molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
         },
       );
 

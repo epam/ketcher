@@ -52,6 +52,8 @@ interface EditorState {
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
+  unipositiveIonsValue: number;
+  oligonucleotidesValue: number;
 }
 
 const initialState: EditorState = {
@@ -70,6 +72,8 @@ const initialState: EditorState = {
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
+  unipositiveIonsValue: 140,
+  oligonucleotidesValue: 200,
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -156,6 +160,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
         ...action.payload,
       };
     },
+    setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
+      state.unipositiveIonsValue = action.payload;
+    },
+    setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
+      state.oligonucleotidesValue = action.payload;
+    },
   },
 });
 
@@ -172,6 +182,8 @@ export const {
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,
   setEditorLineLength,
+  setUnipositiveIonsValue,
+  setOligonucleotidesValue,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
@@ -224,6 +236,12 @@ export const selectUnipositiveIonsMeasurementUnit = (state: RootState) =>
 
 export const selectOligonucleotidesMeasurementUnit = (state: RootState) =>
   state.editor.oligonucleotidesMeasurementUnit;
+
+export const selectUnipositiveIonsValue = (state: RootState) =>
+  state.editor.unipositiveIonsValue;
+
+export const selectOligonucleotidesValue = (state: RootState) =>
+  state.editor.oligonucleotidesValue;
 
 export const selectMonomers = (state: RootState) =>
   state.editor.editor?.drawingEntitiesManager?.monomers;

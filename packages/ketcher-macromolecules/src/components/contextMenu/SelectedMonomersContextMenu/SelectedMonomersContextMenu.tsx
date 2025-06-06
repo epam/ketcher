@@ -30,28 +30,37 @@ export const SelectedMonomersContextMenu = ({
   contextMenuEvent,
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
-  const isClickOnMonomer = selectedMonomers.length > 0;
   const editor = useAppSelector(selectEditor);
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,
   );
+  const isCanvasContext = (props?: {
+    selectedMonomers?: BaseMonomer[];
+    polymerBondRenderer?: unknown;
+  }) =>
+    !props?.polymerBondRenderer &&
+    (!props?.selectedMonomers || props?.selectedMonomers.length === 0);
+
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
   );
+  const isBondContext = (props?: { polymerBondRenderer?: unknown }) =>
+    !!props?.polymerBondRenderer;
+
   const menuItems = [
     {
       name: 'copy',
       title: 'Copy',
       icon: <Icon name={'copyMenu' as IconName} />,
-      disabled: !isClickOnMonomer,
+      disabled: ({ props = {} }) =>
+        isBondContext(props) || isCanvasContext(props),
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: isClickOnMonomer,
-      separator: false,
+      disabled: ({ props = {} }) => !isCanvasContext(props),
     },
     {
       name: 'create_antisense_rna_chain',
@@ -85,14 +94,28 @@ export const SelectedMonomersContextMenu = ({
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
+      name: 'edit_connection_points',
+      title: 'Edit Connection Points...',
+      separator: true,
+      disabled: ({
+        props,
+      }: {
+        props?: {
+          polymerBondRenderer?: unknown;
+          selectedMonomers?: BaseMonomer[];
+        };
+      }) => !isBondContext(props),
+    },
+    {
       name: 'delete',
       title: 'Delete',
       icon: <Icon name={'deleteMenu' as IconName} />,
-      disabled: !isClickOnMonomer,
+      disabled: ({ props = {} }) =>
+        isBondContext(props) || isCanvasContext(props),
     },
   ];
 
-  const handleMenuChange = ({ id: menuItemId }: ItemParams) => {
+  const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
     switch (true) {
       case menuItemId === 'copy':
         editor.events.copySelectedStructure.dispatch();
@@ -106,6 +129,21 @@ export const SelectedMonomersContextMenu = ({
       case menuItemId === 'delete':
         editor.events.deleteSelectedStructure.dispatch();
         break;
+      case menuItemId === 'paste':
+        editor.events.pasteFromClipboard.dispatch();
+        break;
+      case menuItemId === 'edit_connection_points': {
+        const polymerBond = props?.polymerBondRenderer?.polymerBond;
+        if (!polymerBond) return;
+
+        editor.events.openMonomerConnectionModal.dispatch({
+          firstMonomer: polymerBond.firstMonomer,
+          secondMonomer: polymerBond.secondMonomer,
+          polymerBond,
+          isReconnectionDialog: true,
+        });
+        break;
+      }
       case menuItemId?.startsWith(AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX): {
         const modificationType = menuItemId?.replace(
           AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,

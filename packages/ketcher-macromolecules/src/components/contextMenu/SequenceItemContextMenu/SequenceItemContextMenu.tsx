@@ -12,7 +12,6 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import {
-  BaseSequenceItemRenderer,
   NodesSelection,
   BaseMonomer,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
@@ -21,6 +20,7 @@ import {
   BackBoneSequenceNode,
   Chain,
   ITwoStrandedChainItem,
+  BaseSequenceItemRenderer,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -89,6 +89,20 @@ export const SequenceItemContextMenu = ({
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
   );
+  const hasHydrogenBonds =
+    selections?.some((selectionRange) => {
+      return selectionRange.some((selection) => {
+        return isNodeContainHydrogenBonds(selection.node);
+      });
+    }) ?? false;
+
+  const isAntisenseBlockVisible =
+    selectedMonomers?.length > 0 && isAntisenseOptionVisible(selectedMonomers);
+  const isHydrogenBondBlockVisible =
+    !isEstablishHydrogenBondDisabled(selections) || hasHydrogenBonds;
+  const isModifyBlockVisible =
+    !!modifyAminoAcidsMenuItems.length ||
+    (menuProps?.isSelectedOnlyNucleoelements && !menuProps.hasAntisense);
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -117,6 +131,7 @@ export const SequenceItemContextMenu = ({
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: false,
+      separator: true,
     },
     {
       name: SequenceItemContextMenuNames.editSequence,
@@ -126,15 +141,13 @@ export const SequenceItemContextMenu = ({
         props,
       }: {
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
+      }) => !props?.sequenceItemRenderer,
     },
     {
       name: SequenceItemContextMenuNames.startNewSequence,
       title: 'Start new sequence',
       disabled: false,
-      separator: true,
+      separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
@@ -168,14 +181,12 @@ export const SequenceItemContextMenu = ({
         props,
       }: {
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
+      }) => !props?.sequenceItemRenderer,
     },
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
       title: 'Remove hydrogen bonds',
-      separator: true,
+      separator: isModifyBlockVisible,
       disabled: ({
         props,
       }: {
@@ -193,9 +204,7 @@ export const SequenceItemContextMenu = ({
         props,
       }: {
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
+      }) => !props?.sequenceItemRenderer,
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,

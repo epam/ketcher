@@ -204,7 +204,7 @@ class SelectRectangle implements BaseTool {
     }
 
     if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
-      this.startMoveIfNeeded(renderer);
+      this.startMoveIfNeeded(renderer as BaseRenderer);
       if (renderer.drawingEntity.selected) {
         return;
       }

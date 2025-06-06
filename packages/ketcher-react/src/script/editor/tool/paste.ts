@@ -262,6 +262,7 @@ class PasteTool implements Tool {
       if (!this.isSingleContractedGroup || !this.mergeItems) {
         dropAndMerge(this.editor, this.mergeItems, action);
       }
+      this.editor.tool('select');
     }
   }
 

@@ -5,7 +5,10 @@ import { createPolymerEditorCanvas } from '../../helpers/dom';
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
-    const editor: CoreEditor = new CoreEditor({ canvas, theme: {} });
+    const editor: CoreEditor = new CoreEditor({
+      canvas,
+      theme: {},
+    });
     const onMousemove = jest.fn();
     jest
       .spyOn(MonomerTool.prototype, 'mousemove')

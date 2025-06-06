@@ -196,6 +196,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(result, 'class', source.data.class);
       ifDef(
         result,
         'attachmentPoints',

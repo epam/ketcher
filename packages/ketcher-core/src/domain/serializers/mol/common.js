@@ -215,6 +215,10 @@ function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
     lines.push('M  SMT ' + idstr + ' ' + sgroupName);
   }
 
+  if (sgroup.data.class) {
+    lines.push('M  SCL ' + idstr + ' ' + sgroup.data.class);
+  }
+
   return lines.join('\n');
 }
 

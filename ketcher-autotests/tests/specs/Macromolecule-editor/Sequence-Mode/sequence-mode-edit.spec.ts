@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
-  selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
@@ -37,7 +36,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -45,7 +43,6 @@ import {
   getSymbolLocator,
   turnSyncEditModeOff,
 } from '@utils/macromolecules/monomer';
-import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
   hoverOnSequenceSymbol,
   switchToDNAMode,
@@ -60,6 +57,7 @@ import {
 } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -395,7 +393,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -407,7 +405,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await selectMonomer(page, Sugars._25d3r);
+    await Library(page).selectMonomer(Sugars._25d3r);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -419,7 +417,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await selectMonomer(page, Bases.c7A);
+    await Library(page).selectMonomer(Bases.c7A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -431,7 +429,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await selectMonomer(page, Phosphates.ibun);
+    await Library(page).selectMonomer(Phosphates.ibun);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -443,7 +441,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await selectMonomer(page, Nucleotides.Super_T);
+    await Library(page).selectMonomer(Nucleotides.Super_T);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -455,7 +453,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
-    await selectMonomer(page, Chem.DOTA);
+    await Library(page).selectMonomer(Chem.DOTA);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -488,8 +486,8 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await goToRNATab(page);
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await page.getByTestId(Presets.dR_U_P.testId).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);

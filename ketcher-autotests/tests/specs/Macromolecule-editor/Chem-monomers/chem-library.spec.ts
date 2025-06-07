@@ -23,7 +23,7 @@ test.describe('Open Ketcher', () => {
     Test case: #2496 - chem monomer library
     Description: Open Chem tab in library
     */
-    await goToCHEMTab(page);
+    await Library(page).switchToCHEMTab();
     await expect(page.getByText('A6OH')).toBeVisible();
     await takeMonomerLibraryScreenshot(page);
   });

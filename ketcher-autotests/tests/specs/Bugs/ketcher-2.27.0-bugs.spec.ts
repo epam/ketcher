@@ -465,7 +465,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Search J
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     await Library(page).setSearchValue('J');
     await takeMonomerLibraryScreenshot(page);
   });

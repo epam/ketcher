@@ -20,7 +20,7 @@ test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Clear canvas with monomer bonded with another monomers', async ({

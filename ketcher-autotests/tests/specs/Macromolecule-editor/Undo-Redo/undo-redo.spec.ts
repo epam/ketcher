@@ -49,7 +49,7 @@ test.describe('Undo Redo', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
     peptide2 = await addSingleMonomerToCanvas(page, Peptides.Tza, 400, 300, 1);
     const peptide3 = await addSingleMonomerToCanvas(
@@ -200,7 +200,7 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await selectMonomer(page, Peptides.bAla);
+      await Library(page).selectMonomer(Peptides.bAla);
       await clickOnCanvas(page, x, y);
     };
 
@@ -241,7 +241,7 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await selectMonomer(page, Chem.SMPEG2);
+      await Library(page).selectMonomer(Chem.SMPEG2);
       await clickOnCanvas(page, x, y);
     };
 
@@ -345,7 +345,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Pressing Undo/Redo toggle snake mode.
     */
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
       page,
@@ -405,9 +405,9 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo and Redo buttons turn gray.
     The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await takePageScreenshot(page);
-    await selectMonomer(page, Peptides.Edc);
+    await Library(page).selectMonomer(Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
@@ -424,7 +424,7 @@ test.describe('Undo-Redo tests', () => {
     */
     const x = 200;
     const y = 200;
-    await selectMonomer(page, Presets.C);
+    await Library(page).selectMonomer(Presets.C);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -454,8 +454,8 @@ test.describe('Undo-Redo tests', () => {
           8. Press Redo button
           9. Take screenshot to make sure it is on canvas
     */
-    await goToRNATab(page);
-    await selectMonomer(page, Peptides.X);
+    await Library(page).switchToRNATab();
+    await Library(page).selectMonomer(Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -495,8 +495,8 @@ test.describe('Undo-Redo tests', () => {
           8. Press Redo button
           9. Take screenshot to make sure it is on canvas
     */
-    await goToRNATab(page);
-    await selectMonomer(page, Bases.DNA_N);
+    await Library(page).switchToRNATab();
+    await Library(page).selectMonomer(Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(

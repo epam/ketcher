@@ -19,7 +19,7 @@ test.describe('Check attachment point rotation', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {

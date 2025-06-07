@@ -1,24 +1,21 @@
 import { Page, Locator } from '@playwright/test';
 import { Monomer } from '@utils/types';
+import {
+  FavoriteStarSymbol,
+  LibraryMonomerType,
+  LibraryTab,
+  monomerTabMapping,
+  monomerTypeLocation,
+  RNASection,
+  rnaSectionArea,
+} from '../constants/library/Constants';
+import { RNABuilder } from './library/RNABuilder';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
 };
 
-type RNABuilderLocators = {
-  nameYourStructureEditbox: Locator;
-  sugarSlot: Locator;
-  baseSlot: Locator;
-  phosphateSlot: Locator;
-  cancelButton: Locator;
-  saveButton: Locator;
-  addToPresetsButton: Locator;
-  duplicateAndEditButton: Locator;
-  editButton: Locator;
-};
-
 type RNATabLocators = {
-  rnaBuilderSection: Locator & RNABuilderLocators;
   presetsSection: Locator & PresetsSectionLocators;
   sugarsSection: Locator;
   basesSection: Locator;
@@ -40,16 +37,17 @@ export const Library = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  const rnaBuilderSection: RNABuilderLocators = {
-    nameYourStructureEditbox: page.getByTestId('name-your-structure-editbox'),
-    sugarSlot: page.getByTestId('rna-builder-slot--sugar'),
-    baseSlot: page.getByTestId('rna-builder-slot--base'),
-    phosphateSlot: page.getByTestId('rna-builder-slot--phosphate'),
-    cancelButton: page.getByTestId('cancel-btn'),
-    saveButton: page.getByTestId('save-btn'),
-    addToPresetsButton: page.getByTestId('add-to-presets-btn'),
-    duplicateAndEditButton: page.getByTestId('duplicate-btn'),
-    editButton: page.getByTestId('edit-btn'),
+  const getMonomerLibraryLocation = (monomer: Monomer): LibraryMonomerType => {
+    for (const [monomerTypeKey, monomers] of Object.entries(
+      monomerTabMapping,
+    )) {
+      if (monomers?.some((m) => m.alias === monomer.alias)) {
+        return monomerTypeKey as unknown as LibraryMonomerType;
+      }
+    }
+    throw new Error(
+      `Monomer with alias ${monomer.alias} not found in any tab group`,
+    );
   };
 
   const presetsSection: PresetsSectionLocators = {
@@ -57,29 +55,30 @@ export const Library = (page: Page) => {
   };
 
   const rnaTab: RNATabLocators = {
-    rnaBuilderSection: page.getByTestId(
-      'rna-builder-expand-button',
-    ) as Locator & typeof rnaBuilderSection,
-    presetsSection: page.getByTestId('summary-Presets') as Locator &
+    presetsSection: page.getByTestId(RNASection.Presets) as Locator &
       typeof presetsSection,
-    sugarsSection: page.getByTestId('summary-Sugars'),
-    basesSection: page.getByTestId('summary-Bases'),
-    phosphatesSection: page.getByTestId('summary-Phosphates'),
-    nucleotidesSection: page.getByTestId('summary-Nucleotides'),
+    sugarsSection: page.getByTestId(RNASection.Sugars),
+    basesSection: page.getByTestId(RNASection.Bases),
+    phosphatesSection: page.getByTestId(RNASection.Phosphates),
+    nucleotidesSection: page.getByTestId(RNASection.Nucleotides),
   };
 
   const locators: LibraryLocators = {
     searchEditbox: page.getByTestId('monomer-library-input'),
     hideLibraryButton: page.getByTestId('hide-monomer-library'),
     showLibraryButton: page.getByTestId('show-monomer-library'),
-    favoritesTab: page.getByTestId('FAVORITES-TAB'),
-    peptidesTab: page.getByTestId('PEPTIDES-TAB'),
-    rnaTab: page.getByTestId('PEPTIDES-TAB') as Locator & typeof rnaTab,
-    chemTab: page.getByTestId('CHEM-TAB'),
+    favoritesTab: page.getByTestId(LibraryTab.Favorites),
+    peptidesTab: page.getByTestId(LibraryTab.Peptides),
+    rnaTab: page.getByTestId(LibraryTab.RNA) as Locator & typeof rnaTab,
+    chemTab: page.getByTestId(LibraryTab.CHEM),
   };
+
+  const rnaBuilder = RNABuilder(page);
 
   return {
     ...locators,
+
+    rnaBuilder,
 
     async hideLibrary() {
       if (await locators.hideLibraryButton.isVisible()) {
@@ -93,20 +92,32 @@ export const Library = (page: Page) => {
       }
     },
 
-    async switchToFavoridesTab() {
-      await locators.favoritesTab.click();
+    async switchToFavoritesTab() {
+      if (
+        (await locators.favoritesTab.getAttribute('aria-selected')) !== 'true'
+      ) {
+        await this.openTab(LibraryTab.Favorites);
+      }
     },
 
     async switchToPeptidesTab() {
-      await locators.peptidesTab.click();
+      if (
+        (await locators.peptidesTab.getAttribute('aria-selected')) !== 'true'
+      ) {
+        await this.openTab(LibraryTab.Peptides);
+      }
     },
 
     async switchToRNATab() {
-      await locators.rnaTab.click();
+      if ((await locators.rnaTab.getAttribute('aria-selected')) !== 'true') {
+        await this.openTab(LibraryTab.RNA);
+      }
     },
 
     async switchToCHEMTab() {
-      await locators.chemTab.click();
+      if ((await locators.chemTab.getAttribute('aria-selected')) !== 'true') {
+        await this.openTab(LibraryTab.CHEM);
+      }
     },
 
     async clickOnMonomer(monomer: Monomer) {
@@ -120,30 +131,160 @@ export const Library = (page: Page) => {
     async getSearchValue(): Promise<string | null> {
       return await locators.searchEditbox.inputValue();
     },
+
+    async isTabOpened(libraryTab: LibraryTab): Promise<boolean> {
+      const ariaSelected = await getElement(libraryTab).getAttribute(
+        'aria-selected',
+      );
+      return ariaSelected === 'true';
+    },
+
+    async openTab(libraryTab: LibraryTab) {
+      if (!(await this.isTabOpened(libraryTab))) {
+        await getElement(libraryTab).click();
+      }
+    },
+
+    async isRNASectionOpened(rnaSection: RNASection): Promise<boolean> {
+      return await getElement(rnaSectionArea[rnaSection]).isVisible();
+    },
+
+    async openRNASection(rnaSection: RNASection) {
+      await this.openTab(LibraryTab.RNA);
+      if (!(await this.isRNASectionOpened(rnaSection))) {
+        await getElement(rnaSection).click();
+      }
+    },
+
+    async goToMonomerTypeLocation(libraryMonomerType: LibraryMonomerType) {
+      const { libraryTab, rnaSection } =
+        monomerTypeLocation[libraryMonomerType];
+
+      await this.openTab(libraryTab);
+
+      if (rnaSection) {
+        await this.openRNASection(rnaSection);
+      }
+    },
+
+    /**
+     * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
+     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+     */
+    async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+      if (selectOnFavoritesTab) {
+        this.openTab(LibraryTab.Favorites);
+      } else {
+        const location = getMonomerLibraryLocation(monomer);
+        await this.goToMonomerTypeLocation(location);
+      }
+      await getElement(monomer.testId).click();
+    },
+
+    /**
+     * Hovers a monomer by navigating to the corresponding tab and clicking on the monomer.
+     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+     */
+    async hoverMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+      if (selectOnFavoritesTab) {
+        this.openTab(LibraryTab.Favorites);
+      } else {
+        const location = getMonomerLibraryLocation(monomer);
+        await this.goToMonomerTypeLocation(location);
+      }
+      await getElement(monomer.testId).hover();
+    },
+
+    /**
+     * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
+     */
+    async selectCustomPreset(presetTestId: string) {
+      await this.goToMonomerTypeLocation(LibraryMonomerType.Preset);
+      await page.getByTestId(presetTestId).click();
+    },
+
+    /**
+     * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
+     * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+     */
+    async addMonomerToFavorites(monomer: Monomer) {
+      const tab = getMonomerLibraryLocation(monomer);
+      await this.goToMonomerTypeLocation(tab);
+
+      const favoritesStar = page
+        .getByTestId(monomer.testId)
+        .getByText(FavoriteStarSymbol);
+      const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
+        'visible',
+      );
+
+      if (!isFavorite) {
+        await favoritesStar.click();
+      }
+    },
+
+    /**
+     * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
+     */
+    async removeMonomerFromFavorites(
+      monomer: Monomer,
+      removeFromFavoritesTab = true,
+    ) {
+      if (removeFromFavoritesTab) {
+        this.openTab(LibraryTab.Favorites);
+      } else {
+        const tab = getMonomerLibraryLocation(monomer);
+        await this.goToMonomerTypeLocation(tab);
+      }
+
+      const favoritesStar = page
+        .getByTestId(monomer.testId)
+        .getByText(FavoriteStarSymbol);
+      const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
+        'visible',
+      );
+
+      if (isFavorite) {
+        await favoritesStar.click();
+      }
+    },
+
+    /**
+     * Selects multiple monomers by iterating through the provided list of monomers.
+     * For each monomer, it navigates to the corresponding tab and clicks on the monomer.
+     * If a monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+     */
+    async selectMonomers(monomers: Array<Monomer>) {
+      for (const monomer of monomers) {
+        this.selectMonomer(monomer);
+      }
+    },
+
+    /**
+     * Adds multiple monomers to favorites by iterating through the provided list of monomers.
+     * For each monomer, it navigates to the corresponding tab, expands the accordion (if needed),
+     * and clicks on the monomer's favorite icon.
+     */
+    async addMonomersToFavorites(monomers: Array<Monomer>) {
+      for (const monomer of monomers) {
+        this.addMonomerToFavorites(monomer);
+      }
+    },
+
+    /**
+     * Removes multiple monomers from favorites by iterating through the provided list of monomers.
+     */
+    async removeMonomersFromFavorites(monomers: Array<Monomer>) {
+      for (const monomer of monomers) {
+        this.removeMonomerFromFavorites(monomer);
+      }
+    },
+
+    async newPreset() {
+      await this.openRNASection(RNASection.Presets);
+      await presetsSection.newPresetsButton.click();
+    },
   };
 };
-
-// export async function openPPTXFile(
-//   page: Page,
-//   filePath: string,
-//   numberOf: {
-//     Structure: number;
-//   } = { Structure: 1 },
-//   action: Action,
-// ) {
-//   await CommonTopLeftToolbar(page).openFile();
-//   await waitForSpinnerFinishedWork(page, async () => {
-//     await openFile(filePath, page);
-//   });
-//   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-//   if (numberOf.Structure !== 1) {
-//     await openPPTXFileDialog.selectStructure(numberOf);
-//   }
-//   if (action === Action.AddToCanvas) {
-//     await openPPTXFileDialog.pressAddToCanvasButton();
-//   } else if (action === Action.OpenAsNewProject) {
-//     await openPPTXFileDialog.pressOpenAsNewProjectButton();
-//   }
-// }
 
 export type LibraryLocatorsType = ReturnType<typeof Library>;

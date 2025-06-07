@@ -23,7 +23,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectMonomer(page, Chem.sDBL);
+  await Library(page).selectMonomer(Chem.sDBL);
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);

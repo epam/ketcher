@@ -7,8 +7,6 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   waitForRender,
-  hideLibrary,
-  showLibrary,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -17,7 +15,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
@@ -33,7 +31,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {

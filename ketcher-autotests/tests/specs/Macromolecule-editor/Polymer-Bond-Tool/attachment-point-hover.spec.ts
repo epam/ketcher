@@ -15,7 +15,7 @@ test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Move monomer bonded with another monomers and hover attachment points', async ({

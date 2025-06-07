@@ -39,7 +39,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,

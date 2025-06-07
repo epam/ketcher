@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
+import { Library } from '../macromolecules/Library';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -103,11 +104,11 @@ export const CommonTopRightToolbar = (page: Page) => {
       if (options.enableFlexMode) {
         await selectFlexLayoutModeTool(page);
       } else if (options.goToPeptides) {
-        await goToPeptidesTab(page);
+        await Library(page).switchToPeptidesTab();
       } else {
-        await page
-          .getByTestId('summary-Nucleotides')
-          .waitFor({ state: 'visible' });
+        await Library(page).rnaTab.nucleotidesSection.waitFor({
+          state: 'visible',
+        });
       }
 
       await page.evaluate(() => {

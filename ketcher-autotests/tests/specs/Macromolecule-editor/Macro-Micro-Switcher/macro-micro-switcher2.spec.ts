@@ -31,8 +31,6 @@ import {
   selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
-  hideLibrary,
-  showLibrary,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -69,18 +67,6 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 
-async function addToFavoritesMonomers(page: Page) {
-  await addMonomersToFavorites(page, [
-    Peptides.bAla,
-    Peptides.Phe4Me,
-    Peptides.meM,
-    Sugars._25R,
-    Bases.baA,
-    Phosphates.bP,
-    Chem.Test_6_Ch,
-  ]);
-}
-
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
     .locator('g', { hasText: new RegExp(`^${atomText}$`) })
@@ -104,12 +90,20 @@ test.describe('Macro-Micro-Switcher2', () => {
       when Hide Library and switching from Macro mode to Micro mode and back to Macro is saved
       */
     test.slow();
-    await addToFavoritesMonomers(page);
+    await Library(page).addMonomersToFavorites([
+      Peptides.bAla,
+      Peptides.Phe4Me,
+      Peptides.meM,
+      Sugars._25R,
+      Bases.baA,
+      Phosphates.bP,
+      Chem.Test_6_Ch,
+    ]);
     await Library(page).hideLibrary();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).showLibrary();
-    await goToFavoritesTab(page);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 

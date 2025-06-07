@@ -18,7 +18,7 @@ test.describe('Modal window', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToCHEMTab(page);
+    await Library(page).switchToCHEMTab();
 
     peptide1 = await addSingleMonomerToCanvas(
       page,

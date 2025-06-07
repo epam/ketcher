@@ -26,6 +26,14 @@ export const Sugars = createMonomerGroup(MonomerType.Sugar, {
     alias: '5formD',
     testId: '5formD___5-Formyl-2-deoxyribose',
   },
+  _5R6Sm5: {
+    alias: '5R6Sm5',
+    testId: '5R6Sm5___5-(R)-Methyl-(S)-cEt BNA',
+  },
+  ALmecl: {
+    alias: 'ALmecl',
+    testId: 'ALmecl___alpha-L-Methylene cLNA',
+  },
   _12ddR: { alias: '12ddR', testId: "12ddR___1',2'-dideoxyribose" },
   _25d3r: {
     alias: '25d3r',

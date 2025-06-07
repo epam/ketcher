@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   clickOnCanvas,
-  selectMonomer,
   selectSequenceLayoutModeTool,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
@@ -37,18 +36,18 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -83,7 +82,7 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,
@@ -141,7 +140,7 @@ test('Create bond between two chems', async () => {
     Description: Polymer bond tool
     */
   // Choose chems
-  await selectMonomer(page, Chem.hxy);
+  await Library(page).selectMonomer(Chem.hxy);
 
   // Create 2 chems on canvas
   await clickOnCanvas(page, 300, 300);
@@ -176,7 +175,7 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
 
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,
@@ -211,9 +210,9 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await selectMonomer(page, Peptides.bAla);
+  await Library(page).selectMonomer(Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Peptides.Edc);
+  await Library(page).selectMonomer(Peptides.Edc);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
@@ -231,9 +230,9 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await selectMonomer(page, Presets.MOE_A_P);
+  await Library(page).selectMonomer(Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Presets.dR_U_P);
+  await Library(page).selectMonomer(Presets.dR_U_P);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
@@ -251,9 +250,9 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await selectMonomer(page, Chem.A6OH);
+  await Library(page).selectMonomer(Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Chem.Test_6_Ch);
+  await Library(page).selectMonomer(Chem.Test_6_Ch);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await page
@@ -553,7 +552,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded.
     */
   const bondLine = getBondLocator(page, {}).nth(1);
-  await selectMonomer(page, Presets.MOE_A_P);
+  await Library(page).selectMonomer(Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
   await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();

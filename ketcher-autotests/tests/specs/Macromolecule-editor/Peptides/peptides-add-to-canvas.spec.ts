@@ -26,7 +26,7 @@ test.describe('Peptide', () => {
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await hideMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -37,7 +37,7 @@ test.describe('Peptide', () => {
     Test case: #2869 - Preview of monomer structures on canvas
     Description: Add monomer preview on canvas
     */
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await moveMouseToTheMiddleOfTheScreen(page);

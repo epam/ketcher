@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
-import { gotoRNA, pressSaveButton } from '@utils/macromolecules/rnaBuilder';
+import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Presets } from '@constants/monomers/Presets';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 test.describe('Macromolecules delete RNA presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await gotoRNA(page);
+    await Library(page).switchToRNATab();
   });
 
   test('Should not delete default RNA preset', async ({ page }) => {
@@ -19,7 +20,7 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.getByTestId(Presets.A.testId).click({ button: 'right' });
 
     await page.getByTestId('duplicateandedit').click();
-    await pressSaveButton(page);
+    await Library(page).rnaBuilder.save();
 
     const createdPreset = page.getByTestId('A_Copy_A_R_P');
     await expect(createdPreset).toBeVisible();

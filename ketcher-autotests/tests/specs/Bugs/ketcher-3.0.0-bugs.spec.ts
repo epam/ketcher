@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  selectMonomer,
   pressButton,
   moveOnAtom,
   clickOnAtom,
@@ -38,7 +37,6 @@ import {
   verifyFileExport,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import { goToRNATab } from '@utils/macromolecules/library';
 import {
   modifyInRnaBuilder,
   getSymbolLocator,

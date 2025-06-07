@@ -13,7 +13,6 @@ import {
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
-  selectMonomer,
   selectPartOfMolecules,
   selectSequenceLayoutModeTool,
   takePageScreenshot,
@@ -32,8 +31,7 @@ import {
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Chem } from '@constants/monomers/Chem';
-import { goToTab } from '@utils/macromolecules/library';
-import { PEPTIDES_TAB, RNA_TAB } from '@constants/testIdConstants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 /**
  * Tries to hit the “×” twice.
@@ -810,7 +808,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await selectSequenceLayoutModeTool(page);
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
@@ -824,7 +822,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple RNA/DNA structure
      * 3. Open the "Calculate Properties" window
      */
-    await selectMonomer(page, Presets.A);
+    await Library(page).selectMonomer(Presets.A);
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
@@ -838,7 +836,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple CHEM structure
      * 3. Open the "Calculate Properties" window
      */
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
@@ -853,7 +851,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await selectFlexLayoutModeTool(page);
-    await goToTab(page, PEPTIDES_TAB);
+    await Library(page).switchToPeptidesTab();
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/peptides-connected-to-molecule.ket',
       page,
@@ -988,7 +986,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
@@ -1002,7 +1000,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await goToTab(page, RNA_TAB);
+    await Library(page).switchToRNATab();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

@@ -11,7 +11,7 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
@@ -23,11 +23,12 @@ import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {

@@ -3,6 +3,7 @@ import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   addSingleMonomerToCanvas,
@@ -14,7 +15,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
@@ -39,7 +39,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,

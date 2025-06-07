@@ -50,18 +50,23 @@ export const Library = (page: Page) => {
     );
   };
 
-  const presetsSection: PresetsSectionLocators = {
-    newPresetsButton: page.getByTestId('new-preset-button'),
-  };
+  const presetsSection: Locator & PresetsSectionLocators = Object.assign(
+    page.getByTestId(RNASection.Presets),
+    {
+      newPresetsButton: page.getByTestId('new-preset-button'),
+    },
+  );
 
-  const rnaTab: RNATabLocators = {
-    presetsSection: page.getByTestId(RNASection.Presets) as Locator &
-      typeof presetsSection,
-    sugarsSection: page.getByTestId(RNASection.Sugars),
-    basesSection: page.getByTestId(RNASection.Bases),
-    phosphatesSection: page.getByTestId(RNASection.Phosphates),
-    nucleotidesSection: page.getByTestId(RNASection.Nucleotides),
-  };
+  const rnaTab: Locator & RNATabLocators = Object.assign(
+    page.getByTestId(LibraryTab.RNA),
+    {
+      presetsSection,
+      sugarsSection: page.getByTestId(RNASection.Sugars),
+      basesSection: page.getByTestId(RNASection.Bases),
+      phosphatesSection: page.getByTestId(RNASection.Phosphates),
+      nucleotidesSection: page.getByTestId(RNASection.Nucleotides),
+    },
+  );
 
   const locators: LibraryLocators = {
     searchEditbox: page.getByTestId('monomer-library-input'),
@@ -69,7 +74,7 @@ export const Library = (page: Page) => {
     showLibraryButton: page.getByTestId('show-monomer-library'),
     favoritesTab: page.getByTestId(LibraryTab.Favorites),
     peptidesTab: page.getByTestId(LibraryTab.Peptides),
-    rnaTab: page.getByTestId(LibraryTab.RNA) as Locator & typeof rnaTab,
+    rnaTab,
     chemTab: page.getByTestId(LibraryTab.CHEM),
   };
 

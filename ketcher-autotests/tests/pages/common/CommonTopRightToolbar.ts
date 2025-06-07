@@ -78,6 +78,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await locators.zoomSelector.click({ force: true });
       await zoomLocators.zoomDefaultButton.waitFor({ state: 'detached' });
     },
+
     async turnOnMacromoleculesEditor(
       options: {
         enableFlexMode?: boolean;
@@ -92,20 +93,21 @@ export const CommonTopRightToolbar = (page: Page) => {
       });
 
       const switcher = locators.ketcherModeSwitcherCombobox;
-      expect(switcher).toBeVisible();
+      await expect(switcher).toBeVisible();
       await switcher.click();
       const macroOption = page.getByTestId('macromolecules_mode');
-      expect(macroOption).toBeVisible();
+      await expect(macroOption).toBeVisible();
       await macroOption.click();
 
-      expect(page.getByTestId('layout-mode')).toBeVisible();
+      await expect(page.getByTestId('layout-mode')).toBeVisible();
 
       if (options.enableFlexMode) {
         await selectFlexLayoutModeTool(page);
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {
-        await Library(page).rnaTab.nucleotidesSection.waitFor({
+        const nucleotidesSection = Library(page).rnaTab.nucleotidesSection;
+        await nucleotidesSection.waitFor({
           state: 'visible',
         });
       }

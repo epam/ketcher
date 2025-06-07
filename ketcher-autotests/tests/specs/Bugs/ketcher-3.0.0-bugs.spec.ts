@@ -899,11 +899,13 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await Library(page).switchToRNATab();
-    await Library(page).selectMonomer(Presets.A);
-    await Library(page).selectMonomer(Presets.U);
-    await Library(page).selectMonomer(Presets.C);
-    await Library(page).selectMonomer(Presets.A);
-    await Library(page).selectMonomer(Presets.U);
+    await Library(page).selectMonomers([
+      Presets.A,
+      Presets.U,
+      Presets.C,
+      Presets.A,
+      Presets.U,
+    ]);
     await takeEditorScreenshot(page);
   });
 

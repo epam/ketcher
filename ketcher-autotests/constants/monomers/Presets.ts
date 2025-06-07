@@ -15,3 +15,5 @@ export const Presets = {
   MOE_G_P: { alias: 'MOE(G)P', testId: 'MOE(G)P_G_MOE_P' } as Monomer,
   MOE_T_P: { alias: 'MOE(T)P', testId: 'MOE(T)P_T_MOE_P' } as Monomer,
 };
+
+export type PresetsType = typeof Presets;

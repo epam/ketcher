@@ -19,7 +19,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
-  addMonomersToFavorites,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
@@ -38,7 +37,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { goToFavoritesTab } from '@utils/macromolecules/library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';

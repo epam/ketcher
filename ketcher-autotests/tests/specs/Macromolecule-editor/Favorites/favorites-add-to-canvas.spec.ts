@@ -1,10 +1,9 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 import {
-  addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,
-  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';

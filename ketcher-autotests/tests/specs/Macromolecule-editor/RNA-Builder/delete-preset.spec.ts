@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
-import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Presets } from '@constants/monomers/Presets';
 import { Library } from '@tests/pages/macromolecules/Library';
 

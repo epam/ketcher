@@ -11,7 +11,6 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMonomer,
   clickInTheMiddleOfTheScreen,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -25,7 +24,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(

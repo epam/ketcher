@@ -53,3 +53,5 @@ export const Sugars = createMonomerGroup(MonomerType.Sugar, {
     testId: "UNA___2'-3'-Unlocked-ribose",
   },
 });
+
+export type SugarsType = typeof Sugars;

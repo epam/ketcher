@@ -14,7 +14,7 @@ import {
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
-import { TemplateLibrary, selectMonomer } from '@utils/selectors';
+import { TemplateLibrary } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -28,6 +28,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 export async function openEditDialogForTemplate(
   page: Page,

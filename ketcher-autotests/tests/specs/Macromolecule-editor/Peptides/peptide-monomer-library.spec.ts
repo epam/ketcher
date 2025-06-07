@@ -1,25 +1,18 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
-import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { expect, test } from '@playwright/test';
 import {
-  addMonomersToFavorites,
-  addMonomerToFavorites,
   addPeptideOnCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
-  removeMonomerFromFavorites,
-  removeMonomersFromFavorites,
-  selectMonomer,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';

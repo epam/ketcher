@@ -5,11 +5,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { goToCHEMTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {

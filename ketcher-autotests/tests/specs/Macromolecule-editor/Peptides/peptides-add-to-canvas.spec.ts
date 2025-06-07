@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -14,6 +13,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor

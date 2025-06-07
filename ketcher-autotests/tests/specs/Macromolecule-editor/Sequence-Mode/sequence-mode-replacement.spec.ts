@@ -19,13 +19,6 @@ import {
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
-  pressAddToPresetsButton,
-  pressNewPresetButton,
-  selectBaseSlot,
-  selectPhosphateSlot,
-  selectSugarSlot,
-} from '@utils/macromolecules/rnaBuilder';
-import {
   pressCancelInConfirmYourActionDialog,
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';

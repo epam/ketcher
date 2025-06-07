@@ -17,7 +17,6 @@ import {
   takeEditorScreenshot,
   takePageScreenshot,
   waitForPageInit,
-  selectMonomer,
   clickOnTheCanvas,
   zoomWithMouseWheel,
   copyToClipboardByKeyboard,
@@ -27,7 +26,6 @@ import {
   selectUndoByKeyboard,
   getControlModifier,
 } from '@utils';
-import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -40,6 +38,7 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {

@@ -35,12 +35,6 @@ import {
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { Phosphates } from '@constants/monomers/Phosphates';
-import {
-  pressSaveButton,
-  selectBaseSlot,
-  selectPhosphateSlot,
-  selectSugarSlot,
-} from '@utils/macromolecules/rnaBuilder';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';

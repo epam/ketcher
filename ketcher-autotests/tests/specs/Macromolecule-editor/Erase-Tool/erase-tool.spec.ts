@@ -9,7 +9,6 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
-  selectMonomer,
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -28,7 +27,6 @@ import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   MacroBondDataIds,
@@ -37,6 +35,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {

@@ -183,7 +183,7 @@ export const Library = (page: Page) => {
           };
 
       if (selectOnFavoritesTab) {
-        this.openTab(LibraryTab.Favorites);
+        await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLocation(location);
       }
@@ -204,7 +204,7 @@ export const Library = (page: Page) => {
           };
 
       if (selectOnFavoritesTab) {
-        this.openTab(LibraryTab.Favorites);
+        await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLocation(location);
       }
@@ -252,7 +252,7 @@ export const Library = (page: Page) => {
       removeFromFavoritesTab = true,
     ) {
       if (removeFromFavoritesTab) {
-        this.openTab(LibraryTab.Favorites);
+        await this.openTab(LibraryTab.Favorites);
       } else {
         const location = monomerLibraryTypeLocation[monomer.monomerType];
         await this.goToMonomerLocation(location);
@@ -277,7 +277,7 @@ export const Library = (page: Page) => {
      */
     async selectMonomers(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
-        this.selectMonomer(monomer);
+        await this.selectMonomer(monomer);
       }
     },
 
@@ -288,7 +288,7 @@ export const Library = (page: Page) => {
      */
     async addMonomersToFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
-        this.addMonomerToFavorites(monomer);
+        await this.addMonomerToFavorites(monomer);
       }
     },
 
@@ -297,7 +297,7 @@ export const Library = (page: Page) => {
      */
     async removeMonomersFromFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
-        this.removeMonomerFromFavorites(monomer);
+        await this.removeMonomerFromFavorites(monomer);
       }
     },
 

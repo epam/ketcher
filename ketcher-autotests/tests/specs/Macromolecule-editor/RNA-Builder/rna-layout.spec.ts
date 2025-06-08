@@ -10,7 +10,7 @@ Test case: #3063 - Add e2e tests for Macromolecule editor
 async function createRNA(page: Page) {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).switchToRNATab();
-  await Library(page).rnaBuilder.collapse();
+  await Library(page).rnaBuilder.expand();
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');
   await page.press('[placeholder="Name your structure"]', 'Enter');
 }

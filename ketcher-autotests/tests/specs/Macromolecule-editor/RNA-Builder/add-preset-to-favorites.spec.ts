@@ -1,15 +1,18 @@
 import { Presets } from '@constants/monomers/Presets';
 import { test, expect } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
   takeMonomerLibraryScreenshot,
+  waitForKetcherInit,
   waitForMonomerPreview,
-  waitForPageInit,
 } from '@utils';
 
 test.describe('Macromolecules add RNA presets to Favorites', () => {
   test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToRNATab();
   });
 
@@ -24,7 +27,7 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
     await expect(page.getByTestId(Presets.A.testId)).not.toBeVisible();
 
     await Library(page).switchToRNATab();
-    await page.locator('div[class="star "]').first().click();
+    await Library(page).addMonomerToFavorites(Presets.A);
     await Library(page).switchToFavoritesTab();
     await expect(page.getByTestId(Presets.A.testId)).toBeVisible();
   });

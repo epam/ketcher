@@ -45,37 +45,6 @@ export const rnaTabPresetsSection = {
   libraryTab: LibraryTab.RNA,
   rnaSection: RNASection.Presets,
 };
-// export const monomerTypeLocation: Record<
-//   LibraryMonomerType,
-//   MonomerTypeLocation
-// > = {
-//   [LibraryMonomerType.Peptide]: {
-//     libraryTab: LibraryTab.Peptides,
-//   },
-//   [LibraryMonomerType.Preset]: {
-//     libraryTab: LibraryTab.RNA,
-//     rnaSection: RNASection.Presets,
-//   },
-//   [LibraryMonomerType.Sugar]: {
-//     libraryTab: LibraryTab.RNA,
-//     rnaSection: RNASection.Sugars,
-//   },
-//   [LibraryMonomerType.Base]: {
-//     libraryTab: LibraryTab.RNA,
-//     rnaSection: RNASection.Bases,
-//   },
-//   [LibraryMonomerType.Phosphate]: {
-//     libraryTab: LibraryTab.RNA,
-//     rnaSection: RNASection.Phosphates,
-//   },
-//   [LibraryMonomerType.Nucleotide]: {
-//     libraryTab: LibraryTab.RNA,
-//     rnaSection: RNASection.Nucleotides,
-//   },
-//   [LibraryMonomerType.CHEM]: {
-//     libraryTab: LibraryTab.CHEM,
-//   },
-// };
 
 export const monomerLibraryTypeLocation: Record<
   MonomerType,
@@ -113,14 +82,3 @@ export const rnaSectionArea: Record<RNASection, RNASectionArea> = {
   [RNASection.Phosphates]: RNASectionArea.Phosphates,
   [RNASection.Nucleotides]: RNASectionArea.Nucleotides,
 };
-
-// export const monomerTabMapping: Partial<Record<LibraryMonomerType, Monomer[]>> =
-//   {
-//     [LibraryMonomerType.Base]: Object.values(Bases),
-//     [LibraryMonomerType.CHEM]: Object.values(Chem),
-//     [LibraryMonomerType.Nucleotide]: Object.values(Nucleotides),
-//     [LibraryMonomerType.Phosphate]: Object.values(Phosphates),
-//     [LibraryMonomerType.Peptide]: Object.values(Peptides),
-//     [LibraryMonomerType.Preset]: Object.values(Presets),
-//     [LibraryMonomerType.Sugar]: Object.values(Sugars),
-//   };

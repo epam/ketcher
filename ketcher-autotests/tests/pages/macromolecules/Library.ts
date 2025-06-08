@@ -37,19 +37,6 @@ export const Library = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  // const getMonomerLibraryLocation = (monomer: Monomer): LibraryMonomerType => {
-  //   for (const [monomerTypeKey, monomers] of Object.entries(
-  //     monomerTabMapping,
-  //   )) {
-  //     if (monomers?.some((m) => m.alias === monomer.alias)) {
-  //       return monomerTypeKey as unknown as LibraryMonomerType;
-  //     }
-  //   }
-  //   throw new Error(
-  //     `Monomer with alias ${monomer.alias} not found in any tab group`,
-  //   );
-  // };
-
   const presetsSection: Locator & PresetsSectionLocators = Object.assign(
     page.getByTestId(RNASection.Presets),
     {

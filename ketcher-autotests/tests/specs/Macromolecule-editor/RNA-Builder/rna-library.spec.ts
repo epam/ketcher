@@ -1266,6 +1266,7 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await Library(page).setSearchValue('No monomers and presets');
+    await Library(page).searchEditbox.blur();
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).switchToRNATab();
@@ -1654,12 +1655,10 @@ test.describe('RNA Library', () => {
       await Library(page).selectMonomer(Bases.DNA_N);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Bases);
 
       await Library(page).selectMonomer(Bases.RNA_N);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Bases);
 
       await Library(page).selectMonomer(Bases.M);
       await waitForMonomerPreview(page);

@@ -2,12 +2,9 @@ import { Page, Locator } from '@playwright/test';
 import { Monomer } from '@utils/types';
 import {
   FavoriteStarSymbol,
-  LibraryMonomerType,
   LibraryTab,
   monomerLibraryTypeLocation,
-  monomerTabMapping,
   MonomerTypeLocation,
-  monomerTypeLocation,
   RNASection,
   rnaSectionArea,
 } from '../constants/library/Constants';
@@ -178,18 +175,19 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : {
+            libraryTab: LibraryTab.RNA,
+            rnaSection: RNASection.Presets,
+          };
+
       if (selectOnFavoritesTab) {
         this.openTab(LibraryTab.Favorites);
-      } else if (monomer.monomerType) {
-        const location = monomerLibraryTypeLocation[monomer.monomerType];
-        await this.goToMonomerLocation(location);
       } else {
-        const location = {
-          libraryTab: LibraryTab.RNA,
-          rnaSection: RNASection.Presets,
-        };
         await this.goToMonomerLocation(location);
       }
+
       await getElement(monomer.testId).click();
     },
 
@@ -198,12 +196,19 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async hoverMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : {
+            libraryTab: LibraryTab.RNA,
+            rnaSection: RNASection.Presets,
+          };
+
       if (selectOnFavoritesTab) {
         this.openTab(LibraryTab.Favorites);
       } else {
-        const location = monomerLibraryTypeLocation[monomer.monomerType];
         await this.goToMonomerLocation(location);
       }
+
       await getElement(monomer.testId).hover();
     },
 
@@ -211,7 +216,11 @@ export const Library = (page: Page) => {
      * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
      */
     async selectCustomPreset(presetTestId: string) {
-      await this.goToMonomerTypeLocation(LibraryMonomerType.Preset);
+      const presetLocation = {
+        libraryTab: LibraryTab.RNA,
+        rnaSection: RNASection.Presets,
+      };
+      await this.goToMonomerLocation(presetLocation);
       await page.getByTestId(presetTestId).click();
     },
 

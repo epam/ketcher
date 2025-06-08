@@ -19,6 +19,7 @@ import {
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
   clickOnCanvas,
+  MonomerType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
@@ -40,7 +41,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
-  LibraryMonomerType,
+  monomerLibraryTypeLocation,
+  MonomerTypeLocation,
   RNASection,
   RNASectionArea,
 } from '@tests/pages/constants/library/Constants';
@@ -1459,7 +1461,7 @@ test.describe('RNA Library', () => {
     testDescription: string;
     SearchString: string;
     // Location where searched monomer located (we have to go to that location to make sure it is where)
-    ResultMonomerLocationTab: LibraryMonomerType;
+    ResultMonomerLocationTab: MonomerTypeLocation;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
@@ -1472,35 +1474,41 @@ test.describe('RNA Library', () => {
     {
       testDescription: '1. Verify search by full IDT alias (5Br-dU)',
       SearchString: '5Br-dU',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription: '2. Verify search by part of IDT alias (itInd))',
       SearchString: 'itInd',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription: '3. Verify search with a single symbol /',
       SearchString: '/',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription:
         '4. Verify search with a specific ending symbol before the second / (hos/)',
       SearchString: 'hos/',
-      ResultMonomerLocationTab: LibraryMonomerType.Phosphate,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Phosphate],
     },
     {
       testDescription:
         '5. Verify no results when additional symbols are added after the second / (Ind/Am)',
       SearchString: 'Ind/Am',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription:
         '6. Verify case insensitivity of the search (/5SUPER-DT)',
       SearchString: '/5SUPER-DT',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1508,7 +1516,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '7. Verify search returns multiple monomers with the same starting symbol (Super))',
       SearchString: 'Super',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1516,7 +1525,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
       SearchString: '/3',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1524,7 +1534,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
       SearchString: '/5',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1532,7 +1543,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '10. Verify search returns multiple monomers that have internal modification (/i))',
       SearchString: '/i',
-      ResultMonomerLocationTab: LibraryMonomerType.Nucleotide,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1553,7 +1565,7 @@ test.describe('RNA Library', () => {
         await Library(page).rnaBuilder.collapse();
 
         await Library(page).setSearchValue(IDTSearchString.SearchString);
-        await Library(page).goToMonomerTypeLocation(
+        await Library(page).goToMonomerLocation(
           IDTSearchString.ResultMonomerLocationTab,
         );
 
@@ -1665,24 +1677,24 @@ test.describe('RNA Library', () => {
     {
       testDescription: "1. Search 'J' ambiguous peptide",
       SearchString: 'J',
-      ResultMonomerLocationTab: LibraryMonomerType.Peptide,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
     },
     {
       testDescription:
         "2. Search 'Leucine' as component of ambiguous peptide (should be J ambiguous monomer)",
       SearchString: 'Leucine',
-      ResultMonomerLocationTab: LibraryMonomerType.Peptide,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
     },
     {
       testDescription: "3. Search 'W' ambiguous DNA and RNA bases",
       SearchString: 'W',
-      ResultMonomerLocationTab: LibraryMonomerType.Base,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
     },
     {
       testDescription:
         "4. Search 'Thymine'  as component of ambiguous DNA base",
       SearchString: 'Thymine',
-      ResultMonomerLocationTab: LibraryMonomerType.Base,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
     },
   ];
 
@@ -1700,7 +1712,7 @@ test.describe('RNA Library', () => {
         await Library(page).setSearchValue(
           AmbiguousMonomersSearchString.SearchString,
         );
-        await Library(page).goToMonomerTypeLocation(
+        await Library(page).goToMonomerLocation(
           AmbiguousMonomersSearchString.ResultMonomerLocationTab,
         );
         await Library(page).searchEditbox.blur();

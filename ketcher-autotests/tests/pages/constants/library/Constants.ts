@@ -1,11 +1,4 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Monomer, MonomerType } from '@utils/types';
+import { MonomerType } from '@utils/types';
 
 export const FavoriteStarSymbol = '★' as const;
 

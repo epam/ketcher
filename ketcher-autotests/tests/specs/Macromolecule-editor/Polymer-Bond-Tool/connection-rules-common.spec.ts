@@ -8,7 +8,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   waitForKetcherInit,
-  waitForIndigoToLoad,
   waitForRender,
   clickOnCanvas,
   resetZoomLevelToDefault,

@@ -2,7 +2,6 @@
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   waitForKetcherInit,
-  waitForIndigoToLoad,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';

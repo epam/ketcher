@@ -486,9 +486,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await Library(page).switchToRNATab();
-    await Library(page).rnaBuilder.expand();
-    await page.getByTestId(Presets.dR_U_P.testId).hover();
+    await Library(page).hoverMonomer(Presets.dR_U_P);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });

@@ -24,7 +24,6 @@ import {
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 import {
@@ -202,9 +201,8 @@ test.describe('Import-Saving .idt Files', () => {
 
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
-    await waitForRender(page, async () => {
-      await page.getByTestId(Phosphates.P.testId).hover();
-    });
+    await Library(page).hoverMonomer(Phosphates.P);
+    await waitForMonomerPreview(page);
     await takePolymerEditorScreenshot(page);
   });
 

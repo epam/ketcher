@@ -35,7 +35,6 @@ test.describe('Open/save file tests: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

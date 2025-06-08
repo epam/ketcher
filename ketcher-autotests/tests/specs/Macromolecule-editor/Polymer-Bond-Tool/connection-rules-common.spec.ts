@@ -65,7 +65,6 @@ test.describe('Common connection rules: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

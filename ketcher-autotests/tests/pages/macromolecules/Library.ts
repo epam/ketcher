@@ -212,7 +212,18 @@ export const Library = (page: Page) => {
      */
     async selectCustomPreset(presetTestId: string) {
       await this.goToMonomerLocation(rnaTabPresetsSection);
-      await page.getByTestId(presetTestId).click();
+      await getElement(presetTestId).click();
+    },
+
+    async rightClickOnPreset(preset: Monomer) {
+      if (preset.monomerType) {
+        throw new Error(
+          `Given monomer with alias ${preset.alias} is not a Preset`,
+        );
+      } else {
+        await this.goToMonomerLocation(rnaTabPresetsSection);
+        await getElement(preset.testId).click({ button: 'right' });
+      }
     },
 
     /**

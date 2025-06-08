@@ -33,7 +33,7 @@ test.describe('Peptide library testing', () => {
 
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
-    await page.getByTestId(Peptides.A.testId).hover();
+    await Library(page).hoverMonomer(Peptides.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });

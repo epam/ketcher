@@ -14,7 +14,7 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
   });
 
   test('Should have star when hover over RNA presets', async ({ page }) => {
-    await page.getByTestId(Presets.A.testId).hover();
+    await Library(page).hoverMonomer(Presets.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });

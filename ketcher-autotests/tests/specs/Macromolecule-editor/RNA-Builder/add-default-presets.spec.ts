@@ -1,6 +1,8 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheScreen,
+  moveMouseAway,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
@@ -23,6 +25,7 @@ test.describe('Macromolecules default presets', () => {
     Description: Switch to Polymer Editor
     */
     await Library(page).selectMonomer(Presets.G);
+    await Library(page).hoverMonomer(Presets.G);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -32,11 +35,8 @@ test.describe('Macromolecules default presets', () => {
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
     await Library(page).selectMonomer(Presets.G);
-    await page.click('#polymer-editor-canvas');
-
-    // Get rid of flakiness because of preview
-    const coords = { x: 100, y: 100 };
-    await page.mouse.move(coords.x, coords.y);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
 
     await takeEditorScreenshot(page);
   });

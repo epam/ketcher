@@ -75,12 +75,14 @@ export const Library = (page: Page) => {
     async hideLibrary() {
       if (await locators.hideLibraryButton.isVisible()) {
         await locators.hideLibraryButton.click();
+        await locators.searchEditbox.waitFor({ state: 'hidden' });
       }
     },
 
     async showLibrary() {
       if (await locators.showLibraryButton.isVisible()) {
         await locators.showLibraryButton.click();
+        await locators.searchEditbox.waitFor({ state: 'visible' });
       }
     },
 

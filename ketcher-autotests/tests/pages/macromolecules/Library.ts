@@ -4,7 +4,9 @@ import {
   FavoriteStarSymbol,
   LibraryMonomerType,
   LibraryTab,
+  monomerLibraryTypeLocation,
   monomerTabMapping,
+  MonomerTypeLocation,
   monomerTypeLocation,
   RNASection,
   rnaSectionArea,
@@ -37,18 +39,18 @@ export const Library = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  const getMonomerLibraryLocation = (monomer: Monomer): LibraryMonomerType => {
-    for (const [monomerTypeKey, monomers] of Object.entries(
-      monomerTabMapping,
-    )) {
-      if (monomers?.some((m) => m.alias === monomer.alias)) {
-        return monomerTypeKey as unknown as LibraryMonomerType;
-      }
-    }
-    throw new Error(
-      `Monomer with alias ${monomer.alias} not found in any tab group`,
-    );
-  };
+  // const getMonomerLibraryLocation = (monomer: Monomer): LibraryMonomerType => {
+  //   for (const [monomerTypeKey, monomers] of Object.entries(
+  //     monomerTabMapping,
+  //   )) {
+  //     if (monomers?.some((m) => m.alias === monomer.alias)) {
+  //       return monomerTypeKey as unknown as LibraryMonomerType;
+  //     }
+  //   }
+  //   throw new Error(
+  //     `Monomer with alias ${monomer.alias} not found in any tab group`,
+  //   );
+  // };
 
   const presetsSection: Locator & PresetsSectionLocators = Object.assign(
     page.getByTestId(RNASection.Presets),
@@ -161,9 +163,8 @@ export const Library = (page: Page) => {
       }
     },
 
-    async goToMonomerTypeLocation(libraryMonomerType: LibraryMonomerType) {
-      const { libraryTab, rnaSection } =
-        monomerTypeLocation[libraryMonomerType];
+    async goToMonomerLocation(monomerTypeLocation: MonomerTypeLocation) {
+      const { libraryTab, rnaSection } = monomerTypeLocation;
 
       await this.openTab(libraryTab);
 
@@ -179,9 +180,15 @@ export const Library = (page: Page) => {
     async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
       if (selectOnFavoritesTab) {
         this.openTab(LibraryTab.Favorites);
+      } else if (monomer.monomerType) {
+        const location = monomerLibraryTypeLocation[monomer.monomerType];
+        await this.goToMonomerLocation(location);
       } else {
-        const location = getMonomerLibraryLocation(monomer);
-        await this.goToMonomerTypeLocation(location);
+        const location = {
+          libraryTab: LibraryTab.RNA,
+          rnaSection: RNASection.Presets,
+        };
+        await this.goToMonomerLocation(location);
       }
       await getElement(monomer.testId).click();
     },
@@ -194,8 +201,8 @@ export const Library = (page: Page) => {
       if (selectOnFavoritesTab) {
         this.openTab(LibraryTab.Favorites);
       } else {
-        const location = getMonomerLibraryLocation(monomer);
-        await this.goToMonomerTypeLocation(location);
+        const location = monomerLibraryTypeLocation[monomer.monomerType];
+        await this.goToMonomerLocation(location);
       }
       await getElement(monomer.testId).hover();
     },
@@ -213,8 +220,8 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async addMonomerToFavorites(monomer: Monomer) {
-      const tab = getMonomerLibraryLocation(monomer);
-      await this.goToMonomerTypeLocation(tab);
+      const location = monomerLibraryTypeLocation[monomer.monomerType];
+      await this.goToMonomerLocation(location);
 
       const favoritesStar = page
         .getByTestId(monomer.testId)
@@ -238,8 +245,8 @@ export const Library = (page: Page) => {
       if (removeFromFavoritesTab) {
         this.openTab(LibraryTab.Favorites);
       } else {
-        const tab = getMonomerLibraryLocation(monomer);
-        await this.goToMonomerTypeLocation(tab);
+        const location = monomerLibraryTypeLocation[monomer.monomerType];
+        await this.goToMonomerLocation(location);
       }
 
       const favoritesStar = page

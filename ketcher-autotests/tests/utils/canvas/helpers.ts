@@ -333,7 +333,7 @@ export async function addSingleMonomerToCanvas(
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomer.testId).click();
+  await Library(page).selectMonomer(monomer);
   await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
   await hideMonomerPreview(page);
   return getMonomerLocator(page, monomer).nth(index);

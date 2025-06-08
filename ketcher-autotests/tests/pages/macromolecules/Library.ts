@@ -7,6 +7,7 @@ import {
   MonomerTypeLocation,
   RNASection,
   rnaSectionArea,
+  rnaTabPresetsSection,
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
 
@@ -177,10 +178,7 @@ export const Library = (page: Page) => {
     async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
       const location = monomer.monomerType
         ? monomerLibraryTypeLocation[monomer.monomerType]
-        : {
-            libraryTab: LibraryTab.RNA,
-            rnaSection: RNASection.Presets,
-          };
+        : rnaTabPresetsSection;
 
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
@@ -198,10 +196,7 @@ export const Library = (page: Page) => {
     async hoverMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
       const location = monomer.monomerType
         ? monomerLibraryTypeLocation[monomer.monomerType]
-        : {
-            libraryTab: LibraryTab.RNA,
-            rnaSection: RNASection.Presets,
-          };
+        : rnaTabPresetsSection;
 
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
@@ -216,11 +211,7 @@ export const Library = (page: Page) => {
      * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
      */
     async selectCustomPreset(presetTestId: string) {
-      const presetLocation = {
-        libraryTab: LibraryTab.RNA,
-        rnaSection: RNASection.Presets,
-      };
-      await this.goToMonomerLocation(presetLocation);
+      await this.goToMonomerLocation(rnaTabPresetsSection);
       await page.getByTestId(presetTestId).click();
     },
 
@@ -229,7 +220,9 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async addMonomerToFavorites(monomer: Monomer) {
-      const location = monomerLibraryTypeLocation[monomer.monomerType];
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
       await this.goToMonomerLocation(location);
 
       const favoritesStar = page
@@ -254,7 +247,9 @@ export const Library = (page: Page) => {
       if (removeFromFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        const location = monomerLibraryTypeLocation[monomer.monomerType];
+        const location = monomer.monomerType
+          ? monomerLibraryTypeLocation[monomer.monomerType]
+          : rnaTabPresetsSection;
         await this.goToMonomerLocation(location);
       }
 

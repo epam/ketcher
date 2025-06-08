@@ -346,7 +346,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       goToPeptides: false,
     });
     await Library(page).switchToPeptidesTab();
-    await page.getByTestId(Peptides.D_OAla.testId).hover();
+    await Library(page).hoverMonomer(Peptides.D_OAla);
     await waitForMonomerPreview(page);
     await takeElementScreenshot(page, 'polymer-library-preview');
   });
@@ -369,10 +369,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await Library(page).switchToPeptidesTab();
-    await page.getByTestId(Peptides.O.testId).hover();
+    await Library(page).hoverMonomer(Peptides.O);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
-    await page.getByTestId(Peptides.U.testId).hover();
+    await Library(page).hoverMonomer(Peptides.U);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });

@@ -228,9 +228,8 @@ test.describe('Import-Saving .idt Files', () => {
 
       await Library(page).switchToRNATab();
       await Library(page).openRNASection(RNASection.Nucleotides);
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
+      await Library(page).hoverMonomer(monomer);
+      await waitForMonomerPreview(page);
       await takePolymerEditorScreenshot(page);
     });
   }
@@ -252,9 +251,8 @@ test.describe('Import-Saving .idt Files', () => {
       markResetToDefaultState('tabSelection');
 
       await Library(page).switchToRNATab();
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
+      await Library(page).hoverMonomer(monomer);
+      await waitForMonomerPreview(page);
       await takePolymerEditorScreenshot(page);
     });
   }

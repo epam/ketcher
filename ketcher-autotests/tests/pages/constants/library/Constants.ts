@@ -41,6 +41,10 @@ export type MonomerTypeLocation = {
   rnaSection?: RNASection;
 };
 
+export const rnaTabPresetsSection = {
+  libraryTab: LibraryTab.RNA,
+  rnaSection: RNASection.Presets,
+};
 // export const monomerTypeLocation: Record<
 //   LibraryMonomerType,
 //   MonomerTypeLocation

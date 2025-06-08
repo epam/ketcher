@@ -14,7 +14,6 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
-  selectMonomer,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -36,6 +35,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { closeErrorMessage } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
@@ -149,7 +149,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    await selectMonomer(page, Peptides.bAla);
+    await Library(page).selectMonomer(Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -190,7 +190,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     test.slow();
-    await selectMonomer(page, Sugars._25R);
+    await Library(page).selectMonomer(Sugars._25R);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });
@@ -200,7 +200,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    await selectMonomer(page, Peptides.D_2Nal);
+    await Library(page).selectMonomer(Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
   });

@@ -4,7 +4,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import {
   clickOnTheCanvas,
   moveMouseAway,
-  selectMonomer,
   takeEditorScreenshot,
   waitForMonomerPreview,
   waitForPageInit,
@@ -12,6 +11,7 @@ import {
 import { Monomer } from '@utils/types';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -123,7 +123,7 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
           2. Click at the center of canvas
           3. Take screenshot of the canvas to make sure selected monomer appeared on the canvas
         */
-      await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomer);
+      await Library(page).selectMonomer(AmbiguousMonomer.AmbiguousMonomer);
       await clickOnTheCanvas(page, 0, 0);
       await moveMouseAway(page);
       await getMonomerLocator(page, AmbiguousMonomer.AmbiguousMonomer).hover();

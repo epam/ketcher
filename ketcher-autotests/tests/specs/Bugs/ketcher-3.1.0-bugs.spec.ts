@@ -12,7 +12,6 @@ import {
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  addMonomersToFavorites,
   takeMonomerLibraryScreenshot,
   delay,
   openLayoutModeMenu,
@@ -29,10 +28,6 @@ import {
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
-  goToFavoritesTab,
-  goToPeptidesTab,
-} from '@utils/macromolecules/library';
-import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
@@ -40,10 +35,6 @@ import {
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
-import {
-  pressSaveButton,
-  selectBaseSlot,
-} from '@utils/macromolecules/rnaBuilder';
 import {
   switchToPeptideMode,
   switchToRNAMode,
@@ -60,6 +51,7 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
@@ -241,9 +233,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Favorites tab
      * 4. Take a screenshot
      */
-    await goToPeptidesTab(page);
-    await addMonomersToFavorites(page, [Peptides.A, Peptides.C]);
-    await goToFavoritesTab(page);
+    await Library(page).switchToPeptidesTab();
+    await Library(page).addMonomersToFavorites([Peptides.A, Peptides.C]);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -353,8 +345,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       enableFlexMode: true,
       goToPeptides: false,
     });
-    await goToPeptidesTab(page);
-    await page.getByTestId(Peptides.D_OAla.testId).hover();
+    await Library(page).switchToPeptidesTab();
+    await Library(page).hoverMonomer(Peptides.D_OAla);
     await waitForMonomerPreview(page);
     await takeElementScreenshot(page, 'polymer-library-preview');
   });
@@ -376,11 +368,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 6. Take a screenshot
      */
     await selectFlexLayoutModeTool(page);
-    await goToPeptidesTab(page);
-    await page.getByTestId(Peptides.O.testId).hover();
+    await Library(page).switchToPeptidesTab();
+    await Library(page).hoverMonomer(Peptides.O);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
-    await page.getByTestId(Peptides.U.testId).hover();
+    await Library(page).hoverMonomer(Peptides.U);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -506,7 +498,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     for (let i = 0; i < 2; i++) {
       await keyboardPressOnCanvas(page, 'ArrowLeft');
     }
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -634,9 +626,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const symbolN = getSymbolLocator(page, { symbolAlias: 'N' }).first();
     await symbolN.click();
     await modifyInRnaBuilder(page, symbolN);
-    await selectBaseSlot(page);
-    await page.getByTestId(Bases._4ime6A.testId).click();
-    await pressSaveButton(page);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases._4ime6A);
+    await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -9,7 +9,6 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
-  selectMonomer,
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -28,7 +27,6 @@ import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   MacroBondDataIds,
@@ -37,13 +35,14 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Delete monomer bonded with another monomers', async ({ page }) => {
@@ -141,7 +140,7 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: CHEM is deleted.
     */
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -429,7 +428,7 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await selectMonomer(page, Peptides.X);
+    await Library(page).selectMonomer(Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -457,7 +456,7 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await selectMonomer(page, Bases.DNA_N);
+    await Library(page).selectMonomer(Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -485,7 +484,7 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await selectMonomer(page, Peptides.Z);
+    await Library(page).selectMonomer(Peptides.Z);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -513,7 +512,7 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await selectMonomer(page, Bases.RNA_N);
+    await Library(page).selectMonomer(Bases.RNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(

@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  selectMonomer,
   pressButton,
   moveOnAtom,
   clickOnAtom,
@@ -38,7 +37,6 @@ import {
   verifyFileExport,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import { goToRNATab } from '@utils/macromolecules/library';
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -69,6 +67,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
@@ -241,7 +240,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       nodeIndexOverall: 4,
     }).click();
     await page.keyboard.up('Shift');
-    await selectMonomer(page, Peptides.C);
+    await Library(page).selectMonomer(Peptides.C);
     await pressButton(page, 'Yes');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -447,7 +446,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -899,12 +898,14 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await selectMonomer(page, Presets.A);
-    await selectMonomer(page, Presets.U);
-    await selectMonomer(page, Presets.C);
-    await selectMonomer(page, Presets.A);
-    await selectMonomer(page, Presets.U);
+    await Library(page).switchToRNATab();
+    await Library(page).selectMonomers([
+      Presets.A,
+      Presets.U,
+      Presets.C,
+      Presets.A,
+      Presets.U,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -920,8 +921,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Open saved MOL file.
      * 5. Take a screenshot
      */
-    await goToRNATab(page);
-    await selectMonomer(page, Presets.MOE_A_P);
+    await Library(page).switchToRNATab();
+    await Library(page).selectMonomer(Presets.MOE_A_P);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(
       page,
@@ -975,7 +976,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectMonomer(page, Bases.A);
+    await Library(page).selectMonomer(Bases.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await page

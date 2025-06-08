@@ -19,7 +19,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
-  addMonomersToFavorites,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
@@ -31,8 +30,6 @@ import {
   selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
-  hideLibrary,
-  showLibrary,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -40,7 +37,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { goToFavoritesTab } from '@utils/macromolecules/library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
@@ -67,18 +63,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-async function addToFavoritesMonomers(page: Page) {
-  await addMonomersToFavorites(page, [
-    Peptides.bAla,
-    Peptides.Phe4Me,
-    Peptides.meM,
-    Sugars._25R,
-    Bases.baA,
-    Phosphates.bP,
-    Chem.Test_6_Ch,
-  ]);
-}
+import { Library } from '@tests/pages/macromolecules/Library';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -103,12 +88,20 @@ test.describe('Macro-Micro-Switcher2', () => {
       when Hide Library and switching from Macro mode to Micro mode and back to Macro is saved
       */
     test.slow();
-    await addToFavoritesMonomers(page);
-    await hideLibrary(page);
+    await Library(page).addMonomersToFavorites([
+      Peptides.bAla,
+      Peptides.Phe4Me,
+      Peptides.meM,
+      Sugars._25R,
+      Bases.baA,
+      Phosphates.bP,
+      Chem.Test_6_Ch,
+    ]);
+    await Library(page).hideLibrary();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await showLibrary(page);
-    await goToFavoritesTab(page);
+    await Library(page).showLibrary();
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 

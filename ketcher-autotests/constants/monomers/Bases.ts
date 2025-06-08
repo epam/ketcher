@@ -97,3 +97,5 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
     testId: 'h456UR___(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
   },
 });
+
+export type BasesType = typeof Bases;

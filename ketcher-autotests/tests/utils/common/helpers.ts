@@ -20,26 +20,6 @@ export async function pageReloadMicro(page: Page) {
   await waitForIndigoToLoad(page);
 }
 
-export async function contextReload(page: Page): Promise<Page> {
-  /* In order to fix problem with label renderer (one pixel shift) 
-        we have to try to reload deeper than page - context!
-   */
-  const cntxt = page.context();
-  const brwsr = cntxt.browser();
-  await page.close();
-  await cntxt.close();
-  if (brwsr) {
-    const newContext = await brwsr.newContext();
-    page = await newContext.newPage();
-  }
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  return page;
-}
-
 /**
  * This function clears the local storage of the page.
  * It is useful for resetting the application state to ensure no previous data interferes with testing.

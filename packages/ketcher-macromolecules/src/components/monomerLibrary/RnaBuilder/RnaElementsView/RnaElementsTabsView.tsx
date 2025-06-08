@@ -94,7 +94,12 @@ const RnaElementsTabsView = ({
         const details =
           groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer compact>
-              <StyledButton onClick={onNewPresetClick}>New Preset</StyledButton>
+              <StyledButton
+                onClick={onNewPresetClick}
+                data-testid="new-preset-button"
+              >
+                New Preset
+              </StyledButton>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}

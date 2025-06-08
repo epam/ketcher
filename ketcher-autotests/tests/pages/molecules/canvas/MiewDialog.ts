@@ -1,4 +1,6 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
+import { delay } from '@utils/canvas';
 
 type MiewDialogLocators = {
   closeWindowButton: Locator;
@@ -21,6 +23,7 @@ export const MiewDialog = (page: Page) => {
     },
 
     async pressApplyButton() {
+      await delay(0.2);
       await locators.applyButton.click();
     },
 

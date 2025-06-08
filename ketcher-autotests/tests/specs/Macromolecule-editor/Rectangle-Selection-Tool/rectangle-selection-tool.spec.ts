@@ -11,7 +11,6 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMonomer,
   clickInTheMiddleOfTheScreen,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -25,7 +24,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -54,7 +53,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test.afterEach(async () => {
@@ -148,7 +147,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Choose peptide
-    await selectMonomer(page, Peptides.Tza);
+    await Library(page).selectMonomer(Peptides.Tza);
 
     // Create 4 peptides on canvas
     await clickOnCanvas(page, 300, 400);
@@ -189,10 +188,10 @@ test.describe('Rectangle Selection Tool', () => {
       x: center.x - shift,
       y: center.y,
     };
-    await selectMonomer(page, Peptides.bAla);
+    await Library(page).selectMonomer(Peptides.bAla);
     await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
 
-    await selectMonomer(page, Peptides.Edc);
+    await Library(page).selectMonomer(Peptides.Edc);
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
     await clickOnCanvas(page, center.x + shift, center.y);
     await page.keyboard.press('Escape');
@@ -310,7 +309,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await selectMonomer(page, Chem.A6OH);
+    await Library(page).selectMonomer(Chem.A6OH);
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(

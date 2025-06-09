@@ -16,4 +16,9 @@ export const StyledMenu = styled(Menu)`
     opacity: 1;
     font-weight: bold;
   }
+
+  .context-menu-icon {
+    display: flex;
+    align-items: center;
+  }
 `;

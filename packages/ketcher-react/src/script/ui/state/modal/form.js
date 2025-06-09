@@ -153,6 +153,7 @@ export function formReducer(state, action) {
   if (newType === 'DAT') return sdataReducer(state, action);
   if (
     newType === 'SUP' &&
+    state?.result?.type !== 'nucleotideComponent' &&
     Object.values(SUPERATOM_CLASS).includes(action.data?.result?.class)
   )
     return nucleotideComponentReducer(state, action);

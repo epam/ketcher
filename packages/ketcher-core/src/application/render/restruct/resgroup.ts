@@ -22,6 +22,7 @@ import {
   Vec2,
   Struct,
   MonomerMicromolecule,
+  SUPERATOM_CLASS,
 } from 'domain/entities';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
@@ -47,6 +48,7 @@ interface SGroupdrawBracketsOptions {
   lowerIndexText?: string | null;
   upperIndexText?: string | null;
   indexAttribute?: object;
+  superatomClass?: SUPERATOM_CLASS;
 }
 
 class ReSGroup extends ReObject {
@@ -109,6 +111,7 @@ class ReSGroup extends ReObject {
             sgroup.data.name || sgroup.data.class;
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
+          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
           break;
         }
         case 'GEN': {
@@ -311,6 +314,7 @@ function SGroupdrawBrackets({
   lowerIndexText,
   upperIndexText,
   indexAttribute,
+  superatomClass,
 }: SGroupdrawBracketsOptions): void {
   const attachmentPoints = [...atomSet].reduce((arr, atomId) => {
     const rgroupAttachmentPointIds =
@@ -360,7 +364,11 @@ function SGroupdrawBrackets({
     }
   }
   const bracketR = brackets[rightBracketIndex];
-  function renderIndex(text: string, isLowerText = false): void {
+  function renderIndex(
+    text: string,
+    isLowerText = false,
+    superatomClass?: SUPERATOM_CLASS,
+  ): void {
     let path: Vec2;
     let lowerPath: Vec2;
     const bracketPoint1 = new Vec2(
@@ -390,11 +398,60 @@ function SGroupdrawBrackets({
     }
 
     const indexPos = new Vec2(path.x, path.y);
-    const indexPath = render.paper.text(indexPos.x, indexPos.y, text).attr({
-      font: render.options.font,
-      'font-size': render.options.fontszsubInPx,
-    });
+    const iconSize = superatomClass === SUPERATOM_CLASS.BASE ? 14 : 12;
+    const iconOffsetFromBracket = 8;
+    const textOffsetFromBracket = 2;
+    let icon;
+
+    // Draw icon for superatom classes
+    if (superatomClass === SUPERATOM_CLASS.SUGAR) {
+      icon = render.paper.rect(
+        indexPos.x + iconOffsetFromBracket,
+        indexPos.y - iconSize / 2,
+        iconSize,
+        iconSize,
+        2,
+      );
+    } else if (superatomClass === SUPERATOM_CLASS.PHOSPHATE) {
+      icon = render.paper.circle(
+        indexPos.x + iconSize / 2 + iconOffsetFromBracket,
+        indexPos.y,
+        iconSize / 2,
+      );
+    } else if (superatomClass === SUPERATOM_CLASS.BASE) {
+      const rhombusPath = `M${
+        indexPos.x + iconSize / 2 + iconOffsetFromBracket
+      },${indexPos.y - iconSize / 2}
+                         L${indexPos.x + iconSize + iconOffsetFromBracket},${
+        indexPos.y
+      }
+                         L${
+                           indexPos.x + iconSize / 2 + iconOffsetFromBracket
+                         },${indexPos.y + iconSize / 2}
+                         L${indexPos.x + iconOffsetFromBracket},${
+        indexPos.y
+      } Z`;
+      icon = render.paper.path(rhombusPath);
+    }
+
+    if (icon && indexAttribute) {
+      icon.attr({
+        stroke: '#B4B9D6',
+        strokeWidth: '1.4',
+      });
+      set.push(icon);
+    }
+
+    const textPosition = new Vec2(indexPos.x, indexPos.y);
+    const indexPath = render.paper
+      .text(textPosition.x, textPosition.y, text)
+      .attr({
+        font: render.options.font,
+        'font-size': render.options.fontszsubInPx,
+      });
     if (indexAttribute) indexPath.attr(indexAttribute);
+
+    // Bounding box adjustment and final positioning
     const indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
     const t =
       Math.max(
@@ -404,15 +461,16 @@ function SGroupdrawBrackets({
           indexBox,
         ),
         3,
-      ) + 2;
+      ) + (icon ? iconOffsetFromBracket : textOffsetFromBracket);
     indexPath.translateAbs(
-      t * bracketR.bracketAngleDirection.x,
+      t * bracketR.bracketAngleDirection.x +
+        (icon ? iconSize + iconOffsetFromBracket / 2 : 0),
       t * bracketR.bracketAngleDirection.y,
     );
     set.push(indexPath);
   }
   if (lowerIndexText) {
-    renderIndex(lowerIndexText, true);
+    renderIndex(lowerIndexText, true, superatomClass);
   }
   if (upperIndexText) renderIndex(upperIndexText);
 }

@@ -28,6 +28,12 @@ import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
 
+export enum SUPERATOM_CLASS {
+  SUGAR = 'Sugar',
+  BASE = 'Base',
+  PHOSPHATE = 'Phosphate',
+}
+
 export class SGroupBracketParams {
   readonly c: Vec2;
   readonly d: Vec2;
@@ -128,6 +134,7 @@ export class SGroup {
       units: '',
       query: '',
       queryOp: '',
+      class: '',
     };
   }
 

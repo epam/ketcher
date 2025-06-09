@@ -20,5 +20,6 @@ export const StyledMenu = styled(Menu)`
   .context-menu-icon {
     display: flex;
     align-items: center;
+    margin-right: 3px;
   }
 `;

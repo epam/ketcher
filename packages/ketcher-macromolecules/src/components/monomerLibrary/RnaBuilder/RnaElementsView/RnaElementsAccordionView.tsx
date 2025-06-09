@@ -93,7 +93,12 @@ const RnaElementsAccordionView = ({
         const details =
           groupData.groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer>
-              <StyledButton onClick={onNewPresetClick}>New Preset</StyledButton>
+              <StyledButton
+                onClick={onNewPresetClick}
+                data-testid="new-preset-button"
+              >
+                New Preset
+              </StyledButton>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}

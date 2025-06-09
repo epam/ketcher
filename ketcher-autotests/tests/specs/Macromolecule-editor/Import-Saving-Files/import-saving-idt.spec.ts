@@ -19,13 +19,11 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 import {
@@ -38,21 +36,14 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  chooseTab,
-  Tabs,
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
-import {
-  toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
-} from '@utils/macromolecules/rnaBuilder';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -72,6 +63,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { RNASection } from '@tests/pages/constants/library/Constants';
 
 let page: Page;
 
@@ -91,7 +84,7 @@ test.beforeAll(async ({ browser }) => {
   page = await sharedContext.newPage();
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
@@ -170,7 +163,7 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: In case of peptide monomers are on canvas, error "Peptide monomers are not supported in IDT" appear.
     */
-    await selectMonomer(page, Peptides._1Nal);
+    await Library(page).selectMonomer(Peptides._1Nal);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -206,11 +199,10 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    await chooseTab(page, Tabs.Rna);
-    await togglePhosphatesAccordion(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId(Phosphates.P.testId).hover();
-    });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await Library(page).hoverMonomer(Phosphates.P);
+    await waitForMonomerPreview(page);
     await takePolymerEditorScreenshot(page);
   });
 
@@ -232,11 +224,10 @@ test.describe('Import-Saving .idt Files', () => {
       */
       markResetToDefaultState('tabSelection');
 
-      await chooseTab(page, Tabs.Rna);
-      await toggleNucleotidesAccordion(page);
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
+      await Library(page).switchToRNATab();
+      await Library(page).openRNASection(RNASection.Nucleotides);
+      await Library(page).hoverMonomer(monomer);
+      await waitForMonomerPreview(page);
       await takePolymerEditorScreenshot(page);
     });
   }
@@ -257,10 +248,9 @@ test.describe('Import-Saving .idt Files', () => {
       */
       markResetToDefaultState('tabSelection');
 
-      await chooseTab(page, Tabs.Rna);
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
+      await Library(page).switchToRNATab();
+      await Library(page).hoverMonomer(monomer);
+      await waitForMonomerPreview(page);
       await takePolymerEditorScreenshot(page);
     });
   }
@@ -790,7 +780,7 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
     */
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const x = 650;
     const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
@@ -800,7 +790,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
+    await Library(page).selectMonomer(Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -831,7 +821,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -858,7 +848,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
+    await Library(page).selectMonomer(Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -898,7 +888,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -945,7 +935,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
+    await Library(page).selectMonomer(Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
@@ -969,7 +959,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
+    await Library(page).selectMonomer(Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -994,7 +984,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/iMe-dC/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).click();

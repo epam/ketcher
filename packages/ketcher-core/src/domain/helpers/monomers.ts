@@ -334,7 +334,6 @@ export const canModifyAminoAcid = (
   modificationMonomerLibraryItem: MonomerItemType,
 ) => {
   return (
-    monomer.label !== modificationMonomerLibraryItem.label &&
     (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
       modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
     (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
@@ -376,6 +375,7 @@ export const getAminoAcidsToModify = (
 
     if (
       modifiedMonomerItem &&
+      monomer.label !== modifiedMonomerItem.label &&
       canModifyAminoAcid(monomer, modifiedMonomerItem)
     ) {
       aminoAcidsToModify.set(monomer, modifiedMonomerItem);

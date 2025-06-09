@@ -1,4 +1,4 @@
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
@@ -6,7 +6,6 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectMonomer,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
@@ -20,32 +19,8 @@ import {
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
   clickOnCanvas,
-  selectMonomers,
-  addMonomerToFavorites,
-  removeMonomerFromFavorites,
-  selectCustomPreset,
-  hideLibrary,
-  showLibrary,
+  MonomerType,
 } from '@utils';
-import {
-  toggleRnaBuilderAccordion,
-  pressAddToPresetsButton,
-  pressNewPresetButton,
-  pressSaveButton,
-  selectBaseSlot,
-  selectPhosphateSlot,
-  selectSugarSlot,
-  toggleBasesAccordion,
-  toggleNucleotidesAccordion,
-  toggleSugarsAccordion,
-  RnaAccordionType,
-  toggleRnaAccordionItem,
-  toggleRnaBuilder,
-} from '@utils/macromolecules/rnaBuilder';
-import {
-  goToMonomerLocationTab,
-  MonomerLocationTabs,
-} from '@utils/macromolecules/library';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -64,6 +39,13 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import {
+  monomerLibraryTypeLocation,
+  MonomerTypeLocation,
+  RNASection,
+  RNASectionArea,
+} from '@tests/pages/constants/library/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -72,11 +54,11 @@ async function drawThreeMonomers(page: Page) {
   const y2 = 504;
   const x3 = 705;
   const y3 = 106;
-  await selectMonomer(page, Sugars._3A6);
+  await Library(page).selectMonomer(Sugars._3A6);
   await clickOnCanvas(page, x1, y1);
-  await selectMonomer(page, Bases.baA);
+  await Library(page).selectMonomer(Bases.baA);
   await clickOnCanvas(page, x2, y2);
-  await selectMonomer(page, Phosphates.P);
+  await Library(page).selectMonomer(Phosphates.P);
   await clickOnCanvas(page, x3, y3);
 }
 
@@ -103,9 +85,9 @@ async function drawBasePhosphate(page: Page) {
   const base = getMonomerLocator(page, Bases.baA).nth(0);
   const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
-  await selectMonomer(page, Bases.baA);
+  await Library(page).selectMonomer(Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Phosphates.P);
+  await Library(page).selectMonomer(Phosphates.P);
   await clickOnCanvas(page, x, y);
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await base.hover();
@@ -122,9 +104,9 @@ async function drawSugarPhosphate(page: Page) {
   const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
   const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
-  await selectMonomer(page, Sugars._3A6);
+  await Library(page).selectMonomer(Sugars._3A6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Phosphates.P);
+  await Library(page).selectMonomer(Phosphates.P);
   await clickOnCanvas(page, x, y);
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await sugar.hover();
@@ -138,9 +120,9 @@ async function drawSugarBase(page: Page) {
   const y = 350;
   const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
   const base = getMonomerLocator(page, Bases.baA).nth(0);
-  await selectMonomer(page, Sugars._3A6);
+  await Library(page).selectMonomer(Sugars._3A6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Bases.baA);
+  await Library(page).selectMonomer(Bases.baA);
   await clickOnCanvas(page, x, y);
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await sugar.hover();
@@ -166,7 +148,7 @@ async function reloadPageAndConfigureInitialState(page: Page) {
 }
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.describe('RNA Library', () => {
@@ -221,51 +203,57 @@ test.describe('RNA Library', () => {
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: After click on arrow RNA Builder expanded.
     */
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
     await takeMonomerLibraryScreenshot(page);
 
     // Reset to default state
-    await toggleRnaBuilder(page, 'collapse');
+    await Library(page).rnaBuilder.collapse();
   });
 
   const testData = [
     {
-      component: 'Presets',
+      component: RNASection.Presets,
       description:
         'After clicking on the arrow, the Presets component collapsed.',
     },
     {
-      component: 'Sugars',
+      component: RNASection.Sugars,
       description:
         'After clicking on the arrow, the Sugars component expanded.',
     },
     {
-      component: 'Bases',
+      component: RNASection.Bases,
       description: 'After clicking on the arrow, the Bases component expanded.',
     },
     {
-      component: 'Phosphates',
+      component: RNASection.Phosphates,
       description:
         'After clicking on the arrow, the Phosphates component expanded.',
     },
   ];
 
+  function getEnumKeyByValue<T extends Record<string, string>>(
+    enumObj: T,
+    value: string,
+  ): keyof T | undefined {
+    return (Object.keys(enumObj) as Array<keyof T>).find(
+      (key) => enumObj[key] === value,
+    );
+  }
+
   for (const [index, data] of testData.entries()) {
-    test(`Check ${data.component} component`, async () => {
+    const enumKey = getEnumKeyByValue(RNASection, data.component);
+    test(`Check ${enumKey} component`, async () => {
       /* 
       Test case: #2748, #2751 - RNA Builder. Accordion component
       */
-      await toggleRnaAccordionItem(
-        page,
-        data.component as RnaAccordionType,
-        'expand',
-      );
+      await Library(page).openRNASection(data.component);
 
       await takeMonomerLibraryScreenshot(page);
 
       // Reset to default state: expand the 'Presets' component after verifying the last item
       if (index === testData.length - 1) {
-        await toggleRnaAccordionItem(page, 'Presets', 'expand');
+        await Library(page).openRNASection(RNASection.Presets);
       }
     });
   }
@@ -347,11 +335,15 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -364,16 +356,20 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
 
     await reloadPageAndConfigureInitialState(page);
-    await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -386,17 +382,25 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
 
     await reloadPageAndConfigureInitialState(page);
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
     await takeEditorScreenshot(page);
   });
 
@@ -409,10 +413,10 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._3A6, Bases.baA, Phosphates.bP]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '3A6(baA)bP_baA_3A6_bP');
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._3A6, Bases.baA, Phosphates.bP]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -430,11 +434,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Bases.baA, Phosphates.bP]);
-    await selectSugarSlot(page);
-    await selectMonomer(page, Sugars._3SS6);
-    await selectSugarSlot(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Bases.baA, Phosphates.bP]);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugars._3SS6);
+    await Library(page).rnaBuilder.selectSugarSlot();
     await takeRNABuilderScreenshot(page);
   });
 
@@ -447,11 +451,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '25R(A)_A_25R_.');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._25R, Bases.A]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('25R(A)_A_25R_.');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -464,11 +468,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '25R()bP_._25R_bP');
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._25R, Phosphates.bP]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('25R()bP_._25R_bP');
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -481,9 +485,9 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Bases.A, Phosphates.bP]);
-    await selectBaseSlot(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Bases.A, Phosphates.bP]);
+    await Library(page).rnaBuilder.selectBaseSlot();
     await takeRNABuilderScreenshot(page);
   });
 
@@ -496,22 +500,28 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('edit').locator('div').click();
-    await selectBaseSlot(page);
-    await selectMonomer(page, Bases.baA);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases.baA);
     await moveMouseAway(page);
-    await pressSaveButton(page);
-    await selectCustomPreset(page, '25R(baA)Test-6-Ph_baA_25R_Test-6-Ph');
+    await Library(page).rnaBuilder.save();
+    await Library(page).selectCustomPreset(
+      '25R(baA)Test-6-Ph_baA_25R_Test-6-Ph',
+    );
 
     // To avoid unstable test execution
     // Allows see a right preset in a viewport
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -524,25 +534,29 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
-    await pressSaveButton(page);
+    await Library(page).rnaBuilder.save();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.collapse();
     await page.getByTestId('25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('edit').click();
-    await selectPhosphateSlot(page);
-    await selectMonomer(page, Phosphates.P);
-    await pressSaveButton(page);
-    await selectCustomPreset(page, '25R(A)P_A_25R_P');
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphates.P);
+    await Library(page).rnaBuilder.save();
+    await Library(page).selectCustomPreset('25R(A)P_A_25R_P');
     await moveMouseAway(page);
     await takePresetsScreenshot(page);
   });
@@ -556,15 +570,15 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
     await page.getByTestId(Presets.A.testId).click({
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
-    await page.getByTestId('cancel-btn').click();
+    await Library(page).rnaBuilder.cancel();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.collapse();
     await takePresetsScreenshot(page);
   });
 
@@ -581,9 +595,13 @@ test.describe('RNA Library', () => {
       await clearLocalStorage(page);
       await reloadPageAndConfigureInitialState(page);
 
-      await toggleRnaBuilderAccordion(page);
-      await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-      await pressAddToPresetsButton(page);
+      await Library(page).rnaBuilder.expand();
+      await Library(page).selectMonomers([
+        Sugars._25R,
+        Bases.A,
+        Phosphates.Test_6_Ph,
+      ]);
+      await Library(page).rnaBuilder.addToPresets();
       await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
         button: 'right',
       });
@@ -592,7 +610,7 @@ test.describe('RNA Library', () => {
       await takePresetsScreenshot(page);
 
       // Reset to default state
-      await toggleRnaBuilder(page, 'collapse');
+      await Library(page).rnaBuilder.collapse();
     },
   );
 
@@ -601,16 +619,16 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.baA, Phosphates.bP]);
-    await pressAddToPresetsButton(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._25R, Bases.baA, Phosphates.bP]);
+    await Library(page).rnaBuilder.addToPresets();
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
       button: 'right',
     });
     await page.getByTestId('edit').locator('div').click();
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('TestMonomers');
-    await pressSaveButton(page);
+    await Library(page).rnaBuilder.save();
     await takePresetsScreenshot(page);
   });
 
@@ -623,19 +641,19 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectSugarSlot(page);
-    await selectMonomer(page, Sugars._3A6);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugars._3A6);
     await moveMouseAway(page);
-    await selectBaseSlot(page);
-    await selectMonomer(page, Bases.baA);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases.baA);
     await moveMouseAway(page);
-    await selectPhosphateSlot(page);
-    await selectMonomer(page, Phosphates.bP);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphates.bP);
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
 
     // Reset to default state
-    await toggleRnaBuilder(page, 'collapse');
+    await Library(page).rnaBuilder.collapse();
   });
 
   test('Add names to RNA manually', async () => {
@@ -643,19 +661,19 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
-    await toggleRnaBuilderAccordion(page);
-    await selectSugarSlot(page);
-    await selectMonomer(page, Sugars._25R);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugars._25R);
     // To avoid unstable test execution
     // Hide tooltip which overlays 'rna-builder-slot--base' element
     await moveMouseAway(page);
-    await selectBaseSlot(page);
-    await selectMonomer(page, Bases.A);
-    await selectPhosphateSlot(page);
-    await selectMonomer(page, Phosphates.Test_6_Ph);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases.A);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphates.Test_6_Ph);
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('cTest');
-    await pressAddToPresetsButton(page);
+    await Library(page).rnaBuilder.addToPresets();
     await takeRNABuilderScreenshot(page);
   });
 
@@ -682,9 +700,9 @@ test.describe('RNA Library', () => {
       },
     ];
 
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
     for (const monomer of monomers) {
-      await selectMonomer(page, monomer.name);
+      await Library(page).selectMonomer(monomer.name);
       await page
         .getByTestId(`rna-accordion-details-${monomer.groupName}`)
         .hover();
@@ -703,10 +721,10 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._3A6, Bases.baA]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '3A6(baA)_baA_3A6_.');
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._3A6, Bases.baA]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('3A6(baA)_baA_3A6_.');
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -723,10 +741,10 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._3A6, Phosphates.bP]);
-    await pressAddToPresetsButton(page);
-    await selectCustomPreset(page, '3A6()bP_._3A6_bP');
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugars._3A6, Phosphates.bP]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).selectCustomPreset('3A6()bP_._3A6_bP');
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -743,9 +761,9 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Bases.baA, Phosphates.bP]);
-    await selectBaseSlot(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([Bases.baA, Phosphates.bP]);
+    await Library(page).rnaBuilder.selectBaseSlot();
     await takeRNABuilderScreenshot(page);
   });
 
@@ -933,7 +951,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
 
       // Reset to default
-      await toggleRnaAccordionItem(page, 'Presets', 'expand');
+      await Library(page).openRNASection(RNASection.Presets);
     },
   );
 
@@ -1014,9 +1032,9 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomer(page, Sugars._12ddR);
-    await selectBaseSlot(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomer(Sugars._12ddR);
+    await Library(page).rnaBuilder.selectBaseSlot();
     await takePresetsScreenshot(page);
   });
 
@@ -1042,11 +1060,11 @@ test.describe('RNA Library', () => {
 
       const x = 200;
       const y = 200;
-      await selectMonomer(page, monomer);
+      await Library(page).selectMonomer(monomer);
 
       await clickInTheMiddleOfTheScreen(page);
       await page.keyboard.press('Escape');
-      await toggleNucleotidesAccordion(page);
+      await Library(page).openRNASection(RNASection.Nucleotides);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -1142,7 +1160,7 @@ test.describe('RNA Library', () => {
       const x = 300;
       const y = 500;
 
-      await selectMonomer(page, monomer);
+      await Library(page).selectMonomer(monomer);
       await clickOnCanvas(page, x, y);
       await page.keyboard.press('Escape');
       await clickOnCanvas(page, x, y);
@@ -1152,7 +1170,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
 
       // Reset to default state
-      await toggleRnaAccordionItem(page, 'Presets', 'expand');
+      await Library(page).openRNASection(RNASection.Presets);
     });
   }
 
@@ -1174,7 +1192,7 @@ test.describe('RNA Library', () => {
     */
       const x = 200;
       const y = 200;
-      await selectMonomer(page, monomer);
+      await Library(page).selectMonomer(monomer);
 
       await clickInTheMiddleOfTheScreen(page);
       await page.keyboard.press('Escape');
@@ -1191,7 +1209,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
 
       // Reset to default state
-      await toggleRnaAccordionItem(page, 'Presets', 'expand');
+      await Library(page).openRNASection(RNASection.Presets);
     });
   }
 
@@ -1200,14 +1218,14 @@ test.describe('RNA Library', () => {
     Test case: https://github.com/epam/ketcher/issues/3816
     Description: It is not possible to create preset if Sugar is without R3 connection point.
     */
-    await toggleRnaBuilderAccordion(page);
-    await selectBaseSlot(page);
-    await selectMonomer(page, Bases.baA);
-    await selectSugarSlot(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases.baA);
+    await Library(page).rnaBuilder.selectSugarSlot();
     await takePresetsScreenshot(page);
 
     // Reset to default state
-    await toggleRnaBuilder(page, 'collapse');
+    await Library(page).rnaBuilder.collapse();
   });
 
   test('It is possible to add/remove RNA presets into the Favourite library', async () => {
@@ -1223,11 +1241,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await addMonomerToFavorites(page, Presets.A);
-    await chooseTab(page, Tabs.Favorites);
+    await Library(page).addMonomerToFavorites(Presets.A);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
 
-    await removeMonomerFromFavorites(page, Presets.A);
+    await Library(page).removeMonomerFromFavorites(Presets.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -1247,14 +1265,14 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill('No monomers and presets');
+    await Library(page).setSearchValue('No monomers and presets');
+    await Library(page).searchEditbox.blur();
     await takeMonomerLibraryScreenshot(page);
 
-    await chooseTab(page, Tabs.Rna);
+    await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);
 
-    await chooseTab(page, Tabs.Chem);
+    await Library(page).switchToCHEMTab();
     await takeMonomerLibraryScreenshot(page);
 
     // await rnaLibrarySearch.press('Escape');
@@ -1263,10 +1281,10 @@ test.describe('RNA Library', () => {
     const yCoordinate = 62;
     await clickOnCanvas(page, xCoordinate, yCoordinate);
 
-    await chooseTab(page, Tabs.Rna);
+    await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);
 
-    await chooseTab(page, Tabs.Peptides);
+    await Library(page).switchToPeptidesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -1281,10 +1299,14 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilderAccordion(page);
-    await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
-    await pressAddToPresetsButton(page);
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugars._25R,
+      Bases.A,
+      Phosphates.Test_6_Ph,
+    ]);
+    await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.collapse();
 
     const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await customPreset.hover();
@@ -1301,10 +1323,10 @@ test.describe('RNA Library', () => {
      *  Case 16:
      *    Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)
      */
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await takePageScreenshot(page);
 
-    await showLibrary(page);
+    await Library(page).showLibrary();
     await takePageScreenshot(page);
   });
 
@@ -1315,8 +1337,8 @@ test.describe('RNA Library', () => {
      *  Case 18:
      *    Check that After reloading the page, monomers added to the Favorites section not disappear
      */
-    await addMonomerToFavorites(page, Presets.A);
-    await chooseTab(page, Tabs.Favorites);
+    await Library(page).addMonomerToFavorites(Presets.A);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
 
     await configureInitialState(page);
@@ -1332,7 +1354,7 @@ test.describe('RNA Library', () => {
     const rnaNameEditBox = page.getByPlaceholder('Name your structure');
     const rnaName = 'Random Text';
 
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).rnaBuilder.expand();
     await rnaNameEditBox.fill(rnaName);
     await takeRNABuilderScreenshot(page);
 
@@ -1342,7 +1364,7 @@ test.describe('RNA Library', () => {
     await takeRNABuilderScreenshot(page);
 
     // Reset to default state
-    await toggleRnaBuilder(page, 'collapse');
+    await Library(page).rnaBuilder.collapse();
   });
 
   async function scrollAccordionContentToTheTop(
@@ -1362,19 +1384,19 @@ test.describe('RNA Library', () => {
      *    Check that preview window disappears when a cursor moves off from RNA in library
      *    (phosphates, sugars, bases)
      */
-    await toggleSugarsAccordion(page);
-    await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Sugars');
-    await page.getByTestId(Sugars._12ddR.testId).hover();
+    await Library(page).openRNASection(RNASection.Sugars);
+    await scrollAccordionContentToTheTop(page, RNASectionArea.Sugars);
+    await Library(page).hoverMonomer(Sugars._12ddR);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
 
-    await toggleBasesAccordion(page);
-    await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
-    await page.getByTestId(Bases._2imen2.testId).hover();
+    await Library(page).openRNASection(RNASection.Bases);
+    await scrollAccordionContentToTheTop(page, RNASectionArea.Bases);
+    await Library(page).hoverMonomer(Bases._2imen2);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
 
-    // await togglePhosphatesAccordion(page);
+    // await Library(page).openRNASection(RNASection.Phosphates);
     // await scrollAccordionContentToTheTop(
     //   page,
     //   'rna-accordion-details-Phosphates',
@@ -1396,14 +1418,14 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).rnaBuilder.expand();
 
     // Case 22
-    await page.getByTestId('CHEM-TAB').hover();
+    await Library(page).chemTab.hover();
     await takeMonomerLibraryScreenshot(page);
 
     // Case 23
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await takeElementScreenshot(page, Chem.Test_6_Ch.testId, {
       maxDiffPixelRatio: 0.03,
       hideMonomerPreview: true,
@@ -1411,14 +1433,13 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
 
     // Case 24
-    await page.getByTestId(Chem.SMPEG2.testId).hover();
+    await Library(page).hoverMonomer(Chem.SMPEG2);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);
 
     // Case 25
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill('SMCC');
+    await Library(page).setSearchValue('SMCC');
     await takeMonomerLibraryScreenshot(page);
 
     // Reset to default
@@ -1431,17 +1452,17 @@ test.describe('RNA Library', () => {
      *Description:
      *  Case 26 - RNA builder expands when clicking on 'New Preset' button
      */
-    await pressNewPresetButton(page);
-    await expect(page.getByTestId('cancel-btn')).toBeVisible();
+    await Library(page).newPreset();
+    await expect(Library(page).rnaBuilder.cancelButton).toBeVisible();
 
-    await page.getByTestId('cancel-btn').click();
+    await Library(page).rnaBuilder.cancel();
   });
 
   interface ISearchString {
     testDescription: string;
     SearchString: string;
     // Location where searched monomer located (we have to go to that location to make sure it is where)
-    ResultMonomerLocationTab: MonomerLocationTabs;
+    ResultMonomerLocationTab: MonomerTypeLocation;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
@@ -1450,49 +1471,45 @@ test.describe('RNA Library', () => {
     pageReloadNeeded?: boolean;
   }
 
-  async function searchMonomerByName(page: Page, monomerName: string) {
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    await rnaLibrarySearch.fill(monomerName);
-  }
-
-  async function blurMonomerSearchInput(page: Page) {
-    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
-    rnaLibrarySearch.blur();
-  }
-
   const IDTSearchStrings: ISearchString[] = [
     {
       testDescription: '1. Verify search by full IDT alias (5Br-dU)',
       SearchString: '5Br-dU',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription: '2. Verify search by part of IDT alias (itInd))',
       SearchString: 'itInd',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription: '3. Verify search with a single symbol /',
       SearchString: '/',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription:
         '4. Verify search with a specific ending symbol before the second / (hos/)',
       SearchString: 'hos/',
-      ResultMonomerLocationTab: MonomerLocationTabs.PHOSPHATES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Phosphate],
     },
     {
       testDescription:
         '5. Verify no results when additional symbols are added after the second / (Ind/Am)',
       SearchString: 'Ind/Am',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
     },
     {
       testDescription:
         '6. Verify case insensitivity of the search (/5SUPER-DT)',
       SearchString: '/5SUPER-DT',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1500,7 +1517,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '7. Verify search returns multiple monomers with the same starting symbol (Super))',
       SearchString: 'Super',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1508,7 +1526,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
       SearchString: '/3',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1516,7 +1535,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
       SearchString: '/5',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1524,7 +1544,8 @@ test.describe('RNA Library', () => {
       testDescription:
         '10. Verify search returns multiple monomers that have internal modification (/i))',
       SearchString: '/i',
-      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      ResultMonomerLocationTab:
+        monomerLibraryTypeLocation[MonomerType.Nucleotide],
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1542,18 +1563,14 @@ test.describe('RNA Library', () => {
          * 2. Switch to monomer's tab to see it
          * 3. Take screenshot of the library to make sure search works
          */
-        const rnaEditor = page.getByTestId('rna-editor-expanded');
-        if (await rnaEditor.isVisible()) {
-          await toggleRnaBuilderAccordion(page);
-        }
+        await Library(page).rnaBuilder.collapse();
 
-        await searchMonomerByName(page, IDTSearchString.SearchString);
-        await goToMonomerLocationTab(
-          page,
+        await Library(page).setSearchValue(IDTSearchString.SearchString);
+        await Library(page).goToMonomerLocation(
           IDTSearchString.ResultMonomerLocationTab,
         );
 
-        await blurMonomerSearchInput(page);
+        await Library(page).searchEditbox.blur();
         await takeMonomerLibraryScreenshot(page);
 
         // Test should be skipped if related bug exists
@@ -1589,7 +1606,7 @@ test.describe('RNA Library', () => {
 
       // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
       // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
-      await selectMonomer(page, Peptides.X);
+      await Library(page).selectMonomer(Peptides.X);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
 
@@ -1635,17 +1652,15 @@ test.describe('RNA Library', () => {
       //    followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
       // 6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and
       //    "Ambiguous RNA Bases" subsection are classified as "Alternatives"
-      await selectMonomer(page, Bases.DNA_N);
+      await Library(page).selectMonomer(Bases.DNA_N);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
-      await toggleBasesAccordion(page);
 
-      await selectMonomer(page, Bases.RNA_N);
+      await Library(page).selectMonomer(Bases.RNA_N);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
-      await toggleBasesAccordion(page);
 
-      await selectMonomer(page, Bases.M);
+      await Library(page).selectMonomer(Bases.M);
       await waitForMonomerPreview(page);
       await takeMonomerLibraryScreenshot(page);
 
@@ -1661,24 +1676,24 @@ test.describe('RNA Library', () => {
     {
       testDescription: "1. Search 'J' ambiguous peptide",
       SearchString: 'J',
-      ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
     },
     {
       testDescription:
         "2. Search 'Leucine' as component of ambiguous peptide (should be J ambiguous monomer)",
       SearchString: 'Leucine',
-      ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
     },
     {
       testDescription: "3. Search 'W' ambiguous DNA and RNA bases",
       SearchString: 'W',
-      ResultMonomerLocationTab: MonomerLocationTabs.BASES,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
     },
     {
       testDescription:
         "4. Search 'Thymine'  as component of ambiguous DNA base",
       SearchString: 'Thymine',
-      ResultMonomerLocationTab: MonomerLocationTabs.BASES,
+      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
     },
   ];
 
@@ -1693,15 +1708,13 @@ test.describe('RNA Library', () => {
         2. Switch to monomer's tab to see it
         3. Take screenshot of the library to make sure search works
       */
-        await searchMonomerByName(
-          page,
+        await Library(page).setSearchValue(
           AmbiguousMonomersSearchString.SearchString,
         );
-        await goToMonomerLocationTab(
-          page,
+        await Library(page).goToMonomerLocation(
           AmbiguousMonomersSearchString.ResultMonomerLocationTab,
         );
-        await blurMonomerSearchInput(page);
+        await Library(page).searchEditbox.blur();
         await takeMonomerLibraryScreenshot(page);
 
         // Test should be skipped if related bug exists

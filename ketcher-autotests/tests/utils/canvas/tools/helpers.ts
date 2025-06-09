@@ -13,22 +13,6 @@ export async function openLayoutModeMenu(page: Page) {
   await modeSelectorButton.click();
 }
 
-export async function hideLibrary(page: Page) {
-  const hideLibraryButton = page.getByTestId('hide-monomer-library');
-  const isVisible = await hideLibraryButton.isVisible();
-  if (isVisible) {
-    await hideLibraryButton.click();
-  }
-}
-
-export async function showLibrary(page: Page) {
-  const showLibraryButton = page.getByTestId('show-monomer-library');
-  const isVisible = await showLibraryButton.isVisible();
-  if (isVisible) {
-    await showLibraryButton.click();
-  }
-}
-
 export async function selectSnakeLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
   const snakeModeButton = page.getByTestId('snake-layout-mode').first();

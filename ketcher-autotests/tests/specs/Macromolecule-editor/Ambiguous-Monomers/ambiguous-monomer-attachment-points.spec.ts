@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { zoomWithMouseWheel, Tabs, chooseTab } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -17,11 +17,12 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {

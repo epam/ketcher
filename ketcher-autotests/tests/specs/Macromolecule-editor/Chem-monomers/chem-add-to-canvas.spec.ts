@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -13,6 +12,7 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -23,7 +23,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectMonomer(page, Chem.sDBL);
+  await Library(page).selectMonomer(Chem.sDBL);
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);

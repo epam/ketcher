@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { initSdata, sdataReducer } from './sdata';
+import { initSdata, nucleotideComponentReducer, sdataReducer } from './sdata';
 
 import { getDefaultOptions } from '../../data/schema/options-schema';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
+import { SUPERATOM_CLASS } from 'ketcher-core';
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -150,6 +151,11 @@ export function setDefaultSettings() {
 export function formReducer(state, action) {
   const newType = action.data?.result?.type;
   if (newType === 'DAT') return sdataReducer(state, action);
+  if (
+    newType === 'SUP' &&
+    Object.values(SUPERATOM_CLASS).includes(action.data?.result?.class)
+  )
+    return nucleotideComponentReducer(state, action);
 
   return Object.assign({}, state, action.data);
 }

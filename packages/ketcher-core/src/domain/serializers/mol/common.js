@@ -306,7 +306,7 @@ function bracketsToMolfile(mol, sg, idstr) {
   // eslint-disable-line max-statements
   const atomSet = new Pile(sg.atoms);
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
-  SGroup.bracketPos(sg, mol, crossBonds);
+  SGroup.bracketPos(sg, mol);
   const bb = sg.bracketBox;
   const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);

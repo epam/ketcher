@@ -134,7 +134,6 @@ export class SGroup {
       units: '',
       query: '',
       queryOp: '',
-      class: '',
     };
   }
 

@@ -5,13 +5,11 @@ import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
-import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
   SaltsAndSolvents,
-  addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
@@ -29,7 +27,6 @@ import {
   pressButton,
   readFileContent,
   selectFunctionalGroups,
-  selectMonomer,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -42,7 +39,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
   MacroFileType,
   selectAllStructuresOnCanvas,
@@ -59,8 +55,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { Tabs, chooseTab, waitForMonomerPreview } from '@utils/macromolecules';
-import { goToRNATab, goToTab } from '@utils/macromolecules/library';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   moveMonomerOnMicro,
@@ -98,6 +93,7 @@ import {
   BondsSetting,
   ShowHydrogenLabelsOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 const topLeftCorner = {
   x: -325,
@@ -118,18 +114,6 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-async function addToFavoritesMonomers(page: Page) {
-  await addMonomersToFavorites(page, [
-    Peptides.bAla,
-    Peptides.Phe4Me,
-    Peptides.meM,
-    Sugars._25R,
-    Bases.baA,
-    Phosphates.bP,
-    Chem.Test_6_Ch,
-  ]);
-}
-
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   await IndigoFunctionsToolbar(page).ThreeDViewer();
   if (waitForButtonIsEnabled) {
@@ -140,7 +124,7 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -230,10 +214,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await takePageScreenshot(page);
-    expect(page.getByTestId('show-monomer-library')).toBeVisible();
-    await showLibrary(page);
+    expect(Library(page).showLibraryButton).toBeVisible();
+    await Library(page).showLibrary();
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
@@ -409,10 +393,18 @@ test.describe('Macro-Micro-Switcher', () => {
     when switching from Macro mode to Micro mode and back to Macro is saved
     */
 
-    await addToFavoritesMonomers(page);
+    await Library(page).addMonomersToFavorites([
+      Peptides.bAla,
+      Peptides.Phe4Me,
+      Peptides.meM,
+      Sugars._25R,
+      Bases.baA,
+      Phosphates.bP,
+      Chem.Test_6_Ch,
+    ]);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToTab(page, FAVORITES_TAB);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -454,7 +446,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -470,7 +462,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Clean Up button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -486,7 +478,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -515,7 +507,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
     */
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, Peptides.bAla);
+      await Library(page).selectMonomer(Peptides.bAla);
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -544,7 +536,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.bAla);
+    await Library(page).selectMonomer(Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -825,7 +817,7 @@ test.describe('Macro-Micro-Switcher', () => {
       .filter({ has: page.locator(':visible') })
       .click();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await takePageScreenshot(page);
   });
 
@@ -1174,7 +1166,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
+      await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1207,7 +1199,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1258,7 +1250,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectSnakeLayoutModeTool(page);
-      await selectMonomer(page, data.monomer);
+      await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1288,7 +1280,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSnakeLayoutModeTool(page);
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1335,7 +1327,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
+      await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1369,7 +1361,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1421,7 +1413,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
+      await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1454,7 +1446,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1489,7 +1481,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
+    await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,

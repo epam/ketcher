@@ -61,7 +61,8 @@ export class ModifyAminoAcidsView extends TransientView {
           .attr('x', 2)
           .attr('font-family', 'Courier New')
           .attr('font-size', '20px')
-          .attr('font-weight', '700');
+          .attr('font-weight', '700')
+          .attr('style', 'user-select: none');
 
         if (renderer.node.modified) {
           group

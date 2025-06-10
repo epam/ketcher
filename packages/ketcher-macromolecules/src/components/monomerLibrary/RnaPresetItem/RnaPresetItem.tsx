@@ -17,16 +17,13 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import { memo, MouseEvent, useCallback, useEffect, useRef } from 'react';
+import { memo, MouseEvent, useCallback, useRef } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
-import { useAppDispatch, useLayoutMode } from 'hooks';
+import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
-import { selectEditor, setLibraryItemDrag } from 'state/common';
-import { D3DragEvent, drag, select } from 'd3';
-import { useSelector } from 'react-redux';
-import { ZoomTool } from 'ketcher-core';
+import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const RnaPresetItem = ({
   preset,
@@ -38,10 +35,6 @@ const RnaPresetItem = ({
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
 
-  const editor = useSelector(selectEditor);
-
-  const layoutMode = useLayoutMode();
-
   const cardRef = useRef<HTMLDivElement>(null);
 
   const addFavorite = useCallback(
@@ -52,62 +45,7 @@ const RnaPresetItem = ({
     [dispatch, preset],
   );
 
-  useEffect(() => {
-    if (!cardRef.current) {
-      return;
-    }
-
-    const cardElement = select(cardRef.current);
-
-    const dragBehavior = drag<HTMLDivElement, unknown>()
-      .on('start', (event: D3DragEvent<HTMLDivElement, unknown, unknown>) => {
-        const { clientX: x, clientY: y } = event.sourceEvent;
-
-        dispatch(
-          setLibraryItemDrag({
-            item: preset,
-            position: { x, y },
-          }),
-        );
-      })
-      .on('drag', (event: D3DragEvent<HTMLDivElement, unknown, unknown>) => {
-        const { clientX: x, clientY: y } = event.sourceEvent;
-
-        dispatch(
-          setLibraryItemDrag({
-            item: preset,
-            position: { x, y },
-          }),
-        );
-      })
-      .on('end', (event: D3DragEvent<HTMLDivElement, unknown, unknown>) => {
-        const { clientX: x, clientY: y } = event.sourceEvent;
-        const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
-          .node()
-          ?.getBoundingClientRect();
-        if (canvasWrapperBoundingClientRect) {
-          const { top, left, right, bottom } = canvasWrapperBoundingClientRect;
-          const mouseWithinCanvas =
-            x >= left && x <= right && y >= top && y <= bottom;
-          if (mouseWithinCanvas) {
-            editor?.events.placeLibraryItemOnCanvas.dispatch(preset, {
-              x: x - left,
-              y: y - top,
-            });
-          }
-        }
-
-        dispatch(setLibraryItemDrag(null));
-      });
-
-    if (layoutMode !== 'sequence-layout-mode') {
-      cardElement.call(dragBehavior);
-    }
-
-    return () => {
-      cardElement.on('.drag', null);
-    };
-  }, [dispatch, preset, editor?.events.placeLibraryItemOnCanvas, layoutMode]);
+  useLibraryItemDrag(preset, cardRef);
 
   return (
     <Card

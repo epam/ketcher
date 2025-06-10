@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { selectLibraryItemDrag } from 'state/common';
 

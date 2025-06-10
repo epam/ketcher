@@ -28,6 +28,7 @@ import {
   dragMouseTo,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasMacro,
+  clickOnCanvas,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -66,6 +67,7 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   BondsSetting,
+  FontOption,
   GeneralSetting,
   ImageResolutionOption,
   MeasurementUnit,
@@ -88,6 +90,20 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 async function openEditConnectionPointsMenu(page: Page, bondLine: Locator) {
   await bondLine.click({ button: 'right', force: true });
   await page.getByText('Edit Connection Points...').click();
+}
+
+async function callContexMenu(page: Page, locatorText: string) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator.getByText(locatorText, { exact: true }).click({
+    button: 'right',
+  });
+}
+
+async function expandMonomer(page: Page, locatorText: string) {
+  await callContexMenu(page, locatorText);
+  await waitForRender(page, async () => {
+    await page.getByText('Expand monomer').click();
+  });
 }
 
 let page: Page;
@@ -864,5 +880,206 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       .hover();
     await dragMouseTo(600, 350, page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5668
+     * Description: Atoms and bonds is highlighted when the whole molecule with atoms is choosen
+     * Scenario:
+     * 1. Open Ketcher Micro mode
+     * 2. Load a file
+     * 3. Select all
+     * 4. Highlight the selected structure
+     * 5. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/benzene-ring-with-atoms.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await clickOnAtom(page, 'N', 0, 'right');
+    await page.getByText('Highlight', { exact: true }).click();
+    await page.locator('.css-1pz88a0').click(); // Green color
+    await clickOnCanvas(page, 100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 33: Able to select Erase tool after expanding macromolecule abbreviation in Micro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5662
+     * Description: Able to select Erase tool after expanding macromolecule abbreviation in Micro mode
+     * Scenario:
+     * 1. Open Ketcher Micro mode
+     * 2. Load a file
+     * 3. Expand macromolecule abbreviation
+     * 4. Select Erase tool
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/monomers-cycled.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await expandMonomer(page, '1Nal');
+    await takeEditorScreenshot(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeLeftToolbarScreenshot(page);
+  });
+
+  test('Case 34: Clear canvas work for micro structures on macro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5657
+     * Description: Clear canvas work for micro structures on macro mode
+     * Scenario:
+     * 1. Toggle to Macro - Flex mode
+     * 2. Load from file
+     * 3. Press Clear canvas button
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bond properties are not implemented.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 35: The reaction with catalysts is displayed correct with ACS style setting and after layout', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5650
+     * Description: The reaction with catalysts is displayed correct with ACS style setting and after layout.
+     * Scenario:
+     * 1. Add reaction to the Canvas
+     * 2. Click on ACS Style button in the Settings
+     * 3. Click on Apply button in the Settings
+     * 4. Click on layout
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/error with cat and arr.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).setACSSettings();
+    await SettingsDialog(page).apply();
+    await pressButton(page, 'OK');
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).reset();
+  });
+
+  test('Case 36: After save and load a MOL V3000 file in macro and micro mode, bond connections are not changed, and the microstructures are not shifted', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5887
+     * Description: After save and load a MOL V3000 file in macro and micro mode, bond connections are not changed, and the microstructures are not shifted.
+     * Scenario:
+     * 1. Open file in micro mode
+     * 2. Switch to Macro mode->Flex mode
+     * 3. Save to MOL V3000
+     * 4. Open saved file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/monomers-connected-to-microstructures.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5886
+     * Description: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted.
+     * Scenario:
+     * 1. Open file in macro mode->Flex mode
+     * 2. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/monomers-connected-to-microstructures.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 38: R-Group fragment labels font size defined by Sub Font size property at Settings', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5836
+     * Description: R-Group fragment labels font size defined by Sub Font size property at Settings.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Go to Settings - General tab
+     * 4. Set Font size to 30 pt, Sub font size to 30 pt and Font to Courier New
+     * 5. Click on layout Apply
+     * 6. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/R-Group fragment labels font size defined by Sub Font size property at Settings.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).setOptionValue(
+      GeneralSetting.Font,
+      FontOption.CourierNew,
+    );
+    await SettingsDialog(page).apply();
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.FontSizeUnits,
+        value: MeasurementUnit.Pt,
+      },
+      {
+        option: GeneralSetting.FontSize,
+        value: '30',
+      },
+      {
+        option: GeneralSetting.SubFontSizeUnits,
+        value: MeasurementUnit.Pt,
+      },
+      {
+        option: GeneralSetting.SubFontSize,
+        value: '30',
+      },
+    ]);
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
   });
 });

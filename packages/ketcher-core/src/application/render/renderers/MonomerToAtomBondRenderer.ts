@@ -108,9 +108,11 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         combinedVisualBBox,
       );
 
-      // Adjust end position to stop at the atom's visual edge
-      endPositionInPixels.x = endPositionInPixels.x + rayDirection.x * shift;
-      endPositionInPixels.y = endPositionInPixels.y + rayDirection.y * shift;
+      // Adjust end position to stop at the atom's visual edge, with an additional offset for the hover effect
+      endPositionInPixels.x =
+        endPositionInPixels.x + rayDirection.x * (shift + 6);
+      endPositionInPixels.y =
+        endPositionInPixels.y + rayDirection.y * (shift + 6);
     }
 
     return {

@@ -24,7 +24,7 @@ export const GhostRnaPreset = ({ preset }: Props) => {
       </g>
       <path stroke="#CAD3DD" strokeWidth={2} d="M23.518 29v26M71 17H38" />
       <rect width={28} height={28} x={10.275} y={3} fill="#CAD3DD" rx={4} />
-      <rect width={28} height={28} x={10} y={3} fill="#CAD3DD" rx={4} />
+      {/* <rect width={28} height={28} x={10} y={3} fill="#CAD3DD" rx={4} /> */}
       <rect width={28} height={28} x={70} y={3} fill="#CAD3DD" rx={14} />
       <path
         fill="#CAD3DD"

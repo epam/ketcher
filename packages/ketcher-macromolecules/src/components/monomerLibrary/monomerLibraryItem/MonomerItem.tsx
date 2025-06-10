@@ -15,15 +15,14 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
-import { useCallback, MouseEvent, useEffect, useRef } from 'react';
+import { useCallback, MouseEvent, useRef } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
-import { drag, select } from 'd3';
-import { setLibraryItemDrag } from 'state/common';
+import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const MonomerItem = ({
   item,
@@ -59,30 +58,7 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
-  useEffect(() => {
-    if (!cardRef.current) {
-      return;
-    }
-
-    const cardElement = select(cardRef.current);
-
-    const dragBehavior = drag<HTMLDivElement, unknown>()
-      .on('start', () => {
-        console.log('Drag started');
-        dispatch(setLibraryItemDrag(true));
-      })
-      // .on('drag', onDrag)
-      .on('end', () => {
-        console.log('Drag ended');
-        dispatch(setLibraryItemDrag(false));
-      });
-
-    cardElement.call(dragBehavior);
-
-    return () => {
-      cardElement.on('.drag', null);
-    };
-  }, [dispatch]);
+  useLibraryItemDrag(item, cardRef);
 
   return (
     <Card

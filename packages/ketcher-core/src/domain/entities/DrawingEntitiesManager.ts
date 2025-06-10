@@ -17,6 +17,7 @@ import {
   Phosphate,
   Pool,
   RNABase,
+  RxnArrowMode,
   SGroupForest,
   Struct,
   SubChainNode,
@@ -113,6 +114,8 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+import { RxnArrowAddOperation } from 'application/editor/operations/coreRxn/rxnArrow';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -139,6 +142,7 @@ export class DrawingEntitiesManager {
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
+  public rxnArrows: Map<number, RxnArrow> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -3216,6 +3220,38 @@ export class DrawingEntitiesManager {
       polymerBond.isOverlappedByMonomer =
         this.checkBondForOverlapsByMonomers(polymerBond);
     });
+  }
+
+  private deleteRxnArrowModelChange() {}
+
+  private addRxnArrowModelChange(
+    mode: RxnArrowMode,
+    position: [Vec2, Vec2],
+    _arrow?: RxnArrow,
+  ) {
+    if (_arrow) {
+      this.rxnArrows.set(_arrow.id, _arrow);
+
+      return _arrow;
+    }
+
+    const rxnArrow = new RxnArrow(mode, position);
+
+    this.rxnArrows.set(rxnArrow.id, rxnArrow);
+
+    return rxnArrow;
+  }
+
+  public addReactionArrow(mode: RxnArrowMode, position: [Vec2, Vec2]) {
+    const command = new Command();
+    const operation = new RxnArrowAddOperation(
+      this.addRxnArrowModelChange.bind(this, mode, position),
+      this.deleteRxnArrowModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
   }
 }
 

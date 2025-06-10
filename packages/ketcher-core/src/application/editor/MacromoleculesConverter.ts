@@ -678,6 +678,15 @@ export class MacromoleculesConverter {
       }
     });
 
+    // Arrows and pluses
+    struct.rxnArrows.forEach((rxnArrow) => {
+      const arrowAddCommand = drawingEntitiesManager.addReactionArrow(
+        rxnArrow.mode,
+        rxnArrow.pos as [Vec2, Vec2],
+      );
+      command.merge(arrowAddCommand);
+    });
+
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
     drawingEntitiesManager.detectBondsOverlappedByMonomers();
 

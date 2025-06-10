@@ -32,6 +32,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -356,6 +358,16 @@ export class RenderersManager {
   public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
     bond.renderer?.remove();
     this.redrawDrawingEntity(bond.atom);
+  }
+
+  public addRxnArrow(arrow: RxnArrow) {
+    const arrowRenderer = new RxnArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.remove();
   }
 
   public runPostRenderMethods() {

@@ -3,6 +3,9 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import util from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
@@ -37,18 +40,50 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       };
     }
 
-    const atomRect =
-      this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+    const atomRenderer = this.monomerToAtomBond.atom
+      .baseRenderer as AtomRenderer;
+    const atomRootBoundingClientRect = atomRenderer.rootBoundingClientRect; // Use public getter
 
-    if (atomRect) {
-      // Get the atom rectangle dimensions
-      const atomWidth = atomRect.width;
-      const atomHeight = atomRect.height;
+    if (atomRootBoundingClientRect) {
+      // Convert DOMRect to Box2Abs relative to atom's center
+      const atomVisualBBox = new Box2Abs(
+        new Vec2(
+          atomRootBoundingClientRect.x - atomRenderer.scaledPosition.x,
+          atomRootBoundingClientRect.y - atomRenderer.scaledPosition.y,
+        ),
+        new Vec2(
+          atomRootBoundingClientRect.x -
+            atomRenderer.scaledPosition.x +
+            atomRootBoundingClientRect.width,
+          atomRootBoundingClientRect.y -
+            atomRenderer.scaledPosition.y +
+            atomRootBoundingClientRect.height,
+        ),
+      );
 
-      // Estimate the atom radius (approximating the atom as a circle)
-      const atomRadius = Math.min(atomWidth, atomHeight) / 2;
+      let combinedVisualBBox: Box2Abs;
 
-      // Calculate direction vector from start to end
+      // If the label is visible, use labelBoundingBox for a more precise bounding box.
+      // Otherwise, use the overall bounding box of the atom's visual representation.
+      if (atomRenderer.isLabelVisible && atomRenderer.labelBoundingBox) {
+        const labelBBox = atomRenderer.labelBoundingBox;
+        combinedVisualBBox = new Box2Abs(
+          new Vec2(labelBBox.x, labelBBox.y),
+          new Vec2(
+            labelBBox.x + labelBBox.width,
+            labelBBox.y + labelBBox.height,
+          ),
+        );
+      } else {
+        // Fallback: use the bounding box of the entire atom element (circle or rectangle for selection)
+        // Adjust for being relative to (0,0) (atom's center)
+        combinedVisualBBox = new Box2Abs(
+          new Vec2(atomVisualBBox.p0.x, atomVisualBBox.p0.y),
+          new Vec2(atomVisualBBox.p1.x, atomVisualBBox.p1.y),
+        );
+      }
+
+      // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
       const distance = Math.sqrt(
@@ -58,12 +93,24 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;
       const normalizedDirectionY = directionY / distance;
+      const bondDirection = new Vec2(
+        normalizedDirectionX,
+        normalizedDirectionY,
+      );
 
-      // Adjust end position to stop at the atom edge
-      endPositionInPixels.x =
-        endPositionInPixels.x - normalizedDirectionX * atomRadius;
-      endPositionInPixels.y =
-        endPositionInPixels.y - normalizedDirectionY * atomRadius;
+      // Ray direction for shiftRayBox: from atom's center *away* from bond's origin
+      const rayDirection = bondDirection.negated();
+
+      // Calculate the shift needed to avoid overlap with the combined visual bounding box
+      const shift = util.shiftRayBox(
+        new Vec2(0, 0),
+        rayDirection,
+        combinedVisualBBox,
+      );
+
+      // Adjust end position to stop at the atom's visual edge
+      endPositionInPixels.x = endPositionInPixels.x + rayDirection.x * shift;
+      endPositionInPixels.y = endPositionInPixels.y + rayDirection.y * shift;
     }
 
     return {

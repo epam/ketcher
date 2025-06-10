@@ -237,6 +237,10 @@ export class AtomRenderer extends BaseRenderer {
     return labelBboxes;
   }
 
+  public get labelBoundingBox() {
+    return this.textElement?.node()?.getBBox();
+  }
+
   public get shouldDisplayHydrogen() {
     // Remove when rules for displaying hydrogen are implemented same as in molecules mode
     return this.atom.label !== AtomLabel.C || this.isAtomTerminal;

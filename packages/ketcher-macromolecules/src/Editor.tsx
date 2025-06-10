@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
@@ -48,6 +48,7 @@ import {
   selectEditor,
   selectIsHandToolSelected,
   initKetcherId,
+  selectLibraryItemDrag,
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
@@ -106,6 +107,7 @@ import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButto
 import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 import { RulerArea } from 'components/Ruler/RulerArea';
+import { DragGhost } from 'components/DragGhost/DragGhost';
 
 import './theme.less';
 
@@ -177,6 +179,7 @@ function Editor({
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
+  const isLibraryItemInDrag = Boolean(useSelector(selectLibraryItemDrag));
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -302,6 +305,18 @@ function Editor({
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    if (isLibraryItemInDrag) {
+      document.body.style.cursor = 'grabbing';
+    } else {
+      document.body.style.cursor = 'default';
+    }
+
+    return () => {
+      document.body.style.cursor = 'default';
+    };
+  }, [isLibraryItemInDrag]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
@@ -396,6 +411,7 @@ function Editor({
         </Layout.InsideRoot>
       </Layout>
       <Preview />
+      <DragGhost />
       <SequenceItemContextMenu
         selections={selections}
         contextMenuEvent={contextMenuEvent}

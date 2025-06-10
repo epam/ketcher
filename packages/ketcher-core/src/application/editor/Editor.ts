@@ -543,6 +543,36 @@ export class CoreEditor {
         this.transientDrawingView.update();
       },
     );
+
+    this.events.placeLibraryItemOnCanvas.add(
+      (value: IRnaPreset, position: { x: number; y: number }) => {
+        const { sugar, phosphate, base } = value;
+        const { x, y } = position;
+
+        if (!sugar) {
+          return;
+        }
+
+        const { command: modelChanges } =
+          this.drawingEntitiesManager.addRnaPreset({
+            sugar,
+            sugarPosition: Coordinates.canvasToModel(new Vec2(x, y)),
+            phosphate,
+            phosphatePosition: phosphate
+              ? Coordinates.canvasToModel(new Vec2(x + SnakeLayoutCellWidth, y))
+              : undefined,
+            rnaBase: base,
+            rnaBasePosition: base
+              ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
+              : undefined,
+          });
+
+        const history = new EditorHistory(this);
+
+        history.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
+      },
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

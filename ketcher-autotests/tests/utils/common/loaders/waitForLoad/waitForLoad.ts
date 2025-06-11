@@ -20,7 +20,7 @@ import { waitForRender } from '@utils/common';
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   const openStructureDialogWindow = OpenStructureDialog(page).window;
   const loadingSpinner = page.getByTestId('loading-spinner');
-  const errorMessageBox = page.getByText('Error message', {
+  const errorMessageBox = page.getByText('Error Message', {
     exact: true,
   });
 

@@ -45,11 +45,9 @@ export async function closeErrorMessage(page: Page) {
 }
 
 export async function waitForErrorMessage(page: Page) {
-  const errorMessageDialog = page
-    .getByRole('dialog')
-    .getByText('Error message', {
-      exact: true,
-    });
+  const errorMessageDialog = page.getByText('Error message', {
+    exact: true,
+  });
 
   await errorMessageDialog.waitFor({ state: 'visible', timeout: 1000 });
 }

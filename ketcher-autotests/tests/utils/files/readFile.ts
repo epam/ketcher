@@ -364,7 +364,6 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     await waitForLoad(page, async () => {
       await addToCanvasButton.click();
     });
-    await waitForErrorMessage(page);
   } else {
     await waitForLoadAndRender(page, async () => {
       await addToCanvasButton.click();

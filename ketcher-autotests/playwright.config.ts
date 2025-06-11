@@ -10,6 +10,7 @@ import {
   REMOTE_POPUP_URL,
 } from './constants';
 import path from 'path';
+import { on } from 'events';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 // Addign global beforeEach from testSetup

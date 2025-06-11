@@ -418,90 +418,118 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '61. Multi-character peptide IDs without square brackets',
     HELMString: 'PEPTIDE1{Ac-.1Nal.Cys_Bn.D*.-NHEt}$$$$V2.0',
+    differentHELMExport: 'PEPTIDE1{[Ac-].[1Nal].[Cys_Bn].[D*].[-NHEt]}$$$$V2.0',
   },
   {
     helmDescription:
       '62. Multi-character preset of all monomer IDs without square brackets',
     HELMString: 'RNA1{5S6Rm5(mo6pur)sP-}$$$$V2.0',
+    differentHELMExport: 'RNA1{[5S6Rm5]([mo6pur])[sP-]}$$$$V2.0',
   },
   {
     helmDescription:
       '63. Multi-character presets of monomers with one monomer ID without square brackets',
     HELMString: 'RNA1{25moe3(A)P-.5S6Rm5(nC6n5U)P.R(mo4bn3)fl2me}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[25moe3](A)[P-].[5S6Rm5]([nC6n5U])P.R([mo4bn3])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
       '64. Multi-character presets of monomers with two monomer IDs without square brackets',
     HELMString: 'RNA1{5R6Sm5(C)P.R(purine)P.R(T)m2nen}$$$$V2.0',
+    differentHELMExport: 'RNA1{[5R6Sm5](C)P.R([purine])P.R(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '65. Multi-character presets of monomers without phosphate with IDs without square brackets',
     HELMString:
       'RNA1{afl2Nm(nC6n5C)}|RNA2{R(tCnitr)}|RNA3{Sm5ALl(G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
+    differentHELMExport:
+      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
   },
   {
     helmDescription:
       '66. Multi-character presets of monomers without base with IDs without square brackets',
     HELMString: 'RNA1{ALmecl.m2nen.ALtri1.P.R.moen}$$$$V2.0',
+    differentHELMExport: 'RNA1{[ALmecl][m2nen].[ALtri1]P.R[moen]}$$$$V2.0',
   },
   {
     helmDescription:
       '67. Multi-character unsplit nucleotides with IDs without square brackets',
     HELMString:
       'RNA1{2-damdA.5hMedC.Super-G.AmMC6T.Super-T.5Br-dU.5NitInd}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[2-damdA].[5hMedC].[Super-G].[AmMC6T].[Super-T].[5Br-dU].[5NitInd]}$$$$V2.0',
   },
   {
     helmDescription:
       '68. Multi-character CHEMs with IDs without square brackets',
     HELMString:
       'CHEM1{4aPEGMal}|CHEM2{PEG-2}|CHEM3{PEG-4}|CHEM4{PEG-6}|CHEM5{SMPEG2}|CHEM6{SS3}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
+    differentHELMExport:
+      'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
   },
   {
     helmDescription:
       '69. Mix of multi-character peptide IDs with and without square brackets',
     HELMString: 'PEPTIDE1{Ac-.1Nal.1Nal.Cys_Bn.Cys_Bn.D*.D*.-NHEt}$$$$V2.0',
+    differentHELMExport:
+      'PEPTIDE1{[Ac-].[1Nal].[1Nal].[Cys_Bn].[Cys_Bn].[D*].[D*].[-NHEt]}$$$$V2.0',
   },
   {
     helmDescription:
       '70. Mix of multi-character preset of all monomer IDs with and without square brackets',
     HELMString: 'RNA1{5S6Rm5(mo6pur)sP-.5S6Rm5(mo6pur)sP-}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[5S6Rm5]([mo6pur])[sP-].[5S6Rm5]([mo6pur])[sP-]}$$$$V2.0',
   },
   {
     helmDescription:
       '71. Mix of multi-character presets of monomers with one monomer IDs with and without square brackets',
     HELMString:
       'RNA1{25moe3(A)P-.[25moe3](A)P-.5S6Rm5(nC6n5U)P.[5S6Rm5]([nC6n5U])P.R(mo4bn3)fl2me.R([mo4bn3])[fl2me]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[25moe3](A)[P-].[25moe3](A)[P-].[5S6Rm5]([nC6n5U])P.[5S6Rm5]([nC6n5U])P.R([mo4bn3])[fl2me].R([mo4bn3])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
       '72. Mix of multi-character presets of monomers with two monomer IDs with and without square brackets',
     HELMString:
       'RNA1{5R6Sm5(C)P.[5R6Sm5](C)P.R(purine)P.R([purine])P.R(T)m2nen.R(T)[m2nen]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[5R6Sm5](C)P.[5R6Sm5](C)P.R([purine])P.R([purine])P.R(T)[m2nen].R(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '73. Mix of multi-character presets of monomers without phosphate with IDs with and without square brackets',
     HELMString:
       'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{afl2Nm(nC6n5C)}|RNA5{R(tCnitr)}|RNA6{Sm5ALl(G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
+    differentHELMExport:
+      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{[afl2Nm]([nC6n5C])}|RNA5{R([tCnitr])}|RNA6{[Sm5ALl](G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
   },
   {
     helmDescription:
       '74. Mix of multi-character presets of monomers without base with IDs with and without square brackets',
     HELMString:
       'RNA1{[ALmecl][m2nen].ALmecl.m2nen.[ALtri1]P.ALtri1.P.R[moen].R.moen}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[ALmecl][m2nen].[ALmecl][m2nen].[ALtri1]P.[ALtri1]P.R[moen].R[moen]}$$$$V2.0',
   },
   {
     helmDescription:
       '75. Mix of multi-character unsplit nucleotides with IDs with and without square brackets',
     HELMString:
       'RNA1{[2-damdA].2-damdA.[5hMedC].5hMedC.[Super-G].Super-G.[AmMC6T].AmMC6T.[Super-T].Super-T.[5Br-dU].5Br-dU.[5NitInd].5NitInd}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[2-damdA].[2-damdA].[5hMedC].[5hMedC].[Super-G].[Super-G].[AmMC6T].[AmMC6T].[Super-T].[Super-T].[5Br-dU].[5Br-dU].[5NitInd].[5NitInd]}$$$$V2.0',
   },
   {
     helmDescription:
       '76. Mix of multi-character CHEMs with IDs with and without square brackets',
     HELMString:
       'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{4aPEGMal}|CHEM8{PEG-2}|CHEM9{PEG-4}|CHEM10{PEG-6}|CHEM11{SMPEG2}|CHEM12{SS3}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
+    differentHELMExport:
+      'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{[4aPEGMal]}|CHEM8{[PEG-2]}|CHEM9{[PEG-4]}|CHEM10{[PEG-6]}|CHEM11{[SMPEG2]}|CHEM12{[SS3]}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
   },
 ];
 

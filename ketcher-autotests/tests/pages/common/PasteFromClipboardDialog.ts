@@ -5,6 +5,10 @@ import {
   SequenceMonomerType,
   PeptideLetterCodeType,
 } from '../constants/monomers/Constants';
+import {
+  waitForLoad,
+  waitForLoadAndRender,
+} from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 type PasteFromClipboardDialogLocators = {
   addToCanvasButton: Locator;
@@ -55,6 +59,46 @@ export const PasteFromClipboardDialog = (page: Page) => {
       await locators.peptideLettersCodeSelector.click();
       const menuLocator = page.locator('#menu-');
       await menuLocator.getByText(letterCode).click();
+    },
+
+    async addToCanvas(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      }
+    },
+
+    async openAsNew(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      }
+    },
+
+    async closeWindow() {
+      await PasteFromClipboardDialog(page).closeWindowButton.click();
+    },
+
+    async cancel() {
+      await PasteFromClipboardDialog(page).cancelButton.click();
     },
   };
 };

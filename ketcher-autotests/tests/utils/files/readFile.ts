@@ -110,7 +110,7 @@ export async function openFileAndAddToCanvasMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
+  errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await openFile(filename, page);
@@ -121,25 +121,17 @@ export async function openFileAndAddToCanvasMacro(
   if (typeDropdownOption) {
     await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
   }
-  if (errorExpected) {
-    await waitForLoad(page, async () => {
-      await PasteFromClipboardDialog(page).addToCanvasButton.click();
-    });
-  } else {
-    await waitForLoadAndRender(page, async () => {
-      await PasteFromClipboardDialog(page).addToCanvasButton.click();
-    });
-  }
+  await PasteFromClipboardDialog(page).addToCanvas({
+    errorMessageExpected,
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProjectMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
+  errorMessageExpected = false,
 ) {
-  const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
-
   await CommonTopLeftToolbar(page).openFile();
   await openFile(filename, page);
 
@@ -150,15 +142,9 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
     await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
   }
 
-  if (errorExpected) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
-  } else {
-    await waitForLoadAndRender(page, async () => {
-      await openAsNewButton.click();
-    });
-  }
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
@@ -221,40 +207,31 @@ export async function filteredFile(
 export async function pasteFromClipboardAndAddToCanvas(
   page: Page,
   fillStructure: string,
-  needToWait = true,
+  errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
   );
-  if (needToWait) {
-    await waitForLoadAndRender(page, async () => {
-      await PasteFromClipboardDialog(page).addToCanvasButton.click();
-    });
-  } else {
-    await waitForLoad(page, async () => {
-      await PasteFromClipboardDialog(page).addToCanvasButton.click();
-    });
-  }
+  await PasteFromClipboardDialog(page).addToCanvas({
+    errorMessageExpected,
+  });
 }
+
 export async function pasteFromClipboardAndOpenAsNewProject(
   page: Page,
   fillStructure: string,
-  needToWait = true,
+  errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
   );
-  if (needToWait) {
-    await waitForLoadAndRender(page, async () => {
-      await PasteFromClipboardDialog(page).openAsNewButton.click();
-    });
-  } else {
-    await PasteFromClipboardDialog(page).openAsNewButton.click();
-  }
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
 }
 
 /**
@@ -305,11 +282,10 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
         [SequenceMonomerType.Peptide, PeptideLetterCodeType],
       ],
   fillStructure: string,
-  errorExpected = false,
+  errorMessageExpected = false,
 ) {
   const monomerTypeSelector =
     PasteFromClipboardDialog(page).monomerTypeSelector;
-  const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
   const openStructureTextarea =
     PasteFromClipboardDialog(page).openStructureTextarea;
 
@@ -359,15 +335,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
 
   await openStructureTextarea.fill(fillStructure);
 
-  if (errorExpected) {
-    await waitForLoad(page, async () => {
-      await addToCanvasButton.click();
-    });
-  } else {
-    await waitForLoadAndRender(page, async () => {
-      await addToCanvasButton.click();
-    });
-  }
+  await PasteFromClipboardDialog(page).addToCanvas({ errorMessageExpected });
 }
 
 export async function receiveMolFileComparisonData(

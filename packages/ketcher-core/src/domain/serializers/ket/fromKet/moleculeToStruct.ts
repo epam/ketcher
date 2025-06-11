@@ -257,6 +257,7 @@ export function sgroupToStruct(source) {
     case 'SUP': {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);
+      ifDef(sgroup.data, 'class', source.class);
       ifDef(sgroup, 'id', source.id);
       source.attachmentPoints?.forEach(
         (

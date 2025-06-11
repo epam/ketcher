@@ -1068,7 +1068,16 @@ export class KetSerializer implements Serializer<Struct> {
 
     // need for selection population to atoms and bonds from macromolecules mode
     if (moleculesSelection) {
-      populateStructWithSelection(micromoleculesStruct, moleculesSelection);
+      populateStructWithSelection(
+        micromoleculesStruct,
+        selection
+          ? {
+              ...selection,
+              atoms: [...moleculesSelection.atoms, ...(selection.atoms || [])],
+              bonds: [...moleculesSelection.bonds, ...(selection.bonds || [])],
+            }
+          : moleculesSelection,
+      );
     }
 
     const serializedMicromoleculesStruct = JSON.parse(

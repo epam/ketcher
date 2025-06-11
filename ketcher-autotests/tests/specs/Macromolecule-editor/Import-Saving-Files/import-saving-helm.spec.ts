@@ -953,6 +953,64 @@ const incorrectHELMStrings: IHELMString[] = [
     HELMString:
       'PEPTIDE1{[N([H])[C@H](C(O)=O)C].[C(O)([C@H](CS[H])N[H])=O].[C(O)([C@H](CC(O[H])=O)N[H])=O].[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
   },
+  {
+    helmDescription:
+      '82. Multi-character peptide ID with missing opening bracket',
+    HELMString: 'PEPTIDE1{1Nal]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '83. Multi-character peptide ID with missing closing bracket',
+    HELMString: 'PEPTIDE1{[1Nal}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '84. Multi-character preset of all monomer ID with missing opening bracket for sugar',
+    HELMString: 'RNA1{5S6Rm5](mo6pur)sP-}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '85. Multi-character preset of all monomer ID with missing closing bracket for sugar',
+    HELMString: 'RNA1{[5S6Rm5(mo6pur)sP-}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '86. Multi-character preset of all monomer ID with missing opening bracket for base',
+    HELMString: 'RNA1{5S6Rm5(mo6pur])sP-}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '87. Multi-character preset of all monomer ID with missing closing bracket for base',
+    HELMString: 'RNA1{5S6Rm5([mo6pur)sP-}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '88. Multi-character preset of all monomer ID with missing opening bracket for phosphate',
+    HELMString: 'RNA1{5S6Rm5(mo6pur)sP-]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '89. Multi-character preset of all monomer ID with missing closing bracket for phosphate',
+    HELMString: 'RNA1{5S6Rm5(mo6pur)[sP-}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '90. Multi-character unsplit monomer ID with missing opening bracket',
+    HELMString: 'RNA1{2-damdA]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '91. Multi-character unsplit monomer ID with missing closing bracket',
+    HELMString: 'RNA1{[2-damdA}$$$$V2.0',
+  },
+  {
+    helmDescription: '92. Multi-character CHEM ID with missing opening bracket',
+    HELMString: 'CHEM1{4aPEGMal]}$$$$V2.0',
+  },
+  {
+    helmDescription: '93. Multi-character CHEM ID with missing closing bracket',
+    HELMString: 'CHEM1{[4aPEGMal}$$$$V2.0',
+  },
 ];
 
 test.describe('Import incorrect HELM sequence: ', () => {

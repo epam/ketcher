@@ -44,6 +44,16 @@ export async function closeErrorMessage(page: Page) {
   await errorMessage.waitFor({ state: 'hidden' });
 }
 
+export async function waitForErrorMessage(page: Page) {
+  const errorMessageDialog = page
+    .getByRole('dialog')
+    .getByText('Error message', {
+      exact: true,
+    });
+
+  await errorMessageDialog.waitFor({ state: 'visible', timeout: 1000 });
+}
+
 export async function closeOpenStructure(page: Page) {
   const openStructure = page.getByText('Open Structure', {
     exact: true,

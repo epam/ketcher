@@ -20,13 +20,14 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContent(filename);
   await page.getByTestId('text').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByRole('dialog').getByRole('textbox').fill(fileText);
-  await waitForLoad(page, () => {
+  await waitForLoadAndRender(page, () => {
     pressButton(page, 'Apply');
   });
 }

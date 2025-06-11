@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -20,6 +21,8 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
+import { waitForErrorMessage } from '@utils/common/helpers';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -89,7 +92,7 @@ export async function openFileAndAddToCanvas(
   // to stabilize the test
   await selectOptionInDropdown(filename, page);
 
-  await waitForLoad(page, async () => {
+  await waitForLoadAndRender(page, async () => {
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
   });
 
@@ -119,12 +122,14 @@ export async function openFileAndAddToCanvasMacro(
   if (typeDropdownOption) {
     await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
   }
-  if (!errorExpected) {
+  if (errorExpected) {
     await waitForLoad(page, async () => {
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
     });
   } else {
-    await PasteFromClipboardDialog(page).addToCanvasButton.click();
+    await waitForLoadAndRender(page, async () => {
+      await PasteFromClipboardDialog(page).addToCanvasButton.click();
+    });
   }
 }
 
@@ -146,12 +151,14 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
     await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
   }
 
-  if (!errorExpected) {
+  if (errorExpected) {
     await waitForLoad(page, async () => {
       await openAsNewButton.click();
     });
   } else {
-    await openAsNewButton.click();
+    await waitForLoadAndRender(page, async () => {
+      await openAsNewButton.click();
+    });
   }
 }
 
@@ -165,12 +172,14 @@ export async function openFileAndAddToCanvasAsNewProject(
 
   await selectOptionInDropdown(filename, page);
 
-  if (!errorExpected) {
+  if (errorExpected) {
     await waitForLoad(page, async () => {
       await PasteFromClipboardDialog(page).openAsNewButton.click();
     });
   } else {
-    await PasteFromClipboardDialog(page).openAsNewButton.click();
+    await waitForLoadAndRender(page, async () => {
+      await PasteFromClipboardDialog(page).openAsNewButton.click();
+    });
   }
 }
 
@@ -221,11 +230,13 @@ export async function pasteFromClipboardAndAddToCanvas(
     fillStructure,
   );
   if (needToWait) {
-    await waitForLoad(page, async () => {
+    await waitForLoadAndRender(page, async () => {
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
     });
   } else {
-    await PasteFromClipboardDialog(page).addToCanvasButton.click();
+    await waitForLoad(page, async () => {
+      await PasteFromClipboardDialog(page).addToCanvasButton.click();
+    });
   }
 }
 export async function pasteFromClipboardAndOpenAsNewProject(
@@ -239,7 +250,7 @@ export async function pasteFromClipboardAndOpenAsNewProject(
     fillStructure,
   );
   if (needToWait) {
-    await waitForLoad(page, async () => {
+    await waitForLoadAndRender(page, async () => {
       await PasteFromClipboardDialog(page).openAsNewButton.click();
     });
   } else {
@@ -349,12 +360,15 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
 
   await openStructureTextarea.fill(fillStructure);
 
-  if (!errorExpected) {
+  if (errorExpected) {
     await waitForLoad(page, async () => {
       await addToCanvasButton.click();
     });
+    await waitForErrorMessage(page);
   } else {
-    await addToCanvasButton.click();
+    await waitForLoadAndRender(page, async () => {
+      await addToCanvasButton.click();
+    });
   }
 }
 

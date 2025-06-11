@@ -28,8 +28,8 @@ import { waitForRender } from '@utils/common';
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
-  callback();
-  const roleDialog = page.locator('[role=dialog]');
+  await callback();
+  const roleDialog = page.locator('[role=dialog]').first();
   const loadingSpinner = page.locator('.loading-spinner');
 
   if (await roleDialog.isVisible()) {
@@ -52,14 +52,12 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   if (await loadingSpinner.isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
-
-  await waitForRender(page);
 };
 
 export async function waitForLoadAndRender(page: Page, callback: VoidFunction) {
   await waitForRender(page, async () => {
     await waitForLoad(page, async () => {
-      await callback();
+      callback();
     });
   });
 }

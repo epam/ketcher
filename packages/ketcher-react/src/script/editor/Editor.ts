@@ -991,6 +991,9 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
         !isMouseMainButtonPressed(event)
       ) {
+        if (event.type === 'mousedown') {
+          setFunctionalGroupsTooltip({ editor, isShow: false });
+        }
         return true;
       }
 

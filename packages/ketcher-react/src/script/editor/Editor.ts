@@ -991,10 +991,11 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
         !isMouseMainButtonPressed(event)
       ) {
-        if (event.type === 'mousedown') {
-          setFunctionalGroupsTooltip({ editor, isShow: false });
-        }
         return true;
+      }
+
+      if (event.type === 'mousemove' || event.type === 'mouseleave') {
+        setFunctionalGroupsTooltip({ editor, isShow: false });
       }
 
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {

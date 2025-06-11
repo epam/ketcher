@@ -22,7 +22,6 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
-import { waitForErrorMessage } from '@utils/common/helpers';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');

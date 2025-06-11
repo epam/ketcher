@@ -4,7 +4,6 @@ import {
   waitForPageInit,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   openFileAndAddToCanvas,
   copyAndPaste,
   cutAndPaste,

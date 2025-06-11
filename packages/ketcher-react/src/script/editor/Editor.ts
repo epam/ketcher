@@ -622,11 +622,6 @@ class Editor implements KetcherEditor {
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
-    setFunctionalGroupsTooltip({
-      editor: this,
-      isShow: false,
-    });
-
     if (action === true) {
       this.render.update(true, null); // force
     } else {
@@ -994,7 +989,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         return true;
       }
 
-      if (event.type === 'mousemove' || event.type === 'mouseleave') {
+      if (event.type === 'mouseleave') {
         setFunctionalGroupsTooltip({ editor, isShow: false });
       }
 

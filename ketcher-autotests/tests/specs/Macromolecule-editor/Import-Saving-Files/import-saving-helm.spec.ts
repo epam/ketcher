@@ -70,7 +70,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '4. Simple unusual RNA, no base',
-    HELMString: 'RNA1{[Sm5moe][mepo2]}$$$$V2.0',
+    HELMString: 'RNA1{[Sm5moe].[mepo2]}$$$$V2.0',
   },
   {
     helmDescription: '5. Simple unusual RNA',
@@ -329,14 +329,14 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '50. RNA(RP) with single inline Extended SMILES (P)',
     HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{R[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R.[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
   },
   {
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (R)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|]P}$$$$V2.0',
+      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].P}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',

@@ -29,6 +29,9 @@ import {
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  cutToClipboardByKeyboard,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -1081,5 +1084,153 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).reset();
+  });
+
+  test('Case 39: S-Group (Data type) Field value label font size uses Settings - Font size property value instead of Sub font size one', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5834
+     * Description: S-Group (Data type) Field name and value labels remain unchanged and controlled by Sub font size setting.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Go to Settings - General tab
+     * 4. Set Font size to 20 pt
+     * 5. Click on layout Apply
+     * 6. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/S-Group (Data type) Field value label font size.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.FontSizeUnits,
+        value: MeasurementUnit.Pt,
+      },
+      {
+        option: GeneralSetting.FontSize,
+        value: '20',
+      },
+    ]);
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
+  });
+
+  test('Case 40: Importing functional groups (e.g. Boc, Bn, CF3) not ignores drawing settings (e.g. ACS style)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5833
+     * Description: Importing functional groups (e.g. Boc, Bn, CF3) not ignores drawing settings (e.g. ACS style).
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Go to Settings - General tab
+     * 4. Set Font size to 30 pt and Font to Courier New
+     * 5. Click on layout Apply
+     * 6. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Importing functional groups (e.g. Boc, Bn, CF3) ignores drawing settings (e.g. ACS style) and is bolded.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).setOptionValue(
+      GeneralSetting.Font,
+      FontOption.CourierNew,
+    );
+    await SettingsDialog(page).apply();
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.FontSizeUnits,
+        value: MeasurementUnit.Pt,
+      },
+      {
+        option: GeneralSetting.FontSize,
+        value: '30',
+      },
+    ]);
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
+  });
+
+  test('Case 41: System opens correct context menu for monomers on micro canvas if clicked on atom or bond', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5809
+     * Description: System opens correct context menu for monomers on micro canvas if clicked on atom or bond.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Right click on appeared monomer and click on Expand monomer at context menu
+     * 4. Right click on any bond or atom
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/5. Unsplit nucleotide 5hMedC (from library).ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.getByText('5hMedC').click({ button: 'right' });
+    await page.getByText('Expand monomer').click();
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'N', 0, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 42: After bulk deletion of monomer abbreviations, Undo not returns expanded monomers', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5699
+     * Description: After bulk deletion of monomer abbreviations, Undo not returns expanded monomers.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Select all monomers on the canvas
+     * 4. Erase selected monomers
+     * 5. Press Undo
+     * 6. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/monomers-cycled.ket', page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 43: Consistent behavior of copy-paste and cut-paste operations with macromolecule abbreviations', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5674
+     * Description: All selected macromolecule abbreviations should be copied or cut and pasted consistently, maintaining their original structure and positioning.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Select all monomers on the canvas
+     * 4. Select all abbreviations and copy/paste
+     * 5. Select all abbreviations and cut/paste
+     * 6. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/not-cycled-sequence.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await clickOnCanvas(page, 500, 650);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutToClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
+    await pasteFromClipboardByKeyboard(page);
+    await clickOnCanvas(page, 500, 550);
+    await takeEditorScreenshot(page);
   });
 });

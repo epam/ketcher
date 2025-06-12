@@ -1043,7 +1043,11 @@ export class KetSerializer implements Serializer<Struct> {
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
-    const populatedStruct = populateStructWithSelection(struct, selection);
+    const populatedStruct = populateStructWithSelection(
+      struct,
+      selection,
+      true,
+    );
     MacromoleculesConverter.convertStructToDrawingEntities(
       populatedStruct,
       drawingEntitiesManager,
@@ -1067,17 +1071,8 @@ export class KetSerializer implements Serializer<Struct> {
     }
 
     // need for selection population to atoms and bonds from macromolecules mode
-    if (moleculesSelection) {
-      populateStructWithSelection(
-        micromoleculesStruct,
-        selection
-          ? {
-              ...selection,
-              atoms: [...moleculesSelection.atoms, ...(selection.atoms || [])],
-              bonds: [...moleculesSelection.bonds, ...(selection.bonds || [])],
-            }
-          : moleculesSelection,
-      );
+    if (needSetSelectionToMacromolecules) {
+      populateStructWithSelection(micromoleculesStruct, moleculesSelection);
     }
 
     const serializedMicromoleculesStruct = JSON.parse(

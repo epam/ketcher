@@ -18,13 +18,13 @@ import { useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 
-import { zoomList } from 'src/script/ui/action/zoom';
+import { zoomList } from '../../../action/zoom';
 import { ZoomInput, updateInputString } from './ZoomInput';
 import { Icon } from 'components';
 import {
   KETCHER_ROOT_NODE_CSS_SELECTOR,
   KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-} from 'src/constants';
+} from '../../../../../constants';
 
 const ElementAndDropdown = styled('div')`
   position: relative;

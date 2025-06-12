@@ -85,23 +85,23 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 // Custom query:
 
-export async function setCustomQuery(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
-}
+// export async function setCustomQuery(page: Page, customQuery: string) {
+//   await page.getByTestId('custom-query-checkbox').check();
+//   await page.getByTestId('atom-custom-query').fill(customQuery);
+// }
 
 // Custom query - atom properties:
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
 // Custom query - bond properties:
 
 export async function setCustomQueryForBond(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('bond-custom-query').fill(customQuery);
 }
 
 // Bond attributes:

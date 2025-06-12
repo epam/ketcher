@@ -259,7 +259,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
 /* ClipArea */
-export function initClipboard(dispatch) {
+export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
   );
@@ -272,11 +272,11 @@ export function initClipboard(dispatch) {
   return {
     formats,
     focused() {
-      const state = global.currentState;
+      const state = getState();
       return !state.modal;
     },
     onLegacyCut() {
-      const state = global.currentState;
+      const state = getState();
       const editor = state.editor;
       const data = legacyClipData(editor);
       if (data) debAction({ tool: 'eraser', opts: 1 });
@@ -284,10 +284,12 @@ export function initClipboard(dispatch) {
       return data;
     },
     async onCut() {
-      const ketcherInstance = ketcherProvider.getKetcher();
+      const state = getState();
+      const ketcherInstance = ketcherProvider.getKetcher(
+        state.editor.ketcherId,
+      );
       const result = await runAsyncAction(async () => {
-        const state = global.currentState;
-        const editor = state.editor;
+        const editor = getState().editor;
 
         const data = await clipData(editor);
         if (data) debAction({ tool: 'eraser', opts: 1 });
@@ -297,10 +299,12 @@ export function initClipboard(dispatch) {
       return result;
     },
     async onCopy() {
-      const ketcherInstance = ketcherProvider.getKetcher();
+      const state = getState();
+      const ketcherInstance = ketcherProvider.getKetcher(
+        state.editor.ketcherId,
+      );
       const result = await runAsyncAction(async () => {
-        const state = global.currentState;
-        const editor = state.editor;
+        const editor = getState().editor;
         const data = await clipData(editor);
         editor.selection(null);
         return data;
@@ -308,7 +312,10 @@ export function initClipboard(dispatch) {
       return result;
     },
     async onPaste(data, isSmarts: boolean) {
-      const ketcherInstance = ketcherProvider.getKetcher();
+      const state = getState();
+      const ketcherInstance = ketcherProvider.getKetcher(
+        state.editor.ketcherId,
+      );
       const result = await runAsyncAction(async () => {
         const structStr = await getStructStringFromClipboardData(data);
         if (structStr || !rxnTextPlain.test(data['text/plain'])) {
@@ -380,9 +387,10 @@ async function clipData(editor: Editor) {
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
-    const ketcherInstance = ketcherProvider.getKetcher();
+    const ketcherInstance = ketcherProvider.getKetcher(editor.ketcherId);
 
     const data = await getStructure(
+      editor.ketcherId,
       SupportedFormat.molAuto,
       ketcherInstance.formatterFactory,
       struct,

@@ -5,16 +5,16 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { mapBondIdsToBonds } from 'src/script/editor/tool/select';
 import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 import { noOperation } from '../utils';
-import { KetcherLogger } from 'ketcher-core';
+import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondEdit = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
     async ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const bondIds = props?.bondIds || [];
       const molecule = editor.render.ctab;
       try {
@@ -26,7 +26,7 @@ const useBondEdit = () => {
         noOperation();
       }
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const disabled = useCallback(({ props }: Params) => {

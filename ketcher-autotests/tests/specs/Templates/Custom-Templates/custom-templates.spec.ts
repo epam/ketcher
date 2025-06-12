@@ -199,7 +199,7 @@ test.describe('Open Ketcher', () => {
 
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
-    await page.getByRole('dialog').getByTestId('canvas').click();
+    await page.getByTestId('attach-dialog').getByTestId('canvas').click();
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Edit' }).click();
     await page.getByRole('tab', { name: 'Template Library' }).click();

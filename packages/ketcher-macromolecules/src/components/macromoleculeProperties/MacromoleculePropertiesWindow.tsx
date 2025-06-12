@@ -615,6 +615,10 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
   );
 };
 
+const containOnlyPartOfNumber = (value: number) => {
+  return !/[^0.,]/.test(String(value));
+};
+
 const RnaProperties = (props: DnaRnaPropertiesProps) => {
   const dispatch = useAppDispatch();
   const unipositiveIonsMeasurementUnit = useAppSelector(
@@ -670,7 +674,10 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             value={unipositiveIonsValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={unipositiveIonsMeasurementUnit}
-            disabled={!isNumber(props.macromoleculesProperties.Tm)}
+            disabled={
+              !isNumber(props.macromoleculesProperties.Tm) &&
+              !containOnlyPartOfNumber(unipositiveIonsValue)
+            }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
           />
@@ -679,7 +686,10 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             value={oligonucleotidesValue}
             options={['nM', 'μM', 'mM']}
             selectedOption={oligonucleotidesMeasurementUnit}
-            disabled={!isNumber(props.macromoleculesProperties.Tm)}
+            disabled={
+              !isNumber(props.macromoleculesProperties.Tm) &&
+              !containOnlyPartOfNumber(oligonucleotidesMeasurementUnit)
+            }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
           />

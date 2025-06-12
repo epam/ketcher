@@ -36,7 +36,7 @@ test.describe('Loading SMARTS files', () => {
     Description: c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1 should be loaded as benzene with aromatic atom list (carbon and nitrogen)
     */
     const smartsStringToPaste = 'c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1';
-    await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste, false);
+    await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

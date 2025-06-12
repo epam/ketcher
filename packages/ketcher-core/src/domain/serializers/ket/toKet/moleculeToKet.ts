@@ -41,6 +41,11 @@ function fromRlabel(rg) {
   return res;
 }
 
+export interface MoleculesSelection {
+  atoms: Set<number>;
+  bonds: Set<number>;
+}
+
 export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {

@@ -622,6 +622,11 @@ class Editor implements KetcherEditor {
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
+    setFunctionalGroupsTooltip({
+      editor: this,
+      isShow: false,
+    });
+
     if (action === true) {
       this.render.update(true, null); // force
     } else {
@@ -897,19 +902,20 @@ function isContextMenuClosed(contextMenu: ContextMenuInfo) {
 
 function useToolIfNeeded(
   editor: Editor,
+
   eventHandlerName: ToolEventHandlerName,
+
   clientArea: HTMLElement,
+
   event: Event,
 ) {
   const editorTool = editor.tool();
+
   if (!editorTool) return false;
 
   editor.lastEvent = event;
 
-  const isHoverEvent =
-    eventHandlerName === 'mousemove' ||
-    eventHandlerName === 'mouseover' ||
-    eventHandlerName === 'mouseLeaveClientArea';
+  const isHoverEvent = eventHandlerName === 'mousemove';
 
   const contextMenuOK = isHoverEvent
     ? true
@@ -917,15 +923,19 @@ function useToolIfNeeded(
 
   const conditions = [
     eventHandlerName in editorTool,
+
     clientArea.contains(event.target as Node) ||
       editorTool.isSelectionRunning?.(),
+
     contextMenuOK,
   ];
 
   if (conditions.every((c) => c)) {
     editorTool[eventHandlerName]?.(event as any);
+
     return true;
   }
+
   return false;
 }
 

@@ -101,8 +101,8 @@ const assembleMenuItems = (
             }}
             onMouseOut={() => onMouseOut?.(name)}
           >
-            {icon && <span className="context-menu-icon">{icon}</span>}
-            <span>{title}</span>
+            {icon && <span className="context_menu-icon">{icon}</span>}
+            <span className="context_menu-text">{title}</span>
           </Item>
         );
       items.push(item);

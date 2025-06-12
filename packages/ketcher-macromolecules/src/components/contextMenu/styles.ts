@@ -18,4 +18,13 @@ export const StyledMenu = styled(Menu)`
     opacity: 1;
     font-weight: bold;
   }
+
+  .context_menu-icon {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .context_menu-text {
+    padding-top: 1px;
+  }
 `;

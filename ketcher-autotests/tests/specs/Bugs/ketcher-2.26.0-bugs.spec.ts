@@ -77,6 +77,7 @@ import {
   SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -122,6 +123,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   test.afterEach(async ({ context: _ }, testInfo) => {
     await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
     await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
@@ -180,8 +184,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await SaveStructureDialog(page).cancel();
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).reset();
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -221,7 +223,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setACSSettings();
     await SettingsDialog(page).apply();
     await pressButton(page, 'OK');
@@ -271,8 +273,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       { option: BondsSetting.BondThickness, value: '6' },
     ]);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).reset();
   });
 
   test('Case 7: Correct stereo-label placement for (E) and (Z)', async () => {
@@ -536,8 +536,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await SaveStructureDialog(page).cancel();
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).reset();
   });
 
   test('Case 18: Single up bond is being painted over correctly', async () => {
@@ -977,8 +975,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).apply();
     await pressButton(page, 'OK');
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).reset();
   });
 
   test('Case 36: After save and load a MOL V3000 file in macro and micro mode, bond connections are not changed, and the microstructures are not shifted', async () => {
@@ -1082,8 +1078,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       },
     ]);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).reset();
   });
 
   test('Case 39: S-Group (Data type) Field value label font size uses Settings - Font size property value instead of Sub font size one', async () => {
@@ -1115,8 +1109,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       },
     ]);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).reset();
   });
 
   test('Case 40: Importing functional groups (e.g. Boc, Bn, CF3) not ignores drawing settings (e.g. ACS style)', async () => {
@@ -1154,8 +1146,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       },
     ]);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).reset();
   });
 
   test('Case 41: System opens correct context menu for monomers on micro canvas if clicked on atom or bond', async () => {
@@ -1231,6 +1221,180 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 500, 550);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 44: The diagonal bond in the molecule is displayed correct with ACS style', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5685
+     * Description: The diagonal bond in the molecule is displayed correct with ACS style.
+     * Scenario:
+     * 1. Add reaction to the Canvas
+     * 2. Click on ACS Style button in the Settings
+     * 3. Click on Apply button in the Settings
+     * 4. Click on layout
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).setACSSettings();
+    await SettingsDialog(page).apply();
+    await pressButton(page, 'OK');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 45: Open Angel Arrows not changed to Multi-tail arrow after layout', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2496
+     * Description: Open Angel Arrows not changed to Multi-tail arrow after layout.
+     * Scenario:
+     * 1. Add reaction to the Canvas
+     * 2. Click on layout
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Open Angel Arrows changed to Multi-tail arrow after layout.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 46: The atom is not colored with the parameter render-coloring=false when saving to png or svg', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2441
+     * Description: The atom is not colored with the parameter render-coloring=false when saving to png or svg.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Go to Settings - General tab
+     * 4. Switch Atom coloring to off in the Settings
+     * 5. Click on Apply
+     * 6. Save to PNG (or SVG)
+     * 7. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-with-colored-atoms.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
+    await SettingsDialog(page).apply();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+  });
+
+  test('Case 47: "Unordered_map::at: key not found" error is not displayed after adding of specific reactions from the RDF file', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2411
+     * Description: "Unordered_map::at: key not found" error is not displayed after adding of specific reactions from the RDF file.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('RDF-V2000/issue-load.rdf', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2440
+     * Description: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported).
+     * System throws an error: Alternatives ambiguous monomers on the canvas souldn't be saved to IDT, only mixtures allowed
+     * Scenario:
+     * 1. Go to Macro - Flex mode
+     * 2. Load from file
+     * 3. Click on Save to IDT
+     * 4. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous DNA Bases (alternatives).ket',
+      page,
+    );
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.IDT,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2409
+     * Description: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens
+     * The reaction is not changed the direction and location and Aromatize, Dearonatize, Calculate CIP, Add explicit hydrogens are applied correctly
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Click on Aromatize
+     * 4. Click on Dearomatize
+     * 5. Click on Calculate CIP
+     * 6. Click on Add explicit hydrogens
+     * 7. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/error with aromatize v2.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 50: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2219
+     * Description: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Click on Aromatize
+     * 4. Click on Dearomatize
+     * 5. Click on Calculate CIP
+     * 6. Click on Add explicit hydrogens
+     * 7. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro('KET/arr vert.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/arr vert-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/arr vert-expected.cdxml',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

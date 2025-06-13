@@ -16,4 +16,18 @@ export const StyledMenu = styled(Menu)`
     opacity: 1;
     font-weight: bold;
   }
+  .context_menu-icon {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+  .context_menu-icon svg {
+    vertical-align: middle;
+  }
+  .context_menu-text {
+    display: inline-flex;
+    align-items: center;
+    padding-top: 1px;
+    vertical-align: middle;
+  }
 `;

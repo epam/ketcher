@@ -33,6 +33,7 @@ Object {
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
+          testid="openStructureModal"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"

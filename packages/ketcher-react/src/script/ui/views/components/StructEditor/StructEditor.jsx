@@ -320,7 +320,10 @@ class StructEditor extends Component {
         <div className={classes.measureLog} ref={this.logRef} />
 
         {indigoVerification && (
-          <div className={`${classes.spinnerOverlay} loading-spinner`}>
+          <div
+            className={`${classes.spinnerOverlay} loading-spinner`}
+            data-testid="loading-spinner"
+          >
             <LoadingCircles />
           </div>
         )}

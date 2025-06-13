@@ -8,8 +8,6 @@ export const StyledMenu = styled(Menu)`
   .contexify_itemContent {
     font-family: ${({ theme }) => theme.ketcher.font.family.inter};
     font-size: ${({ theme }) => theme.ketcher.font.size.regular};
-    display: flex;
-    align-items: center;
   }
   .contexify_separator {
     color: rgba(225, 229, 234, 1);
@@ -19,10 +17,17 @@ export const StyledMenu = styled(Menu)`
     font-weight: bold;
   }
   .context_menu-icon {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    vertical-align: middle;
+  }
+  .context_menu-icon svg {
+    vertical-align: middle;
   }
   .context_menu-text {
+    display: inline-flex;
+    align-items: center;
     padding-top: 1px;
+    vertical-align: middle;
   }
 `;

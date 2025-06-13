@@ -641,11 +641,11 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   };
 
   const onChangeUnipositiveIonsValue = (value: number) => {
-    dispatch(setUnipositiveIonsValue(value));
+    dispatch(setUnipositiveIonsValue(value.toString()));
   };
 
   const onChangeOligonucleotidesValue = (value: number) => {
-    dispatch(setOligonucleotidesValue(value));
+    dispatch(setOligonucleotidesValue(value.toString()));
   };
 
   return props.isError ? (
@@ -688,7 +688,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesMeasurementUnit)
+              !containOnlyPartOfNumber(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}

@@ -531,6 +531,174 @@ const correctHELMStrings: IHELMString[] = [
     differentHELMExport:
       'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{[4aPEGMal]}|CHEM8{[PEG-2]}|CHEM9{[PEG-4]}|CHEM10{[PEG-6]}|CHEM11{[SMPEG2]}|CHEM12{[SS3]}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
   },
+  {
+    helmDescription: '77. Single unknown peptide',
+    HELMString: 'PEPTIDE1{[Unknown Peptide]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '78. Single unknown unsplit nucleotide',
+    HELMString: 'RNA1{[Unknown Unsplit Nucleotide]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '79. Unknown sugar in single nucleotide',
+    HELMString: 'RNA1{[Unknown Sugar](A)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '80. Unknown base in single nucleotide',
+    HELMString: 'RNA1{R([Unknown Base])P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '81. Unknown phosphate in single nucleotide',
+    HELMString: 'RNA1{R(A)[Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '82. Unknown sugar and unknown base in single nucleotide',
+    HELMString: 'RNA1{[Unknown Sugar]([Unknown Base])P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '83. Unknown sugar and unknown phosphate in single nucleotide',
+    HELMString: 'RNA1{[Unknown Sugar](A)[Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '84. Unknown base and unknown phosphate in single nucleotide',
+    HELMString: 'RNA1{R([Unknown Base])[Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '85. Unknown sugar, unknown base and unknown phosphate in single nucleotide',
+    HELMString:
+      'RNA1{[Unknown Sugar]([Unknown Base])[Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '86. Unknown sugar in single nucleoside',
+    HELMString: 'RNA1{[Unknown Sugar](A)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '87. Unknown base in single nucleoside',
+    HELMString: 'RNA1{R([Unknown Base])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '88. Unknown sugar and base in single nucleoside',
+    HELMString: 'RNA1{[Unknown Sugar]([Unknown Base])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '89. Unknown sugar in sugar-phosphate single preset',
+    HELMString: 'RNA1{[Unknown Sugar]P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '90. Unknown phosphate in sugar-phosphate single preset',
+    HELMString: 'RNA1{R[Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '91. Unknown sugar and unknown phosphate in sugar-phosphate single preset',
+    HELMString: 'RNA1{[Unknown Sugar][Unknown Phosphate]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '92. Unknown CHEM',
+    HELMString: 'CHEM1{[Unknown CHEM]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '93. Combination of all monomers on one canvas',
+    HELMString:
+      'PEPTIDE1{[Unknown Peptide]}|RNA1{[Unknown Unsplit Nucleotide]}|RNA2{[Unknown Sugar](A)P.R([Unknown Base])P.R(A)[Unknown Phosphate].[Unknown Sugar]([Unknown Base])P.[Unknown Sugar](A)[Unknown Phosphate].R([Unknown Base])[Unknown Phosphate].[Unknown Sugar]([Unknown Base])[Unknown Phosphate].[Unknown Sugar](A)}|RNA3{R([Unknown Base])}|RNA4{[Unknown Sugar]([Unknown Base])}|RNA5{[Unknown Sugar].P.R.[Unknown Phosphate].[Unknown Sugar].[Unknown Phosphate]}|CHEM1{[Unknown CHEM]}$PEPTIDE1,RNA1,1:R2-1:R1|RNA1,RNA2,1:R2-1:R1|RNA2,RNA3,22:R2-1:R1|RNA3,RNA4,1:R2-1:R1|RNA4,RNA5,1:R2-1:R1|RNA5,CHEM1,6:R2-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '94. Unknown peptide with all attachment points occupied',
+    HELMString:
+      'PEPTIDE1{A.[Unknown Peptide].A}|PEPTIDE2{A}|PEPTIDE3{A}$PEPTIDE1,PEPTIDE2,2:R3-1:R2|PEPTIDE1,PEPTIDE3,2:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '95. Unknown unsplit nucleotide with all attachment points occupied',
+    HELMString:
+      'RNA1{[Unknown unsplit nucleotide]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}|PEPTIDE4{A}$RNA1,PEPTIDE3,1:R2-1:R1|PEPTIDE2,RNA1,1:R2-1:R1|PEPTIDE1,RNA1,1:R2-1:R3|RNA1,PEPTIDE4,1:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '96. Unknown unsplit nucleotide with all attachment points occupied',
+    HELMString:
+      'RNA1{[Unknown unsplit nucleotide]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}|PEPTIDE4{A}$RNA1,PEPTIDE3,1:R2-1:R1|PEPTIDE2,RNA1,1:R2-1:R1|PEPTIDE1,RNA1,1:R2-1:R3|RNA1,PEPTIDE4,1:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '97. Unknown sugar with all attachment points occupied',
+    HELMString:
+      'RNA1{[Unknown sugar](A)P}|PEPTIDE1{A}|PEPTIDE2{A}$PEPTIDE1,RNA1,1:R2-1:R1|PEPTIDE2,RNA1,1:R1-1:R4$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription: '98. Unknown base with all attachment points occupied',
+    HELMString:
+      'RNA1{R([Unknown base])P}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE2,2:R2-1:R1|RNA1,PEPTIDE1,2:R3-1:R2|RNA1,PEPTIDE3,2:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '99. Unknown phosphate with all attachment points occupied',
+    HELMString:
+      'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
+    differentHELMExport:
+      'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
+  },
+  {
+    helmDescription: '100. Unknown CHEM with all attachment points occupied',
+    HELMString:
+      'CHEM1{[Unknown CHEM]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}|PEPTIDE4{A}$PEPTIDE4,CHEM1,1:R2-1:R1|CHEM1,PEPTIDE2,1:R2-1:R1|PEPTIDE1,CHEM1,1:R2-1:R3|CHEM1,PEPTIDE3,1:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
+  {
+    helmDescription:
+      '101. All monomers of nucleotide are unknown with all attachment points occupied',
+    HELMString:
+      'RNA1{[Unknown sugar]([Unknown base])[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}|PEPTIDE4{A}|PEPTIDE5{A}|PEPTIDE6{A}|PEPTIDE7{A}|PEPTIDE8{A}$RNA1,PEPTIDE1,1:R1-1:R2|RNA1,PEPTIDE2,1:R4-1:R2|PEPTIDE3,RNA1,1:R2-3:R3|RNA1,PEPTIDE4,3:R2-1:R1|RNA1,PEPTIDE5,3:R4-1:R1|RNA1,PEPTIDE8,2:R2-1:R1|RNA1,PEPTIDE7,2:R3-1:R2|RNA1,PEPTIDE6,2:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
+  },
 ];
 
 test.describe('Import correct HELM sequence: ', () => {

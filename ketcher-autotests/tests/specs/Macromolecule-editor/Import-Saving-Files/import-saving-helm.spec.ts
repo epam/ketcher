@@ -71,7 +71,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '4. Simple unusual RNA, no base',
-    HELMString: 'RNA1{[Sm5moe][mepo2]}$$$$V2.0',
+    HELMString: 'RNA1{[Sm5moe].[mepo2]}$$$$V2.0',
   },
   {
     helmDescription: '5. Simple unusual RNA',
@@ -330,14 +330,14 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '50. RNA(RP) with single inline Extended SMILES (P)',
     HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{R[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R.[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
   },
   {
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (R)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|]P}$$$$V2.0',
+      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].P}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',
@@ -451,7 +451,7 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '66. Multi-character presets of monomers without base with IDs without square brackets',
     HELMString: 'RNA1{ALmecl.m2nen.ALtri1.P.R.moen}$$$$V2.0',
-    differentHELMExport: 'RNA1{[ALmecl][m2nen].[ALtri1]P.R[moen]}$$$$V2.0',
+    differentHELMExport: 'RNA1{[ALmecl].[m2nen].[ALtri1].P.R.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -513,7 +513,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[ALmecl][m2nen].ALmecl.m2nen.[ALtri1]P.ALtri1.P.R[moen].R.moen}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[ALmecl][m2nen].[ALmecl][m2nen].[ALtri1]P.[ALtri1]P.R[moen].R[moen]}$$$$V2.0',
+      'RNA1{[ALmecl].[m2nen].[ALmecl].[m2nen].[ALtri1].P.[ALtri1].P.R.[moen].R.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -683,6 +683,8 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
     differentHELMExport:
       'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
   {
     helmDescription: '100. Unknown CHEM with all attachment points occupied',

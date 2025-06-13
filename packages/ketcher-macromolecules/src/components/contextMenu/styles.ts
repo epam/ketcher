@@ -8,6 +8,8 @@ export const StyledMenu = styled(Menu)`
   .contexify_itemContent {
     font-family: ${({ theme }) => theme.ketcher.font.family.inter};
     font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+    display: flex;
+    align-items: center;
   }
   .contexify_separator {
     color: rgba(225, 229, 234, 1);
@@ -16,7 +18,10 @@ export const StyledMenu = styled(Menu)`
     opacity: 1;
     font-weight: bold;
   }
-
+  .context_menu-icon {
+    display: flex;
+    align-items: center;
+  }
   .context_menu-text {
     padding-top: 1px;
   }

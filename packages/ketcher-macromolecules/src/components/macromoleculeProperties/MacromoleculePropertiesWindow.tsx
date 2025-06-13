@@ -688,7 +688,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesMeasurementUnit)
+              !containOnlyPartOfNumber(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}

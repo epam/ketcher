@@ -3431,14 +3431,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-with-elements.svg',
       page,
+      'Images/multi-tailed-arrows-with-elements.svg',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-with-elements.png',
       page,
+      'Images/multi-tailed-arrows-with-elements.png',
     );
     await takeEditorScreenshot(page);
   });
@@ -3451,16 +3451,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened together from SVG/PNG file with the correct size of file.
      */
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
       page,
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
       page,
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);

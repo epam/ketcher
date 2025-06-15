@@ -150,8 +150,8 @@ export async function openFileAndAddToCanvasAsNewProject(
 }
 
 export async function openImageAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   x?: number,
   y?: number,
 ) {

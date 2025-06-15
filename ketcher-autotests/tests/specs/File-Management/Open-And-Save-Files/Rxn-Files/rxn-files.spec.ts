@@ -60,8 +60,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction with atom and bond properties
      */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-atom-and-bond-properties-saved.rxn',
       page,
+      'Rxn-V2000/reaction-with-atom-and-bond-properties-saved.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -119,8 +119,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      */
     test.slow();
     await openFileAndAddToCanvas(
-      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
     );
     await verifyFileExport(
       page,
@@ -239,8 +239,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Import the structure from the saved RXN 2000/3000 file
      */
     await openFileAndAddToCanvas(
-      'Rxn-V3000/reaction-with-several-components.rxn',
       page,
+      'Rxn-V3000/reaction-with-several-components.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -253,8 +253,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Open the RXN v3000 file with S-Group Properties Type = Multiple group
      */
     await openFileAndAddToCanvas(
-      'Rxn-V3000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
+      'Rxn-V3000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -267,8 +267,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
      */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -280,7 +280,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(1)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/sec-butyl-abr.rxn');
     await takeEditorScreenshot(page);
   });
 
@@ -291,7 +291,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(2)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/sec-butyl-abr.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
@@ -312,7 +312,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1904(1)
      * Description: Reaction with heteroatoms is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Rxn-V2000/heteroatoms.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/heteroatoms.rxn');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -324,7 +324,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1904(2)
      * Description: Reaction with heteroatoms is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Rxn-V2000/heteroatoms.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/heteroatoms.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/heteroatoms-expectedV2000.rxn',
@@ -340,7 +340,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(1)
      * Description: Reaction can be opened correctly from rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V3000/r-group-V3000.rxn');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -352,7 +352,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(2)
      * Description: Reaction can be saved correctly to rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V3000/r-group-V3000.rxn');
     await verifyFileExport(
       page,
       'Rxn-V3000/r-group-V3000-expectedV3000.rxn',
@@ -370,8 +370,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -401,8 +401,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -432,8 +432,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -463,8 +463,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -493,8 +493,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -524,8 +524,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
@@ -555,8 +555,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -582,8 +582,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -609,8 +609,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -636,8 +636,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -663,8 +663,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -690,8 +690,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -717,8 +717,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await verifyFileExport(
@@ -744,8 +744,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await verifyFileExport(
@@ -771,8 +771,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -798,8 +798,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -825,8 +825,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
     await verifyFileExport(
@@ -853,8 +853,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
     await verifyFileExport(
@@ -879,7 +879,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
       { option: BondsSetting.BondLength, value: '7.8' },
@@ -900,7 +900,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -930,7 +930,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN3000
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -959,7 +959,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-diagonally-arrow.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
       { option: BondsSetting.BondLength, value: '67.8' },
@@ -986,7 +986,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-diagonally-arrow.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1015,7 +1015,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN3000
   */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-diagonally-arrow.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1044,7 +1044,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
       { option: BondsSetting.BondLength, value: '7.8' },
@@ -1070,7 +1070,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1099,7 +1099,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN3000
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1128,7 +1128,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
       { option: BondsSetting.BondLength, value: '7.8' },
@@ -1149,7 +1149,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1178,7 +1178,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied and it should be save to RXN3000
   */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -1207,7 +1207,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: GeneralSetting.ReactionComponentMarginSizeUnits,
@@ -1237,7 +1237,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
   */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -1261,7 +1261,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
   */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

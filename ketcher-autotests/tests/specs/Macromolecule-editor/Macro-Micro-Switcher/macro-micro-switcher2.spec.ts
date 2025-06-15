@@ -153,8 +153,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: AP label selection works but not saves to KET.
       */
     await openFileAndAddToCanvas(
-      'KET/structure-with-two-attachment-points.ket',
       page,
+      'KET/structure-with-two-attachment-points.ket',
     );
     await page.keyboard.down('Shift');
     await page.getByText('R1').click();
@@ -182,8 +182,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: Attachment points and leaving groups are correctly represented in KET format.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -207,8 +207,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: We can save bond between micro and macro structures to Mol V3000 format.
       */
     await openFileAndAddToCanvas(
-      'KET/chem-connected-to-micro-structure.ket',
       page,
+      'KET/chem-connected-to-micro-structure.ket',
     );
     await verifyFileExport(
       page,
@@ -226,8 +226,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
@@ -250,8 +250,8 @@ test.describe('Macro-Micro-Switcher2', () => {
         Description: We can connect molecule to attachment point and when delete bond attachment point remains.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-with-oxygen.ket',
       page,
+      'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -271,7 +271,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: #4532
       Description: It is possible to save micro-macro connection to mol v3000 file.
       */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/micro-macro-structure-expected.mol',

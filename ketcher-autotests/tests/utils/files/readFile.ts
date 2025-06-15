@@ -80,8 +80,8 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
  * Should be used to prevent extra delay() calls in test cases
  */
 export async function openFileAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
 ) {

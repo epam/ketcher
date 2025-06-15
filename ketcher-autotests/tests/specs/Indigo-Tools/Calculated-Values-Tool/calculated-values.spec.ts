@@ -29,7 +29,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The 'Calculated Values' modal window is opened,
     the 'Chemical Formula' field contains 'C7H16' value.
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -70,8 +70,8 @@ test.describe('Calculated Values Tools', () => {
     changes according to the selected values in the fields for the decimal places count.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/calculated-values-rings.mol',
       page,
+      'Molfiles-V2000/calculated-values-rings.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
 
@@ -102,7 +102,7 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/calcvalues-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/calcvalues-reaction.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await takeEditorScreenshot(page);
@@ -122,7 +122,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The calculation result for a substructure with not selected query features should be correct.
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-structure.mol');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.keyboard.down('Shift');
@@ -176,7 +176,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 300;
     const yDelta = 600;
-    await openFileAndAddToCanvas('Molfiles-V2000/ritalin.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/ritalin.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -191,7 +191,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-bromination.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -223,7 +223,7 @@ test.describe('Calculated Values Tools', () => {
     For our example: C5H10R#. All other fields contain 'error:
     Cannot calculate mass for structure with pseudoatoms, template atoms or RSites' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -238,7 +238,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 200;
     const yDelta = 200;
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -251,7 +251,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Regardless of the method of selection all fields contain
     'Cannot calculate properties for RGroups' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -266,7 +266,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 100;
     const yDelta = 100;
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -282,8 +282,8 @@ test.describe('Calculated Values Tools', () => {
     all fields contain the 'Cannot calculate properties for RGroups' message.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/attachment-points-structure.mol',
       page,
+      'Molfiles-V2000/attachment-points-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -300,8 +300,8 @@ test.describe('Calculated Values Tools', () => {
     const xDelta = 100;
     const yDelta = 100;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/attachment-points-structure.mol',
       page,
+      'Molfiles-V2000/attachment-points-structure.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
@@ -325,8 +325,8 @@ test.describe('Calculated Values Tools', () => {
     error: Cannot calculate mass for structure with repeating units
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/sru-polymer-structure.mol',
       page,
+      'Molfiles-V2000/sru-polymer-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -349,8 +349,8 @@ test.describe('Calculated Values Tools', () => {
     C 84.7 H 15.3
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/multiple-group-structure.mol',
       page,
+      'Molfiles-V2000/multiple-group-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -372,8 +372,8 @@ test.describe('Calculated Values Tools', () => {
     C 84.6 H 15.4
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/superatom-structure.mol',
       page,
+      'Molfiles-V2000/superatom-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -395,8 +395,8 @@ test.describe('Calculated Values Tools', () => {
     C 84.9 H 15.1
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/data-s-group-structure.mol',
       page,
+      'Molfiles-V2000/data-s-group-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -410,7 +410,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -424,8 +424,8 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/a-query-unsaturated.mol',
       page,
+      'Molfiles-V3000/a-query-unsaturated.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -439,7 +439,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -452,7 +452,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -465,7 +465,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -478,7 +478,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -491,7 +491,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -507,8 +507,8 @@ test.describe('Calculated Values Tools', () => {
     represented in the common way (as simple structure).
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/a-query-unsaturated.mol',
       page,
+      'Molfiles-V3000/a-query-unsaturated.mol',
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
@@ -524,7 +524,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -539,7 +539,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -554,7 +554,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -569,7 +569,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -591,7 +591,7 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 78.3 H 4.4 O 17.4
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/hetero-adduct.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/hetero-adduct.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -611,7 +611,7 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 60.1 H 4.1 Br 35.8
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/c14napthylbromide.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/c14napthylbromide.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -624,7 +624,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/dgln-atomlist.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/dgln-atomlist.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -643,8 +643,8 @@ test.describe('Calculated Values Tools', () => {
     [C 40.0 H 6.7 O 53.3]+[C 52.1 H 13.1 O 34.7] > [C 54.5 H 9.2 O 36.3]+[H 11.2 O 88.8]
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-plus-and-arrows.rxn',
       page,
+      'Rxn-V2000/reaction-plus-and-arrows.rxn',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -667,7 +667,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 500;
     const yDelta = 800;
-    await openFileAndAddToCanvas('KET/reaction-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reaction-arrow.ket');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -690,8 +690,8 @@ test.describe('Calculated Values Tools', () => {
     C 77.3 H 22.7
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
       page,
+      'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);

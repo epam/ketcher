@@ -198,8 +198,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvas(
-        'KET/eight-micromolecules.ket',
         page,
+        'KET/eight-micromolecules.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -587,8 +587,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/glutamine.mol',
         page,
+        'Molfiles-V2000/glutamine.mol',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -610,8 +610,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
       await openFileAndAddToCanvas(
-        'KET/stereo-and-structure.ket',
         page,
+        'KET/stereo-and-structure.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -633,8 +633,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-charged.ket',
         page,
+        'KET/two-benzene-charged.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -656,8 +656,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas without text.
     */
       await openFileAndAddToCanvas(
-        'KET/benzene-rings-with-text.ket',
         page,
+        'KET/benzene-rings-with-text.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -679,8 +679,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas without Shape Ellipse.
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-ellipse.ket',
         page,
+        'KET/two-benzene-and-ellipse.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -698,8 +698,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-arrow.ket',
         page,
+        'KET/two-benzene-and-arrow.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -719,8 +719,8 @@ test.describe('Macro-Micro-Switcher', () => {
       const xOffsetFromCenter = 200;
       const yOffsetFromCenter = 0;
       await openFileAndAddToCanvas(
-        'KET/three-alpha-d-allopyranose.ket',
         page,
+        'KET/three-alpha-d-allopyranose.ket',
         xOffsetFromCenter,
         yOffsetFromCenter,
       );
@@ -742,8 +742,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: In Macro mode plus sign is not appear
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-plus.ket',
         page,
+        'KET/two-benzene-and-plus.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -811,8 +811,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/two-benzene-and-plus.ket',
       page,
+      'KET/two-benzene-and-plus.ket',
       topLeftCorner.x,
       topLeftCorner.y,
     );
@@ -836,7 +836,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
       await clickInTheMiddleOfTheScreen(page);
@@ -850,7 +850,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure is in left upper corner of canvas
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/peptides-connected-with-bonds.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -869,7 +869,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
       await setSettingsOptions(page, [
         {
           option: AtomsSetting.ShowHydrogenLabels,
@@ -894,8 +894,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment point added in micro mode used as attachment point when switch to macro mode.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -911,8 +911,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: System does not allow create s-group if structure have attachment point.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     const modifier = getControlModifier();
     await keyboardPressOnCanvas(page, `${modifier}+a`);
@@ -932,8 +932,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Multiple attachment points added in micro mode used as attachment point when switch to macro mode.
     */
     await openFileAndAddToCanvas(
-      'KET/more-than-one-attachment-point.ket',
       page,
+      'KET/more-than-one-attachment-point.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -967,8 +967,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
     */
-    // await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
-    await openFileAndAddToCanvas('KET/long-chain.ket', page);
+    // await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'KET/long-chain.ket');
     await addSuperatomAttachmentPoint(page, 'C', 4);
     await addSuperatomAttachmentPoint(page, 'C', 6);
     await addSuperatomAttachmentPoint(page, 'C', 8);
@@ -986,8 +986,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
     await openFileAndAddToCanvas(
-      'KET/chain-with-eight-attachment-points.ket',
       page,
+      'KET/chain-with-eight-attachment-points.ket',
     );
     await clickOnAtom(page, 'C', 9, 'right');
     await takeEditorScreenshot(page);
@@ -999,8 +999,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
     await openFileAndAddToCanvas(
-      'KET/chain-with-eight-attachment-points.ket',
       page,
+      'KET/chain-with-eight-attachment-points.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click();
@@ -1015,8 +1015,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: In context menu for AP - only Delete and Highlight avaliable.
     */
     await openFileAndAddToCanvas(
-      'KET/structure-with-two-attachment-points.ket',
       page,
+      'KET/structure-with-two-attachment-points.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click({ button: 'right' });
@@ -1166,8 +1166,8 @@ test.describe('Macro-Micro-Switcher', () => {
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).selectMonomer(data.monomer);
@@ -1199,8 +1199,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Chem.Test_6_Ch);
@@ -1249,8 +1249,8 @@ test.describe('Macro-Micro-Switcher', () => {
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectSnakeLayoutModeTool(page);
@@ -1279,8 +1279,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSnakeLayoutModeTool(page);
@@ -1327,8 +1327,8 @@ test.describe('Macro-Micro-Switcher', () => {
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).selectMonomer(data.monomer);
@@ -1361,8 +1361,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Chem.Test_6_Ch);
@@ -1413,8 +1413,8 @@ test.describe('Macro-Micro-Switcher', () => {
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).selectMonomer(data.monomer);
@@ -1446,8 +1446,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Chem.Test_6_Ch);
@@ -1481,8 +1481,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Chem.Test_6_Ch);
@@ -1509,7 +1509,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
-    await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 645, 318);
     await takeEditorScreenshot(page);
@@ -1546,8 +1546,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: We can save bond between micro and macro structures to KET.
     */
     await openFileAndAddToCanvas(
-      'KET/chem-connected-to-micro-structure.ket',
       page,
+      'KET/chem-connected-to-micro-structure.ket',
     );
 
     await verifyFileExport(
@@ -1568,8 +1568,8 @@ test.describe('Macro-Micro-Switcher', () => {
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await verifyFileExport(
         page,
@@ -1591,8 +1591,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in SDF V2000 format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
@@ -1613,8 +1613,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
@@ -1636,8 +1636,8 @@ test.describe('Macro-Micro-Switcher', () => {
                  CDX does not support R-groups, so R1 converts to H (hydrogen)
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -1665,8 +1665,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in CDX format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -1693,8 +1693,8 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
 
       await verifyFileExport(
@@ -1716,8 +1716,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Undo-Redo invalidation if we change mode from micro to macro and back.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1735,8 +1735,8 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -1757,8 +1757,8 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -1774,8 +1774,8 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Aromatize/Dearomatize works for molecules with AP.
      */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -1789,8 +1789,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Layout works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -1801,7 +1801,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4530
     Description: Clean Up works for molecules with AP.
     */
-    await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/distorted-r1-attachment-point.ket');
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -1812,7 +1812,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4530
     Description: Calculate CIPs works for molecules with AP.
     */
-    await openFileAndAddToCanvas('KET/structure-with-ap-and-stereo.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/structure-with-ap-and-stereo.ket');
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -1824,8 +1824,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure Check works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
@@ -1839,8 +1839,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Calculate values works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
@@ -1852,8 +1852,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 3D view works for molecules with AP but hydrohen is shown instead of AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await open3DViewer(page);
     await expect(page).toHaveScreenshot({
@@ -1879,8 +1879,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
         await openFileAndAddToCanvas(
-          'KET/two-attachment-points-added-in-micro-mode.ket',
           page,
+          'KET/two-attachment-points-added-in-micro-mode.ket',
         );
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
         await selectSequenceLayoutModeTool(page);
@@ -1950,8 +1950,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach old AP to new AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await page.getByText('R1').click();
@@ -1971,8 +1971,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is possible to wrap AP labed to R-group (by fragment tool).
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await page.getByText('R1').click();
@@ -1987,8 +1987,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach R-Group to AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await page.getByText('R1').click();
@@ -2005,8 +2005,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to change charge of AP label (select it and use A+/A- buttons).
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).chargePlus();
     await page.getByText('R1').click();
@@ -2026,8 +2026,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach bond to AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R1').click();
@@ -2054,7 +2054,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Canvas after switching to Macro mode and presented after returning to Micro
      */
 
-    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2086,7 +2086,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro
      */
 
-    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2100,7 +2100,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on the Canvas after switching
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-svg-expected.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-svg-expected.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2115,7 +2115,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
 
-    await openFileAndAddToCanvas('CDXML/image-svg-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-svg-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2129,7 +2129,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-png-svg-together.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-png-svg-together.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2144,7 +2144,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
 
-    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2183,7 +2183,7 @@ test.describe('Macro-Micro-Switcher', () => {
     The structure after opening is not similar to the original one. 
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
-      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
       await verifyFileExport(
         page,
         'Molfiles-V2000/micro-macro-structure-expected.mol',
@@ -2208,7 +2208,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5123
     After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
-      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
       await verifyFileExport(
         page,
         'SDF/micro-macro-structure-v2000-expected.sdf',
@@ -2228,7 +2228,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4532
     Description: It is possible to save micro-macro connection to sdf v3000 file.
     */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
     await verifyFileExport(
       page,
       'SDF/micro-macro-structure-v3000-expected.sdf',

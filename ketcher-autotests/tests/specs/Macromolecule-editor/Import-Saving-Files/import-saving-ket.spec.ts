@@ -265,7 +265,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('macromoleculesEditor');
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvas('KET/monomers-saved-in-macro-mode.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/monomers-saved-in-macro-mode.ket');
     await takeEditorScreenshot(page);
   });
 

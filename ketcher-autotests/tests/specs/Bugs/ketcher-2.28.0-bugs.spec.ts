@@ -411,8 +411,8 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvas(
-    'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
     page,
+    'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
   );
 
   await verifyFileExport(

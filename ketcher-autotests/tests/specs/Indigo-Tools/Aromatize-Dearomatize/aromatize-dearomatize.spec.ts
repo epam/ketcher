@@ -45,7 +45,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1868
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/non-aromatic.mol');
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).dearomatize();
@@ -60,8 +60,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/non-aromatic-structures.mol',
       page,
+      'Molfiles-V2000/non-aromatic-structures.mol',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -80,8 +80,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Dearomatize function affects all canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/aromatic-structures.mol',
       page,
+      'Molfiles-V2000/aromatic-structures.mol',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -98,8 +98,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     All other structures are rendered with a circle inside the cycles.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -116,8 +116,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await IndigoFunctionsToolbar(page).dearomatize();
@@ -137,8 +137,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -155,8 +155,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     inside the cycle during any manipulations.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -192,8 +192,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/aromatic-benzene-v2000.mol',
       page,
+      'Molfiles-V2000/aromatic-benzene-v2000.mol',
     );
     await verifyFileExport(
       page,
@@ -214,8 +214,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
      * with the circle inside the cycles.
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/aromatic-benzene-v3000.mol',
       page,
+      'Molfiles-V3000/aromatic-benzene-v3000.mol',
     );
     await verifyFileExport(
       page,
@@ -235,7 +235,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved smiles-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('SMILES/aromatic-benzene-smiles.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/aromatic-benzene-smiles.smi');
     await verifyFileExport(
       page,
       'SMILES/aromatic-benzene-smiles-expected.smi',
@@ -254,8 +254,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/aromatic-benzene-rxnv2000.rxn',
       page,
+      'Rxn-V2000/aromatic-benzene-rxnv2000.rxn',
     );
     await verifyFileExport(
       page,
@@ -276,8 +276,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
       page,
+      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
     );
     await verifyFileExport(
       page,
@@ -297,7 +297,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved cml-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('CML/aromatic-benzene.cml', page);
+    await openFileAndAddToCanvas(page, 'CML/aromatic-benzene.cml');
 
     await verifyFileExport(
       page,

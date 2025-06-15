@@ -345,8 +345,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
       page,
+      'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
     );
     await takeEditorScreenshot(page);
   });

@@ -27,7 +27,7 @@ test.describe('CDF files', () => {
   test('Open SDF v2000 file and save it', async ({ page }) => {
     await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('SDF/sdf-v2000-to-open.sdf', page);
+    await openFileAndAddToCanvas(page, 'SDF/sdf-v2000-to-open.sdf');
     await verifyFileExport(
       page,
       'SDF/sdf-v2000-to-open-expected.sdf',
@@ -38,7 +38,7 @@ test.describe('CDF files', () => {
   });
 
   test('Open SDF v3000 file and save it', async ({ page }) => {
-    await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
+    await openFileAndAddToCanvas(page, 'SDF/sdf-v3000-to-open.sdf');
     await verifyFileExport(
       page,
       'SDF/sdf-v3000-to-open-expected.sdf',
@@ -49,7 +49,7 @@ test.describe('CDF files', () => {
   });
 
   test('Open SDF V2000 file and place it on canvas', async ({ page }) => {
-    await openFileAndAddToCanvas('SDF/sdf-v2000-to-open.sdf', page);
+    await openFileAndAddToCanvas(page, 'SDF/sdf-v2000-to-open.sdf');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -57,7 +57,7 @@ test.describe('CDF files', () => {
   test('Open SDF V3000 file and place it on canvas', async ({ page }) => {
     await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
+    await openFileAndAddToCanvas(page, 'SDF/sdf-v3000-to-open.sdf');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -71,8 +71,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
     await verifyFileExport(
       page,
@@ -96,8 +96,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
     await verifyFileExport(
       page,
@@ -121,8 +121,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
     await verifyFileExport(
       page,
@@ -146,8 +146,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
     await verifyFileExport(
       page,
@@ -171,8 +171,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
     await verifyFileExport(
       page,
@@ -196,8 +196,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
     await verifyFileExport(
       page,
@@ -223,8 +223,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
     await verifyFileExport(
       page,
@@ -250,8 +250,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
     await verifyFileExport(
       page,
@@ -277,8 +277,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
     await verifyFileExport(
       page,
@@ -304,8 +304,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
     await verifyFileExport(
       page,
@@ -331,8 +331,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
     await verifyFileExport(
       page,
@@ -358,8 +358,8 @@ test.describe('CDF files', () => {
   */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
     await verifyFileExport(
       page,
@@ -385,7 +385,7 @@ test('The Bond length setting with px option is applied and it should be save to
   */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
     { option: BondsSetting.BondLength, value: '79.8' },
@@ -415,7 +415,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   The Hash spacing setting is applied and it should be save to sdf 2000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -446,7 +446,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   The Hash spacing setting is applied and it should be save to sdf 3000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -477,7 +477,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   The Hash spacing setting is applied and it should be save to sdf 2000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -508,7 +508,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   The Hash spacing setting is applied and it should be save to sdf 3000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -539,7 +539,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   The Hash spacing setting is applied and it should be save to sdf 2000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -570,7 +570,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   The Hash spacing setting is applied and it should be save to sdf 3000
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     {
       option: BondsSetting.HashSpacingUnits,
@@ -603,7 +603,7 @@ test('The Bond length setting with pt option is applied and it should be save to
   */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setSettingsOptions(page, [
     { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
     { option: BondsSetting.BondLength, value: '29.8' },
@@ -635,7 +635,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setACSSettings(page);
   await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
@@ -663,7 +663,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
   await setACSSettings(page);
   await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);

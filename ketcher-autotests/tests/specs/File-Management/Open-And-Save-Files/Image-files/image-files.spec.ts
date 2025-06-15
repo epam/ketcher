@@ -222,10 +222,10 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images of SVG and PNG format can be added from two different KET files saved and opened
      */
-    await openFileAndAddToCanvas('KET/images-png-svg-with-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg-with-elements.ket');
     await openFileAndAddToCanvas(
-      'KET/images-with-benzene-ring-and-arrow.ket',
       page,
+      'KET/images-with-benzene-ring-and-arrow.ket',
       200,
       200,
     );
@@ -332,7 +332,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
      */
-    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -412,7 +412,7 @@ test.describe('Image files', () => {
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
-    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
@@ -427,7 +427,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo
      */
-    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -1795,8 +1795,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -1827,8 +1827,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -1859,8 +1859,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-svg-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -1891,8 +1891,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-svg-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -1923,8 +1923,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -1955,8 +1955,8 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
-      'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
@@ -2034,7 +2034,7 @@ test.describe('Image files', () => {
         await CommonTopLeftToolbar(page).openFile();
         await openFile(testCase.file, page);
       } else if (testCase.action === 'save') {
-        await openFileAndAddToCanvas(testCase.file, page);
+        await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
           testCase.dropdownOption || MoleculesFileFormatType.MDLMolfileV2000,
@@ -2110,7 +2110,7 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await openFileAndAddToCanvas(`CDX/${fileName}`, page);
+      await openFileAndAddToCanvas(page, `CDX/${fileName}`);
       await takeEditorScreenshot(page);
     });
   }
@@ -2131,7 +2131,7 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await openFileAndAddToCanvas(`CDXML/${fileName}`, page);
+      await openFileAndAddToCanvas(page, `CDXML/${fileName}`);
       await takeEditorScreenshot(page);
     });
   }
@@ -2193,7 +2193,7 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
@@ -2211,7 +2211,7 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2209
      * Description: Images of allowed formats together (PNG, SVG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
@@ -2241,7 +2241,7 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo
      */
-    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2253,7 +2253,7 @@ test.describe('Image files', () => {
      * Description: Action of adding to Canvas images of allowed formats (SVG) together from CDX file can be Undo/Redo
      * (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-svg-expected.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-svg-expected.cdx');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2265,7 +2265,7 @@ test.describe('Image files', () => {
      * Description: Action of adding to Canvas images of allowed formats (SVG) together from CDXML file can be Undo/Redo
      * (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDXML/image-svg-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-svg-expected.cdxml');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2277,7 +2277,7 @@ test.describe('Image files', () => {
      * Description: Action of adding to Canvas images of allowed formats (SVG, PNG) together from CDX file can be Undo/Redo
      * (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-png-svg-together.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-png-svg-together.cdx');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2289,7 +2289,7 @@ test.describe('Image files', () => {
      * Description: Action of adding to Canvas images of allowed formats (SVG, PNG) together from CDXML file can be Undo/Redo
      * (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2566,7 +2566,7 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openFileAndAddToCanvas('KET/svg-images-black-and-colored.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/svg-images-black-and-colored.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
@@ -2636,7 +2636,7 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openFileAndAddToCanvas('KET/images-svg-with-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-svg-with-elements.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
@@ -3074,7 +3074,7 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-with-elements.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
@@ -3090,7 +3090,7 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-with-elements.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,

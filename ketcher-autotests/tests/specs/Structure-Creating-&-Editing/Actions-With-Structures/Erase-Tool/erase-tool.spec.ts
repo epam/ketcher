@@ -25,8 +25,8 @@ test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas(
-      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
 
     await await CommonLeftToolbar(page).selectEraseTool();
@@ -154,8 +154,8 @@ test.describe('Erase Tool', () => {
     Description: The appropriate icon presents at the Toolbar for Erase tool.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
     await takeLeftToolbarScreenshot(page);
   });

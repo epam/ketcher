@@ -646,8 +646,8 @@ test.describe('Cascade Reactions', () => {
       'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
     );
     await openFileAndAddToCanvas(
-      'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1.rdf',
       page,
+      'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1.rdf',
       200,
       100,
     );
@@ -1750,7 +1750,7 @@ test.describe('Cascade Reactions', () => {
           const rdfFileExpected =
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvas(rdfFile, page);
+          await openFileAndAddToCanvas(page, rdfFile);
           await clickOnCanvas(page, 500, 600);
           await selectRingButton(page, RingButton.Benzene);
           await clickOnCanvas(page, 200, 600);
@@ -2654,7 +2654,7 @@ test.describe('Cascade Reactions', () => {
           const rdfFileExpected =
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvas(ketFile, page);
+          await openFileAndAddToCanvas(page, ketFile);
           await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 470, 360);
           await pressButton(page, 'Apply');
           await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 700, 360);

@@ -21,7 +21,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
-  await openFileAndAddToCanvas(fileName, page);
+  await openFileAndAddToCanvas(page, fileName);
   await takeEditorScreenshot(page);
 }
 
@@ -112,8 +112,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
 
     await verifyFileExport(
@@ -138,8 +138,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
 
     await verifyFileExport(
@@ -164,8 +164,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
 
     await verifyFileExport(
@@ -190,8 +190,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -216,8 +216,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
 
     await verifyFileExport(
@@ -242,8 +242,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
 
     await verifyFileExport(
@@ -271,8 +271,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/simple-schema-with-retrosynthetic-arrow.ket',
         page,
+        'KET/simple-schema-with-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -300,8 +300,8 @@ test.describe('CML files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -329,8 +329,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-two-retrosynthetic-arrows.ket',
         page,
+        'KET/schema-with-two-retrosynthetic-arrows.ket',
       );
 
       await verifyFileExport(
@@ -359,8 +359,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       );
 
       await verifyFileExport(
@@ -389,8 +389,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -419,8 +419,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -446,7 +446,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.BondLengthUnits,
@@ -479,7 +479,7 @@ test.describe('CML files', () => {
     Description: Add new settings for ACS style for convert and layout functions
     The Hash spacing setting is applied, click on layout and it should be save to CML specification
     */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -510,7 +510,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setSettingsOptions(page, [
       {
         option: GeneralSetting.ReactionComponentMarginSizeUnits,
@@ -543,7 +543,7 @@ test.describe('CML files', () => {
   Description: add new option AVS style and check saving to different format
   After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

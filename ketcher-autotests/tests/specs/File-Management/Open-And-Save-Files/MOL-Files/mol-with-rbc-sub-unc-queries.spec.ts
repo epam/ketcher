@@ -12,6 +12,7 @@ test('Open MOL file with RBC,SUB,UNC queries', async ({ page }) => {
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas(
+    page,
     'Molfiles-V3000/mol-with-queries-v3000.mol',
     page,
   );

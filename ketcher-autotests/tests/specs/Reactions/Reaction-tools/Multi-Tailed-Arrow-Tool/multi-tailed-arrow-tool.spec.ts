@@ -220,13 +220,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * and they are on the correct positions to each other and they saved together to .ket file with correct parameters.
      */
     await openFileAndAddToCanvas(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
       200 - x,
       300 - y,
     );

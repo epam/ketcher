@@ -21,7 +21,7 @@ test.describe('open files with different formats', () => {
     Test case: EPMLSOPKET-1839
     */
 
-    await openFileAndAddToCanvas('Rxn-V2000/1839-ketcher.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/1839-ketcher.rxn');
     await takeEditorScreenshot(page);
   });
 
@@ -29,7 +29,7 @@ test.describe('open files with different formats', () => {
     /*
     Test case: EPMLSOPKET-1840
     */
-    await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/1840-cyclopentyl.smi');
     await takeEditorScreenshot(page);
   });
 
@@ -37,7 +37,7 @@ test.describe('open files with different formats', () => {
     /*
     Test case: EPMLSOPKET-1841
     */
-    await openFileAndAddToCanvas('InChI/1841-ketcher.inchi', page);
+    await openFileAndAddToCanvas(page, 'InChI/1841-ketcher.inchi');
     await takeEditorScreenshot(page);
   });
 
@@ -58,8 +58,8 @@ test.describe('open files with different formats', () => {
 
     // add second structure from file to canvas
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/glutamine.mol',
       page,
+      'Molfiles-V2000/glutamine.mol',
       X_OFFSET,
       0,
     );
@@ -77,8 +77,8 @@ test.describe('open files with different formats', () => {
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     // add second structure from file to canvas
     await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-reaction.rxn',
       page,
+      'Rxn-V2000/rxn-reaction.rxn',
       0,
       -X_OFFSET,
     );
@@ -156,8 +156,8 @@ test.describe('open files with different formats', () => {
       Description: ket file with SMARTS attributes should be open without error
       */
     await openFileAndAddToCanvas(
-      'KET/benzene-with-smarts-attributes.ket',
       page,
+      'KET/benzene-with-smarts-attributes.ket',
     );
     await takeEditorScreenshot(page);
   });

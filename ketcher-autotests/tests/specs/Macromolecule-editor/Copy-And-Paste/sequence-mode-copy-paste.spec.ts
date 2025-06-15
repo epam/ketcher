@@ -37,7 +37,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
@@ -95,7 +95,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });

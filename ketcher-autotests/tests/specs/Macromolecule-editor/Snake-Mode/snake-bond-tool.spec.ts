@@ -22,6 +22,7 @@ import {
   clickOnCanvas,
   resetZoomLevelToDefault,
   waitForPageInit,
+  MacroFileType,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -581,7 +582,7 @@ test.describe('Snake Bond Tool', () => {
     const x = 550;
     const y = 350;
     await selectSnakeLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -607,7 +608,7 @@ test.describe('Snake Bond Tool', () => {
     const x1 = 300;
     const y1 = 300;
     await selectSnakeLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptides.meE).hover();
     await dragMouseTo(x, y, page);
@@ -919,8 +920,8 @@ test.describe('Snake Bond Tool', () => {
     Then update expected screenshot.
     */
     await openFileAndAddToCanvasMacro(
-      `KET/sequence-with-side-connection.ket`,
       page,
+      `KET/sequence-with-side-connection.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -942,7 +943,7 @@ test.describe('Snake Bond Tool', () => {
         );
       }
     });
-    await openFileAndAddToCanvasMacro(`KET/sequence-rna-2000.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -969,7 +970,7 @@ test.describe('Snake Bond Tool', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(`KET/sequence-rna-4000.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
     await moveMouseAway(page);
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
@@ -994,7 +995,7 @@ test.describe('Snake Bond Tool', () => {
         );
       }
     });
-    await openFileAndAddToCanvasMacro(`KET/sequence-peptides-4000.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1020,7 +1021,7 @@ test.describe('Snake Bond Tool', () => {
         );
       }
     });
-    await openFileAndAddToCanvasMacro(`KET/sequence-peptides-8000.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1035,8 +1036,9 @@ test.describe('Snake Bond Tool', () => {
     */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `Molfiles-V3000/rna-mod-phosphate-example.mol`,
       page,
+      `Molfiles-V3000/rna-mod-phosphate-example.mol`,
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1047,8 +1049,8 @@ test.describe('Snake Bond Tool', () => {
     Description: Both snake bonds are connected to the default position of attachment point used for this bond
     */
     await openFileAndAddToCanvasMacro(
-      `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
       page,
+      `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -1063,8 +1065,8 @@ test.describe('Snake Bond Tool', () => {
     const SCROLL_DELTA = 700;
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
       page,
+      `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);

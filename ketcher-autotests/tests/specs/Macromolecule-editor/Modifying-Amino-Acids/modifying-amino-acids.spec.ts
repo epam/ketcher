@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -9,6 +9,7 @@ import {
   selectAllStructuresOnCanvas,
   MonomerType,
   selectFlexLayoutModeTool,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -35,20 +36,19 @@ test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
-interface IHELMString {
+interface ICommonPart {
   Description: string;
-  HELMString: string;
-  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
-  // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
   pageReloadNeeded?: boolean;
-  // Some times export result is different to import string
   differentHELMExport?: string;
 }
 
-const aminoAcidsForPhosphorylation: IHELMString[] = [
+type IHELMStringOrKetFile =
+  | (ICommonPart & { HELMString: string; KETString?: never })
+  | (ICommonPart & { KETFile: string; HELMString?: never });
+
+const aminoAcidsForPhosphorylation: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. Phosphorylation operation for S natural analog amino acid group',
@@ -69,7 +69,7 @@ const aminoAcidsForPhosphorylation: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForSideChainAcetylation: IHELMString[] = [
+const aminoAcidsForSideChainAcetylation: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. Side chain acetylation operation for K natural analog amino acid group',
@@ -78,7 +78,7 @@ const aminoAcidsForSideChainAcetylation: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForCitrullination: IHELMString[] = [
+const aminoAcidsForCitrullination: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. Citrullination operation for R natural analog amino acid group',
@@ -87,7 +87,7 @@ const aminoAcidsForCitrullination: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForHydroxylation: IHELMString[] = [
+const aminoAcidsForHydroxylation: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. Hydroxylation operation for P natural analog amino acid group',
@@ -102,7 +102,7 @@ const aminoAcidsForHydroxylation: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForNMethylation: IHELMString[] = [
+const aminoAcidsForNMethylation: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. N-methylation operation for A natural analog amino acid group',
@@ -239,7 +239,7 @@ const aminoAcidsForNMethylation: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForInversion: IHELMString[] = [
+const aminoAcidsForInversion: IHELMStringOrKetFile[] = [
   {
     Description: '1. Inversion operation for A natural analog amino acid group',
     HELMString:
@@ -355,7 +355,7 @@ const aminoAcidsForInversion: IHELMString[] = [
   },
 ];
 
-const aminoAcidsForNaturalAminoAcid: IHELMString[] = [
+const aminoAcidsForNaturalAminoAcid: IHELMStringOrKetFile[] = [
   {
     Description:
       '1. Natural amino acid operation for A natural analog amino acid group',
@@ -515,7 +515,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForPhosphorylation.HELMString,
+      aminoAcidForPhosphorylation.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -558,7 +558,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForSideChainAcetylation.HELMString,
+      aminoAcidForSideChainAcetylation.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -601,7 +601,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForCitrullination.HELMString,
+      aminoAcidForCitrullination.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -644,7 +644,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForHydroxylation.HELMString,
+      aminoAcidForHydroxylation.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -687,7 +687,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForNMethylation.HELMString,
+      aminoAcidForNMethylation.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -730,7 +730,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForInversion.HELMString,
+      aminoAcidForInversion.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -773,7 +773,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      aminoAcidForNaturalAminoAcid.HELMString,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -798,3 +798,67 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     );
   });
 }
+
+test(`Check that amino acid modifications are not present in list if they are not applicable`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Check that amino acid modifications are not present in list if they are not applicable
+   *
+   * Case:
+   *     1. Load KET file with all types of monomers and peptides that has no amino acid modifications applicable
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for random monomer
+   *     4. Validate context menu doesn't contain Modify amino acids option
+   */
+  test.setTimeout(15000);
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    page,
+    'KET/Modifying-Amino-Acids/All types of monomers on the canvas.ket',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const randomPeptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+  await randomPeptide.click({ button: 'left', force: true });
+  await randomPeptide.click({ button: 'right', force: true });
+  const modifyAminoAcidsOption = page.getByTestId('modify_amino_acids').first();
+  await expect(modifyAminoAcidsOption).toHaveCount(0);
+});
+
+test('Check that phosphorylation modifies only eligable monomers', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Check that phosphorylation modifies only eligable monomers
+   *
+   * Case:
+   *     1. Load KET file with all types of monomers and peptides (including peptide eligable for phosphorylation)
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for random monomer and click on Phosphorylation
+   *     4. Validate context menu doesn't contain Modify amino acids option
+   */
+  test.setTimeout(15000);
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    page,
+    'KET/Modifying-Amino-Acids/All types of monomers on the canvas and all amino acid modifications.ket',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const randomPeptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await clickContextMenuOptionForMonomer(
+    page,
+    randomPeptide,
+    'aminoAcidModification-Phosphorylation',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

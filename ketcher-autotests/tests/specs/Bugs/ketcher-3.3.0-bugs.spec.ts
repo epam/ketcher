@@ -764,8 +764,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
       page,
+      'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

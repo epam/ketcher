@@ -141,8 +141,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
       page,
+      'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
@@ -164,8 +164,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Benzene ring.ket',
       page,
+      'KET/Bugs/Benzene ring.ket',
     );
     await takePageScreenshot(page, {
       hideMonomerPreview: true,
@@ -187,8 +187,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/System should not change monomer position after switching from Molecules to Macromolecules - Sequence.ket',
       page,
+      'KET/Bugs/System should not change monomer position after switching from Molecules to Macromolecules - Sequence.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -237,8 +237,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
       page,
+      'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -310,7 +310,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     for (const filePath of files) {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectFlexLayoutModeTool(page);
-      await openFileAndAddToCanvasAsNewProjectMacro(filePath, page);
+      await openFileAndAddToCanvasAsNewProjectMacro(page, filePath);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -379,8 +379,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
       page,
+      'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -567,8 +567,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Delete of micromolecules bonds works wrong (or doesnt work).ket',
       page,
+      'KET/Bugs/Delete of micromolecules bonds works wrong (or doesnt work).ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

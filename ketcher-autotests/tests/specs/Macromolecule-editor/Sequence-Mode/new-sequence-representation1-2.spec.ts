@@ -1822,10 +1822,10 @@ async function setupSenseAndAntiSenseSequences(
     );
   }
   if (senseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(senseSequence.SenseForm, page);
+    await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
   if (antisenseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(antisenseSequence.AntiSenseForm, page);
+    await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
   const senseBase = getMonomerLocator(page, Bases.c7io7n).first();

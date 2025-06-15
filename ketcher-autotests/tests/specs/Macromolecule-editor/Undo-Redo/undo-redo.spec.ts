@@ -25,6 +25,7 @@ import {
   clickOnCanvas,
   selectUndoByKeyboard,
   getControlModifier,
+  MacroFileType,
 } from '@utils';
 import {
   connectMonomersWithBonds,
@@ -122,12 +123,12 @@ test.describe('Undo Redo', () => {
 
   test('Undo redo for imported structure', async ({ page }) => {
     await openFileAndAddToCanvasMacro(
-      'KET/peptide-enumeration-one-two-three.ket',
       page,
+      'KET/peptide-enumeration-one-two-three.ket',
     );
     await openFileAndAddToCanvasMacro(
-      'KET/peptide-enumeration-one-two-three.ket',
       page,
+      'KET/peptide-enumeration-one-two-three.ket',
     );
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -159,7 +160,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
-    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
     await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.D_aIle,
@@ -279,7 +280,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
-    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
     await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.SertBu,
@@ -315,7 +316,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Undo/Redo after opening  a .ket file is working.
     */
-    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
@@ -330,8 +331,9 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo/Redo after opening  a .mol file is working.
     */
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/monomers-connected-with-bonds.mol',
       page,
+      'Molfiles-V3000/monomers-connected-with-bonds.mol',
+      MacroFileType.MOLv3000,
     );
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -346,8 +348,8 @@ test.describe('Undo-Redo tests', () => {
     */
     await Library(page).switchToRNATab();
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     await selectSnakeLayoutModeTool(page);
     await CommonTopLeftToolbar(page).undo();
@@ -379,8 +381,8 @@ test.describe('Undo-Redo tests', () => {
       'Pen',
     ];
     await openFileAndAddToCanvasMacro(
-      'KET/ten-peptides-not-connected.ket',
       page,
+      'KET/ten-peptides-not-connected.ket',
     );
     await connectMonomersWithBonds(page, monomerNames);
     const maxUndoHistorySize = 5;

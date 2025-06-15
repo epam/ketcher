@@ -180,8 +180,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
       page,
+      'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
     await takePageScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -201,8 +201,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/monomer-and-micro-structure.ket',
       page,
+      'KET/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -223,8 +223,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
       page,
+      'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
     );
     await page.keyboard.down('Shift');
     await getSymbolLocator(page, {
@@ -371,8 +371,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot to validate movement of microstructures on Sequence mode works as expected
      */
     await openFileAndAddToCanvasMacro(
-      "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
       page,
+      "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -819,8 +819,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       goToPeptides: false,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'Molfiles-V3000/Bugs/macromol.mol',
       page,
+      'Molfiles-V3000/Bugs/macromol.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(

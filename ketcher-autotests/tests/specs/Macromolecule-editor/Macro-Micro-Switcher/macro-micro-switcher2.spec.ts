@@ -30,6 +30,7 @@ import {
   selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
+  MacroFileType,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -124,7 +125,11 @@ test.describe('Macro-Micro-Switcher2', () => {
         Test case: Macro-Micro-Switcher/#3747
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
         */
-      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        testInfo.fileName,
+        MacroFileType.MOLv3000,
+      );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

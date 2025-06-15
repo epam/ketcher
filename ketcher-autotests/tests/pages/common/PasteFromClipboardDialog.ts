@@ -61,6 +61,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
       await menuLocator.getByText(letterCode).click();
     },
 
+    async fillTextArea(text: string) {
+      locators.openStructureTextarea.fill(text);
+    },
+
     async addToCanvas(
       option: { errorMessageExpected: boolean } = {
         errorMessageExpected: false,

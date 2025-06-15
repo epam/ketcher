@@ -368,7 +368,7 @@ test.describe('Erase Tool', () => {
     Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
     erased portions are not reflected in opened file.
     */
-    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.Bal).click();
     await getMonomerLocator(page, Peptides.D_2Nal).click();
@@ -382,8 +382,8 @@ test.describe('Erase Tool', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-flex-chain-expected.ket',
       page,
+      'KET/peptides-flex-chain-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -396,7 +396,7 @@ test.describe('Erase Tool', () => {
     Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
     erased portions are not reflected in opened file.
     */
-    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.Bal).click();
     await getMonomerLocator(page, Peptides.D_2Nal).click();
@@ -410,8 +410,8 @@ test.describe('Erase Tool', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/peptides-flex-chain-expected.mol',
       page,
+      'Molfiles-V3000/peptides-flex-chain-expected.mol',
     );
     await takeEditorScreenshot(page);
   });

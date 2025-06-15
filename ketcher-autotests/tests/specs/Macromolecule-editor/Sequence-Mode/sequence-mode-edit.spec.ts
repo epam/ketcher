@@ -215,7 +215,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Added 'U' in the end of sequence.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-sequence.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -237,7 +237,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Added 'U' in the middle of sequence.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-seq-g.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -259,7 +259,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4340
     Description: After adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode.
     */
-    await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/atuc.ket');
     await takeEditorScreenshot(page);
     await getSymbolLocator(page, {
       symbolAlias: 'T',
@@ -279,7 +279,7 @@ test.describe('Sequence edit mode', () => {
     Description: It was decided to restrict adding symbols before separate phosphate to prevent adding of nucleosides
     by entering symbols before the phosphate.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-g.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -299,7 +299,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4706 https://github.com/epam/ketcher/issues/4706
     Description: It is not possible to add more monomers to cycled scructure. Error message appears.
     */
-    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
     await page
       .getByText('U', { exact: true })
       .first()
@@ -317,7 +317,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4575 https://github.com/epam/ketcher/issues/4575
     Description: It is not possible to add more monomers to cycled structure. Error message appears.
     */
-    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
@@ -337,7 +337,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await hoverOnSequenceSymbol(page, 'A');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -354,7 +354,7 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await hoverOnSequenceSymbol(page, 'A');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -371,7 +371,7 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
 
@@ -467,7 +467,7 @@ test.describe('Sequence edit mode', () => {
     */
     await switchToRNAMode(page);
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['A', 'C', '@'];
 
@@ -589,7 +589,7 @@ test.describe('Sequence edit mode', () => {
     Description: Double-click on any symbol of sequence, the edit mode turned on AND cursor (blinking line) 
     placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
     */
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 4,

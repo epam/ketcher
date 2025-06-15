@@ -156,7 +156,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
       const scrollValue = -400;
       const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
-      await openFileAndAddToCanvasMacro('KET/five-monomers.ket', page);
+      await openFileAndAddToCanvasMacro(page, 'KET/five-monomers.ket');
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await scrollHorizontally(page, scrollValue);
       for (const label of moleculeLabels) {
@@ -179,8 +179,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -225,7 +225,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V2000/glutamine.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V2000/glutamine.mol',
+      MacroFileType.MOLv3000,
+    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -238,7 +242,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await openFileAndAddToCanvasMacro('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/stereo-and-structure.ket');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -255,8 +259,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const y = 400;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
@@ -274,8 +278,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await pageReload(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page
@@ -301,8 +305,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const y2 = 500;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page.getByText('Edc').hover();
@@ -321,8 +325,8 @@ test.describe('Macro-Micro-Switcher', () => {
     const numberOfPressZoomIn = 5;
     const numberOfPressZoomOut = 8;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -346,8 +350,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -370,8 +374,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomIn);
     await clickInTheMiddleOfTheScreen(page);
@@ -1518,8 +1522,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1531,7 +1535,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Github ticket: #4530
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
-    await openFileAndAddToCanvasMacro('KET/part-chain-with-s-group.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/part-chain-with-s-group.ket');
     await clickOnAtom(page, 'C', 2, 'right');
     await takeEditorScreenshot(page);
   });
@@ -1642,10 +1646,9 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDX,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
       page,
-      undefined,
       // Error expected
       true,
     );
@@ -1672,7 +1675,7 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDXML,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
       page,
     );
@@ -2824,9 +2827,9 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   */
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
     page,
-    undefined,
+    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
+    MacroFileType.Ket,
     // error is expected
     true,
   );

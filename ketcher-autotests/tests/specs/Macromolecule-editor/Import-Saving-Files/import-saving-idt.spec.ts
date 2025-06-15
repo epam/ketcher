@@ -104,7 +104,7 @@ test.afterAll(async ({ browser }) => {
 
 test.describe('Import-Saving .idt Files', () => {
   test(`Import .idt file`, async () => {
-    await openFileAndAddToCanvasMacro('IDT/idt-a.idt', page);
+    await openFileAndAddToCanvasMacro(page, 'IDT/idt-a.idt', MacroFileType.IDT);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -173,7 +173,7 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Check import of .ket file and save in .idt format', async () => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
     await openFileAndAddToCanvasAsNewProject('IDT/idt-rna-a.idt', page);
     await takeEditorScreenshot(page);
@@ -269,7 +269,7 @@ test.describe('Import-Saving .idt Files', () => {
   // });
 
   test('Should open .ket file and modify to .idt format in save modal textarea', async () => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
   });
 
@@ -289,7 +289,11 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
-      await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        `IDT/${fileName}.idt`,
+        MacroFileType.IDT,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -577,7 +581,7 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
     */
     // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-    await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/5formD-form5C-cm.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
@@ -692,8 +696,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: It is possible save 80 char formating for IDT.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/idt-line-longer-than-80-chars.ket',
       page,
+      'KET/idt-line-longer-than-80-chars.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -709,7 +713,7 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Check import of .ket file with unresolved monomers and save in .idt format ', async () => {
-    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
     await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
     await openFileAndAddToCanvasAsNewProject(
       'IDT/unresolved-monomers.idt',
@@ -1620,8 +1624,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -600);
@@ -1649,8 +1653,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -600);
@@ -1680,8 +1684,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
@@ -1710,8 +1714,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
@@ -1742,8 +1746,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1771,8 +1775,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
     );
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
@@ -1804,8 +1808,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1833,8 +1837,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1865,8 +1869,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
     );
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1890,8 +1894,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
     );
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1920,8 +1924,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1954,8 +1958,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);

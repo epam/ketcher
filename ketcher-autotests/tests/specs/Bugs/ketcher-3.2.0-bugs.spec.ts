@@ -494,8 +494,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
       page,
+      'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

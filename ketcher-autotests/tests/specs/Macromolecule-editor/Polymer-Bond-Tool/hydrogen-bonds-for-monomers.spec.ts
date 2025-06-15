@@ -660,7 +660,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
     await takeEditorScreenshot(page);

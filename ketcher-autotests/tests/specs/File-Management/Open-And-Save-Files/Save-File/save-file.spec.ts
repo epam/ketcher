@@ -122,8 +122,8 @@ test.describe('Save files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });

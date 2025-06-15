@@ -61,8 +61,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -87,8 +87,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -113,8 +113,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -139,8 +139,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -165,8 +165,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -191,8 +191,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -217,8 +217,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -244,8 +244,8 @@ test.describe('Loading SMARTS files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
         page,
+        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
       );
       await takeEditorScreenshot(page);
     },
@@ -271,8 +271,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -297,8 +297,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
       page,
+      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -323,8 +323,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -349,8 +349,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
       page,
+      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -443,7 +443,7 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       if (monomer.pageReloadNeeded) {
         await pageReloadMicro(page);
       }
-      await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -453,8 +453,8 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        monomer.SMARTSFile_Expected,
         page,
+        monomer.SMARTSFile_Expected,
       );
       await takeEditorScreenshot(page);
 
@@ -504,7 +504,7 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       if (monomer.pageReloadNeeded) {
         await pageReloadMicro(page);
       }
-      await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
       await expandMonomer(page, monomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
@@ -515,8 +515,8 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        monomer.SMARTSFile_Expected,
         page,
+        monomer.SMARTSFile_Expected,
       );
       await takeEditorScreenshot(page);
 

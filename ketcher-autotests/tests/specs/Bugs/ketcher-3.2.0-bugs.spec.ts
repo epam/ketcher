@@ -384,8 +384,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
       page,
+      'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
     );
     await selectAllStructuresOnCanvas(page);
     const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
@@ -737,8 +737,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/markush.mol',
       page,
+      'Molfiles-V2000/Bugs/markush.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -755,8 +755,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
       page,
+      'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -773,8 +773,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/two-stereostructures.mol',
       page,
+      'Molfiles-V2000/Bugs/two-stereostructures.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -792,8 +792,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
       page,
+      'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -803,8 +803,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
       page,
+      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -821,8 +821,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Substitution count.ket',
       page,
+      'KET/Bugs/Substitution count.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -839,8 +839,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/different-features.mol',
       page,
+      'Molfiles-V2000/Bugs/different-features.mol',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -862,8 +862,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
+      'KET/Bugs/Elliptical arrows can be saved to the png.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -884,8 +884,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/Bugs/stereochemistry.cdxml',
       page,
+      'CDXML/Bugs/stereochemistry.cdxml',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

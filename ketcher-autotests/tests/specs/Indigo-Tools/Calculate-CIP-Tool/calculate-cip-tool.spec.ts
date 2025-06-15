@@ -450,8 +450,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     After fix we need update file and screenshot.
      */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
         page,
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       );
       await IndigoFunctionsToolbar(page).calculateCIP();
       await takeEditorScreenshot(page);
@@ -588,8 +588,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 4. Take screenshot
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -610,8 +610,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Open saved file
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -620,8 +620,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo-expected.ket',
       page,
+      'KET/ring-and-chains-with-stereo-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -642,8 +642,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Open saved file
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -653,8 +653,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
       page,
+      'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -675,8 +675,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 6. Check that CIP stereo-label is restored
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -710,8 +710,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -749,8 +749,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are rotated with structure
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -775,8 +775,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are flipped with structure
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -804,8 +804,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -830,8 +830,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are positioned correctly
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -861,8 +861,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -892,8 +892,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -927,8 +927,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -961,8 +961,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 6. Check that CIP stereo-labels are positioned correctly
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);

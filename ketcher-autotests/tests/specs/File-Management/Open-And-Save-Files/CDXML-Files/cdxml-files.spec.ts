@@ -306,8 +306,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
       page,
+      'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -334,8 +334,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
       page,
+      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -360,8 +360,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
       page,
+      'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -389,8 +389,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
         page,
+        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -419,8 +419,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
         page,
+        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -449,8 +449,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
         page,
+        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -480,8 +480,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
       page,
+      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -511,8 +511,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -542,8 +542,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -573,8 +573,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -606,8 +606,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
       page,
+      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -634,8 +634,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-dif-elements-acs-style.cdxml',
       page,
+      'CDXML/layout-with-dif-elements-acs-style.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -648,8 +648,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reactant-single-reaction.ket',
       page,
+      'KET/reactant-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -658,8 +658,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/reactant-single-reaction-expected.cdxml',
       page,
+      'CDXML/reactant-single-reaction-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -672,8 +672,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Single reaction containing only products can be saved/loaded from CDXML with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/products-single-reaction.ket',
       page,
+      'KET/products-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -682,8 +682,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/products-single-reaction-expected.cdxml',
       page,
+      'CDXML/products-single-reaction-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -696,8 +696,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -706,8 +706,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
       page,
+      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -720,8 +720,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multiple-individual-reactions.ket',
       page,
+      'KET/multiple-individual-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -730,8 +730,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/multiple-individual-reactions-expected.cdxml',
       page,
+      'CDXML/multiple-individual-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -744,8 +744,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/several-cascade-reactions.ket',
       page,
+      'KET/several-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -754,8 +754,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/several-cascade-reactions-expected.cdxml',
       page,
+      'CDXML/several-cascade-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -768,8 +768,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/combination-of-single-and-cascade-reactions.ket',
       page,
+      'KET/combination-of-single-and-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -778,8 +778,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
       page,
+      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -792,8 +792,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/cascade-of-multiple-reactions.ket',
       page,
+      'KET/cascade-of-multiple-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -802,8 +802,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
       page,
+      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -816,8 +816,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
       page,
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -826,8 +826,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
       page,
+      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });

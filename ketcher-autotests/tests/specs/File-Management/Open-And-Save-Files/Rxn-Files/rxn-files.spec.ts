@@ -129,8 +129,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
       page,
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -219,14 +219,14 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
       page,
+      'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
     );
     await takeEditorScreenshot(page);
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
       page,
+      'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -299,8 +299,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
       page,
+      'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -386,8 +386,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -417,8 +417,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -448,8 +448,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -478,8 +478,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -509,8 +509,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -540,8 +540,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
       page,
+      'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -567,8 +567,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -594,8 +594,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -621,8 +621,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
       page,
+      'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -648,8 +648,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
       page,
+      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -675,8 +675,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -702,8 +702,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -729,8 +729,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
       page,
+      'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -756,8 +756,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
       page,
+      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -783,8 +783,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -810,8 +810,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
       page,
+      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -837,8 +837,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
       page,
+      'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -865,8 +865,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
       page,
+      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -916,8 +916,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       page,
+      'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -945,8 +945,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       page,
+      'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -972,8 +972,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
       page,
+      'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1001,8 +1001,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       page,
+      'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1030,8 +1030,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       page,
+      'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1056,8 +1056,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
       page,
+      'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1085,8 +1085,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       page,
+      'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1114,8 +1114,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       page,
+      'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1164,8 +1164,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       page,
+      'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1193,8 +1193,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       page,
+      'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1224,8 +1224,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
       page,
+      'Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1248,8 +1248,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
       page,
+      'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1272,8 +1272,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
       page,
+      'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
     );
     await takeEditorScreenshot(page);
   });

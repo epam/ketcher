@@ -104,8 +104,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst-px-bond-lengh.ket',
       page,
+      'KET/layout-with-catalyst-px-bond-lengh.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -136,8 +136,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst-px-hash-spacing-expected.ket',
       page,
+      'KET/layout-with-catalyst-px-hash-spacing-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -168,8 +168,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
       page,
+      'KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -199,8 +199,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-diagonally-arrow-pt-hash-spacing-expected.ket',
       page,
+      'KET/layout-with-diagonally-arrow-pt-hash-spacing-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -253,8 +253,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-long-molecule-inch-hash-spacing-expected.ket',
       page,
+      'KET/layout-with-long-molecule-inch-hash-spacing-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -285,8 +285,8 @@ test.describe('Ket files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst-px-margin-size.ket',
       page,
+      'KET/layout-with-catalyst-px-margin-size.ket',
     );
     await takeEditorScreenshot(page);
   });

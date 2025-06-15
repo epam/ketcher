@@ -123,8 +123,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-peptides.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-peptides.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -149,8 +149,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -175,8 +175,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-chems.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-chems.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -201,8 +201,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-bases.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-bases.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -227,8 +227,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-sugars.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-sugars.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -253,8 +253,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -282,8 +282,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/simple-schema-with-retrosynthetic-arrow.cml',
         page,
+        'CML/simple-schema-with-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -311,8 +311,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
       page,
+      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -340,8 +340,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-two-retrosynthetic-arrows.cml',
         page,
+        'CML/schema-with-two-retrosynthetic-arrows.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -370,8 +370,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
         page,
+        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -400,8 +400,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
         page,
+        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -430,8 +430,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
         page,
+        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -464,8 +464,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-catalyst-px-bond-lengh.cml',
       page,
+      'CML/layout-with-catalyst-px-bond-lengh.cml',
     );
 
     await takeEditorScreenshot(page);
@@ -495,8 +495,8 @@ test.describe('CML files', () => {
       FileType.CML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
       page,
+      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -528,8 +528,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-dif-elements-cm-margin-size.cml',
       page,
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
     );
 
     await takeEditorScreenshot(page);
@@ -554,8 +554,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-dif-elements-acs-style.cml',
       page,
+      'CML/layout-with-dif-elements-acs-style.cml',
     );
     await takeEditorScreenshot(page);
   });

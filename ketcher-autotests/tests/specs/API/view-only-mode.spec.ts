@@ -132,8 +132,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: All editing tools are disabled in toolbars for elements
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page, { timeout: 10000 });
@@ -148,8 +148,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await enableViewOnlyModeBySetOptions(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await takePageScreenshot(page);
   });
@@ -505,8 +505,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       page,
+      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -529,8 +529,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       page,
+      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -553,8 +553,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       page,
+      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });

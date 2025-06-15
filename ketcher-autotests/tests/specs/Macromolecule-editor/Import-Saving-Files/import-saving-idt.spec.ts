@@ -175,7 +175,7 @@ test.describe('Import-Saving .idt Files', () => {
   test('Check import of .ket file and save in .idt format', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
-    await openFileAndAddToCanvasAsNewProject('IDT/idt-rna-a.idt', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'IDT/idt-rna-a.idt');
     await takeEditorScreenshot(page);
   });
 
@@ -405,7 +405,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await selectSequenceLayoutModeTool(page);
     await verifyFileExport(page, 'IDT/idt-expected.idt', FileType.IDT);
-    await openFileAndAddToCanvasAsNewProject('IDT/idt-expected.idt', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'IDT/idt-expected.idt');
     await takeEditorScreenshot(page);
   });
 
@@ -425,8 +425,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-1.idt',
       page,
+      'IDT/sequences-with-modifications-1.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -450,8 +450,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-2.idt',
       page,
+      'IDT/sequences-with-modifications-2.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -510,8 +510,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-3.idt',
       page,
+      'IDT/sequences-with-modifications-3.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -569,8 +569,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-4.idt',
       page,
+      'IDT/sequences-with-modifications-4.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -611,8 +611,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-5.idt',
       page,
+      'IDT/sequences-with-modifications-5.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -706,8 +706,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/idt-line-longer-than-80-chars-expected.idt',
       page,
+      'IDT/idt-line-longer-than-80-chars-expected.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -716,8 +716,8 @@ test.describe('Import-Saving .idt Files', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
     await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/unresolved-monomers.idt',
       page,
+      'IDT/unresolved-monomers.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -1049,8 +1049,8 @@ test.describe('Import-Saving .idt Files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
       page,
+      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1064,8 +1064,8 @@ test.describe('Import-Saving .idt Files', () => {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
       page,
+      'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1102,8 +1102,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/idt-with-unresolved-monomer-expected.idt',
       page,
+      'IDT/idt-with-unresolved-monomer-expected.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -1787,8 +1787,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
@@ -1850,8 +1850,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
@@ -1905,8 +1905,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 200);

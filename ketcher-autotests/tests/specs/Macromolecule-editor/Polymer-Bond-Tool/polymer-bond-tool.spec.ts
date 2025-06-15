@@ -560,7 +560,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
   await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
-  await openFileAndAddToCanvasAsNewProject('IDT/moe-idt-expected.idt', page);
+  await openFileAndAddToCanvasAsNewProject(page, 'IDT/moe-idt-expected.idt');
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
@@ -897,8 +897,8 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     FileType.KET,
   );
   await openFileAndAddToCanvasAsNewProject(
-    'KET/five-peptides-connected-by-r2-r1-expected.ket',
     page,
+    'KET/five-peptides-connected-by-r2-r1-expected.ket',
   );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -937,8 +937,8 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     'v3000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
     page,
+    'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
   );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

@@ -373,8 +373,8 @@ test.describe('Import-Saving .fasta Files', () => {
       FileType.FASTA,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
       page,
+      'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
     );
     await takeEditorScreenshot(page);
   });

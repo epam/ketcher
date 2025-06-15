@@ -135,8 +135,8 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
-  filename: string,
   page: Page,
+  filename: string,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();

@@ -622,8 +622,8 @@ test.describe('Snake Bond Tool', () => {
     Description: Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -638,8 +638,8 @@ test.describe('Snake Bond Tool', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/long-peptide-chain.ket`,
       page,
+      `KET/long-peptide-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -655,8 +655,8 @@ test.describe('Snake Bond Tool', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/long-peptide-chain.ket`,
       page,
+      `KET/long-peptide-chain.ket`,
     );
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -680,8 +680,8 @@ test.describe('Snake Bond Tool', () => {
     const y2 = 100;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await scrollUp(page, 200);
     await moveMouseAway(page);
@@ -704,8 +704,8 @@ test.describe('Snake Bond Tool', () => {
     const y2 = 100;
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
@@ -725,8 +725,8 @@ test.describe('Snake Bond Tool', () => {
     Description: Bonds connecting through R3, R4, ... Rn attachment points remain straight lines.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/two-peptides-in-chain-connected-through-r3-r4.ket`,
       page,
+      `KET/two-peptides-in-chain-connected-through-r3-r4.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -751,7 +751,7 @@ test.describe('Snake Bond Tool', () => {
   for (const testCase of testCases) {
     test(testCase.description, async () => {
       await selectFlexLayoutModeTool(page);
-      await openFileAndAddToCanvasAsNewProject(testCase.filename, page);
+      await openFileAndAddToCanvasAsNewProject(page, testCase.filename);
 
       // Workaround against fake scroll bars that sometimes shown even if they are not intended to
       await page.mouse.wheel(400, 0);
@@ -773,8 +773,8 @@ test.describe('Snake Bond Tool', () => {
     */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -789,8 +789,8 @@ test.describe('Snake Bond Tool', () => {
     */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -809,8 +809,8 @@ test.describe('Snake Bond Tool', () => {
     const y2 = 100;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -831,8 +831,8 @@ test.describe('Snake Bond Tool', () => {
     const y2 = 100;
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
@@ -858,8 +858,8 @@ test.describe('Snake Bond Tool', () => {
     const y2 = 100;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
@@ -878,8 +878,8 @@ test.describe('Snake Bond Tool', () => {
     const y = 650;
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/chems-connected-through-r2-r1.ket`,
       page,
+      `KET/chems-connected-through-r2-r1.ket`,
     );
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
@@ -902,8 +902,8 @@ test.describe('Snake Bond Tool', () => {
     const y = 650;
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      `KET/chems-connected-through-r2-r1-and-r1-r2.ket`,
       page,
+      `KET/chems-connected-through-r2-r1-and-r1-r2.ket`,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);

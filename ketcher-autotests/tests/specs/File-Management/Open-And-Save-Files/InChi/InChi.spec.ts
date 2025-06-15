@@ -210,8 +210,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/InChI-fused-structure-expected.inchi',
       page,
+      'InChI/InChI-fused-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -230,8 +230,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/nonone-chain-structure-expected.inchi',
       page,
+      'InChI/nonone-chain-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -253,8 +253,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
       page,
+      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -273,8 +273,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/nona-2,4,6-triyne-expected.inchi',
       page,
+      'InChI/nona-2,4,6-triyne-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -293,8 +293,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/cyclic-cyclohexane-structure-expected.inchi',
       page,
+      'InChI/cyclic-cyclohexane-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -316,8 +316,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/sugar_without_stereo-expected.inchi',
       page,
+      'InChI/sugar_without_stereo-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -332,8 +332,8 @@ test.describe('Open and Save InChI file', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/Chiral.mol', page);
     await verifyFileExport(page, 'InChI/Chiral-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/Chiral-expected.inchi',
       page,
+      'InChI/Chiral-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -348,8 +348,8 @@ test.describe('Open and Save InChI file', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/spiro.mol', page);
     await verifyFileExport(page, 'InChI/spiro-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/spiro-expected.inchi',
       page,
+      'InChI/spiro-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -391,8 +391,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/propane-hexane-benzene-expected.inchi',
       page,
+      'InChI/propane-hexane-benzene-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });

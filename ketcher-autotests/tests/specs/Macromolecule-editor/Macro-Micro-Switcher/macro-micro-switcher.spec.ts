@@ -1578,8 +1578,8 @@ test.describe('Macro-Micro-Switcher', () => {
         'v2000',
       );
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
         page,
+        'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
       );
       await takeEditorScreenshot(page);
     },
@@ -1601,8 +1601,8 @@ test.describe('Macro-Micro-Switcher', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -1623,8 +1623,8 @@ test.describe('Macro-Micro-Switcher', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -1647,8 +1647,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
       page,
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
       // Error expected
       true,
     );
@@ -1676,8 +1676,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
       page,
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1703,8 +1703,8 @@ test.describe('Macro-Micro-Switcher', () => {
         FileType.CML,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'CML/one-attachment-point-added-in-micro-mode-expected.cml',
         page,
+        'CML/one-attachment-point-added-in-micro-mode-expected.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -2158,8 +2158,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is possible to save micro-macro connection to ket file.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/micro-macro-structure.ket',
       page,
+      'KET/micro-macro-structure.ket',
     );
     await verifyFileExport(
       page,
@@ -2167,8 +2167,8 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/micro-macro-structure-expected.ket',
       page,
+      'KET/micro-macro-structure-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -2191,8 +2191,8 @@ test.describe('Macro-Micro-Switcher', () => {
         'v2000',
       );
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V2000/micro-macro-structure-expected.mol',
         page,
+        'Molfiles-V2000/micro-macro-structure-expected.mol',
       );
       await takeEditorScreenshot(page);
     },
@@ -2216,8 +2216,8 @@ test.describe('Macro-Micro-Switcher', () => {
         'v2000',
       );
       await openFileAndAddToCanvasAsNewProject(
-        'SDF/micro-macro-structure-v2000-expected.sdf',
         page,
+        'SDF/micro-macro-structure-v2000-expected.sdf',
       );
       await takeEditorScreenshot(page);
     },
@@ -2236,8 +2236,8 @@ test.describe('Macro-Micro-Switcher', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/micro-macro-structure-v3000-expected.sdf',
       page,
+      'SDF/micro-macro-structure-v3000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -2378,7 +2378,7 @@ test.describe('Expand on Micro canvas: ', () => {
        *       4. Take screenshot to make sure it works
        *       Molecule should appear
        */
-      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await takeEditorScreenshot(page);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
@@ -2516,8 +2516,8 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
        *       4. Check if Expand monomer menu option is disabled
        */
       await openFileAndAddToCanvasAsNewProject(
-        nonExpandableMonomer.KETFile,
         page,
+        nonExpandableMonomer.KETFile,
       );
       await takeEditorScreenshot(page);
       await callContexMenu(page, nonExpandableMonomer.monomerLocatorText);
@@ -2614,8 +2614,8 @@ test.describe('Collapse on Micro canvas: ', () => {
        *       Molecule got collapsed
        */
       await openFileAndAddToCanvasAsNewProject(
-        collapsableMonomer.KETFile,
         page,
+        collapsableMonomer.KETFile,
       );
       await expandMonomer(page, collapsableMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
@@ -2794,8 +2794,8 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
        */
 
       await openFileAndAddToCanvasAsNewProject(
-        movableCollapsedMonomer.KETFile,
         page,
+        movableCollapsedMonomer.KETFile,
       );
       await takeEditorScreenshot(page);
 

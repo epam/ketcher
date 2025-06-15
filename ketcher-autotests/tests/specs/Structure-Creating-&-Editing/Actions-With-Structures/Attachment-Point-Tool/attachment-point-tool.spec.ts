@@ -454,8 +454,8 @@ test.describe('Attachment Point Tool', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -474,8 +474,8 @@ test.describe('Attachment Point Tool', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });

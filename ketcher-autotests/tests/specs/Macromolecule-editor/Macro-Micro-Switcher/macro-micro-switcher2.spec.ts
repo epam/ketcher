@@ -168,8 +168,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/structure-with-two-attachment-points-expected.ket',
       page,
+      'KET/structure-with-two-attachment-points-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -193,8 +193,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -236,8 +236,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       page,
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -279,8 +279,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/micro-macro-structure-expected.mol',
       page,
+      'Molfiles-V3000/micro-macro-structure-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -296,8 +296,8 @@ test.describe('Macro-Micro-Switcher2', () => {
      *
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
@@ -320,8 +320,8 @@ test.describe('Macro-Micro-Switcher2', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -422,8 +422,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -444,8 +444,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await doubleClickOnAtom(page, 'Zn');
@@ -465,8 +465,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -474,8 +474,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties-expected.ket',
       page,
+      'KET/single-atom-properties-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -493,8 +493,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -503,8 +503,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/single-atom-properties-expected.mol',
       page,
+      'Molfiles-V3000/single-atom-properties-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -523,8 +523,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -547,8 +547,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await resetCurrentTool(page);
@@ -584,8 +584,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -610,8 +610,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -643,8 +643,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, 400, 400);
@@ -672,8 +672,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -682,8 +682,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties-saved-in-macro-expected.ket',
       page,
+      'KET/single-atom-properties-saved-in-macro-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -702,8 +702,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -713,8 +713,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       page,
+      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -731,8 +731,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Verify that Flex mode is opened
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-atoms.ket',
       page,
+      'KET/benzene-ring-with-two-atoms.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
@@ -1015,8 +1015,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Undo/redo
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-atoms.ket',
       page,
+      'KET/benzene-ring-with-two-atoms.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,

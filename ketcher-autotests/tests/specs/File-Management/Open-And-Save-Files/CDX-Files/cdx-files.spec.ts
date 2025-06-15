@@ -344,8 +344,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reactant-single-reaction.ket',
       page,
+      'KET/reactant-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -368,8 +368,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/products-single-reaction.ket',
       page,
+      'KET/products-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -392,8 +392,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -416,8 +416,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multiple-individual-reactions.ket',
       page,
+      'KET/multiple-individual-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -440,8 +440,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/several-cascade-reactions.ket',
       page,
+      'KET/several-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -464,8 +464,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/combination-of-single-and-cascade-reactions.ket',
       page,
+      'KET/combination-of-single-and-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -488,8 +488,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/cascade-of-multiple-reactions.ket',
       page,
+      'KET/cascade-of-multiple-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -512,8 +512,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
       page,
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(

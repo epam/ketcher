@@ -816,8 +816,8 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
     page,
+    'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
   );
 
   const dC2SGroup = page.getByText('dC_2').first();
@@ -845,8 +845,8 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
-    "Molfiles-V2000/Bugs/Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files.mol",
     page,
+    "Molfiles-V2000/Bugs/Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files.mol",
   );
 
   await takeEditorScreenshot(page, {

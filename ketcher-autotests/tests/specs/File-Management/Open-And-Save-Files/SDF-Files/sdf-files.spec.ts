@@ -81,8 +81,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -106,8 +106,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -131,8 +131,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -156,8 +156,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -181,8 +181,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -206,8 +206,8 @@ test.describe('CDF files', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -233,8 +233,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -260,8 +260,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -287,8 +287,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -314,8 +314,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -341,8 +341,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -368,8 +368,8 @@ test.describe('CDF files', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       page,
+      'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -400,8 +400,8 @@ test('The Bond length setting with px option is applied and it should be save to
     'v2000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
     page,
+    'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -431,8 +431,8 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'v2000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -462,8 +462,8 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'v3000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -493,8 +493,8 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'v2000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -524,8 +524,8 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'v3000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -555,8 +555,8 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'v2000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -587,8 +587,8 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'v3000',
   );
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
     page,
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -619,8 +619,8 @@ test('The Bond length setting with pt option is applied and it should be save to
   );
 
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
     page,
+    'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -648,8 +648,8 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   );
 
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
     page,
+    'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
   );
   await takeEditorScreenshot(page);
 });
@@ -676,8 +676,8 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   );
 
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
     page,
+    'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
   );
   await takeEditorScreenshot(page);
 });

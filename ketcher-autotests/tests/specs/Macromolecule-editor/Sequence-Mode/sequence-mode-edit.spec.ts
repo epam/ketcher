@@ -915,8 +915,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rna-dna-pep-sequence-expected.ket',
       page,
+      'KET/rna-dna-pep-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -956,8 +956,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       page,
+      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1080,8 +1080,8 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/monomer-does-not-have-attachment-point-r2.ket',
       page,
+      'KET/monomer-does-not-have-attachment-point-r2.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
@@ -1254,8 +1254,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rna-AAAAAA-sequence-expected.ket',
       page,
+      'KET/rna-AAAAAA-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1287,8 +1287,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/dna-AAAAAA-sequence-expected.ket',
       page,
+      'KET/dna-AAAAAA-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1320,8 +1320,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
       page,
+      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1354,8 +1354,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       page,
+      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1622,8 +1622,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
       page,
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1665,8 +1665,8 @@ test.describe('Sequence edit mode', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
       page,
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

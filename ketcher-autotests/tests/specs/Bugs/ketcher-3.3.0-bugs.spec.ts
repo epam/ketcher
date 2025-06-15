@@ -876,8 +876,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
       page,
+      'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -894,8 +894,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/Bugs/R-fragment-structure.mol',
     );
     await takeEditorScreenshot(page);
   });

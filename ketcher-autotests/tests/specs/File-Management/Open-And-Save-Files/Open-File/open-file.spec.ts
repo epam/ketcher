@@ -131,8 +131,8 @@ test.describe('open files with different formats', () => {
      */
     // add first structure from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/a-query-notList.mol',
       page,
+      'Molfiles-V3000/a-query-notList.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -144,8 +144,8 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/dhis-prohibit-atoms.mol',
       page,
+      'Molfiles-V3000/dhis-prohibit-atoms.mol',
     );
     await takeEditorScreenshot(page);
   });

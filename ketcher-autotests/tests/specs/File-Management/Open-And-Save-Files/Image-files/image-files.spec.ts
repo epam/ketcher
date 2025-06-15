@@ -86,8 +86,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-demo-expected.ket',
       page,
+      'KET/image-svg-demo-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -101,8 +101,8 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await verifyFileExport(page, 'KET/image-png-expected.ket', FileType.KET);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-png-expected.ket',
       page,
+      'KET/image-png-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -121,8 +121,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-and-png-expected.ket',
       page,
+      'KET/image-svg-and-png-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -134,8 +134,8 @@ test.describe('Image files', () => {
      * with correct positions and layer levels (last added image is on top)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/four-images-svg-and-png.ket',
       page,
+      'KET/four-images-svg-and-png.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -144,8 +144,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/four-images-svg-and-png-expected.ket',
       page,
+      'KET/four-images-svg-and-png-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -156,8 +156,8 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format can be saved to KET file and added to canvas with structures
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-with-benzene-ring-and-arrow.ket',
       page,
+      'KET/images-with-benzene-ring-and-arrow.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -166,8 +166,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-with-benzene-ring-and-arrow-expected.ket',
       page,
+      'KET/images-with-benzene-ring-and-arrow-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -178,8 +178,8 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format with Structure library elements can be saved to KET file and added to canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-elements.ket',
       page,
+      'KET/images-png-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -188,8 +188,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-elements-expected.ket',
       page,
+      'KET/images-png-svg-with-elements-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -201,8 +201,8 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-80-with-50-structures.ket',
       page,
+      'KET/images-png-svg-80-with-50-structures.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -211,8 +211,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-80-with-50-structures-expected.ket',
       page,
+      'KET/images-png-svg-80-with-50-structures-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -236,8 +236,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/two-images-with-many-elements-expected.ket',
       page,
+      'KET/two-images-with-many-elements-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -492,8 +492,8 @@ test.describe('Image files', () => {
      * moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-elements.ket',
       page,
+      'KET/images-png-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -510,8 +510,8 @@ test.describe('Image files', () => {
      * Description: Loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-elements.ket',
       page,
+      'KET/images-png-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -664,7 +664,7 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
-    await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
@@ -680,8 +680,8 @@ test.describe('Image files', () => {
      * Description: Loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDX/image-png-svg-together.cdx',
       page,
+      'CDX/image-png-svg-together.cdx',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -698,8 +698,8 @@ test.describe('Image files', () => {
      * Description: Loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-svg-together.cdxml',
       page,
+      'CDXML/image-png-svg-together.cdxml',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -732,7 +732,7 @@ test.describe('Image files', () => {
      * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG)
      * can be deleted using "Erase" (or Delete, Backspace buttons)
      */
-    await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
@@ -746,8 +746,8 @@ test.describe('Image files', () => {
      * can be deleted using "Erase" (or Delete, Backspace buttons)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDX/image-png-svg-together.cdx',
       page,
+      'CDX/image-png-svg-together.cdx',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -762,8 +762,8 @@ test.describe('Image files', () => {
      * can be deleted using "Erase" (or Delete, Backspace buttons)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-svg-together.cdxml',
       page,
+      'CDXML/image-png-svg-together.cdxml',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -970,8 +970,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-after-moving-expected.ket',
       page,
+      'KET/image-svg-png-after-moving-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1028,8 +1028,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-after-moving-expected.cdxml',
       page,
+      'CDXML/image-svg-png-after-moving-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1061,8 +1061,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-after-scaling-expected.ket',
       page,
+      'KET/image-svg-png-after-scaling-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1125,8 +1125,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-after-scaling-expected.cdxml',
       page,
+      'CDXML/image-svg-png-after-scaling-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1149,8 +1149,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-after-deleting-expected.ket',
       page,
+      'KET/image-svg-png-after-deleting-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1201,8 +1201,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-after-deleting-expected.cdxml',
       page,
+      'CDXML/image-svg-png-after-deleting-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1225,8 +1225,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-after-copying-expected.ket',
       page,
+      'KET/image-svg-png-after-copying-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1277,8 +1277,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-after-copying-expected.cdxml',
       page,
+      'CDXML/image-svg-png-after-copying-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1290,8 +1290,8 @@ test.describe('Image files', () => {
      * saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer level.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene.ket',
       page,
+      'KET/images-png-svg-with-benzene.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -1304,8 +1304,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1317,8 +1317,8 @@ test.describe('Image files', () => {
      * and aligned, they can be saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -1329,8 +1329,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1345,8 +1345,8 @@ test.describe('Image files', () => {
     const x = 400;
     const y = 300;
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'C', 0);
@@ -1364,8 +1364,8 @@ test.describe('Image files', () => {
      * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-calculateCIP.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-calculateCIP.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculateCIP();
@@ -1376,8 +1376,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1389,8 +1389,8 @@ test.describe('Image files', () => {
      * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).checkStructure();
@@ -1404,8 +1404,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1417,8 +1417,8 @@ test.describe('Image files', () => {
      * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -1430,8 +1430,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1443,8 +1443,8 @@ test.describe('Image files', () => {
      * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -1457,8 +1457,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1469,8 +1469,8 @@ test.describe('Image files', () => {
      * Description: Images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).ThreeDViewer();
@@ -1482,8 +1482,8 @@ test.describe('Image files', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       page,
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1506,8 +1506,8 @@ test.describe('Image files', () => {
        * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
        */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/images-png-svg-with-benzene-for-distorting.ket',
         page,
+        'KET/images-png-svg-with-benzene-for-distorting.ket',
       );
       await takeEditorScreenshot(page);
 
@@ -1518,7 +1518,7 @@ test.describe('Image files', () => {
       await applyAutoMapMode(page, mode);
 
       await verifyFileExport(page, expectedFiles[index], FileType.KET);
-      await openFileAndAddToCanvasAsNewProject(expectedFiles[index], page);
+      await openFileAndAddToCanvasAsNewProject(page, expectedFiles[index]);
       await takeEditorScreenshot(page);
     });
   });
@@ -1551,8 +1551,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-expected.cdxml',
       page,
+      'CDXML/image-png-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1591,8 +1591,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-colored-expected.cdxml',
       page,
+      'CDXML/image-svg-colored-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1604,8 +1604,8 @@ test.describe('Image files', () => {
      * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-svg-colored-above-png.ket',
       page,
+      'KET/images-svg-colored-above-png.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1627,8 +1627,8 @@ test.describe('Image files', () => {
      * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-svg-colored-above-png.ket',
       page,
+      'KET/images-svg-colored-above-png.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1637,8 +1637,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/images-svg-colored-above-png-expected.cdxml',
       page,
+      'CDXML/images-svg-colored-above-png-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1650,8 +1650,8 @@ test.describe('Image files', () => {
      * after that loaded from CDX file and added to selected place on Canvas.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-png-with-elements.ket',
       page,
+      'KET/image-png-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1673,8 +1673,8 @@ test.describe('Image files', () => {
      * after that loaded from CDXML file and added to selected place on Canvas.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-png-with-elements.ket',
       page,
+      'KET/image-png-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1683,8 +1683,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1696,8 +1696,8 @@ test.describe('Image files', () => {
      * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-with-elements.ket',
       page,
+      'KET/image-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1719,8 +1719,8 @@ test.describe('Image files', () => {
      * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-with-elements.ket',
       page,
+      'KET/image-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1729,8 +1729,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1742,8 +1742,8 @@ test.describe('Image files', () => {
      * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-with-elements.ket',
       page,
+      'KET/image-svg-png-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1765,8 +1765,8 @@ test.describe('Image files', () => {
      * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/image-svg-png-with-elements.ket',
       page,
+      'KET/image-svg-png-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1775,8 +1775,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1839,8 +1839,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/two-images-png-with-elements-expected.cdxml',
       page,
+      'CDXML/two-images-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1903,8 +1903,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/two-images-svg-with-elements-expected.cdxml',
       page,
+      'CDXML/two-images-svg-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1967,8 +1967,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/two-image-svg-png-with-elements-expected.cdxml',
       page,
+      'CDXML/two-image-svg-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -2051,8 +2051,8 @@ test.describe('Image files', () => {
      * and added to selected place on Canvas with correct position and layer level.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
@@ -2076,8 +2076,8 @@ test.describe('Image files', () => {
      * and added to selected place on Canvas with correct position and layer level.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
@@ -2088,8 +2088,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/images-png-50-with-50-structures-expected.cdxml',
       page,
+      'CDXML/images-png-50-with-50-structures-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -2173,8 +2173,8 @@ test.describe('Image files', () => {
      * Description: Images of allowed formats (SVG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDX/image-svg-expected.cdx',
       page,
+      'CDX/image-svg-expected.cdx',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
@@ -2329,8 +2329,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/two-image-png-expected.cdxml',
       page,
+      'CDXML/two-image-png-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -2381,8 +2381,8 @@ test.describe('Image files', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/two-image-svg-expected.cdxml',
       page,
+      'CDXML/two-image-svg-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -2413,8 +2413,8 @@ test.describe('Image files', () => {
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2451,8 +2451,8 @@ test.describe('Image files', () => {
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2489,8 +2489,8 @@ test.describe('Image files', () => {
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2521,8 +2521,8 @@ test.describe('Image files', () => {
      * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -2550,8 +2550,8 @@ test.describe('Image files', () => {
      * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
      */
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/image-png-with-elements-expected.cdxml',
       page,
+      'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2595,8 +2595,8 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/svg-colored-images-with-elements.ket',
       page,
+      'KET/svg-colored-images-with-elements.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -2823,8 +2823,8 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/svg-colored-images-with-elements.ket',
       page,
+      'KET/svg-colored-images-with-elements.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();

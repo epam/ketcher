@@ -326,8 +326,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       test.slow();
 
       await openFileAndAddToCanvasAsNewProject(
-        'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
+        'KET/all-possible-query-features-with-out-custom-query.ket',
       );
       await IndigoFunctionsToolbar(page).aromatize();
       await takeEditorScreenshot(page);
@@ -355,8 +355,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       test.slow();
 
       await openFileAndAddToCanvasAsNewProject(
-        'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
+        'KET/all-possible-query-features-with-out-custom-query.ket',
       );
       await IndigoFunctionsToolbar(page).aromatize();
       await IndigoFunctionsToolbar(page).dearomatize();
@@ -380,8 +380,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Screenshots should be updated after fix.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/all-possible-custom-query-features.ket',
       page,
+      'KET/all-possible-custom-query-features.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -404,8 +404,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Screenshots should be updated after fix.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/all-possible-custom-query-features.ket',
       page,
+      'KET/all-possible-custom-query-features.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await IndigoFunctionsToolbar(page).dearomatize();
@@ -420,8 +420,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
+      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -435,8 +435,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
+      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await IndigoFunctionsToolbar(page).dearomatize();

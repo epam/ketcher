@@ -551,8 +551,8 @@ test.describe('Open and Save file', () => {
         test.slow();
 
         await openFileAndAddToCanvasAsNewProject(
-          'Molfiles-V3000/more-900-atoms.mol',
           page,
+          'Molfiles-V3000/more-900-atoms.mol',
         );
         await takeEditorScreenshot(page);
       },
@@ -624,8 +624,8 @@ test.describe('Open and Save file', () => {
       test.slow();
 
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V3000/more-900-atoms.mol',
         page,
+        'Molfiles-V3000/more-900-atoms.mol',
       );
       await verifyFileExport(
         page,
@@ -732,8 +732,8 @@ test.describe('Open and Save file', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
       page,
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -761,8 +761,8 @@ test.describe('Open and Save file', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
       page,
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -786,8 +786,8 @@ test.describe('Open and Save file', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
       page,
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -811,8 +811,8 @@ test.describe('Open and Save file', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
       page,
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
     );
     await takeEditorScreenshot(page);
   });

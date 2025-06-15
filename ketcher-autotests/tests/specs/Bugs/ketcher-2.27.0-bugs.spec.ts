@@ -268,8 +268,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/benzene-ring-with-two-attachment-points.ket',
       page,
+      'KET/Bugs/benzene-ring-with-two-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
     await page.getByText('R1').click({
@@ -348,8 +348,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/micro-and-macro-structure.ket',
       page,
+      'KET/Bugs/micro-and-macro-structure.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -358,8 +358,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/micro-and-macro-structure-expected.ket',
       page,
+      'KET/Bugs/micro-and-macro-structure-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -406,8 +406,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Two nucleotides.ket',
       page,
+      'KET/Bugs/Two nucleotides.ket',
     );
     await LeftToolbar(page).stereochemistry();
     await pressButton(page, 'Apply');
@@ -426,8 +426,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/bond-with-hash-spacing.ket',
       page,
+      'KET/Bugs/bond-with-hash-spacing.ket',
     );
     await takeEditorScreenshot(page);
     await setSettingsOption(page, BondsSetting.HashSpacing, '10');
@@ -446,8 +446,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
     await page.getByText('X').hover();
     await takeEditorScreenshot(page);
@@ -484,8 +484,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
       page,
+      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -508,8 +508,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
       page,
+      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -538,8 +538,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/circle-peptides-one-expanded.ket',
       page,
+      'KET/Bugs/circle-peptides-one-expanded.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -406,8 +406,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -430,8 +430,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -454,8 +454,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -478,8 +478,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -502,8 +502,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -526,8 +526,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -553,8 +553,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       page,
+      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -580,8 +580,8 @@ test.describe('SMILES files', () => {
       FileType.ExtendedSMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
       page,
+      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -607,8 +607,8 @@ test.describe('SMILES files', () => {
       FileType.ExtendedSMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -631,8 +631,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
       page,
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -656,8 +656,8 @@ test.describe('SMILES files', () => {
         FileType.SMILES,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
         page,
+        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
       );
       await takeEditorScreenshot(page);
     },
@@ -681,8 +681,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
       page,
+      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -705,8 +705,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
       page,
+      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -729,8 +729,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
       page,
+      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -753,8 +753,8 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
       page,
+      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
     );
     await takeEditorScreenshot(page);
   });

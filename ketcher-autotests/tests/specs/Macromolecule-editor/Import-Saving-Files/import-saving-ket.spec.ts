@@ -713,12 +713,12 @@ for (const monomer of allTypesOfMonomers) {
      */
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
     await verifyFileExport(page, monomer.KETFile_Expected, FileType.KET);
-    await openFileAndAddToCanvasAsNewProject(monomer.KETFile_Expected, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile_Expected);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -741,7 +741,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
   const KETFileExpected =
     'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers-expected.ket';
 
-  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFile);
   await takeEditorScreenshot(page);
   await verifyFileExport(page, KETFileExpected, FileType.KET);
 });
@@ -764,11 +764,11 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
   const KETFileExpected =
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
 
-  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFile);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await verifyFileExport(page, KETFileExpected, FileType.KET);
-  await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFileExpected);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

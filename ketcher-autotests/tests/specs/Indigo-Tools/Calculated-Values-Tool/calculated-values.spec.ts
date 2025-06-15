@@ -113,7 +113,7 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(
       page,
-     'Molfiles-V2000/calculated-values-rings.mol',
+      'Molfiles-V2000/calculated-values-rings.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
 

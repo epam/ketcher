@@ -222,6 +222,7 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format can be added from two different KET files saved and opened
      */
     await openFileAndAddToCanvas(page, 'KET/images-png-svg-with-elements.ket');
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg-with-elements.ket');
     await openFileAndAddToCanvas(
       page,
       'KET/images-with-benzene-ring-and-arrow.ket',
@@ -410,6 +411,7 @@ test.describe('Image files', () => {
      * Description: Zoom In and Zoom Out work for Images
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await resetCurrentTool(page);
     await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');

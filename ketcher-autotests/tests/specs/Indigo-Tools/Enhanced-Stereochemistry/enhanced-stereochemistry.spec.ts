@@ -56,8 +56,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group', true);
@@ -72,8 +72,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -89,8 +89,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -106,8 +106,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
@@ -123,8 +123,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The 'Enhanced Stereochemistry' window is opened.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await LeftToolbar(page).stereochemistry();
@@ -140,8 +140,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     structure(s) with the correct tetrahedral stereochemistry is present on the canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/two-stereostructures.mol',
       page,
+      'Molfiles-V2000/two-stereostructures.mol',
     );
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
     await takeEditorScreenshot(page);
@@ -158,8 +158,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     const xDelta = 300;
     const yDelta = 600;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/two-stereostructures.mol',
       page,
+      'Molfiles-V2000/two-stereostructures.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
@@ -175,8 +175,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     - all selected stereocenters have the same stereo marks.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/same-marks-stereostructure.mol',
       page,
+      'Molfiles-V2000/same-marks-stereostructure.mol',
     );
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
@@ -190,8 +190,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     - the selected stereocenters have different stereo marks.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
@@ -204,8 +204,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group', true);
@@ -220,8 +220,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and '&2' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
@@ -237,8 +237,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and '&1' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
@@ -255,7 +255,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/stereo-and-structure.ket');
 
     await verifyFileExport(
       page,
@@ -278,7 +278,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('KET/stereo-or-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/stereo-or-structure.ket');
 
     await verifyFileExport(
       page,
@@ -301,7 +301,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('KET/stereo-mixed-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/stereo-mixed-structure.ket');
 
     await verifyFileExport(
       page,
@@ -326,7 +326,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/mixed-and-stereomarks.ket');
 
     await verifyFileExport(
       page,
@@ -351,7 +351,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('KET/mixed-or-stereomarks.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/mixed-or-stereomarks.ket');
 
     await verifyFileExport(
       page,
@@ -373,8 +373,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -390,8 +390,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -407,8 +407,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Only stereo flag displays near the structure.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -424,8 +424,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: When 'Off' is selected - Stereobonds and stereo labels are displayed in black.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -441,8 +441,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: When 'Labels and Bonds' is selected - Stereobonds and stereo labels are displayed in color.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -459,8 +459,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     and stereo labels are displayed in black.
     */
     await openFileAndAddToCanvas(
-      'KET/different-marks-stereostructure.ket',
       page,
+      'KET/different-marks-stereostructure.ket',
     );
     await setSettingsOption(
       page,
@@ -477,8 +477,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     option in the "Show the Stereo flags" field.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await setSettingsOption(page, StereochemistrySetting.ShowTheStereoFlags);
     await takeEditorScreenshot(page);
@@ -509,8 +509,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     opening the saved file, all structures will be displayed with the ABS (Chiral) Flags.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/one-structure-with-abs-flag.mol',
       page,
+      'Molfiles-V2000/one-structure-with-abs-flag.mol',
     );
     await verifyFileExport(
       page,
@@ -530,8 +530,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     the saved file, all structures will be displayed with the AND Enantiomer Flags.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/three-structure-enantiomer.mol',
       page,
+      'Molfiles-V2000/three-structure-enantiomer.mol',
     );
     await verifyFileExport(
       page,
@@ -553,8 +553,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     • Create new OR Group
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
@@ -568,7 +568,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     'Add to OR [ ] Group' setting becomes available when at least
     one OR group has been created on the canvas.
     */
-    await openFileAndAddToCanvas('KET/mixed-and-or-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/mixed-and-or-structure.ket');
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
   });
@@ -579,8 +579,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Labels (&) are colored and color intensity is decreasing with the number.
     */
     await openFileAndAddToCanvas(
-      'KET/mixed-with-eight-stereocenters.ket',
       page,
+      'KET/mixed-with-eight-stereocenters.ket',
     );
     await takeEditorScreenshot(page);
 
@@ -597,8 +597,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Stereo flag is presented as changed - ABS (Chiral)1
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await setSettingsOption(
       page,
@@ -618,7 +618,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       StereochemistrySetting.TextOfMixedFlag,
       'Mixed2',
     );
-    await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/mixed-and-stereomarks.ket');
     await takeEditorScreenshot(page);
   });
 

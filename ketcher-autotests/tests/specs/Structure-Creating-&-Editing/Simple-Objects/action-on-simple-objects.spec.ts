@@ -44,7 +44,7 @@ const setupEllipse = async (page: Page) => {
 async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };
   const point1 = { x: 83, y: 207 };
-  await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
   await selectAllStructuresOnCanvas(page);
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
@@ -71,7 +71,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1978
     const numberOfPressZoomOut = 5;
     const numberOfPressZoomIn = 5;
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+_');
@@ -126,7 +126,7 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1983
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
@@ -136,7 +136,7 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1983
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
@@ -150,7 +150,7 @@ test.describe('Action on simples objects', () => {
     const numberOfPress = 1;
     const anyPointX = 200;
     const anyPointY = 200;
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+_');
@@ -185,7 +185,7 @@ test.describe('Action on simples objects', () => {
 
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-1982
-    await openFileAndAddToCanvas('KET/simple-objects-with-changes.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects-with-changes.ket');
 
     await verifyFileExport(
       page,

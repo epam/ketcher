@@ -18,7 +18,7 @@ test.describe('Layout', () => {
     Test case: EPMLSOPKET-16884
     Description: The structures are displayed orderly in the middle of the screen
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -30,7 +30,7 @@ test.describe('Layout', () => {
     Test case: EPMLSOPKET-16885
     Description: The structures are displayed orderly in the middle of the screen
     */
-    await openFileAndAddToCanvas('KET/two-atoms-and-bond.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-atoms-and-bond.ket');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -43,8 +43,8 @@ test.describe('Layout', () => {
     Description: The structures are displayed orderly in the middle of the screen
     */
       await openFileAndAddToCanvas(
-        'KET/two-templates-rings-and-functional-groups.ket',
         page,
+        'KET/two-templates-rings-and-functional-groups.ket',
       );
       await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);

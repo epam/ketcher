@@ -35,7 +35,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/nine-connected-rnas.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/nine-connected-rnas.ket');
     await selectSequenceLayoutModeTool(page);
   });
 
@@ -259,7 +259,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: Nucleoside edited in RNA builder.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     await page.keyboard.down('Shift');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
@@ -283,7 +283,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: "Phosphate" field is empty when single nucleoside is selected.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -297,7 +297,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: Nucleoside converted to Nucleotide after added Phosphate in RNA Builder.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -316,7 +316,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Instead of field 'name your structure', 'N nucleotides selected' displayed (N- the number of nucleotides and nucleosides).
     In the 'phosphate' field - [multiple] displayed.
     */
-    await openFileAndAddToCanvasMacro('KET/agtcu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/agtcu.ket');
     await page.keyboard.down('Shift');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
@@ -343,7 +343,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: If among selected elements on canvas there is a single 
     phosphate (selected without an adjacent nucleoside to left),then in this case,editing in RNA builder prohibited.
     */
-    await openFileAndAddToCanvasMacro('KET/modified-agtcup.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/modified-agtcup.ket');
     await page.keyboard.down('Shift');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
@@ -369,8 +369,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: RNA builder highlighted in Edit mode. Canvas disabled.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/all-types-of-possible-modifications.ket',
       page,
+      'KET/all-types-of-possible-modifications.ket',
     );
     await page.keyboard.down('Shift');
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();

@@ -109,8 +109,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
       page,
+      'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -177,8 +177,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
       page,
+      'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
     );
     await clickOnAtom(page, 'C', 4, 'right');
     await takeEditorScreenshot(page);
@@ -323,8 +323,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
       page,
+      'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
     await clickOnBond(page, BondType.SINGLE, 2, 'right');
     await takeEditorScreenshot(page);
@@ -425,8 +425,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/peptides-with-long-bond.ket',
       page,
+      'KET/Bugs/peptides-with-long-bond.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -685,8 +685,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const firstMonomer = getMonomerLocator(page, Peptides.F).first();
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/structure-in-snake-mode.ket',
       page,
+      'KET/Bugs/structure-in-snake-mode.ket',
     );
     await moveMonomer(page, firstMonomer, 200, 400);
     await takeEditorScreenshot(page, {

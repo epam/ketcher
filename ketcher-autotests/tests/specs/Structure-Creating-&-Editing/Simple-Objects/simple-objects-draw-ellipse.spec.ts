@@ -114,7 +114,7 @@ test.describe('Draw Ellipse', () => {
   test('Simple Objects - Draw a lot of ellipses', async ({ page }) => {
     // Test case: EPMLSOPKET-1966
     // Separeting and moving few objects on canvas
-    await openFileAndAddToCanvas('KET/ellipse-test-EPMLSOPKET-1966.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ellipse-test-EPMLSOPKET-1966.ket');
     await separetingAndMovingEllipse(page);
     await takeEditorScreenshot(page);
   });

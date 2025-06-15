@@ -640,8 +640,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/peptide-connected-to-microstructure-r2-r1.ket',
       page,
+      'KET/peptide-connected-to-microstructure-r2-r1.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -659,8 +659,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/peptide-connected-to-microstructure-r3-r1.ket',
       page,
+      'KET/peptide-connected-to-microstructure-r3-r1.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -676,8 +676,8 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/single-benzene-ring.ket',
       page,
+      'KET/single-benzene-ring.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -694,8 +694,8 @@ test.describe('Calculate Properties tests', () => {
      * 4. Open the "Calculate Properties" window
      */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/single-benzene-ring.ket',
       page,
+      'KET/single-benzene-ring.ket',
     );
     await selectPartOfMolecules(page, 10);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -714,8 +714,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/benzene-ring-connected-to-peptide.ket',
       page,
+      'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectPartOfMolecules(page, -80);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -734,8 +734,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/benzene-ring-connected-to-rna.ket',
       page,
+      'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectPartOfMolecules(page, -80);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -754,8 +754,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/benzene-ring-connected-to-peptide.ket',
       page,
+      'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -774,8 +774,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/benzene-ring-connected-to-rna.ket',
       page,
+      'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -792,7 +792,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasAsNewProjectMacro('KET/naphthalene.ket', page);
+    await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -853,8 +853,8 @@ test.describe('Calculate Properties tests', () => {
     await selectFlexLayoutModeTool(page);
     await Library(page).switchToPeptidesTab();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/peptides-connected-to-molecule.ket',
       page,
+      'KET/peptides-connected-to-molecule.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -1057,8 +1057,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/peptide-rna-microstructure-connected.ket',
       page,
+      'KET/peptide-rna-microstructure-connected.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -1075,8 +1075,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/peptide-dna-microstructure-connected.ket',
       page,
+      'KET/peptide-dna-microstructure-connected.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -1112,8 +1112,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/sequenses-connected-through-chem.ket',
       page,
+      'KET/sequenses-connected-through-chem.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -1130,8 +1130,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/microstructure-with-attachment-points.ket',
       page,
+      'KET/microstructure-with-attachment-points.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
@@ -1150,8 +1150,8 @@ test.describe('Calculate Properties tests', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/microstructure-without-attachment-points.ket',
       page,
+      'KET/microstructure-without-attachment-points.ket',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);

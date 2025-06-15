@@ -75,8 +75,8 @@ test.describe('Ignore Chiral Flag', () => {
     // Test case: https://github.com/epam/ketcher/issues/6161
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -86,8 +86,8 @@ test.describe('Ignore Chiral Flag', () => {
   }) => {
     // Test case: https://github.com/epam/ketcher/issues/6161
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await takeEditorScreenshot(page);
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);

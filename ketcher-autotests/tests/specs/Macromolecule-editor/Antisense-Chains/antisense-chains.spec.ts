@@ -107,7 +107,7 @@ async function loadMonomerOnCanvas(
     );
   }
   if (monomer.KETFile) {
-    await openFileAndAddToCanvasMacro(monomer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, monomer.KETFile);
   }
 }
 
@@ -3664,8 +3664,8 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
   await selectSequenceLayoutModeTool(page);
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
     page,
+    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
   );
 
   await takeEditorScreenshot(page, {
@@ -3674,8 +3674,9 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
   });
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
     page,
+    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
+    MacroFileType.MOLv3000,
   );
 
   await takeEditorScreenshot(page, {

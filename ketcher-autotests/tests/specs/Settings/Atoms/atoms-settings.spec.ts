@@ -111,7 +111,7 @@ test.describe('Atom Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.General);
     await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).apply();
-    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
     await takeEditorScreenshot(page);
   });
 

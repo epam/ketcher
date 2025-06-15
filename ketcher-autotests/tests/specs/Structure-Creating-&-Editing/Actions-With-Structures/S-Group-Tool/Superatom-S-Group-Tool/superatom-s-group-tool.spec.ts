@@ -80,7 +80,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -92,7 +92,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -104,7 +104,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -118,7 +118,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     const CANVAS_CLICK_X = 570;
     const CANVAS_CLICK_Y = 380;
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await LeftToolbar(page).sGroup();
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await fillFieldByLabel(page, 'Name', 'Test@!#$%12345');
@@ -134,7 +134,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -146,7 +146,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is unable to delete atom on structure with Superatom S-group.
       EDIT ABBREVIATION modal appears.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -159,7 +159,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1539
       Description: User is able to delete whole Chain with Superatom S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
@@ -174,7 +174,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is unable to add Template on structure with Superatom S-group.
       EDIT ABBREVIATION modal appears.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await selectRingButton(page, RingButton.Benzene);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -188,7 +188,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is unable to add R-Group Label on structure with SRU polymer S-group.
       EDIT ABBREVIATION modal appears.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -203,7 +203,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 3);
     await pressButton(page, 'Remove Abbreviation');
@@ -219,7 +219,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     const CANVAS_CLICK_X = 600;
     const CANVAS_CLICK_Y = 600;
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -230,7 +230,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1540
       Description: User is able to cut and paste structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -241,7 +241,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1541
       Description: User is able to save and open structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
 
     await verifyFileExport(
       page,
@@ -259,7 +259,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12990
       Description: User is able to contract/expand/remove abbreviation on structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
     await takeEditorScreenshot(page);
   });
@@ -271,7 +271,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12991
       Description: User is able to contract/expand/remove abbreviation on atom with Superatom S-group.
     */
-    await openFileAndAddToCanvas('KET/superatom-one-atom-on-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/superatom-one-atom-on-chain.ket');
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
     await takeEditorScreenshot(page);
   });
@@ -282,7 +282,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: S-Group added to the structure and represent in .ket file.
       The test is currently not functioning correctly as the bug has not been fixed.
     */
-    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -302,7 +302,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: S-Group added to the structure and represent in .ket file.
       The test is currently not functioning correctly as the bug has not been fixed.
     */
-    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await addQueryComponent(page);

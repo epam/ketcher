@@ -350,11 +350,11 @@ test.describe('Connection rules for peptides: ', () => {
     freePeptideConnectionPoint: string,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
-      tmpPeptideMonomers['Test-6-P-1'].fileName,
       page,
+      tmpPeptideMonomers['Test-6-P-1'].fileName,
     );
 
-    await openFileAndAddToCanvasMacro(peptide.fileName, page);
+    await openFileAndAddToCanvasMacro(page, peptide.fileName);
     const peptideLocator = getMonomerLocator(page, {
       monomerAlias: peptide.alias,
     }).first();
@@ -402,11 +402,11 @@ test.describe('Connection rules for peptides: ', () => {
     CHEM: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
-      tmpPeptideMonomers['Test-6-P-1'].fileName,
       page,
+      tmpPeptideMonomers['Test-6-P-1'].fileName,
     );
 
-    await openFileAndAddToCanvasMacro(CHEM.fileName, page);
+    await openFileAndAddToCanvasMacro(page, CHEM.fileName);
     const CHEMLocator = getMonomerLocator(page, {
       monomerAlias: CHEM.alias,
     }).first();
@@ -451,7 +451,7 @@ test.describe('Connection rules for peptides: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
       monomerType: leftMonomer.monomerType,
@@ -462,7 +462,7 @@ test.describe('Connection rules for peptides: ', () => {
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
     const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,
@@ -1116,7 +1116,7 @@ test.describe('Connection rules for peptides: ', () => {
   });
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
@@ -1128,7 +1128,7 @@ test.describe('Connection rules for peptides: ', () => {
   }
 
   async function loadMolecule(page: Page, molecule: IMolecule) {
-    await openFileAndAddToCanvasMacro(molecule.fileName, page);
+    await openFileAndAddToCanvasMacro(page, molecule.fileName);
     await moveMouseAway(page);
   }
 

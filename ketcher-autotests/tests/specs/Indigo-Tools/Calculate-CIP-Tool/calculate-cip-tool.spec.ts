@@ -74,7 +74,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1886
     Description: The structure isn`t changed.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
@@ -87,8 +87,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: (R) and (S) stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -118,8 +118,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     // will work after bugfix in 2.13-rc.3 bug#3025
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await IndigoFunctionsToolbar(page).layout();
@@ -141,8 +141,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await copyAndPaste(page);
@@ -161,8 +161,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await cutAndPaste(page);
@@ -178,8 +178,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: (E) and (Z) stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structures-with-stereo-bonds-ez.mol',
       page,
+      'Molfiles-V2000/structures-with-stereo-bonds-ez.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -193,8 +193,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-1.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-1.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -208,8 +208,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-2.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-2.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -223,8 +223,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-3.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-3.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -238,8 +238,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-4.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-4.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -253,8 +253,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-5.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-5.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -268,8 +268,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-6.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-6.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -283,8 +283,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds-7.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds-7.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -300,8 +300,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     'Undo' action leads to previous structure with stereo labels.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/aromatic-with-stereolabels.mol',
       page,
+      'Molfiles-V2000/aromatic-with-stereolabels.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -320,8 +320,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     The structure appears in 3D Viewer dialog without stereo labels.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await IndigoFunctionsToolbar(page).ThreeDViewer();
@@ -338,8 +338,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     'Undo' action leads to the previous structure with stereo labels.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await waitForRender(page, async () => {
@@ -362,8 +362,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     'Undo' action leads to the previous structure with stereo labels.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectEraseTool();
@@ -388,8 +388,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       y: 160,
     };
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
@@ -414,8 +414,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: New stereobond is added to the Chain structure.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
@@ -430,8 +430,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The labels are next to the stereo bonds. When you hover over the label, the tooltip does not appear.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
@@ -450,8 +450,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     After fix we need update file and screenshot.
      */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
         page,
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       );
       await IndigoFunctionsToolbar(page).calculateCIP();
       await takeEditorScreenshot(page);
@@ -472,8 +472,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: CIP data located in file at atom properties section
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
 
@@ -498,8 +498,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     IMPORTANT: This test some times fails because of https://github.com/epam/ketcher/issues/2647 and https://github.com/epam/ketcher/issues/3951
     */
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/structure-with-stereo-bonds.mol',
         page,
+        'Molfiles-V2000/structure-with-stereo-bonds.mol',
       );
       const expectedFile = await getMolfile(page, 'v2000');
       await saveToFile(
@@ -529,8 +529,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The file is saved as .mol V3000 file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await verifyFileExport(
       page,
@@ -546,8 +546,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The file is saved as .smi file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -563,8 +563,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The file is saved as .inchi file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -588,8 +588,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 4. Take screenshot
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -610,8 +610,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Open saved file
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -620,8 +620,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo-expected.ket',
       page,
+      'KET/ring-and-chains-with-stereo-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -642,8 +642,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Open saved file
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
@@ -653,8 +653,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
       page,
+      'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -675,8 +675,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 6. Check that CIP stereo-label is restored
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -710,8 +710,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -749,8 +749,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are rotated with structure
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -775,8 +775,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are flipped with structure
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -804,8 +804,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -830,8 +830,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 5. Check that CIP stereo-labels are positioned correctly
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -861,8 +861,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -892,8 +892,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -927,8 +927,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * After fix we need update screenshots.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -961,8 +961,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     * 6. Check that CIP stereo-labels are positioned correctly
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ring-and-chains-with-stereo.ket',
       page,
+      'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);

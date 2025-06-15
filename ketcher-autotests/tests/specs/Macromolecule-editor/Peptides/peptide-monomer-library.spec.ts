@@ -251,8 +251,8 @@ test.describe('Peptide library testing', () => {
     Description: Selected 'Nal' monomer appear above the others when you click on it.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/stuck-peptides-not-connected.ket',
       page,
+      'KET/stuck-peptides-not-connected.ket',
     );
     await getMonomerLocator(page, Peptides.Nal).click();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -269,7 +269,7 @@ test.describe('Peptide library testing', () => {
     */
     const x = 200;
     const y = 200;
-    await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/stuck-peptides-connected.ket');
     await getMonomerLocator(page, Peptides.Nal).click();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page, {

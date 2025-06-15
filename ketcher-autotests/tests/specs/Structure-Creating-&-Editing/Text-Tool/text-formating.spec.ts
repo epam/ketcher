@@ -140,7 +140,7 @@ test.describe('Text tools test cases', () => {
 
   test('Saving text object as a .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
-    await openFileAndAddToCanvas('KET/ketfile01.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ketfile01.ket');
 
     await verifyFileExport(page, 'KET/ketfile01-expected.ket', FileType.KET);
     await takeEditorScreenshot(page);
@@ -179,7 +179,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
-    await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-text-objects.ket');
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await cutAndPaste(page);
@@ -193,7 +193,7 @@ test.describe('Text tools test cases', () => {
   test(' Selection of different types of text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2274
     // Verify if its possible to select a text objects of any size by clicking on green frame
-    await openFileAndAddToCanvas('KET/text-object.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/text-object.ket');
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
     await selectAllStructuresOnCanvas(page);

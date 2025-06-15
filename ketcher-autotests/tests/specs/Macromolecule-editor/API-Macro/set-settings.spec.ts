@@ -17,7 +17,7 @@ test.describe('getKet', () => {
      * Test case: #3531
      * Description: 'setSettings' method does nothing, as there are no settings for macro mode yet
      */
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await page.waitForFunction(() => window.ketcher);
 
     await page.evaluate(() => {

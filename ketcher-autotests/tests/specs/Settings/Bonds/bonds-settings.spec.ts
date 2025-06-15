@@ -44,8 +44,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
@@ -63,8 +63,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
@@ -82,8 +82,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
@@ -101,8 +101,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
@@ -120,8 +120,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
@@ -139,8 +139,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
@@ -158,8 +158,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
@@ -177,8 +177,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
@@ -197,8 +197,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
@@ -217,8 +217,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
@@ -237,8 +237,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
@@ -257,8 +257,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
@@ -274,8 +274,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering 1000 values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
@@ -291,8 +291,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering 1000 values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
@@ -308,8 +308,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering 1000 values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
@@ -325,8 +325,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering 1000 values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
@@ -343,8 +343,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -367,8 +367,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -391,8 +391,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -415,8 +415,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -439,8 +439,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering thw whole values 
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -463,8 +463,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -487,8 +487,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -511,8 +511,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -536,8 +536,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -561,8 +561,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -585,8 +585,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -610,8 +610,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -634,8 +634,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -658,8 +658,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -682,8 +682,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -706,8 +706,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -730,8 +730,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -754,8 +754,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -778,8 +778,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -802,8 +802,8 @@ test.describe('Bonds Settings', () => {
         Description: require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -827,8 +827,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -852,8 +852,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -877,8 +877,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -902,8 +902,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -927,8 +927,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -949,8 +949,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -971,8 +971,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -993,8 +993,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering values with one decimal place
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1015,8 +1015,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1037,8 +1037,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1059,8 +1059,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1081,8 +1081,8 @@ test.describe('Bonds Settings', () => {
         require a number input should allow entering the whole values
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1104,8 +1104,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1127,8 +1127,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1150,8 +1150,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1173,8 +1173,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1196,8 +1196,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1219,8 +1219,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1242,8 +1242,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1265,8 +1265,8 @@ test.describe('Bonds Settings', () => {
         the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/mixed-or-stereomarks.ket',
       page,
+      'KET/mixed-or-stereomarks.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1284,8 +1284,8 @@ test.describe('Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).openSection(SettingsSection.General);
@@ -1308,8 +1308,8 @@ test.describe('Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOption(page, BondsSetting.BondSpacing, '50');
     await takeEditorScreenshot(page);
@@ -1323,8 +1323,8 @@ test.describe('Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOption(page, BondsSetting.BondSpacing, '10');
     await takeEditorScreenshot(page);
@@ -1336,8 +1336,8 @@ test.describe('Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOption(page, BondsSetting.BondSpacing, '100');
     await takeEditorScreenshot(page);

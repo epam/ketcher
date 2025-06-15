@@ -512,7 +512,7 @@ test.describe('Connection rules for RNAs: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
       monomerType: leftMonomer.monomerType,
@@ -523,7 +523,7 @@ test.describe('Connection rules for RNAs: ', () => {
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
     const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,

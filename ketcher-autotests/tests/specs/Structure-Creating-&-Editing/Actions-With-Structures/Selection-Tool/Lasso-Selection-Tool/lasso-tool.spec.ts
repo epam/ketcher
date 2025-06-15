@@ -52,7 +52,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
      */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
     await clickOnCanvas(page, atomPoint.x, atomPoint.y);
@@ -84,7 +84,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
      */
     const selectCoords = { x: 100, y: 100 };
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -102,7 +102,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 5;
     const shiftCoords = { x: 270, y: 10 };
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -132,7 +132,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -149,7 +149,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1343
      * Description: Atoms are fused.
      */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -209,7 +209,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -230,7 +230,7 @@ test.describe('Lasso Selection tool', () => {
     const randomCoords = { x: 20, y: 20 };
     const shiftCoords = { x: 70, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );

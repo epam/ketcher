@@ -58,7 +58,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3998
       Description: verify the floating window with calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -68,7 +68,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(1)
       Description: verify 0 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '0' }).click();
@@ -82,7 +82,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(2)
       Description: verify 7 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '7' }).click();
@@ -126,7 +126,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4000
       Description: Change dedcimal places
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByText('Decimal places3').first().click();
     await page.getByRole('option', { name: '4' }).click();

@@ -15,8 +15,8 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
 
   test('Open file and connect phosphate and sugar', async ({ page }) => {
     await openFileAndAddToCanvasMacro(
-      'KET/connection-of-phosphate-and-sugar.ket',
       page,
+      'KET/connection-of-phosphate-and-sugar.ket',
     );
 
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);

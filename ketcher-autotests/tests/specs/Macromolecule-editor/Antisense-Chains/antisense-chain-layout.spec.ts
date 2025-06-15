@@ -90,7 +90,7 @@ async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
     );
   }
   if (polymer.KETFile) {
-    await openFileAndAddToCanvasMacro(polymer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, polymer.KETFile);
   }
 }
 

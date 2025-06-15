@@ -182,8 +182,8 @@ test.describe('Zoom changes', () => {
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/clean-diff-properties.mol',
       page,
+      'Molfiles-V2000/clean-diff-properties.mol',
     );
     await zoomSelector.click();
     await zoomInButton.click();
@@ -208,8 +208,8 @@ test.describe('Zoom changes', () => {
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/all-kind-of-r-group.mol',
       page,
+      'Molfiles-V2000/all-kind-of-r-group.mol',
     );
 
     await zoomSelector.click();
@@ -242,7 +242,7 @@ test.describe('Zoom changes', () => {
       Description: The correct structure fits on the canvas, and the zoom percentage 
       has decreased on the "Zoom panel"
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol');
     await expect(page).toHaveScreenshot();
   });
 

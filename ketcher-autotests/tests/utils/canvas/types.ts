@@ -1,3 +1,8 @@
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
+
 export enum SORT_TYPE {
   DESC_X = 'DESC_X',
   DESC_Y = 'DESC_Y',
@@ -100,3 +105,11 @@ export enum MacroFileType {
   IDT = 'IDT',
   HELM = 'HELM',
 }
+
+export type StructureFormat =
+  | MacroFileType
+  | [MacroFileType.FASTA | MacroFileType.Sequence, SequenceMonomerType]
+  | [
+      MacroFileType.Sequence,
+      [SequenceMonomerType.Peptide, PeptideLetterCodeType],
+    ];

@@ -25,7 +25,7 @@ test.describe('ACS Style Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5156
     Description: add new option ACS style
     */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-diagonally-arrow.ket');
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await SettingsDialog(page).setACSSettings();
     await takeEditorScreenshot(page);
@@ -45,7 +45,7 @@ test.describe('ACS Style Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5156
     Description: add new option ACS style
     */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-long-molecule.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

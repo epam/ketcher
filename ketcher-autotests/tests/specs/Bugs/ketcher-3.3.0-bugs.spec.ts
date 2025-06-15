@@ -764,8 +764,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
       page,
+      'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -875,8 +876,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
       page,
+      'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -893,8 +894,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/Bugs/R-fragment-structure.mol',
     );
     await takeEditorScreenshot(page);
   });

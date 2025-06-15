@@ -13,7 +13,7 @@ test.describe('getMolfile', () => {
   });
 
   test('with two monomers bonded', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/alanine-monomers-bonded-expected.mol',

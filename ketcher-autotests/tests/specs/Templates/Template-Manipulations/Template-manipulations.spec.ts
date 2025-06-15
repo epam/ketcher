@@ -387,7 +387,7 @@ test.describe('Template Manupulations', () => {
     Description: Click the 'Save As' button, and click the 'Save' button.
     Open the saved *.mol file and edit it in any way.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/three-templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-templates.mol');
     await verifyFileExport(
       page,
       'Molfiles-V2000/three-templates-expected.mol',
@@ -403,7 +403,7 @@ test.describe('Template Manupulations', () => {
     Description: Click the 'Save As' button and click the 'Save' button.
     Open the saved *.rxn file and edit it in any way.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/templates-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/templates-reaction.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/templates-reaction-expected.rxn',
@@ -553,8 +553,8 @@ test.describe('Open Ketcher', () => {
     */
     await drawBenzeneRing(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await moveOnAtom(page, 'C', 1);
     await moveOnAtom(page, 'C', 0);
@@ -574,8 +574,8 @@ test.describe('Open Ketcher', () => {
     */
     await drawBenzeneRing(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await moveOnBond(page, BondType.DOUBLE, 1);
     await moveOnBond(page, BondType.DOUBLE, 0);

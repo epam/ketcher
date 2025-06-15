@@ -735,8 +735,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     const containsReaction = await page.evaluate(() => {
       return window.ketcher.containsReaction();

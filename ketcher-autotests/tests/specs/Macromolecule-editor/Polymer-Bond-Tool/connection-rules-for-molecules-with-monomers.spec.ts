@@ -87,8 +87,8 @@ test.describe('Connection rules for molecules with monomers: ', () => {
      *  Description: Allow connection of molecule with monomer
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
     await clickOnAtom(page, 'C', 10, 'right');
     await page.getByText('Delete').click();
@@ -105,8 +105,8 @@ test.describe('Connection rules for molecules with monomers: ', () => {
      *  Description: Allow connection of molecule with monomer
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
     await clickOnBond(page, BondType.SINGLE, 18, 'right');
     await page.getByText('Delete').click();

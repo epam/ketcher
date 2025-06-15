@@ -828,8 +828,8 @@ test.describe('RNA Library', () => {
   for (const monomer of monomersToDelete) {
     test(`Open file from .ket and Delete ${monomer.monomer.alias} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
-        'KET/monomers-connected-with-bonds.ket',
         page,
+        'KET/monomers-connected-with-bonds.ket',
       );
       await CommonLeftToolbar(page).selectEraseTool();
       await getMonomerLocator(page, monomer.monomer).click();
@@ -982,8 +982,8 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
@@ -999,8 +999,8 @@ test.describe('RNA Library', () => {
     await configureInitialState(page);
 
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await verifyFileExport(
       page,
@@ -1016,8 +1016,8 @@ test.describe('RNA Library', () => {
     Sugar does not have R3 attachment point so bond between sugar and base is not created
     */
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takePageScreenshot(page);
@@ -1090,8 +1090,8 @@ test.describe('RNA Library', () => {
     Description: Chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -1113,8 +1113,8 @@ test.describe('RNA Library', () => {
     Description: Unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1128,8 +1128,8 @@ test.describe('RNA Library', () => {
     Description: unsplit nucleotides can be deleted from sequence
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Nucleotides.AmMC6T).click();

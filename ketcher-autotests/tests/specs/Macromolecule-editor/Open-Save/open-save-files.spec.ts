@@ -85,8 +85,8 @@ test.describe('Open/save file tests: ', () => {
      */
     test.setTimeout(20000);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
       page,
+      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();

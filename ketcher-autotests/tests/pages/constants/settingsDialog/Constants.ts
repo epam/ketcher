@@ -21,7 +21,7 @@ export enum GeneralSetting {
   SubFontSizeUnits = 'Sub font size-measure-input',
   ReactionComponentMarginSize = 'Reaction component margin size-value-input',
   ReactionComponentMarginSizeUnits = 'Reaction component margin size-measure-input',
-  ImageResolution = 'image-resolution',
+  ImageResolution = 'image-resolution-input-span',
 }
 
 export enum StereochemistrySetting {

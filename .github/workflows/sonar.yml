@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Sonar
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-a
     steps:
       - uses: actions/checkout@v2
         with:

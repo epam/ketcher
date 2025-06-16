@@ -1132,4 +1132,9 @@ export class CoreEditor {
       false,
     );
   }
+
+  public destroy() {
+    this.unsubscribeEvents();
+    editor = undefined;
+  }
 }

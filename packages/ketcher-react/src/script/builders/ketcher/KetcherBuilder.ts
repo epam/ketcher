@@ -36,25 +36,26 @@ import { CustomButton } from './CustomButtons';
 
 class KetcherBuilder {
   private structService: StructService | null;
-  private editor: Editor | null;
   private serviceMode: ServiceMode | null;
   private formatterFactory: FormatterFactory | null;
 
   constructor() {
     this.structService = null;
-    this.editor = null;
     this.serviceMode = null;
     this.formatterFactory = null;
   }
 
-  async appendApiAsync(structServiceProvider: StructServiceProvider) {
+  appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(
       structServiceProvider,
       DefaultStructServiceOptions,
     );
+    this.formatterFactory = new FormatterFactory(this.structService!);
+    return this.structService;
   }
 
   reinitializeApi(
+    ketcherId: string,
     structServiceProvider: StructServiceProvider,
     setStructServiceToStore: (structService: StructService) => void,
   ) {
@@ -64,6 +65,7 @@ class KetcherBuilder {
       structServiceProvider,
       DefaultStructServiceOptions,
     );
+    this.structService.addKetcherId(ketcherId);
 
     window.addEventListener(
       STRUCT_SERVICE_INITIALIZED_EVENT,
@@ -76,7 +78,7 @@ class KetcherBuilder {
           return;
         }
 
-        const ketcher = ketcherProvider.getKetcher();
+        const ketcher = ketcherProvider.getKetcher(ketcherId);
         ketcher.reinitializeIndigo(this.structService);
         IndigoProvider.setIndigo(this.structService);
         setStructServiceToStore(this.structService);
@@ -92,6 +94,8 @@ class KetcherBuilder {
   }
 
   async appendUiAsync(
+    prevKetcherId: string,
+    ketcherId: string,
     element: HTMLDivElement | null,
     appRoot: Root,
     staticResourcesUrl: string,
@@ -100,21 +104,19 @@ class KetcherBuilder {
     togglerComponent?: JSX.Element,
     customButtons?: Array<CustomButton>,
   ): Promise<{
-    setKetcher: (ketcher: Ketcher) => void;
-    ketcherId: string;
     cleanup: ReturnType<typeof initApp> | null;
     setServer: (structService: StructService) => void;
   }> {
     const { structService } = this;
     let cleanup: ReturnType<typeof initApp> | null = null;
 
-    const { editor, setKetcher, ketcherId, setServer } = await new Promise<{
+    const { editor, setServer } = await new Promise<{
       editor: Editor;
-      setKetcher: (ketcher: Ketcher) => void;
-      ketcherId: string;
       setServer: (structService: StructService) => void;
     }>((resolve) => {
       cleanup = initApp(
+        prevKetcherId,
+        ketcherId,
         element,
         appRoot,
         staticResourcesUrl,
@@ -132,15 +134,13 @@ class KetcherBuilder {
       );
     });
 
-    this.editor = editor;
-    this.editor.errorHandler =
+    editor.errorHandler =
       errorHandler && typeof errorHandler === 'function'
         ? errorHandler
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
           () => {};
-    this.formatterFactory = new FormatterFactory(structService!);
 
-    return { setKetcher, ketcherId, cleanup, setServer };
+    return { cleanup, setServer };
   }
 
   build() {
@@ -158,11 +158,7 @@ class KetcherBuilder {
       );
     }
 
-    const ketcher = new Ketcher(
-      this.editor!,
-      this.structService,
-      this.formatterFactory,
-    );
+    const ketcher = new Ketcher(this.structService, this.formatterFactory);
     ketcher[this.serviceMode] = true;
 
     const userInput = document.location.search;
@@ -171,7 +167,7 @@ class KetcherBuilder {
       userInput === 'constructor' ||
       userInput === 'prototype'
     ) {
-      return;
+      return ketcher;
     }
     const params = new URLSearchParams(document.location.search);
     const initialMol = params.get('moll');
@@ -180,7 +176,7 @@ class KetcherBuilder {
     }
 
     IndigoProvider.setIndigo(this.structService);
-    ketcherProvider.setKetcherInstance(ketcher);
+    ketcherProvider.addKetcherInstance(ketcher);
     return ketcher;
   }
 }

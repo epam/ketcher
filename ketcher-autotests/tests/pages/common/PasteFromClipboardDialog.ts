@@ -39,13 +39,16 @@ export const PasteFromClipboardDialog = (page: Page) => {
     ...locators,
 
     async selectContentType(contentType: MacroFileType) {
+      const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      await locators.contentTypeSelector.click();
-      const listbox = page.getByRole('listbox');
-      await listbox.waitFor({ state: 'visible' });
-      await page.getByText(contentType).click();
-      if (await listbox.isVisible()) {
-        await page.getByText(contentType).click(); /* retry */
+      if (await contentTypeOption.isHidden()) {
+        await locators.contentTypeSelector.click();
+        const listbox = page.getByRole('listbox');
+        await listbox.waitFor({ state: 'visible' });
+        await contentTypeOption.click();
+        if (await listbox.isVisible()) {
+          await contentTypeOption.click(); /* retry */
+        }
       }
     },
 

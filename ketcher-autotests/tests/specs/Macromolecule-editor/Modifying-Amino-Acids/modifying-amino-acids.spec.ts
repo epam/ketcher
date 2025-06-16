@@ -2990,3 +2990,395 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     );
   });
 }
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Undo/redo after: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Phosphorylation.
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Undo/redo after: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Side chain acetylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Undo/redo after: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Citrullination
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Undo/redo after: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Hydroxylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Undo/redo after: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after N-methylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Undo/redo after: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Inversion
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Undo/redo after: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Natural amino acid
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Press Undo button
+     *     5. Take screenshot to validate changes has been rolled back
+     *     6. Press Redo button
+     *     7. Take screenshot to validate changes has been rolled forward
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}

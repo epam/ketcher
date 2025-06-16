@@ -1,0 +1,299 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "monomer1"
+            },
+            {
+                "$ref": "monomer2"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer4"
+            },
+            {
+                "$ref": "monomer5"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer4"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer4"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer5"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-meP___N-Methyl-Proline"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 41.2875,
+            "y": -16.656250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    },
+    "monomerTemplate-meP___N-Methyl-Proline": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.792,
+                    -0.351,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.657,
+                    0.149,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.075,
+                    0.149,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.792,
+                    -1.351,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.989,
+                    -0.258,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.657,
+                    0.485,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.157,
+                    1.351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.179,
+                    1.143,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.196,
+                    -1.236,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    7
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "meP___N-Methyl-Proline",
+        "fullName": "N-Methyl-Proline",
+        "alias": "meP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        1
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 41.2875,
+            "y": -18.156250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    },
+    "monomer2": {
+        "type": "monomer",
+        "id": "2",
+        "position": {
+            "x": 41.2875,
+            "y": -19.656250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 41.2875,
+            "y": -21.156250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    },
+    "monomer4": {
+        "type": "monomer",
+        "id": "4",
+        "position": {
+            "x": 41.2875,
+            "y": -22.656250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    },
+    "monomer5": {
+        "type": "monomer",
+        "id": "5",
+        "position": {
+            "x": 41.2875,
+            "y": -24.156250000000004
+        },
+        "alias": "meP",
+        "templateId": "meP___N-Methyl-Proline"
+    }
+}

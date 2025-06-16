@@ -140,6 +140,7 @@ export interface Selection {
 }
 
 class Editor implements KetcherEditor {
+  ketcherId: string;
   #origin?: any;
   render: Render;
   _selection: Selection | null;
@@ -182,7 +183,7 @@ class Editor implements KetcherEditor {
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
-  constructor(clientArea, options, serverSettings) {
+  constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -191,9 +192,11 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
+      prevEditor?.render,
       options.reuseRestructIfExist !== false,
     );
 
+    this.ketcherId = ketcherId;
     this._selection = null; // eslint-disable-line
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
@@ -410,7 +413,7 @@ class Editor implements KetcherEditor {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
       this.event.change.dispatch('force');
-      ketcherProvider.getKetcher().changeEvent.dispatch('force');
+      ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
     }
   }
 
@@ -637,7 +640,7 @@ class Editor implements KetcherEditor {
         }
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher().changeEvent.dispatch(action);
+        ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
       }
       this.render.update(false, null);
     }
@@ -657,7 +660,9 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -693,7 +698,9 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -741,7 +748,9 @@ class Editor implements KetcherEditor {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        ketcherProvider.getKetcher().changeEvent.add(subscribeFuncWrapper);
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .changeEvent.add(subscribeFuncWrapper);
         break;
       }
 

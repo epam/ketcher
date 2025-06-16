@@ -10,7 +10,7 @@ declare global {
   }
 
   export interface SVGElement {
-    getBBox: () => void;
+    getBBox: () => DOMRect;
   }
 
   export interface Element {

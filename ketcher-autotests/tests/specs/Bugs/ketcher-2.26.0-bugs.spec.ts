@@ -32,6 +32,11 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
+  readFileContent,
+  pasteFromClipboardAndOpenAsNewProject,
+  moveMouseToTheMiddleOfTheScreen,
+  copyToClipboardByIcon,
+  moveMouseAway,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -78,6 +83,7 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -1396,5 +1402,375 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 51: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2217
+     * Description: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Export to CDXML
+     * 4. Load exported file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/4 mol.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(page, 'CDXML/4 mol-expected.cdxml', FileType.CDXML);
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/4 mol-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 52: Arrow not changes direction after loading saved RXN single reaction if the elements were too close to single arrow on save', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2493
+     * Description: Arrow not changes direction after loading saved RXN single reaction if the elements were too close to single arrow on save
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Export to RXN
+     * 4. Load exported file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/elements-too-close-to-single-arrow.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
+      FileType.RXN,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 53: The arrow is displayed In the right direction after importing from rxn file', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2479
+     * Description: The arrow is displayed In the right direction after importing from rxn file
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from RXN file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/The error is displayed to another side after importing from rxn file.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 54: The arrow is displayed correct (right direction) when import from rxn file', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2478
+     * Description: The arrow is displayed correct (right direction) when import from rxn file
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from RXN file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/The arrow is displayed incorrect when import from rxn file.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 55: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2558
+     * Description: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Export to CDX
+     * 4. Load exported file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/4 mol.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(page, 'CDX/4 mol-expected.cdx', FileType.CDX);
+    const fileContent = await readFileContent('CDX/4 mol-expected.cdx');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 56: Correct length of Multi-Tailed Arrow and Single arrow after loading from RDF', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2555
+     * Description: Correct length of Multi-Tailed Arrow and Single arrow after loading from RDF
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from RDF file
+     * 3. Export to KET
+     * Total length of Multi-Tailed Arrow is 7
+     * Length of tail is 0.5
+     * Length of head arrow is 6.5
+     * Total length of the single arrow is 7
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/rdf-rxn-v2000-cascade-reaction-2-1-1-expected(2).ket',
+      FileType.KET,
+    );
+  });
+
+  test('Case 57: Can correctly save specific cascade reaction with 3 tails to RDF V3000', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2551
+     * Description: Can correctly save specific cascade reaction with 3 tails to RDF V3000
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET file
+     * 3. Export to RDF V3000
+     * 4. Load exported file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-tails-5-with-pluses (1).ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
+      FileType.RDF,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 58: Specific 1:1 reaction is added to Canvas from RXN with correct positions of elements', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2531
+     * Description: Specific 1:1 reaction is added to Canvas from RXN with correct positions of elements
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from RXN file
+     * 3. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('Rxn-V2000/rxn-1x1.rxn', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 59: The reaction with reaction mapping tool is displayed correct with ACS Style settings', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2501
+     * Description: The reaction with reaction mapping tool is displayed correct with ACS Style settings
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET file
+     * 3. Click on ACS Style button in the Settings
+     * 4. Click on Apply button in the Settings
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).setACSSettings();
+    await SettingsDialog(page).apply();
+    await pressButton(page, 'OK');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 60: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2485
+     * Description: Single reaction with Multi-Tailed arrow is not corrupted after loading from RXN if the elements were too close to arrow on save
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET file
+     * 3. Click on Save to RXN
+     * 4. Copy RXN from the preview and paste to Canvas
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/elements were too close to arrow on save.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.MDLRxnfileV3000,
+    );
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await copyToClipboardByIcon(page);
+    await closeErrorAndInfoModals(page);
+    await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
+    await clickOnCanvas(page, 300, 200);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 61: When several reactions on canvas are positioned one under another, reaction(s) can be saved correctly to RXN V2000', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2454
+     * Description: When several reactions on canvas are positioned one under another, reaction(s) can be saved correctly to RXN V2000
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Export to RXN
+     * 4. Load exported file
+     * 5. Take screenshot
+     * Only one reaction should be saved to RXN (the set of separate reactions should be saved to RDF)
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/ket-issue-2.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/ket-issue-2-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/ket-issue-2-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 62: When several reactions on canvas are positioned one under another, reaction(s) can be saved correctly to RDF V3000', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2454
+     * Description: When several reactions on canvas are positioned one under another, reaction(s) can be saved correctly to RDF V3000
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Export to RDF
+     * 4. Load exported file
+     * 5. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/ket-issue-2.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'RDF-V3000/ket-issue-2-expected.rdf',
+      FileType.RDF,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V3000/ket-issue-2-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 63: Reactions not change the ordering on canvas after layout', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2452
+     * Description: Reactions not change the ordering on canvas after layout
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Press Layout button
+     * 4. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/2-reactions.ket', page);
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 64: Sub font size is correct when save to PNG', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2446
+     * Description: Sub font size is correct when save to PNG.
+     * Scenario:
+     * 1. Open Micro
+     * 2. Add Chain to Canvas
+     * 3. Go to Settings - General tab
+     * 4. Set 30 pt to the Sub Font size in the Settings
+     * 5. Click on Apply
+     * 6. Save to PNG
+     * 7. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/simple-chain.ket', page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
+    await SettingsDialog(page).apply();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
+    await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+  });
+
+  test('Case 65: System should throw an error in case of wrong IUBcode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2331
+     * Description: System should throw an error in case of wrong IUBcode.
+     * Scenario:
+     * 1. Toggle to Macro - Flex mode
+     * 2. Load IDT from paste from clipboard way: (YY:00330067)
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 66: Sugar R should not save in the IDT format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/Indigo/issues/2122
+     * Description: Sugar R should not save in the IDT format.
+     * Scenario:
+     * 1. Toggle to Macro - Flex mode
+     * 2. Add Sugar R to Canvas
+     * 3. Save to IDT
+     * 4. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await Library(page).selectMonomer(Sugars.R);
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.IDT,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

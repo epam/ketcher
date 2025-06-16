@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Locator, Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -10,11 +10,15 @@ import {
   MonomerType,
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  moveMouseAway,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  ModifyAminoAcidsOption,
+  MonomerOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 let page: Page;
 
@@ -499,20 +503,6 @@ const aminoAcidsForNaturalAminoAcid: IHELMStringOrKetFile[] = [
   },
 ];
 
-async function clickContextMenuOptionForMonomer(
-  page: Page,
-  monomer: Locator,
-  optionTestId: string,
-) {
-  await monomer.click({ button: 'left', force: true });
-  await monomer.click({ button: 'right', force: true });
-  const modifyAminoAcidsOption = page.getByTestId('modify_amino_acids').first();
-  await modifyAminoAcidsOption.click({ button: 'left' });
-  const phosphorylationOption = page.getByTestId(optionTestId).first();
-  await phosphorylationOption.click({ button: 'left' });
-  await moveMouseAway(page);
-}
-
 for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
   test(`${aminoAcidForPhosphorylation.Description}`, async () => {
     /*
@@ -541,11 +531,11 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Phosphorylation',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -587,11 +577,11 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Side chain acetylation',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -630,11 +620,11 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Citrullination',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -674,11 +664,11 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Hydroxylation',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -721,11 +711,11 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-N-methylation',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -768,11 +758,11 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Inversion',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -815,11 +805,11 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     const randomPeptide = getMonomerLocator(page, {
       monomerType: MonomerType.Peptide,
     }).first();
-    await clickContextMenuOptionForMonomer(
-      page,
-      randomPeptide,
-      'aminoAcidModification-Natural amino acid',
-    );
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -857,9 +847,12 @@ test(`1. Check that amino acid modifications are not present in list if they are
   const randomPeptide = getMonomerLocator(page, {
     monomerType: MonomerType.Peptide,
   }).first();
-  await randomPeptide.click({ button: 'left', force: true });
-  await randomPeptide.click({ button: 'right', force: true });
-  const modifyAminoAcidsOption = page.getByTestId('modify_amino_acids').first();
+
+  await ContextMenu(page, randomPeptide).open();
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(MonomerOption.ModifyAminoAcids)
+    .first();
   await expect(modifyAminoAcidsOption).toHaveCount(0);
 });
 
@@ -887,11 +880,10 @@ test('2. Check that phosphorylation modifies only eligable monomers', async () =
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Phosphorylation',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.Phosphorylation,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -923,11 +915,10 @@ test('3. Check that Side Chain Acetylation modifies only eligable monomers', asy
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Side chain acetylation',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.SideChainAcetylation,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -959,11 +950,10 @@ test('4. Check that Citrullination modifies only eligable monomers', async () =>
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Citrullination',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.Citrullination,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -995,11 +985,10 @@ test('5. Check that Hydroxylation modifies only eligable monomers', async () => 
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Hydroxylation',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.Hydroxylation,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -1031,11 +1020,10 @@ test('6. Check that N-methylation modifies only eligable monomers', async () => 
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-N-methylation',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.NMethylation,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -1067,11 +1055,10 @@ test('7. Check that Inversion modifies only eligable monomers', async () => {
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Inversion',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.Inversion,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -1103,11 +1090,10 @@ test('8. Check that Natural amino acid modifies only eligable monomers', async (
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await clickContextMenuOptionForMonomer(
-    page,
-    randomPeptide,
-    'aminoAcidModification-Natural amino acid',
-  );
+  await ContextMenu(page, randomPeptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.NaturalAminoAcid,
+  ]);
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -1123,6 +1109,8 @@ test('9. Check that Right-clicking on a selection that includes an amino-acid (i
    * option give a list of modifications (Req.2)
    * 2. Check that Natural amino acid option first one in the drop-down if it is available. All other
    *    modifications ordered alphabetically. (Req 2.2)
+   * 3. Select a set containing an amino‑acid that does have a given modification and one that does
+   *    not → open Modify… → confirm the modification is listed (availability logic satisfied) (Req.2.1)
    *
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Natural amino acid)
@@ -1143,10 +1131,326 @@ test('9. Check that Right-clicking on a selection that includes an amino-acid (i
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await randomPeptide.click({ button: 'left', force: true });
-  await randomPeptide.click({ button: 'right', force: true });
-  const modifyAminoAcidsOption = page.getByTestId('modify_amino_acids').first();
-  await modifyAminoAcidsOption.click({ button: 'left' });
+  await ContextMenu(page, randomPeptide).hover(MonomerOption.ModifyAminoAcids);
+
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+    hideMonomerPreview: true,
+  });
+});
+
+test(`10. Verify that Phosphorylation menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Phosphorylation
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Phosphorylation menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{S}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.Phosphorylation)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`11. Verify that Side chain acetylation menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Side chain acetylation
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Phosphorylation menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{K}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.SideChainAcetylation)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`12. Verify that Citrullination menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Citrullination
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Citrullination menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{R}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.Citrullination)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`13. Verify that Hydroxylation menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Hydroxylation
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Hydroxylation menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{P}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.Hydroxylation)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`14. Verify that N-methylation menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for N-methylation
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that N-methylation menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.NMethylation)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`15. Verify that Inversion menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Natural amino acid
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Natural amino acid menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.Inversion)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`16. Verify that Natural amino acid menu options is available for single selected monomer`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
+   *              then hover it and check a submenu of modification types is displayed (Req.2)
+   *
+   * Case:
+   *     1. Load HELM string with monomer eligable for Natural amino acid
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that Natural amino acid menu options is available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{[1Nal]}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.NaturalAminoAcid)
+    .first();
+  await expect(modifyAminoAcidsOption).toBeVisible();
+});
+
+test(`17. Verify that N-methylation options is NOT available for selected monomer if R1 occupied`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Select an amino‑acid whose R1 is occupied and whose modification lacks R1 → open Modify… → confirm
+   *              that modification is not listed (Req. 2.1)
+   *
+   * Case:
+   *     1. Load HELM string with sequence with monomer (P) eligable for N-methylation but with R1 occupied
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and hover mouse over Modify amino acids option
+   *     4. Validate that N-methylation menu options is NOT available
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.P.A}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).hover(MonomerOption.ModifyAminoAcids);
+
+  const modifyAminoAcidsOption = page
+    .getByTestId(ModifyAminoAcidsOption.NMethylation)
+    .first();
+  await expect(modifyAminoAcidsOption).toHaveCount(0);
+});
+
+test(`18. Check if the original monomer had a side-chain connection, but the replacement monomer does not, a warning message appear after the modification type is chosen`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7265
+   * Description: Check if the original monomer had a side-chain connection, but the replacement monomer does not, a warning message
+   *              appear after the modification type is chosen: "Some side chain connections will be deleted during replacement.
+   *              Do you want to proceed?" with the options of "Cancel" (default) and "Yes" (Req. 3.1)
+   *
+   * Case:
+   *     1. Load HELM string with sequence with monomers (R) eligable for Citrullination but with R3 occupied
+   *     2. Select all monomer on the canva (using Control+A)
+   *     3. Call context menu for monomer and click Citrullination in Modify amino acids option submenu
+   *     4. Take screenshot to validate warning message appearence
+   *     5. Click Yes
+   *     6. Take screenshot to validate removed bonds
+   */
+  test.setTimeout(15000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{R.R.R}|PEPTIDE2{A}|PEPTIDE3{C}|PEPTIDE4{D}$PEPTIDE1,PEPTIDE2,1:R3-1:R1|PEPTIDE1,PEPTIDE3,2:R3-1:R2|PEPTIDE1,PEPTIDE4,3:R3-1:R3$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const peptide = getMonomerLocator(page, {
+    monomerType: MonomerType.Peptide,
+  }).first();
+
+  await ContextMenu(page, peptide).click([
+    MonomerOption.ModifyAminoAcids,
+    ModifyAminoAcidsOption.Citrullination,
+  ]);
+
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+    hideMonomerPreview: true,
+  });
+
+  await page.getByTitle('Yes').click();
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

@@ -9,6 +9,7 @@ import {
   fromMultitailArrowTailRemove,
   MultitailArrow,
   Action,
+  ketcherProvider,
 } from 'ketcher-core';
 import Editor from 'src/script/editor';
 
@@ -23,23 +24,23 @@ function updateEditor(editor: unknown, action: Action) {
 }
 
 export const useMultitailArrowTailsAdd = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const addTail = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor;
       const operation = fromMultitailArrowTailAdd(
         editor.render.ctab,
         props?.itemId as number,
       );
       updateEditor(editor, operation);
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const isAddTailDisabled = useCallback(
     ({ props }: Params): boolean => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const multitailArrow = editor.render.ctab.molecule.multitailArrows.get(
         props?.itemId as number,
       );
@@ -50,18 +51,18 @@ export const useMultitailArrowTailsAdd = () => {
         )
       );
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return { addTail, isAddTailDisabled };
 };
 
 export const useMultitailArrowTailsRemove = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const removeTail = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor;
       const operation = fromMultitailArrowTailRemove(
         editor.render.ctab,
         props?.itemId as number,
@@ -69,7 +70,7 @@ export const useMultitailArrowTailsRemove = () => {
       );
       updateEditor(editor, operation);
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const removeTailHidden = useCallback(({ props }: Params) => {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   changeImage,
   changeVersion,
@@ -33,6 +33,7 @@ import { recognize } from '../../../../../state/server';
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
 import { Icon, StructRender } from 'components';
 import { ketcherProvider } from 'ketcher-core';
+import { useAppContext } from 'src/hooks';
 
 function isImage(file) {
   return file?.type?.includes('image');
@@ -101,7 +102,11 @@ function RecognizeDialog(prop) {
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null;
-  const ketcher = ketcherProvider.getKetcher();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   useEffect(() => {
     onRecognize(file, version);

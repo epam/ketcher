@@ -58,7 +58,7 @@ test.describe('Import-Saving .seq Files', () => {
   test(`Import .seq Peptide file`, async ({ page }) => {
     await openFileAndAddToCanvasMacro(page, `Sequence/sequence-peptide.seq`, [
       MacroFileType.Sequence,
-      [SequenceMonomerType.Peptide, PeptideLetterCodeType.threeLetterCode],
+      SequenceMonomerType.Peptide,
     ]);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {

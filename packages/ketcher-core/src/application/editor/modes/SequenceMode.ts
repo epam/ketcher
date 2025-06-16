@@ -89,6 +89,7 @@ export class SequenceMode extends BaseMode {
   private _isEditInRNABuilderMode = false;
   private _isAntisenseEditMode = false;
   private _isSyncEditMode = true;
+  private isFirstInit = true;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
@@ -192,9 +193,10 @@ export class SequenceMode extends BaseMode {
       chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
     )?.scaledMonomerPositionForSequence;
 
-    if (firstMonomerPosition && needScroll) {
+    if (firstMonomerPosition && needScroll && !this.isFirstInit) {
       zoom.scrollTo(firstMonomerPosition);
     }
+    this.isFirstInit = false;
 
     if (this.isEditMode) {
       const drawnStructuresElement =

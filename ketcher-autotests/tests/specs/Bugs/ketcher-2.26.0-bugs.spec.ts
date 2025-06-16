@@ -132,6 +132,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).reset();
+    await SettingsDialog(page).apply();
     await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
@@ -806,7 +807,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       symbolAlias: 'A',
       nodeIndexOverall: 7,
     }).dblclick();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async () => {

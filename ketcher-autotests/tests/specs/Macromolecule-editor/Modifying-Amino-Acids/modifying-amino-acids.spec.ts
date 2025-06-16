@@ -26,6 +26,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -2631,6 +2632,356 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     ).saveStructureTextarea.getAttribute('data-testid');
     await takeElementScreenshot(page, previewAreaTestId || '');
     await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Erase monomers after: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Phosphorylation.
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Erase monomers after: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Side chain acetylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Erase monomers after: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Citrullination
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Erase monomers after: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Hydroxylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Erase monomers after: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after N-methylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Erase monomers after: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Inversion
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Erase monomers after: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Natural amino acid
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Delete all monomers
+     *     5. Take screenshot to validate canvas is empty and all monomers got deleted
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    do {
+      await randomPeptide.click();
+    } while ((await randomPeptide.count()) > 0);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
 
     // Test should be skipped if related bug exists
     test.fixme(

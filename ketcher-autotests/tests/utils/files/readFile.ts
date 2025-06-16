@@ -35,7 +35,7 @@ export async function readFileContent(filePath: string) {
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
-export async function openFile(filename: string, page: Page) {
+export async function openFile(page: Page, filename: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   // Start waiting for file chooser before clicking. Note no await.
@@ -86,7 +86,7 @@ export async function openFileAndAddToCanvas(
   yOffsetFromCenter?: number,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
+  await openFile(page, filename);
 
   // to stabilize the test
   await selectOptionInDropdown(filename, page);
@@ -113,7 +113,7 @@ export async function openFileAndAddToCanvasMacro(
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
+  await openFile(page, filename);
   await setupStructureFormatComboboxes(page, structureFormat);
   await PasteFromClipboardDialog(page).addToCanvas({
     errorMessageExpected,
@@ -127,7 +127,7 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
+  await openFile(page, filename);
   await setupStructureFormatComboboxes(page, structureFormat);
   await PasteFromClipboardDialog(page).openAsNew({
     errorMessageExpected,
@@ -140,7 +140,7 @@ export async function openFileAndAddToCanvasAsNewProject(
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
+  await openFile(page, filename);
 
   await selectOptionInDropdown(filename, page);
 

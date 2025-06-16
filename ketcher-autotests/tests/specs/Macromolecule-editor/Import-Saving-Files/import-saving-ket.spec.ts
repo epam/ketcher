@@ -213,7 +213,7 @@ test.describe('Import-Saving .ket Files', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('KET/empty-file.ket', page);
+    await openFile(page, 'KET/empty-file.ket');
     await expect(addToCanvasButton).toBeDisabled();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
@@ -226,7 +226,7 @@ test.describe('Import-Saving .ket Files', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('KET/corrupted-file.ket', page);
+    await openFile(page, 'KET/corrupted-file.ket');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
     await closeErrorMessage(page);

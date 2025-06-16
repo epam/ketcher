@@ -80,7 +80,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('FASTA/fasta-empty.fasta', page);
+    await openFile(page, 'FASTA/fasta-empty.fasta');
     await expect(addToCanvasButton).toBeDisabled();
   });
 
@@ -91,7 +91,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-corrupted.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
@@ -184,8 +184,8 @@ test.describe('Import-Saving .fasta Files', () => {
   //     page,
   //   }) => {
   //     await CommonTopLeftToolbar(page).openFile();
-  //     await openFile(data.filename, page);
-  //     await selectOptionInDropdown(data.filename, page);
+  //     await openFile(page, data.filename);
+  //     await selectOptionInDropdown(data.filename);
   //
   //     if (data.monomers === 'Peptide') {
   //       await page.getByTestId('dropdown-select-type').click();
@@ -204,7 +204,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-multiline-sequence.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();
@@ -218,7 +218,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
@@ -230,7 +230,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();
@@ -264,7 +264,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-dash-symbol.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();

@@ -323,7 +323,7 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
      */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('KET/images-png-svg.ket', page);
+    await openFile(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -357,7 +357,7 @@ test.describe('Image files', () => {
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
       await CommonTopLeftToolbar(page).openFile();
-      await openFile(`KET/${fileName}.ket`, page);
+      await openFile(page, `KET/${fileName}.ket`);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
@@ -387,7 +387,7 @@ test.describe('Image files', () => {
       const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
       await CommonTopLeftToolbar(page).openFile();
-      await openFile(`KET/${file}`, page);
+      await openFile(page, `KET/${file}`);
       await addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
@@ -400,7 +400,7 @@ test.describe('Image files', () => {
      */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(`KET/image-png-159-symbols.ket`, page);
+    await openFile(page, `KET/image-png-159-symbols.ket`);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
@@ -2032,7 +2032,7 @@ test.describe('Image files', () => {
     test(testCase.description, async () => {
       if (testCase.action === 'open') {
         await CommonTopLeftToolbar(page).openFile();
-        await openFile(testCase.file, page);
+        await openFile(page, testCase.file);
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
@@ -2143,7 +2143,7 @@ test.describe('Image files', () => {
      *  is displayed - "Cannot deserialize input JSON.".
      */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
+    await openFile(page, `CDXML/image-png-169-symbols.cdxml`);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });

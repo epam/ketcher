@@ -48,7 +48,7 @@ test.describe('Floating windows', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('Txt/incorect-text.txt', page);
+    await openFile(page, 'Txt/incorect-text.txt');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
@@ -143,7 +143,7 @@ test.describe('Floating windows', () => {
       Description: open text file via "open file" 
     */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('CML/cml-molecule.cml', page);
+    await openFile(page, 'CML/cml-molecule.cml');
     await takeEditorScreenshot(page);
   });
 

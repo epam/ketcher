@@ -187,7 +187,7 @@ test.describe('Import-Saving .idt Files', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('IDT/idt-empty.idt', page);
+    await openFile(page, 'IDT/idt-empty.idt');
     await expect(addToCanvasButton).toBeDisabled();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
@@ -262,7 +262,7 @@ test.describe('Import-Saving .idt Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'IDT/idt-corrupted.idt';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);

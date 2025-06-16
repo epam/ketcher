@@ -392,7 +392,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Description: ${detailedDescription}
        */
       await CommonTopLeftToolbar(page).openFile();
-      await openFile(file, page);
+      await openFile(page, file);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
       await takeEditorScreenshot(page);
@@ -456,7 +456,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
      */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('KET/multi-tailed-arrow-to-compare.ket', page);
+    await openFile(page, 'KET/multi-tailed-arrow-to-compare.ket');
     await takeEditorScreenshot(page);
   });
 

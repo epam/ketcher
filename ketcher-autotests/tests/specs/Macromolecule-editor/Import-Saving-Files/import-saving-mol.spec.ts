@@ -260,7 +260,7 @@ test.describe('Import-Saving .mol Files', () => {
         PasteFromClipboardDialog(page).addToCanvasButton;
 
       await CommonTopLeftToolbar(page).openFile();
-      await openFile('Molfiles-V2000/empty-file.mol', page);
+      await openFile(page, 'Molfiles-V2000/empty-file.mol');
       await expect(addToCanvasButton).toBeDisabled();
 
       // Closing page since test expects it to have closed at the end

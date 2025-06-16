@@ -785,7 +785,7 @@ test.describe('Cascade Reactions', () => {
         2. Take screenshot
       */
       await CommonTopLeftToolbar(page).openFile();
-      await openFile(rdfFile, page);
+      await openFile(page, rdfFile);
       await takeEditorScreenshot(page);
     });
   });

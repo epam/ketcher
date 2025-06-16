@@ -288,7 +288,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(`KET/images-png-50-with-50-structures.ket`, page);
+    await openFile(page, `KET/images-png-50-with-50-structures.ket`);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();
     await takeEditorScreenshot(page);

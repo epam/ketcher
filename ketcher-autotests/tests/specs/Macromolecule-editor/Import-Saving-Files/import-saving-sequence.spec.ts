@@ -108,7 +108,7 @@ test.describe('Import-Saving .seq Files', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('Sequence/sequence-empty.seq', page);
+    await openFile(page, 'Sequence/sequence-empty.seq');
     await expect(addToCanvasButton).toBeDisabled();
     await closeErrorMessage(page);
   });
@@ -119,7 +119,7 @@ test.describe('Import-Saving .seq Files', () => {
     const filename = 'Sequence/sequence-corrupted.seq';
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(filename, page);
+    await openFile(page, filename);
     await selectOptionInDropdown(filename, page);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
 

@@ -12,7 +12,8 @@ import {
   selectAllStructuresOnCanvas,
   setAromaticity,
   setBondType,
-  setCustomQuery,
+  setCustomQueryForAtom,
+  setCustomQueryForBond,
   setSubstitutionCount,
   setUnsaturated,
   waitForAtomPropsModal,
@@ -48,7 +49,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
 
   test('returns true, when atom has custom query', async ({ page }) => {
     const customQuery = '#6;x9';
-    await setCustomQuery(page, customQuery);
+    await setCustomQueryForAtom(page, customQuery);
     await checkIsQueryStructureSelected(page, true);
   });
 
@@ -106,7 +107,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
 
   test(`returns true for customQuery bond`, async ({ page }) => {
     const customQuery = 'x2&D3,D2';
-    await setCustomQuery(page, customQuery);
+    await setCustomQueryForBond(page, customQuery);
     await checkIsQueryStructureSelected(page, true);
   });
 });

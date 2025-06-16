@@ -1,9 +1,12 @@
 import Select from '../../../../../../component/form/Select';
-import { Field, FieldWithModal } from 'src/script/ui/component/form/form/form';
+import {
+  Field,
+  FieldWithModal,
+} from '../../../../../../component/form/form/form';
 import { atom as atomSchema } from '../../../../../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from 'src/script/ui/utils';
 import ElementNumber from '../ElementNumber/ElementNumber';
-import { openDialog } from 'src/script/ui/state/modal';
+import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import classes from './../Atom.module.less';
 import { BaseProps } from '../../../../modal.types';

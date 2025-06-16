@@ -342,10 +342,9 @@ function CustomQueryField(props) {
       >
         <Input
           type="textarea"
-          data-testid="atomCustomQuery"
+          data-testid="custom-query-value"
           name={name}
           schema={desc}
-          data-testId="custom-query-value"
           {...fieldOpts}
           {...rest}
         />

@@ -57,7 +57,8 @@ describe('Rotate controller', () => {
    * 2. click Rotate Tool
    */
   it('hides when active tool is not SelectTool', () => {
-    const editor = new Editor(document, {}, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     const NonSelectTool = new RotateTool(editor, undefined);
     const paper = jest.fn();
     const visibleAtoms = [0, 1];
@@ -89,7 +90,8 @@ describe('Rotate controller', () => {
    * Click `zoom in` or press `Ctrl+=`
    */
   it('rerenders while zooming', () => {
-    const editor = new Editor(document, {}, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     editor.rotateController.rerender = jest.fn();
 
     editor.zoom(2);
@@ -203,7 +205,8 @@ describe('Rotate controller', () => {
    * 2. Undo
    */
   it(`cancels rotation without modifying history stack`, () => {
-    const editor = new Editor(document, {}, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {

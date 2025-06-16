@@ -519,8 +519,16 @@ const getNumberOfTicks = (_width: number) => {
 };
 
 const roundToMinNiceNumber = (number: number) => {
-  if (number < 10) {
-    return Math.floor(number);
+  if (number < 1) {
+    return 0;
+  } else if (number < 2) {
+    return 1;
+  } else if (number < 3) {
+    return 2;
+  } else if (number < 5) {
+    return 3;
+  } else if (number < 10) {
+    return 5;
   } else if (number < 100) {
     return Math.floor(number / 10) * 10;
   } else if (number < 1000) {
@@ -567,25 +575,25 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
     const svgContainer = d3.select(svgRef.current);
     const maximumNumberOfTicks = getNumberOfTicks(width);
     const distanceBetweenTicksForMaximumNumberOfTicks = roundToMinNiceNumber(
-      initialData.length / (maximumNumberOfTicks + 1),
+      initialData.length / maximumNumberOfTicks,
     );
     let finalDistanceBetweenTicks = distanceBetweenTicksForMaximumNumberOfTicks;
     let tickValues: number[];
+
     if (distanceBetweenTicksForMaximumNumberOfTicks >= 1) {
       let numberOfTicksWithMaximumCoverage = -Infinity;
       let distanceBetweenTicksWithMaximumCoverage = -Infinity;
       let maximumCoverage = -Infinity;
 
-      for (let i = 1; i <= maximumNumberOfTicks; i++) {
+      for (let i = 2; i <= maximumNumberOfTicks; i++) {
         const numberOfTicks = i;
         const distanceBetweenTicks = roundToMinNiceNumber(
-          initialData.length / (numberOfTicks + 1),
+          initialData.length / numberOfTicks,
         );
         const coverage = Number(
-          (
-            distanceBetweenTicks *
-            ((numberOfTicks + 1) / initialData.length)
-          ).toFixed(2),
+          (distanceBetweenTicks * (numberOfTicks / initialData.length)).toFixed(
+            2,
+          ),
         );
 
         if (
@@ -717,7 +725,14 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
                 ? _round(props.macromoleculesProperties.extinctionCoefficient)
                 : '–'
             }
-            hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
+            hint={
+              <div>
+                The extinction coefficient for wavelength of 280nm is calculated
+                using the method from{' '}
+                <i>Gill, S.C. and von Hippel, P.H. (1989).</i> Natural analogue
+                is used in place of a modified amino acid.
+              </div>
+            }
           ></BasicProperty>
         </BasicPropertiesWrapper>
         <BasicProperty
@@ -726,11 +741,11 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             <div>
               <HydrophobicityHintHeader>
                 <div>y = Hydrophobicity score</div>
-                <div>x = Number of amino acid residues</div>
+                <div>x = Position of the amino acid residue</div>
               </HydrophobicityHintHeader>
               The hydrophobicity is calculated using the method from{' '}
-              <i>Black S.D. and Mould D.R. (1991)</i>. Only amino acid natural
-              analogues are used in the calculation.
+              <i>Black S.D. and Mould D.R. (1991).</i> Natural analogue is used
+              in place of a modified amino acid.
             </div>
           }
         />
@@ -780,11 +795,11 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
   };
 
   const onChangeUnipositiveIonsValue = (value: number) => {
-    dispatch(setUnipositiveIonsValue(value));
+    dispatch(setUnipositiveIonsValue(value.toString()));
   };
 
   const onChangeOligonucleotidesValue = (value: number) => {
-    dispatch(setOligonucleotidesValue(value));
+    dispatch(setOligonucleotidesValue(value.toString()));
   };
 
   return props.isError ? (
@@ -802,7 +817,13 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
           <BasicProperty
             name="Melting Temp. (°C)"
             value={_round(props.macromoleculesProperties.Tm, 1)}
-            hint="The melting temperature is calculated using the method from Khandelwal G. and Bhyravabhotla J. (2010). Only base natural analogues are used in the calculation."
+            hint={
+              <div>
+                The melting temperature is calculated using the method from{' '}
+                <i>Khandelwal G. and Bhyravabhotla J. (2010).</i> Natural
+                analogue is used in place of a modified base.
+              </div>
+            }
           />
         ) : (
           <div></div>
@@ -827,7 +848,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesMeasurementUnit)
+              !containOnlyPartOfNumber(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}

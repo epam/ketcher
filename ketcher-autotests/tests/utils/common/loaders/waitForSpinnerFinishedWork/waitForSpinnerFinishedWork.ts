@@ -5,9 +5,11 @@ import { emptyFunction } from '@utils/common/helpers';
 export const waitForSpinnerFinishedWork = async (
   page: Page,
   callback: VoidFunction,
-  timeout = 1000,
+  timeout = 250,
 ) => {
-  await callback();
-  await page.waitForSelector('.loading-spinner', { state: 'detached' });
+  const loadingSpinner = page.getByTestId('loading-spinner');
+
+  callback();
+  await loadingSpinner.waitFor({ state: 'detached' });
   await waitForRender(page, emptyFunction, timeout);
 };

@@ -10,6 +10,7 @@ import {
   MonomerType,
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
+  takeElementScreenshot,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -23,6 +24,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
 
@@ -1466,8 +1469,8 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
   test(`Saving to KET: ${aminoAcidForPhosphorylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
-     *
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1523,7 +1526,8 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
   test(`Saving to KET: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1580,7 +1584,8 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
   test(`Saving to KET: ${aminoAcidForCitrullination.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1637,7 +1642,8 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
   test(`Saving to KET: ${aminoAcidForHydroxylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1694,7 +1700,8 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
   test(`Saving to KET: ${aminoAcidForNMethylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1751,7 +1758,8 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
   test(`Saving to KET: ${aminoAcidForInversion.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1808,7 +1816,8 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
   test(`Saving to KET: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1865,7 +1874,8 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
   test(`Saving to MOL: ${aminoAcidForPhosphorylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1923,7 +1933,8 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
   test(`Saving to MOL: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -1981,7 +1992,8 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
   test(`Saving to MOL: ${aminoAcidForCitrullination.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -2039,7 +2051,8 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
   test(`Saving to MOL: ${aminoAcidForHydroxylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -2097,7 +2110,8 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
   test(`Saving to MOL: ${aminoAcidForNMethylation.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -2155,7 +2169,8 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
   test(`Saving to MOL: ${aminoAcidForInversion.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -2213,7 +2228,8 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
   test(`Saving to MOL: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7265
-     * Description: Verify that structures with modified amino acids are correctly saved to KET
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
      * Case:
      *     1. Load HELM string with all peptides from same group
@@ -2258,6 +2274,363 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Export to SVG: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Export to SVG: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Export to SVG: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Export to SVG: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Export to SVG: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Export to SVG: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Export to SVG: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Verify that structures with modified amino acids are correctly exported to SVG
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Open export to SVG dialog
+     *     5. Take screenshot of SVG preview area validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+
+    const previewAreaTestId = await SaveStructureDialog(
+      page,
+    ).saveStructureTextarea.getAttribute('data-testid');
+    await takeElementScreenshot(page, previewAreaTestId || '');
+    await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
     test.fixme(

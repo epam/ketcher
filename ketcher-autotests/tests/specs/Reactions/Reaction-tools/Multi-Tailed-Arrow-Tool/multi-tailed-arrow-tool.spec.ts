@@ -16,7 +16,6 @@ import {
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectPartOfMolecules,

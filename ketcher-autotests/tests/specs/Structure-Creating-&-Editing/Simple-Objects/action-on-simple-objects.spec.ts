@@ -3,7 +3,6 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  resetCurrentTool,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,

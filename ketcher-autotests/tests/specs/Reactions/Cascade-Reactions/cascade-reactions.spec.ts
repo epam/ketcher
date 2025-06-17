@@ -9,7 +9,6 @@ import {
   pressButton,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
-  resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   selectAllStructuresOnCanvas,

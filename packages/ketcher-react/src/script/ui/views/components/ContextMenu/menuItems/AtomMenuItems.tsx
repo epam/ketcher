@@ -23,6 +23,7 @@ import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';
 import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { Icon } from 'components';
 
 const {
   ringBondCount,
@@ -211,6 +212,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit}>
+        <Icon name="edit" className={styles.icon} />
         {props.propsFromTrigger?.extraItemsSelected
           ? 'Edit selected atoms...'
           : 'Edit...'}
@@ -262,6 +264,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           </Item>
         )}
       <Item {...props} onClick={handleDelete}>
+        <Icon name="deleteMenu" className={styles.icon} />
         Delete
       </Item>
     </>

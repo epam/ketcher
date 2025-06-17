@@ -11,7 +11,6 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   moveOnAtom,
-  resetCurrentTool,
   clickOnAtom,
   pressButton,
   dragMouseTo,
@@ -387,13 +386,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('350');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

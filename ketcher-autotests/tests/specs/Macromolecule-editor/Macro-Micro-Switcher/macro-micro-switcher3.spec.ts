@@ -17,7 +17,6 @@ import {
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
-  resetCurrentTool,
   resetZoomLevelToDefault,
   takeElementScreenshot,
   selectAllStructuresOnCanvas,
@@ -635,7 +634,6 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
     'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('50');
-  await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'A');
   await expandMonomer(page, '5hMedC');
@@ -669,7 +667,6 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('50');
-  await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, '12ddR');
   await expandMonomer(page, 'Mal');
@@ -703,7 +700,6 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
     'KET/Micro-Macro-Switcher/All type of monomers in vertical chain.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('40');
-  await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'oC64m5');
   await expandMonomer(page, 'gly');

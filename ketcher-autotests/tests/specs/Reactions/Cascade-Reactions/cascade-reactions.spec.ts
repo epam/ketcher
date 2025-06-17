@@ -816,13 +816,10 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).setZoomInputValue('20');
-      await resetCurrentTool(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).setZoomInputValue('400');
-      await resetCurrentTool(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).setZoomInputValue('100');
-      await resetCurrentTool(page);
       await takeEditorScreenshot(page);
     });
   });

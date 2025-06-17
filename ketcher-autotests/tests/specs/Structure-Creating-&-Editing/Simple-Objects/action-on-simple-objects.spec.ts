@@ -87,7 +87,6 @@ test.describe('Action on simples objects', () => {
   test('Simple Object - Action with zoom tool', async ({ page }) => {
     // Test case: EPMLSOPKET-1980
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await setupEllipse(page);
     await CommonTopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);

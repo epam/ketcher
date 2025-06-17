@@ -19,7 +19,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
-  resetCurrentTool,
   clickOnCanvas,
   setMolecule,
 } from '@utils';
@@ -912,7 +911,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await expandMonomer(page, 'P');
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

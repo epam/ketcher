@@ -15,7 +15,6 @@ import {
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  resetCurrentTool,
   resetZoomLevelToDefault,
   saveToTemplates,
   screenshotBetweenUndoRedo,
@@ -411,14 +410,11 @@ test.describe('Image files', () => {
      * Description: Zoom In and Zoom Out work for Images
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -528,13 +524,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1799,7 +1792,6 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1831,7 +1823,6 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1863,7 +1854,6 @@ test.describe('Image files', () => {
       'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1895,7 +1885,6 @@ test.describe('Image files', () => {
       'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1927,7 +1916,6 @@ test.describe('Image files', () => {
       'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1959,7 +1947,6 @@ test.describe('Image files', () => {
       'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -2055,7 +2042,6 @@ test.describe('Image files', () => {
       'KET/images-png-50-with-50-structures.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -2080,7 +2066,6 @@ test.describe('Image files', () => {
       'KET/images-png-50-with-50-structures.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -2157,13 +2142,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -2178,13 +2160,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -2196,13 +2175,10 @@ test.describe('Image files', () => {
     await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -2214,13 +2190,10 @@ test.describe('Image files', () => {
     await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -3013,7 +2986,6 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/saved-svg-images-as-png.png');
     await CommonTopRightToolbar(page).setZoomInputValue('30');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

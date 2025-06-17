@@ -489,13 +489,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -3455,7 +3452,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
@@ -3463,7 +3459,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

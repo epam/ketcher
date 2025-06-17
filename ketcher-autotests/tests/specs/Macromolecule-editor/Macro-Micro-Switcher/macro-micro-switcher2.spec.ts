@@ -551,19 +551,16 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('50');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).setZoomInputValue('120');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).setZoomInputValue('150');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

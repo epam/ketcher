@@ -836,10 +836,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('150');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -938,10 +936,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await pressButton(page, 'OK');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('150');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

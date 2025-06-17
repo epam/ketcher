@@ -11,6 +11,8 @@ import {
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeElementScreenshot,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -3375,6 +3377,405 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       hideMonomerPreview: true,
     });
 
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Phosphorylation.
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Side chain acetylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Citrullination
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Hydroxylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after N-methylation
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Inversion
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Switching flex/snake/sequens after: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Validate view switching (flex/sequence/snake) after applying modification after Natural amino acid
+     *
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Switch to Snake mode
+     *     5. Take screenshot to validate it works correct
+     *     6. Press Sequence button
+     *     7. Take screenshot to validate it works correct
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await selectSnakeLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,

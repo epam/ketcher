@@ -522,6 +522,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * 2. Verify that after choosing a modification type from the menu, all amino acids for whom that modification exists replace
      *    the original monomer, and all bonds (both hydrogen and covalent) of that monomer preserved (Req.3)
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -568,6 +569,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * 2. Verify that after choosing a modification type from the menu, all amino acids for whom that modification exists replace
      *    the original monomer, and all bonds (both hydrogen and covalent) of that monomer preserved (Req.3)
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -611,6 +613,8 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Assign every modification listed in Modification types to its matching amino‑acid and verify the alias on
      * the canvas updates accordingly ( Req.1) - Citrullination
+     *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -655,6 +659,8 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Assign every modification listed in Modification types to its matching amino‑acid and verify the alias on
      * the canvas updates accordingly ( Req.1) - Hydroxylation
+     *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -702,6 +708,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * 2. Verify that after choosing a modification type from the menu, all amino acids for whom that modification exists replace
      *    the original monomer, and all bonds (both hydrogen and covalent) of that monomer preserved (Req.3)
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -749,6 +756,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * 2. Verify that after choosing a modification type from the menu, all amino acids for whom that modification exists replace
      *    the original monomer, and all bonds (both hydrogen and covalent) of that monomer preserved (Req.3)
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -796,6 +804,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * 2. Verify that after choosing a modification type from the menu, all amino acids for whom that modification exists replace
      *    the original monomer, and all bonds (both hydrogen and covalent) of that monomer preserved (Req.3)
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -839,6 +848,7 @@ test(`1. Check that amino acid modifications are not present in list if they are
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that amino acid modifications are not present in list if they are not applicable
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides that has no amino acid modifications applicable
    *     2. Select all monomer on the canva (using Control+A)
@@ -871,6 +881,7 @@ test('2. Check that phosphorylation modifies only eligable monomers', async () =
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that phosphorylation modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for phosphorylation)
    *     2. Select all monomer on the canva (using Control+A)
@@ -906,6 +917,7 @@ test('3. Check that Side Chain Acetylation modifies only eligable monomers', asy
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that Side Chain Acetylation modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Side Chain Acetylation)
    *     2. Select all monomer on the canva (using Control+A)
@@ -941,6 +953,7 @@ test('4. Check that Citrullination modifies only eligable monomers', async () =>
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that Citrullination modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Citrullination)
    *     2. Select all monomer on the canva (using Control+A)
@@ -976,6 +989,7 @@ test('5. Check that Hydroxylation modifies only eligable monomers', async () => 
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that Hydroxylation modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Hydroxylation)
    *     2. Select all monomer on the canva (using Control+A)
@@ -1011,6 +1025,7 @@ test('6. Check that N-methylation modifies only eligable monomers', async () => 
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that N-methylation modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for N-methylation)
    *     2. Select all monomer on the canva (using Control+A)
@@ -1046,6 +1061,7 @@ test('7. Check that Inversion modifies only eligable monomers', async () => {
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that Inversion modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Inversion)
    *     2. Select all monomer on the canva (using Control+A)
@@ -1081,6 +1097,7 @@ test('8. Check that Natural amino acid modifies only eligable monomers', async (
    * Test task: https://github.com/epam/ketcher/issues/7265
    * Description: Check that Natural amino acid modifies only eligable monomers
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Natural amino acid)
    *     2. Select all monomer on the canva (using Control+A)
@@ -1122,6 +1139,7 @@ test('9. Check that Right-clicking on a selection that includes an amino-acid (i
    * 3. Select a set containing an amino‑acid that does have a given modification and one that does
    *    not → open Modify… → confirm the modification is listed (availability logic satisfied) (Req.2.1)
    *
+   * Version 3.5
    * Case:
    *     1. Load KET file with all types of monomers and peptides (including peptide eligable for Natural amino acid)
    *     2. Select all monomer on the canva (using Control+A)
@@ -1155,6 +1173,7 @@ test(`10. Verify that Phosphorylation menu options is available for single selec
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Phosphorylation
    *     2. Select all monomer on the canva (using Control+A)
@@ -1189,6 +1208,7 @@ test(`11. Verify that Side chain acetylation menu options is available for singl
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Side chain acetylation
    *     2. Select all monomer on the canva (using Control+A)
@@ -1223,6 +1243,7 @@ test(`12. Verify that Citrullination menu options is available for single select
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Citrullination
    *     2. Select all monomer on the canva (using Control+A)
@@ -1257,6 +1278,7 @@ test(`13. Verify that Hydroxylation menu options is available for single selecte
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Hydroxylation
    *     2. Select all monomer on the canva (using Control+A)
@@ -1291,6 +1313,7 @@ test(`14. Verify that N-methylation menu options is available for single selecte
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for N-methylation
    *     2. Select all monomer on the canva (using Control+A)
@@ -1325,6 +1348,7 @@ test(`15. Verify that Inversion menu options is available for single selected mo
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Natural amino acid
    *     2. Select all monomer on the canva (using Control+A)
@@ -1359,6 +1383,7 @@ test(`16. Verify that Natural amino acid menu options is available for single se
    * Description: Right‑click a single amino‑acid (all modes) → confirm a Modify… menu item appears,
    *              then hover it and check a submenu of modification types is displayed (Req.2)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with monomer eligable for Natural amino acid
    *     2. Select all monomer on the canva (using Control+A)
@@ -1393,6 +1418,7 @@ test(`17. Verify that N-methylation options is NOT available for selected monome
    * Description: Select an amino‑acid whose R1 is occupied and whose modification lacks R1 → open Modify… → confirm
    *              that modification is not listed (Req. 2.1)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with sequence with monomer (P) eligable for N-methylation but with R1 occupied
    *     2. Select all monomer on the canva (using Control+A)
@@ -1428,6 +1454,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
    *              appear after the modification type is chosen: "Some side chain connections will be deleted during replacement.
    *              Do you want to proceed?" with the options of "Cancel" (default) and "Yes" (Req. 3.1)
    *
+   * Version 3.5
    * Case:
    *     1. Load HELM string with sequence with monomers (R) eligable for Citrullination but with R3 occupied
    *     2. Select all monomer on the canva (using Control+A)
@@ -1474,6 +1501,8 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1532,6 +1561,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1590,6 +1620,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1648,6 +1679,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1706,6 +1738,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1764,6 +1797,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1822,6 +1856,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to KET
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1880,6 +1915,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1938,7 +1974,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
-     *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -1998,6 +2034,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2057,6 +2094,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2116,6 +2154,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2175,6 +2214,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2234,6 +2274,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000
      *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2292,6 +2333,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2343,6 +2385,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2394,6 +2437,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2445,6 +2489,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2496,6 +2541,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2547,6 +2593,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2598,6 +2645,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that structures with modified amino acids are correctly exported to SVG
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2649,6 +2697,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Phosphorylation.
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2699,6 +2748,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Side chain acetylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2749,6 +2799,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Citrullination
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2799,6 +2850,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Hydroxylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2849,6 +2901,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after N-methylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2899,6 +2952,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Inversion
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2949,6 +3003,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Verify that the Erase tool properly deletes modified amino acids from the canvas after Natural amino acid
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -2999,6 +3054,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Phosphorylation.
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3055,6 +3111,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Side chain acetylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3111,6 +3168,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Citrullination
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3167,6 +3225,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Hydroxylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3223,6 +3282,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after N-methylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3279,6 +3339,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Inversion
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3335,6 +3396,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Modify an amino acid, then use undo and redo to verify correct behavior after Natural amino acid
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3391,6 +3453,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Phosphorylation.
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3448,6 +3511,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Side chain acetylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3505,6 +3569,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Citrullination
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3562,6 +3627,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Hydroxylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3619,6 +3685,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after N-methylation
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3676,6 +3743,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Inversion
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3733,6 +3801,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
      * Test task: https://github.com/epam/ketcher/issues/7265
      * Description: Validate view switching (flex/sequence/snake) after applying modification after Natural amino acid
      *
+     * Version 3.5
      * Case:
      *     1. Load HELM string with all peptides from same group
      *     2. Select all monomer on the canva (using Control+A)
@@ -3769,6 +3838,356 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     });
 
     await selectSequenceLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after Phosphorylation.
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after Side chain acetylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after Citrullination
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after Hydroxylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after N-methylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged after Inversion
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Switch to micromolecules and back mode after: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged Natural amino acid
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

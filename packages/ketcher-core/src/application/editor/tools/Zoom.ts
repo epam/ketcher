@@ -50,7 +50,7 @@ export class ZoomTool implements BaseTool {
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
-  private scrollBars?: {
+  private scrollBars!: {
     horizontal: ScrollBar;
     vertical: ScrollBar;
   };
@@ -154,7 +154,7 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(forceHide = false) {
-    if (this.canvas.node() && this.canvasWrapper.node() && this.scrollBars) {
+    if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
       this.renderScrollBar(this.scrollBars.horizontal, forceHide);
       this.renderScrollBar(this.scrollBars.vertical, forceHide);
@@ -280,11 +280,8 @@ export class ZoomTool implements BaseTool {
   }
 
   public scrollToVerticalBottom() {
-    if (!this.scrollBars) {
-      return;
-    }
-
     this.drawScrollBars();
+
     if (this.scrollBars.vertical.offsetEnd < 0) {
       this.zoom?.translateBy(
         this.canvasWrapper,

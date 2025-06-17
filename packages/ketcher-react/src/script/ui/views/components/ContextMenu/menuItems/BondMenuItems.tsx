@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import Editor from 'src/script/editor';
-import tools from 'src/script/ui/action/tools';
+import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
@@ -18,13 +18,14 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const [bondData, setBondData] = useState<{
     type: number;
     stereo: number;
@@ -40,10 +41,10 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     props: props.propsFromTrigger,
   } as Params);
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
-  const editor = getKetcherInstance().editor as Editor;
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
   useEffect(() => {
-    const editor = getKetcherInstance()?.editor;
+    const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     if (bondIds.length > 0 && editor) {
@@ -54,7 +55,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         setBondData(null);
       }
     }
-  }, [props.propsFromTrigger, getKetcherInstance]);
+  }, [props.propsFromTrigger, ketcherId]);
 
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];

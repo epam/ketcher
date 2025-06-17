@@ -60,8 +60,6 @@ test.describe('S-Group Properties', () => {
     await page.getByRole('option', { name: 'Superatom' }).click();
     await page.getByLabel('Name').click();
     await page.getByLabel('Name').fill('Test');
-
-    await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
     await takeEditorScreenshot(page);
   });

@@ -235,6 +235,7 @@ import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
 import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.svg';
 import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg';
 import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
+import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
 
 export const iconNameToIcon = {
   α,
@@ -346,6 +347,7 @@ export const iconNameToIcon = {
   clear: ClearIcon,
   open: OpenIcon,
   paste: PasteIcon,
+  editMenu: EditContextMenu,
   pasteNavBar: PasteContextMenu,
   'period-table': PeriodTableIcon,
   arrows: ReactionArrowOpenAngleIcon,

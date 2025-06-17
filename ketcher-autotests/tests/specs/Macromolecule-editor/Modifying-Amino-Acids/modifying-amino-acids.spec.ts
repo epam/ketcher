@@ -13,6 +13,7 @@ import {
   takeElementScreenshot,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -4195,6 +4196,885 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
     });
 
     await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Saving to KET in Molecules mode: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to KET in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+    await verifyFileExport(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.ket`,
+      FileType.KET,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.ket`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Saving to MOL in Molecules mode: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: 1. Verify that structures with modified amino acids are correctly saved to MOLv3000 in Molecules mode
+     *              2. Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Switch to Molecules mode
+     *     5. Validate export to KET file
+     *     6. Load resulted KET as New Project
+     *     7. Take screenshot to validate modified peptides and all bonds remain in place
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
+    );
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,

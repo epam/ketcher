@@ -578,6 +578,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly.
@@ -599,6 +600,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly.
@@ -630,6 +632,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After opening the file, the CIP stereo-labels are mising because of MOL V3000 format limitations.
@@ -663,6 +666,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After Undo the CIP stereo-labels are restored.
@@ -696,6 +700,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly in different views (flex, sequence, snake).
@@ -738,6 +743,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After rotation the CIP stereo-labels are rotated with structure.
@@ -764,6 +770,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After horizontal flip the CIP stereo-labels are flipped with structure.
@@ -790,6 +797,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After vertical flip the CIP stereo-labels are flipped with structure.
@@ -819,6 +827,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After zoom in and zoom out the CIP stereo-labels are positioned correctly.
@@ -847,6 +856,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After zoom in and zoom out the CIP stereo-labels are positioned correctly.
@@ -877,6 +887,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After ACS style is added and structure is rotated, the CIP stereo-labels are positioned correctly.
@@ -912,6 +923,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After ACS style is added and structure is zoomed in and out, the CIP stereo-labels are positioned correctly.
@@ -949,6 +961,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     page,
   }) => {
     /*
+     * Version: 3.5
     Test case: https://github.com/epam/ketcher/issues/7233
     Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
     Stereo-labels are positioned correctly. After connecting monomer to atom, the CIP stereo-labels are positioned correctly.

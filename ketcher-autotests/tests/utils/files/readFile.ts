@@ -88,9 +88,6 @@ export async function openFileAndAddToCanvas(
   await CommonTopLeftToolbar(page).openFile();
   await openFile(page, filename);
 
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
   await waitForLoadAndRender(page, async () => {
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
   });
@@ -141,9 +138,6 @@ export async function openFileAndAddToCanvasAsNewProject(
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await openFile(page, filename);
-
-  await selectOptionInDropdown(filename, page);
-
   await PasteFromClipboardDialog(page).openAsNew({
     errorMessageExpected,
   });

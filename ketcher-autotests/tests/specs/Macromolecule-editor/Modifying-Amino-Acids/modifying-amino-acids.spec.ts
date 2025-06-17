@@ -46,6 +46,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   await CommonTopLeftToolbar(page).clearCanvas();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -4258,8 +4259,6 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       hideMonomerPreview: true,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForPhosphorylation.shouldFail === true,
@@ -4321,8 +4320,6 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -4391,8 +4388,6 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       hideMonomerPreview: true,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForCitrullination.shouldFail === true,
@@ -4454,8 +4449,6 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -4519,8 +4512,6 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       hideMonomerPreview: true,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNMethylation.shouldFail === true,
@@ -4582,8 +4573,6 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -4647,8 +4636,6 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       hideMonomerPreview: true,
     });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,
@@ -4693,22 +4680,26 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       ModifyAminoAcidsOption.Phosphorylation,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -4753,22 +4744,26 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       ModifyAminoAcidsOption.SideChainAcetylation,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -4814,16 +4809,18 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       ModifyAminoAcidsOption.Citrullination,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
@@ -4875,16 +4872,18 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       ModifyAminoAcidsOption.Hydroxylation,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
@@ -4936,22 +4935,26 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       ModifyAminoAcidsOption.NMethylation,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -4997,22 +5000,26 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       ModifyAminoAcidsOption.Inversion,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -5058,22 +5065,26 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       ModifyAminoAcidsOption.NaturalAminoAcid,
     ]);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.mol`,
       FileType.MOL,
       'v3000',
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
+      `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.mol`,
     );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     // Test should be skipped if related bug exists
     test.fixme(

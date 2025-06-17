@@ -76,7 +76,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>
-        <Icon name="editMenu" className={styles.icon} />
+        <Icon name="editMenu" className={styles.iconEdit} />
         {props.propsFromTrigger?.extraItemsSelected
           ? 'Edit selected bonds...'
           : 'Edit...'}
@@ -140,7 +140,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       </Item>
 
       <Item {...props} onClick={handleDelete}>
-        <Icon name="deleteMenu" className={styles.icon} />
+        <Icon name="deleteMenu" className={styles.iconDelete} />
         <span>Delete</span>
       </Item>
     </>

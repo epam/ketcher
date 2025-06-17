@@ -91,9 +91,7 @@ test.describe('Action on simples objects', () => {
     await setupEllipse(page);
     await CommonTopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).setZoomInputValue('100');
-    });
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await takeEditorScreenshot(page);
   });
 

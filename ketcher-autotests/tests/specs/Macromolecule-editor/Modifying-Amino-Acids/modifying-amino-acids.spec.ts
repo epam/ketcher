@@ -47,6 +47,8 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await CommonTopLeftToolbar(page).clearCanvas();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await selectFlexLayoutModeTool(page);
+  await CommonTopRightToolbar(page).resetZoom();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -3896,7 +3898,6 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForPhosphorylation.shouldFail === true,
@@ -3946,7 +3947,6 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForSideChainAcetylation.shouldFail === true,
@@ -3996,7 +3996,6 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForCitrullination.shouldFail === true,
@@ -4046,7 +4045,6 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForHydroxylation.shouldFail === true,
@@ -4096,7 +4094,6 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNMethylation.shouldFail === true,
@@ -4146,7 +4143,6 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForInversion.shouldFail === true,
@@ -4196,7 +4192,6 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,
@@ -4315,11 +4310,6 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       page,
       `KET/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.ket`,
     );
-
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-      hideMonomerPreview: true,
-    });
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -5086,6 +5076,399 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNaturalAminoAcid.shouldFail === true,
+      `That test fails because of ${aminoAcidForNaturalAminoAcid.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
+  test(`Zoom in/out after: ${aminoAcidForPhosphorylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Phosphorylation.
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Phosphorylation
+     *     4. Set zoom to 50%
+     *     5. Take screenshot to validate no glitches with modified amino acids on canvas
+     *     6. Set zoom to 150%
+     *     7. Take screenshot to validate no glitches with modified amino acids on canvas
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForPhosphorylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Phosphorylation,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForPhosphorylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForPhosphorylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation) {
+  test(`Zoom in/out after: ${aminoAcidForSideChainAcetylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Side chain acetylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Side chain acetylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForSideChainAcetylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.SideChainAcetylation,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForSideChainAcetylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForSideChainAcetylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
+  test(`Zoom in/out after: ${aminoAcidForCitrullination.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Citrullination
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Citrullination
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForCitrullination.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Citrullination,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForCitrullination.shouldFail === true,
+      `That test fails because of ${aminoAcidForCitrullination.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
+  test(`Zoom in/out after: ${aminoAcidForHydroxylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Hydroxylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Hydroxylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForHydroxylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Hydroxylation,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForHydroxylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForHydroxylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
+  test(`Zoom in/out after: ${aminoAcidForNMethylation.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after N-methylation
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click N-methylation
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNMethylation.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NMethylation,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForNMethylation.shouldFail === true,
+      `That test fails because of ${aminoAcidForNMethylation.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForInversion of aminoAcidsForInversion) {
+  test(`Zoom in/out after: ${aminoAcidForInversion.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Inversion
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Inversion
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForInversion.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      aminoAcidForInversion.shouldFail === true,
+      `That test fails because of ${aminoAcidForInversion.issueNumber} issue.`,
+    );
+  });
+}
+
+for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
+  test(`Zoom in/out after: ${aminoAcidForNaturalAminoAcid.Description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7265
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas after Natural amino acid
+     *
+     * Version 3.5
+     * Case:
+     *     1. Load HELM string with all peptides from same group
+     *     2. Select all monomer on the canva (using Control+A)
+     *     3. Call context menu for random monomer and click Natural amino acid
+     *     4. Switch to Micromolecules mode and back to Macromolecules mode
+     *     5. Take screenshot to validate structures remain unchanged
+     */
+    test.setTimeout(15000);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      aminoAcidForNaturalAminoAcid.HELMString || '',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+
+    const randomPeptide = getMonomerLocator(page, {
+      monomerType: MonomerType.Peptide,
+    }).first();
+
+    await ContextMenu(page, randomPeptide).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.NaturalAminoAcid,
+    ]);
+
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
+
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+
+    await selectFlexLayoutModeTool(page);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,

@@ -141,7 +141,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
 
       <Item {...props} onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.iconDelete} />
-        <span>Delete</span>
+        <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>
   );

@@ -9,6 +9,7 @@ import {
   keyboardTypeOnCanvas,
   selectSnakeLayoutModeTool,
   keyboardPressOnCanvas,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -169,6 +170,185 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('27');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 6: Check that in Snake mode the allowed values on the ruler can be any whole number', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: In Snake mode the allowed values on the ruler can be any whole number.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Set the ruler value to 8
+     * 3. Verify that the ruler value is set to 8
+     * 4. Set the ruler value to 13
+     * 5. Verify that the ruler value is set to 13
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await Ruler(page).setLength('8');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('13');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 7: Change layout by dragging ruler slider in Sequence and Snake mode', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Drag ruler slider to the right and verify that the layout is changed
+     * 3. Drag ruler slider to the left and verify that the layout is changed
+     * 4. Switch to Snake mode
+     * 5. Drag ruler slider to the right and verify that the layout is changed
+     * 6. Drag ruler slider to the left and verify that the layout is changed
+     * 7. Take screenshot
+     * We have a bug:https://github.com/epam/ketcher/issues/7288
+     * After fixing need to update screenshots
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(
+      page,
+      'ACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTU',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: In Snake mode, the slider maintain a consistent appearance regardless of the zoom level, whereas the ruler is adapt:
+     * When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units (e.g., 5, 10, 15, etc.).
+     * Numbers between these intervals represented as vertical lines instead of numerical labels.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Set the zoom level to 50% or below
+     * 3. Verify that the ruler displays markings at intervals of 5 units
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await page.keyboard.press('Escape');
+    await Ruler(page).hover();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 9: Check that in Sequence mode, the ruler and slider control remain the same regardless of the zoom level. The ruler is represented by vertical lines instead of numbers', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: In Sequence mode, the ruler and slider control remain the same regardless of the zoom level.
+     * The ruler is represented by vertical lines instead of numbers.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Set the zoom level to 50% or below
+     * 3. Verify that the ruler and slider control remain the same regardless of the zoom level
+     * 4. The ruler is represented by vertical lines instead of numbers
+     * 5. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await page.keyboard.press('Escape');
+    await Ruler(page).hover();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 10: Verify that the visual element for adding new sequences include a tail that adjusts its length as monomers are added', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Verify that the visual element for adding new sequences include a tail that adjusts its length as monomers are added.
+     * The tail must stay aligned on the same level as the monomer chain. Its length scale proportionally to the number of monomers,
+     * matching the exact length of the monomer chain.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence with a length of 20 monomers
+     * 3. Verify that the visual element for adding new sequences include a tail that adjusts its length as monomers are added
+     * 4. The tail must stay aligned on the same level as the monomer chain
+     * 5. Its length scale proportionally to the number of monomers, matching the exact length of the monomer chain
+     * 6. Take screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTU');
+    await page.getByTestId('NewSequencePlusButtonIcon').hover();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTU');
+    await page.getByTestId('NewSequencePlusButtonIcon').hover();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 11: Check if the slider moves out of the viewport, the input field is repositioned to the corresponding corner of the canvas', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: When the slider is outside the viewport, the input field dynamically adjust its position based on the slider’s location.
+     * If the slider moves out of the viewport, the input field is repositioned to the corresponding corner of the canvas: the right corner if the slider
+     * exits on the right, and the left corner if it exits on the left..
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence
+     * 3. Input in the input field to make the slider move out of the viewport
+     * 4. Take screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await Ruler(page).setLength('50');
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

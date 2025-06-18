@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 /* tests/pages/macromolecules/tools/Ruler.ts */
 import { Page, Locator, expect } from '@playwright/test';
+import { waitForRender } from '@utils/common';
 
 type RulerLocators = {
   handle: Locator;
@@ -32,17 +33,14 @@ export const Ruler = (page: Page) => {
       await page.mouse.down();
     },
 
-    async dragRulerHandle(offsetX: number, offsetY: number) {
+    async dragRulerHandle(x: number, y: number) {
       await expect(locators.handle).toBeVisible();
-      const box = await locators.handle.boundingBox();
-      if (!box) return;
-      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await locators.handle.hover();
       await page.mouse.down();
-      await page.mouse.move(
-        box.x + box.width / 2 + offsetX,
-        box.y + box.height / 2 + offsetY,
-      );
-      await page.mouse.up();
+      await page.mouse.move(x, y);
+      await waitForRender(page, async () => {
+        await page.mouse.up();
+      });
     },
 
     async setLength(value: string) {

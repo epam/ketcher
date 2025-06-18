@@ -12,8 +12,8 @@ export const waitForSpinnerFinishedWork = async (
   const loadingSpinner = page.getByTestId('loading-spinner');
 
   callback();
-  await delay(0.2);
   do {
+    await delay(0.2);
     await loadingSpinner.first().waitFor({ state: 'detached' });
   } while ((await loadingSpinner.count()) > 0);
   await waitForRender(page, emptyFunction, timeout);

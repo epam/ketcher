@@ -90,6 +90,7 @@ test.describe('Action on simples objects', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
+    await CommonTopRightToolbar(page).zoomSelector.click();
     await takeEditorScreenshot(page);
   });
 

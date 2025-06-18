@@ -411,7 +411,6 @@ test.describe('Image files', () => {
      * Description: Zoom In and Zoom Out work for Images
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');

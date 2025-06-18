@@ -203,7 +203,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
         <Item {...props} onClick={handleDelete}>
-          <Icon name="deleteMenu" className={styles.iconDelete} />
+          <Icon name="deleteMenu" className={styles.iconMenu} />
           <span className={styles.contextMenuText}>Delete</span>
         </Item>
       </>
@@ -213,10 +213,12 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit}>
-        <Icon name="editMenu" className={styles.iconEdit} />
-        {props.propsFromTrigger?.extraItemsSelected
-          ? 'Edit selected atoms...'
-          : 'Edit...'}
+        <Icon name="editMenu" className={styles.iconMenu} />
+        <span className={styles.contextMenuText}>
+          {props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected atoms...'
+            : 'Edit...'}
+        </span>
       </Item>
       <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>
         Enhanced stereochemistry...
@@ -265,7 +267,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           </Item>
         )}
       <Item {...props} onClick={handleDelete}>
-        <Icon name="deleteMenu" className={styles.iconDelete} />
+        <Icon name="deleteMenu" className={styles.iconMenu} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>

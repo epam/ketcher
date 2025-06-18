@@ -76,10 +76,12 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>
-        <Icon name="editMenu" className={styles.iconEdit} />
-        {props.propsFromTrigger?.extraItemsSelected
-          ? 'Edit selected bonds...'
-          : 'Edit...'}
+        <Icon name="editMenu" className={styles.iconMenu} />
+        <span className={styles.contextMenuText}>
+          {props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected bonds...'
+            : 'Edit...'}
+        </span>
       </Item>
 
       {bondNamesWithoutEmptyValue.map((name, i) => {
@@ -140,7 +142,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       </Item>
 
       <Item {...props} onClick={handleDelete}>
-        <Icon name="deleteMenu" className={styles.iconDelete} />
+        <Icon name="deleteMenu" className={styles.iconMenu} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>

@@ -203,7 +203,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
         <Item {...props} onClick={handleDelete}>
-          <Icon name="deleteMenu" className={styles.iconMenu} />
+          <Icon name="deleteMenu" className={styles.icon} />
           <span className={styles.contextMenuText}>Delete</span>
         </Item>
       </>
@@ -213,7 +213,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit}>
-        <Icon name="editMenu" className={styles.iconMenu} />
+        <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
           {props.propsFromTrigger?.extraItemsSelected
             ? 'Edit selected atoms...'
@@ -267,7 +267,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           </Item>
         )}
       <Item {...props} onClick={handleDelete}>
-        <Icon name="deleteMenu" className={styles.iconMenu} />
+        <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>

@@ -130,8 +130,8 @@ test.describe('Draw Rectangle', () => {
   }) => {
     // Test case: EPMLSOPKET-1958
     await openFileAndAddToCanvas(
-      'KET/rectangle-test-EPMLSOPKET-1977.ket',
       page,
+      'KET/rectangle-test-EPMLSOPKET-1977.ket',
     );
     await separetingAndMovingRecatngles(page);
     await takeEditorScreenshot(page);

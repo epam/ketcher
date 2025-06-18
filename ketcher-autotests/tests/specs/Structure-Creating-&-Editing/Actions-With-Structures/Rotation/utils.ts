@@ -83,7 +83,7 @@ export async function addStructureAndSelect(
   page: Page,
   fileName: string = anyStructure,
 ) {
-  await openFileAndAddToCanvas(fileName, page);
+  await openFileAndAddToCanvas(page, fileName);
   const modifier = getControlModifier();
   await page.keyboard.press(`${modifier}+KeyA`);
   await page.getByTestId('floating-tools').isVisible();

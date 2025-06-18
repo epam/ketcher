@@ -138,7 +138,7 @@ test.describe('Atom Tool', () => {
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.List, [
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
@@ -174,7 +174,7 @@ test.describe('Atom Tool', () => {
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
       PeriodicTableElement.V,
       PeriodicTableElement.Ti,
@@ -208,8 +208,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
@@ -223,8 +223,8 @@ test.describe('Atom Tool', () => {
     Description: AH Generic is deleted from structure.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('AH').click();
@@ -240,8 +240,8 @@ test.describe('Atom Tool', () => {
     Description: Part of structure with List/Not List and Generic Group is deleted.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -259,8 +259,8 @@ test.describe('Atom Tool', () => {
     const numberOfPressZoomOut = 5;
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
@@ -286,8 +286,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -304,8 +304,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -343,8 +343,8 @@ test.describe('Atom Tool', () => {
     Description: Structure is represented with correctly colored atoms.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-colored-atoms.mol',
       page,
+      'Molfiles-V2000/chain-with-colored-atoms.mol',
     );
     await verifyFileExport(
       page,
@@ -361,8 +361,8 @@ test.describe('Atom Tool', () => {
     Description: Structure is represented with correctly colored atoms.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-colored-atoms.rxn',
       page,
+      'Rxn-V2000/reaction-with-colored-atoms.rxn',
     );
     await verifyFileExport(
       page,
@@ -380,8 +380,8 @@ test.describe('Atom Tool', () => {
     Structure is represented with correct List and Not List atom symbols
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await verifyFileExport(
       page,
@@ -398,7 +398,7 @@ test.describe('Atom Tool', () => {
     Description: The saved *.rxn file is opened in Ketcher.
     The reaction is represented with correct List and Not List atom symbols.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-list-notlist.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-list-notlist.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/reaction-list-notlist-expected.rxn',
@@ -415,8 +415,8 @@ test.describe('Atom Tool', () => {
     The reaction is represented with correct Generic Groups.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-group-generics.rxn',
       page,
+      'Rxn-V2000/reaction-with-group-generics.rxn',
     );
     await verifyFileExport(
       page,
@@ -434,8 +434,8 @@ test.describe('Atom Tool', () => {
     Structure is represented with correct Generic Groups
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-group-generics.mol',
       page,
+      'Molfiles-V2000/chain-with-group-generics.mol',
     );
     await verifyFileExport(
       page,
@@ -455,7 +455,7 @@ test.describe('Atom Tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectPartOfMolecules(page);
     await atomToolbar.clickAtom(Atom.Oxygen);
     await takeEditorScreenshot(page);
@@ -494,7 +494,7 @@ test.describe('Atom Tool', () => {
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
     const numberOfAtom = 0;
-    await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
@@ -574,7 +574,7 @@ test.describe('Atom Tool', () => {
     }
 
     const anyAtom = 0;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await RightToolbar(page).clickAtom(Atom.Aurum);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);

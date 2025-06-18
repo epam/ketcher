@@ -22,7 +22,7 @@ test.describe('Snake mode copy&paste', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSnakeLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);

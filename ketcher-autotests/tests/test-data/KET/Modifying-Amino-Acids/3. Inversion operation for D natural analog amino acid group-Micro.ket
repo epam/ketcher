@@ -1,0 +1,332 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "monomer1"
+            },
+            {
+                "$ref": "monomer2"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer4"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer4",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer0"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer4"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-dD___D-Aspartic acid"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "dD",
+        "templateId": "dD___D-Aspartic acid"
+    },
+    "monomerTemplate-dD___D-Aspartic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    -0.866,
+                    -1.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -0.75,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.732,
+                    -0.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    -1.25,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.732,
+                    -0.75,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.866,
+                    -2.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    0.75,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.866,
+                    1.75,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    0,
+                    2.25,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.732,
+                    0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    6
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    10
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "dD___D-Aspartic acid",
+        "fullName": "D-Aspartic acid",
+        "alias": "dD",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "D"
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 2.75,
+            "y": -1.25
+        },
+        "alias": "dD",
+        "templateId": "dD___D-Aspartic acid"
+    },
+    "monomer2": {
+        "type": "monomer",
+        "id": "2",
+        "position": {
+            "x": 4.25,
+            "y": -1.25
+        },
+        "alias": "dD",
+        "templateId": "dD___D-Aspartic acid"
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 1.25,
+            "y": -2.75
+        },
+        "alias": "dD",
+        "templateId": "dD___D-Aspartic acid",
+        "seqid": 4
+    },
+    "monomer4": {
+        "type": "monomer",
+        "id": "4",
+        "position": {
+            "x": 2.75,
+            "y": -2.75
+        },
+        "alias": "dD",
+        "templateId": "dD___D-Aspartic acid"
+    }
+}

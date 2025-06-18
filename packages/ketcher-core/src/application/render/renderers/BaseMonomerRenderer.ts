@@ -37,7 +37,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private attachmentPoints: AttachmentPoint[] | [] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
-  private monomerSymbolElement?: SVGUseElement | SVGRectElement;
+  private readonly _monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
 
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -62,14 +62,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   protected constructor(
     public monomer: BaseMonomer,
     private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
+    public monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
     this.editor = CoreEditor?.provideEditorInstance();
-    this.monomerSymbolElement = document.querySelector(
+    this._monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
     // Cross-browser width and height detection via getAttribute()
@@ -77,10 +77,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
       width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') || 0
+        this._monomerSymbolElement?.getAttribute('data-actual-width') || 0
       ),
       height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
+        this._monomerSymbolElement?.getAttribute('data-actual-height') || 0
       ),
     };
     monomerSize = this.monomerSize;
@@ -101,6 +101,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public static get monomerSize() {
     return monomerSize;
+  }
+
+  public get monomerSymbolElement() {
+    return this._monomerSymbolElement;
   }
 
   public get center() {

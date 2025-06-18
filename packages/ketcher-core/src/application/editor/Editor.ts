@@ -568,7 +568,7 @@ export class CoreEditor {
           return item.isAmbiguous === true;
         };
 
-        let modelChanges;
+        let modelChanges: Command;
 
         if (isRnaPreset(item)) {
           const { sugar, phosphate, base } = item;

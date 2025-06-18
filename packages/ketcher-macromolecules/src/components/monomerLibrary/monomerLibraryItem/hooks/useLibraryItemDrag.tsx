@@ -2,7 +2,6 @@ import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
 import { selectEditor, setLibraryItemDrag } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
-import { useLayoutMode } from 'hooks';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const useLibraryItemDrag = (
@@ -12,8 +11,6 @@ export const useLibraryItemDrag = (
   const dispatch = useDispatch();
 
   const editor = useSelector(selectEditor);
-
-  const layoutMode = useLayoutMode();
 
   useEffect(() => {
     if (!itemRef.current) {
@@ -54,7 +51,7 @@ export const useLibraryItemDrag = (
         dispatch(setLibraryItemDrag(null));
       });
 
-    if (layoutMode !== 'sequence-layout-mode') {
+    if (editor?.mode.modeName !== 'sequence-layout-mode') {
       itemElement.call(dragBehavior);
     }
 
@@ -64,8 +61,8 @@ export const useLibraryItemDrag = (
   }, [
     dispatch,
     item,
+    editor?.mode.modeName,
     editor?.events.placeLibraryItemOnCanvas,
-    layoutMode,
     itemRef,
   ]);
 };

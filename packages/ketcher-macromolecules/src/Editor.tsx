@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Provider, useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
@@ -178,7 +178,6 @@ function Editor({
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
-  const isLibraryItemInDrag = Boolean(useSelector(selectLibraryItemDrag));
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -302,18 +301,6 @@ function Editor({
       );
     };
   }, [dispatch]);
-
-  useEffect(() => {
-    if (isLibraryItemInDrag) {
-      document.body.style.cursor = 'grabbing';
-    } else {
-      document.body.style.cursor = 'default';
-    }
-
-    return () => {
-      document.body.style.cursor = 'default';
-    };
-  }, [isLibraryItemInDrag]);
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());

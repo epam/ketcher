@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 26.950000000000003,
-            "y": -17.837500000000002
+            "x": 10.275,
+            "y": -6.7
         },
         "alias": "Q",
         "templateId": "Q___Glutamine",
@@ -280,8 +280,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 28.450000000000003,
-            "y": -17.837500000000002
+            "x": 11.775,
+            "y": -6.7
         },
         "alias": "Q",
         "templateId": "Q___Glutamine"
@@ -290,8 +290,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 26.950000000000003,
-            "y": -19.337500000000002
+            "x": 10.275,
+            "y": -8.2
         },
         "alias": "Q",
         "templateId": "Q___Glutamine"

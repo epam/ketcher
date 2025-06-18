@@ -115,8 +115,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 18.6125,
-            "y": -11.51875
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -320,8 +320,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 20.1125,
-            "y": -11.51875
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -330,8 +330,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 21.6125,
-            "y": -11.51875
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -340,8 +340,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 18.6125,
-            "y": -13.01875
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -350,8 +350,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 20.1125,
-            "y": -13.01875
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -360,8 +360,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 21.6125,
-            "y": -13.01875
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine",
@@ -371,8 +371,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 18.6125,
-            "y": -14.51875
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"

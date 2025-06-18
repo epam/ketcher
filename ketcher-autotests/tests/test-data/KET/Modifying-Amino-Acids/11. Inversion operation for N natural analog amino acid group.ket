@@ -66,8 +66,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 28.450000000000003,
-            "y": -17.837500000000002
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dN",
         "templateId": "dN___D-Asparagine"
@@ -278,8 +278,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 29.950000000000003,
-            "y": -17.837500000000002
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dN",
         "templateId": "dN___D-Asparagine",
@@ -289,8 +289,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 28.450000000000003,
-            "y": -19.337500000000002
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dN",
         "templateId": "dN___D-Asparagine"
@@ -299,8 +299,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 29.950000000000003,
-            "y": -19.337500000000002
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dN",
         "templateId": "dN___D-Asparagine"

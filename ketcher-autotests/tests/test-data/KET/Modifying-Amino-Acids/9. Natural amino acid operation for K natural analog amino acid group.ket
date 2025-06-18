@@ -272,8 +272,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 16.3625,
-            "y": -11.51875
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -499,8 +499,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 17.8625,
-            "y": -11.51875
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine",
@@ -510,8 +510,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 19.3625,
-            "y": -11.51875
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -520,8 +520,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 20.8625,
-            "y": -11.51875
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -530,8 +530,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 22.3625,
-            "y": -11.51875
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -540,8 +540,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 23.8625,
-            "y": -11.51875
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -550,8 +550,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 16.3625,
-            "y": -13.01875
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -560,8 +560,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 17.8625,
-            "y": -13.01875
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -570,8 +570,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 19.3625,
-            "y": -13.01875
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -580,8 +580,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 20.8625,
-            "y": -13.01875
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -590,8 +590,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 22.3625,
-            "y": -13.01875
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -600,8 +600,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 16.3625,
-            "y": -14.51875
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -610,8 +610,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 17.8625,
-            "y": -14.51875
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -620,8 +620,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 19.3625,
-            "y": -14.51875
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "K",
         "templateId": "K___Lysine"
@@ -630,8 +630,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 20.8625,
-            "y": -14.51875
+            "x": 5.75,
+            "y": -4.25
         },
         "alias": "K",
         "templateId": "K___Lysine"

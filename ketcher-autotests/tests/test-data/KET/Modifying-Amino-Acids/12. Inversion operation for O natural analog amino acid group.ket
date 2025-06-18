@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 38.2875,
-            "y": -24.156250000000004
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dO",
         "templateId": "dO___D-pyrrolysine"
@@ -384,8 +384,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 39.7875,
-            "y": -24.156250000000004
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dO",
         "templateId": "dO___D-pyrrolysine",
@@ -395,8 +395,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 38.2875,
-            "y": -25.656250000000004
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dO",
         "templateId": "dO___D-pyrrolysine"

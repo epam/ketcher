@@ -191,8 +191,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 26.200000000000003,
-            "y": -17.837500000000002
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -373,8 +373,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 27.700000000000003,
-            "y": -17.837500000000002
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -383,8 +383,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 29.200000000000003,
-            "y": -17.837500000000002
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -393,8 +393,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 30.700000000000003,
-            "y": -17.837500000000002
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine",
@@ -404,8 +404,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 32.2,
-            "y": -17.837500000000002
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -414,8 +414,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 33.7,
-            "y": -17.837500000000002
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -424,8 +424,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 26.200000000000003,
-            "y": -19.337500000000002
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -434,8 +434,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 27.700000000000003,
-            "y": -19.337500000000002
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -444,8 +444,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 29.200000000000003,
-            "y": -19.337500000000002
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -454,8 +454,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 30.700000000000003,
-            "y": -19.337500000000002
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"
@@ -464,8 +464,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 32.2,
-            "y": -19.337500000000002
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "dS",
         "templateId": "dS___D-Serine"

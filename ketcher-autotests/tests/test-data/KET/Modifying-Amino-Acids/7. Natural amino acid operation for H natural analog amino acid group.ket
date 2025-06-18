@@ -138,8 +138,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 39.125,
-            "y": -27.475
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "H",
         "templateId": "H___Histidine",
@@ -388,8 +388,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 40.625,
-            "y": -27.475
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -398,8 +398,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 42.125,
-            "y": -27.475
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -408,8 +408,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 39.125,
-            "y": -28.975
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -418,8 +418,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 40.625,
-            "y": -28.975
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -428,8 +428,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 42.125,
-            "y": -28.975
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -438,8 +438,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 39.125,
-            "y": -30.475
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "H",
         "templateId": "H___Histidine"
@@ -448,8 +448,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 40.625,
-            "y": -30.475
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "H",
         "templateId": "H___Histidine"

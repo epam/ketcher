@@ -161,8 +161,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 10.4,
-            "y": -6.825000000000001
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -477,8 +477,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 11.9,
-            "y": -6.825000000000001
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -487,8 +487,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 13.4,
-            "y": -6.825000000000001
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -497,8 +497,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 10.4,
-            "y": -8.325000000000001
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan",
@@ -508,8 +508,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.9,
-            "y": -8.325000000000001
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -518,8 +518,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 13.4,
-            "y": -8.325000000000001
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -528,8 +528,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 10.4,
-            "y": -9.825000000000001
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -538,8 +538,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 11.9,
-            "y": -9.825000000000001
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -548,8 +548,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 13.4,
-            "y": -9.825000000000001
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"

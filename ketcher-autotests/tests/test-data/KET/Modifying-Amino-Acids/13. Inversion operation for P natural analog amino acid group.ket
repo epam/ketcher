@@ -284,8 +284,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 45.125,
-            "y": -28.975
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -464,8 +464,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 46.625,
-            "y": -28.975
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -474,8 +474,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 48.125,
-            "y": -28.975
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -484,8 +484,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 49.625,
-            "y": -28.975
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -494,8 +494,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 51.125,
-            "y": -28.975
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -504,8 +504,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 52.625,
-            "y": -28.975
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -514,8 +514,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 45.125,
-            "y": -30.475
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -524,8 +524,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 46.625,
-            "y": -30.475
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -534,8 +534,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 48.125,
-            "y": -30.475
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline",
@@ -545,8 +545,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 49.625,
-            "y": -30.475
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -555,8 +555,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 51.125,
-            "y": -30.475
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -565,8 +565,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 52.625,
-            "y": -30.475
+            "x": 8.75,
+            "y": -2.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -575,8 +575,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 45.125,
-            "y": -31.975
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -585,8 +585,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 46.625,
-            "y": -31.975
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -595,8 +595,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 48.125,
-            "y": -31.975
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"
@@ -605,8 +605,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 45.125,
-            "y": -33.475
+            "x": 1.25,
+            "y": -5.75
         },
         "alias": "dP",
         "templateId": "dP___D-Proline"

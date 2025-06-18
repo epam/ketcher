@@ -103,8 +103,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 34.5375,
-            "y": -22.656250000000004
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "M",
         "templateId": "M___Methionine",
@@ -292,8 +292,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 36.0375,
-            "y": -22.656250000000004
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "M",
         "templateId": "M___Methionine"
@@ -302,8 +302,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 37.5375,
-            "y": -22.656250000000004
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "M",
         "templateId": "M___Methionine"
@@ -312,8 +312,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 34.5375,
-            "y": -24.156250000000004
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "M",
         "templateId": "M___Methionine"
@@ -322,8 +322,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 36.0375,
-            "y": -24.156250000000004
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "M",
         "templateId": "M___Methionine"
@@ -332,8 +332,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 37.5375,
-            "y": -24.156250000000004
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "M",
         "templateId": "M___Methionine"

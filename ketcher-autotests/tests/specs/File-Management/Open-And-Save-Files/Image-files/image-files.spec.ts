@@ -222,7 +222,6 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format can be added from two different KET files saved and opened
      */
     await openFileAndAddToCanvas(page, 'KET/images-png-svg-with-elements.ket');
-    await openFileAndAddToCanvas(page, 'KET/images-png-svg-with-elements.ket');
     await openFileAndAddToCanvas(
       page,
       'KET/images-with-benzene-ring-and-arrow.ket',

@@ -235,8 +235,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 8.025,
-            "y": -5.95
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -408,8 +408,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 9.525,
-            "y": -5.95
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -418,8 +418,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 11.025,
-            "y": -5.95
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -428,8 +428,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 12.525,
-            "y": -5.95
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -438,8 +438,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 14.025,
-            "y": -5.95
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -448,8 +448,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 8.025,
-            "y": -7.45
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -458,8 +458,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 9.525,
-            "y": -7.45
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dV",
         "templateId": "dV___D-Valine",
@@ -469,8 +469,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 11.025,
-            "y": -7.45
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -479,8 +479,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 12.525,
-            "y": -7.45
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -489,8 +489,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 8.025,
-            "y": -8.95
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -499,8 +499,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 9.525,
-            "y": -8.95
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -509,8 +509,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 11.025,
-            "y": -8.95
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"
@@ -519,8 +519,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 12.525,
-            "y": -8.95
+            "x": 5.75,
+            "y": -4.25
         },
         "alias": "dV",
         "templateId": "dV___D-Valine"

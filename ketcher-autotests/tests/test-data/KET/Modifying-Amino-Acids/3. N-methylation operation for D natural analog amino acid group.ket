@@ -80,8 +80,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 18.6125,
-            "y": -12.26875
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"
@@ -292,8 +292,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 20.1125,
-            "y": -12.26875
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"
@@ -302,8 +302,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 21.6125,
-            "y": -12.26875
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"
@@ -312,8 +312,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 18.6125,
-            "y": -13.76875
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"
@@ -322,8 +322,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 20.1125,
-            "y": -13.76875
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid",

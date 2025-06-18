@@ -161,8 +161,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 35.2875,
-            "y": -23.406250000000004
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -360,8 +360,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 36.7875,
-            "y": -23.406250000000004
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -370,8 +370,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 38.2875,
-            "y": -23.406250000000004
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -380,8 +380,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 35.2875,
-            "y": -24.906250000000004
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -390,8 +390,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 36.7875,
-            "y": -24.906250000000004
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine",
@@ -401,8 +401,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 38.2875,
-            "y": -24.906250000000004
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -411,8 +411,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 35.2875,
-            "y": -26.406250000000004
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -421,8 +421,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 36.7875,
-            "y": -26.406250000000004
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"
@@ -431,8 +431,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 38.2875,
-            "y": -26.406250000000004
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "dT",
         "templateId": "dT___D-Threonine"

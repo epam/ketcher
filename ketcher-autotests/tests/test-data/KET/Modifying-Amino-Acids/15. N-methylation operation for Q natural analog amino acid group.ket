@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 51.125,
-            "y": -22.975000000000005
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meQ",
         "templateId": "meQ___N-Methyl-Glutamine"
@@ -270,8 +270,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 52.625,
-            "y": -22.975000000000005
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meQ",
         "templateId": "meQ___N-Methyl-Glutamine"
@@ -280,8 +280,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 51.125,
-            "y": -24.475000000000005
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meQ",
         "templateId": "meQ___N-Methyl-Glutamine",

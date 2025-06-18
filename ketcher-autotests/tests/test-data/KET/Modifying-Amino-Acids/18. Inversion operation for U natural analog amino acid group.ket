@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 45.125,
-            "y": -29.725
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dU",
         "templateId": "dU___D-selenocysteine"
@@ -234,8 +234,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 46.625,
-            "y": -29.725
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dU",
         "templateId": "dU___D-selenocysteine",
@@ -245,8 +245,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 45.125,
-            "y": -31.225
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dU",
         "templateId": "dU___D-selenocysteine"

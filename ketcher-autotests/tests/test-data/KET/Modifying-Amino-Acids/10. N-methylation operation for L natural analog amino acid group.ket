@@ -196,8 +196,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 34.5375,
-            "y": -21.906250000000004
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -399,8 +399,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 36.0375,
-            "y": -21.906250000000004
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -409,8 +409,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 37.5375,
-            "y": -21.906250000000004
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -419,8 +419,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 34.5375,
-            "y": -23.406250000000004
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -429,8 +429,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 36.0375,
-            "y": -23.406250000000004
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -439,8 +439,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 37.5375,
-            "y": -23.406250000000004
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -449,8 +449,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 34.5375,
-            "y": -24.906250000000004
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -459,8 +459,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 36.0375,
-            "y": -24.906250000000004
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine",
@@ -470,8 +470,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 37.5375,
-            "y": -24.906250000000004
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -480,8 +480,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 34.5375,
-            "y": -26.406250000000004
+            "x": 1.25,
+            "y": -5.75
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -490,8 +490,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 36.0375,
-            "y": -26.406250000000004
+            "x": 2.75,
+            "y": -5.75
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"

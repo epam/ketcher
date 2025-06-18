@@ -272,8 +272,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 8.15,
-            "y": -6.825000000000001
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -499,8 +499,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 9.65,
-            "y": -6.825000000000001
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -509,8 +509,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 11.15,
-            "y": -6.825000000000001
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -519,8 +519,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 12.65,
-            "y": -6.825000000000001
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -529,8 +529,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 14.15,
-            "y": -6.825000000000001
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine",
@@ -540,8 +540,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 15.65,
-            "y": -6.825000000000001
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -550,8 +550,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 8.15,
-            "y": -8.325000000000001
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -560,8 +560,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 9.65,
-            "y": -8.325000000000001
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -570,8 +570,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 11.15,
-            "y": -8.325000000000001
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -580,8 +580,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 12.65,
-            "y": -8.325000000000001
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -590,8 +590,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 14.15,
-            "y": -8.325000000000001
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -600,8 +600,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 8.15,
-            "y": -9.825000000000001
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -610,8 +610,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 9.65,
-            "y": -9.825000000000001
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -620,8 +620,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 11.15,
-            "y": -9.825000000000001
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"
@@ -630,8 +630,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 12.65,
-            "y": -9.825000000000001
+            "x": 5.75,
+            "y": -4.25
         },
         "alias": "dK",
         "templateId": "dK___D-Lysine"

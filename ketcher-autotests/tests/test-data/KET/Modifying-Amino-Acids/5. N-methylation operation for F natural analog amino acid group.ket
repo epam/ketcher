@@ -625,8 +625,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 32.2875,
-            "y": -23.40625
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -880,8 +880,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 33.7875,
-            "y": -23.40625
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -890,8 +890,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 35.2875,
-            "y": -23.40625
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -900,8 +900,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 36.7875,
-            "y": -23.40625
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -910,8 +910,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 38.2875,
-            "y": -23.40625
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -920,8 +920,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 39.7875,
-            "y": -23.40625
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -930,8 +930,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 41.2875,
-            "y": -23.40625
+            "x": 10.25,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -940,8 +940,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 42.7875,
-            "y": -23.40625
+            "x": 11.75,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -950,8 +950,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 44.2875,
-            "y": -23.40625
+            "x": 13.25,
+            "y": -1.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -960,8 +960,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 32.2875,
-            "y": -24.90625
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -970,8 +970,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 33.7875,
-            "y": -24.90625
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -980,8 +980,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 35.2875,
-            "y": -24.90625
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -990,8 +990,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 36.7875,
-            "y": -24.90625
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1000,8 +1000,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 38.2875,
-            "y": -24.90625
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine",
@@ -1011,8 +1011,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 39.7875,
-            "y": -24.90625
+            "x": 8.75,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1021,8 +1021,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 41.2875,
-            "y": -24.90625
+            "x": 10.25,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1031,8 +1031,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 42.7875,
-            "y": -24.90625
+            "x": 11.75,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1041,8 +1041,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 44.2875,
-            "y": -24.90625
+            "x": 13.25,
+            "y": -2.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1051,8 +1051,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 32.2875,
-            "y": -26.40625
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1061,8 +1061,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 33.7875,
-            "y": -26.40625
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1071,8 +1071,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 35.2875,
-            "y": -26.40625
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1081,8 +1081,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 36.7875,
-            "y": -26.40625
+            "x": 5.75,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1091,8 +1091,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 38.2875,
-            "y": -26.40625
+            "x": 7.25,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1101,8 +1101,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 39.7875,
-            "y": -26.40625
+            "x": 8.75,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1111,8 +1111,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 41.2875,
-            "y": -26.40625
+            "x": 10.25,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1121,8 +1121,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 42.7875,
-            "y": -26.40625
+            "x": 11.75,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1131,8 +1131,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 44.2875,
-            "y": -26.40625
+            "x": 13.25,
+            "y": -4.25
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1141,8 +1141,8 @@
         "type": "monomer",
         "id": "27",
         "position": {
-            "x": 32.2875,
-            "y": -27.90625
+            "x": 1.25,
+            "y": -5.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1151,8 +1151,8 @@
         "type": "monomer",
         "id": "28",
         "position": {
-            "x": 33.7875,
-            "y": -27.90625
+            "x": 2.75,
+            "y": -5.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1161,8 +1161,8 @@
         "type": "monomer",
         "id": "29",
         "position": {
-            "x": 35.2875,
-            "y": -27.90625
+            "x": 4.25,
+            "y": -5.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1171,8 +1171,8 @@
         "type": "monomer",
         "id": "30",
         "position": {
-            "x": 36.7875,
-            "y": -27.90625
+            "x": 5.75,
+            "y": -5.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -1181,8 +1181,8 @@
         "type": "monomer",
         "id": "31",
         "position": {
-            "x": 38.2875,
-            "y": -27.90625
+            "x": 7.25,
+            "y": -5.75
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"

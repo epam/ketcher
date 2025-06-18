@@ -103,8 +103,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 27.700000000000003,
-            "y": -18.587500000000002
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -330,8 +330,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 29.200000000000003,
-            "y": -18.587500000000002
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -340,8 +340,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 30.700000000000003,
-            "y": -18.587500000000002
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -350,8 +350,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 27.700000000000003,
-            "y": -20.087500000000002
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -360,8 +360,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 29.200000000000003,
-            "y": -20.087500000000002
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -370,8 +370,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 30.700000000000003,
-            "y": -20.087500000000002
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid",

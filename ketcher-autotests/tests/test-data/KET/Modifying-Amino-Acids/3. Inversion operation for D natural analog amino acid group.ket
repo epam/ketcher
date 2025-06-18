@@ -80,8 +80,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 39.125,
-            "y": -28.225
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -292,8 +292,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 40.625,
-            "y": -28.225
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -302,8 +302,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 42.125,
-            "y": -28.225
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -312,8 +312,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 39.125,
-            "y": -29.725
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid",
@@ -323,8 +323,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 40.625,
-            "y": -29.725
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"

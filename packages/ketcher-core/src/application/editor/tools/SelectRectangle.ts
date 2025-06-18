@@ -37,6 +37,7 @@ import {
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
+import { blurActiveElement } from '../../../utilities/dom';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -144,6 +145,7 @@ class SelectRectangle implements BaseTool {
         ])
         .keyModifiers(false)
         .filter((e) => {
+          blurActiveElement();
           e.preventDefault();
           if (e.shiftKey) {
             e.stopPropagation();
@@ -202,7 +204,7 @@ class SelectRectangle implements BaseTool {
     }
 
     if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
-      this.startMoveIfNeeded(renderer);
+      this.startMoveIfNeeded(renderer as BaseRenderer);
       if (renderer.drawingEntity.selected) {
         return;
       }

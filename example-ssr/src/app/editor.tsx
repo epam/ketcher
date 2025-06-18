@@ -1,10 +1,9 @@
 'use client';
 
-import 'ketcher-react/dist/index.css';
-
 import { StandaloneStructServiceProvider as StandaloneStructServiceProviderType } from 'ketcher-standalone';
-
 import { Editor } from 'ketcher-react';
+
+import 'ketcher-react/dist/index.css';
 
 const StandaloneStructServiceProvider =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

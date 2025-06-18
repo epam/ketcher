@@ -2,7 +2,6 @@
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   waitForKetcherInit,
-  waitForIndigoToLoad,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -35,7 +34,6 @@ test.describe('Open/save file tests: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

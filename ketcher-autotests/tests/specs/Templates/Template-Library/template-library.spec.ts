@@ -1,5 +1,4 @@
 import { Page, test, expect } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   BottomToolbar,
   openStructureLibrary,
@@ -10,7 +9,6 @@ import {
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  pressButton,
   selectAllStructuresOnCanvas,
   selectFunctionalGroups,
   takeEditorScreenshot,
@@ -18,27 +16,11 @@ import {
   waitForRender,
 } from '@utils';
 import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
-
-async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Stereochemistry', { exact: true }).click();
-  await page.getByTestId('stereo-label-style-input-span').click();
-  // Using "On" label style, to always show the stereo labels, so we can see the difference
-  await page.getByRole('option', { name: 'On' }).click();
-  await pressButton(page, 'Apply');
-}
-
-async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Stereochemistry', { exact: true }).click();
-
-  const checkLocator = page.getByText('Ignore the chiral flag');
-  const isChecked = await checkLocator.isChecked();
-  if (isChecked !== newSetting) {
-    await checkLocator.click();
-  }
-  await pressButton(page, 'Apply');
-}
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  LabelDisplayAtStereogenicCentersOption,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 
 async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   await BottomToolbar(page).StructureLibrary();
@@ -78,12 +60,17 @@ test.describe('Templates - Template Library', () => {
     const offsetX = 300;
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-    await setDisplayStereoFlagsSettingToOn(page);
+    // Using "On" label style, to always show the stereo labels, so we can see the difference
+    await setSettingsOption(
+      page,
+      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+      LabelDisplayAtStereogenicCentersOption.On,
+    );
 
-    await setIgnoreChiralFlagSetting(page, true);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await placePhenylalanineMustard(page, x - offsetX, y);
 
-    await setIgnoreChiralFlagSetting(page, false);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await placePhenylalanineMustard(page, x + offsetX, y);
     await takeEditorScreenshot(page);
   });

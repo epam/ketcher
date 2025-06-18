@@ -28,6 +28,12 @@ import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
 
+export enum SUPERATOM_CLASS {
+  SUGAR = 'Sugar',
+  BASE = 'Base',
+  PHOSPHATE = 'Phosphate',
+}
+
 export class SGroupBracketParams {
   readonly c: Vec2;
   readonly d: Vec2;
@@ -112,6 +118,7 @@ export class SGroup {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
+      nucleotideComponent: '',
       subscript: '',
       expanded: undefined,
       // data s-group fields
@@ -365,7 +372,9 @@ export class SGroup {
   }
 
   public get isSuperatomWithoutLabel() {
-    return this.type === SGroup.TYPES.SUP && !this.data.name;
+    return (
+      this.type === SGroup.TYPES.SUP && !this.data.name && !this.data.class
+    );
   }
 
   public get isMonomer() {
@@ -495,29 +504,10 @@ export class SGroup {
     return crossBonds;
   }
 
-  static bracketPos(
-    sGroup,
-    mol,
-    crossBondsPerAtom?: { [key: number]: Array<number> },
-    remol?: ReStruct,
-    render?,
-  ): void {
+  static bracketPos(sGroup, mol, remol?: ReStruct, render?): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
     const PADDING_VECTOR = new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
-    const crossBonds = crossBondsPerAtom
-      ? Object.values(crossBondsPerAtom).flat()
-      : null;
-    // TODO: Overall cross bonds logic seems unclear and not-correct for s groups in general leading to tilted hover plate
-    if (sGroup.isMonomer || !crossBonds || crossBonds.length !== 2) {
-      sGroup.bracketDirection = new Vec2(1, 0);
-    } else {
-      const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol);
-      const p2 = mol.bonds.get(crossBonds[1]).getCenter(mol);
-      sGroup.bracketDirection = Vec2.diff(p2, p1).normalized();
-    }
-    const d = sGroup.bracketDirection;
-
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Array<any> = [];
     const getAtom = (aid) => {
@@ -526,6 +516,9 @@ export class SGroup {
       }
       return mol.atoms.get(aid);
     };
+
+    sGroup.bracketDirection = new Vec2(1, 0);
+
     atoms.forEach((aid) => {
       const atom = getAtom(aid);
       let position;
@@ -539,15 +532,7 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      let bbb: Box2Abs | null = null;
-      [bba.p0.x, bba.p1.x].forEach((x) => {
-        [bba.p0.y, bba.p1.y].forEach((y) => {
-          const v = new Vec2(x, y);
-          const p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
-          bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p);
-        });
-      });
-      braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!);
+      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba!);
     });
     if (!render) render = window.ketcher!.editor.render;
     let attachmentPointsVBox =

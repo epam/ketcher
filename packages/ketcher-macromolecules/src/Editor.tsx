@@ -23,6 +23,8 @@ import {
   BaseMonomer,
   CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
   SequenceMode,
@@ -45,7 +47,9 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
   setContextMenuActive,
+  setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -101,10 +105,14 @@ import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMono
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
@@ -118,6 +126,7 @@ interface EditorContainerProps extends EditorProps {
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -132,6 +141,8 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
+  store.dispatch(initKetcherId(ketcherId));
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
@@ -142,6 +153,7 @@ function EditorContainer({
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
+              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
@@ -238,6 +250,8 @@ function Editor({
     editor?.events.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
         setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
 
         // TODO separate by two events
         if (editor.mode instanceof SequenceMode) {
@@ -266,6 +280,27 @@ function Editor({
       editor?.zoomTool.destroy();
     };
   }, [editor]);
+
+  useEffect(() => {
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
@@ -308,6 +343,7 @@ function Editor({
 
         <Layout.Main>
           <EditorEvents />
+          <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"

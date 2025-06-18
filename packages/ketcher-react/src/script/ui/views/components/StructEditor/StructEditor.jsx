@@ -150,20 +150,30 @@ class StructEditor extends Component {
   }
 
   componentDidMount() {
+    const prevKetcher = this.props.prevKetcherId
+      ? ketcherProvider.getKetcher(this.props.prevKetcherId)
+      : undefined;
+
+    const ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
+
     this.editor = new Editor(
+      this.props.ketcherId,
       this.editorRef.current,
       {
         ...this.props.options,
       },
       { ...this.props.serverSettings },
+      prevKetcher?.editor,
     );
-    const ketcher = ketcherProvider.getKetcher();
+
+    ketcher.addEditor(this.editor);
     if (ketcher?.editor.macromoleculeConvertionError) {
       this.props.onShowMacromoleculesErrorMessage(
         ketcher.editor.macromoleculeConvertionError,
       );
       ketcher.editor.clearMacromoleculeConvertionError();
     }
+
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 
@@ -266,9 +276,11 @@ class StructEditor extends Component {
     const {
       Tag = 'div',
       className,
-      indigoVerification,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      ketcherId,
       /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
+      indigoVerification,
       tool,
       toolOpts,
       options,
@@ -320,7 +332,10 @@ class StructEditor extends Component {
         <div className={classes.measureLog} ref={this.logRef} />
 
         {indigoVerification && (
-          <div className={`${classes.spinnerOverlay} loading-spinner`}>
+          <div
+            className={`${classes.spinnerOverlay} loading-spinner`}
+            data-testid="loading-spinner"
+          >
             <LoadingCircles />
           </div>
         )}

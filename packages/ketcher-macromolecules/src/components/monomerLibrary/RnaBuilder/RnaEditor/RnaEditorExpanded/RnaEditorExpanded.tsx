@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities, ModeTypes } from 'ketcher-core';
+import { Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -126,7 +126,7 @@ export const RnaEditorExpanded = ({
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
 
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -430,6 +430,7 @@ export const RnaEditorExpanded = ({
               : newPreset?.name
           }
           placeholder="Name your structure"
+          data-testid="name-your-structure-editbox"
           disabled={isSequenceEditInRNABuilderMode}
           onChange={onChangeName}
         />
@@ -446,6 +447,7 @@ export const RnaEditorExpanded = ({
                   : newPreset?.name
               }
               placeholder="Name your structure"
+              data-testid="name-your-structure-editbox"
               disabled={isSequenceEditInRNABuilderMode}
               onChange={onChangeName}
             />

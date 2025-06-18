@@ -40,6 +40,9 @@ jest.mock('d3', () => {
         append() {
           return this;
         },
+        raise() {
+          return this;
+        },
         data() {
           return this;
         },

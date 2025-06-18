@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { chooseTab, Tabs } from '@utils/macromolecules';
 import path from 'path';
 import { Page, test } from '@playwright/test';
 import {
@@ -36,6 +35,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -73,7 +73,7 @@ async function selectMonomerOnMicro(page: Page, monomerName: string) {
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {

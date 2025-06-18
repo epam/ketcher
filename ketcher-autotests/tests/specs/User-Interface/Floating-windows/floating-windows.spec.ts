@@ -164,7 +164,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', false);
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
   });

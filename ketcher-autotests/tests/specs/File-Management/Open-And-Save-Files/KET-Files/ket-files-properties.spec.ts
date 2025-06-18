@@ -1,19 +1,20 @@
 /* eslint-disable max-len */
 import { expect, test } from '@playwright/test';
+import {
+  BondsSetting,
+  GeneralSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  setACSSettings,
+  setSettingsOptions,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
-  openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  pressButton,
-  scrollToDownInSetting,
-  setBondLengthOptionUnit,
-  setBondLengthValue,
-  setHashSpacingOptionUnit,
-  setHashSpacingValue,
-  setReactionMarginSizeOptionUnit,
-  setReactionMarginSizeValue,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -87,12 +88,13 @@ test.describe('Ket files', () => {
     test.slow();
     await waitForPageInit(page);
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '57.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondLengthUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.BondLength, value: '57.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -119,12 +121,13 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setHashSpacingOptionUnit(page, 'px-option');
-    await setHashSpacingValue(page, '57.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.HashSpacing, value: '57.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -149,12 +152,13 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '27.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondLengthUnits,
+        value: MeasurementUnit.Pt,
+      },
+      { option: BondsSetting.BondLength, value: '27.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -180,12 +184,13 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setHashSpacingOptionUnit(page, 'pt-option');
-    await setHashSpacingValue(page, '27.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Pt,
+      },
+      { option: BondsSetting.HashSpacing, value: '27.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -209,12 +214,10 @@ test.describe('Ket files', () => {
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setBondLengthOptionUnit(page, 'inch-option');
-    await setBondLengthValue(page, '1.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Inch },
+      { option: BondsSetting.BondLength, value: '1.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -235,12 +238,13 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setHashSpacingOptionUnit(page, 'inch-option');
-    await setHashSpacingValue(page, '1.8');
-    await pressButton(page, 'Apply');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Inch,
+      },
+      { option: BondsSetting.HashSpacing, value: '1.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -265,13 +269,13 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '47.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '47.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -296,13 +300,13 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'pt-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Pt,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '7.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -322,13 +326,13 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '3.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Cm,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '3.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -348,13 +352,13 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'inch-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Inch,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '7.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -373,10 +377,7 @@ test.describe('Ket files', () => {
     Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -398,12 +399,16 @@ test.describe('Ket files', () => {
   */
       await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
       await TopRightToolbar(page).Settings();
-      await openBondsSettingsSection(page);
-      await scrollToDownInSetting(page);
-      await setReactionMarginSizeOptionUnit(page, 'px-option');
-      await setReactionMarginSizeValue(page, '47.8');
-      await pressButton(page, 'Apply');
-      await takeEditorScreenshot(page);
+      await SettingsDialog(page).setOptionValue(
+        GeneralSetting.ReactionComponentMarginSize,
+        '47.8',
+      );
+      await SettingsDialog(page).apply();
+
+      const youNeedToApplyTheLayoutDialog = page.getByText(
+        'To fully apply these changes, you need to apply the layout.',
+      );
+      await expect(youNeedToApplyTheLayoutDialog).toBeVisible();
     },
   );
 });

@@ -248,6 +248,9 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
       } else if (type === 'SMT') {
         const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
         sGroups[sid].data.subscript = propertyData.slice(4).trim();
+      } else if (type === 'SCL') {
+        const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
+        sGroups[sid].data.class = propertyData.slice(4).trim();
       } else if (type === 'SDT') {
         sGroup.applyDataSGroupDesc(sGroups, propertyData);
       } else if (type === 'SDD') {

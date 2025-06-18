@@ -33,7 +33,7 @@ import {
   initSaltsAndSolvents,
   initSaltsAndSolventsTemplates,
 } from '../state/saltsAndSolvents';
-import { useSubscriptionOnEvents } from '../../../hooks';
+import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 
@@ -59,6 +59,7 @@ const App = (props: Props) => {
   const { checkServer } = props;
 
   useSubscriptionOnEvents();
+  const { ketcherId, prevKetcherId } = useAppContext();
 
   useEffect(() => {
     checkServer();
@@ -73,13 +74,21 @@ const App = (props: Props) => {
   }, []);
 
   // Temporary workaround: add proper types for Editor
-  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
+  const Editor = ConnectedEditor as React.ComponentType<{
+    className: string;
+    ketcherId: string;
+    prevKetcherId: string;
+  }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
       <div className={classes.app}>
         <AppHiddenContainer />
-        <Editor className={classes.canvas} />
+        <Editor
+          prevKetcherId={prevKetcherId}
+          ketcherId={ketcherId}
+          className={classes.canvas}
+        />
 
         <TopToolbarContainer
           className={classes.top}
@@ -90,7 +99,7 @@ const App = (props: Props) => {
         <RightToolbarContainer className={classes.right} />
 
         <AppClipArea />
-        <AppModalContainer />
+        <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
       </div>
     </ThemeProvider>

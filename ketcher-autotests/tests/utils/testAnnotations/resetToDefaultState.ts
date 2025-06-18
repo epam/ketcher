@@ -1,14 +1,14 @@
 import { Page, test, TestInfo } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
-import { chooseTab, Tabs } from '@utils/macromolecules';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {
     await selectFlexLayoutModeTool(page);
   },
   tabSelection: async (page: Page) => {
-    await chooseTab(page, Tabs.Peptides);
+    await Library(page).switchToRNATab();
   },
   micromoleculesEditor: async (page: Page) => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

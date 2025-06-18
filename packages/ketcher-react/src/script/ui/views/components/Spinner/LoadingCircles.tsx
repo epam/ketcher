@@ -17,7 +17,10 @@
 import styles from './LoadingCircles.module.less';
 
 export const LoadingCircles = () => (
-  <div className={`${styles.container} loading-spinner`}>
+  <div
+    className={`${styles.container} loading-spinner`}
+    data-testid="loading-spinner"
+  >
     <span />
     <span />
     <span />

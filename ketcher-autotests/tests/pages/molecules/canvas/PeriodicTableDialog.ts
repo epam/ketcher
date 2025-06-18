@@ -5,7 +5,7 @@ import {
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { RightToolbar } from '../RightToolbar';
 
-type OpenStructureDialogLocators = {
+type PeriodicTableDialogLocators = {
   singleRadioButton: Locator;
   listRadioButton: Locator;
   notListRadioButton: Locator;
@@ -18,7 +18,7 @@ export const PeriodicTableDialog = (page: Page) => {
   const getButton = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  const locators: OpenStructureDialogLocators = {
+  const locators: PeriodicTableDialogLocators = {
     singleRadioButton: page.getByTestId('single-radio-button'),
     listRadioButton: page.getByTestId('list-radio-button'),
     notListRadioButton: page.getByTestId('not-list-radio-button'),

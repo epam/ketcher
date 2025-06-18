@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
+import { Library } from '../macromolecules/Library';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -78,33 +78,42 @@ export const CommonTopRightToolbar = (page: Page) => {
       await locators.zoomSelector.click({ force: true });
       await zoomLocators.zoomDefaultButton.waitFor({ state: 'detached' });
     },
+
     async turnOnMacromoleculesEditor(
       options: {
         enableFlexMode?: boolean;
         goToPeptides?: boolean;
       } = { enableFlexMode: true, goToPeptides: true },
     ) {
+      await page.evaluate(() => {
+        // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window._ketcher_isChainLengthRulerDisabled = true;
+      });
+
       const switcher = locators.ketcherModeSwitcherCombobox;
-      expect(switcher).toBeVisible();
+      await expect(switcher).toBeVisible();
       await switcher.click();
       const macroOption = page.getByTestId('macromolecules_mode');
-      expect(macroOption).toBeVisible();
+      await expect(macroOption).toBeVisible();
       await macroOption.click();
 
-      expect(page.getByTestId('layout-mode')).toBeVisible();
+      await expect(page.getByTestId('layout-mode')).toBeVisible();
 
       if (options.enableFlexMode) {
         await selectFlexLayoutModeTool(page);
       } else if (options.goToPeptides) {
-        await goToPeptidesTab(page);
+        await Library(page).switchToPeptidesTab();
       } else {
-        await page
-          .getByTestId('summary-Nucleotides')
-          .waitFor({ state: 'visible' });
+        const nucleotidesSection = Library(page).rnaTab.nucleotidesSection;
+        await nucleotidesSection.waitFor({
+          state: 'visible',
+        });
       }
 
       await page.evaluate(() => {
-        // Temporary solution to disable autozoom for the polymer editor in e2e tests
+        // Temporary solution to disable autozoom for the macro editor in e2e tests
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         window._ketcher_isAutozoomDisabled = true;

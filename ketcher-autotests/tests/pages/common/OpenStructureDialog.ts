@@ -5,6 +5,7 @@ type OpenStructureDialogLocators = {
   openFromFileButton: Locator;
   openFromImageButton: Locator;
   closeWindowButton: Locator;
+  window: Locator;
 };
 
 export const OpenStructureDialog = (page: Page) => {
@@ -13,6 +14,7 @@ export const OpenStructureDialog = (page: Page) => {
     openFromFileButton: page.getByTestId('open-from-file-button'),
     openFromImageButton: page.getByTestId('open-from-image-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
+    window: page.getByTestId('openStructureModal'),
   };
 
   return {

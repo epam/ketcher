@@ -16,7 +16,7 @@
 
 import { Modal, ModalProps } from './Modal';
 
-import { BaseCallProps } from './modal.types';
+import { BaseCallProps, ModalContainerProps } from './modal.types';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { omit } from 'lodash/fp';
@@ -39,6 +39,7 @@ const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
 const mergeProps = (
   stateProps: StateProps,
   dispatchProps: BaseCallProps,
+  ownProps: ModalContainerProps,
 ): ModalProps => {
   const prop = stateProps.modal && stateProps.modal.prop;
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
@@ -53,6 +54,7 @@ const mergeProps = (
       if (prop && prop.onCancel) prop.onCancel();
       dispatchProps.onCancel();
     },
+    ...ownProps,
   };
 };
 

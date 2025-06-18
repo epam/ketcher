@@ -16,7 +16,6 @@
 
 import {
   FormatterFactory,
-  Pile,
   SGroup,
   identifyStructFormat,
   Struct,
@@ -180,9 +179,7 @@ export function load(struct: Struct, options?) {
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
-          const atomSet = new Pile(sg.atoms);
-          const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
-          SGroup.bracketPos(sg, parsedStruct, crossBonds);
+          SGroup.bracketPos(sg, parsedStruct);
           if (offset) sg.updateOffset(offset);
         });
       }

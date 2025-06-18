@@ -17,13 +17,12 @@
 import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
-import { ModeTypes } from 'ketcher-core';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {

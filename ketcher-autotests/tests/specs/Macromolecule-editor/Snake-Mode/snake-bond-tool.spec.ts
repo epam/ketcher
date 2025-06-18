@@ -23,18 +23,19 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
-import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { RNASection } from '@tests/pages/constants/library/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.dU,
@@ -69,7 +70,7 @@ async function createBondedMonomers(page: Page) {
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -99,7 +100,7 @@ test.describe('Snake Bond Tool', () => {
     */
 
     await selectSnakeLayoutModeTool(page);
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
@@ -138,7 +139,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Snake bond tool
     */
     await selectFlexLayoutModeTool(page);
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
 
     await addBondedMonomersToCanvas(page, Peptides.Tza, 100, 100, 25, 25, 18);
 
@@ -160,7 +161,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Mode returns back/forth after undo/redo', async () => {
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const flexModeButton = page.getByTestId('flex-layout-mode');
     const snakeModeButton = page.getByTestId('snake-layout-mode');
     await createBondedMonomers(page);
@@ -181,7 +182,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond between RNA nucleotides', async () => {
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
@@ -219,7 +220,7 @@ test.describe('Snake Bond Tool', () => {
 
   test('Check snake mode arrange for RNA chain', async () => {
     await selectFlexLayoutModeTool(page);
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -319,7 +320,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const [peptide1] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
@@ -331,9 +332,9 @@ test.describe('Snake Bond Tool', () => {
     );
 
     await selectFlexLayoutModeTool(page);
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     await addBondedMonomersToCanvas(page, Peptides.bAla, 700, 500, 50, 50, 4);
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -376,7 +377,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with nucleoside', async () => {
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
@@ -396,7 +397,7 @@ test.describe('Snake Bond Tool', () => {
       1,
     );
 
-    await page.getByTestId('summary-Sugars').click();
+    await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Sugars.R,
@@ -404,7 +405,7 @@ test.describe('Snake Bond Tool', () => {
       500,
       2,
     );
-    await page.getByTestId('summary-Bases').click();
+    await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Bases.A,
@@ -438,11 +439,9 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake bond for chain with side chains', async () => {
     await selectFlexLayoutModeTool(page);
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Presets);
 
-    if (await page.getByTestId(Presets.C.testId).isHidden()) {
-      await page.getByTestId('summary-Presets').click();
-    }
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
       Presets.C,
@@ -468,7 +467,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
     await addRnaPresetOnCanvas(page, Presets.U, 900, 300, 3, 3);
-    await page.getByTestId('summary-Sugars').click();
+    await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Sugars.R,
@@ -476,7 +475,7 @@ test.describe('Snake Bond Tool', () => {
       350,
       4,
     );
-    await page.getByTestId('summary-Bases').click();
+    await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Bases.nC6n8A,
@@ -485,7 +484,7 @@ test.describe('Snake Bond Tool', () => {
       0,
     );
 
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     const [peptide] = await addBondedMonomersToCanvas(
       page,
       Peptides.A,
@@ -546,10 +545,9 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     await addSingleMonomerToCanvas(page, Peptides.bAla, 300, 300, 0);
-    await goToRNATab(page);
-    await page.getByTestId('summary-Sugars').click();
+    await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Sugars.R,
@@ -557,7 +555,7 @@ test.describe('Snake Bond Tool', () => {
       500,
       0,
     );
-    await page.getByTestId('summary-Bases').click();
+    await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Bases.A,

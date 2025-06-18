@@ -8,7 +8,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   waitForKetcherInit,
-  waitForIndigoToLoad,
   waitForRender,
   clickOnCanvas,
   resetZoomLevelToDefault,
@@ -65,7 +64,6 @@ test.describe('Common connection rules: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

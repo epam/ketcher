@@ -746,7 +746,7 @@ test.describe('Functional Groups', () => {
       page,
     );
 
-    await page.getByText('CO2Et').click({ button: 'right' });
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });

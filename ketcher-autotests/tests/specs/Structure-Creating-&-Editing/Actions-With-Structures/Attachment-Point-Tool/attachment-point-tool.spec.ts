@@ -6,7 +6,6 @@ import {
   dragMouseTo,
   resetCurrentTool,
   copyAndPaste,
-  cutAndPaste,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
@@ -16,6 +15,7 @@ import {
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import { cutAndPaste } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {

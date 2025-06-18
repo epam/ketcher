@@ -1,22 +1,22 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
-  selectMonomer,
+  clickInTheMiddleOfTheScreen,
+  moveMouseAway,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
-import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import { Presets } from '@constants/monomers/Presets';
-import { goToRNATab } from '@utils/macromolecules/library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToRNATab(page);
-    await toggleRnaBuilderAccordion(page);
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
   });
 
   test('Check Guanine in default presets', async ({ page }) => {
@@ -24,7 +24,8 @@ test.describe('Macromolecules default presets', () => {
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
     */
-    await selectMonomer(page, Presets.G);
+    await Library(page).selectMonomer(Presets.G);
+    await Library(page).hoverMonomer(Presets.G);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -33,12 +34,9 @@ test.describe('Macromolecules default presets', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await selectMonomer(page, Presets.G);
-    await page.click('#polymer-editor-canvas');
-
-    // Get rid of flakiness because of preview
-    const coords = { x: 100, y: 100 };
-    await page.mouse.move(coords.x, coords.y);
+    await Library(page).selectMonomer(Presets.G);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
 
     await takeEditorScreenshot(page);
   });

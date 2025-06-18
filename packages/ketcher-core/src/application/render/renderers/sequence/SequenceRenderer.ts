@@ -38,9 +38,9 @@ import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
+import { SettingsManager } from 'utilities';
 
 export type SequencePointer = number;
-export type NumberOfSymbolsInRow = number;
 export type SequenceLastCaretPosition = number;
 
 type BaseNodeSelection = {
@@ -60,8 +60,6 @@ export type TwoStrandedNodeSelection = BaseNodeSelection & {
 
 export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
-
-const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
@@ -547,6 +545,7 @@ export class SequenceRenderer {
   }
 
   private static get nodesGroupedByRows() {
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     const finalArray: Array<Array<ITwoStrandedChainItem>> = [];
     let chainNodes: Array<ITwoStrandedChainItem> = [];
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
@@ -555,9 +554,9 @@ export class SequenceRenderer {
         return;
       }
 
-      if (chainNodes.length > NUMBER_OF_SYMBOLS_IN_ROW) {
+      if (chainNodes.length > lineLength) {
         while (chainNodes.length > 0) {
-          finalArray.push(chainNodes.splice(0, NUMBER_OF_SYMBOLS_IN_ROW));
+          finalArray.push(chainNodes.splice(0, lineLength));
         }
       } else {
         finalArray.push([...chainNodes]);

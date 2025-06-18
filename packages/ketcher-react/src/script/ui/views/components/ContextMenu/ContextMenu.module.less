@@ -49,12 +49,16 @@
   .icon {
     width: 20px;
     height: 20px;
-    margin: 0 12px 0 0;
+    display: flex;
+    align-items: center;
+    margin: 0 12px 3px 0;
   }
 
   .contextMenuText {
-    margin-top: 2px;
-  } 
+    display: flex;
+    align-items: center;
+    line-height: var(--ketcher-font-size-regular);
+  }  
 
   :global(.contexify_submenu) {
     max-height: 400px;

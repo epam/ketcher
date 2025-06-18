@@ -75,7 +75,7 @@ const assembleMenuItems = (
     ) => {
       const item =
         subMenuItems && subMenuItems.length ? (
-          <Submenu label={title}>
+          <Submenu label={title} data-testid={name}>
             {assembleMenuItems(subMenuItems, handleMenuChange)}
           </Submenu>
         ) : (

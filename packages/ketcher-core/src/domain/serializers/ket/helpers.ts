@@ -87,6 +87,7 @@ export const modifyTransformation = (transformation: MonomerTransformation) => {
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,
+  resetSelection = false,
 ) => {
   if (!selection) {
     return populatedStruct;
@@ -95,7 +96,15 @@ export const populateStructWithSelection = (
     const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
-        value.setInitiallySelected(selectedEntities.includes(key) || undefined);
+        if (resetSelection) {
+          value.setInitiallySelected(
+            selectedEntities.includes(key) || undefined,
+          );
+        } else {
+          if (selectedEntities.includes(key)) {
+            value.setInitiallySelected(true);
+          }
+        }
       }
     });
   });

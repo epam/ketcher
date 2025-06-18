@@ -796,7 +796,7 @@ for (const replaceMonomer of replaceMonomers) {
         7. Take screenshot to validate that replacement work in Flex mode canvas
         8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -835,7 +835,7 @@ for (const replaceMonomer of replaceMonomers) {
         7. Take screenshot to validate that replacement work in Flex mode canvas
         8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -874,7 +874,7 @@ for (const replaceMonomer of replaceMonomers) {
           7. Take screenshot to validate that replacement work in Flex mode canvas
           8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -913,7 +913,7 @@ for (const replaceMonomer of replaceMonomers) {
           7. Take screenshot to validate that replacement work in Flex mode canvas
           8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -950,7 +950,7 @@ for (const replaceMonomer of replaceMonomers) {
           7. Take screenshot to validate that replacement work in Flex mode canvas
           8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -989,7 +989,7 @@ for (const replaceMonomer of replaceMonomers) {
             7. Take screenshot to validate that replacement work in Flex mode canvas
             8. Add info to log if known bugs exist and skip test
           */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -1050,7 +1050,7 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         5. Validate that error message occures
         6. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
         noR2ConnectionPointReplaceMonomer,
@@ -1113,7 +1113,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
         noR1orR2ConnectionPointReplaceMonomer,
@@ -1153,7 +1153,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
@@ -1191,7 +1191,7 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         5. Validate that error message occures
         6. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditModeWithError(
         page,
         noR2ConnectionPointReplaceMonomer,
@@ -1231,7 +1231,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
         noR1orR2ConnectionPointReplaceMonomer,
@@ -1271,7 +1271,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
@@ -1310,7 +1310,7 @@ for (const replaceMonomer of replaceMonomers) {
         7. Take screenshot to validate that replacement work in Flex mode canvas
         8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
       await moveMouseAway(page);
@@ -1345,7 +1345,7 @@ for (const replaceMonomer of replaceMonomers) {
         7. Take screenshot to validate that replacement work in Flex mode canvas
         8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsInEditMode(
         page,
         replaceMonomer,
@@ -1390,7 +1390,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       //   await pageReload(page);
       // }
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
@@ -1430,7 +1430,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsInEditModeWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
@@ -1666,7 +1666,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -1709,7 +1709,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -1752,7 +1752,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       */
       test.setTimeout(20000);
 
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbol(
         page,
         replaceMonomer,
@@ -1794,7 +1794,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
           7. Take screenshot to validate that replacement work in Flex mode canvas
           8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -1834,7 +1834,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
           7. Take screenshot to validate that replacement work in Flex mode canvas
           8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -1874,7 +1874,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
             7. Take screenshot to validate that replacement work in Flex mode canvas
             8. Add info to log if known bugs exist and skip test
           */
-      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
@@ -1926,7 +1926,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectSequenceLayoutModeTool(page);
   await getSymbolLocator(page, {
     nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
@@ -1980,7 +1980,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -2040,7 +2040,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2088,7 +2088,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2136,7 +2136,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2181,7 +2181,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
     MonomerDescription: 'preset (C)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2225,7 +2225,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     MonomerDescription: 'preset (C)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2282,7 +2282,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     MonomerDescription: 'preset (C)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2325,7 +2325,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     MonomerDescription: 'preset (C)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -2373,7 +2373,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
     MonomerDescription: 'preset (C)',
   };
 
-  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

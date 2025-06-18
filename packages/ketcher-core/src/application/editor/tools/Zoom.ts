@@ -281,6 +281,7 @@ export class ZoomTool implements BaseTool {
 
   public scrollToVerticalBottom() {
     this.drawScrollBars();
+
     if (this.scrollBars.vertical.offsetEnd < 0) {
       this.zoom?.translateBy(
         this.canvasWrapper,
@@ -408,8 +409,8 @@ export class ZoomTool implements BaseTool {
   }
 
   destroy() {
-    this.scrollBars.horizontal?.bar?.remove();
-    this.scrollBars.vertical?.bar?.remove();
+    this.scrollBars?.horizontal?.bar?.remove();
+    this.scrollBars?.vertical?.bar?.remove();
     this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
     this.zoom = null;
     this.zoomEventHandlers = [];

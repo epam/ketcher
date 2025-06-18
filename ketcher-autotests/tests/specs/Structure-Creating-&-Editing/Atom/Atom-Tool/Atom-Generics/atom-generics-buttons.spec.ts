@@ -11,8 +11,8 @@ test.describe('Generic node', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
   });
 

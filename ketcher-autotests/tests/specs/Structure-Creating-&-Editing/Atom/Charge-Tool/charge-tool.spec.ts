@@ -53,7 +53,7 @@ test.describe('Charge tool', () => {
     */
     const anyAtom = 0;
     const anotherAnyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'N', anyAtom);
     await clickOnAtom(page, 'O', anyAtom);
@@ -74,7 +74,7 @@ test.describe('Charge tool', () => {
     const anyAtom = 0;
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
     await page.mouse.move(x, y);
@@ -93,7 +93,7 @@ test.describe('Charge tool', () => {
     const anyAtom = 0;
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
     await page.mouse.move(x, y);

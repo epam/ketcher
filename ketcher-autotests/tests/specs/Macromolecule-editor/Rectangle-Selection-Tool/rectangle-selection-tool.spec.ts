@@ -34,7 +34,7 @@ async function moveMonomersToNewPosition(
   x: number,
   y: number,
 ) {
-  await openFileAndAddToCanvasMacro(filePath, page);
+  await openFileAndAddToCanvasMacro(page, filePath);
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -386,7 +386,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await clickOnCanvas(page, x, y);
@@ -419,7 +419,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 850;
     const y = 500;
-    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptides.Hhs).hover();
@@ -434,7 +434,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 900;
     const y = 500;
-    await openFileAndAddToCanvasMacro('KET/two-rows-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/two-rows-of-monomers.ket');
     await getMonomerLocator(page, Peptides.Hhs).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -445,7 +445,7 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomers are deleted from canvas and then appears after pressing Undo.
     */
-    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);

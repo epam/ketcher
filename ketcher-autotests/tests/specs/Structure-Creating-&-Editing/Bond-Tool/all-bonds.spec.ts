@@ -287,7 +287,7 @@ test.describe(`Bond tool:`, () => {
       });
 
       test(`${bondTypeName}: Open and edit`, async () => {
-        await openFileAndAddToCanvas(fileName, page);
+        await openFileAndAddToCanvas(page, fileName);
         await LeftToolbar(page).reactionPlusTool();
         await clickOnTheCanvas(page, 200, 0);
       });
@@ -556,7 +556,7 @@ test.describe('Bond Tool', () => {
      */
     const point = { x: -200, y: -200 };
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await openFileAndAddToCanvas('KET/ketcher-42.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ketcher-42.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );

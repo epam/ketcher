@@ -143,7 +143,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1958
-    await openFileAndAddToCanvas('KET/lines-EPMLSOPKET-1958.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/lines-EPMLSOPKET-1958.ket');
     await separetingAndMovingLines(page);
     await takeEditorScreenshot(page);
   });

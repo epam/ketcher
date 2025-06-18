@@ -47,6 +47,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
@@ -110,6 +111,7 @@ import './theme.less';
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
@@ -123,6 +125,7 @@ interface EditorContainerProps extends EditorProps {
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -137,6 +140,8 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
+  store.dispatch(initKetcherId(ketcherId));
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
@@ -147,6 +152,7 @@ function EditorContainer({
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
+              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}

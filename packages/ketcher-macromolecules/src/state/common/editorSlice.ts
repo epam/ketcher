@@ -109,7 +109,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor?.mode.modeName;
-      state.editor?.switchToMicromolecules();
+      state.editor?.destroy();
       state.editor = undefined;
     },
     showPreview: (

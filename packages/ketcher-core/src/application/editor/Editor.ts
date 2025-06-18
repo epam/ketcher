@@ -81,6 +81,7 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 
 interface ICoreEditorConstructorParams {
+  ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -100,6 +101,7 @@ let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
+  public ketcherId?: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -140,12 +142,14 @@ export class CoreEditor {
   private cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
+    ketcherId,
     theme,
     canvas,
     monomersLibraryUpdate,
     mode,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;
+    this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -173,7 +177,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeEventListeners();
   }
@@ -1047,7 +1051,7 @@ export class CoreEditor {
       );
 
     if (conversionErrorMessage) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
@@ -1085,7 +1089,7 @@ export class CoreEditor {
     this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() || new Struct();
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,

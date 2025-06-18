@@ -386,6 +386,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
+      page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await takeEditorScreenshot(page);
@@ -424,6 +425,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
+      page,
       'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
     );
     await takeEditorScreenshot(page);

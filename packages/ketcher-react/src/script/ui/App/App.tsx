@@ -36,6 +36,7 @@ import {
 import { useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
+import { ketcherProvider } from 'ketcher-core';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -69,6 +70,12 @@ const App = (props: Props) => {
       dispatch(initLib([]));
       dispatch(initSaltsAndSolvents([]));
       dispatch(initFGroups([]));
+      // App component is unmounted after editor components (MicromoleculeEditor.tsx and ketcher-react/src/Editor.tsx)
+      // due to asynchronous behaviour (see packages/ketcher-react/src/MicromoleculesEditor.tsx, appRootRef.current.unmount call).
+      // In other hand we still ketcher instance in ketcherProvider for useSubscriptionOnEvents cleanup function.
+      // So we need to remove ketcher instance from ketcherProvider here.
+      // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
+      ketcherProvider.removeKetcherInstance(ketcherId);
     };
   }, []);
 

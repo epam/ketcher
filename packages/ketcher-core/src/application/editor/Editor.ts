@@ -136,6 +136,8 @@ export class CoreEditor {
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
     theme,
@@ -363,7 +365,7 @@ export class CoreEditor {
   }
 
   private setupContextMenuEvents() {
-    document.addEventListener('contextmenu', (event) => {
+    this.contextMenuEventHandler = (event) => {
       event.preventDefault();
 
       const eventData = event.target?.__data__;
@@ -415,7 +417,9 @@ export class CoreEditor {
       }
 
       return false;
-    });
+    };
+
+    document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
   private subscribeEvents() {
@@ -876,7 +880,12 @@ export class CoreEditor {
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
+    document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);
+
+    this.cleanupsForDomEvents.forEach((cleanupFunction) => {
+      cleanupFunction();
+    });
   }
 
   get trackedDomEvents() {
@@ -940,8 +949,13 @@ export class CoreEditor {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
+      const handler = subs.dispatch.bind(subs);
 
-      target.addEventListener(eventName, subs.dispatch.bind(subs));
+      target.addEventListener(eventName, handler);
+
+      this.cleanupsForDomEvents.push(() => {
+        target.removeEventListener(eventName, handler);
+      });
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
@@ -1127,5 +1141,10 @@ export class CoreEditor {
       MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
+  }
+
+  public destroy() {
+    this.unsubscribeEvents();
+    editor = undefined;
   }
 }

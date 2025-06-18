@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -483,25 +484,21 @@ test.describe('9. Fold/unfold hydrogens for', () => {
     await waitForPageInit(page);
   });
 
-  const fileNames = [
-    'Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
-      );
-      await clickOnCanvas(page, 20, 20);
-      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-      await takeEditorScreenshot(page);
-      /*
+  test(`by Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`, async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`,
+    );
+    await clickOnCanvas(page, 20, 20);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await takeEditorScreenshot(page);
+    /*
       await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
-    });
-  }
+  });
 });
 
 test.describe('10. Fold/unfold hydrogens for', () => {

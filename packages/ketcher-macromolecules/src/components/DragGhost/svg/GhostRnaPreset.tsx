@@ -1,70 +1,153 @@
-import { IRnaPreset } from 'ketcher-core';
+import { IRnaPreset, monomerFactory } from 'ketcher-core';
 
 type Props = {
   preset: IRnaPreset;
 };
 
 export const GhostRnaPreset = ({ preset }: Props) => {
-  const { sugar, base, phosphate } = preset;
+  const { sugar, phosphate, base } = preset;
+
+  if (!sugar) {
+    return null;
+  }
+
+  const [SugarMonomer, SugarRenderer] = monomerFactory(sugar);
+  const sugarInstance = new SugarMonomer(sugar);
+  const sugarRenderer = new SugarRenderer(sugarInstance);
+
+  const phosphateRenderer = phosphate
+    ? (() => {
+        const [PhosphateMonomer, PhosphateRenderer] = monomerFactory(phosphate);
+        const phosphateInstance = new PhosphateMonomer(phosphate);
+        return new PhosphateRenderer(phosphateInstance);
+      })()
+    : null;
+
+  const baseRenderer = base
+    ? (() => {
+        const [BaseMonomer, BaseRenderer] = monomerFactory(base);
+        const baseInstance = new BaseMonomer(base);
+        return new BaseRenderer(baseInstance);
+      })()
+    : null;
+
+  const sugarSize = sugarRenderer.monomerSize;
+  const phosphateSize = phosphateRenderer?.monomerSize;
+  const baseSize = baseRenderer?.monomerSize;
+
+  const sugarX = 15;
+  const sugarY = 15;
+
+  const phosphateX = phosphateSize ? sugarX + sugarSize.width + 30 : 0;
+  const phosphateY = sugarY;
+
+  const baseX = sugarX + (sugarSize.width - (baseSize?.width || 0)) / 2;
+  const baseY = sugarY + sugarSize.height + 30;
+
+  const totalWidth =
+    Math.max(
+      sugarX + sugarSize.width,
+      phosphateSize ? phosphateX + phosphateSize.width : 0,
+      baseSize ? baseX + baseSize.width : 0,
+    ) + 20;
+
+  const totalHeight =
+    Math.max(
+      sugarY + sugarSize.height,
+      phosphateSize ? phosphateY + phosphateSize.height : 0,
+      baseSize ? baseY + baseSize.height : 0,
+    ) + 20;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={105}
-      height={97}
-      viewBox="0 0 105 97"
-      fill="none"
+      width={totalWidth}
+      height={totalHeight}
+      viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+      overflow="visible"
     >
-      <g filter="url(#a)">
-        <path
-          fill="#fff"
-          d="M35 0a6 6 0 0 1 6 6v7h26.475C69.274 5.541 75.989 0 84 0c9.389 0 17 7.611 17 17s-7.611 17-17 17c-8.011 0-14.727-5.541-16.525-13H41v7a6 6 0 0 1-6 6h-8.066v18.906L42.98 68.953l-19.49 19.49L4 68.953 19.934 53.02V34H13a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6h22Z"
-          shapeRendering="crispEdges"
-        />
+      <g
+        style={{
+          filter: 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.4))',
+        }}
+      >
+        {phosphateSize && (
+          <line
+            x1={sugarX + sugarSize.width}
+            y1={sugarY + sugarSize.height / 2}
+            x2={phosphateX}
+            y2={phosphateY + phosphateSize.height / 2}
+            stroke="#CAD3DD"
+            strokeWidth="3"
+          />
+        )}
+
+        {baseSize && (
+          <line
+            x1={sugarX + sugarSize.width / 2}
+            y1={sugarY + sugarSize.height}
+            x2={baseX + baseSize.width / 2}
+            y2={baseY}
+            stroke="#CAD3DD"
+            strokeWidth="3"
+          />
+        )}
+
+        <g transform={`translate(${sugarX}, ${sugarY})`}>
+          <use href={sugarRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+          <text
+            x={sugarSize.width / 2}
+            y={sugarSize.height / 2}
+            textAnchor="middle"
+            dominantBaseline="central"
+            pointerEvents="none"
+            fill="#333"
+            fontSize="7px"
+            fontWeight="bold"
+          >
+            {sugar.label}
+          </text>
+        </g>
+
+        {phosphateSize && (
+          <g transform={`translate(${phosphateX}, ${phosphateY})`}>
+            <use
+              href={phosphateRenderer.monomerSymbolElementId}
+              fill="#CAD3DD"
+            />
+            <text
+              x={phosphateSize.width / 2}
+              y={phosphateSize.height / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              pointerEvents="none"
+              fill="#333"
+              fontSize="7px"
+              fontWeight="bold"
+            >
+              {phosphate?.label}
+            </text>
+          </g>
+        )}
+
+        {baseSize && (
+          <g transform={`translate(${baseX}, ${baseY})`}>
+            <use href={baseRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+            <text
+              x={baseSize.width / 2}
+              y={baseSize.height / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              pointerEvents="none"
+              fill="#333"
+              fontSize="7px"
+              fontWeight="bold"
+            >
+              {base?.label}
+            </text>
+          </g>
+        )}
       </g>
-      <path stroke="#CAD3DD" strokeWidth={2} d="M23.518 29v26M71 17H38" />
-      <rect width={28} height={28} x={10.275} y={3} fill="#CAD3DD" rx={4} />
-      {/* <rect width={28} height={28} x={10} y={3} fill="#CAD3DD" rx={4} /> */}
-      <rect width={28} height={28} x={70} y={3} fill="#CAD3DD" rx={14} />
-      <path
-        fill="#CAD3DD"
-        d="m23.557 53.397 15.556 15.557L23.557 84.51 8 68.954z"
-      />
-      <path
-        fill="#333"
-        d="M21.905 71h-.989l1.507-4.364h1.189L25.116 71h-.989l-1.093-3.367H23L21.905 71Zm-.062-1.715h2.335v.72h-2.335v-.72ZM82.954 19v-4.364h1.722c.331 0 .613.064.846.19.233.125.41.299.533.522.123.222.185.477.185.767 0 .29-.063.546-.188.767a1.293 1.293 0 0 1-.543.518c-.236.123-.521.185-.856.185h-1.098v-.74h.948c.178 0 .324-.03.44-.09a.607.607 0 0 0 .26-.259.806.806 0 0 0 .087-.38.786.786 0 0 0-.088-.38.583.583 0 0 0-.26-.254.95.95 0 0 0-.443-.091h-.622V19h-.922ZM22.928 19v-4.364h1.722c.33 0 .61.06.843.177.235.117.413.282.535.497.124.213.186.463.186.752 0 .29-.063.539-.188.748a1.216 1.216 0 0 1-.543.477c-.236.11-.521.166-.857.166h-1.152v-.741h1.003c.176 0 .322-.024.439-.073a.522.522 0 0 0 .26-.217.687.687 0 0 0 .087-.36.715.715 0 0 0-.087-.367.536.536 0 0 0-.262-.226 1.074 1.074 0 0 0-.441-.078h-.622V19h-.923Zm2.357-1.986L26.369 19h-1.018l-1.061-1.986h.995Z"
-      />
-      <defs>
-        <filter
-          id="a"
-          width={105}
-          height={96.443}
-          x={0}
-          y={0}
-          colorInterpolationFilters="sRGB"
-          filterUnits="userSpaceOnUse"
-        >
-          <feFlood floodOpacity={0} result="BackgroundImageFix" />
-          <feColorMatrix
-            in="SourceAlpha"
-            result="hardAlpha"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-          />
-          <feOffset dy={4} />
-          <feGaussianBlur stdDeviation={2} />
-          <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-          <feBlend
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_12586_13359"
-          />
-          <feBlend
-            in="SourceGraphic"
-            in2="effect1_dropShadow_12586_13359"
-            result="shape"
-          />
-        </filter>
-      </defs>
     </svg>
   );
 };

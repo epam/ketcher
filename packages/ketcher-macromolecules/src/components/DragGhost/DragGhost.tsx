@@ -6,6 +6,7 @@ import { selectLibraryItemDrag } from 'state/common';
 import styles from './DragGhost.module.less';
 import { GhostRnaPreset } from './svg/GhostRnaPreset';
 import { GhostMonomer } from 'components/DragGhost/svg/GhostMonomer';
+import { useZoomTransform } from '../../hooks/useZoomTransform';
 
 // TODO: Extract this helper
 const isRnaPreset = (
@@ -20,6 +21,8 @@ export const DragGhost = () => {
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
   const animateRef = useRef<number | null>(null);
 
+  const transform = useZoomTransform();
+
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
     if (!element || !libraryItemDrag) {
@@ -27,7 +30,7 @@ export const DragGhost = () => {
     }
 
     animateRef.current = requestAnimationFrame(() => {
-      element.style.transform = `translate(${libraryItemDrag.position.x}px, ${libraryItemDrag.position.y}px)`;
+      element.style.transform = `translate(${libraryItemDrag.position.x}px, ${libraryItemDrag.position.y}px) scale(${transform.k})`;
     });
 
     return () => {
@@ -36,7 +39,7 @@ export const DragGhost = () => {
         animateRef.current = null;
       }
     };
-  }, [libraryItemDrag]);
+  }, [libraryItemDrag, transform.k]);
 
   if (!libraryItemDrag) {
     return null;

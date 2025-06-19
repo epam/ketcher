@@ -9,7 +9,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
-  selectFlexLayoutModeTool,
   MonomerType,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
@@ -17,6 +16,7 @@ import {
   selectAllStructuresOnCanvas,
   selectSequenceLayoutModeTool,
 } from '@utils';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,
@@ -90,7 +90,7 @@ async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
     );
   }
   if (polymer.KETFile) {
-    await openFileAndAddToCanvasMacro(polymer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, polymer.KETFile);
   }
 }
 

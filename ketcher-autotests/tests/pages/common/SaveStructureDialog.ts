@@ -51,7 +51,7 @@ export const SaveStructureDialog = (page: Page) => {
     },
 
     async getTextAreaValue(): Promise<string> {
-      const loadingSpinner = page.locator('.loading-spinner');
+      const loadingSpinner = page.getByTestId('loading-spinner');
       if (await loadingSpinner.isVisible()) {
         await loadingSpinner.waitFor({ state: 'hidden' });
       }
@@ -60,7 +60,7 @@ export const SaveStructureDialog = (page: Page) => {
     },
 
     async getWarningTextAreaValue(): Promise<string> {
-      const loadingSpinner = page.locator('.loading-spinner');
+      const loadingSpinner = page.getByTestId('loading-spinner');
       if (await loadingSpinner.isVisible()) {
         await loadingSpinner.waitFor({ state: 'hidden' });
       }

@@ -81,6 +81,7 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 
 interface ICoreEditorConstructorParams {
+  ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -100,6 +101,7 @@ let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
+  public ketcherId?: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -136,14 +138,18 @@ export class CoreEditor {
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
+    ketcherId,
     theme,
     canvas,
     monomersLibraryUpdate,
     mode,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;
+    this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -171,7 +177,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeEventListeners();
   }
@@ -363,7 +369,7 @@ export class CoreEditor {
   }
 
   private setupContextMenuEvents() {
-    document.addEventListener('contextmenu', (event) => {
+    this.contextMenuEventHandler = (event) => {
       event.preventDefault();
 
       const eventData = event.target?.__data__;
@@ -415,7 +421,9 @@ export class CoreEditor {
       }
 
       return false;
-    });
+    };
+
+    document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
   private subscribeEvents() {
@@ -876,7 +884,12 @@ export class CoreEditor {
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
+    document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);
+
+    this.cleanupsForDomEvents.forEach((cleanupFunction) => {
+      cleanupFunction();
+    });
   }
 
   get trackedDomEvents() {
@@ -940,8 +953,13 @@ export class CoreEditor {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
+      const handler = subs.dispatch.bind(subs);
 
-      target.addEventListener(eventName, subs.dispatch.bind(subs));
+      target.addEventListener(eventName, handler);
+
+      this.cleanupsForDomEvents.push(() => {
+        target.removeEventListener(eventName, handler);
+      });
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
@@ -1033,7 +1051,7 @@ export class CoreEditor {
       );
 
     if (conversionErrorMessage) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
@@ -1071,7 +1089,7 @@ export class CoreEditor {
     this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() || new Struct();
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
@@ -1127,5 +1145,10 @@ export class CoreEditor {
       MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
+  }
+
+  public destroy() {
+    this.unsubscribeEvents();
+    editor = undefined;
   }
 }

@@ -8,7 +8,7 @@ enum IndigoShowHydrogenLabelsMode {
   ALL = 'all',
 }
 
-export function getLabelRenderModeForIndigo() {
+export function getLabelRenderModeForIndigo(ketcherId: string) {
   // Terminal does not supported by indigo so TERMINAL_HETERO used
   // Off removing all labels in indigo so HETERO used
   const renderModeMapping = {
@@ -22,7 +22,7 @@ export function getLabelRenderModeForIndigo() {
 
   return (
     renderModeMapping[
-      ketcherProvider.getKetcher().editor.options().showHydrogenLabels
+      ketcherProvider.getKetcher(ketcherId).editor.options().showHydrogenLabels
     ] || IndigoShowHydrogenLabelsMode.OFF
   );
 }

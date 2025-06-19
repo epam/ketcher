@@ -95,4 +95,5 @@ export interface Editor {
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
   focusCliparea: () => void;
+  ketcherId: string;
 }

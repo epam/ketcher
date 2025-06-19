@@ -203,15 +203,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1954
      * Description: Open and Save file - InChI String - Fused structure
      */
-    await openFileAndAddToCanvas('KET/InChI-fused-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/InChI-fused-structure.ket');
     await verifyFileExport(
       page,
       'InChI/InChI-fused-structure-expected.inchi',
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/InChI-fused-structure-expected.inchi',
       page,
+      'InChI/InChI-fused-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -223,15 +223,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1939
      * Description: Open and Save file - InChI String - Chain string with single bonds only
      */
-    await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await verifyFileExport(
       page,
       'InChI/nonone-chain-structure-expected.inchi',
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/nonone-chain-structure-expected.inchi',
       page,
+      'InChI/nonone-chain-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -244,8 +244,8 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Chain string that contains some double bonds
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/(2E,4E,6E)-nona-2,4,6-triene.mol',
       page,
+      'Molfiles-V2000/(2E,4E,6E)-nona-2,4,6-triene.mol',
     );
     await verifyFileExport(
       page,
@@ -253,8 +253,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
       page,
+      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -266,15 +266,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1941
      * Description: Open and Save file - InChI String - Chain string that contains some triple
      */
-    await openFileAndAddToCanvas('Molfiles-V2000/nona-2,4,6-triyne.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/nona-2,4,6-triyne.mol');
     await verifyFileExport(
       page,
       'InChI/nona-2,4,6-triyne-expected.inchi',
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/nona-2,4,6-triyne-expected.inchi',
       page,
+      'InChI/nona-2,4,6-triyne-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -286,15 +286,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1951
      * Description: Open and Save file - InChI String - Cyclic structure with single bonds only
      */
-    await openFileAndAddToCanvas('KET/cyclic-cyclohexane-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclic-cyclohexane-structure.ket');
     await verifyFileExport(
       page,
       'InChI/cyclic-cyclohexane-structure-expected.inchi',
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/cyclic-cyclohexane-structure-expected.inchi',
       page,
+      'InChI/cyclic-cyclohexane-structure-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -307,8 +307,8 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Sugars without stereobonds
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/sugar_without_stereo.mol',
       page,
+      'Molfiles-V2000/sugar_without_stereo.mol',
     );
     await verifyFileExport(
       page,
@@ -316,8 +316,8 @@ test.describe('Open and Save InChI file', () => {
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/sugar_without_stereo-expected.inchi',
       page,
+      'InChI/sugar_without_stereo-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -329,11 +329,11 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1953
      * Description: Open and Save file - InChI String - Structure with stereobonds
      */
-    await openFileAndAddToCanvas('Molfiles-V2000/Chiral.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/Chiral.mol');
     await verifyFileExport(page, 'InChI/Chiral-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/Chiral-expected.inchi',
       page,
+      'InChI/Chiral-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -345,11 +345,11 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1955
      * Description: Open and Save file - InChI String - Spiro structure
      */
-    await openFileAndAddToCanvas('Molfiles-V2000/spiro.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/spiro.mol');
     await verifyFileExport(page, 'InChI/spiro-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/spiro-expected.inchi',
       page,
+      'InChI/spiro-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -364,7 +364,7 @@ test.describe('Open and Save InChI file', () => {
     const saveStructureTextarea =
       SaveStructureDialog(page).saveStructureTextarea;
 
-    await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
@@ -384,15 +384,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1928
      * Description: Open and Save file - InChi string for some structures
      */
-    await openFileAndAddToCanvas('KET/propane-hexane-benzene.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/propane-hexane-benzene.ket');
     await verifyFileExport(
       page,
       'InChI/propane-hexane-benzene-expected.inchi',
       FileType.InChI,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'InChI/propane-hexane-benzene-expected.inchi',
       page,
+      'InChI/propane-hexane-benzene-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -403,8 +403,8 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi string for reaction
      */
     await openFileAndAddToCanvas(
-      'KET/cyclohexane-connecting-arrow-with-benzene.ket',
       page,
+      'KET/cyclohexane-connecting-arrow-with-benzene.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -426,7 +426,7 @@ test.describe('Open and Save InChI file', () => {
     const warningsTab = SaveStructureDialog(page).warningsTab;
     const warningTextarea = SaveStructureDialog(page).warningTextarea;
 
-    await openFileAndAddToCanvas('KET/chain-with-s-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-s-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
@@ -446,7 +446,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1961
      * Description: Open and Save file - InChI String - Alias
      */
-    await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-alias.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).setFileName('Alias');
     await SaveStructureDialog(page).chooseFileFormat(
@@ -454,7 +454,7 @@ test.describe('Open and Save InChI file', () => {
     );
 
     await SaveStructureDialog(page).save();
-    await openFileAndAddToCanvas('InChI/alias.inchi', page);
+    await openFileAndAddToCanvas(page, 'InChI/alias.inchi');
   });
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name', async ({
@@ -468,7 +468,7 @@ test.describe('Open and Save InChI file', () => {
     await pasteFromClipboardAndAddToCanvas(
       page,
       '1S/C9H14/c1-3-5-7-9-8-6-4-2/h3,5-9H,4H2,1-2H3/b5-3-,8-6+,9-7+',
-      false,
+      true,
     );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
@@ -488,7 +488,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1962
      * Description: Open and Save file - InChI String - Pseudoatom
      */
-    await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-generic-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
@@ -508,7 +508,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1938
      * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
      */
-    await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-generic-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
@@ -528,7 +528,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1965
      * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
      */
-    await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await openPasteFromClipboard(page, '123.!@*');
     await pressButton(page, 'Cancel');
     await openPasteFromClipboard(page, '123.!@*');
@@ -541,7 +541,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1930
      * Description: Open and Save file - InChi string for Rgroup
      */
-    await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/structure-with-R-Group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,

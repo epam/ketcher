@@ -48,7 +48,7 @@ test.describe('Floating windows', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('Txt/incorect-text.txt', page);
+    await openFile(page, 'Txt/incorect-text.txt');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
@@ -58,7 +58,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3998
       Description: verify the floating window with calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -68,7 +68,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(1)
       Description: verify 0 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '0' }).click();
@@ -82,7 +82,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(2)
       Description: verify 7 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '7' }).click();
@@ -126,7 +126,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4000
       Description: Change dedcimal places
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByText('Decimal places3').first().click();
     await page.getByRole('option', { name: '4' }).click();
@@ -143,7 +143,7 @@ test.describe('Floating windows', () => {
       Description: open text file via "open file" 
     */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('CML/cml-molecule.cml', page);
+    await openFile(page, 'CML/cml-molecule.cml');
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +164,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', false);
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
   });

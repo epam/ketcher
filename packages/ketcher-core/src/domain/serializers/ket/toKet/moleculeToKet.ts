@@ -41,6 +41,11 @@ function fromRlabel(rg) {
   return res;
 }
 
+export interface MoleculesSelection {
+  atoms: Set<number>;
+  bonds: Set<number>;
+}
+
 export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
@@ -196,6 +201,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(result, 'class', source.data.class);
       ifDef(
         result,
         'attachmentPoints',

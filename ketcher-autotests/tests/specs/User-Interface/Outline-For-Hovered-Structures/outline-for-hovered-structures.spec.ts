@@ -22,7 +22,7 @@ test.describe('Outline for hovered structures', () => {
   test('Should draw selection outline correctly for hovered structures', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await page.keyboard.press('Control+KeyA');
     await page.keyboard.down('Alt');

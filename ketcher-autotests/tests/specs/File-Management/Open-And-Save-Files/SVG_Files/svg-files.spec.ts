@@ -23,8 +23,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -42,8 +42,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -61,8 +61,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -80,8 +80,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -99,8 +99,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -118,8 +118,8 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -135,7 +135,7 @@ test.describe('Saving in .svg files', () => {
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

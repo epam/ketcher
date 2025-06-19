@@ -227,12 +227,11 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
+        const lineLength =
+          SettingsManager.editorLineLength['sequence-layout-mode'];
         this.showNewSequenceButton(
           chainIndex,
-          Math.max(
-            chain.length,
-            (sequenceViewModel.chains.at(chainIndex + 1) ?? []).length,
-          ),
+          Math.min(chain.lastRow.sequenceViewModelItems.length, lineLength),
         );
       }
     });
@@ -248,11 +247,12 @@ export class SequenceRenderer {
     currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
     previousChainLength: number = SequenceRenderer.lastChainLength,
   ) {
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     return new Vec2(
       currentChainStartPosition.x,
       currentChainStartPosition.y +
         80 +
-        47 * Math.floor((previousChainLength - 1) / 30),
+        47 * Math.floor((previousChainLength - 1) / lineLength),
     );
   }
 

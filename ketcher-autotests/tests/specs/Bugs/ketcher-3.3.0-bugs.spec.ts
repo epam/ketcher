@@ -42,13 +42,11 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { expandMonomer } from '@utils/canvas/monomer/helpers';
 
 let page: Page;
-
-async function callContextMenuForAnySymbol(page: Page) {
-  const anySymbol = getSymbolLocator(page, {}).first();
-  await anySymbol.click({ button: 'right', force: true });
-}
 
 test.describe('Ketcher bugs in 3.3.0', () => {
   test.beforeAll(async ({ browser }) => {
@@ -87,7 +85,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       'PEPTIDE1{A}|RNA1{R(A)}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -371,8 +370,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('delete').click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -837,12 +836,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('1Nal')
-      .click({ button: 'right' });
-    await page.getByText('Expand monomer').click();
+    const peptide1Nal = getMonomerLocator(page, Peptides._1Nal);
+    await expandMonomer(page, peptide1Nal);
     await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);

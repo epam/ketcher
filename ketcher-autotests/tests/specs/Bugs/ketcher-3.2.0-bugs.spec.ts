@@ -22,11 +22,7 @@ import {
   clickOnCanvas,
   setMolecule,
 } from '@utils';
-import {
-  waitForPageInit,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils/common';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   FileType,
   verifyFileExport,
@@ -52,22 +48,10 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
-
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
 
 test.describe('Ketcher bugs in 3.2.0', () => {
   test.beforeAll(async ({ browser }) => {
@@ -908,7 +892,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await keyboardTypeOnCanvas(page, 'AA');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomer(page, 'P');
+    const symbolP = page
+      .getByTestId('ketcher-canvas')
+      .getByText('P', { exact: true });
+    await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomer);
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page, {

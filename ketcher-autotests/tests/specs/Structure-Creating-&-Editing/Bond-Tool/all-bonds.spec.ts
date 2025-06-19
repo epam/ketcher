@@ -47,6 +47,8 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -563,8 +565,8 @@ test.describe('Bond Tool', () => {
     await clickOnTheCanvas(page, point.x, point.y);
     await dragMouseTo(x + 50, y, page);
     await takeEditorScreenshot(page);
-    await rightClickOnBond(page, BondType.DOUBLE, 0);
-    await page.getByText('Edit selected bonds...').click();
+    const point1 = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    await ContextMenu(page, point1).click(MicroBondOption.EditSelectedBonds);
     await page.getByTestId('topology-input-span').click();
     await selectOption(page, 'Ring');
     await pressButton(page, 'Apply');

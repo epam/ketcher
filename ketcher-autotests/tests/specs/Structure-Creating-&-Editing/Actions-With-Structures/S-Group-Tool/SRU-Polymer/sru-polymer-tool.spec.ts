@@ -30,6 +30,8 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -141,8 +143,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await selectRepeatPattern(page, SGroupRepeatPattern.HeadToHead);
     await takeEditorScreenshot(page);
   });
@@ -156,8 +157,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
   });
@@ -172,8 +172,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await page.getByLabel('Polymer label').fill(polymerLabel);
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);

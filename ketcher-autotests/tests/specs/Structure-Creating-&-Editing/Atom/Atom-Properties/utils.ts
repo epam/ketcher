@@ -1,6 +1,16 @@
 import { Page } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MicroAtomOption,
+  QueryAtomOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { pressButton, clickOnAtom, resetCurrentTool } from '@utils';
+import {
+  pressButton,
+  clickOnAtom,
+  resetCurrentTool,
+  getAtomByIndex,
+} from '@utils';
 
 export async function selectAtomLabel(
   page: Page,
@@ -150,9 +160,11 @@ export async function selectRingBondCountOption(
   atomIndex: number,
   optionTestId: string,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring bond count').click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.RingBondCount,
+  ]);
   await page
     .getByRole('menuitem', { name: 'Ring bond count', exact: true })
     .getByTestId(optionTestId)
@@ -165,9 +177,11 @@ export async function selectHCountOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('H count', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.HCount,
+  ]);
   await page
     .locator(
       `div:nth-child(2) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
@@ -181,9 +195,11 @@ export async function selectSubstitutionCountOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Substitution count', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.SubstitutionCount,
+  ]);
   await page
     .locator(
       `div:nth-child(3) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
@@ -197,12 +213,11 @@ export async function selectUnsaturatedOption(
   atomIndex: number,
   selectedOption: string,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Unsaturated$/ })
-    .click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.Unsaturated,
+  ]);
 
   await page.getByTestId(`${selectedOption}-option`).click();
   await resetCurrentTool(page);
@@ -213,9 +228,11 @@ export async function selectImplicitHCountOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Implicit H count', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.ImplicitHCount,
+  ]);
   await page
     .locator(
       `div:nth-child(5) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
@@ -229,9 +246,11 @@ export async function selectAromaticityOption(
   atomIndex: number,
   optionName: string,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Aromaticity', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.Aromaticity,
+  ]);
   await page.getByText(optionName, { exact: true }).click();
   await resetCurrentTool(page);
 }
@@ -241,9 +260,11 @@ export async function selectRingMembershipOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring membership', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.RingMembership,
+  ]);
   await page
     .locator(
       `div:nth-child(7) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
@@ -257,9 +278,11 @@ export async function selectRingSizeOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring size', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.RingSize,
+  ]);
   await page
     .locator(
       `div:nth-child(8) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
@@ -273,9 +296,11 @@ export async function selectConnectivityOption(
   atomIndex: number,
   optionIndex: number,
 ) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Connectivity', { exact: true }).click();
+  const point = await getAtomByIndex(page, { label: 'C' }, atomIndex);
+  await ContextMenu(page, point).click([
+    MicroAtomOption.QueryProperties,
+    QueryAtomOption.Connectivity,
+  ]);
   await page
     .locator(
       `div:nth-child(9) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,

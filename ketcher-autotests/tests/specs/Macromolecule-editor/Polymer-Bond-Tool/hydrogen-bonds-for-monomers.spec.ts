@@ -29,6 +29,8 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 test.setTimeout(40000);
@@ -238,13 +240,6 @@ async function hoverOverConnectionLine(page: Page) {
   await bondLine.hover({ force: true });
 }
 
-async function callContexMenuOverConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.click({ button: 'right', force: true });
-}
-
 async function clickOnConnectionLine(page: Page) {
   const bondLine = getBondLocator(page, {
     bondType: MacroBondDataIds.Hydrogen,
@@ -283,7 +278,10 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
       await hoverOverConnectionLine(page);
 
-      await callContexMenuOverConnectionLine(page);
+      const bondLine = getBondLocator(page, {
+        bondType: MacroBondDataIds.Hydrogen,
+      }).first();
+      await ContextMenu(page, bondLine).open();
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -570,36 +568,31 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
 async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
+  const canvasLocator = page
+    .getByTestId('ketcher-canvas')
+    .getByText(locatorText, { exact: true });
   await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
+    await ContextMenu(page, canvasLocator).click(
+      MonomerOnMicroOption.ExpandMonomer,
+    );
   });
 }
 
 async function collapseMonomer(page: Page) {
-  // await clickInTheMiddleOfTheScreen(page, 'right');
   const canvasLocator = page.getByTestId('ketcher-canvas');
   const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
-
-  if (await attachmentPoint.isVisible()) {
-    await attachmentPoint.click({
-      button: 'right',
-    });
-  } else {
-    await canvasLocator.getByText('O', { exact: true }).first().click({
-      button: 'right',
-    });
-  }
   await waitForRender(page, async () => {
-    await page.getByText('Collapse monomer').click();
+    if (await attachmentPoint.isVisible()) {
+      await ContextMenu(page, attachmentPoint).click(
+        MonomerOnMicroOption.CollapseMonomer,
+      );
+    } else {
+      await ContextMenu(
+        page,
+        canvasLocator.getByText('O', { exact: true }).first(),
+      ).click(MonomerOnMicroOption.CollapseMonomer);
+    }
   });
 }
 

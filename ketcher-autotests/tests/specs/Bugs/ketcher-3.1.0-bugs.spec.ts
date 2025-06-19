@@ -25,6 +25,7 @@ import {
   takeElementScreenshot,
   waitForMonomerPreview,
   copyContentToClipboard,
+  getAtomByIndex,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -52,6 +53,9 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { Sugars } from '@constants/monomers/Sugars';
+import { getBondByIndex } from '@utils/canvas/bonds';
 
 let page: Page;
 
@@ -180,7 +184,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       page,
       'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
     );
-    await clickOnAtom(page, 'C', 4, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 4);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -210,12 +215,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.[dR](A+C+G+U)P.R(A)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await getMonomerLocator(page, {
-      monomerAlias: 'R',
-      monomerType: MonomerType.Sugar,
-    })
-      .first()
-      .click({ button: 'right', force: true });
+    const sugarR = getMonomerLocator(page, Sugars.R).first();
+
+    await ContextMenu(page, sugarR).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -326,7 +328,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       page,
       'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
-    await clickOnBond(page, BondType.SINGLE, 2, 'right');
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 

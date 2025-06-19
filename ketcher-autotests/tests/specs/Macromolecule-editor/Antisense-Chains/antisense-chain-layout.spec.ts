@@ -31,6 +31,8 @@ import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { Chem } from '@constants/monomers/Chem';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -636,14 +638,6 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
   await resetZoomLevelToDefault(page);
 });
 
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorOptions: MonomerLocatorOptions,
-) {
-  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
-  await canvasLocator.click({ button: 'right', force: true });
-}
-
 const longChain: IMonomer = {
   id: 1,
   monomerDescription: '',
@@ -682,11 +676,10 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   }
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-  await createAntisenseStrandOption.click();
+  const monomer = getMonomerLocator(page, chain.monomerLocatorOptions);
+  await ContextMenu(page, monomer).click(
+    MonomerOption.CreateAntisenseRNAStrand,
+  );
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

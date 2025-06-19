@@ -68,6 +68,14 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import {
+  collapseMonomer,
+  collapseMonomers,
+  expandMonomer,
+  expandMonomers,
+} from '@utils/canvas/monomer/helpers';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -105,14 +113,6 @@ async function interactWithMicroMolecule(
   } else if (action === 'click') {
     await element.click();
   }
-}
-
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorOptions: MonomerLocatorOptions,
-) {
-  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
-  await canvasLocator.click({ button: 'right', force: true });
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
@@ -684,11 +684,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('1Nal').click({ button: 'right' });
-    await page.getByText('Expand monomers').click();
+    await expandMonomer(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    await page.getByText('NH').click({ button: 'right' });
-    await page.getByText('Collapse monomers').click();
+    await collapseMonomers(page, page.getByText('NH'));
     await takeEditorScreenshot(page);
   });
 
@@ -873,12 +871,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, Bases.DNA_N);
-    const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
+    const baseDNAN = getMonomerLocator(page, Bases.DNA_N).first();
+    await ContextMenu(page, baseDNAN).click(
+      MonomerOption.CreateAntisenseRNAStrand,
+    );
 
-    await createAntisenseStrandOption.click();
     await takeEditorScreenshot(page);
     await verifyHELMExport(
       page,
@@ -955,8 +952,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/modified-phosphates.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('mph').first().click({ button: 'right' });
-    await page.getByText('Expand monomers').click();
+    await expandMonomers(page, page.getByText('mph').first());
     await takeEditorScreenshot(page);
   });
 
@@ -980,12 +976,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Library(page).selectMonomer(Bases.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page
+    const baseA = page
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })
-      .getByText('A', { exact: true })
-      .click({ button: 'right' });
-    await page.getByText('Expand monomer').click();
+      .getByText('A', { exact: true });
+    await expandMonomer(page, baseA);
     await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180);
     await takeEditorScreenshot(page);

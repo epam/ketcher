@@ -14,6 +14,7 @@ import {
   waitForAtomPropsModal,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  getAtomByIndex,
 } from '@utils';
 
 import {
@@ -62,6 +63,8 @@ import {
   PeriodicTableElement,
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1554,8 +1557,8 @@ test.describe('Atom Properties', () => {
 
     const anyAtom = 2;
     await drawBenzeneRing(page);
-    await clickOnAtom(page, 'C', anyAtom, 'right');
-    await page.getByText('Query properties').click();
+    const point = await getAtomByIndex(page, { label: 'C' }, anyAtom);
+    await ContextMenu(page, point).click(MicroAtomOption.QueryProperties);
 
     for (const option of optionsToClick) {
       if (option === 'Unsaturated') {

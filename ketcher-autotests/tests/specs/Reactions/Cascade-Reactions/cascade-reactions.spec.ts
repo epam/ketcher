@@ -34,11 +34,12 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function addTail(page: Page, x: number, y: number) {
-  await page.mouse.click(x, y, { button: 'right' });
   await waitForRender(page, async () => {
-    await page.getByText('Add new tail').click();
+    await ContextMenu(page, { x, y }).click(MultiTailedArrowOption.AddNewTail);
   });
 }
 

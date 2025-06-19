@@ -26,6 +26,9 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -80,8 +83,10 @@ test.describe('Sequence mode selection for edit mode', () => {
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
   });
 
@@ -266,8 +271,10 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.getByText('G').first().click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

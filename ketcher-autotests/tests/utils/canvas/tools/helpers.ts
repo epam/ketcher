@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
+import { SequenceType, waitForRender } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
@@ -27,17 +27,6 @@ export async function selectSequenceLayoutModeTool(page: Page) {
 
   await sequenceModeButton.waitFor({ state: 'visible' });
   await sequenceModeButton.click();
-}
-
-export async function startNewSequence(page: Page) {
-  const newSequenceCellCoordinates = { x: 50, y: 50 };
-  await clickOnCanvas(page, 200, 200, { button: 'right' });
-  await page.getByTestId('start_new_sequence').click();
-  await clickOnCanvas(
-    page,
-    newSequenceCellCoordinates.x,
-    newSequenceCellCoordinates.y,
-  );
 }
 
 export async function switchSequenceEnteringType(

@@ -1,4 +1,6 @@
 import { Page, test } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   AtomsSetting,
@@ -126,8 +128,7 @@ test.describe('Atom Settings', () => {
     await resetCurrentTool(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Query properties').click();
+    await ContextMenu(page, point).click(MicroAtomOption.QueryProperties);
     await ringBondCountQuery(page, 'Ring bond count');
     await substitutionCountQuery(page, 'Substitution count');
     await aromaticityQuery(page, 'Aromaticity');

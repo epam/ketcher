@@ -10,6 +10,7 @@ import {
   selectSnakeLayoutModeTool,
   keyboardPressOnCanvas,
   selectSequenceLayoutModeTool,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -349,6 +350,321 @@ test.describe('Tests for Ruler', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('50');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 12: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 Peptides', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Drag ruler slider to the right and verify that the layout is changed
+     * 3. Drag ruler slider to the left and verify that the layout is changed
+     * 4. Switch to Snake mode
+     * 5. Drag ruler slider to the right and verify that the layout is changed
+     * 6. Drag ruler slider to the left and verify that the layout is changed
+     * 7. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-peptides.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 13: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 Peptides', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Set the ruler value to 10
+     * 3. Set the ruler value to 40
+     * 4. Switch to Snake mode
+     * 5. Set the ruler value to 7
+     * 6. Set the ruler value to 12
+     * 7. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-peptides.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('10');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('40');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('7');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('12');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 14: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Drag ruler slider to the right and verify that the layout is changed
+     * 3. Drag ruler slider to the left and verify that the layout is changed
+     * 4. Switch to Snake mode
+     * 5. Drag ruler slider to the right and verify that the layout is changed
+     * 6. Drag ruler slider to the left and verify that the layout is changed
+     * 7. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-dna-monomers.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 15: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Set the ruler value to 10
+     * 3. Set the ruler value to 40
+     * 4. Switch to Snake mode
+     * 5. Set the ruler value to 7
+     * 6. Set the ruler value to 12
+     * 7. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-dna-monomers.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('10');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('40');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('7');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('12');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: Change layout by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Open Calculate properties window
+     * 3. Drag ruler slider to the right and verify that the layout is changed
+     * 4. Drag ruler slider to the left and verify that the layout is changed
+     * 5. Switch to Snake mode
+     * 6. Drag ruler slider to the right and verify that the layout is changed
+     * 7. Drag ruler slider to the left and verify that the layout is changed
+     * 8. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-dna-monomers.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 17: Change layout by set lenght in ruler slider in Sequence and Snake mode when opened Calculate properties window', async () => {
+    /*
+     * Version: 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Open Calculate properties window
+     * 3. Set the ruler value to 10
+     * 4. Set the ruler value to 40
+     * 5. Switch to Snake mode
+     * 6. Set the ruler value to 7
+     * 7. Set the ruler value to 12
+     * 8. Take screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-peptides.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('10');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('40');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('7');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('12');
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

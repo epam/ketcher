@@ -123,8 +123,8 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
+      'Molfiles-V2000/create-template-with-simple-objects.mol',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
@@ -150,8 +150,8 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
-      'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
+      'Rxn-V2000/create-template-with-reaction-arrow.rxn',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
@@ -174,7 +174,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(3)
     Description: Template is copied and pasted as expected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -185,7 +185,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(4)
     Description: Template is cut and pasted as expected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -253,7 +253,7 @@ test.describe('Create and Save Templates', () => {
       Description: Template attached to structure on canvas.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -344,7 +344,7 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-1721
       Description: The scrollbar in the structure field is present.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page, false);
     await getEditorScreenshot(page);
   });

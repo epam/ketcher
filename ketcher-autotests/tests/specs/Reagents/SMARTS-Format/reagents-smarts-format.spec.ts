@@ -30,8 +30,8 @@ test.describe('Reagents SMARTS format', () => {
     format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -60,8 +60,8 @@ test.describe('Reagents SMARTS format', () => {
     )
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
 
     await verifyFileExport(
@@ -96,7 +96,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
     */
-    await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/expected-smarts-below.smarts');
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +107,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4706
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
-    await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/not-list-atoms-smarts.smarts');
     await takeEditorScreenshot(page);
   });
 });
@@ -123,8 +123,8 @@ test.describe('Reagents SMARTS format', () => {
     Description: File saved in format (e.g. "ketcher.smarts")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(

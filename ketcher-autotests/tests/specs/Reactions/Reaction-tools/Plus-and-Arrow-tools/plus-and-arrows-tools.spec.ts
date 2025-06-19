@@ -103,8 +103,8 @@ test.describe('Plus and Arrows tools ', () => {
     for (const tool of Object.values(ArrowType)) {
       test(` ${counter}. ${tool} check`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
           page,
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         );
         await LeftToolbar(page).selectArrowTool(tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
@@ -159,7 +159,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     const xOffsetFromCenter1 = -235;
     const xOffsetFromCenter2 = 235;
-    await openFileAndAddToCanvas('Molfiles-V2000/four-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/four-structures.mol');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnTheCanvas(page, xOffsetFromCenter1, 0);
     await clickOnTheCanvas(page, xOffsetFromCenter2, 0);
@@ -195,7 +195,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -296,7 +296,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -372,8 +372,8 @@ test.describe('Plus and Arrows tools ', () => {
 
     async function configureInitialState(page: Page) {
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(
         ArrowType.ArrowEquilibriumFilledHalfBow,
@@ -466,8 +466,8 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Actions on the reaction with non-default reaction arrows
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       page,
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.FailedArrow);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -504,8 +504,8 @@ test.describe('Plus and Arrows tools ', () => {
      */
     test('add default arrow and save in KET file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
       const offsetFromCenter = -35;
@@ -516,8 +516,8 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'KET/default-reaction-arrow-tool-saving.ket',
         page,
+        'KET/default-reaction-arrow-tool-saving.ket',
       );
     });
   });
@@ -529,8 +529,8 @@ test.describe('Plus and Arrows tools ', () => {
      */
     test('add non default arrow and save in KET file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(
         ArrowType.ArrowEquilibriumFilledHalfBow,
@@ -543,8 +543,8 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'KET/non-default-reaction-arrow-tool-saving.ket',
         page,
+        'KET/non-default-reaction-arrow-tool-saving.ket',
       );
     });
   });
@@ -556,8 +556,8 @@ test.describe('Plus and Arrows tools ', () => {
      */
     test('add non default arrow and save in RXN file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(
         ArrowType.ArrowEquilibriumFilledHalfBow,
@@ -568,8 +568,8 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Other-Files/non-default-reaction-arrow-tool-saving.rxn',
         page,
+        'Other-Files/non-default-reaction-arrow-tool-saving.rxn',
       );
     });
   });
@@ -582,8 +582,8 @@ test.describe('Plus and Arrows tools ', () => {
     for (const { name, fileExtension } of formatsForSave) {
       test(`save in ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
           page,
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         );
         await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
         await clickOnTheCanvas(page, xOffsetFromCenter, 15);
@@ -593,8 +593,8 @@ test.describe('Plus and Arrows tools ', () => {
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `Other-Files/default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
+          `Other-Files/default-reaction-arrow-tool-saving.${fileExtension}`,
         );
       });
     }
@@ -608,8 +608,8 @@ test.describe('Plus and Arrows tools ', () => {
     for (const { name, fileExtension } of formatsForSave) {
       test(`save in ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
           page,
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         );
         await LeftToolbar(page).selectArrowTool(
           ArrowType.ArrowEquilibriumOpenAngle,
@@ -620,8 +620,8 @@ test.describe('Plus and Arrows tools ', () => {
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `Other-Files/non-default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
+          `Other-Files/non-default-reaction-arrow-tool-saving.${fileExtension}`,
         );
       });
     }
@@ -634,8 +634,8 @@ test.describe('Plus and Arrows tools ', () => {
      */
     test('Resize and save', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
@@ -650,14 +650,14 @@ test.describe('Plus and Arrows tools ', () => {
       /*
        */
       await openFileAndAddToCanvas(
-        `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
         page,
+        `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
       );
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
       await openFileAndAddToCanvas(
-        `KET/resizing-reaction-arrow-saving.ket`,
         page,
+        `KET/resizing-reaction-arrow-saving.ket`,
       );
     });
   });

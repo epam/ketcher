@@ -24,7 +24,7 @@ test.describe('Flex mode copy&paste', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
   });
 

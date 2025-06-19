@@ -31,7 +31,7 @@ test.describe('Mapping Tools', () => {
     /* Test case: EPMLSOPKET-1799, EPMLSOPKET-8909
     Description:  Click atoms to map atoms in a reaction
     */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
@@ -45,7 +45,7 @@ test.describe('Mapping Tools', () => {
 
   test.describe('Mapping Tools', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/mapped-atoms.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-atoms.rxn');
     });
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('Mapping Tools', () => {
 
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
-    await openFileAndAddToCanvas('Rxn-V2000/mapped-rection-benz.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -78,7 +78,7 @@ test.describe('Mapping Tools', () => {
   test('Click atoms to map atoms of reactants or products', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
@@ -107,7 +107,7 @@ test.describe('Mapping Tools', () => {
 
   test.describe('Mapping reactions', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
       await clickInTheMiddleOfTheScreen(page);
     });
 
@@ -143,7 +143,7 @@ test.describe('Mapping reactions', () => {
     Test case: EPMLSOPKET-1830
     Description: Structure with attachment points saved as .rxn file
     */
-    await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/mapped-reaction-expected.rxn',

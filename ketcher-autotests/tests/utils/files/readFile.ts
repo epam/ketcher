@@ -10,8 +10,8 @@ import {
   clickOnCanvas,
   MacroFileType,
   delay,
+  StructureFormat,
 } from '@utils';
-import { waitForLoad } from '@utils/common';
 import { MolfileFormat } from 'ketcher-core';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -35,7 +35,7 @@ export async function readFileContent(filePath: string) {
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
-export async function openFile(filename: string, page: Page) {
+export async function openFile(page: Page, filename: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   // Start waiting for file chooser before clicking. Note no await.
@@ -80,16 +80,13 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
  * Should be used to prevent extra delay() calls in test cases
  */
 export async function openFileAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
+  await openFile(page, filename);
 
   await waitForLoadAndRender(page, async () => {
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
@@ -107,70 +104,48 @@ export async function openFileAndAddToCanvas(
 }
 
 export async function openFileAndAddToCanvasMacro(
-  filename: string,
   page: Page,
-  typeDropdownOption?: SequenceMonomerType,
+  filename: string,
+  structureFormat: StructureFormat = MacroFileType.Ket,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
-  if (typeDropdownOption) {
-    await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
-  }
+  await openFile(page, filename);
+  await setupStructureFormatComboboxes(page, structureFormat);
   await PasteFromClipboardDialog(page).addToCanvas({
     errorMessageExpected,
   });
 }
 
 export async function openFileAndAddToCanvasAsNewProjectMacro(
-  filename: string,
   page: Page,
-  typeDropdownOption?: SequenceMonomerType,
+  filename: string,
+  structureFormat: StructureFormat = MacroFileType.Ket,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
-  if (typeDropdownOption) {
-    await PasteFromClipboardDialog(page).selectMonomerType(typeDropdownOption);
-  }
-
+  await openFile(page, filename);
+  await setupStructureFormatComboboxes(page, structureFormat);
   await PasteFromClipboardDialog(page).openAsNew({
     errorMessageExpected,
   });
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
-  filename: string,
   page: Page,
-  errorExpected = false,
+  filename: string,
+  errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
-  await openFile(filename, page);
-
-  await selectOptionInDropdown(filename, page);
-
-  if (errorExpected) {
-    await waitForLoad(page, async () => {
-      await PasteFromClipboardDialog(page).openAsNewButton.click();
-    });
-  } else {
-    await waitForLoadAndRender(page, async () => {
-      await PasteFromClipboardDialog(page).openAsNewButton.click();
-    });
-  }
+  await openFile(page, filename);
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
 }
 
 export async function openImageAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   x?: number,
   y?: number,
 ) {
@@ -211,9 +186,7 @@ export async function pasteFromClipboardAndAddToCanvas(
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
-  await PasteFromClipboardDialog(page).openStructureTextarea.fill(
-    fillStructure,
-  );
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
   await PasteFromClipboardDialog(page).addToCanvas({
     errorMessageExpected,
   });
@@ -226,12 +199,53 @@ export async function pasteFromClipboardAndOpenAsNewProject(
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
-  await PasteFromClipboardDialog(page).openStructureTextarea.fill(
-    fillStructure,
-  );
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
   await PasteFromClipboardDialog(page).openAsNew({
     errorMessageExpected,
   });
+}
+
+async function setupStructureFormatComboboxes(
+  page: Page,
+  structureFormat: StructureFormat,
+) {
+  let structureType: MacroFileType = MacroFileType.Ket;
+  let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
+  let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
+
+  if (Array.isArray(structureFormat)) {
+    const [tmpFastaOrSequenceStructureType, tmpSequenceOrFastaType] =
+      structureFormat;
+    structureType = tmpFastaOrSequenceStructureType;
+    if (Array.isArray(tmpSequenceOrFastaType)) {
+      const [tmpSequenceMonomerType, tmpPetideType] = tmpSequenceOrFastaType;
+      sequenceOrFastaType = tmpSequenceMonomerType;
+      peptideType = tmpPetideType;
+    } else {
+      sequenceOrFastaType = tmpSequenceOrFastaType;
+    }
+  } else {
+    structureType = structureFormat;
+  }
+  if (structureFormat !== MacroFileType.Ket) {
+    await PasteFromClipboardDialog(page).selectContentType(structureType);
+  }
+
+  if (
+    structureType === MacroFileType.Sequence ||
+    structureType === MacroFileType.FASTA
+  ) {
+    await PasteFromClipboardDialog(page).selectMonomerType(sequenceOrFastaType);
+
+    if (
+      sequenceOrFastaType === SequenceMonomerType.Peptide &&
+      peptideType === PeptideLetterCodeType.threeLetterCode
+    ) {
+      await PasteFromClipboardDialog(page).selectPeptideLetterType(
+        PeptideLetterCodeType.threeLetterCode,
+      );
+    }
+  }
 }
 
 /**
@@ -270,71 +284,14 @@ export async function pasteFromClipboardAndOpenAsNewProject(
  */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
-  structureFormat:
-    | Exclude<MacroFileType, MacroFileType.Sequence | MacroFileType.FASTA>
-    | [MacroFileType.FASTA, SequenceMonomerType]
-    | [
-        MacroFileType.Sequence,
-        Exclude<SequenceMonomerType, SequenceMonomerType.Peptide>,
-      ]
-    | [
-        MacroFileType.Sequence,
-        [SequenceMonomerType.Peptide, PeptideLetterCodeType],
-      ],
+  structureFormat: StructureFormat,
   fillStructure: string,
   errorMessageExpected = false,
 ) {
-  const monomerTypeSelector =
-    PasteFromClipboardDialog(page).monomerTypeSelector;
-  const openStructureTextarea =
-    PasteFromClipboardDialog(page).openStructureTextarea;
-
-  let structureType: MacroFileType = MacroFileType.Ket;
-  let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
-  let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
-
-  if (Array.isArray(structureFormat)) {
-    const [tmpFastaOrSequenceStructureType, tmpSequenceOrFastaType] =
-      structureFormat;
-    structureType = tmpFastaOrSequenceStructureType;
-    if (Array.isArray(tmpSequenceOrFastaType)) {
-      const [tmpSequenceMonomerType, tmpPetideType] = tmpSequenceOrFastaType;
-      sequenceOrFastaType = tmpSequenceMonomerType;
-      peptideType = tmpPetideType;
-    } else {
-      sequenceOrFastaType = tmpSequenceOrFastaType;
-    }
-  } else {
-    structureType = structureFormat;
-  }
-
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
-
-  if (structureFormat !== MacroFileType.Ket) {
-    await PasteFromClipboardDialog(page).selectContentType(structureType);
-  }
-
-  if (
-    structureType === MacroFileType.Sequence ||
-    structureType === MacroFileType.FASTA
-  ) {
-    monomerTypeSelector.click();
-    const lowCaseSequenceFormat = sequenceOrFastaType.toLowerCase();
-    await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
-
-    if (
-      sequenceOrFastaType === SequenceMonomerType.Peptide &&
-      peptideType === PeptideLetterCodeType.threeLetterCode
-    ) {
-      await PasteFromClipboardDialog(page).selectPeptideLetterType(
-        PeptideLetterCodeType.threeLetterCode,
-      );
-    }
-  }
-
-  await openStructureTextarea.fill(fillStructure);
-
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
   await PasteFromClipboardDialog(page).addToCanvas({ errorMessageExpected });
 }
 

@@ -38,12 +38,16 @@ export const useLibraryItemDrag = (
           ?.getBoundingClientRect();
         if (canvasWrapperBoundingClientRect) {
           const { top, left, right, bottom } = canvasWrapperBoundingClientRect;
+          const transform = ZoomTool.instance.zoomTransform;
+          const adjustedX = x - left + 15;
+          const adjustedY = y - top + 15;
+          const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
           const mouseWithinCanvas =
             x >= left && x <= right && y >= top && y <= bottom;
           if (mouseWithinCanvas) {
             editor?.events.placeLibraryItemOnCanvas.dispatch(item, {
-              x: x - left,
-              y: y - top,
+              x: scaledX,
+              y: scaledY,
             });
           }
         }

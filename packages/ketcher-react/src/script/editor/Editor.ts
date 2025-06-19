@@ -924,19 +924,11 @@ function useToolIfNeeded(
 
   editor.lastEvent = event;
 
-  const isHoverEvent = eventHandlerName === 'mousemove';
-
-  const contextMenuOK = isHoverEvent
-    ? true
-    : isContextMenuClosed(editor.contextMenu);
-
   const conditions = [
     eventHandlerName in editorTool,
-
     clientArea.contains(event.target as Node) ||
       editorTool.isSelectionRunning?.(),
-
-    contextMenuOK,
+    eventHandlerName === 'mousemove' || isContextMenuClosed(editor.contextMenu),
   ];
 
   if (conditions.every((c) => c)) {

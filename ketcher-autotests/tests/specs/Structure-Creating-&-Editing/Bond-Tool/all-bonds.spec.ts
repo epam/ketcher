@@ -16,7 +16,6 @@ import {
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
-  rightClickOnBond,
   selectOption,
   waitForPageInit,
   waitForRender,

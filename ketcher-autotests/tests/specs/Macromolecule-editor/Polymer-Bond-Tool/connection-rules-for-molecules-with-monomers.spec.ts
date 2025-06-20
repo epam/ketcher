@@ -13,8 +13,6 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
-  clickOnAtom,
-  clickOnBond,
   getAtomByIndex,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,

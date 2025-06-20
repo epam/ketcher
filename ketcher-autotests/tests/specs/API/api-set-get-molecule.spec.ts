@@ -13,7 +13,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  clickOnCanvas,
   readFileContent,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';

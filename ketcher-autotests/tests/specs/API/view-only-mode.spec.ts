@@ -11,7 +11,6 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   moveOnAtom,
-  clickOnAtom,
   pressButton,
   dragMouseTo,
   selectAllStructuresOnCanvas,

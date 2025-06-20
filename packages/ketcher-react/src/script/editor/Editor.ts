@@ -923,8 +923,9 @@ function useToolIfNeeded(
   editor.lastEvent = event;
   const conditions = [
     eventHandlerName in editorTool,
-    clientArea.contains(event.target) || editorTool.isSelectionRunning?.(),
-    isContextMenuClosed(editor.contextMenu),
+    clientArea.contains(event.target as Node) ||
+      editorTool.isSelectionRunning?.(),
+    eventHandlerName === 'mousemove' || isContextMenuClosed(editor.contextMenu),
   ];
 
   if (conditions.every((condition) => condition)) {

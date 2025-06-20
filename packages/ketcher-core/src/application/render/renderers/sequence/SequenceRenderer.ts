@@ -227,11 +227,13 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
-        const lineLength =
-          SettingsManager.editorLineLength['sequence-layout-mode'];
         this.showNewSequenceButton(
           chainIndex,
-          Math.min(chain.lastRow.sequenceViewModelItems.length, lineLength),
+          Math.max(
+            chain.lastRow.sequenceViewModelItems.length,
+            sequenceViewModel.chains[chainIndex + 1]?.firstRow
+              ?.sequenceViewModelItems.length || 0,
+          ),
         );
       }
     });

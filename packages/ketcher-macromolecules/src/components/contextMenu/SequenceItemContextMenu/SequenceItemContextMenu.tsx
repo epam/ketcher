@@ -1,14 +1,17 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  Icon,
+  IconName,
+} from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import {
-  BaseSequenceItemRenderer,
   NodesSelection,
   BaseMonomer,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
@@ -17,6 +20,7 @@ import {
   BackBoneSequenceNode,
   Chain,
   ITwoStrandedChainItem,
+  BaseSequenceItemRenderer,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -85,6 +89,20 @@ export const SequenceItemContextMenu = ({
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
   );
+  const hasHydrogenBonds =
+    selections?.some((selectionRange) => {
+      return selectionRange.some((selection) => {
+        return isNodeContainHydrogenBonds(selection.node);
+      });
+    }) ?? false;
+
+  const isAntisenseBlockVisible =
+    selectedMonomers?.length > 0 && isAntisenseOptionVisible(selectedMonomers);
+  const isHydrogenBondBlockVisible =
+    !isEstablishHydrogenBondDisabled(selections) || hasHydrogenBonds;
+  const isModifyBlockVisible =
+    !!modifyAminoAcidsMenuItems.length ||
+    (menuProps?.isSelectedOnlyNucleoelements && !menuProps.hasAntisense);
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -105,13 +123,31 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.copy,
       title: 'Copy',
+      icon: <Icon name={'copyMenu' as IconName} />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
+      icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: false,
       separator: true,
+    },
+    {
+      name: SequenceItemContextMenuNames.editSequence,
+      title: 'Edit sequence',
+      disabled: false,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => !props?.sequenceItemRenderer,
+    },
+    {
+      name: SequenceItemContextMenuNames.startNewSequence,
+      title: 'Start new sequence',
+      disabled: false,
+      separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
@@ -126,6 +162,49 @@ export const SequenceItemContextMenu = ({
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
+    },
+    {
+      name: SequenceItemContextMenuNames.establishHydrogenBond,
+      title: 'Establish Hydrogen Bonds',
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+              props?.sequenceItemRenderer?.twoStrandedNode,
+            )
+          : isEstablishHydrogenBondDisabled(selections);
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => !props?.sequenceItemRenderer,
+    },
+    {
+      name: SequenceItemContextMenuNames.deleteHydrogenBond,
+      title: 'Remove hydrogen bonds',
+      separator: isModifyBlockVisible,
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? !isNodeContainHydrogenBonds(props?.sequenceItemRenderer?.node)
+          : !selections?.some((selectionRange) => {
+              return selectionRange.some((selection) => {
+                return isNodeContainHydrogenBonds(selection.node);
+              });
+            });
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => !props?.sequenceItemRenderer,
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
@@ -151,73 +230,10 @@ export const SequenceItemContextMenu = ({
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
-      name: SequenceItemContextMenuNames.editSequence,
-      title: 'Edit sequence',
-      disabled: false,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
-    },
-    {
-      name: SequenceItemContextMenuNames.startNewSequence,
-      title: 'Start new sequence',
-      disabled: false,
-    },
-    {
-      name: SequenceItemContextMenuNames.establishHydrogenBond,
-      title: 'Establish Hydrogen Bonds',
-      disabled: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return selections?.length === 0
-          ? isTwoStrandedNodeRestrictedForHydrogenBondCreation(
-              props?.sequenceItemRenderer?.twoStrandedNode,
-            )
-          : isEstablishHydrogenBondDisabled(selections);
-      },
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
-    },
-    {
-      name: SequenceItemContextMenuNames.deleteHydrogenBond,
-      title: 'Delete Hydrogen Bonds',
-      separator: true,
-      disabled: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return selections?.length === 0
-          ? !isNodeContainHydrogenBonds(props?.sequenceItemRenderer?.node)
-          : !selections?.some((selectionRange) => {
-              return selectionRange.some((selection) => {
-                return isNodeContainHydrogenBonds(selection.node);
-              });
-            });
-      },
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
-    },
-    {
       name: SequenceItemContextMenuNames.delete,
       title: 'Delete',
       disabled: selectedMonomers?.length === 0,
+      icon: <Icon name={'deleteMenu' as IconName} />,
     },
   ];
 

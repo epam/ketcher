@@ -5,15 +5,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  setBondLengthOptionUnit,
-  setBondLengthValue,
-  pressButton,
-  setReactionMarginSizeOptionUnit,
-  setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
-  setHashSpacingOptionUnit,
-  setHashSpacingValue,
-  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -21,11 +13,19 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import {
+  setACSSettings,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  BondsSetting,
+  GeneralSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +37,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-2956
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-2956.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-2956.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -47,7 +47,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-3086
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-3086.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-3086.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -81,7 +81,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4713
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4713.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4713.cdxml');
     await takeEditorScreenshot(page);
   });
 
@@ -90,7 +90,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4714
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4714.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4714.cdxml');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
@@ -101,7 +101,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4715
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4715.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4715.cdxml');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
@@ -114,13 +114,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4716
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4716.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4716.cdxml');
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -131,7 +131,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4717
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4717.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4717.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -141,7 +141,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4718
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-4718-structures.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-4718-structures.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -151,7 +151,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-6969
      * Description: Open/Import structure CDXML file
      */
-    await openFileAndAddToCanvas('CDXML/cdxml-6969.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-6969.cdxml');
 
     await verifyFileExport(
       page,
@@ -170,8 +170,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
 
     await verifyFileExport(
@@ -190,8 +190,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
 
     await verifyFileExport(
@@ -211,8 +211,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -232,8 +232,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
 
     await verifyFileExport(
@@ -253,8 +253,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
 
     await verifyFileExport(
@@ -274,8 +274,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
 
     await verifyFileExport(
@@ -295,8 +295,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -306,8 +306,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
       page,
+      'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -323,8 +323,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -334,8 +334,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
       page,
+      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -349,8 +349,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await verifyFileExport(
@@ -360,8 +360,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
       page,
+      'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -378,8 +378,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       );
 
       await verifyFileExport(
@@ -389,8 +389,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
         page,
+        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -408,8 +408,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -419,8 +419,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
         page,
+        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -438,8 +438,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -449,8 +449,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
         page,
+        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
       );
       await takeEditorScreenshot(page);
     },
@@ -465,12 +465,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Bond length setting is applied, click on layout and it should be save to CDXML specification
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '54.8');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setSettingsOptions(page, [
+      { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Pt },
+      { option: BondsSetting.BondLength, value: '54.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -481,8 +480,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
       page,
+      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -496,12 +495,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setHashSpacingOptionUnit(page, 'pt-option');
-    await setHashSpacingValue(page, '54.8');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Pt,
+      },
+      { option: BondsSetting.HashSpacing, value: '54.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -510,8 +511,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -525,12 +526,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setHashSpacingOptionUnit(page, 'cm-option');
-    await setHashSpacingValue(page, '7.8');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Cm,
+      },
+      { option: BondsSetting.HashSpacing, value: '7.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -539,8 +542,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -554,12 +557,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await openBondsSettingsSection(page);
-    await setHashSpacingOptionUnit(page, 'inch-option');
-    await setHashSpacingValue(page, '7.8');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.HashSpacingUnits,
+        value: MeasurementUnit.Inch,
+      },
+      { option: BondsSetting.HashSpacing, value: '7.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -568,8 +573,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
       page,
+      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -583,12 +588,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setSettingsOptions(page, [
+      {
+        option: GeneralSetting.ReactionComponentMarginSizeUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: GeneralSetting.ReactionComponentMarginSize, value: '7.8' },
+    ]);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -599,8 +606,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
       page,
+      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -615,11 +622,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   https://github.com/epam/Indigo/issues/2458
   */
     test.slow();
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
@@ -630,8 +634,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/layout-with-dif-elements-acs-style.cdxml',
       page,
+      'CDXML/layout-with-dif-elements-acs-style.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -644,8 +648,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reactant-single-reaction.ket',
       page,
+      'KET/reactant-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -654,8 +658,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/reactant-single-reaction-expected.cdxml',
       page,
+      'CDXML/reactant-single-reaction-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -668,8 +672,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Single reaction containing only products can be saved/loaded from CDXML with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/products-single-reaction.ket',
       page,
+      'KET/products-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -678,8 +682,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/products-single-reaction-expected.cdxml',
       page,
+      'CDXML/products-single-reaction-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -692,8 +696,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -702,8 +706,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
       page,
+      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -716,8 +720,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multiple-individual-reactions.ket',
       page,
+      'KET/multiple-individual-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -726,8 +730,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/multiple-individual-reactions-expected.cdxml',
       page,
+      'CDXML/multiple-individual-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -740,8 +744,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/several-cascade-reactions.ket',
       page,
+      'KET/several-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -750,8 +754,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/several-cascade-reactions-expected.cdxml',
       page,
+      'CDXML/several-cascade-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -764,8 +768,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/combination-of-single-and-cascade-reactions.ket',
       page,
+      'KET/combination-of-single-and-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -774,8 +778,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
       page,
+      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -788,8 +792,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/cascade-of-multiple-reactions.ket',
       page,
+      'KET/cascade-of-multiple-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -798,8 +802,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
       page,
+      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -812,8 +816,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
       page,
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -822,8 +826,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
       page,
+      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });

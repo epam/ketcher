@@ -1,6 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -33,7 +33,7 @@ test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await openFileAndAddToCanvasMacro(fileName, page);
+    await openFileAndAddToCanvasMacro(page, fileName);
     await shiftStructure(page);
   });
 

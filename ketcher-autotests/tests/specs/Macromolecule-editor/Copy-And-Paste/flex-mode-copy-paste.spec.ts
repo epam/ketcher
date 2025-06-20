@@ -11,8 +11,8 @@ import {
   moveMouseAway,
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 const startX = 300;
 const startY = 300;
@@ -24,7 +24,7 @@ test.describe('Flex mode copy&paste', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
   });
 
@@ -38,7 +38,7 @@ test.describe('Flex mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -58,7 +58,7 @@ test.describe('Flex mode copy&paste', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

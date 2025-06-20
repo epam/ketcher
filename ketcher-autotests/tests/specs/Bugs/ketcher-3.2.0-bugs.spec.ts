@@ -19,7 +19,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
-  resetCurrentTool,
   clickOnCanvas,
   setMolecule,
 } from '@utils';
@@ -51,8 +50,8 @@ import {
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -82,7 +81,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -283,7 +282,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(2).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'Delete');
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -384,8 +383,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
       page,
+      'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
     );
     await selectAllStructuresOnCanvas(page);
     const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
@@ -494,8 +493,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
       page,
+      'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -579,7 +578,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -624,7 +623,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -737,8 +736,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/markush.mol',
       page,
+      'Molfiles-V2000/Bugs/markush.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -755,8 +754,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
       page,
+      'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -773,8 +772,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/two-stereostructures.mol',
       page,
+      'Molfiles-V2000/Bugs/two-stereostructures.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -792,8 +791,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
       page,
+      'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -803,8 +802,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'v2000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
       page,
+      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -821,8 +820,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Substitution count.ket',
       page,
+      'KET/Bugs/Substitution count.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -839,8 +838,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Bugs/different-features.mol',
       page,
+      'Molfiles-V2000/Bugs/different-features.mol',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -862,10 +861,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
+      'KET/Bugs/Elliptical arrows can be saved to the png.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -884,10 +883,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/Bugs/stereochemistry.cdxml',
       page,
+      'CDXML/Bugs/stereochemistry.cdxml',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -912,7 +911,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await expandMonomer(page, 'P');
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -930,6 +928,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

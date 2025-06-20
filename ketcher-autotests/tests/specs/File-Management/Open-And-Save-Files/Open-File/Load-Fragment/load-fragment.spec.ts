@@ -76,9 +76,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       /*
        * Test case: EPMLSOPKET-1860, EPMLSOPKET-1854, EPMLSOPKET-1861, EPMLSOPKET-2933
        */
-      await openFileAndAddToCanvas(testCase.firstFile, page);
+      await openFileAndAddToCanvas(page, testCase.firstFile);
       await moveElement(page, testCase.atomType, 0);
-      await openFileAndAddToCanvas(testCase.secondFile, page);
+      await openFileAndAddToCanvas(page, testCase.secondFile);
     });
   }
 
@@ -228,8 +228,8 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test is related to the existing bug: https://github.com/epam/ketcher/issues/3153
      */
     await openFileAndAddToCanvas(
-      'KET/hydrogen-plus-oxygen-arrow-hydrogen.ket',
       page,
+      'KET/hydrogen-plus-oxygen-arrow-hydrogen.ket',
     );
     await verifyFileExport(
       page,

@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   takeEditorScreenshot,
@@ -30,7 +30,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -346,8 +346,8 @@ test.describe('1. User can expand hydrogens for ', () => {
       test.setTimeout(180000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
       );
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
@@ -651,8 +651,8 @@ test.describe('2. User can expand hydrogens for ', () => {
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,
       );
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);

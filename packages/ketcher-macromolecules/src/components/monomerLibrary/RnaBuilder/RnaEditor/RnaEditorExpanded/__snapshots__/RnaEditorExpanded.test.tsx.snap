@@ -7,6 +7,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 >
   <input
     class="css-9n8o5v"
+    data-testid="name-your-structure-editbox"
     placeholder="Name your structure"
     value=""
   />
@@ -142,6 +143,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 >
   <input
     class="css-9n8o5v"
+    data-testid="name-your-structure-editbox"
     disabled=""
     placeholder="Name your structure"
     value="2 nucleotides"
@@ -278,6 +280,7 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
 >
   <input
     class="css-9n8o5v"
+    data-testid="name-your-structure-editbox"
     placeholder="Name your structure"
     value="MyRna"
   />

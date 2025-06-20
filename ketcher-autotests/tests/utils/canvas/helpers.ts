@@ -11,11 +11,10 @@ import {
   clickOnCanvas,
   dragMouseTo,
   moveOnAtom,
-  pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
-import { TemplateLibrary, selectMonomer } from '@utils/selectors';
+import { TemplateLibrary } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -27,9 +26,9 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 export async function openEditDialogForTemplate(
   page: Page,
@@ -314,23 +313,17 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, {
     maxDiffPixels: 1,
   });
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await TopLeftToolbar(page).redo();
-}
-
-export async function resetAllSettingsToDefault(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await pressButton(page, 'Reset');
-  await pressButton(page, 'Apply');
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function addSingleMonomerToCanvas(
@@ -340,7 +333,7 @@ export async function addSingleMonomerToCanvas(
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomer.testId).click();
+  await Library(page).selectMonomer(monomer);
   await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
   await hideMonomerPreview(page);
   return getMonomerLocator(page, monomer).nth(index);
@@ -384,7 +377,7 @@ export async function addMonomerToCenterOfCanvas(
   page: Page,
   monomerType: Monomer,
 ) {
-  await selectMonomer(page, monomerType);
+  await Library(page).selectMonomer(monomerType);
   await clickInTheMiddleOfTheScreen(page);
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,

@@ -14,8 +14,8 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -33,7 +33,7 @@ test.afterAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.describe('Connection rules for Base monomers: ', () => {
@@ -217,7 +217,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
       monomerType: leftMonomer.monomerType,
@@ -228,7 +228,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
     const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,
@@ -1051,7 +1051,7 @@ test.describe('Connection rules for Base monomers: ', () => {
   };
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     await getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
     })
@@ -1062,7 +1062,7 @@ test.describe('Connection rules for Base monomers: ', () => {
   }
 
   async function loadMolecule(page: Page, molecule: IMolecule) {
-    await openFileAndAddToCanvasMacro(molecule.fileName, page);
+    await openFileAndAddToCanvasMacro(page, molecule.fileName);
     await moveMouseAway(page);
   }
 

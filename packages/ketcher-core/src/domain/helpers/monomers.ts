@@ -328,3 +328,59 @@ export function getAllConnectedMonomersRecursively(
 
   return connectedMonomers;
 }
+
+export const canModifyAminoAcid = (
+  monomer: BaseMonomer,
+  modificationMonomerLibraryItem: MonomerItemType,
+) => {
+  return (
+    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+      modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
+    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
+      modificationMonomerLibraryItem.props.MonomerCaps?.R2)
+  );
+};
+
+export const getAminoAcidsToModify = (
+  monomers: BaseMonomer[],
+  modificationType: string,
+  monomersLibrary: MonomerItemType[],
+) => {
+  const naturalAnalogueToModifiedMonomerItem = new Map<
+    string,
+    MonomerItemType
+  >();
+  const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
+
+  monomersLibrary.forEach((libraryItem) => {
+    if (libraryItem.props?.modificationType !== modificationType) {
+      return;
+    }
+    const monomerNaturalAnalogCode = libraryItem.props.MonomerNaturalAnalogCode;
+
+    if (monomerNaturalAnalogCode) {
+      naturalAnalogueToModifiedMonomerItem.set(
+        monomerNaturalAnalogCode,
+        libraryItem,
+      );
+    }
+  });
+
+  monomers.forEach((monomer) => {
+    const monomerNaturalAnalogCode =
+      monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
+      monomerNaturalAnalogCode,
+    );
+
+    if (
+      modifiedMonomerItem &&
+      monomer.label !== modifiedMonomerItem.label &&
+      canModifyAminoAcid(monomer, modifiedMonomerItem)
+    ) {
+      aminoAcidsToModify.set(monomer, modifiedMonomerItem);
+    }
+  });
+
+  return aminoAcidsToModify;
+};

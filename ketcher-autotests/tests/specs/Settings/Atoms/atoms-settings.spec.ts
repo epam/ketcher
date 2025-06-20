@@ -1,44 +1,36 @@
 import { Page, test } from '@playwright/test';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  AtomsSetting,
+  SettingsSection,
+  ShowHydrogenLabelsOption,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import {
+  setSettingsOption,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   resetCurrentTool,
   getAtomByIndex,
   clickOnCanvas,
 } from '@utils';
-import { scrollSettingBar } from '@utils/scrollSettingBar';
 
-const DEFAULT_SCROLLBAR_DELAY = 150;
-
-async function setHydrogenLabelsOn(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
-  await page.getByTestId('show-hydrogen-labels-input-span').click();
-  await page.getByTestId('On-option').click();
-  await pressButton(page, 'Apply');
-}
 async function selectExtendedTableElements(page: Page, element: string) {
   const extendedTableButton = RightToolbar(page).extendedTableButton;
 
   await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
-async function atomDefaultSettings(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('General', { exact: true }).click();
-  await page.getByText('Atoms', { exact: true }).click();
-  // await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
 }
 
 async function ringBondCountQuery(page: Page, menuItem: string) {
@@ -77,7 +69,11 @@ test.describe('Atom Settings', () => {
     // Test case: EPMLSOPKET-10080
     // Verify appear of hydrogen labels on the molecules after changing setting to 'on'
     await drawBenzeneRing(page);
-    await setHydrogenLabelsOn(page);
+    await setSettingsOption(
+      page,
+      AtomsSetting.ShowHydrogenLabels,
+      ShowHydrogenLabelsOption.On,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -100,7 +96,9 @@ test.describe('Atom Settings', () => {
   }) => {
     // Test case: EPMLSOPKET-10076 and EPMLSOPKET-10079
     // Verify the default setting for “Show hydrogen labels”
-    await atomDefaultSettings(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await takeEditorScreenshot(page);
   });
 
@@ -109,9 +107,11 @@ test.describe('Atom Settings', () => {
   }) => {
     // Test case:EPMLSOPKET-10083
     // Verify if the non-terminal atom will Show hydrogen labels when set on Terminal and Hetero
-    await atomDefaultSettings(page);
-    await pressButton(page, 'Apply');
-    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
+    await SettingsDialog(page).apply();
+    await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -121,7 +121,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

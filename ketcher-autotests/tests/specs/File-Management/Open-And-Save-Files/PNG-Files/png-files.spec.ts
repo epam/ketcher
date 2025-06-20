@@ -3,13 +3,12 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  pressButton,
 } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { setACSSettings } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,9 +45,9 @@ test.describe('Saving in .png files', () => {
     test(`Export to PNG: Verify it is possible to export ${description} to PNG`, async ({
       page,
     }) => {
-      await openFileAndAddToCanvas(filename, page);
+      await openFileAndAddToCanvas(page, filename);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -64,11 +63,11 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -83,11 +82,11 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -102,10 +101,10 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -120,11 +119,11 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -139,11 +138,11 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -158,11 +157,11 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -179,14 +178,11 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2458
   https://github.com/epam/Indigo/issues/2457
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await TopRightToolbar(page).Settings();
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
+    await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );

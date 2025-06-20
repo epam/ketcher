@@ -11,7 +11,6 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMonomer,
   clickInTheMiddleOfTheScreen,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -23,9 +22,9 @@ import { Chem } from '@constants/monomers/Chem';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -35,7 +34,7 @@ async function moveMonomersToNewPosition(
   x: number,
   y: number,
 ) {
-  await openFileAndAddToCanvasMacro(filePath, page);
+  await openFileAndAddToCanvasMacro(page, filePath);
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -54,12 +53,12 @@ test.describe('Rectangle Selection Tool', () => {
 
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test.afterEach(async () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
 
@@ -148,7 +147,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Choose peptide
-    await selectMonomer(page, Peptides.Tza);
+    await Library(page).selectMonomer(Peptides.Tza);
 
     // Create 4 peptides on canvas
     await clickOnCanvas(page, 300, 400);
@@ -189,10 +188,10 @@ test.describe('Rectangle Selection Tool', () => {
       x: center.x - shift,
       y: center.y,
     };
-    await selectMonomer(page, Peptides.bAla);
+    await Library(page).selectMonomer(Peptides.bAla);
     await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
 
-    await selectMonomer(page, Peptides.Edc);
+    await Library(page).selectMonomer(Peptides.Edc);
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
     await clickOnCanvas(page, center.x + shift, center.y);
     await page.keyboard.press('Escape');
@@ -310,7 +309,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await selectMonomer(page, Chem.A6OH);
+    await Library(page).selectMonomer(Chem.A6OH);
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -387,7 +386,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await clickOnCanvas(page, x, y);
@@ -407,9 +406,9 @@ test.describe('Rectangle Selection Tool', () => {
     );
     await getMonomerLocator(page, Peptides._2Nal).hover();
     await dragMouseTo(x, y, page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -420,7 +419,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 850;
     const y = 500;
-    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptides.Hhs).hover();
@@ -435,7 +434,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 900;
     const y = 500;
-    await openFileAndAddToCanvasMacro('KET/two-rows-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/two-rows-of-monomers.ket');
     await getMonomerLocator(page, Peptides.Hhs).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -446,11 +445,11 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomers are deleted from canvas and then appears after pressing Undo.
     */
-    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 });

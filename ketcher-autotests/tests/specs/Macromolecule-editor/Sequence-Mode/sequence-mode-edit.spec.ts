@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
-  selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
@@ -37,7 +36,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -45,7 +43,6 @@ import {
   getSymbolLocator,
   turnSyncEditModeOff,
 } from '@utils/macromolecules/monomer';
-import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
   hoverOnSequenceSymbol,
   switchToDNAMode,
@@ -58,8 +55,9 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -217,7 +215,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Added 'U' in the end of sequence.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-sequence.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -239,7 +237,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Added 'U' in the middle of sequence.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-seq-g.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -261,7 +259,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4340
     Description: After adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode.
     */
-    await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/atuc.ket');
     await takeEditorScreenshot(page);
     await getSymbolLocator(page, {
       symbolAlias: 'T',
@@ -281,7 +279,7 @@ test.describe('Sequence edit mode', () => {
     Description: It was decided to restrict adding symbols before separate phosphate to prevent adding of nucleosides
     by entering symbols before the phosphate.
     */
-    await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-g.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -301,7 +299,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4706 https://github.com/epam/ketcher/issues/4706
     Description: It is not possible to add more monomers to cycled scructure. Error message appears.
     */
-    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
     await page
       .getByText('U', { exact: true })
       .first()
@@ -319,7 +317,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4575 https://github.com/epam/ketcher/issues/4575
     Description: It is not possible to add more monomers to cycled structure. Error message appears.
     */
-    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
@@ -339,7 +337,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await hoverOnSequenceSymbol(page, 'A');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -356,7 +354,7 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await hoverOnSequenceSymbol(page, 'A');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -373,7 +371,7 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
 
@@ -395,7 +393,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
-    await selectMonomer(page, Peptides.A);
+    await Library(page).selectMonomer(Peptides.A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -407,7 +405,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await selectMonomer(page, Sugars._25d3r);
+    await Library(page).selectMonomer(Sugars._25d3r);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -419,7 +417,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await selectMonomer(page, Bases.c7A);
+    await Library(page).selectMonomer(Bases.c7A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -431,7 +429,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await selectMonomer(page, Phosphates.ibun);
+    await Library(page).selectMonomer(Phosphates.ibun);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -443,7 +441,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await selectMonomer(page, Nucleotides.Super_T);
+    await Library(page).selectMonomer(Nucleotides.Super_T);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -455,7 +453,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
-    await selectMonomer(page, Chem.DOTA);
+    await Library(page).selectMonomer(Chem.DOTA);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -469,7 +467,7 @@ test.describe('Sequence edit mode', () => {
     */
     await switchToRNAMode(page);
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['A', 'C', '@'];
 
@@ -488,9 +486,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await goToRNATab(page);
-    await toggleRnaBuilderAccordion(page);
-    await page.getByTestId(Presets.dR_U_P.testId).hover();
+    await Library(page).hoverMonomer(Presets.dR_U_P);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -593,7 +589,7 @@ test.describe('Sequence edit mode', () => {
     Description: Double-click on any symbol of sequence, the edit mode turned on AND cursor (blinking line) 
     placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
     */
-    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 4,
@@ -614,7 +610,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -629,7 +625,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -646,7 +642,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -662,7 +658,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -701,7 +697,7 @@ test.describe('Sequence edit mode', () => {
       await keyboardPressOnCanvas(page, symbol);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -717,7 +713,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -871,17 +867,17 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -919,8 +915,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rna-dna-pep-sequence-expected.ket',
       page,
+      'KET/rna-dna-pep-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -960,8 +956,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       page,
+      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1000,7 +996,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1084,8 +1080,8 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/monomer-does-not-have-attachment-point-r2.ket',
       page,
+      'KET/monomer-does-not-have-attachment-point-r2.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
@@ -1185,12 +1181,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1223,12 +1219,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1258,8 +1254,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rna-AAAAAA-sequence-expected.ket',
       page,
+      'KET/rna-AAAAAA-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1291,8 +1287,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/dna-AAAAAA-sequence-expected.ket',
       page,
+      'KET/dna-AAAAAA-sequence-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1324,8 +1320,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
       page,
+      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1358,8 +1354,8 @@ test.describe('Sequence edit mode', () => {
       'v3000',
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       page,
+      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1626,8 +1622,8 @@ test.describe('Sequence edit mode', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
       page,
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1669,8 +1665,8 @@ test.describe('Sequence edit mode', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
       page,
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1700,7 +1696,7 @@ test.describe('Sequence edit mode', () => {
     await callContextMenuForAnySymbol(page);
     await page.getByTestId('copy').click();
     await keyboardPressOnCanvas(page, 'Escape');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await clickOnCanvas(page, 400, 400, { button: 'right' });
     await page.getByTestId('paste').click();
     await takeEditorScreenshot(page, {
@@ -1714,12 +1710,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -24,13 +24,14 @@ import {
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -137,8 +138,8 @@ test.describe('Hot keys', () => {
       Expected: Benzene ring with attachment points copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-attachment-points.ket',
       page,
+      'KET/benzene-ring-with-two-attachment-points.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -164,8 +165,8 @@ test.describe('Hot keys', () => {
       After fixing this bug we need update screenshots.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-attachment-points.ket',
       page,
+      'KET/benzene-ring-with-two-attachment-points.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -191,8 +192,8 @@ test.describe('Hot keys', () => {
       Expected: Structure copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -214,8 +215,8 @@ test.describe('Hot keys', () => {
       Expected: Structure copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -343,8 +344,8 @@ test.describe('Hot keys', () => {
       Expected: Reaction with catalyst above and below arrow copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reaction-with-catalyst.ket',
       page,
+      'KET/reaction-with-catalyst.ket',
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -368,8 +369,8 @@ test.describe('Hot keys', () => {
       Expected: Reaction with catalyst above and below elliptical arrow copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/two-benzene-and-elliptical-arrow.ket',
       page,
+      'KET/two-benzene-and-elliptical-arrow.ket',
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -393,8 +394,8 @@ test.describe('Hot keys', () => {
       Expected: Reaction with a molecula as atom with valence, alias, text and plus copied and moves to a new place.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/two-benzene-valence-alias-text-plus.ket',
       page,
+      'KET/two-benzene-valence-alias-text-plus.ket',
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -419,8 +420,8 @@ test.describe('Hot keys', () => {
       Expected: Aromatize/dearomatize works after moving by ctrl.
       */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/two-benzene-valence-alias-text-plus.ket',
       page,
+      'KET/two-benzene-valence-alias-text-plus.ket',
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -498,8 +499,8 @@ test.describe('Hot keys', () => {
         Expected: Copy/paste works after moving by ctrl.
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/two-benzene-valence-alias-text-plus.ket',
       page,
+      'KET/two-benzene-valence-alias-text-plus.ket',
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -536,14 +537,14 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);
     });
     await page.keyboard.press('Delete');
     await page.mouse.move(x, y);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 });

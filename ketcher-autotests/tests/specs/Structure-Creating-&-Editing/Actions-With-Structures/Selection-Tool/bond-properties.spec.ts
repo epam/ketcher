@@ -20,6 +20,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function selectOption(
   page: Page,
@@ -45,7 +46,7 @@ test.describe('Bond Properties', () => {
       Topology - 'Either',
       Reacting Center - 'Unmarked'.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
     await takeEditorScreenshot(page);
   });
@@ -66,7 +67,7 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.DOUBLE, 2);
     await page.getByText('Double').click();
     let i = 0;
@@ -96,7 +97,7 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.DOUBLE, 2);
     await page.getByText('Double').click();
     let i = 0;
@@ -121,7 +122,7 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.DOUBLE, 2);
     await page.getByText('Double').click();
     let i = 0;
@@ -155,7 +156,7 @@ test.describe('Bond Properties', () => {
             Description: Any bond can be changed with any bond type selected in the 'Type' list.
             *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
           */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await selectOption(page, 'Double', type);
       await pressButton(page, 'Apply');
@@ -168,7 +169,7 @@ test.describe('Bond Properties', () => {
           Description: Any bond can be changed with any bond type selected in the 'Type' list.
           *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
         */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.SINGLE, 2);
     await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
@@ -181,7 +182,7 @@ test.describe('Bond Properties', () => {
      * Description: The saved structure is correctly rendered on the canvas
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.SINGLE, 2);
     await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
@@ -205,7 +206,7 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.DOUBLE, 2);
     await page.getByText('Either').click();
     let i = 0;
@@ -234,7 +235,7 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await page.getByText('Either').click();
       await page.keyboard.press(letter);
@@ -254,7 +255,7 @@ test.describe('Bond Properties', () => {
           *.mol file should be correctly opened, applied bond property should be correctly represented.
         */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.SINGLE, 2);
     await selectOption(page, 'Either', 'Ring');
     await pressButton(page, 'Apply');
@@ -282,8 +283,8 @@ test.describe('Bond Properties', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/mol_1461_to_open-expected.mol',
       page,
+      'Molfiles-V2000/mol_1461_to_open-expected.mol',
     );
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
@@ -304,7 +305,7 @@ test.describe('Bond Properties', () => {
           User is able to select the Reacting Center by typing the N, C, M, O, U letters.
         */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await doubleClickOnBond(page, BondType.DOUBLE, 2);
     await page.getByText('Unmarked').click();
     let i = 0;
@@ -333,7 +334,7 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await page.getByText('Unmarked').click();
       await page.keyboard.press(letter);
@@ -374,7 +375,7 @@ test.describe('Bond Properties', () => {
           we can`t  open the file
         */
 
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
 
     for (let i = 0; i < rCOptions.length - 1; i++) {
       await doubleClickOnBond(page, BondType.SINGLE, i);
@@ -408,8 +409,8 @@ test.describe('Bond Properties', () => {
     */
 
     await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
       page,
+      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
     );
     await doubleClickOnBond(page, BondType.SINGLE, 8);
     await selectOption(page, 'Unmarked', 'Center');
@@ -431,7 +432,7 @@ test.describe('Bond Properties', () => {
         Selected bonds are highlighted green color.
  */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
     await selectAllStructuresOnCanvas(page);
     await doubleClickOnBond(page, BondType.SINGLE, 1);
     await selectOption(page, 'Single', 'Double');
@@ -470,7 +471,7 @@ test.describe('Bond Properties', () => {
         *.mol and *.rxn files correctly opened, applied atom property correctly represented.
     */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
     await selectOption(page, 'Single', 'Double');
@@ -509,8 +510,8 @@ test.describe('Bond Properties', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/mol_1465_to_open-expected.mol',
       page,
+      'Molfiles-V2000/mol_1465_to_open-expected.mol',
     );
     await doubleClickOnBond(page, BondType.SINGLE, 5);
     await selectOption(page, 'Single', 'Single Up');
@@ -526,7 +527,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, x + 150, y + 150);
 
     await verifyFileExport(
@@ -548,8 +549,8 @@ test.describe('Bond Properties', () => {
         *.mol and *.rxn files correctly opened, applied atom property correctly represented.
   */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
       page,
+      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
     );
     await doubleClickOnBond(page, BondType.SINGLE, 10);
     await selectOption(page, 'Single', 'Double');

@@ -43,8 +43,8 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -58,7 +58,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await selectFlexLayoutModeTool(page);
 });
@@ -1822,10 +1822,10 @@ async function setupSenseAndAntiSenseSequences(
     );
   }
   if (senseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(senseSequence.SenseForm, page);
+    await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
   if (antisenseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(antisenseSequence.AntiSenseForm, page);
+    await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
   const senseBase = getMonomerLocator(page, Bases.c7io7n).first();

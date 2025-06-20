@@ -2,7 +2,6 @@
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   waitForKetcherInit,
-  waitForIndigoToLoad,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -10,8 +9,8 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -35,14 +34,13 @@ test.describe('Open/save file tests: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -62,7 +60,7 @@ test.describe('Open/save file tests: ', () => {
      */
     test.setTimeout(25000);
 
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
     const openStructureTextarea =
@@ -87,11 +85,11 @@ test.describe('Open/save file tests: ', () => {
      */
     test.setTimeout(20000);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
       page,
+      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );

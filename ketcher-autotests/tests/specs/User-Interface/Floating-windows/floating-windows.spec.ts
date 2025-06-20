@@ -14,7 +14,7 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 async function editText(page: Page, text: string) {
@@ -31,7 +31,7 @@ test.describe('Floating windows', () => {
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     const fileContent = await readFileContent('Txt/kecther-text.txt');
     await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
@@ -47,8 +47,8 @@ test.describe('Floating windows', () => {
     // Verify if adding incorrect text file triggers Error message
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await TopLeftToolbar(page).openFile();
-    await openFile('Txt/incorect-text.txt', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'Txt/incorect-text.txt');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
@@ -58,7 +58,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3998
       Description: verify the floating window with calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
@@ -68,7 +68,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(1)
       Description: verify 0 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '0' }).click();
@@ -82,7 +82,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(2)
       Description: verify 7 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '7' }).click();
@@ -106,7 +106,7 @@ test.describe('Floating windows', () => {
       Description: verify floating window for 
       open/drag file or paste from clipboard 
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await takeEditorScreenshot(page);
   });
 
@@ -126,7 +126,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4000
       Description: Change dedcimal places
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByText('Decimal places3').first().click();
     await page.getByRole('option', { name: '4' }).click();
@@ -142,8 +142,8 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4005, EPMLSOPKET-4009
       Description: open text file via "open file" 
     */
-    await TopLeftToolbar(page).openFile();
-    await openFile('CML/cml-molecule.cml', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'CML/cml-molecule.cml');
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +164,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', false);
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
   });

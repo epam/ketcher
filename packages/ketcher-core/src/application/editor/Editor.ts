@@ -44,19 +44,23 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
   DrawingEntitiesManager,
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
-  CELL_WIDTH,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { DOMSubscription } from 'subscription';
-import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
+import {
+  EditorLineLength,
+  initHotKeys,
+  KetcherLogger,
+  keyNorm,
+} from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
@@ -70,12 +74,23 @@ import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { ReinitializeModeOperation } from 'application/editor/operations';
+import { getAminoAcidsToModify } from 'domain/helpers/monomers';
+import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import { SnakeLayoutCellWidth } from 'domain/constants';
+import { blurActiveElement } from '../../utilities/dom';
 
 interface ICoreEditorConstructorParams {
+  ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
+}
+
+interface ModifyAminoAcidsHandlerParams {
+  monomers: BaseMonomer[];
+  modificationType: string;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -86,6 +101,7 @@ let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
+  public ketcherId?: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -122,14 +138,18 @@ export class CoreEditor {
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
+    ketcherId,
     theme,
     canvas,
     monomersLibraryUpdate,
     mode,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;
+    this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -157,7 +177,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeEventListeners();
   }
@@ -349,7 +369,7 @@ export class CoreEditor {
   }
 
   private setupContextMenuEvents() {
-    document.addEventListener('contextmenu', (event) => {
+    this.contextMenuEventHandler = (event) => {
       event.preventDefault();
 
       const eventData = event.target?.__data__;
@@ -369,6 +389,9 @@ export class CoreEditor {
             };
           }),
       ) as NodesSelection;
+      const selectedMonomers = this.drawingEntitiesManager.selectedEntities
+        .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+        .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([event, sequenceSelections]);
@@ -385,16 +408,22 @@ export class CoreEditor {
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,
-          this.drawingEntitiesManager.selectedEntities
-            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
-            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+          selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        this.events.rightClickCanvas.dispatch([event, sequenceSelections]);
+        // TODO separate by two events for modes
+        this.events.rightClickCanvas.dispatch([
+          event,
+          this.mode instanceof SequenceMode
+            ? sequenceSelections
+            : selectedMonomers,
+        ]);
       }
 
       return false;
-    });
+    };
+
+    document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
   private subscribeEvents() {
@@ -468,6 +497,48 @@ export class CoreEditor {
       history.update(command);
       this.renderersContainer.update(command);
     });
+    this.events.modifyAminoAcids.add(
+      ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
+        this.onModifyAminoAcids(monomers, modificationType);
+      },
+    );
+
+    this.events.setEditorLineLength.add(
+      (lineLengthUpdate: Partial<EditorLineLength>) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
+        const command = new Command();
+        const history = new EditorHistory(this);
+
+        command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
+        history.update(command);
+      },
+    );
+
+    this.events.toggleLineLengthHighlighting.add(
+      (value: boolean, currentPosition = 0) => {
+        // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (window._ketcher_isChainLengthRulerDisabled) {
+          return;
+        }
+
+        if (value) {
+          this.transientDrawingView.showLineLengthHighlight({
+            currentPosition,
+          });
+        } else {
+          this.transientDrawingView.hideLineLengthHighlight();
+        }
+        this.transientDrawingView.update();
+      },
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -687,6 +758,76 @@ export class CoreEditor {
     this.mode = mode;
   }
 
+  private onModifyAminoAcids(
+    monomers: BaseMonomer[],
+    modificationType: string,
+  ) {
+    const modelChanges = new Command();
+    const editorHistory = new EditorHistory(editor);
+    const aminoAcidsToModify = getAminoAcidsToModify(
+      monomers,
+      modificationType,
+      this.monomersLibrary,
+    );
+    const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
+
+    [...aminoAcidsToModify.entries()].forEach(
+      ([aminoAcidToModify, modifiedMonomerItem]) => {
+        aminoAcidToModify.covalentBonds.forEach((polymerBond) => {
+          const attachmentPoint =
+            aminoAcidToModify.getAttachmentPointByBond(polymerBond);
+
+          if (!attachmentPoint) {
+            KetcherLogger.error('Attachment point not found for the bond');
+
+            return;
+          }
+
+          const modificationHasAttachmentPointForBond =
+            modifiedMonomerItem.props.MonomerCaps?.[attachmentPoint];
+
+          if (!modificationHasAttachmentPointForBond) {
+            bondsToDelete.add(polymerBond);
+          }
+        });
+      },
+    );
+
+    const modificationFunction = () => {
+      aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
+        modelChanges.merge(
+          this.drawingEntitiesManager.modifyMonomerItem(
+            aminoAcidToModify,
+            modifiedMonomerItem,
+          ),
+        );
+      });
+
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      editor.renderersContainer.update(modelChanges);
+      editorHistory.update(modelChanges);
+      editor.transientDrawingView.hideModifyAminoAcidsView();
+      editor.transientDrawingView.update();
+    };
+
+    if (bondsToDelete.size > 0) {
+      this.events.openConfirmationDialog.dispatch({
+        confirmationText:
+          'Some side chain connections will be deleted during replacement. Do you want to proceed?',
+        onConfirm: () => {
+          bondsToDelete.forEach((bond) => {
+            modelChanges.merge(
+              this.drawingEntitiesManager.deleteDrawingEntity(bond),
+            );
+          });
+          modificationFunction();
+        },
+      });
+    } else {
+      modificationFunction();
+    }
+  }
+
   public get isSequenceMode() {
     return this?.mode instanceof SequenceMode;
   }
@@ -734,12 +875,21 @@ export class CoreEditor {
 
   public unsubscribeEvents() {
     for (const eventName in this.events) {
+      this.events[eventName].handlers.forEach((handler) => {
+        this.events[eventName].remove(handler);
+      });
       this.events[eventName].handlers = [];
     }
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
+    document.removeEventListener('contextmenu', this.contextMenuEventHandler);
+    this.canvas.removeEventListener('mousedown', blurActiveElement);
+
+    this.cleanupsForDomEvents.forEach((cleanupFunction) => {
+      cleanupFunction();
+    });
   }
 
   get trackedDomEvents() {
@@ -798,11 +948,18 @@ export class CoreEditor {
   }
 
   private domEventSetup() {
+    this.canvas.addEventListener('mousedown', blurActiveElement);
+
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
+      const handler = subs.dispatch.bind(subs);
 
-      target.addEventListener(eventName, subs.dispatch.bind(subs));
+      target.addEventListener(eventName, handler);
+
+      this.cleanupsForDomEvents.push(() => {
+        target.removeEventListener(eventName, handler);
+      });
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
@@ -894,7 +1051,7 @@ export class CoreEditor {
       );
 
     if (conversionErrorMessage) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
@@ -932,7 +1089,7 @@ export class CoreEditor {
     this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() || new Struct();
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
@@ -941,12 +1098,7 @@ export class CoreEditor {
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(
-          this.canvas.width.baseVal.value,
-          true,
-          true,
-          false,
-        ),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
@@ -989,9 +1141,14 @@ export class CoreEditor {
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
       false,
-      MONOMER_START_X_POSITION - CELL_WIDTH / 4,
-      MONOMER_START_Y_POSITION - CELL_WIDTH / 4,
+      MONOMER_START_X_POSITION - SnakeLayoutCellWidth / 4,
+      MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
+  }
+
+  public destroy() {
+    this.unsubscribeEvents();
+    editor = undefined;
   }
 }

@@ -3,7 +3,6 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  resetCurrentTool,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -20,8 +19,8 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import {
@@ -44,7 +43,7 @@ const setupEllipse = async (page: Page) => {
 async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };
   const point1 = { x: 83, y: 207 };
-  await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+  await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
   await selectAllStructuresOnCanvas(page);
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
@@ -54,7 +53,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
 async function saveToTemplates(page: Page) {
   const saveToTemplates = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplates.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');
@@ -71,7 +70,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1978
     const numberOfPressZoomOut = 5;
     const numberOfPressZoomIn = 5;
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+_');
@@ -87,13 +86,11 @@ test.describe('Action on simples objects', () => {
   test('Simple Object - Action with zoom tool', async ({ page }) => {
     // Test case: EPMLSOPKET-1980
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await setupEllipse(page);
     await CommonTopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await CommonTopRightToolbar(page).setZoomInputValue('100');
-    });
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
+    await CommonTopRightToolbar(page).zoomSelector.click();
     await takeEditorScreenshot(page);
   });
 
@@ -126,7 +123,7 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1983
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
@@ -136,7 +133,7 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1983
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
@@ -150,7 +147,7 @@ test.describe('Action on simples objects', () => {
     const numberOfPress = 1;
     const anyPointX = 200;
     const anyPointY = 200;
-    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+_');
@@ -160,13 +157,13 @@ test.describe('Action on simples objects', () => {
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await cutAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -185,7 +182,7 @@ test.describe('Action on simples objects', () => {
 
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-1982
-    await openFileAndAddToCanvas('KET/simple-objects-with-changes.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-objects-with-changes.ket');
 
     await verifyFileExport(
       page,
@@ -201,7 +198,7 @@ test.describe('Action on simples objects', () => {
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);

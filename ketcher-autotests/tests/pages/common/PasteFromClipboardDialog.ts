@@ -5,6 +5,10 @@ import {
   SequenceMonomerType,
   PeptideLetterCodeType,
 } from '../constants/monomers/Constants';
+import {
+  waitForLoad,
+  waitForLoadAndRender,
+} from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 type PasteFromClipboardDialogLocators = {
   addToCanvasButton: Locator;
@@ -35,13 +39,16 @@ export const PasteFromClipboardDialog = (page: Page) => {
     ...locators,
 
     async selectContentType(contentType: MacroFileType) {
+      const contentTypeOption = page.getByText(contentType, { exact: true });
       await locators.contentTypeSelector.waitFor({ state: 'visible' });
-      await locators.contentTypeSelector.click();
-      const listbox = page.getByRole('listbox');
-      await listbox.waitFor({ state: 'visible' });
-      await page.getByText(contentType).click();
-      if (await listbox.isVisible()) {
-        await page.getByText(contentType).click(); /* retry */
+      if (await contentTypeOption.isHidden()) {
+        await locators.contentTypeSelector.click();
+        const listbox = page.getByRole('listbox');
+        await listbox.waitFor({ state: 'visible' });
+        await contentTypeOption.click();
+        if (await listbox.isVisible()) {
+          await contentTypeOption.click(); /* retry */
+        }
       }
     },
 
@@ -55,6 +62,50 @@ export const PasteFromClipboardDialog = (page: Page) => {
       await locators.peptideLettersCodeSelector.click();
       const menuLocator = page.locator('#menu-');
       await menuLocator.getByText(letterCode).click();
+    },
+
+    async fillTextArea(text: string) {
+      locators.openStructureTextarea.fill(text);
+    },
+
+    async addToCanvas(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      }
+    },
+
+    async openAsNew(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      }
+    },
+
+    async closeWindow() {
+      await PasteFromClipboardDialog(page).closeWindowButton.click();
+    },
+
+    async cancel() {
+      await PasteFromClipboardDialog(page).cancelButton.click();
     },
   };
 };

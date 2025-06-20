@@ -173,7 +173,6 @@ export class SequenceMode extends BaseMode {
     // only recalculate after changes in the sequence
     const modelChanges = needReArrangeChains
       ? editor.drawingEntitiesManager.applySnakeLayout(
-          editor.canvas.width.baseVal.value,
           true,
           false,
           true,

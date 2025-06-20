@@ -17,8 +17,10 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
-  LayoutMode,
-  SingleChainMacromoleculeProperties,
+  type LayoutMode,
+  SettingsManager,
+  type EditorLineLength,
+  type SingleChainMacromoleculeProperties,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
@@ -38,12 +40,13 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
-// TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
+  ketcherId: string;
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
   editorLayoutMode: LayoutMode | undefined;
+  editorLineLength: EditorLineLength;
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
@@ -51,13 +54,17 @@ interface EditorState {
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
+  unipositiveIonsValue: number;
+  oligonucleotidesValue: number;
 }
 
 const initialState: EditorState = {
+  ketcherId: '',
   isReady: null,
   activeTool: 'select',
   editor: undefined,
   editorLayoutMode: undefined,
+  editorLineLength: SettingsManager.editorLineLength,
   preview: {
     type: PreviewType.Monomer,
     monomer: undefined,
@@ -69,14 +76,19 @@ const initialState: EditorState = {
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
+  unipositiveIonsValue: 140,
+  oligonucleotidesValue: 200,
 };
 
-export const editorSlice: Slice = createSlice({
+export const editorSlice: Slice<EditorState> = createSlice({
   name: 'editor',
   initialState,
   reducers: {
     init: (state) => {
       state.isReady = false;
+    },
+    initKetcherId: (state, action: PayloadAction<string>) => {
+      state.ketcherId = action.payload;
     },
     initSuccess: (state) => {
       state.isReady = true;
@@ -90,10 +102,10 @@ export const editorSlice: Slice = createSlice({
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
     },
-
     createEditor: (
       state,
       action: PayloadAction<{
+        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
@@ -106,18 +118,23 @@ export const editorSlice: Slice = createSlice({
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
       });
 
+      // TODO: Figure out proper typing here and below
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       state.editor = editor;
       action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
-      state.editorLayoutMode = state.editor.mode.modeName;
-      state.editor.switchToMicromolecules();
+      state.editorLayoutMode = state.editor?.mode.modeName;
+      state.editor?.destroy();
       state.editor = undefined;
     },
     showPreview: (
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       state.preview = action.payload || { monomer: undefined, style: '' };
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
@@ -151,6 +168,21 @@ export const editorSlice: Slice = createSlice({
     ) => {
       state.oligonucleotidesMeasurementUnit = action.payload;
     },
+    setEditorLineLength: (
+      state,
+      action: PayloadAction<Partial<EditorLineLength>>,
+    ) => {
+      state.editorLineLength = {
+        ...state.editorLineLength,
+        ...action.payload,
+      };
+    },
+    setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
+      state.unipositiveIonsValue = action.payload;
+    },
+    setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
+      state.oligonucleotidesValue = action.payload;
+    },
   },
 });
 
@@ -158,6 +190,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  initKetcherId,
   selectTool,
   setPosition,
   createEditor,
@@ -169,9 +202,11 @@ export const {
   setMacromoleculesProperties,
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,
+  setEditorLineLength,
+  setUnipositiveIonsValue,
+  setOligonucleotidesValue,
 } = editorSlice.actions;
 
-export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
   state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
@@ -180,11 +215,13 @@ export const selectEditorPosition = (
   state: RootState,
 ): PresetPosition | undefined => state.editor.position;
 // TODO: Specify the types.
-// export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
-//   state.editor.isReady;
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
+
+export const selectKetcherId = (state: RootState): string => {
+  return state.editor.ketcherId;
+};
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;
@@ -225,7 +262,16 @@ export const selectUnipositiveIonsMeasurementUnit = (state: RootState) =>
 export const selectOligonucleotidesMeasurementUnit = (state: RootState) =>
   state.editor.oligonucleotidesMeasurementUnit;
 
+export const selectUnipositiveIonsValue = (state: RootState) =>
+  state.editor.unipositiveIonsValue;
+
+export const selectOligonucleotidesValue = (state: RootState) =>
+  state.editor.oligonucleotidesValue;
+
 export const selectMonomers = (state: RootState) =>
   state.editor.editor?.drawingEntitiesManager?.monomers;
+
+export const selectEditorLineLength = (state: RootState): EditorLineLength =>
+  state.editor.editorLineLength;
 
 export const editorReducer = editorSlice.reducer;

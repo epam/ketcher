@@ -34,3 +34,5 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
     testId: 'Test-6-Ch___Test-6-AP-Chem',
   },
 });
+
+export type ChemType = typeof Chem;

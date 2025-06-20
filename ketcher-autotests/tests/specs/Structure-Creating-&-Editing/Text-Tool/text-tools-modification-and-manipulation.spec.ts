@@ -14,8 +14,9 @@ import {
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -40,9 +41,9 @@ async function moveStructureToNewPosition(page: Page) {
 }
 
 async function performUndoRedo(page: Page) {
-  await TopLeftToolbar(page).undo();
-  await TopLeftToolbar(page).redo();
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).undo();
 }
 
 test.describe('Text tools test cases', () => {
@@ -80,7 +81,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/text-object-for-test.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -95,7 +96,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete created text object in the text editor field', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/test-text-object.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
     await page.getByText('TEST').dblclick();
     await pressButton(page, 'Cancel');
     await page.getByText('TEST').dblclick();
@@ -190,7 +191,7 @@ test.describe('Text tools test cases', () => {
   });
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
@@ -202,7 +203,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     const text2 = 'Ketcher is a cool tool';
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -216,7 +217,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await page
@@ -241,8 +242,8 @@ test.describe('Text tools test cases', () => {
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
@@ -261,8 +262,8 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
@@ -288,7 +289,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await waitForRender(page, async () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });

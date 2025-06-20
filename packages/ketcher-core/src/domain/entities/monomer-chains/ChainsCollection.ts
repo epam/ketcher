@@ -384,7 +384,14 @@ export class ChainsCollection {
     chain: Chain,
     startChain: Chain,
     previousChain?: Chain,
+    visitedChains: Set<Chain> = new Set(),
   ): Chain[] {
+    if (visitedChains.has(chain)) {
+      return [];
+    }
+
+    visitedChains.add(chain);
+
     const complimentaryChainsWithData =
       this.getComplimentaryChainsWithData(chain);
 
@@ -393,27 +400,32 @@ export class ChainsCollection {
     }
 
     const complimentaryChainGoesToStartChain = complimentaryChainsWithData.find(
-      (complimentaryChainsWithData) =>
-        complimentaryChainsWithData.complimentaryChain !== previousChain &&
-        complimentaryChainsWithData.complimentaryChain === startChain,
+      ({ complimentaryChain }) =>
+        complimentaryChain !== previousChain &&
+        complimentaryChain === startChain,
     );
 
     if (complimentaryChainGoesToStartChain) {
       return [chain];
     } else {
       return complimentaryChainsWithData.reduce(
-        (acc, complimentaryChainWithData) => {
-          return complimentaryChainWithData.complimentaryChain === startChain ||
-            complimentaryChainWithData.complimentaryChain === previousChain
-            ? [...acc]
-            : [
-                ...acc,
-                ...this.findCycledComplimentaryChains(
-                  complimentaryChainWithData.complimentaryChain,
-                  startChain,
-                  chain,
-                ),
-              ];
+        (acc, { complimentaryChain }) => {
+          if (
+            complimentaryChain === startChain ||
+            complimentaryChain === previousChain
+          ) {
+            return acc;
+          }
+
+          return [
+            ...acc,
+            ...this.findCycledComplimentaryChains(
+              complimentaryChain,
+              startChain,
+              chain,
+              visitedChains,
+            ),
+          ];
         },
         [] as Chain[],
       );

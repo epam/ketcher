@@ -133,12 +133,18 @@ const MeasureInput = ({
     <div className={clsx(styles.measureInput, className)} {...rest}>
       <span>{rest.title || desc.title}</span>
       <div style={{ display: 'flex' }}>
-        <Input schema={schema} value={internalValue} onChange={handleChange} />
+        <Input
+          schema={schema}
+          value={internalValue}
+          onChange={handleChange}
+          data-testid={`${desc.title}-value-input`}
+        />
         <Select
           onChange={onExtraChange}
           options={selectOptions}
           value={extraValue}
           className={styles.select}
+          data-testid={`${desc.title}-measure-input`}
         />
       </div>
     </div>

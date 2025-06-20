@@ -26,8 +26,8 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -35,25 +35,36 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Import-Saving .seq Files', () => {
-  const sequenceFileTypes = [
-    SequenceMonomerType.DNA,
-    SequenceMonomerType.RNA,
-    SequenceMonomerType.Peptide,
-  ] as const;
-
-  for (const fileType of sequenceFileTypes) {
-    test(`Import .seq ${fileType} file`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro(
-        `Sequence/sequence-${fileType.toLowerCase()}.seq`,
-        page,
-        fileType,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
+  test(`Import .seq RNA file`, async ({ page }) => {
+    await openFileAndAddToCanvasMacro(page, `Sequence/sequence-rna.seq`, [
+      MacroFileType.Sequence,
+      SequenceMonomerType.RNA,
+    ]);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
     });
-  }
+  });
+  test(`Import .seq DNA file`, async ({ page }) => {
+    await openFileAndAddToCanvasMacro(page, `Sequence/sequence-dna.seq`, [
+      MacroFileType.Sequence,
+      SequenceMonomerType.DNA,
+    ]);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+  test(`Import .seq Peptide file`, async ({ page }) => {
+    await openFileAndAddToCanvasMacro(page, `Sequence/sequence-peptide.seq`, [
+      MacroFileType.Sequence,
+      SequenceMonomerType.Peptide,
+    ]);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
     page,
@@ -76,7 +87,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check import of .ket file and save in .seq format', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(
       page,
       'Sequence/sequence-rna-a-expected.seq',
@@ -96,8 +107,8 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await TopLeftToolbar(page).openFile();
-    await openFile('Sequence/sequence-empty.seq', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'Sequence/sequence-empty.seq');
     await expect(addToCanvasButton).toBeDisabled();
     await closeErrorMessage(page);
   });
@@ -107,8 +118,8 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     const filename = 'Sequence/sequence-corrupted.seq';
 
-    await TopLeftToolbar(page).openFile();
-    await openFile(filename, page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, filename);
     await selectOptionInDropdown(filename, page);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
@@ -121,8 +132,9 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(
-      'Sequence/sequence-snake-mode-rna.seq',
       page,
+      'Sequence/sequence-snake-mode-rna.seq',
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -132,8 +144,9 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(
-      'Sequence/sequence-snake-mode-rna.seq',
       page,
+      'Sequence/sequence-snake-mode-rna.seq',
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
     await selectSnakeLayoutModeTool(page);
     await verifyFileExport(
@@ -146,7 +159,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Should open .ket file and modify to .seq format in save modal textarea', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'Sequence/sequence-rna-a.seq', FileType.SEQ);
   });
 
@@ -154,8 +167,8 @@ test.describe('Import-Saving .seq Files', () => {
   test('Should not convert .ket file with RNA and Peptide to .seq format in save modal', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -167,8 +180,8 @@ test.describe('Import-Saving .seq Files', () => {
   test('Should not convert .ket file with CHEMs to .seq format in save modal', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -214,9 +227,15 @@ test.describe('Import-Saving .seq Files', () => {
     The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4175 For now structures overlap each other.
     When fix is made, you need to update screenshot.
     */
-    await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+    await openFileAndAddToCanvasMacro(page, 'Sequence/sequence-acgtu.seq', [
+      MacroFileType.Sequence,
+      SequenceMonomerType.RNA,
+    ]);
     // Need open twice
-    await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+    await openFileAndAddToCanvasMacro(page, 'Sequence/sequence-acgtu.seq', [
+      MacroFileType.Sequence,
+      SequenceMonomerType.RNA,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -232,8 +251,8 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -600);
@@ -260,15 +279,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -300,15 +319,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
         page,
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
       );
 
       await zoomWithMouseWheel(page, -200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -340,15 +359,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -378,8 +397,8 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -406,15 +425,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -438,8 +457,8 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -466,15 +485,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -497,8 +516,8 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
@@ -524,15 +543,15 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -605,9 +624,9 @@ test.describe('Import correct Sequence file: ', () => {
       */
 
       await openFileAndAddToCanvasAsNewProjectMacro(
-        correctSequenceFile.SequenceFileName,
         page,
-        correctSequenceFile.SequenceMonomerType,
+        correctSequenceFile.SequenceFileName,
+        [MacroFileType.Sequence, correctSequenceFile.SequenceMonomerType],
       );
 
       await takeEditorScreenshot(page, {
@@ -814,7 +833,7 @@ test(`7. Verify export option includes both single-letter and three-letter seque
    * Case: 1. Open Save structure dialog
    *       2. Verify File format list contains single-letter and three-letter Sequence options
    */
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
 
   // Click on "File format" dropdown
   await page.getByRole('combobox').click();
@@ -886,7 +905,7 @@ for (const sequenceToExport of sequencesToExport) {
       sequenceToExport.sequenceString,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
@@ -1012,7 +1031,7 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       );
     }
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
@@ -1377,7 +1396,7 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       sequenceToExport.sequenceString,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );

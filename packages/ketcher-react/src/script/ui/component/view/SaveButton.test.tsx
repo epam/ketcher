@@ -21,7 +21,7 @@ jest.mock('../../../../hooks', () => {
   return {
     ...jest.requireActual('../../../../hooks'),
     useAppContext: () => ({
-      getKetcherInstance: () => null,
+      ketcherId: '',
     }),
   };
 });

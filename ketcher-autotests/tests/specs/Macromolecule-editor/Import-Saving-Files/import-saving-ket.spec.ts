@@ -14,7 +14,6 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
-  selectMonomer,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -34,8 +33,9 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorMessage } from '@utils/common/helpers';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
@@ -68,7 +68,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await processResetToDefaultState(testInfo, page);
 });
 
@@ -85,7 +85,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: #3230 - Support parsing KET file for macromolecules on ketcher side
     Description: Ket Deserialize
     */
-      await openFileAndAddToCanvasMacro('KET/monomers-with-bonds.ket', page);
+      await openFileAndAddToCanvasMacro(page, 'KET/monomers-with-bonds.ket');
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     },
@@ -98,7 +98,7 @@ test.describe('Import-Saving .ket Files', () => {
     The structure does not fit on the canvas when opened, and to
     see the whole picture in this test and in future ones, zoom is used
     */
-    await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/fifty-monomers.ket');
 
     await verifyFileExport(
       page,
@@ -119,7 +119,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
     */
-    await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/hundred-monomers.ket');
 
     await verifyFileExport(
       page,
@@ -149,11 +149,11 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    await selectMonomer(page, Peptides.bAla);
+    await Library(page).selectMonomer(Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
-    await TopLeftToolbar(page).clearCanvas();
-    await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -165,16 +165,16 @@ test.describe('Import-Saving .ket Files', () => {
     Description: After pressing Undo not break the selection/moving functionality.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
       page,
+      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
     );
     // This is not an error here you need to open the file twice
     await openFileAndAddToCanvasMacro(
-      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
       page,
+      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);
@@ -190,7 +190,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     test.slow();
-    await selectMonomer(page, Sugars._25R);
+    await Library(page).selectMonomer(Sugars._25R);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });
@@ -200,7 +200,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    await selectMonomer(page, Peptides.D_2Nal);
+    await Library(page).selectMonomer(Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
   });
@@ -212,8 +212,8 @@ test.describe('Import-Saving .ket Files', () => {
     */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await TopLeftToolbar(page).openFile();
-    await openFile('KET/empty-file.ket', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'KET/empty-file.ket');
     await expect(addToCanvasButton).toBeDisabled();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
@@ -225,8 +225,8 @@ test.describe('Import-Saving .ket Files', () => {
     */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await TopLeftToolbar(page).openFile();
-    await openFile('KET/corrupted-file.ket', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'KET/corrupted-file.ket');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
     await closeErrorMessage(page);
@@ -239,7 +239,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     markResetToDefaultState('defaultLayout');
 
-    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -251,8 +251,8 @@ test.describe('Import-Saving .ket Files', () => {
     Description: .ket file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-saved-in-micro-mode.ket',
       page,
+      'KET/monomers-saved-in-micro-mode.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -265,7 +265,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('macromoleculesEditor');
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvas('KET/monomers-saved-in-macro-mode.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/monomers-saved-in-macro-mode.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -274,7 +274,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: .ket file with macro structures is imported correctly in macro mode
     */
-    await openFileAndAddToCanvasMacro('KET/three-presets.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/three-presets.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -283,7 +283,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: .ket file with macro structures is imported correctly in macro mode.
     */
-    await openFileAndAddToCanvasMacro('KET/three-chems-connected.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/three-chems-connected.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -292,7 +292,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: There should be possible to load monomers which not found in Monomer library
     */
-    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
 
     await verifyFileExport(
       page,
@@ -307,8 +307,8 @@ test.describe('Import-Saving .ket Files', () => {
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
     );
 
     await verifyFileExport(
@@ -328,8 +328,8 @@ test.describe('Import-Saving .ket Files', () => {
           4. Compate result with template
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/AllAmbiguousMonomers.ket',
       page,
+      'KET/Ambiguous-monomers/AllAmbiguousMonomers.ket',
     );
 
     await zoomWithMouseWheel(page, -250);
@@ -370,8 +370,8 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   for (const data of testData) {
     test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `KET/Base-Templates/${data.fileName}.ket`,
         page,
+        `KET/Base-Templates/${data.fileName}.ket`,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
@@ -397,8 +397,8 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `KET/CHEM-Templates/${data.fileName}.ket`,
         page,
+        `KET/CHEM-Templates/${data.fileName}.ket`,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
@@ -424,8 +424,8 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `KET/Peptide-Templates/${data.fileName}.ket`,
         page,
+        `KET/Peptide-Templates/${data.fileName}.ket`,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
@@ -451,8 +451,8 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `KET/Phosphate-Templates/${data.fileName}.ket`,
         page,
+        `KET/Phosphate-Templates/${data.fileName}.ket`,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
@@ -478,8 +478,8 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `KET/Sugar-Templates/${data.fileName}.ket`,
         page,
+        `KET/Sugar-Templates/${data.fileName}.ket`,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
@@ -713,12 +713,12 @@ for (const monomer of allTypesOfMonomers) {
      */
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
     await verifyFileExport(page, monomer.KETFile_Expected, FileType.KET);
-    await openFileAndAddToCanvasAsNewProject(monomer.KETFile_Expected, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile_Expected);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -741,7 +741,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
   const KETFileExpected =
     'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers-expected.ket';
 
-  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFile);
   await takeEditorScreenshot(page);
   await verifyFileExport(page, KETFileExpected, FileType.KET);
 });
@@ -764,11 +764,11 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
   const KETFileExpected =
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
 
-  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFile);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await verifyFileExport(page, KETFileExpected, FileType.KET);
-  await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
+  await openFileAndAddToCanvasAsNewProject(page, KETFileExpected);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

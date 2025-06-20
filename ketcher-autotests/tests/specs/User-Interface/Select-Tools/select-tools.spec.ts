@@ -15,6 +15,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,7 +25,7 @@ test.describe('Select tools tests', () => {
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
     page,
   }) => {
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -61,7 +62,7 @@ test.describe('Select tools tests', () => {
       Description: Attachment points are highlited with CTRL+A
       Note: At the moment the test is not working correctly until bug is fixed. Attachment points are not fully highlited.
     */
-    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });

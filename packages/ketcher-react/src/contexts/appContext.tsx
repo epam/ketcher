@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Ketcher } from 'ketcher-core';
 import React from 'react';
 
 export interface IAppContext {
-  getKetcherInstance: () => Ketcher;
   ketcherId: string;
+  prevKetcherId: string;
 }
 
 const appContext = React.createContext<IAppContext>({} as IAppContext);

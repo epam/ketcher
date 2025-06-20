@@ -46,7 +46,7 @@ test.describe('Rectangle selection tool', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1347
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -59,7 +59,7 @@ test.describe('Rectangle selection tool', () => {
     // Test case: EPMLSOPKET-1348
     const objectSelection = 100;
     const atomNumber = 5;
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -74,7 +74,7 @@ test.describe('Rectangle selection tool', () => {
     const atomNumber = 5;
     const moveMouseCoordinatesY = 10;
     const moveMouseCoordinatesX = 270;
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -99,7 +99,7 @@ test.describe('Rectangle selection tool', () => {
     //  Test case: EPMLSOPKET-1350
     const objectSelection = 100;
     const moveMouseCoordinatesY = 10;
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -122,7 +122,7 @@ test.describe('Rectangle selection tool', () => {
     //  Test case: EPMLSOPKET-1351
     const firstAtomNumber = 4;
     const secondAtomNumber = 9;
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -140,7 +140,7 @@ test.describe('Rectangle selection tool', () => {
     //  Test case: EPMLSOPKET-1351
     const firstBondNumber = 3;
     const secondBondnumber = 8;
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -165,7 +165,7 @@ test.describe('Rectangle selection tool', () => {
       await dragMouseTo(mostRightAtom.x + shift, mostRightAtom.y + shift, page);
     }
     const atomOnTheRightSide = 14;
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );

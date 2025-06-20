@@ -27,8 +27,8 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -42,7 +42,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -138,7 +138,7 @@ async function loadTwoMonomers(
   leftMonomer: IMonomer,
   rightMonomer: IMonomer,
 ) {
-  await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+  await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
 
@@ -151,7 +151,7 @@ async function loadTwoMonomers(
   await dragMouseTo(500, 370, page);
   await moveMouseAway(page);
 
-  await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+  await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
 
   const rightMonomerLocator =
     (await canvasLocator
@@ -660,7 +660,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
     await takeEditorScreenshot(page);
@@ -710,12 +710,12 @@ Object.values(monomers).forEach((leftMonomer) => {
         hideMonomerPreview: true,
       });
 
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
@@ -821,8 +821,8 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   test.setTimeout(25000);
 
   await openFileAndAddToCanvasMacro(
-    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
     page,
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
   );
   await moveMouseAway(page);
   await zoomWithMouseWheel(page, 100);
@@ -886,8 +886,8 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   test.setTimeout(25000);
 
   await openFileAndAddToCanvasMacro(
-    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
     page,
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
   );
   await moveMouseAway(page);
   await zoomWithMouseWheel(page, 100);

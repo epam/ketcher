@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 type queryNumberValues =
@@ -86,14 +86,14 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
 // Custom query - bond properties:
 
 export async function setCustomQueryForBond(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('bond-custom-query').fill(customQuery);
 }
 
 // Bond attributes:
@@ -162,7 +162,7 @@ export async function setReactionFlagExactChange(page: Page) {
 export async function checkSmartsValue(page: Page, value: string) {
   const saveStructureTextarea = SaveStructureDialog(page).saveStructureTextarea;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.DaylightSMARTS,
   );

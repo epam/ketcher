@@ -26,8 +26,8 @@ import {
 } from '@utils/keyboard/index';
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page
@@ -50,7 +50,7 @@ test.describe('Sequence Mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
@@ -67,7 +67,7 @@ test.describe('Sequence Mode', () => {
     */
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 300;
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -88,8 +88,8 @@ test.describe('Sequence Mode', () => {
     and nucleotides are depicted as symbols forming a word.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -104,8 +104,8 @@ test.describe('Sequence Mode', () => {
     including last phosphate connected to last nucleoside.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/phosphates-not-part-of-nucleoside.ket',
       page,
+      'KET/phosphates-not-part-of-nucleoside.ket',
     );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -120,7 +120,11 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/dna-long.mol',
+      MacroFileType.MOLv3000,
+    );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -134,7 +138,7 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvasMacro('KET/50-peptides-and-2-chems.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/50-peptides-and-2-chems.ket');
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -148,7 +152,7 @@ test.describe('Sequence Mode', () => {
     */
     const ZOOM_OUT_VALUE = 800;
     const SCROLL_DOWN_VALUE = 150;
-    await openFileAndAddToCanvasMacro('KET/natural-analog-peptides.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/natural-analog-peptides.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
@@ -163,8 +167,8 @@ test.describe('Sequence Mode', () => {
     Description: Sugar, Base or CHEM appears as @ symbol
     */
     await openFileAndAddToCanvasMacro(
-      'KET/sugar-base-chem-not-connected.ket',
       page,
+      'KET/sugar-base-chem-not-connected.ket',
     );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -178,7 +182,11 @@ test.describe('Sequence Mode', () => {
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -191,9 +199,13 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await selectSequenceLayoutModeTool(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -204,7 +216,11 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await selectSequenceLayoutModeTool(page);
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
@@ -217,7 +233,11 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: Length of each row is limited to 30 nucleotides after switch to sequence mode.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/dna-long.mol',
+      MacroFileType.MOLv3000,
+    );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -230,7 +250,11 @@ test.describe('Sequence Mode', () => {
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -244,8 +268,8 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/modified-nucleotide-chain.ket',
       page,
+      'KET/modified-nucleotide-chain.ket',
     );
     await takeEditorScreenshot(page);
     await startNewSequence(page);
@@ -261,7 +285,7 @@ test.describe('Sequence Mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 100;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-cyclic-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-cyclic-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -276,22 +300,25 @@ test.describe('Sequence Mode', () => {
       description:
         'System displays structure preview of DNA (preset) while hovering over letters on canvas.',
       file: 'Molfiles-V3000/dna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'System displays structure preview of RNA (preset) while hovering over letters on canvas.',
       file: 'Molfiles-V3000/rna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'System displays structure preview of Peptide (preset) while hovering over letters on canvas.',
       file: 'KET/peptides-connected-with-bonds.ket',
+      fileType: MacroFileType.Ket,
     },
   ];
 
   for (const data of testData) {
     test(`Ensure that ${data.description}`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro(data.file, page);
+      await openFileAndAddToCanvasMacro(page, data.file, data.fileType);
       await selectSequenceLayoutModeTool(page);
       await page
         .locator('g.drawn-structures')
@@ -334,7 +361,7 @@ test.describe('Sequence Mode', () => {
       Description: Modified component is unambiguously marked.
       */
       await selectSequenceLayoutModeTool(page);
-      await openFileAndAddToCanvasMacro(data.file, page);
+      await openFileAndAddToCanvasMacro(page, data.file);
       await takeEditorScreenshot(page);
     });
   }
@@ -348,8 +375,8 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/phosphates-not-part-of-nucleoside.ket',
       page,
+      'KET/phosphates-not-part-of-nucleoside.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -362,8 +389,8 @@ test.describe('Sequence Mode', () => {
     Description: CHEM is displayed as @ symbol.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chem-on-the-end-of-sequence.ket',
       page,
+      'KET/chem-on-the-end-of-sequence.ket',
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -378,8 +405,8 @@ test.describe('Sequence Mode', () => {
     Description: Sugars that are not part of a nucleotide or nucleoside in sequence view are displayed as @ symbol
     */
     await openFileAndAddToCanvasMacro(
-      'KET/sugar-on-the-end-of-sequence.ket',
       page,
+      'KET/sugar-on-the-end-of-sequence.ket',
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -393,7 +420,7 @@ test.describe('Sequence Mode', () => {
     Test case: #3734
     Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
     */
-    await openFileAndAddToCanvasMacro('KET/r3-r2-sugar-phosphate.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/r3-r2-sugar-phosphate.ket');
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -407,8 +434,8 @@ test.describe('Sequence Mode', () => {
     After fix need to be updated.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/r1-r1-sugar-base-connection.ket',
       page,
+      'KET/r1-r1-sugar-base-connection.ket',
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -423,8 +450,8 @@ test.describe('Sequence Mode', () => {
     Description: Modified component is marked accordingly to mockup.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/modified-and-unmodified-sequence.ket',
       page,
+      'KET/modified-and-unmodified-sequence.ket',
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -548,7 +575,7 @@ test.describe('Sequence Mode', () => {
     Description: DNA and RNA chains are merged into one chain.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
@@ -1006,8 +1033,8 @@ test.describe('Sequence Mode', () => {
     When fix is made, you need to update screenshot.
     */
       await openFileAndAddToCanvasMacro(
-        'KET/monomers-attached-to-bases-via-r2.ket',
         page,
+        'KET/monomers-attached-to-bases-via-r2.ket',
       );
       await selectSequenceLayoutModeTool(page);
       await takeEditorScreenshot(page);
@@ -1041,7 +1068,7 @@ test.describe('Sequence Mode', () => {
     test(`Validate displaying modified nucleotide chains for ${testInfo.description}`, async ({
       page,
     }) => {
-      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await openFileAndAddToCanvasMacro(page, testInfo.fileName);
       await selectSequenceLayoutModeTool(page);
       await takeEditorScreenshot(page);
     });
@@ -1128,7 +1155,7 @@ test.describe('Sequence Mode', () => {
         modifiedAminoAcid,
       );
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -1165,6 +1192,6 @@ test.describe('Sequence Mode', () => {
     await newSequenceButton.nth(3).hover({ force: true });
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 });

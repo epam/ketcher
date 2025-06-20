@@ -6,7 +6,7 @@ import {
 } from '@utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,8 +22,8 @@ test.describe('Reagents molecule above arrow', () => {
       We have a bug https://github.com/epam/Indigo/issues/2591
     */
       await openFileAndAddToCanvas(
-        'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
         page,
+        'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
       );
       await takeEditorScreenshot(page);
     },
@@ -35,8 +35,8 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
     await openFileAndAddToCanvas(
-      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
       page,
+      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -47,10 +47,10 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -63,10 +63,10 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -81,10 +81,10 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 text reagent above the arrow and HBr below.
     */
     await openFileAndAddToCanvas(
-      'KET/text-reagents-below-and-above-arrow.ket',
       page,
+      'KET/text-reagents-below-and-above-arrow.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -99,10 +99,10 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 text reagent above the arrow and HBr below.
     */
     await openFileAndAddToCanvas(
-      'KET/text-reagents-below-and-above-arrow.ket',
       page,
+      'KET/text-reagents-below-and-above-arrow.ket',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -116,8 +116,8 @@ test.describe('Reagents molecule above arrow', () => {
       Test case: EPMLSOPKET-4705
       Description: File is shown in the preview with correct text nodes.
     */
-    await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await openFileAndAddToCanvas(page, 'KET/text-nodes-on-reaction.ket');
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );

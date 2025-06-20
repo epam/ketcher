@@ -5,7 +5,7 @@ import { waitForMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Macromolecules connect phosphate and sugar', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,8 +15,8 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
 
   test('Open file and connect phosphate and sugar', async ({ page }) => {
     await openFileAndAddToCanvasMacro(
-      'KET/connection-of-phosphate-and-sugar.ket',
       page,
+      'KET/connection-of-phosphate-and-sugar.ket',
     );
 
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);

@@ -15,8 +15,8 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
@@ -130,12 +130,12 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
     await resetCurrentTool(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });
@@ -182,8 +182,8 @@ test.describe('Zoom changes', () => {
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/clean-diff-properties.mol',
       page,
+      'Molfiles-V2000/clean-diff-properties.mol',
     );
     await zoomSelector.click();
     await zoomInButton.click();
@@ -208,8 +208,8 @@ test.describe('Zoom changes', () => {
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/all-kind-of-r-group.mol',
       page,
+      'Molfiles-V2000/all-kind-of-r-group.mol',
     );
 
     await zoomSelector.click();
@@ -242,7 +242,7 @@ test.describe('Zoom changes', () => {
       Description: The correct structure fits on the canvas, and the zoom percentage 
       has decreased on the "Zoom panel"
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol');
     await expect(page).toHaveScreenshot();
   });
 

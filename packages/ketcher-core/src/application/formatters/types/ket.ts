@@ -32,6 +32,7 @@ export interface IKetMonomerNode {
   templateId: string;
   expanded?: boolean;
   transformation?: MonomerTransformation;
+  selected?: boolean;
 }
 
 export interface IKetAmbiguousMonomerNode {
@@ -44,6 +45,7 @@ export interface IKetAmbiguousMonomerNode {
   alias: string;
   templateId: string;
   transformation?: AmbiguousMonomerTransformation;
+  selected?: boolean;
 }
 
 export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;
@@ -83,6 +85,7 @@ export interface IKetConnection {
   label?: string;
   endpoint1: IKetConnectionEndPoint;
   endpoint2: IKetConnectionEndPoint;
+  selected?: boolean;
 }
 
 export type monomerClass =
@@ -169,6 +172,7 @@ export interface IKetMonomerTemplate {
   unresolved?: boolean;
   atoms: [];
   bonds: [];
+  modificationType?: string;
 }
 
 export interface IKetAmbiguousMonomerTemplate {

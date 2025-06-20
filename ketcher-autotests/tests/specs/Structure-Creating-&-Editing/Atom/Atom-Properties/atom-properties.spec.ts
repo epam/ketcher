@@ -29,7 +29,6 @@ import {
   selectUnsaturated,
   selectReactionFlagsInversion,
   selectExactChange,
-  selectThreeAtomsFromPeriodicTable,
   selectElementFromExtendedTable,
   selectRingBondCountOption,
   selectHCountOption,
@@ -50,13 +49,19 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -88,7 +93,7 @@ test.describe('Atom Properties', () => {
       'Cancel', 'Apply' and 'X' buttons;
       The 'Atom Properties' header.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
     await waitForAtomPropsModal(page);
     await takeEditorScreenshot(page);
@@ -116,7 +121,7 @@ test.describe('Atom Properties', () => {
       'Cancel', 'Apply' and 'X' buttons;
       The 'Atom Properties' header.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await moveOnAtom(page, 'O', 0);
     await waitForRender(page, async () => {
       await page.keyboard.press('/');
@@ -130,7 +135,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Label' field contains the correct typed atom symbol.
       The selected carbon atom isn`t changed with 'Na' atom symbol.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
 
     await selectAtomLabel(page, 'Na', 'Cancel');
@@ -143,7 +148,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Label' field contains the correct typed atom symbol.
       The selected carbon atom is changed with 'Sb' atom symbol.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
 
     await waitForRender(page, async () => {
@@ -159,7 +164,7 @@ test.describe('Atom Properties', () => {
       The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears
       when the cursor is over the field. The Apply button becomes disabled.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
 
     await page.getByLabel('Label').fill('J%');
@@ -176,7 +181,7 @@ test.describe('Atom Properties', () => {
       when the cursor is over the field. The Apply button becomes disabled.
       The 'N' atom symbol isn`t changed with an incorrect symbol.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
 
     await selectAtomLabel(page, 'J%', 'Cancel');
@@ -190,7 +195,7 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 2;
     const secondAnyAtom = 3;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
@@ -214,8 +219,8 @@ test.describe('Atom Properties', () => {
       Description: The saved *.mol file is opened and can be edited.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-three-atoms.mol',
       page,
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
     );
 
     await doubleClickOnAtom(page, 'N', 0);
@@ -238,8 +243,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-three-atoms.mol',
       page,
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
     );
     await verifyFileExport(
       page,
@@ -257,7 +262,7 @@ test.describe('Atom Properties', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
@@ -275,8 +280,8 @@ test.describe('Atom Properties', () => {
       Description: The appeared symbol is colored with the same color as in Periodic Table and added to two different rings.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       page,
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'N', 0);
@@ -298,8 +303,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       page,
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
     await verifyFileExport(
       page,
@@ -317,7 +322,7 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct typed characters.
       The selected carbon atom does not changed.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -332,7 +337,7 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct typed characters. (for example 'abc123TesREasd!@').
       The selected carbon atom is changed with typed text.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -351,8 +356,8 @@ test.describe('Atom Properties', () => {
       The correct edited alias 'TesREasd!@' and Label ('Sb' for our example) appears for the edited atom.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-ring-with-alias.mol',
       page,
+      'Molfiles-V2000/benzene-ring-with-alias.mol',
     );
 
     await doubleClickOnAtom(page, 'C', 0);
@@ -367,7 +372,7 @@ test.describe('Atom Properties', () => {
       Description: In the opened dialog the 'Number' field contains the correct text (for our example - Carbon = 6).
       Nitrogen = 7, Oxygen = 8
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
@@ -389,7 +394,7 @@ test.describe('Atom Properties', () => {
       - new items "List" (input field) and "edit" icon should be added
       - "Not list (checkbox)" should be added
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
     await page.locator('label').filter({ hasText: 'Atom Type' }).click();
     await page.getByRole('option', { name: 'List', exact: true }).click();
@@ -403,7 +408,7 @@ test.describe('Atom Properties', () => {
       - Label and Number should be hidden
       - new item "Special" (input field) and "edit" icon should be added
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
     await page.locator('label').filter({ hasText: 'Atom Type' }).click();
     await page.getByRole('option', { name: 'Special', exact: true }).click();
@@ -420,7 +425,7 @@ test.describe('Atom Properties', () => {
       The '2' is present in the 'Charge' field.
       The '2-' symbol appears near the selected atom on top-right side.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillChargeForAtom(page, '1', 'Apply');
@@ -442,7 +447,7 @@ test.describe('Atom Properties', () => {
       The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
       The 'Apply' button becomes disabled.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByLabel('Charge').fill('A');
@@ -459,7 +464,7 @@ test.describe('Atom Properties', () => {
       The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
       The 'Apply' button becomes disabled.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByTestId('charge-input').fill('9999');
@@ -473,8 +478,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-charge.mol',
       page,
+      'Molfiles-V2000/benzene-with-charge.mol',
     );
     await verifyFileExport(
       page,
@@ -491,8 +496,8 @@ test.describe('Atom Properties', () => {
       Description: The Charge are changed for three atoms (S, F, I).
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
@@ -515,8 +520,8 @@ test.describe('Atom Properties', () => {
       Description: The Charge are changed for three atoms (S, F, I).
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await doubleClickOnAtom(page, 'S', 0);
@@ -537,7 +542,7 @@ test.describe('Atom Properties', () => {
       The 'Isotope' field contains the correct typed value.
       The isotope value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillIsotopeForAtom(page, '18', 'Cancel');
@@ -551,7 +556,7 @@ test.describe('Atom Properties', () => {
       The 'Isotope' field contains the correct typed value.
       '13' appears near the carbon atom in top-left side.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await fillIsotopeForAtom(page, '13', 'Apply');
@@ -564,7 +569,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Isotope' field is filled with '0' by default.
       Field highlight with red and tooltip appears: There must be integer!
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByLabel('Isotope').fill('b');
@@ -577,7 +582,7 @@ test.describe('Atom Properties', () => {
       Description: The range for 'Isotope' field is from 0 to 999
       Field highlight with red and tooltip appears: Invalid isotope value!
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByTestId('isotope-input').fill('-88');
@@ -592,7 +597,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1615
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-isotope.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-with-isotope.mol');
     await verifyFileExport(
       page,
       'Molfiles-V2000/chain-with-isotope-expected.mol',
@@ -608,8 +613,8 @@ test.describe('Atom Properties', () => {
       Description: The typed isotope value appears near the selected atoms only.Number is colored same as atoms.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
@@ -632,7 +637,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
     const timeout = 2000;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();
@@ -652,8 +657,8 @@ test.describe('Atom Properties', () => {
     */
     const timeout = 2000;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
@@ -679,7 +684,7 @@ test.describe('Atom Properties', () => {
       The 'Valence' field contains the selected value.
       The valence value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectValenceForAtom(page, 'III', 'Cancel');
@@ -693,7 +698,7 @@ test.describe('Atom Properties', () => {
       The 'Valence' field contains the correct typed value.
       'III' appears near the carbon atom in right side.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectValenceForAtom(page, 'III', 'Apply');
@@ -707,7 +712,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1619
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-valence.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-with-valence.mol');
     await verifyFileExport(
       page,
       'Molfiles-V2000/chain-with-valence-expected.mol',
@@ -724,8 +729,8 @@ test.describe('Atom Properties', () => {
       Number is colored same as atoms.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
@@ -750,7 +755,7 @@ test.describe('Atom Properties', () => {
       The 'Radical' field contains the selected parameter.
       The radical symbol does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRadical(page, 'Monoradical', 'Cancel');
@@ -767,7 +772,7 @@ test.describe('Atom Properties', () => {
       Diradical (singlet) - two dots;
       Diradical (triplet) - two caret signs (^^).
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRadical(page, 'Monoradical', 'Apply');
@@ -782,8 +787,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-radicals.mol',
       page,
+      'Molfiles-V2000/chain-with-radicals.mol',
     );
     await verifyFileExport(
       page,
@@ -801,8 +806,8 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-radicals.mol',
       page,
+      'Molfiles-V2000/chain-with-radicals.mol',
     );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
@@ -819,7 +824,7 @@ test.describe('Atom Properties', () => {
     const timeout = 2000;
     const anyAtom = 2;
     const secondAnyAtom = 4;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
@@ -848,8 +853,8 @@ test.describe('Atom Properties', () => {
       Number is colored same as atoms.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
@@ -882,7 +887,7 @@ test.describe('Atom Properties', () => {
       The 'Ring bond count' field contains the selected value.
       The Ring bond count value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Cancel');
@@ -898,7 +903,7 @@ test.describe('Atom Properties', () => {
       The 'Ring bond count' field contains the selected value.
       The selected Ring bond count - rb* - appears below the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRingBondCount(page, 'As drawn', 'Apply');
@@ -913,8 +918,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-ring-bond-count.mol',
       page,
+      'Molfiles-V2000/chain-with-ring-bond-count.mol',
     );
     await verifyFileExport(
       page,
@@ -934,8 +939,8 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-ring-bond-count.mol',
       page,
+      'Molfiles-V2000/chain-with-ring-bond-count.mol',
     );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '3', 'Apply');
@@ -953,7 +958,7 @@ test.describe('Atom Properties', () => {
     const timeout = 2000;
     const anyAtom = 2;
     const secondAnyAtom = 4;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
@@ -983,7 +988,7 @@ test.describe('Atom Properties', () => {
     const anyAtom = 2;
     const secondAnyAtom = 3;
     const thirdAnyAtom = 4;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
 
@@ -1010,7 +1015,7 @@ test.describe('Atom Properties', () => {
     const secondAnyAtom = 3;
     const thirdAnyAtom = 4;
     const numberOfPress = 2;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
 
@@ -1030,12 +1035,12 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '3', 'Apply');
 
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -1050,7 +1055,7 @@ test.describe('Atom Properties', () => {
       The 'H count' drop-down list contains values: 0, 1, 2, 3, 4.
       The value is selected. The 'H count' field contains the selected value.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '0', 'Cancel');
@@ -1066,7 +1071,7 @@ test.describe('Atom Properties', () => {
       The 'H count' field contains the selected value.
       The selected hydrogen count value (H2) appears below/above the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '2', 'Apply');
@@ -1080,7 +1085,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1640
       Description: The newly selected hydrogen count is assigned to the carbon atom
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '2', 'Apply');
@@ -1097,7 +1102,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-h-count.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-with-h-count.mol');
     await verifyFileExport(
       page,
       'Molfiles-V2000/chain-with-h-count-expected.mol',
@@ -1116,7 +1121,7 @@ test.describe('Atom Properties', () => {
       Hydrogen count atom property is displayed as specified from the menu item.
       Nothing happens.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByText('Query specific').click();
@@ -1141,7 +1146,7 @@ test.describe('Atom Properties', () => {
       The 'Substitution count' field contains the selected value.
       The substitution count does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '0', 'Cancel');
@@ -1157,7 +1162,7 @@ test.describe('Atom Properties', () => {
       The 'Substitution count' field contains the selected value.
       The selected substitution count s* appears near the carbon
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '2', 'Apply');
@@ -1171,7 +1176,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1642
       Description: The newly selected Substitution count is assigned to the carbon atom
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '2', 'Apply');
@@ -1189,8 +1194,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-substitution-count.mol',
       page,
+      'Molfiles-V2000/chain-with-substitution-count.mol',
     );
     await verifyFileExport(
       page,
@@ -1210,7 +1215,7 @@ test.describe('Atom Properties', () => {
       Number of nonhydrogen substituents is displayed as AtomSymbol(sN) where N depends on the number selected.
       Nothing is changed.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByText('Query specific').click();
@@ -1233,7 +1238,7 @@ test.describe('Atom Properties', () => {
       The 'Unsaturated' checkbox is present in the 'Query specific' field. The checkbox is not set by default.
       The unsaturated mark does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectUnsaturated(page, 'Cancel');
@@ -1250,7 +1255,7 @@ test.describe('Atom Properties', () => {
       The 'u' mark appears below the carbon atom.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectUnsaturated(page, 'Apply');
@@ -1266,8 +1271,8 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 3;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-unsaturated.mol',
       page,
+      'Molfiles-V2000/chain-with-unsaturated.mol',
     );
 
     await doubleClickOnAtom(page, 'C', anyAtom);
@@ -1285,7 +1290,7 @@ test.describe('Atom Properties', () => {
       Description: Modal window opens without errors. All sections are displayed correctly.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -1317,7 +1322,7 @@ test.describe('Atom Properties', () => {
     */
     const timeout = 2000;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await moveOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
@@ -1333,8 +1338,8 @@ test.describe('Atom Properties', () => {
       Description: Mapping labels are colored with the same color as the colored atoms.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-three-colored-atoms.rxn',
       page,
+      'Rxn-V2000/reaction-with-three-colored-atoms.rxn',
     );
 
     await LeftToolbar(page).selectReactionMappingTool(
@@ -1357,8 +1362,8 @@ test.describe('Atom Properties', () => {
       The selected atoms are copied and pasted to the canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/all-possible-atoms-properties.mol',
       page,
+      'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -1373,8 +1378,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/all-possible-atoms-properties.mol',
       page,
+      'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
     await verifyFileExport(
       page,
@@ -1393,8 +1398,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.rxn file.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V3000/all-possible-atoms-properties.rxn',
       page,
+      'Rxn-V3000/all-possible-atoms-properties.rxn',
     );
     await verifyFileExport(
       page,
@@ -1414,7 +1419,7 @@ test.describe('Atom Properties', () => {
       The 'Inversion' field contains the selected value.
       The stereo mark does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectReactionFlagsInversion(page, 'Inverts', 'Cancel');
@@ -1430,7 +1435,7 @@ test.describe('Atom Properties', () => {
       Inverts - .Inv, ext.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Inverts');
@@ -1447,7 +1452,7 @@ test.describe('Atom Properties', () => {
       Retains - .Ret, ext.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Retains');
@@ -1461,8 +1466,8 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-rection-flags.mol',
       page,
+      'Molfiles-V2000/chain-with-rection-flags.mol',
     );
     await verifyFileExport(
       page,
@@ -1478,14 +1483,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -1496,14 +1498,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different Not List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'Not List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -1650,7 +1649,7 @@ test.describe('Atom Properties', () => {
     const atomIndices = [2, 4];
     const selectedOption = ['Unsaturated', 'Saturated'];
 
-    await openFileAndAddToCanvas('KET/benzene-unsaturated.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-unsaturated.ket');
 
     for (let i = 0; i < atomIndices.length; i++) {
       await selectUnsaturatedOption(page, atomIndices[i], selectedOption[i]);

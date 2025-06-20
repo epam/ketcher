@@ -14,7 +14,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('getKet', () => {
   });
 
   test('with two monomers bonded', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await verifyFileExport(
       page,
       'KET/alanine-monomers-bonded-expected.ket',

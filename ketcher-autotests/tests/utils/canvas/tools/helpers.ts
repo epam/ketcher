@@ -1,43 +1,16 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
-import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { RingButton } from '@tests/pages/molecules/BottomToolbar';
-
-/**
- * Select button from top panel
- * Usage: await selectAction(TopPanelButton.Open, page)
- */
-export async function selectAction(type: TopPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 export async function openLayoutModeMenu(page: Page) {
   const modeSelectorButton = page.getByTestId('layout-mode');
   await modeSelectorButton.click();
-}
-
-export async function hideLibrary(page: Page) {
-  const hideLibraryButton = page.getByTestId('hide-monomer-library');
-  const isVisible = await hideLibraryButton.isVisible();
-  if (isVisible) {
-    await hideLibraryButton.click();
-  }
-}
-
-export async function showLibrary(page: Page) {
-  const showLibraryButton = page.getByTestId('show-monomer-library');
-  const isVisible = await showLibraryButton.isVisible();
-  if (isVisible) {
-    await showLibraryButton.click();
-  }
 }
 
 export async function selectSnakeLayoutModeTool(page: Page) {
@@ -111,19 +84,6 @@ export async function selectRectangleArea(
   await page.mouse.up();
 }
 
-export async function selectTopPanelButton(
-  buttonName: TopPanelButton,
-  page: Page,
-) {
-  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await topPanelButton.click();
-}
-
-export async function selectRingButton(buttonName: RingButton, page: Page) {
-  const bottomPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await bottomPanelButton.click();
-}
-
 export async function selectButtonById(buttonId: 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
@@ -133,7 +93,7 @@ export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,
 ) {
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   if (format) {
     await SaveStructureDialog(page).chooseFileFormat(format);
   }
@@ -171,176 +131,9 @@ export async function selectWithLasso(
 export async function saveToTemplates(page: Page, templateName: string) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-export async function openStereochemistrySettingsSection(page: Page) {
-  await page.getByText('Stereochemistry', { exact: true }).click();
-}
-
-export async function switchIgnoreTheChiralFlag(page: Page) {
-  await page
-    .locator('label')
-    .filter({ hasText: 'Ignore the chiral flag' })
-    .getByTestId('undefined-input-span')
-    .locator('span')
-    .click();
-}
-
-export async function openBondsSettingsSection(page: Page) {
-  await page.getByText('Bonds', { exact: true }).click();
-}
-
-export async function setBondLengthOptionUnit(page: Page, unitName: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('combobox')
-    .first()
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setBondLengthValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('textbox')
-    .first()
-    .fill(value);
-}
-
-export async function getBondLengthValue(page: Page): Promise<string | null> {
-  return await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('textbox')
-    .first()
-    .inputValue();
-}
-
-export async function setBondThicknessOptionUnit(page: Page, unitName: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('combobox')
-    .nth(1)
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setBondThicknessValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('textbox')
-    .nth(2)
-    .fill(value);
-}
-
-export async function setStereoBondWidthOptionUnit(
-  page: Page,
-  unitName: string,
-) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('combobox')
-    .nth(2)
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setStereoBondWidthValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('textbox')
-    .nth(3)
-    .fill(value);
-}
-
-export async function setHashSpacingOptionUnit(page: Page, unitName: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('combobox')
-    .nth(3)
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setHashSpacingValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as circleBond' })
-    .getByRole('textbox')
-    .nth(4)
-    .fill(value);
-}
-
-export async function setBondSpacingValue(page: Page, value: string) {
-  await page.getByTestId('bondSpacing-input').fill(value);
-}
-
-export async function setFontSizeOptionUnit(page: Page, unitName: string) {
-  await page
-    .locator('div > .MuiInputBase-root > .MuiSelect-select')
-    .first()
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setFontSizeValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Reset to Select ToolAfter' })
-    .getByRole('textbox')
-    .nth(1)
-    .fill(value);
-}
-
-export async function setSubFontSizeOptionUnit(page: Page, unitName: string) {
-  await page
-    .locator('div:nth-child(7) > div > .MuiInputBase-root > .MuiSelect-select')
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setSubFontSizeValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Reset to Select ToolAfter' })
-    .getByRole('textbox')
-    .nth(2)
-    .fill(value);
-}
-
-export async function setReactionMarginSizeOptionUnit(
-  page: Page,
-  unitName: string,
-) {
-  await page
-    .locator('div:nth-child(8) > div > .MuiInputBase-root > .MuiSelect-select')
-    .click();
-  await page.getByTestId(unitName).click();
-}
-
-export async function setReactionMarginSizeValue(page: Page, value: string) {
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Reset to Select ToolAfter' })
-    .getByRole('textbox')
-    .nth(3)
-    .fill(value);
-}
-
-export async function scrollToDownInSetting(page: Page) {
-  const scrollToDown = page.getByTestId('Options for Debugging-accordion');
-  await scrollToDown.scrollIntoViewIfNeeded();
-  await scrollToDown.hover({ force: true });
 }

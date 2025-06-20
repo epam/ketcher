@@ -16,7 +16,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   BottomToolbar,
@@ -30,7 +30,7 @@ const CANVAS_CLICK_Y = 300;
 async function saveToTemplates(page: Page, shouldSave = true) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
@@ -41,7 +41,7 @@ async function saveToTemplates(page: Page, shouldSave = true) {
 
 async function saveUserTemplate(page: Page) {
   await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -72,7 +72,7 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
@@ -98,7 +98,7 @@ test.describe('Click User Templates on canvas', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('to_delete');
@@ -123,10 +123,10 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
+      'Molfiles-V2000/create-template-with-simple-objects.mol',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('simple_object_template');
@@ -150,15 +150,15 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
-      'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
+      'Rxn-V2000/create-template-with-reaction-arrow.rxn',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('reaction_arrow_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -174,7 +174,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(3)
     Description: Template is copied and pasted as expected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -185,7 +185,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(4)
     Description: Template is cut and pasted as expected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -210,7 +210,7 @@ test.describe('Create and Save Templates', () => {
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplates(page);
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
@@ -231,7 +231,7 @@ test.describe('Create and Save Templates', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
@@ -253,10 +253,10 @@ test.describe('Create and Save Templates', () => {
       Description: Template attached to structure on canvas.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -324,13 +324,13 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
@@ -344,7 +344,7 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-1721
       Description: The scrollbar in the structure field is present.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page, false);
     await getEditorScreenshot(page);
   });

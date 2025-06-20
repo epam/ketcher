@@ -9,7 +9,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
-  selectFlexLayoutModeTool,
   MonomerType,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
@@ -17,6 +16,7 @@ import {
   selectAllStructuresOnCanvas,
   selectSequenceLayoutModeTool,
 } from '@utils';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,
@@ -29,8 +29,8 @@ import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { Chem } from '@constants/monomers/Chem';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -44,7 +44,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -90,7 +90,7 @@ async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
     );
   }
   if (polymer.KETFile) {
-    await openFileAndAddToCanvasMacro(polymer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, polymer.KETFile);
   }
 }
 

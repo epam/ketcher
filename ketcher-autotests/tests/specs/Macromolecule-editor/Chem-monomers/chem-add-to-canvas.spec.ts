@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -12,7 +11,8 @@ import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -23,7 +23,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectMonomer(page, Chem.sDBL);
+  await Library(page).selectMonomer(Chem.sDBL);
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);
@@ -44,7 +44,7 @@ test.describe('Actions with CHEM', () => {
     Test case: Actions with structures
     Description: CHEM name fits in its icon when placed on canvas.
     */
-    await openFileAndAddToCanvasMacro('KET/all-chems.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/all-chems.ket');
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page);
   });
@@ -57,7 +57,7 @@ test.describe('Actions with CHEM', () => {
     https://github.com/epam/ketcher/issues/3582
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
-    await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.down();

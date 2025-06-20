@@ -11,7 +11,7 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
@@ -21,13 +21,14 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -41,7 +42,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -72,7 +73,7 @@ test.describe('Import/export sequence:', () => {
       PasteFromClipboardDialog(page).contentTypeSelector;
 
     await selectSequenceLayoutModeTool(page);
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
     const defaultValue = await contentTypeSelector
@@ -269,7 +270,7 @@ test.describe('Import/export sequence:', () => {
       SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectSequenceLayoutModeTool(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList
       .locator('span')

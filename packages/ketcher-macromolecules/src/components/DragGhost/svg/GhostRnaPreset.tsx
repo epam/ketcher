@@ -35,8 +35,8 @@ export const GhostRnaPreset = ({ preset }: Props) => {
   const phosphateSize = phosphateRenderer?.monomerSize;
   const baseSize = baseRenderer?.monomerSize;
 
-  const sugarX = 15;
-  const sugarY = 15;
+  const sugarX = 0;
+  const sugarY = 0;
 
   const phosphateX = phosphateSize ? sugarX + sugarSize.width + 30 : 0;
   const phosphateY = sugarY;

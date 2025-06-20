@@ -41,14 +41,6 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
-type LibraryItemDragState = {
-  item: IRnaPreset;
-  position: {
-    x: number;
-    y: number;
-  };
-} | null;
-
 interface EditorState {
   ketcherId: string;
   isReady: boolean | null;
@@ -65,7 +57,6 @@ interface EditorState {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
   unipositiveIonsValue: number;
   oligonucleotidesValue: number;
-  libraryItemDrag: LibraryItemDragState;
 }
 
 const initialState: EditorState = {
@@ -88,7 +79,6 @@ const initialState: EditorState = {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
-  libraryItemDrag: null,
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -194,15 +184,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
-    setLibraryItemDrag: (
-      state,
-      action: PayloadAction<LibraryItemDragState>,
-    ) => {
-      state.libraryItemDrag =
-        action.payload === null
-          ? null
-          : { ...state.libraryItemDrag, ...action.payload };
-    },
   },
 });
 
@@ -294,8 +275,5 @@ export const selectMonomers = (state: RootState) =>
 
 export const selectEditorLineLength = (state: RootState): EditorLineLength =>
   state.editor.editorLineLength;
-
-export const selectLibraryItemDrag = (state: RootState): LibraryItemDragState =>
-  state.editor.libraryItemDrag;
 
 export const editorReducer = editorSlice.reducer;

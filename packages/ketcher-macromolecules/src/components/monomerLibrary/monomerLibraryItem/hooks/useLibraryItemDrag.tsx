@@ -1,8 +1,18 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
-import { selectEditor, setLibraryItemDrag } from 'state/common';
+import { selectEditor } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
 import { useDispatch, useSelector } from 'react-redux';
+
+export const LibraryItemDragAction = 'LibraryItemDrag';
+
+export type LibraryItemDragState = {
+  item: IRnaPreset;
+  position: {
+    x: number;
+    y: number;
+  };
+} | null;
 
 export const useLibraryItemDrag = (
   item: IRnaPreset | MonomerOrAmbiguousType,
@@ -24,10 +34,12 @@ export const useLibraryItemDrag = (
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
         const { clientX: x, clientY: y } = event.sourceEvent;
 
-        dispatch(
-          setLibraryItemDrag({
-            item,
-            position: { x, y },
+        window.dispatchEvent(
+          new CustomEvent<LibraryItemDragState>(LibraryItemDragAction, {
+            detail: {
+              item,
+              position: { x, y },
+            },
           }),
         );
       })
@@ -52,7 +64,11 @@ export const useLibraryItemDrag = (
           }
         }
 
-        dispatch(setLibraryItemDrag(null));
+        window.dispatchEvent(
+          new CustomEvent<LibraryItemDragState>(LibraryItemDragAction, {
+            detail: null,
+          }),
+        );
       });
 
     if (editor?.mode.modeName !== 'sequence-layout-mode') {

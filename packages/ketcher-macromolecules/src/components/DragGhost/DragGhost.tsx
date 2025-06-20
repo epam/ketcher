@@ -1,12 +1,14 @@
 import { IRnaPreset, MonomerOrAmbiguousType } from 'ketcher-core';
-import { useLayoutEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import { selectLibraryItemDrag } from 'state/common';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './DragGhost.module.less';
 import { GhostRnaPreset } from './svg/GhostRnaPreset';
 import { GhostMonomer } from 'components/DragGhost/svg/GhostMonomer';
 import { useZoomTransform } from '../../hooks/useZoomTransform';
+import {
+  LibraryItemDragAction,
+  LibraryItemDragState,
+} from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 
 // TODO: Extract this helper
 const isRnaPreset = (
@@ -16,21 +18,36 @@ const isRnaPreset = (
 };
 
 export const DragGhost = () => {
-  const libraryItemDrag = useSelector(selectLibraryItemDrag);
+  const [libraryItemDragData, setLibraryItemDragData] =
+    useState<LibraryItemDragState>(null);
 
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
   const animateRef = useRef<number | null>(null);
 
   const transform = useZoomTransform();
 
+  useEffect(() => {
+    const handleLibraryItemDrag = (event: Event) => {
+      const libraryItemDragData = (event as CustomEvent<LibraryItemDragState>)
+        .detail;
+      setLibraryItemDragData(libraryItemDragData);
+    };
+
+    window.addEventListener(LibraryItemDragAction, handleLibraryItemDrag);
+
+    return () => {
+      window.removeEventListener(LibraryItemDragAction, handleLibraryItemDrag);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
-    if (!element || !libraryItemDrag) {
+    if (!element || !libraryItemDragData) {
       return;
     }
 
     animateRef.current = requestAnimationFrame(() => {
-      element.style.transform = `translate(${libraryItemDrag.position.x}px, ${libraryItemDrag.position.y}px) scale(${transform.k})`;
+      element.style.transform = `translate(${libraryItemDragData.position.x}px, ${libraryItemDragData.position.y}px) scale(${transform.k})`;
     });
 
     return () => {
@@ -39,18 +56,18 @@ export const DragGhost = () => {
         animateRef.current = null;
       }
     };
-  }, [libraryItemDrag, transform.k]);
+  }, [libraryItemDragData, transform.k]);
 
-  if (!libraryItemDrag) {
+  if (!libraryItemDragData) {
     return null;
   }
 
   return (
     <div className={styles.dragGhost} ref={ghostWrapperRef}>
-      {isRnaPreset(libraryItemDrag.item) ? (
-        <GhostRnaPreset preset={libraryItemDrag.item} />
+      {isRnaPreset(libraryItemDragData.item) ? (
+        <GhostRnaPreset preset={libraryItemDragData.item} />
       ) : (
-        <GhostMonomer monomerItem={libraryItemDrag.item} />
+        <GhostMonomer monomerItem={libraryItemDragData.item} />
       )}
     </div>
   );

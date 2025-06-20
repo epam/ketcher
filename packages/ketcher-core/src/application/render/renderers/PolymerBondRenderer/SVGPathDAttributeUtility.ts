@@ -1,4 +1,4 @@
-export class SVGPathDAttributeUtil {
+export class SVGPathDAttributeUtility {
   public static generateAbsoluteLine(x: number, y: number): string {
     return `L ${x},${y}`;
   }

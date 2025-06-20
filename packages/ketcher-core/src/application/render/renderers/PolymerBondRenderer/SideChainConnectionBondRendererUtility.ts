@@ -3,13 +3,13 @@ import type {
   BaseSequenceItemRenderer,
 } from 'application/render';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 import type { BaseMonomer } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {
   Connection,
   ConnectionDirectionInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
 interface CalculatePathPartAndTurnPointParameter {
   readonly cell: Cell;
@@ -40,7 +40,7 @@ export class SideChainConnectionBondRendererUtility {
   }: CalculatePathPartAndTurnPointParameter): CalculatePathPartAndTurnPointResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (CELL_WIDTH / 2) * cos;
+    const xOffset = (SnakeLayoutCellWidth / 2) * cos;
     const yOffset = (this.cellHeight / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {

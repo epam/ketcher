@@ -5,12 +5,7 @@ import {
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import {
-  pressButton,
-  clickOnAtom,
-  resetCurrentTool,
-  getAtomByIndex,
-} from '@utils';
+import { pressButton, resetCurrentTool, getAtomByIndex } from '@utils';
 
 export async function selectAtomLabel(
   page: Page,

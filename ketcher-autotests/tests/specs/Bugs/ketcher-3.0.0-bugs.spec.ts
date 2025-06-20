@@ -41,7 +41,6 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
-  MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import {
   hoverOnSequenceSymbol,
@@ -69,7 +68,6 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
-  collapseMonomer,
   collapseMonomers,
   expandMonomer,
   expandMonomers,

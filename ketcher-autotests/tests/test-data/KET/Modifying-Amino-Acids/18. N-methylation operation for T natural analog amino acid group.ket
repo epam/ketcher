@@ -161,8 +161,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 9.525,
+            "y": -5.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -351,8 +351,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.75,
-            "y": -1.25
+            "x": 11.025,
+            "y": -5.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -361,8 +361,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.25,
-            "y": -1.25
+            "x": 12.525,
+            "y": -5.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -371,8 +371,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 9.525,
+            "y": -7.45
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine",
@@ -382,8 +382,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 2.75,
-            "y": -2.75
+            "x": 11.025,
+            "y": -7.45
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -392,8 +392,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 4.25,
-            "y": -2.75
+            "x": 12.525,
+            "y": -7.45
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -402,8 +402,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 1.25,
-            "y": -4.25
+            "x": 9.525,
+            "y": -8.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -412,8 +412,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 2.75,
-            "y": -4.25
+            "x": 11.025,
+            "y": -8.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"
@@ -422,8 +422,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 4.25,
-            "y": -4.25
+            "x": 12.525,
+            "y": -8.95
         },
         "alias": "meT",
         "templateId": "meT___N-Methyl-Threonine"

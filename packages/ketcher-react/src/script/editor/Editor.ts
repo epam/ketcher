@@ -911,19 +911,16 @@ function isContextMenuClosed(contextMenu: ContextMenuInfo) {
 
 function useToolIfNeeded(
   editor: Editor,
-
   eventHandlerName: ToolEventHandlerName,
-
   clientArea: HTMLElement,
-
-  event: Event,
+  event,
 ) {
   const editorTool = editor.tool();
-
-  if (!editorTool) return false;
+  if (!editorTool) {
+    return false;
+  }
 
   editor.lastEvent = event;
-
   const conditions = [
     eventHandlerName in editorTool,
     clientArea.contains(event.target as Node) ||
@@ -931,9 +928,8 @@ function useToolIfNeeded(
     eventHandlerName === 'mousemove' || isContextMenuClosed(editor.contextMenu),
   ];
 
-  if (conditions.every((c) => c)) {
-    editorTool[eventHandlerName]?.(event as any);
-
+  if (conditions.every((condition) => condition)) {
+    editorTool[eventHandlerName]?.(event);
     return true;
   }
 

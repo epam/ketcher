@@ -107,15 +107,131 @@ export enum QueryAtomOption {
   HCount = 'H count-option',
   SubstitutionCount = 'Substitution count-option',
   Unsaturated = 'Unsaturated-option',
-  Aromaticity = 'Aromaticity-option',
   ImplicitHCount = 'Implicit H count-option',
+  Aromaticity = 'Aromaticity-option',
   RingMembership = 'Ring membership-option',
   RingSize = 'Ring size-option',
   Connectivity = 'Connectivity-option',
   Chirality = 'Chirality-option',
-  CustomQuery = 'Custom Query-option',
-  Inversion = 'Inversion-option',
-  ExactChange = 'Exact change-option',
+  // CustomQuery = 'Custom Query-option',
+  // Inversion = 'Inversion-option',
+  // ExactChange = 'Exact change-option',
+}
+
+export enum RingBondCountOption {
+  None = 'Ring bond count-none-option',
+  AsDrawn = 'Ring bond count-As drawn-option',
+  Zero = 'Ring bond count-0-option',
+  Two = 'Ring bond count-2-option',
+  Three = 'Ring bond count-3-option',
+  Four = 'Ring bond count-4-option',
+  Five = 'Ring bond count-5-option',
+  Six = 'Ring bond count-6-option',
+  Seven = 'Ring bond count-7-option',
+  Eight = 'Ring bond count-8-option',
+  Nine = 'Ring bond count-9-option',
+}
+
+export enum HCountOption {
+  None = 'H count-none-option',
+  Zero = 'H count-0-option',
+  One = 'H count-1-option',
+  Two = 'H count-2-option',
+  Three = 'H count-3-option',
+  Four = 'H count-4-option',
+  Five = 'H count-5-option',
+  Six = 'H count-6-option',
+  Seven = 'H count-7-option',
+  Eight = 'H count-8-option',
+  Nine = 'H count-9-option',
+}
+
+export enum SubstitutionCountOption {
+  None = 'Substitution count-none-option',
+  AsDrawn = 'Substitution count-As drawn-option',
+  Zero = 'Substitution count-0-option',
+  One = 'Substitution count-1-option',
+  Two = 'Substitution count-2-option',
+  Three = 'Substitution count-3-option',
+  Four = 'Substitution count-4-option',
+  Five = 'Substitution count-5-option',
+  Six = 'Substitution count-6-option',
+  Seven = 'Substitution count-7-option',
+  Eight = 'Substitution count-8-option',
+  Nine = 'Substitution count-9-option',
+}
+
+export enum UnsaturatedOption {
+  Unsaturated = 'Unsaturated-Unsaturated-option',
+  Saturated = 'Unsaturated-Saturated-option',
+}
+
+export enum ImplicitHCountOption {
+  None = 'Implicit H count-none-option',
+  Zero = 'Implicit H count-0-option',
+  One = 'Implicit H count-1-option',
+  Two = 'Implicit H count-2-option',
+  Three = 'Implicit H count-3-option',
+  Four = 'Implicit H count-4-option',
+  Five = 'Implicit H count-5-option',
+  Six = 'Implicit H count-6-option',
+  Seven = 'Implicit H count-7-option',
+  Eight = 'Implicit H count-8-option',
+  Nine = 'Implicit H count-9-option',
+}
+
+export enum AromaticityOption {
+  None = 'Aromaticity-none-option',
+  Aromatic = 'Aromaticity-aromatic-option',
+  Aliphatic = 'Aromaticity-aliphatic-option',
+}
+
+export enum RingMembershipOption {
+  None = 'Ring membership-none-option',
+  Zero = 'Ring membership-0-option',
+  One = 'Ring membership-1-option',
+  Two = 'Ring membership-2-option',
+  Three = 'Ring membership-3-option',
+  Four = 'Ring membership-4-option',
+  Five = 'Ring membership-5-option',
+  Six = 'Ring membership-6-option',
+  Seven = 'Ring membership-7-option',
+  Eight = 'Ring membership-8-option',
+  Nine = 'Ring membership-9-option',
+}
+
+export enum RingSizeOption {
+  None = 'Ring size-none-option',
+  Zero = 'Ring size-0-option',
+  One = 'Ring size-1-option',
+  Two = 'Ring size-2-option',
+  Three = 'Ring size-3-option',
+  Four = 'Ring size-4-option',
+  Five = 'Ring size-5-option',
+  Six = 'Ring size-6-option',
+  Seven = 'Ring size-7-option',
+  Eight = 'Ring size-8-option',
+  Nine = 'Ring size-9-option',
+}
+
+export enum ConnectivityOption {
+  None = 'Connectivity-none-option',
+  Zero = 'Connectivity-0-option',
+  One = 'Connectivity-1-option',
+  Two = 'Connectivity-2-option',
+  Three = 'Connectivity-3-option',
+  Four = 'Connectivity-4-option',
+  Five = 'Connectivity-5-option',
+  Six = 'Connectivity-6-option',
+  Seven = 'Connectivity-7-option',
+  Eight = 'Connectivity-8-option',
+  Nine = 'Connectivity-9-option',
+}
+
+export enum ChiralityOption {
+  None = 'Chirality-none-option',
+  Clockwise = 'Chirality-clockwise-option',
+  Anticlockwise = 'Chirality-anticlockwise-option',
 }
 
 export enum MultiTailedArrowOption {
@@ -141,5 +257,14 @@ export type ContextMenuOption =
   | HighlightOption
   | MicroAtomOption
   | QueryAtomOption
+  | RingBondCountOption
+  | HCountOption
+  | SubstitutionCountOption
+  | UnsaturatedOption
+  | ImplicitHCountOption
+  | AromaticityOption
+  | RingMembershipOption
+  | RingSizeOption
+  | ConnectivityOption
   | MultiTailedArrowOption
   | LibraryPresetOption;

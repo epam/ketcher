@@ -1553,7 +1553,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
         await ContextMenu(page, middleOfTheScreen).click(
-          MonomerOnMicroOption.CollapseMonomer,
+          MonomerOnMicroOption.CollapseMonomers,
         );
       });
 

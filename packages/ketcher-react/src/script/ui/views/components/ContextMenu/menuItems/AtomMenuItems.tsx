@@ -251,6 +251,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
               <ButtonGroup<AtomAllAttributeValue>
                 buttons={buttons}
                 defaultValue={getPropertyValue(key)}
+                title={title}
                 onClick={(value: AtomAllAttributeValue) =>
                   updateAtomProperty(key, value)
                 }

@@ -2872,7 +2872,7 @@ for (const monomer1 of shortMonomerList) {
       const monomerLocator = getMonomerLocator(
         page,
         monomer1.monomerLocatorOptions,
-      );
+      ).first();
       await ContextMenu(page, monomerLocator).open();
 
       const createAntisenseStrandOption = page

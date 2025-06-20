@@ -2027,16 +2027,16 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         .first()
         .getAttribute('data-symbol-id');
 
-      const senseSymbol = await getSymbolLocator(page, {
+      const senseSymbol = getSymbolLocator(page, {
         symbolId: senseSymbolId || '',
       }).first();
-      const antisenseSymbol = await getSymbolLocator(page, {
+      const antisenseSymbol = getSymbolLocator(page, {
         symbolId: antisenseSymbolId || '',
       }).first();
-      const senseSymbolWithHBond = await getSymbolLocator(page, {
+      const senseSymbolWithHBond = getSymbolLocator(page, {
         symbolId: senseSymbolWithHBondId || '',
       }).first();
-      const antisenseSymbolWithHBond = await getSymbolLocator(page, {
+      const antisenseSymbolWithHBond = getSymbolLocator(page, {
         symbolId: antisenseSymbolWithHBondId || '',
       }).first();
 
@@ -2079,6 +2079,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
       await pressYesInConfirmYourActionDialog(page);
       await selectAllStructuresOnCanvas(page);
+      await antisenseSymbolWithHBond.hover();
       await ContextMenu(page, antisenseSymbolWithHBond).open();
       await expect(deleteHydrogenBondsOption).toBeDisabled();
       await closeContextMenu(page);

@@ -7,7 +7,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -93,7 +93,9 @@ test.describe('Sequence edit mode', () => {
     const x = 100;
     const y = 100;
     await ContextMenu(page, { x, y }).open();
-    await takeEditorScreenshot(page);
+    expect(
+      page.getByTestId(SequenceSymbolOption.StartNewSequence),
+    ).toBeVisible();
     await page.keyboard.press('Escape');
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
@@ -101,7 +103,10 @@ test.describe('Sequence edit mode', () => {
       symbolAlias: 'G',
     });
     await ContextMenu(page, symbolG).open();
-    await takeEditorScreenshot(page);
+    expect(page.getByTestId(SequenceSymbolOption.EditSequence)).toBeVisible();
+    expect(
+      page.getByTestId(SequenceSymbolOption.StartNewSequence),
+    ).toBeVisible();
   });
 
   test('Add/edit sequence', async ({ page }) => {

@@ -682,7 +682,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomer(page, page.getByText('1Nal'));
+    await expandMonomers(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
     await collapseMonomers(page, page.getByText('NH'));
     await takeEditorScreenshot(page);

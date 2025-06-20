@@ -503,7 +503,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click([
+    await ContextMenu(page, point).hover([
       MicroAtomOption.QueryProperties,
       QueryAtomOption.HCount,
     ]);

@@ -895,7 +895,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     const symbolP = page
       .getByTestId('ketcher-canvas')
       .getByText('P', { exact: true });
-    await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomer);
+    await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page, {

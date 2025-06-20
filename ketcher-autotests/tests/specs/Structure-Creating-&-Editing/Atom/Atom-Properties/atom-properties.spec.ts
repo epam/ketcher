@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -31,15 +32,6 @@ import {
   selectReactionFlagsInversion,
   selectExactChange,
   selectElementFromExtendedTable,
-  selectRingBondCountOption,
-  selectHCountOption,
-  selectSubstitutionCountOption,
-  selectUnsaturatedOption,
-  selectImplicitHCountOption,
-  selectAromaticityOption,
-  selectRingMembershipOption,
-  selectRingSizeOption,
-  selectConnectivityOption,
 } from './utils';
 import {
   FileType,
@@ -64,7 +56,19 @@ import {
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  AromaticityOption,
+  ConnectivityOption,
+  HCountOption,
+  ImplicitHCountOption,
+  MicroAtomOption,
+  QueryAtomOption,
+  RingBondCountOption,
+  RingMembershipOption,
+  RingSizeOption,
+  SubstitutionCountOption,
+  UnsaturatedOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1544,34 +1548,24 @@ test.describe('Atom Properties', () => {
       Description: All options match with the options from the ""Query specific"" drop-down list inside the ""Edit"" section.
     */
     const optionsToClick = [
-      'Ring bond count',
-      'H count',
-      'Substitution count',
-      'Unsaturated',
-      'Implicit H count',
-      'Aromaticity',
-      'Ring membership',
-      'Ring size',
-      'Connectivity',
+      QueryAtomOption.RingBondCount,
+      QueryAtomOption.HCount,
+      QueryAtomOption.SubstitutionCount,
+      QueryAtomOption.Unsaturated,
+      QueryAtomOption.ImplicitHCount,
+      QueryAtomOption.Aromaticity,
+      QueryAtomOption.RingMembership,
+      QueryAtomOption.RingSize,
+      QueryAtomOption.Connectivity,
     ];
 
     const anyAtom = 2;
     await drawBenzeneRing(page);
     const point = await getAtomByIndex(page, { label: 'C' }, anyAtom);
-    await ContextMenu(page, point).click(MicroAtomOption.QueryProperties);
+    await ContextMenu(page, point).hover(MicroAtomOption.QueryProperties);
 
     for (const option of optionsToClick) {
-      if (option === 'Unsaturated') {
-        await page
-          .locator('div')
-          .filter({ hasText: /^Unsaturated$/ })
-          .nth(0)
-          .click();
-      } else if (option === 'H count') {
-        await page.getByText(option, { exact: true }).click();
-      } else {
-        await page.getByText(option).click();
-      }
+      await page.getByTestId(option).first().click();
       await takeEditorScreenshot(page);
     }
     await takeEditorScreenshot(page);
@@ -1584,15 +1578,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18034
       Description: All Ring bond count options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = ['As drawn-option', '3-option', '9-option'];
+    const optionIndices = [
+      RingBondCountOption.AsDrawn,
+      RingBondCountOption.Three,
+      RingBondCountOption.Nine,
+    ];
 
     await drawBenzeneRing(page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectRingBondCountOption(page, atomIndices[i], optionIndices[i]);
+      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
+      await ContextMenu(page, point).click([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.RingBondCount,
+        optionIndices[i],
+      ]);
     }
     await takeEditorScreenshot(page);
   });
@@ -1604,15 +1605,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18035
       Description: All H count options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+    const optionIndices = [
+      HCountOption.Zero,
+      HCountOption.Three,
+      HCountOption.Nine,
+    ];
 
     await drawBenzeneRing(page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectHCountOption(page, atomIndices[i], optionIndices[i]);
+      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
+      await ContextMenu(page, point).click([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.HCount,
+        optionIndices[i],
+      ]);
     }
     await takeEditorScreenshot(page);
   });
@@ -1624,19 +1632,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18036
       Description: All Substitution count options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+    const optionIndices = [
+      SubstitutionCountOption.AsDrawn,
+      SubstitutionCountOption.Two,
+      SubstitutionCountOption.Eight,
+    ];
 
     await drawBenzeneRing(page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectSubstitutionCountOption(
-        page,
-        atomIndices[i],
+      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
+      await ContextMenu(page, point).click([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.SubstitutionCount,
         optionIndices[i],
-      );
+      ]);
     }
     await takeEditorScreenshot(page);
   });
@@ -1648,14 +1659,21 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18070
       Description: All Unsaturated options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4];
-    const selectedOption = ['Unsaturated', 'Saturated'];
+    const selectedOption = [
+      UnsaturatedOption.Unsaturated,
+      UnsaturatedOption.Saturated,
+    ];
 
     await openFileAndAddToCanvas(page, 'KET/benzene-unsaturated.ket');
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectUnsaturatedOption(page, atomIndices[i], selectedOption[i]);
+      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
+      await ContextMenu(page, point).click([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.Unsaturated,
+        selectedOption[i],
+      ]);
     }
     await takeEditorScreenshot(page);
   });
@@ -1669,19 +1687,26 @@ test.describe('Atom Properties', () => {
       Description: All Implicit H count options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      // eslint-disable-next-line no-magic-numbers
       const atomIndices = [2, 4, 5];
-      // eslint-disable-next-line no-magic-numbers
-      const optionIndices = [2, 5, 11];
+      const optionIndices = [
+        ImplicitHCountOption.Zero,
+        ImplicitHCountOption.Three,
+        ImplicitHCountOption.Nine,
+      ];
 
       await drawBenzeneRing(page);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        await selectImplicitHCountOption(
+        const point = await getAtomByIndex(
           page,
+          { label: 'C' },
           atomIndices[i],
-          optionIndices[i],
         );
+        await ContextMenu(page, point).click([
+          MicroAtomOption.QueryProperties,
+          QueryAtomOption.ImplicitHCount,
+          optionIndices[i],
+        ]);
       }
       await takeEditorScreenshot(page);
     },
@@ -1694,14 +1719,21 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18068
       Description: All Aromaticity options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4];
-    const selectedOption = ['aromatic', 'aliphatic'];
+    const selectedOption = [
+      AromaticityOption.Aromatic,
+      AromaticityOption.Aliphatic,
+    ];
 
     await drawBenzeneRing(page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectAromaticityOption(page, atomIndices[i], selectedOption[i]);
+      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
+      await ContextMenu(page, point).click([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.Aromaticity,
+        selectedOption[i],
+      ]);
     }
     await takeEditorScreenshot(page);
   });
@@ -1715,19 +1747,26 @@ test.describe('Atom Properties', () => {
       Description: All Ring membership options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      // eslint-disable-next-line no-magic-numbers
       const atomIndices = [2, 4, 5];
-      // eslint-disable-next-line no-magic-numbers
-      const optionIndices = [2, 5, 11];
+      const optionIndices = [
+        RingMembershipOption.Zero,
+        RingMembershipOption.Three,
+        RingMembershipOption.Nine,
+      ];
 
       await drawBenzeneRing(page);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        await selectRingMembershipOption(
+        const point = await getAtomByIndex(
           page,
+          { label: 'C' },
           atomIndices[i],
-          optionIndices[i],
         );
+        await ContextMenu(page, point).click([
+          MicroAtomOption.QueryProperties,
+          QueryAtomOption.RingMembership,
+          optionIndices[i],
+        ]);
       }
       await takeEditorScreenshot(page);
     },
@@ -1742,15 +1781,26 @@ test.describe('Atom Properties', () => {
       Description: All Ring size options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      // eslint-disable-next-line no-magic-numbers
       const atomIndices = [2, 4, 5];
-      // eslint-disable-next-line no-magic-numbers
-      const optionIndices = [2, 5, 11];
+      const optionIndices = [
+        RingSizeOption.Zero,
+        RingSizeOption.Three,
+        RingSizeOption.Nine,
+      ];
 
       await drawBenzeneRing(page);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        await selectRingSizeOption(page, atomIndices[i], optionIndices[i]);
+        const point = await getAtomByIndex(
+          page,
+          { label: 'C' },
+          atomIndices[i],
+        );
+        await ContextMenu(page, point).click([
+          MicroAtomOption.QueryProperties,
+          QueryAtomOption.RingSize,
+          optionIndices[i],
+        ]);
       }
       await takeEditorScreenshot(page);
     },
@@ -1768,12 +1818,25 @@ test.describe('Atom Properties', () => {
       // eslint-disable-next-line no-magic-numbers
       const atomIndices = [2, 4, 5];
       // eslint-disable-next-line no-magic-numbers
-      const optionIndices = [2, 5, 11];
+      const optionIndices = [
+        ConnectivityOption.Zero,
+        ConnectivityOption.Three,
+        ConnectivityOption.Nine,
+      ];
 
       await drawBenzeneRing(page);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        await selectConnectivityOption(page, atomIndices[i], optionIndices[i]);
+        const point = await getAtomByIndex(
+          page,
+          { label: 'C' },
+          atomIndices[i],
+        );
+        await ContextMenu(page, point).click([
+          MicroAtomOption.QueryProperties,
+          QueryAtomOption.Connectivity,
+          optionIndices[i],
+        ]);
       }
       await takeEditorScreenshot(page);
     },
@@ -1786,47 +1849,44 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18038
       Description: All combinations options added to Benzene structure.
     */
-    // eslint-disable-next-line no-magic-numbers
-    const anyAtom = [0, 1, 2, 3, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndex = ['0-option', 2, 3, 'Unsaturated', 7, 'aliphatic'];
+    const optionIndex = [
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.RingBondCount,
+        RingBondCountOption.Zero,
+      ],
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.HCount,
+        HCountOption.Two,
+      ],
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.SubstitutionCount,
+        SubstitutionCountOption.Three,
+      ],
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.Unsaturated,
+        UnsaturatedOption.Unsaturated,
+      ],
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.ImplicitHCount,
+        ImplicitHCountOption.Seven,
+      ],
+      [
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.Aromaticity,
+        AromaticityOption.Aliphatic,
+      ],
+    ];
 
     await drawBenzeneRing(page);
 
-    for (let i = 0; i < anyAtom.length; i++) {
-      const atomIndex = anyAtom[i];
-      const option = optionIndex[i];
-
-      switch (i) {
-        case 0:
-          await selectRingBondCountOption(page, atomIndex, option as string);
-          break;
-        case 1:
-          await selectHCountOption(page, atomIndex, option as number);
-          break;
-        // eslint-disable-next-line no-magic-numbers
-        case 2:
-          await selectSubstitutionCountOption(
-            page,
-            atomIndex,
-            option as number,
-          );
-          break;
-        // eslint-disable-next-line no-magic-numbers
-        case 3:
-          await selectUnsaturatedOption(page, atomIndex, option as string);
-          break;
-        // eslint-disable-next-line no-magic-numbers
-        case 4:
-          await selectImplicitHCountOption(page, atomIndex, option as number);
-          break;
-        // eslint-disable-next-line no-magic-numbers
-        case 5:
-          await selectAromaticityOption(page, atomIndex, option as string);
-          break;
-        default:
-          break;
-      }
+    for (let i = 0; i < optionIndex.length; i++) {
+      const point = await getAtomByIndex(page, { label: 'C' }, i);
+      await ContextMenu(page, point).click(optionIndex[i]);
     }
     await takeEditorScreenshot(page);
   });

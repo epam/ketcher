@@ -836,7 +836,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    const peptide1Nal = getMonomerLocator(page, Peptides._1Nal);
+    const peptide1Nal = page
+      .getByTestId('ketcher-canvas')
+      .getByText(Peptides._1Nal.alias, { exact: true });
     await expandMonomer(page, peptide1Nal);
     await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400);

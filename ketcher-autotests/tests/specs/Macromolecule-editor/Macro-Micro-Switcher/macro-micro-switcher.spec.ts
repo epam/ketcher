@@ -292,6 +292,7 @@ test.describe('Macro-Micro-Switcher', () => {
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })
       .getByText('A6OH');
+    await monomerOnTheCanvas.hover();
     await ContextMenu(page, monomerOnTheCanvas).open();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page, {
@@ -337,14 +338,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
-
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -492,7 +489,11 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await ContextMenu(page, getMonomerLocator(page, Chem.Test_6_Ch)).open();
+    const test6Ch = page
+      .getByTestId('ketcher-canvas')
+      .getByText(Chem.Test_6_Ch.alias);
+    await test6Ch.hover();
+    await ContextMenu(page, test6Ch).open();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

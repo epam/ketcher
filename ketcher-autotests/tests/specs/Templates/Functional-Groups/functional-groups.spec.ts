@@ -747,7 +747,7 @@ test.describe('Functional Groups', () => {
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
       await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ExpandAbbreviation,
+        SuperatomOption.ContractAbbreviation,
       );
     });
     await takeEditorScreenshot(page);

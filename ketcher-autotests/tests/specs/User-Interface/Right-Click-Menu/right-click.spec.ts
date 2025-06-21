@@ -26,10 +26,12 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
+  AromaticityOption,
   HighlightOption,
   MicroAtomOption,
   MicroBondOption,
   QueryAtomOption,
+  RingBondCountOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 
 test.describe('Right-click menu', () => {
@@ -55,7 +57,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await ContextMenu(page, point).click(MicroBondOption.QueryBonds);
+    await ContextMenu(page, point).hover(MicroBondOption.QueryBonds);
     await takeEditorScreenshot(page);
   });
 
@@ -135,15 +137,15 @@ test.describe('Right-click menu', () => {
   test('Check right-click property change for atoms', async ({ page }) => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await ContextMenu(page, point).click([
+    await ContextMenu(page, point).hover([
       MicroAtomOption.QueryProperties,
       QueryAtomOption.RingBondCount,
     ]);
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'As drawn' }).first().click();
+    await page.getByTestId(RingBondCountOption.AsDrawn).first().click();
     await page.getByTestId(QueryAtomOption.Aromaticity).click();
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'aliphatic' }).click();
+    await page.getByTestId(AromaticityOption.Aliphatic).click();
     await page.getByTestId(QueryAtomOption.Unsaturated).first().click();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
@@ -463,7 +465,7 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click(MicroAtomOption.Highlight);
+    await ContextMenu(page, point).hover(MicroAtomOption.Highlight);
     await takeEditorScreenshot(page);
   });
 
@@ -656,7 +658,6 @@ test.describe('Right-click menu', () => {
         MicroBondOption.Highlight,
         highlight.colorClass,
       ]);
-      await clickOnCanvas(page, 100, 100);
     }
     await takeEditorScreenshot(page);
   });

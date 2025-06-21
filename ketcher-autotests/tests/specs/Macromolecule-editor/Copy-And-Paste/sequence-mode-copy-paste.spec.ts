@@ -81,7 +81,9 @@ test.describe('Sequence mode copy&paste for view mode', () => {
       await page.keyboard.down('Control');
       await getSymbolLocator(page, {
         symbolAlias: 'G',
-      }).click();
+      })
+        .first()
+        .click();
       await page.keyboard.up('Control');
       await copyToClipboardByKeyboard(page);
 

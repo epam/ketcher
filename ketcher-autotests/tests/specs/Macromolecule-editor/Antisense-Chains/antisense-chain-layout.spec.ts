@@ -676,7 +676,7 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   }
 
   await selectAllStructuresOnCanvas(page);
-  const monomer = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomer = getMonomerLocator(page, chain.monomerLocatorOptions).first();
   await ContextMenu(page, monomer).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );

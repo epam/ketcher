@@ -43,7 +43,6 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import {
-  hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
   switchToRNAMode,
@@ -637,7 +636,13 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
-    await hoverOnSequenceSymbol(page, 'X', 0);
+    await page
+      .getByTestId('ketcher-canvas')
+      .getByText('X')
+      .nth(0)
+      .locator('..')
+      .first()
+      .hover();
     await takeEditorScreenshot(page);
   });
 

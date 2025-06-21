@@ -17,10 +17,7 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  getSequenceSymbolLocator,
-  selectSequenceRangeInEditMode,
-} from '@utils/macromolecules/sequence';
+import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -61,7 +58,11 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     page,
   }) => {
     await page.keyboard.down('Control');
-    await getSequenceSymbolLocator(page, 'G').click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+    })
+      .first()
+      .click();
     await page.keyboard.up('Control');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -78,7 +79,9 @@ test.describe('Sequence mode copy&paste for view mode', () => {
       'pasting is performed in next row, and canvas is moved to make newly added sequence visible',
     async ({ page }) => {
       await page.keyboard.down('Control');
-      await getSequenceSymbolLocator(page, 'G').click();
+      await getSymbolLocator(page, {
+        symbolAlias: 'G',
+      }).click();
       await page.keyboard.up('Control');
       await copyToClipboardByKeyboard(page);
 
@@ -99,20 +102,30 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
-    const symbolG = getSequenceSymbolLocator(page, 'G');
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
   });
 
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
-    const fromSymbol = getSequenceSymbolLocator(page, 'G', 2);
-    const toSymbol = getSequenceSymbolLocator(page, 'G', 4);
+    const fromSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 23,
+    });
+    const toSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 36,
+    });
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
     await copyToClipboardByKeyboard(page);
-    const cNthNumber = 5;
-    await getSequenceSymbolLocator(page, 'C', cNthNumber).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 26,
+    }).click();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
@@ -306,7 +319,10 @@ test.describe('Sequence-edit mode', () => {
     }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
-    const symbolG = getSequenceSymbolLocator(page, 'G');
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
+
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardByKeyboard(page);

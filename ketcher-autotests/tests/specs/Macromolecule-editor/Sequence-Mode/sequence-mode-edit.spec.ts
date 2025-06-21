@@ -43,7 +43,6 @@ import {
   turnSyncEditModeOff,
 } from '@utils/macromolecules/monomer';
 import {
-  hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
   switchToRNAMode,
@@ -326,10 +325,14 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
-    await hoverOnSequenceSymbol(page, 'A');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+    }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await hoverOnSequenceSymbol(page, 'K');
+    await getSymbolLocator(page, {
+      symbolAlias: 'K',
+    }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -343,10 +346,10 @@ test.describe('Sequence edit mode', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
-    await hoverOnSequenceSymbol(page, 'A');
+    await getMonomerLocator(page, Peptides.A).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await hoverOnSequenceSymbol(page, 'Aad');
+    await getMonomerLocator(page, Peptides.Aad).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -364,7 +367,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
 
     for (const symbol of sequenceSymbols) {
-      await hoverOnSequenceSymbol(page, symbol);
+      await getMonomerLocator(page, { monomerAlias: symbol }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
@@ -460,7 +463,11 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['A', 'C', '@'];
 
     for (const symbol of sequenceSymbols) {
-      await hoverOnSequenceSymbol(page, symbol);
+      await getSymbolLocator(page, {
+        symbolAlias: symbol,
+      })
+        .first()
+        .hover();
       await waitForMonomerPreview(page);
       await takePageScreenshot(page);
       await moveMouseAway(page);
@@ -548,7 +555,10 @@ test.describe('Sequence edit mode', () => {
     */
     await switchToRNAMode(page);
     await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-    await hoverOnSequenceSymbol(page, 'A', 0);
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });

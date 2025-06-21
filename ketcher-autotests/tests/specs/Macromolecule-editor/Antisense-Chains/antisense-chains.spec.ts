@@ -2660,7 +2660,10 @@ for (const chain of chainWithExtraBondToBase) {
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+    const monomerLocator = getMonomerLocator(
+      page,
+      chain.monomerLocatorOptions,
+    ).first();
     await ContextMenu(page, monomerLocator).open();
 
     const createAntisenseStrandOption = page
@@ -2950,7 +2953,10 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3001,7 +3007,10 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3092,7 +3101,10 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3140,7 +3152,10 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3191,7 +3206,10 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3227,7 +3245,10 @@ test(`10. Check that options "Delete" and "Copy" added to the r-click menu`, asy
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const deleteOption = page.getByTestId(MonomerOption.Delete).first();
@@ -3260,7 +3281,10 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const deleteOption = page.getByTestId(MonomerOption.Delete).first();
@@ -3295,7 +3319,10 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const copyOption = page.getByTestId(MonomerOption.Copy).first();
@@ -3331,7 +3358,10 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3401,7 +3431,10 @@ test(`14. Validate that both sense and antisense strands can be exported correct
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3457,7 +3490,10 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3502,7 +3538,10 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
@@ -3546,7 +3585,10 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  const monomerLocator = getMonomerLocator(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
   await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page

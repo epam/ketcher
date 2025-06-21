@@ -53,7 +53,12 @@ import {
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AmbiguousMonomerType,
+  AttachmentPointName,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
@@ -541,6 +546,64 @@ export class CoreEditor {
           this.transientDrawingView.hideLineLengthHighlight();
         }
         this.transientDrawingView.update();
+      },
+    );
+
+    this.events.placeLibraryItemOnCanvas.add(
+      (
+        item: IRnaPreset | MonomerOrAmbiguousType,
+        position: { x: number; y: number },
+      ) => {
+        const { x, y } = position;
+
+        const isRnaPreset = (
+          item: IRnaPreset | MonomerOrAmbiguousType,
+        ): item is IRnaPreset => {
+          return 'sugar' in item;
+        };
+
+        const isAmbiguousMonomer = (
+          item: MonomerOrAmbiguousType,
+        ): item is AmbiguousMonomerType => {
+          return item.isAmbiguous === true;
+        };
+
+        let modelChanges: Command;
+
+        if (isRnaPreset(item)) {
+          const { sugar, phosphate, base } = item;
+          if (!sugar) {
+            return;
+          }
+
+          modelChanges = this.drawingEntitiesManager.addRnaPreset({
+            sugar,
+            sugarPosition: Coordinates.canvasToModel(new Vec2(x, y)),
+            phosphate,
+            phosphatePosition: phosphate
+              ? Coordinates.canvasToModel(new Vec2(x + SnakeLayoutCellWidth, y))
+              : undefined,
+            rnaBase: base,
+            rnaBasePosition: base
+              ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
+              : undefined,
+          }).command;
+        } else if (isAmbiguousMonomer(item)) {
+          modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
+        } else {
+          modelChanges = this.drawingEntitiesManager.addMonomer(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
+        }
+
+        const history = new EditorHistory(this);
+
+        history.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
       },
     );
   }

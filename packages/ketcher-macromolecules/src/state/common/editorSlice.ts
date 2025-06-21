@@ -21,6 +21,7 @@ import {
   SettingsManager,
   type EditorLineLength,
   type SingleChainMacromoleculeProperties,
+  IRnaPreset,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
@@ -205,6 +206,7 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
+  setLibraryItemDrag,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

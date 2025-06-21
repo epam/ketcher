@@ -1,9 +1,11 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   ClickTarget,
   ContextMenuOption,
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
+import { delay } from '@utils/canvas';
 
 type ContextMenuLocators = {
   contextMenuBody: Locator;
@@ -40,6 +42,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       }
       try {
         // Wait for the context menu to close after clicking the last option
+        await delay(0.1);
         await locators.contextMenuBody.waitFor({
           state: 'hidden',
           timeout: 1000,

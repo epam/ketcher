@@ -36,14 +36,15 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       for (let i = 0; i < options.length; i++) {
         const option = getOption(options[i]).first();
         await option.waitFor({ state: 'visible' });
-
-        if (i < options.length - 1) {
-          await option.click();
-        } else {
-          await option.click();
-        }
+        await option.click();
       }
-      if (await locators.contextMenuBody.isVisible()) {
+      try {
+        // Wait for the context menu to close after clicking the last option
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 1000,
+        });
+      } catch (error) {
         await page.keyboard.press('Escape');
         await locators.contextMenuBody.waitFor({ state: 'hidden' });
       }

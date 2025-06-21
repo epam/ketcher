@@ -61,7 +61,7 @@ export enum MicroBondOption {
   Double = 'bond-double-option',
   DoubleCisTrans = 'bond-crossed-option',
   Triple = 'bond-triple-option',
-  QueryBonds = 'bond-aromatic-option',
+  QueryBonds = 'Query bonds-option',
   Hydrogen = 'bond-hydrogen-option',
   Dative = 'bond-dative-option',
   ChangeDirection = 'Change direction-option',

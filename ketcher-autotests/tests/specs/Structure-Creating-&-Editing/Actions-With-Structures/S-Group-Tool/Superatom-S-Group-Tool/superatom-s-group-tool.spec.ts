@@ -27,6 +27,8 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -53,21 +55,6 @@ async function fillFieldByLabel(
 ) {
   await page.getByLabel(fieldLabel).click();
   await page.getByLabel(fieldLabel).fill(superatomName);
-}
-
-async function contractExpandRemoveAbbreviation(
-  page: Page,
-  superatomName: string,
-) {
-  point = await getAtomByIndex(page, { label: 'C' }, 3);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-  await page.getByText('Contract Abbreviation').click();
-  await takeEditorScreenshot(page);
-  await page.getByText(superatomName).click({ button: 'right' });
-  await page.getByText('Expand Abbreviation').click();
-  await takeEditorScreenshot(page);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-  await page.getByText('Remove Abbreviation').click();
 }
 
 test.describe('Superatom S-Group tool', () => {
@@ -260,7 +247,16 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to contract/expand/remove abbreviation on structure with Superatom S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
-    await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
+
+    point = await getAtomByIndex(page, { label: 'C' }, 3);
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await takeEditorScreenshot(page);
+    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
+      SuperatomOption.ExpandAbbreviation,
+    );
+    await takeEditorScreenshot(page);
+    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
+
     await takeEditorScreenshot(page);
   });
 
@@ -272,7 +268,15 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to contract/expand/remove abbreviation on atom with Superatom S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/superatom-one-atom-on-chain.ket');
-    await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
+
+    point = await getAtomByIndex(page, { label: 'C' }, 3);
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await takeEditorScreenshot(page);
+    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
+      SuperatomOption.ExpandAbbreviation,
+    );
+    await takeEditorScreenshot(page);
+    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
     await takeEditorScreenshot(page);
   });
 

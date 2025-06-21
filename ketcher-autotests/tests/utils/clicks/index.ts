@@ -249,15 +249,6 @@ export async function doubleClickOnBond(
   });
 }
 
-export async function rightClickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-}
-
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,

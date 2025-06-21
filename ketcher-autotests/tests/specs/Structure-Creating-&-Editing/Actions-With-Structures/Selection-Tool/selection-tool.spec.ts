@@ -15,6 +15,7 @@ import {
   waitForPageInit,
   waitForRender,
   selectAllStructuresOnCanvas,
+  getAtomByIndex,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -24,6 +25,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +40,8 @@ test.describe('Selection tools', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'C', 0, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 

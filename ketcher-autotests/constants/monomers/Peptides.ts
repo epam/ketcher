@@ -3,6 +3,7 @@ import { createMonomerGroup } from './common';
 
 export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   A: { alias: 'A', testId: 'A___Alanine' },
+  Aad: { alias: 'Aad', testId: 'Aad___L-2-aminoadipic acid' },
   Ala_al: {
     alias: 'Ala-al',
     testId: 'Ala-al___(2S)-2-aminopropanal',

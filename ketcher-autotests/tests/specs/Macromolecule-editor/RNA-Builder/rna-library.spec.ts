@@ -46,6 +46,8 @@ import {
   RNASection,
   RNASectionArea,
 } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -507,10 +509,8 @@ test.describe('RNA Library', () => {
       Phosphates.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').locator('div').click();
+    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Bases.baA);
     await moveMouseAway(page);
@@ -541,18 +541,18 @@ test.describe('RNA Library', () => {
       Phosphates.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('duplicateandedit').locator('div').click();
+    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await ContextMenu(page, customPreset).click(
+      LibraryPresetOption.DuplicateAndEdit,
+    );
     await Library(page).rnaBuilder.save();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await Library(page).rnaBuilder.collapse();
-    await page.getByTestId('25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').click();
+    const customPresetCopy = page.getByTestId(
+      '25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph',
+    );
+    await ContextMenu(page, customPresetCopy).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphates.P);
     await Library(page).rnaBuilder.save();
@@ -571,10 +571,8 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await Library(page).rnaBuilder.expand();
-    await page.getByTestId(Presets.A.testId).click({
-      button: 'right',
-    });
-    await page.getByTestId('duplicateandedit').locator('div').click();
+    const resetA = page.getByTestId(Presets.A.testId);
+    await ContextMenu(page, resetA).click(LibraryPresetOption.DuplicateAndEdit);
     await Library(page).rnaBuilder.cancel();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
@@ -602,10 +600,10 @@ test.describe('RNA Library', () => {
         Phosphates.Test_6_Ph,
       ]);
       await Library(page).rnaBuilder.addToPresets();
-      await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-        button: 'right',
-      });
-      await page.getByTestId('deletepreset').click();
+      const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+      await ContextMenu(page, customPreset).click(
+        LibraryPresetOption.DeletePreset,
+      );
       await page.getByRole('button', { name: 'Delete' }).click();
       await takePresetsScreenshot(page);
 
@@ -622,10 +620,8 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugars._25R, Bases.baA, Phosphates.bP]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').locator('div').click();
+    const customPreset = page.getByTestId('25R(baA)bP_baA_25R_bP');
+    await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('TestMonomers');
     await Library(page).rnaBuilder.save();
@@ -1309,9 +1305,9 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.collapse();
 
     const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await customPreset.hover();
-    await customPreset.click({ button: 'right' });
-    await page.getByText('Delete Preset').click();
+    await ContextMenu(page, customPreset).click(
+      LibraryPresetOption.DeletePreset,
+    );
     await page.getByRole('button', { name: 'Delete' }).click();
     await takeMonomerLibraryScreenshot(page);
   });

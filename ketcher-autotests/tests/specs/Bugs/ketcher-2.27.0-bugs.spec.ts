@@ -41,6 +41,12 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BondsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { expandMonomer } from '@utils/canvas/monomer/helpers';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  HighlightOption,
+  MicroBondOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -272,21 +278,20 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/benzene-ring-with-two-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
-    await page.getByText('R1').click({
-      button: 'right',
-    });
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-cyxjjb').click(); // Red
-    await page
+    const attachmentPointR1 = page.getByText('R1');
+    await ContextMenu(page, attachmentPointR1).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Red,
+    ]);
+    const primaryAattachmentPoint = page
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })
       .locator('path')
-      .nth(8)
-      .click({
-        button: 'right',
-      });
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-d1acvy').click(); // Blue
+      .nth(8);
+    await ContextMenu(page, primaryAattachmentPoint).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Blue,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -545,8 +550,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await page.getByText('2Nal').click({ button: 'right' });
-    await page.getByText('Expand monomer').click();
+    await expandMonomer(page, page.getByText('2Nal'));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

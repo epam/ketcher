@@ -33,6 +33,7 @@ const MacromoleculeMenuItems = (
     <>
       <Item
         {...props}
+        data-testid={`${expandText}-option`}
         hidden={(params) => hidden(params, true)}
         onClick={(params) => action(params, true)}
         disabled={expandingDisabled}
@@ -41,6 +42,7 @@ const MacromoleculeMenuItems = (
       </Item>
       <Item
         {...props}
+        data-testid={`${collapseText}-option`}
         hidden={(params) => hidden(params, false)}
         onClick={(params) => action(params, false)}
       >

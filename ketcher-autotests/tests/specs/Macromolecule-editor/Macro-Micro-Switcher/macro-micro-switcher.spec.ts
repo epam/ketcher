@@ -40,6 +40,7 @@ import {
   waitForRender,
 } from '@utils';
 import {
+  getAtomByIndex,
   MacroFileType,
   selectAllStructuresOnCanvas,
   SequenceType,
@@ -94,6 +95,11 @@ import {
   ShowHydrogenLabelsOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MonomerOnMicroOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -282,11 +288,12 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page
+    const monomerOnTheCanvas = page
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })
-      .getByText('A6OH')
-      .click({ button: 'right' });
+      .getByText('A6OH');
+    await monomerOnTheCanvas.hover();
+    await ContextMenu(page, monomerOnTheCanvas).open();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -331,14 +338,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
-
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -486,11 +489,11 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page
+    const test6Ch = page
       .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('Test-6-Ch')
-      .click({ button: 'right' });
+      .getByText(Chem.Test_6_Ch.alias);
+    await test6Ch.hover();
+    await ContextMenu(page, test6Ch).open();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -989,7 +992,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/chain-with-eight-attachment-points.ket',
     );
-    await clickOnAtom(page, 'C', 9, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 9);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1019,7 +1023,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/structure-with-two-attachment-points.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R2').click({ button: 'right' });
+    await ContextMenu(page, page.getByText('R2')).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1536,7 +1540,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
     await openFileAndAddToCanvasMacro(page, 'KET/part-chain-with-s-group.ket');
-    await clickOnAtom(page, 'C', 2, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 2);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1889,11 +1894,13 @@ test.describe('Macro-Micro-Switcher', () => {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
         }
 
-        await getSymbolLocator(page, {
+        const symbolAt = getSymbolLocator(page, {
           symbolAlias: '@',
           nodeIndexOverall: 0,
-        }).click({ button: 'right' });
-        await page.getByTestId('edit_sequence').click();
+        });
+        await ContextMenu(page, symbolAt).click(
+          SequenceSymbolOption.EditSequence,
+        );
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await keyboardPressOnCanvas(page, 'Escape');
@@ -1932,11 +1939,13 @@ test.describe('Macro-Micro-Switcher', () => {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
         }
 
-        await getSymbolLocator(page, {
+        const symbolAt = getSymbolLocator(page, {
           symbolAlias: '@',
           nodeIndexOverall: 0,
-        }).click({ button: 'right' });
-        await page.getByTestId('edit_sequence').click();
+        });
+        await ContextMenu(page, symbolAt).click(
+          SequenceSymbolOption.EditSequence,
+        );
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await takeEditorScreenshot(page);
@@ -2243,42 +2252,19 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 });
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
-
 async function collapseMonomer(page: Page) {
-  // await clickInTheMiddleOfTheScreen(page, 'right');
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
+  const canvas = page.getByTestId('ketcher-canvas');
+  const attachmentPoint = canvas.getByText('H', { exact: true }).first();
 
   if (await attachmentPoint.isVisible()) {
-    await attachmentPoint.click({
-      button: 'right',
-    });
+    await ContextMenu(page, attachmentPoint).click(
+      MonomerOnMicroOption.CollapseMonomer,
+    );
   } else {
-    await canvasLocator.getByText('O', { exact: true }).first().click({
-      button: 'right',
-    });
-  }
-
-  const collapseMonomerMenu = page.getByText('Collapse monomer');
-  if (await collapseMonomerMenu.isVisible()) {
-    await page.getByText('Collapse monomer').click();
-  } else {
-    // This hack should be removed after https://github.com/epam/ketcher/issues/5809 fix.
-    // Only Collapse monomer menu should remain
-    await page.getByText('Contract abbreviation').click();
+    await ContextMenu(
+      page,
+      canvas.getByText('O', { exact: true }).first(),
+    ).click(MonomerOnMicroOption.CollapseMonomer);
   }
 }
 
@@ -2380,7 +2366,12 @@ test.describe('Expand on Micro canvas: ', () => {
        */
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await takeEditorScreenshot(page);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      const monomerOnMicro = page
+        .getByTestId('ketcher-canvas')
+        .getByText(expandableMonomer.monomerLocatorText, { exact: true });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
+      );
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists
@@ -2520,9 +2511,15 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
         nonExpandableMonomer.KETFile,
       );
       await takeEditorScreenshot(page);
-      await callContexMenu(page, nonExpandableMonomer.monomerLocatorText);
 
-      const disableState = await page.getByText('Expand monomer').isDisabled();
+      const monomerOnMicro = page
+        .getByTestId('ketcher-canvas')
+        .getByText(nonExpandableMonomer.monomerLocatorText, { exact: true });
+      await ContextMenu(page, monomerOnMicro).open();
+
+      const disableState = await page
+        .getByTestId(MonomerOnMicroOption.ExpandMonomer)
+        .isDisabled();
       expect(disableState).toBe(true);
     });
   }
@@ -2617,7 +2614,12 @@ test.describe('Collapse on Micro canvas: ', () => {
         page,
         collapsableMonomer.KETFile,
       );
-      await expandMonomer(page, collapsableMonomer.monomerLocatorText);
+      const monomerOnMicro = page
+        .getByTestId('ketcher-canvas')
+        .getByText(collapsableMonomer.monomerLocatorText, { exact: true });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
+      );
       await takeEditorScreenshot(page);
       await collapseMonomer(page);
       await takeEditorScreenshot(page);

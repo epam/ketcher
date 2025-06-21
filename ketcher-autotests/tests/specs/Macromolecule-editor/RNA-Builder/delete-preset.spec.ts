@@ -4,6 +4,8 @@ import { takeMonomerLibraryScreenshot } from '@utils';
 import { Presets } from '@constants/monomers/Presets';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 
 test.describe('Macromolecules delete RNA presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,21 +16,24 @@ test.describe('Macromolecules delete RNA presets', () => {
   });
 
   test('Should not delete default RNA preset', async ({ page }) => {
-    await Library(page).rightClickOnPreset(Presets.A);
+    const libraryPresetA = page.getByTestId(Presets.A.testId);
+    await ContextMenu(page, libraryPresetA).open();
     await takeMonomerLibraryScreenshot(page);
   });
 
   test('Delete copy RNA preset', async ({ page }) => {
-    await Library(page).rightClickOnPreset(Presets.A);
-
-    await page.getByTestId('duplicateandedit').click();
+    const libraryPresetA = page.getByTestId(Presets.A.testId);
+    await ContextMenu(page, libraryPresetA).click(
+      LibraryPresetOption.DuplicateAndEdit,
+    );
     await Library(page).rnaBuilder.save();
 
     const createdPreset = page.getByTestId('A_Copy_A_R_P');
     await expect(createdPreset).toBeVisible();
 
-    await createdPreset.click({ button: 'right' });
-    await page.getByTestId('deletepreset').click();
+    await ContextMenu(page, createdPreset).click(
+      LibraryPresetOption.DeletePreset,
+    );
     await page.getByRole('button', { name: 'Delete' }).click();
 
     await expect(createdPreset).not.toBeVisible();

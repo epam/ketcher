@@ -1,4 +1,6 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -7,7 +9,6 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  waitForRender,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import {
@@ -467,20 +468,6 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
   }
 });
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
-
 test.describe('Saving expanded monomer to SMARTS: ', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -505,7 +492,12 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
         await pageReloadMicro(page);
       }
       await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
-      await expandMonomer(page, monomer.monomerLocatorText);
+      const monomerOnMicro = page
+        .getByTestId('ketcher-canvas')
+        .getByText(monomer.monomerLocatorText, { exact: true });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
+      );
       await takeEditorScreenshot(page);
 
       await verifyFileExport(

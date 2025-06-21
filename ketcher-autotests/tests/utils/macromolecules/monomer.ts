@@ -12,6 +12,11 @@ import {
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MonomerOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -244,13 +249,11 @@ export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseRNAStrand,
+    );
+  });
 }
 
 export async function createAntisenseStrandByButton(
@@ -271,28 +274,27 @@ export async function createAntisenseStrandByButton(
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
-  await symbolLocator.click({ button: 'right' });
-  await page.getByTestId('modify_in_rna_builder').click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbolLocator).click(
+      SequenceSymbolOption.ModifyInRNABuilder,
+    );
+  });
 }
 
 export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseDNAStrand,
+    );
+  });
 }
 
-export async function deleteHydrogenBond(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const deleteHydrogenBondOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondOption.click();
+export async function deleteHydrogenBond(page: Page, symbol: Locator) {
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbol).click(
+      SequenceSymbolOption.DeleteHydrogenBonds,
+    );
+  });
 }
 
 export async function turnSyncEditModeOn(page: Page) {

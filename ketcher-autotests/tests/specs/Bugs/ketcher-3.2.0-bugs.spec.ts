@@ -21,6 +21,7 @@ import {
   resetZoomLevelToDefault,
   clickOnCanvas,
   setMolecule,
+  MolFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
@@ -783,7 +784,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
       'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

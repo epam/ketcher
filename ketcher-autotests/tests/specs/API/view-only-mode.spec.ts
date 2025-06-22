@@ -30,6 +30,7 @@ import {
   disableViewOnlyModeBySetOptions,
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
+  MolFileFormat,
 } from '@utils/formats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -524,7 +525,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -548,7 +549,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

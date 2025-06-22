@@ -14,6 +14,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -234,7 +235,7 @@ test.describe('Superatom S-Group tool', () => {
       page,
       'Molfiles-V2000/superatom-all-chain-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

@@ -37,6 +37,9 @@ import {
   moveMouseAway,
   getAtomByIndex,
   getCachedBodyCenter,
+  RxnFileFormat,
+  SdfFileFormat,
+  RdfFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -325,7 +328,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/reaction-saved-to-MOL-V3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -355,7 +358,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -384,7 +387,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -412,7 +415,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1017,7 +1020,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1457,7 +1460,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1567,7 +1570,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1663,7 +1666,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Rxn-V2000/ket-issue-2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1690,7 +1693,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'RDF-V3000/ket-issue-2-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

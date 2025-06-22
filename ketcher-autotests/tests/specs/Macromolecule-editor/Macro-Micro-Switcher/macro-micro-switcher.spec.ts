@@ -9,7 +9,9 @@ import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
+  MolFileFormat,
   SaltsAndSolvents,
+  SdfFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
@@ -1580,7 +1582,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
         FileType.MOL,
-        'v2000',
+        MolFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
         page,
@@ -1603,7 +1605,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1625,7 +1627,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -2197,7 +2199,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'Molfiles-V2000/micro-macro-structure-expected.mol',
         FileType.MOL,
-        'v2000',
+        MolFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
         page,
@@ -2222,7 +2224,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'SDF/micro-macro-structure-v2000-expected.sdf',
         FileType.SDF,
-        'v2000',
+        SdfFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
         page,
@@ -2242,7 +2244,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'SDF/micro-macro-structure-v3000-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

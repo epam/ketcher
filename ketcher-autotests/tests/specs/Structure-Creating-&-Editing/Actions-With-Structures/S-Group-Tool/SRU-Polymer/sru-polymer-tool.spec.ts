@@ -8,6 +8,7 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  MolFileFormat,
   openFileAndAddToCanvas,
   pressButton,
   resetCurrentTool,
@@ -294,7 +295,7 @@ test.describe('SRU Polymer tool', () => {
       page,
       'Molfiles-V2000/sru-polymer-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

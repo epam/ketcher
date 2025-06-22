@@ -18,6 +18,7 @@ import {
   dragMouseTo,
   clickOnCanvas,
   waitForRender,
+  RdfFileFormat,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -1008,7 +1009,7 @@ test.describe('Cascade Reactions', () => {
       page,
       'RDF-V2000/single-arrow-expected.rdf',
       FileType.RDF,
-      'v2000',
+      RdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1028,7 +1029,7 @@ test.describe('Cascade Reactions', () => {
       page,
       'RDF-V3000/single-arrow-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1051,7 +1052,7 @@ test.describe('Cascade Reactions', () => {
       page,
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
-      'v2000',
+      RdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1074,7 +1075,7 @@ test.describe('Cascade Reactions', () => {
       page,
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1149,7 +1150,12 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
-      await verifyFileExport(page, `${rdfFileExpected}`, FileType.RDF, 'v2000');
+      await verifyFileExport(
+        page,
+        `${rdfFileExpected}`,
+        FileType.RDF,
+        RdfFileFormat.v2000,
+      );
       await openFileAndAddToCanvasAsNewProject(page, `${rdfFileExpected}`);
       await takeEditorScreenshot(page);
     });
@@ -1221,7 +1227,12 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
-      await verifyFileExport(page, `${rdfFileExpected}`, FileType.RDF, 'v3000');
+      await verifyFileExport(
+        page,
+        `${rdfFileExpected}`,
+        FileType.RDF,
+        RdfFileFormat.v3000,
+      );
       await openFileAndAddToCanvasAsNewProject(page, `${rdfFileExpected}`);
       await takeEditorScreenshot(page);
     });
@@ -1257,7 +1268,9 @@ test.describe('Cascade Reactions', () => {
         2. Save and verify RDF file
         3. Open saved RDF file
       */
-      const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
+      const fileFormat = rdfFile.includes('V2000')
+        ? RdfFileFormat.v2000
+        : RdfFileFormat.v3000;
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await verifyFileExport(
@@ -1420,7 +1433,9 @@ test.describe('Cascade Reactions', () => {
         2. Save and verify RDF file
         3. Open saved RDF file
       */
-      const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
+      const fileFormat = rdfFile.includes('V2000')
+        ? RdfFileFormat.v2000
+        : RdfFileFormat.v3000;
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await verifyFileExport(
@@ -1452,9 +1467,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are only one reactant`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are only one reactant`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2426
           After fix we should update snapshots and test files.
@@ -1463,20 +1479,23 @@ test.describe('Cascade Reactions', () => {
             2. Save and verify RDF file
             3. Open saved RDF file
           */
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -1498,9 +1517,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are no reagents and cascade reactions`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are no reagents and cascade reactions`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2550
           After fix we should update snapshots and test files.
@@ -1509,20 +1529,23 @@ test.describe('Cascade Reactions', () => {
             2. Save and verify RDF file
             3. Open saved RDF file
           */
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -1554,9 +1577,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           Case:
@@ -1565,21 +1589,24 @@ test.describe('Cascade Reactions', () => {
             3. Open saved RDF file
           */
 
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -1661,9 +1688,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
@@ -1673,21 +1701,24 @@ test.describe('Cascade Reactions', () => {
             3. Open saved RDF file
           */
 
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -1727,9 +1758,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /*
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /*
             Test case: https://github.com/epam/Indigo/issues/2237
             Description: Loaded from RDF RXN file, added cascade reaction to Canvas, added other elements,
             cascade reactions with elements saved to RDF formats with the correct positions.
@@ -1743,38 +1775,41 @@ test.describe('Cascade Reactions', () => {
             7. Save and verify RDF file
             8. Open saved RDF file
           */
-          const rdfFile = format === 'v2000' ? rdfFileV2000 : rdfFileV3000;
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFile = format === 'v2000' ? rdfFileV2000 : rdfFileV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvas(page, rdfFile);
-          await clickOnCanvas(page, 500, 600);
-          await selectRingButton(page, RingButton.Benzene);
-          await clickOnCanvas(page, 200, 600);
-          await CommonLeftToolbar(page).selectAreaSelectionTool(
-            SelectionToolType.Rectangle,
-          );
-          await addTail(page, 482, 464);
-          await takeEditorScreenshot(page);
-          await selectPartOfMolecules(page);
-          await CommonLeftToolbar(page).selectEraseTool();
-          await takeEditorScreenshot(page);
-          await CommonTopLeftToolbar(page).undo();
-          await takeEditorScreenshot(page);
-          await copyAndPaste(page);
-          await clickOnCanvas(page, 500, 200);
-          await takeEditorScreenshot(page);
-          await CommonTopLeftToolbar(page).undo();
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvas(page, rdfFile);
+            await clickOnCanvas(page, 500, 600);
+            await selectRingButton(page, RingButton.Benzene);
+            await clickOnCanvas(page, 200, 600);
+            await CommonLeftToolbar(page).selectAreaSelectionTool(
+              SelectionToolType.Rectangle,
+            );
+            await addTail(page, 482, 464);
+            await takeEditorScreenshot(page);
+            await selectPartOfMolecules(page);
+            await CommonLeftToolbar(page).selectEraseTool();
+            await takeEditorScreenshot(page);
+            await CommonTopLeftToolbar(page).undo();
+            await takeEditorScreenshot(page);
+            await copyAndPaste(page);
+            await clickOnCanvas(page, 500, 200);
+            await takeEditorScreenshot(page);
+            await CommonTopLeftToolbar(page).undo();
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -1844,9 +1879,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v2000] as const).forEach(
+        (format) => {
+          test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
@@ -1856,21 +1892,24 @@ test.describe('Cascade Reactions', () => {
             3. Open saved RDF file
           */
 
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -2193,7 +2232,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV2000}`,
           FileType.RDF,
-          'v2000',
+          RdfFileFormat.v2000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV2000);
         await takeEditorScreenshot(page);
@@ -2249,7 +2288,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV2000}`,
           FileType.RDF,
-          'v2000',
+          RdfFileFormat.v2000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV2000);
         await takeEditorScreenshot(page);
@@ -2305,7 +2344,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV2000}`,
           FileType.RDF,
-          'v2000',
+          RdfFileFormat.v2000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV2000);
         await takeEditorScreenshot(page);
@@ -2361,7 +2400,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV2000}`,
           FileType.RDF,
-          'v2000',
+          RdfFileFormat.v2000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV2000);
         await takeEditorScreenshot(page);
@@ -2524,7 +2563,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV2000}`,
           FileType.RDF,
-          'v2000',
+          RdfFileFormat.v2000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV2000);
         await takeEditorScreenshot(page);
@@ -2551,9 +2590,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /* 
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /* 
           Test case: https://github.com/epam/Indigo/issues/2404
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           Case:
@@ -2561,21 +2601,24 @@ test.describe('Cascade Reactions', () => {
             2. Save and verify RDF file
             3. Open saved RDF file
           */
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvasAsNewProject(page, ketFile);
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvasAsNewProject(page, ketFile);
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 
@@ -2608,7 +2651,7 @@ test.describe('Cascade Reactions', () => {
           page,
           `${rdfFileExpectedV3000}`,
           FileType.RDF,
-          'v3000',
+          RdfFileFormat.v3000,
         );
         await openFileAndAddToCanvasAsNewProject(page, rdfFileExpectedV3000);
         await takeEditorScreenshot(page);
@@ -2635,9 +2678,10 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Add to Canvas from ${testCaseDescription} then can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
-          /*
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
+        (format) => {
+          test(`Add to Canvas from ${testCaseDescription} then can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+            /*
             Test case: https://github.com/epam/Indigo/issues/2404
             Description: Added to Canvas from KET cascade reaction (2-1-1) without text, using "Add Text" tool, 
             added text name and conditions for each part of reaction, saved to RDF V2000/V3000 formats, after that loaded from RDF V2000/V3000, 
@@ -2648,25 +2692,38 @@ test.describe('Cascade Reactions', () => {
             3. Save and verify RDF file
             4. Open saved RDF file
           */
-          const rdfFileExpected =
-            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+            const rdfFileExpected =
+              format === RdfFileFormat.v2000
+                ? rdfFileExpectedV2000
+                : rdfFileExpectedV3000;
 
-          await openFileAndAddToCanvas(page, ketFile);
-          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 470, 360);
-          await pressButton(page, 'Apply');
-          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 700, 360);
-          await pressButton(page, 'Apply');
-          await takeEditorScreenshot(page);
-          await verifyFileExport(
-            page,
-            `${rdfFileExpected}`,
-            FileType.RDF,
-            format,
-          );
-          await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
-          await takeEditorScreenshot(page);
-        });
-      });
+            await openFileAndAddToCanvas(page, ketFile);
+            await addTextToCanvas(
+              page,
+              'abcde FGHIJKLMNOP!@##$%^^^&*',
+              470,
+              360,
+            );
+            await pressButton(page, 'Apply');
+            await addTextToCanvas(
+              page,
+              'abcde FGHIJKLMNOP!@##$%^^^&*',
+              700,
+              360,
+            );
+            await pressButton(page, 'Apply');
+            await takeEditorScreenshot(page);
+            await verifyFileExport(
+              page,
+              `${rdfFileExpected}`,
+              FileType.RDF,
+              format,
+            );
+            await openFileAndAddToCanvasAsNewProject(page, rdfFileExpected);
+            await takeEditorScreenshot(page);
+          });
+        },
+      );
     },
   );
 

@@ -33,6 +33,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   getCachedBodyCenter,
   getAtomByIndex,
+  RxnFileFormat,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -382,7 +383,7 @@ test.describe('Template Manupulations', () => {
       page,
       'Molfiles-V2000/three-templates-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -398,7 +399,7 @@ test.describe('Template Manupulations', () => {
       page,
       'Rxn-V2000/templates-reaction-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

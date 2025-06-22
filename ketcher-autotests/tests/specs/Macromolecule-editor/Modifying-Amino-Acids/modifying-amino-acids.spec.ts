@@ -1951,7 +1951,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2010,7 +2010,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2070,7 +2070,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2130,7 +2130,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2190,7 +2190,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2250,7 +2250,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2310,7 +2310,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -4676,7 +4676,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4740,7 +4740,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4805,7 +4805,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4868,7 +4868,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4931,7 +4931,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4996,7 +4996,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -5061,7 +5061,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

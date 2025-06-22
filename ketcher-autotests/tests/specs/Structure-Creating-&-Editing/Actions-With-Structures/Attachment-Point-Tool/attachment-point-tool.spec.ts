@@ -14,6 +14,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  RxnFileFormat,
 } from '@utils';
 import { cutAndPaste } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -404,7 +405,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -421,7 +422,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -436,7 +437,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -451,7 +452,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -471,7 +472,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -491,7 +492,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });

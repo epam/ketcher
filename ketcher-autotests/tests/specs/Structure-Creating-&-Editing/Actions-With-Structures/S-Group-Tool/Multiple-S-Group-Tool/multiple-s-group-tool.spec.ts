@@ -18,6 +18,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -229,7 +230,7 @@ test.describe('Multiple S-Group tool', () => {
       page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

@@ -21,6 +21,7 @@ import {
   selectFlexLayoutModeTool,
   waitForPageInit,
   MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -476,7 +477,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     page,
     'Molfiles-V3000/two-peptides-connected-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -932,7 +933,7 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     page,
     'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,

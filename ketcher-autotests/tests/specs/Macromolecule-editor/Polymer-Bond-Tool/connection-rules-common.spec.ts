@@ -354,7 +354,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });

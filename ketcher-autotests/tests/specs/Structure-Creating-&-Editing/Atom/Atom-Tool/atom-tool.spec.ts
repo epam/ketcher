@@ -22,6 +22,8 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
+  RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -351,7 +353,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/chain-with-colored-atoms-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -369,7 +371,7 @@ test.describe('Atom Tool', () => {
       page,
       'Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -388,7 +390,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -404,7 +406,7 @@ test.describe('Atom Tool', () => {
       page,
       'Rxn-V2000/reaction-list-notlist-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -423,7 +425,7 @@ test.describe('Atom Tool', () => {
       page,
       'Rxn-V2000/reaction-with-group-generics-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -442,7 +444,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/chain-with-group-generics-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

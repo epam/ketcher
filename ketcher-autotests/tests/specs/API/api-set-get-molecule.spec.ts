@@ -24,6 +24,7 @@ import {
   addFragment,
   disableQueryElements,
   enableDearomatizeOnLoad,
+  MolFileFormat,
   setMolecule,
 } from '@utils/formats';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
@@ -192,7 +193,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/test-data-for-enatiomer.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await takeEditorScreenshot(page);
@@ -215,7 +216,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V2000/test-data-for-chiral-centersv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -237,7 +238,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });

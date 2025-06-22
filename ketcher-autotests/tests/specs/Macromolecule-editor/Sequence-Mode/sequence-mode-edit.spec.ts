@@ -12,6 +12,7 @@ import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
+  MolFileFormat,
   Monomer,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
@@ -951,7 +952,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1315,7 +1316,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1349,7 +1350,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1657,7 +1658,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

@@ -21,6 +21,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   MonomerType,
+  MolFileFormat,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -3460,7 +3461,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
     page,
     'KET/Antisense-Chains/Antisense-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await verifyHELMExport(

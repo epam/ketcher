@@ -29,6 +29,7 @@ import {
   setMolecule,
   FILE_TEST_DATA,
   moveMouseAway,
+  RxnFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
@@ -796,7 +797,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'Rxn-V3000/Bugs/super-g-and-super-t-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -929,7 +930,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'Molfiles-V3000/Bugs/moe-a-p-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

@@ -11,6 +11,7 @@ import {
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
+  MolFileFormat,
 } from '@utils';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -440,7 +441,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       'Molfiles-V2000/ring-with-attachment.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

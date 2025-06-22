@@ -4,6 +4,7 @@ import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   getMolfile,
+  MolFileFormat,
   Monomer,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -2230,24 +2231,13 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile(
+  verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.mol',
-    expectedFile,
+    FileType.MOL,
+    MolFileFormat.v3000,
+    [1],
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.mol',
-      fileFormat: 'v3000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,

@@ -18,7 +18,7 @@ test.describe('getMolfile', () => {
       page,
       'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });

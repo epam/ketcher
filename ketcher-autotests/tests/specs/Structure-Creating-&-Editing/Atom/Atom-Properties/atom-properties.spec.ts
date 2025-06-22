@@ -16,6 +16,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   getAtomByIndex,
+  MolFileFormat,
 } from '@utils';
 
 import {
@@ -257,7 +258,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/benzene-with-three-atoms-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -317,7 +318,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -492,7 +493,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/benzene-with-charge-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -609,7 +610,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-isotope-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -724,7 +725,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-valence-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -801,7 +802,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-radicals-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -932,7 +933,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-ring-bond-count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1114,7 +1115,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-h-count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1208,7 +1209,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-substitution-count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1392,7 +1393,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/all-possible-atoms-properties-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1412,7 +1413,7 @@ test.describe('Atom Properties', () => {
       page,
       'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -1480,7 +1481,7 @@ test.describe('Atom Properties', () => {
       page,
       'Molfiles-V2000/chain-with-rection-flags-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

@@ -518,7 +518,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 

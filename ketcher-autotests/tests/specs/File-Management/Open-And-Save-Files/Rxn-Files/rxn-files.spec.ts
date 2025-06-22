@@ -14,6 +14,7 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
+  RxnFileFormat,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -126,7 +127,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -210,13 +211,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await verifyFileExport(
       page,
       'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -296,7 +297,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -329,7 +330,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/heteroatoms-expectedV2000.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -357,7 +358,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/r-group-V3000-expectedV3000.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -382,7 +383,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -413,7 +414,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -444,7 +445,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -474,7 +475,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -505,7 +506,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -536,7 +537,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -563,7 +564,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -590,7 +591,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -617,7 +618,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -644,7 +645,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -671,7 +672,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -698,7 +699,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -725,7 +726,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -752,7 +753,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -779,7 +780,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -806,7 +807,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -833,7 +834,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -861,7 +862,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -888,7 +889,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-catalyst-px-bond-lengh.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -912,7 +913,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -942,7 +943,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -969,7 +970,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -998,7 +999,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1027,7 +1028,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1053,7 +1054,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1082,7 +1083,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1111,7 +1112,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1137,7 +1138,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-long-molecule-inch-bond-lengh.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -1161,7 +1162,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1190,7 +1191,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1221,7 +1222,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1245,7 +1246,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1269,7 +1270,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

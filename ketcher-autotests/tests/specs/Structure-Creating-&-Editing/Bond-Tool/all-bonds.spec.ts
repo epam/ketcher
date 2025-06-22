@@ -7,7 +7,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
   pressButton,
@@ -221,11 +220,7 @@ test.describe(`Bond tool:`, () => {
       point = await getAtomByIndex(page, { label: 'C' }, 1);
       await clickOnCanvas(page, point.x, point.y);
 
-      point = await getAtomByIndex(
-        page,
-        { label: 'C' },
-        DELAY_IN_SECONDS.THREE,
-      );
+      point = await getAtomByIndex(page, { label: 'C' }, 3);
       await clickOnCanvas(page, point.x, point.y);
 
       const editedChain = await page.evaluate(() => {

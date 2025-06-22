@@ -4,7 +4,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  DELAY_IN_SECONDS,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
@@ -46,7 +45,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15525, EPMLSOPKET-15533
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('d');
-    await delay(DELAY_IN_SECONDS.FIVE);
+    await delay(5);
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);

@@ -3,7 +3,6 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
   clickOnCanvas,
-  getControlModifier,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,

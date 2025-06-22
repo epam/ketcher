@@ -21,7 +21,6 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
-  addCyclopentadieneRingWithTwoAtoms,
   ZoomOutByKeyboard,
 } from '@utils';
 import {

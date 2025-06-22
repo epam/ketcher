@@ -1879,7 +1879,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000,
       testCaseDescription,
     }) => {
-      ([RdfFileFormat.v2000, RdfFileFormat.v2000] as const).forEach(
+      ([RdfFileFormat.v2000, RdfFileFormat.v3000] as const).forEach(
         (format) => {
           test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
             /* 

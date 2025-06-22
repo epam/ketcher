@@ -512,6 +512,10 @@ export class CoreEditor {
           return;
         }
 
+        // Additional cleanup as line length highlight enlarges the canvas which leads to scroll to bottom in sequence edit mode
+        this.transientDrawingView.hideLineLengthHighlight();
+        this.transientDrawingView.update();
+
         const command = new Command();
         const history = new EditorHistory(this);
 

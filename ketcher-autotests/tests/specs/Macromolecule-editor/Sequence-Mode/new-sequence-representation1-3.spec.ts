@@ -1554,7 +1554,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
        * 7. Take screenshot to validate that monomer was added in Flex mode canvas
        * 8. Add info to log if known bugs exist and skip test
        */
-      if (sequence.Id in [123] && monomer.Id in [4]) {
+      if (sequence.Id === 123 && monomer.Id === 4) {
         test.skip();
       }
 

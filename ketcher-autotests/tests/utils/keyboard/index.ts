@@ -23,10 +23,14 @@ export async function ZoomOutByKeyboard(page: Page) {
 export async function ZoomInByKeyboard(page: Page) {
   const modifier = getControlModifier();
   await waitForRender(page, async () => {
-    await waitForRender(
-      page,
-      async () => await page.keyboard.press(`${modifier}+Equal`),
-    );
+    await page.keyboard.press(`${modifier}+Equal`);
+  });
+}
+
+export async function clearCanvasByKeyboard(page: Page) {
+  const modifier = getControlModifier();
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+Delete`);
   });
 }
 

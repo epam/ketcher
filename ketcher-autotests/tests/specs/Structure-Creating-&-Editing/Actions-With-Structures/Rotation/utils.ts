@@ -5,6 +5,7 @@ import {
   clickOnCanvas,
   getControlModifier,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -84,8 +85,7 @@ export async function addStructureAndSelect(
   fileName: string = anyStructure,
 ) {
   await openFileAndAddToCanvas(page, fileName);
-  const modifier = getControlModifier();
-  await page.keyboard.press(`${modifier}+KeyA`);
+  await selectAllStructuresOnCanvas(page);
   await page.getByTestId('floating-tools').isVisible();
 }
 

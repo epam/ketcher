@@ -15,6 +15,7 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   moveMouseAway,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -262,7 +263,7 @@ test.describe('R-Group Label Tool', () => {
     // eslint-disable-next-line no-magic-numbers
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);

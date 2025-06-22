@@ -21,6 +21,8 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  addCyclopentadieneRingWithTwoAtoms,
+  ZoomOutByKeyboard,
 } from '@utils';
 import {
   FileType,
@@ -264,7 +266,7 @@ test.describe('Atom Tool', () => {
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
 

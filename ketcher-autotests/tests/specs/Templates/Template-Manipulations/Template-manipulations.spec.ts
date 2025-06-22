@@ -109,7 +109,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -123,8 +122,8 @@ test.describe('Template Manupulations', () => {
     */
     const anyAtom = 0;
     await drawBenzeneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -141,7 +140,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

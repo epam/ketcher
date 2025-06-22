@@ -90,7 +90,7 @@ export async function selectRingButton(page: Page, name: RingButton) {
 export async function drawBenzeneRing(page: Page) {
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press('Escape');
+  // await page.keyboard.press('Escape');
 }
 
 export async function drawCyclohexaneRing(page: Page) {

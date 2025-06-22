@@ -2277,6 +2277,7 @@ for (const monomer of monomersToAdd) {
       }
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, {
         position: 1,

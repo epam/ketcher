@@ -40,6 +40,7 @@ import {
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
+  MolFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';

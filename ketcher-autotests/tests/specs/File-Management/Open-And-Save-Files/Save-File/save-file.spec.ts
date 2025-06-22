@@ -6,14 +6,12 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getMolfile, MolFileFormat, SdfFileFormat } from '@utils/formats';
+import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,

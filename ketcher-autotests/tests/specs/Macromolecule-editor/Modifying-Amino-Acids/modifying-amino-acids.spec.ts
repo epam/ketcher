@@ -14,6 +14,7 @@ import {
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
+  MolFileFormat,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

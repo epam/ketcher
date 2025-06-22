@@ -16,6 +16,7 @@ import {
   Monomer,
   takeElementScreenshot,
   MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,

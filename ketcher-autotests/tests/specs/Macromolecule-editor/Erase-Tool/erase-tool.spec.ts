@@ -12,6 +12,7 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {

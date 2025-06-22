@@ -17,6 +17,7 @@ import {
   clickOnCanvas,
   getAtomByIndex,
   MolFileFormat,
+  RxnFileFormat,
 } from '@utils';
 
 import {

@@ -31,6 +31,7 @@ import {
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';

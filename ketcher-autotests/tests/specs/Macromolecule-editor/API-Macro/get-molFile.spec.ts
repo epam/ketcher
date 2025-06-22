@@ -1,6 +1,10 @@
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { openFileAndAddToCanvasMacro, waitForPageInit } from '@utils';
+import {
+  MolFileFormat,
+  openFileAndAddToCanvasMacro,
+  waitForPageInit,
+} from '@utils';
 import {
   FileType,
   verifyFileExport,

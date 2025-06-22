@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
 import {
   BondsSetting,

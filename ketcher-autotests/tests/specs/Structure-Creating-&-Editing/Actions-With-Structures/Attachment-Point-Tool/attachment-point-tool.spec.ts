@@ -15,6 +15,7 @@ import {
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
 import { cutAndPaste } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms';

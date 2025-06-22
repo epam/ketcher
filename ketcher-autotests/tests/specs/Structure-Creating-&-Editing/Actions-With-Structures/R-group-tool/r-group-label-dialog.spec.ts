@@ -16,6 +16,7 @@ import {
   ZoomInByKeyboard,
   moveMouseAway,
   ZoomOutByKeyboard,
+  RxnFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -501,7 +502,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V2000/chain-with-r-group-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 

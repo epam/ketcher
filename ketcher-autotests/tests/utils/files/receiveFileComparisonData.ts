@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
-import { Ketcher, MolfileFormat } from 'ketcher-core';
+import { Ketcher } from 'ketcher-core';
 import { getTestDataDirectory, readFileContent, saveToFile } from './readFile';
 import {
   getCdx,
@@ -18,7 +18,6 @@ import {
   getSmiles,
   getFasta,
   getExtendedSmiles,
-  SequenceFileFormat,
   FileFormat,
 } from '@utils/formats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';

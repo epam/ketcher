@@ -13,6 +13,7 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   waitForPageInit,
+  MolFileFormat,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';

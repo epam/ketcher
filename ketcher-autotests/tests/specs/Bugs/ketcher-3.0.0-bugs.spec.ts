@@ -30,6 +30,7 @@ import {
   FILE_TEST_DATA,
   moveMouseAway,
   RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';

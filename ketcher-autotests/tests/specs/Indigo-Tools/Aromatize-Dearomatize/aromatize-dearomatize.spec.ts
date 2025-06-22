@@ -8,6 +8,7 @@ import {
   MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
+  RxnFileFormat,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,

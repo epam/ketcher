@@ -7,7 +7,6 @@ import {
   resetZoomLevelToDefault,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,

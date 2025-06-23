@@ -43,6 +43,7 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -484,7 +485,7 @@ test.describe('Common connection rules: ', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('C', { exact: true })
       .first()

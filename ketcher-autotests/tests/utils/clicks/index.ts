@@ -119,7 +119,7 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   const canvas = (await page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .filter({ has: page.locator(':visible') })
     .boundingBox()) as BoundingBox;
   return {

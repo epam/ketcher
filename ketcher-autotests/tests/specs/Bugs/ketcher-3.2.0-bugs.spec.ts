@@ -51,6 +51,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -894,7 +895,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     const symbolP = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .getByText('P', { exact: true });
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500);

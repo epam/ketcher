@@ -45,6 +45,7 @@ import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -837,7 +838,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     const peptide1Nal = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .getByText(Peptides._1Nal.alias, { exact: true });
     await expandMonomer(page, peptide1Nal);
     await selectRingButton(page, RingButton.Cyclohexane);

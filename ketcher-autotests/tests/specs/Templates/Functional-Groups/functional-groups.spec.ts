@@ -41,6 +41,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { expandAbbreviation, removeAbbreviation } from '@utils/sgroup/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -532,7 +533,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('me')
       .first()

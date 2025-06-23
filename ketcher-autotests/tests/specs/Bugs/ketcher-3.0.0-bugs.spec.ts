@@ -31,6 +31,7 @@ import {
   moveMouseAway,
   RxnFileFormat,
   MolFileFormat,
+  SequenceFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
@@ -57,8 +58,6 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -75,6 +74,7 @@ import {
 } from '@utils/canvas/monomer/helpers';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -639,7 +639,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .getByText('X')
       .nth(0)
       .locator('..')
@@ -756,8 +756,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Scenario:
      * 1. Go to Macro - Flex mode
      * 2. Load from HELM: PEPTIDE1{A.C.D}$$$$V2.0
-     * 3. Open Save dialog and choose Sequence (3-letter code)
-     * 4. Press Save button
+     * 3. Validate export to Sequence (3-letter code)
+     *
+     * Version 3.5
      */
     test.slow();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
@@ -769,13 +770,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.Sequence3LetterCode,
+    await verifyFileExport(
+      page,
+      'Sequence/peptide-3-letter-code-expected.seq',
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
     );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).save();
-    await takeEditorScreenshot(page);
   });
 
   test(`Case 25: Super G and Super T monomers can be load from a saved RXN V3000 file`, async () => {
@@ -982,7 +982,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     const baseA = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('A', { exact: true });
     await expandMonomer(page, baseA);

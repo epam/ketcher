@@ -102,6 +102,7 @@ import {
   MonomerOnMicroOption,
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -170,7 +171,7 @@ test.describe('Macro-Micro-Switcher', () => {
       for (const label of moleculeLabels) {
         await waitForRender(page, async () => {
           await page
-            .getByTestId('ketcher-canvas')
+            .getByTestId(KETCHER_CANVAS)
             .filter({ has: page.locator(':visible') })
             .getByText(label, { exact: true })
             .hover();
@@ -291,7 +292,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     const monomerOnTheCanvas = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('A6OH');
     await monomerOnTheCanvas.hover();
@@ -492,7 +493,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     const test6Ch = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .getByText(Chem.Test_6_Ch.alias);
     await test6Ch.hover();
     await ContextMenu(page, test6Ch).open();
@@ -1468,7 +1469,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectEraseTool();
     const canvasLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
@@ -1503,7 +1504,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
     const canvasLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
@@ -2255,7 +2256,7 @@ test.describe('Macro-Micro-Switcher', () => {
 });
 
 async function collapseMonomer(page: Page) {
-  const canvas = page.getByTestId('ketcher-canvas');
+  const canvas = page.getByTestId(KETCHER_CANVAS);
   const attachmentPoint = canvas.getByText('H', { exact: true }).first();
 
   if (await attachmentPoint.isVisible()) {
@@ -2369,7 +2370,7 @@ test.describe('Expand on Micro canvas: ', () => {
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await takeEditorScreenshot(page);
       const monomerOnMicro = page
-        .getByTestId('ketcher-canvas')
+        .getByTestId(KETCHER_CANVAS)
         .getByText(expandableMonomer.monomerLocatorText, { exact: true });
       await ContextMenu(page, monomerOnMicro).click(
         MonomerOnMicroOption.ExpandMonomer,
@@ -2515,7 +2516,7 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
       await takeEditorScreenshot(page);
 
       const monomerOnMicro = page
-        .getByTestId('ketcher-canvas')
+        .getByTestId(KETCHER_CANVAS)
         .getByText(nonExpandableMonomer.monomerLocatorText, { exact: true });
       await ContextMenu(page, monomerOnMicro).open();
 
@@ -2617,7 +2618,7 @@ test.describe('Collapse on Micro canvas: ', () => {
         collapsableMonomer.KETFile,
       );
       const monomerOnMicro = page
-        .getByTestId('ketcher-canvas')
+        .getByTestId(KETCHER_CANVAS)
         .getByText(collapsableMonomer.monomerLocatorText, { exact: true });
       await ContextMenu(page, monomerOnMicro).click(
         MonomerOnMicroOption.ExpandMonomer,
@@ -2803,7 +2804,7 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
       );
       await takeEditorScreenshot(page);
 
-      const canvasLocator = page.getByTestId('ketcher-canvas');
+      const canvasLocator = page.getByTestId(KETCHER_CANVAS);
       const monomerLocator = canvasLocator.getByText(
         movableCollapsedMonomer.monomerLocatorText,
         { exact: true },

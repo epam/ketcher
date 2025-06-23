@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
+import { Mode } from '../constants/commonTopRightToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -97,7 +98,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       const switcher = locators.ketcherModeSwitcherCombobox;
       await expect(switcher).toBeVisible();
       await switcher.click();
-      const macroOption = page.getByTestId('macromolecules_mode');
+      const macroOption = page.getByTestId(Mode.Macromolecules);
       await expect(macroOption).toBeVisible();
       await macroOption.click();
 
@@ -127,7 +128,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await switcher.waitFor({ state: 'visible' });
       await switcher.click();
 
-      const microOption = page.getByTestId('molecules_mode');
+      const microOption = page.getByTestId(Mode.Molecules);
       await microOption.waitFor({ state: 'visible' });
       await microOption.click();
     },

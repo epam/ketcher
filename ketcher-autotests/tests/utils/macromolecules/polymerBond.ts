@@ -550,7 +550,7 @@ export async function selectRightConnectionPointAtSelectConnectionPointDialog(
 
 export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
   const bondLocator = page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .locator(`g:nth-child(${bondIndex.toString()}) > path`)
     .first();
 

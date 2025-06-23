@@ -257,7 +257,7 @@ export async function takeEditorScreenshot(
     const modifier = getControlModifier();
     await page.keyboard.press(`${modifier}+KeyB`);
   }
-  await takeElementScreenshot(page, 'ketcher-canvas', options);
+  await takeElementScreenshot(page, KETCHER_CANVAS, options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -517,7 +517,7 @@ export async function waitForElementInCanvas(
   page: Page,
   text: string,
 ): Promise<void> {
-  const canvas = page.getByTestId('ketcher-canvas');
+  const canvas = page.getByTestId(KETCHER_CANVAS);
   const targetElement = canvas.locator(`div:has-text("${text}")`);
   await expect(targetElement).toBeVisible();
 }

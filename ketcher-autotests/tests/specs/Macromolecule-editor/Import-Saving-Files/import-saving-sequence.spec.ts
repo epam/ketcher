@@ -12,6 +12,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   readFileContent,
+  SequenceFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -889,14 +890,15 @@ for (const sequenceToExport of sequencesToExport) {
   test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
     page,
   }) => {
-    /* 
-  Test case: https://github.com/epam/ketcher/issues/5215
-  Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
-  Case:
-      1. Load correct sequence via paste from clipboard way
-      2. Export canvas to 3-letter sequence
-      2. Compare export result with source sequence string
-  */
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5215
+     * Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
+     * Case:
+     *  1. Load correct sequence via paste from clipboard way
+     *  2. Export canvas to 3-letter sequence
+     *  3. Compare export result with source sequence string
+     *  4. Validate export to .seq file format
+     */
     test.setTimeout(35000);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -922,6 +924,13 @@ for (const sequenceToExport of sequencesToExport) {
     }
 
     await SaveStructureDialog(page).cancel();
+
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/${sequenceToExport.sequenceDescription}.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
+    );
   });
 }
 
@@ -1386,7 +1395,10 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
      * Case:
      *     1. Load correct sequence via paste from clipboard way
      *     2. Export canvas to 3-letter sequence
-     *     2. Compare export result with source sequence string
+     *     3. Compare export result with source sequence string
+     *     4. Validate export to .seq file format
+     *
+     *  Version 3.5
      */
     test.setTimeout(35000);
 
@@ -1413,5 +1425,12 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
     }
 
     await SaveStructureDialog(page).cancel();
+
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/${sequenceToExport.sequenceDescription}.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
+    );
   });
 }

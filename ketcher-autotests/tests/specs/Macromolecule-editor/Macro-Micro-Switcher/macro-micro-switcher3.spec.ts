@@ -37,6 +37,7 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -52,7 +53,7 @@ async function selectExpandedMonomer(
 
 async function expandMonomer(page: Page, locatorText: string) {
   const canvasLocator = page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .getByText(locatorText, { exact: true });
 
   await waitForRender(page, async () => {
@@ -63,7 +64,7 @@ async function expandMonomer(page: Page, locatorText: string) {
 }
 
 async function selectMonomerOnMicro(page: Page, monomerName: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
   await waitForRender(page, async () => {
     await canvasLocator.getByText(monomerName, { exact: true }).click();
   });
@@ -285,7 +286,7 @@ interface IMonomer {
 //       await openFileAndAddToCanvasAsNewProject(page,
 //         movableCollapsedMonomer.KETFile,
 //       );
-//       const canvasLocator = page.getByTestId('ketcher-canvas');
+//       const canvasLocator = page.getByTestId(KETCHER_CANVAS);
 //       const monomerLocator = canvasLocator.getByText(
 //         movableCollapsedMonomer.monomerLocatorText,
 //         { exact: true },

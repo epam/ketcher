@@ -142,7 +142,7 @@ async function loadTwoMonomers(
 ) {
   await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
-  const canvasLocator = page.getByTestId('ketcher-canvas').first();
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
 
   const leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
@@ -183,7 +183,7 @@ async function bondTwoMonomersByCenterToCenter(
   rightMonomer: IMonomer,
   bondType?: MacroBondType,
 ) {
-  const canvasLocator = page.getByTestId('ketcher-canvas').first();
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
 
   let leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
@@ -570,7 +570,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
 async function expandMonomer(page: Page, locatorText: string) {
   const canvasLocator = page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .getByText(locatorText, { exact: true });
   await waitForRender(page, async () => {
     await ContextMenu(page, canvasLocator).click(
@@ -580,7 +580,7 @@ async function expandMonomer(page: Page, locatorText: string) {
 }
 
 async function collapseMonomer(page: Page) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
   const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
   await waitForRender(page, async () => {
     if (await attachmentPoint.isVisible()) {

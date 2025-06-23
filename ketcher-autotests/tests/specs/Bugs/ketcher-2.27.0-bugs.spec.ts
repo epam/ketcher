@@ -47,6 +47,7 @@ import {
   HighlightOption,
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -284,7 +285,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       HighlightOption.Red,
     ]);
     const primaryAattachmentPoint = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .locator('path')
       .nth(8);

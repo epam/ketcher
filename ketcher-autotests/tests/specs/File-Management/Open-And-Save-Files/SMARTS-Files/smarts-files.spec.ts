@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   takeEditorScreenshot,
@@ -493,7 +494,7 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       }
       await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
       const monomerOnMicro = page
-        .getByTestId('ketcher-canvas')
+        .getByTestId(KETCHER_CANVAS)
         .getByText(monomer.monomerLocatorText, { exact: true });
       await ContextMenu(page, monomerOnMicro).click(
         MonomerOnMicroOption.ExpandMonomer,

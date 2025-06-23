@@ -10,6 +10,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -275,7 +276,7 @@ test.describe('Text tools test cases', () => {
 
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);

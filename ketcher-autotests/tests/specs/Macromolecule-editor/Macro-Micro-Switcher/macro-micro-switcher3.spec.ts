@@ -20,9 +20,9 @@ import {
   resetZoomLevelToDefault,
   takeElementScreenshot,
   selectAllStructuresOnCanvas,
-  clickInTheMiddleOfTheScreen,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
+  getCachedBodyCenter,
 } from '@utils';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -35,6 +35,9 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -48,22 +51,20 @@ async function selectExpandedMonomer(
   await clickOnBond(page, bondType, bondNumber);
 }
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
 async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
+  const canvasLocator = page
+    .getByTestId(KETCHER_CANVAS)
+    .getByText(locatorText, { exact: true });
+
   await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
+    await ContextMenu(page, canvasLocator).click(
+      MonomerOnMicroOption.ExpandMonomer,
+    );
   });
 }
 
 async function selectMonomerOnMicro(page: Page, monomerName: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
   await waitForRender(page, async () => {
     await canvasLocator.getByText(monomerName, { exact: true }).click();
   });
@@ -285,7 +286,7 @@ interface IMonomer {
 //       await openFileAndAddToCanvasAsNewProject(page,
 //         movableCollapsedMonomer.KETFile,
 //       );
-//       const canvasLocator = page.getByTestId('ketcher-canvas');
+//       const canvasLocator = page.getByTestId(KETCHER_CANVAS);
 //       const monomerLocator = canvasLocator.getByText(
 //         movableCollapsedMonomer.monomerLocatorText,
 //         { exact: true },
@@ -1550,9 +1551,11 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
-      await clickInTheMiddleOfTheScreen(page, 'right');
+      const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
-        await page.getByText('Collapse monomer').click();
+        await ContextMenu(page, middleOfTheScreen).click(
+          MonomerOnMicroOption.CollapseMonomers,
+        );
       });
 
       await verifyFileExport(page, exportResultFileName, FileType.KET);

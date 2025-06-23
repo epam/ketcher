@@ -16,6 +16,7 @@ import {
   readFileContent,
   MonomerType,
   selectSequenceLayoutModeTool,
+  MolFileFormat,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -101,7 +102,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -187,7 +188,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/fifty-monomers-v3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -202,7 +203,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -240,7 +241,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V2000/empty-canvas-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -319,7 +320,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/snake-mode-peptides-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -393,7 +394,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -412,7 +413,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -431,7 +432,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -451,7 +452,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -471,7 +472,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -490,7 +491,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 });
@@ -595,7 +596,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         page,
         `Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -650,7 +651,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         page,
         `Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -700,7 +701,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         page,
         `Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -751,7 +752,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         page,
         `Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -801,7 +802,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         page,
         `Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });

@@ -9,6 +9,7 @@ import {
   mapTwoAtoms,
   clickOnAtom,
   clickOnCanvas,
+  RxnFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -148,7 +149,7 @@ test.describe('Mapping reactions', () => {
       page,
       'Rxn-V2000/mapped-reaction-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 });

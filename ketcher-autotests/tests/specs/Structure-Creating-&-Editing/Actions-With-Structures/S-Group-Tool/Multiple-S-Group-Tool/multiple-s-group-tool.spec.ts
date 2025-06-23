@@ -18,6 +18,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -28,6 +29,9 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getBondByIndex } from '@utils/canvas/bonds';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -119,8 +123,8 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3, 'right');
-    await page.getByText('Edit S-Group...').click();
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);
@@ -226,7 +230,7 @@ test.describe('Multiple S-Group tool', () => {
       page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

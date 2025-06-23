@@ -18,6 +18,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -174,7 +175,7 @@ test.describe('Data S-Group tool', () => {
       page,
       'Molfiles-V2000/chain-with-name-and-value-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

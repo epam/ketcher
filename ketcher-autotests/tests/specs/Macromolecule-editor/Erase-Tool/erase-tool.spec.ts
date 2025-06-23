@@ -12,6 +12,7 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -404,7 +405,7 @@ test.describe('Erase Tool', () => {
       page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await CommonTopLeftToolbar(page).clearCanvas();

@@ -1,9 +1,11 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   ClickTarget,
   ContextMenuOption,
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
+import { delay } from '@utils/canvas';
 
 type ContextMenuLocators = {
   contextMenuBody: Locator;
@@ -14,7 +16,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     page.getByTestId(dataTestId);
 
   const locators: ContextMenuLocators = {
-    contextMenuBody: page.getByTestId(''),
+    contextMenuBody: page.getByRole('menu'),
   };
 
   return {
@@ -28,36 +30,44 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       }
     },
 
-    async click(option: ContextMenuOption | ContextMenuOption[]) {
+    async click(optionPath: ContextMenuOption | ContextMenuOption[]) {
       await this.open();
-      if (Array.isArray(option)) {
-        const firstLevelOption = getOption(option[0]);
-        const secondLevelOption = getOption(option[1]);
-        await firstLevelOption.waitFor({ state: 'visible' });
-        await firstLevelOption.click();
-        await secondLevelOption.waitFor({ state: 'visible' });
-        await secondLevelOption.click();
-      } else {
-        const firstLevelOption = getOption(option);
-        await firstLevelOption.waitFor({ state: 'visible' });
-        await firstLevelOption.click();
+
+      const options = Array.isArray(optionPath) ? optionPath : [optionPath];
+
+      for (let i = 0; i < options.length; i++) {
+        const option = getOption(options[i]).first();
+        await option.waitFor({ state: 'visible' });
+        await option.click();
+      }
+      try {
+        // Wait for the context menu to close after clicking the last option
+        await delay(0.1);
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 1000,
+        });
+      } catch (error) {
+        await page.keyboard.press('Escape');
+        await locators.contextMenuBody.waitFor({ state: 'hidden' });
       }
       await moveMouseAway(page);
     },
 
-    async hover(option: ContextMenuOption | ContextMenuOption[]) {
+    async hover(optionPath: ContextMenuOption | ContextMenuOption[]) {
       await this.open();
-      if (Array.isArray(option)) {
-        const firstLevelOption = getOption(option[0]);
-        const secondLevelOption = getOption(option[1]);
-        await firstLevelOption.waitFor({ state: 'visible' });
-        await firstLevelOption.click();
-        await secondLevelOption.waitFor({ state: 'visible' });
-        await secondLevelOption.hover();
-      } else {
-        const firstLevelOption = getOption(option);
-        await firstLevelOption.waitFor({ state: 'visible' });
-        await firstLevelOption.hover();
+
+      const options = Array.isArray(optionPath) ? optionPath : [optionPath];
+
+      for (let i = 0; i < options.length; i++) {
+        const option = getOption(options[i]).first();
+        await option.waitFor({ state: 'visible' });
+
+        if (i < options.length - 1) {
+          await option.click();
+        } else {
+          await option.hover();
+        }
       }
     },
   };

@@ -1,4 +1,21 @@
 import { Page, test } from '@playwright/test';
+import {
+  takeEditorScreenshot,
+  waitForPageInit,
+  clickInTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
+  clickOnCanvas,
+} from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  AromaticityOption,
+  MicroAtomOption,
+  QueryAtomOption,
+  RingBondCountOption,
+  RingSizeOption,
+  SubstitutionCountOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   AtomsSetting,
@@ -15,15 +32,6 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import {
-  takeEditorScreenshot,
-  waitForPageInit,
-  clickInTheMiddleOfTheScreen,
-  openFileAndAddToCanvas,
-  resetCurrentTool,
-  getAtomByIndex,
-  clickOnCanvas,
-} from '@utils';
 
 async function selectExtendedTableElements(page: Page, element: string) {
   const extendedTableButton = RightToolbar(page).extendedTableButton;
@@ -31,33 +39,6 @@ async function selectExtendedTableElements(page: Page, element: string) {
   await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
-
-async function ringBondCountQuery(page: Page, menuItem: string) {
-  await page.getByText(menuItem).click();
-  await page
-    .getByRole('menuitem', { name: 'Ring bond count', exact: true })
-    .getByTestId('3-option')
-    .click();
-}
-
-async function substitutionCountQuery(page: Page, menuItem: string) {
-  await page.getByText(menuItem).click();
-  await page.getByRole('button', { name: 'As drawn' }).nth(1).click();
-}
-
-async function aromaticityQuery(page: Page, menuItem: string) {
-  await page.getByText(menuItem).click();
-  await page.getByRole('button', { name: 'aromatic' }).click();
-}
-
-async function ringSizeQuery(page: Page, menuItem: string) {
-  await page.getByText(menuItem).click();
-  await page
-    .locator(
-      'div:nth-child(8) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(9)',
-    )
-    .click();
 }
 
 test.describe('Atom Settings', () => {
@@ -123,15 +104,29 @@ test.describe('Atom Settings', () => {
 
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Query properties').click();
-    await ringBondCountQuery(page, 'Ring bond count');
-    await substitutionCountQuery(page, 'Substitution count');
-    await aromaticityQuery(page, 'Aromaticity');
-    await ringSizeQuery(page, 'Ring size');
+
+    await ContextMenu(page, point).click([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.RingBondCount,
+      RingBondCountOption.Three,
+    ]);
+    await ContextMenu(page, point).click([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.SubstitutionCount,
+      SubstitutionCountOption.AsDrawn,
+    ]);
+    await ContextMenu(page, point).click([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.Aromaticity,
+      AromaticityOption.Aromatic,
+    ]);
+    await ContextMenu(page, point).click([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.RingSize,
+      RingSizeOption.Eight,
+    ]);
     await clickOnCanvas(page, pointX, pointY);
     await takeEditorScreenshot(page);
   });

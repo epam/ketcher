@@ -5,8 +5,10 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
+  RxnFileFormat,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
@@ -199,7 +201,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Molfiles-V2000/aromatic-benzene-v2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -221,7 +223,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -261,7 +263,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Rxn-V2000/aromatic-benzene-rxnv2000-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -283,7 +285,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
       'Rxn-V3000/aromatic-benzene-rxnv3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });

@@ -13,6 +13,7 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   waitForPageInit,
+  MolFileFormat,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
@@ -1139,7 +1140,7 @@ test.describe('Side chain connections', () => {
       page,
       'KET/Side-Chain-Connections/20-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });

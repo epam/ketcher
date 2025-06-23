@@ -2,6 +2,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  clearCanvasByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   takeEditorScreenshot,
@@ -109,7 +110,7 @@ test.describe('Clear Canvas Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

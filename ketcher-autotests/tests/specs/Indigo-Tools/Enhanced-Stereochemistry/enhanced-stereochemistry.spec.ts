@@ -14,6 +14,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
+  MolFileFormat,
 } from '@utils';
 
 import {
@@ -516,7 +517,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/one-structure-with-abs-flag-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -537,7 +538,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/three-structure-enantiomer-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

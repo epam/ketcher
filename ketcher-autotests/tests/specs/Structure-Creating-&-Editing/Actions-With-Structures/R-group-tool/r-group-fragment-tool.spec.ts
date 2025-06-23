@@ -13,6 +13,7 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -332,7 +333,7 @@ test.describe('R-Group Fragment Tool', () => {
       page,
       'Molfiles-V2000/r1-several-structures-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -350,7 +351,7 @@ test.describe('R-Group Fragment Tool', () => {
       page,
       'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 

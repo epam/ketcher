@@ -10,6 +10,7 @@ import {
   rnaTabPresetsSection,
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
+import { ContextMenu } from '../common/ContextMenu';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -211,7 +212,7 @@ export const Library = (page: Page) => {
         );
       } else {
         await this.goToMonomerLocation(rnaTabPresetsSection);
-        await getElement(preset.testId).click({ button: 'right' });
+        await ContextMenu(page, getElement(preset.testId)).open();
       }
     },
 

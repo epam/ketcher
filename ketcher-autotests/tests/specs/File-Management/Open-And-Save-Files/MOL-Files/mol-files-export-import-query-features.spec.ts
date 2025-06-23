@@ -5,6 +5,9 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
+  SdfFileFormat,
+  MolFileFormat,
+  RxnFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -76,7 +79,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Aromaticity-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -112,7 +115,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -148,7 +151,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -185,7 +188,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Chirality-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -222,7 +225,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -300,7 +303,7 @@ test.describe('Open Ketcher', () => {
         page,
         'SDF/Query-Feature/Connectivity-expected.sdf',
         FileType.SDF,
-        'v2000',
+        SdfFileFormat.v2000,
       );
 
       await openFileAndAddToCanvasAsNewProject(
@@ -340,7 +343,7 @@ test.describe('Open Ketcher', () => {
         page,
         'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
         FileType.RXN,
-        'v2000',
+        RxnFileFormat.v2000,
       );
 
       await openFileAndAddToCanvasAsNewProject(
@@ -377,7 +380,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/H count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -413,7 +416,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/H count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -449,7 +452,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/H count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -526,7 +529,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Implicit H count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -565,7 +568,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -603,7 +606,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -639,7 +642,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring bond count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -675,7 +678,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -750,7 +753,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring membership-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -788,7 +791,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -863,7 +866,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring size-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -901,7 +904,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -939,7 +942,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -977,7 +980,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Substitution count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1015,7 +1018,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1051,7 +1054,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1087,7 +1090,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Unsaturated-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1123,7 +1126,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1162,7 +1165,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Custom-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
         await openFileAndAddToCanvasAsNewProject(page, 'Molfiles-V2000/Query-Feature/Custom-expected.mol', page);
@@ -1199,7 +1202,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Custom-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
         await openFileAndAddToCanvasAsNewProject(page, 'SDF/Query-Feature/Custom-expected.sdf', page);
@@ -1236,7 +1239,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Custom2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
         await openFileAndAddToCanvasAsNewProject(page, 'Rxn-V2000/Query-Feature/Custom2-expected.rxn', page);
@@ -1270,7 +1273,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1306,7 +1309,7 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/All Atom Query features together-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1342,7 +1345,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

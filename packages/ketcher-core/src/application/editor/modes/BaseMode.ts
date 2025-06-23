@@ -26,6 +26,7 @@ export abstract class BaseMode {
   private _pasteIsInProgress = false;
 
   protected constructor(
+    protected coreEditorId: string,
     public modeName: LayoutMode,
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
@@ -34,7 +35,7 @@ export abstract class BaseMode {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = modesMap[modeName];
     editor.mode.destroy();
-    editor.setMode(new ModeConstructor());
+    editor.setMode(new ModeConstructor(this.coreEditorId));
     editor.mode.initialize(true, isUndo, false);
   }
 
@@ -44,7 +45,7 @@ export abstract class BaseMode {
     _needReArrangeChains = false,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     command.addOperation(
       new SelectLayoutModeOperation(
@@ -65,7 +66,7 @@ export abstract class BaseMode {
   async onKeyDown(event: KeyboardEvent) {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
-        const editor = CoreEditor.provideEditorInstance();
+        const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
           const shortcutKey = keyNorm.lookup(hotKeys, event);
@@ -101,10 +102,10 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     const drawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
-    const ketSerializer = new KetSerializer();
+    const ketSerializer = new KetSerializer(this.coreEditorId);
     const serializedKet = ketSerializer.serialize(
       new Struct(),
       drawingEntitiesManager,
@@ -123,13 +124,14 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     const isCanvasEmptyBeforePaste =
       !editor.drawingEntitiesManager.hasDrawingEntities;
 
     if (isClipboardAPIAvailable()) {
-      const isSequenceEditInRNABuilderMode =
-        CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+      const isSequenceEditInRNABuilderMode = CoreEditor.provideEditorInstance(
+        this.coreEditorId,
+      ).isSequenceEditInRNABuilderMode;
 
       if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
       this._pasteIsInProgress = true;
@@ -163,7 +165,7 @@ export abstract class BaseMode {
 
   async pasteFromClipboard(clipboardData) {
     let modelChanges;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
@@ -186,8 +188,8 @@ export abstract class BaseMode {
   }
 
   pasteKetFormatFragment(pastedStr: string) {
-    const editor = CoreEditor.provideEditorInstance();
-    const ketSerializer = new KetSerializer();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
+    const ketSerializer = new KetSerializer(this.coreEditorId);
     const deserialisedKet =
       ketSerializer.deserializeToDrawingEntities(pastedStr);
     if (!deserialisedKet) {
@@ -225,7 +227,7 @@ export abstract class BaseMode {
     pastedStr: string,
     sequenceType: SequenceType,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
@@ -262,7 +264,7 @@ export abstract class BaseMode {
   }
 
   unsupportedSymbolsError(errorMessage: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
       errorMessage,

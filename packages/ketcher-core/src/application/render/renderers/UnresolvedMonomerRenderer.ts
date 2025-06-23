@@ -6,11 +6,16 @@ const UNRESOLVED_MONOMER_HOVERED_ELEMENT_ID = '#unresolved-monomer-hover';
 const UNRESOLVED_MONOMER_SYMBOL_ELEMENT_ID = '#unresolved-monomer';
 
 export class UnresolvedMonomerRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: UnresolvedMonomer, scale?: number) {
+  constructor(
+    public monomer: UnresolvedMonomer,
+    coreEditorId: string,
+    scale?: number,
+  ) {
     super(
       monomer,
       UNRESOLVED_MONOMER_HOVERED_ELEMENT_ID,
       UNRESOLVED_MONOMER_SYMBOL_ELEMENT_ID,
+      coreEditorId,
       scale,
     );
   }

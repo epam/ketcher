@@ -50,7 +50,9 @@ class KetcherBuilder {
       structServiceProvider,
       DefaultStructServiceOptions,
     );
-    this.formatterFactory = new FormatterFactory(this.structService!);
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.formatterFactory = new FormatterFactory(this.structService!, null);
     return this.structService;
   }
 

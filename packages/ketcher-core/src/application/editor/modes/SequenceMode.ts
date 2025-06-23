@@ -85,6 +85,7 @@ interface PreservedHydrogenBonds {
 }
 
 export class SequenceMode extends BaseMode {
+  private _coreEditorId: string;
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
   private _isAntisenseEditMode = false;
@@ -93,9 +94,12 @@ export class SequenceMode extends BaseMode {
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
 
-  constructor(previousMode?: LayoutMode) {
-    super('sequence-layout-mode', previousMode);
+  constructor(coreEditorId: string, previousMode?: LayoutMode) {
+    super(coreEditorId, 'sequence-layout-mode', previousMode);
+    this._coreEditorId = coreEditorId;
   }
+
+  c;
 
   public get isEditMode() {
     return this._isEditMode;
@@ -165,7 +169,7 @@ export class SequenceMode extends BaseMode {
     needReArrangeChains = true,
   ) {
     const command = super.initialize(needRemoveSelection);
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     editor.drawingEntitiesManager.clearCanvas();
 
@@ -218,11 +222,12 @@ export class SequenceMode extends BaseMode {
     sequenceItemRenderer?: BaseSequenceItemRenderer,
     needToRemoveSelection = true,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionNextToMonomer(
         sequenceItemRenderer.node.monomer,
+        this._coreEditorId,
       );
     }
 
@@ -233,7 +238,7 @@ export class SequenceMode extends BaseMode {
 
   public turnOffEditMode() {
     if (!this.isEditMode) return;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     this.isEditMode = false;
     this.initialize(false, true, true);
@@ -241,7 +246,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOnSequenceEditInRNABuilderMode() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     this.isEditInRNABuilderMode = true;
     this.initialize(false, false, false);
@@ -250,7 +255,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOffSequenceEditInRNABuilderMode() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     this.isEditInRNABuilderMode = false;
     this.initialize(false, true, false);
@@ -258,25 +263,29 @@ export class SequenceMode extends BaseMode {
   }
 
   public startNewSequence(eventData?: StartNewSequenceEventData) {
-    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode) {
+    if (
+      CoreEditor.provideEditorInstance(this._coreEditorId)
+        ?.isSequenceEditInRNABuilderMode
+    ) {
       return;
     }
     const currentChainIndex = this.isEditMode
       ? SequenceRenderer.currentChainIndex
       : SequenceRenderer.sequenceViewModel.chains.length - 1;
     const indexOfRowBefore = isNumber(eventData?.indexOfRowBefore)
-      ? eventData?.indexOfRowBefore
+      ? eventData?.indexOfRowBefore ?? 0
       : currentChainIndex;
 
     if (!this.isEditMode) {
       this.turnOnEditMode();
     }
 
-    SequenceRenderer.startNewSequence(indexOfRowBefore);
+    SequenceRenderer.startNewSequence(indexOfRowBefore, this._coreEditorId);
 
     if (SequenceRenderer.caretPosition === -1) {
       SequenceRenderer.setCaretPositionByNode(
         SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
+        this._coreEditorId,
       );
     }
   }
@@ -284,7 +293,7 @@ export class SequenceMode extends BaseMode {
   public modifySequenceInRnaBuilder(
     updatedSelection: LabeledNodesWithPositionInSequence[],
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
@@ -410,7 +419,9 @@ export class SequenceMode extends BaseMode {
     }
 
     // Refresh UI
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
   }
@@ -483,10 +494,13 @@ export class SequenceMode extends BaseMode {
           sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
         : false;
 
-      SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
+      SequenceRenderer.setCaretPositionByMonomer(
+        eventData.node.monomer,
+        this._coreEditorId,
+      );
 
       if (isRightSideOfSequenceItemClicked) {
-        SequenceRenderer.moveCaretForward();
+        SequenceRenderer.moveCaretForward(this._coreEditorId);
       }
 
       SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -510,9 +524,10 @@ export class SequenceMode extends BaseMode {
       this.selectionStarted &&
       this.mousemoveCounter > 1
     ) {
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
+        this._coreEditorId,
       );
 
       let startCaretPosition = this.selectionStartCaretPosition;
@@ -521,7 +536,10 @@ export class SequenceMode extends BaseMode {
         startCaretPosition = SequenceRenderer.caretPosition;
         endCaretPosition = this.selectionStartCaretPosition;
       } else {
-        SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition + 1);
+        SequenceRenderer.setCaretPosition(
+          SequenceRenderer.caretPosition + 1,
+          this._coreEditorId,
+        );
         endCaretPosition++;
       }
       const monomers = SequenceRenderer.getMonomersByCaretPositionRange(
@@ -536,6 +554,7 @@ export class SequenceMode extends BaseMode {
       const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
         this.selectionStartCaretPosition,
         SequenceRenderer.caretPosition,
+        this._coreEditorId,
       );
       modelChanges.addOperation(moveCaretOperation);
       editor.renderersContainer.update(modelChanges);
@@ -564,7 +583,7 @@ export class SequenceMode extends BaseMode {
     nextMonomer?: BaseMonomer,
     phosphate?: string,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
       phosphate || RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -604,7 +623,7 @@ export class SequenceMode extends BaseMode {
     }
 
     const modelChanges = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const newPeptideLibraryItem = getPeptideLibraryItem(editor, enteredSymbol);
 
     assert(newPeptideLibraryItem);
@@ -644,7 +663,7 @@ export class SequenceMode extends BaseMode {
       return undefined;
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
       nextNodeToConnect instanceof Nucleotide ||
@@ -656,11 +675,13 @@ export class SequenceMode extends BaseMode {
             enteredSymbol,
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
+            this._coreEditorId,
           )
         : Nucleoside.createOnCanvas(
             enteredSymbol,
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
+            this._coreEditorId,
           );
 
     modelChanges.merge(addedNodeModelChanges);
@@ -696,7 +717,7 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const nodeR2Bond =
       firstNodeToConnect.lastMonomerInNode.attachmentPointsToBonds?.R2;
     const nextNodeR1Bond =
@@ -740,7 +761,7 @@ export class SequenceMode extends BaseMode {
     node: SubChainNode | BackBoneSequenceNode | undefined,
     modelChanges: Command,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const nodeR2Bond = node?.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     if (!nodeR2Bond || nodeR2Bond instanceof MonomerToAtomBond) {
@@ -757,15 +778,18 @@ export class SequenceMode extends BaseMode {
     previousCaretPosition: number,
     newCaretPosition?: number,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
       previousCaretPosition,
       isNumber(newCaretPosition)
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
+      this._coreEditorId,
     );
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
@@ -777,7 +801,7 @@ export class SequenceMode extends BaseMode {
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     const isConnectionPossible = this.areR1R2Free(secondMonomer, firstMonomer);
 
@@ -796,7 +820,7 @@ export class SequenceMode extends BaseMode {
 
   private splitCurrentChain() {
     const modelChanges = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const editorHistory = new EditorHistory(editor);
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
@@ -812,7 +836,9 @@ export class SequenceMode extends BaseMode {
       );
 
       if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
-        modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+        modelChanges.addOperation(
+          SequenceRenderer.moveCaretForward(this._coreEditorId),
+        );
         modelChanges.merge(
           editor.drawingEntitiesManager.deleteMonomer(
             previousTwoStrandedNodeInSameChain.senseNode.lastMonomerInNode,
@@ -838,7 +864,9 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
   }
@@ -847,7 +875,7 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
@@ -1128,7 +1156,7 @@ export class SequenceMode extends BaseMode {
   get keyboardEventHandlers() {
     const deleteNode = (direction: Direction) => {
       if (this.isEditInRNABuilderMode) return;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
       const nodeToDelete =
         direction === Direction.Left
           ? SequenceRenderer.previousNode
@@ -1137,7 +1165,7 @@ export class SequenceMode extends BaseMode {
         direction === Direction.Left
           ? (SequenceRenderer.previousCaretPosition as number)
           : SequenceRenderer.caretPosition;
-      const selections = SequenceRenderer.selections;
+      const selections = SequenceRenderer.selections(this._coreEditorId);
       const modelChanges = new Command();
       let nodesToDelete: TwoStrandedNodesSelection;
 
@@ -1283,7 +1311,7 @@ export class SequenceMode extends BaseMode {
           if (this.isSyncEditMode) return;
 
           const modelChanges = new Command();
-          const editor = CoreEditor.provideEditorInstance();
+          const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
           const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
@@ -1301,7 +1329,9 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(
+            new ReinitializeModeOperation(this._coreEditorId),
+          );
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },
@@ -1311,7 +1341,7 @@ export class SequenceMode extends BaseMode {
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
           const modelChanges = new Command();
-          const editor = CoreEditor.provideEditorInstance();
+          const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
           const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
@@ -1351,7 +1381,9 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(
+            new ReinitializeModeOperation(this._coreEditorId),
+          );
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
         },
@@ -1371,7 +1403,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
-          SequenceRenderer.moveCaretUp();
+          SequenceRenderer.moveCaretUp(this._coreEditorId);
 
           if (SequenceRenderer.currentEdittingNode?.antisenseNode) {
             this.turnOnAntisenseEditMode();
@@ -1395,7 +1427,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
-          SequenceRenderer.moveCaretDown();
+          SequenceRenderer.moveCaretDown(this._coreEditorId);
           this.turnOffAntisenseEditMode();
           this.unselectAllEntities();
         },
@@ -1406,7 +1438,7 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretForward();
+          SequenceRenderer.moveCaretForward(this._coreEditorId);
           SequenceRenderer.resetLastUserDefinedCaretPosition();
           this.unselectAllEntities();
         },
@@ -1417,7 +1449,7 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretBack();
+          SequenceRenderer.moveCaretBack(this._coreEditorId);
           SequenceRenderer.resetLastUserDefinedCaretPosition();
 
           this.unselectAllEntities();
@@ -1434,7 +1466,7 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (SequenceRenderer.isEmptyCanvas() && !this.isEditMode) {
             this.turnOnEditMode();
-            SequenceRenderer.setCaretPosition(0);
+            SequenceRenderer.setCaretPosition(0, this._coreEditorId);
           }
 
           if (!this.isEditMode) {
@@ -1446,7 +1478,7 @@ export class SequenceMode extends BaseMode {
           }
 
           const enteredSymbol = event.code.replace('Key', '');
-          const editor = CoreEditor.provideEditorInstance();
+          const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
           const history = new EditorHistory(editor);
           const modelChanges = new Command();
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
@@ -1540,7 +1572,9 @@ export class SequenceMode extends BaseMode {
             }
           }
 
-          modelChanges.addOperation(new ReinitializeModeOperation());
+          modelChanges.addOperation(
+            new ReinitializeModeOperation(this._coreEditorId),
+          );
           editor.renderersContainer.update(modelChanges);
 
           if (
@@ -1563,7 +1597,9 @@ export class SequenceMode extends BaseMode {
                   ))
             )
           ) {
-            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+            modelChanges.addOperation(
+              SequenceRenderer.moveCaretForward(this._coreEditorId),
+            );
           }
 
           history.update(modelChanges);
@@ -1590,7 +1626,10 @@ export class SequenceMode extends BaseMode {
             this.selectionStartCaretPosition !== -1
               ? this.selectionStartCaretPosition
               : SequenceRenderer.caretPosition;
-          SequenceRenderer.shiftArrowSelectionInEditMode(event);
+          SequenceRenderer.shiftArrowSelectionInEditMode(
+            event,
+            this._coreEditorId,
+          );
 
           if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {
             SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -1601,7 +1640,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public deleteSelection() {
-    const selections = SequenceRenderer.selections;
+    const selections = SequenceRenderer.selections(this._coreEditorId);
 
     if (selections.length === 0) {
       return true;
@@ -1625,7 +1664,7 @@ export class SequenceMode extends BaseMode {
   }
 
   isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
@@ -1729,7 +1768,7 @@ export class SequenceMode extends BaseMode {
     if (!this.isEditMode) {
       const command = new Command();
 
-      command.addOperation(new ReinitializeModeOperation());
+      command.addOperation(new ReinitializeModeOperation(this._coreEditorId));
 
       return command;
     }
@@ -1759,12 +1798,15 @@ export class SequenceMode extends BaseMode {
 
     const modelChanges = this.insertNewSequenceFragment(chainsCollection);
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
 
     modelChanges.addOperation(
       new RestoreSequenceCaretPositionOperation(
         SequenceRenderer.caretPosition,
         nextCaretPosition,
+        this._coreEditorId,
       ),
     );
 
@@ -1828,7 +1870,7 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     previousSelectionNode?: SubChainNode | BackBoneSequenceNode,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
       selectedTwoStrandedNode,
     );
@@ -1927,7 +1969,7 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
@@ -1953,7 +1995,9 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();
     modelChanges.setUndoOperationsByPriority();
@@ -2142,10 +2186,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
-    const selections = SequenceRenderer.selections;
+    const selections = SequenceRenderer.selections(this._coreEditorId);
 
     if (selections.length > 0) {
       if (this.isSelectionsContainAntisenseChains(selections)) {
@@ -2222,17 +2266,20 @@ export class SequenceMode extends BaseMode {
         this.insertNewSequenceFragment(newMonomerSequenceNode),
       );
 
-      modelChanges.addOperation(new ReinitializeModeOperation());
+      modelChanges.addOperation(
+        new ReinitializeModeOperation(this._coreEditorId),
+      );
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.setCaretPositionNextToMonomer(
         newMonomerSequenceNode.lastMonomerInNode,
+        this._coreEditorId,
       );
       history.update(modelChanges);
     }
   }
 
   private createRnaPresetNode(preset: IRnaPreset, position: Vec2) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const { base: rnaBase, sugar, phosphate } = preset;
 
     assert(sugar);
@@ -2283,7 +2330,7 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     previousSelectionNode?: SubChainNode | BackBoneSequenceNode,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
       selectedTwoStrandedNode,
     );
@@ -2412,7 +2459,7 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     preset: IRnaPreset,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
@@ -2438,7 +2485,9 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();
     modelChanges.setUndoOperationsByPriority();
@@ -2446,10 +2495,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public insertPresetFromLibrary(preset: IRnaPreset) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
-    const selections = SequenceRenderer.selections;
+    const selections = SequenceRenderer.selections(this._coreEditorId);
 
     if (selections.length > 0) {
       if (this.isSelectionsContainAntisenseChains(selections)) {
@@ -2515,10 +2564,13 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(rnaPresetAddModelChanges);
       modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
 
-      modelChanges.addOperation(new ReinitializeModeOperation());
+      modelChanges.addOperation(
+        new ReinitializeModeOperation(this._coreEditorId),
+      );
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.setCaretPositionNextToMonomer(
         newPresetNode.lastMonomerInNode,
+        this._coreEditorId,
       );
       history.update(modelChanges);
     }
@@ -2617,7 +2669,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private showMergeWarningModal(message?: string | null) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error Message',
@@ -2703,7 +2755,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private deleteSelectedDrawingEntities() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const modelChanges = new Command();
     editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
       modelChanges.merge(
@@ -2759,11 +2811,13 @@ export class SequenceMode extends BaseMode {
   }
 
   private unselectAllEntities() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const modelChanges =
       editor.drawingEntitiesManager.unselectAllDrawingEntities();
     modelChanges.merge(
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(
+        this._coreEditorId,
+      ),
     );
     editor.renderersContainer.update(modelChanges);
   }
@@ -2772,7 +2826,7 @@ export class SequenceMode extends BaseMode {
     twoStrandedNode: ITwoStrandedChainItem,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const senseNode = twoStrandedNode.senseNode;
     const antisenseNode = twoStrandedNode.antisenseNode;
 
@@ -2806,7 +2860,7 @@ export class SequenceMode extends BaseMode {
     node: SubChainNode | BackBoneSequenceNode | undefined,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     node?.monomers.forEach((monomer) => {
       monomer.hydrogenBonds.forEach((hydrogenBond) => {
@@ -2821,9 +2875,9 @@ export class SequenceMode extends BaseMode {
 
   public establishHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
     const modelChanges = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
-    const selections = SequenceRenderer.selections;
+    const selections = SequenceRenderer.selections(this._coreEditorId);
 
     if (selections.length) {
       selections.forEach((selectionRange) => {
@@ -2845,16 +2899,18 @@ export class SequenceMode extends BaseMode {
       );
     }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
   }
 
   public deleteHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
     const modelChanges = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const history = new EditorHistory(editor);
-    const selections = SequenceRenderer.selections;
+    const selections = SequenceRenderer.selections(this._coreEditorId);
 
     if (selections.length) {
       selections.forEach((selectionRange) => {
@@ -2873,7 +2929,9 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(this.deleteHydrogenBondsForNode(node));
     }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
+    modelChanges.addOperation(
+      new ReinitializeModeOperation(this._coreEditorId),
+    );
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
   }

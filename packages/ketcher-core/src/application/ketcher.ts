@@ -54,6 +54,7 @@ import {
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -68,6 +69,7 @@ const allowedApiSettings = {
 
 export class Ketcher {
   _id: string;
+  _coreEditorId: string | null = null;
   logging: LogSettings;
   structService: StructService;
   #formatterFactory: FormatterFactory;
@@ -96,7 +98,7 @@ export class Ketcher {
     this.changeEvent = new Subscription();
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
-    this._indigo = new Indigo(this.structService);
+    this._indigo = new Indigo(this.structService, this._coreEditorId);
     this.#eventBus = new EventEmitter();
     this.logging = {
       enabled: false,
@@ -107,6 +109,10 @@ export class Ketcher {
 
   get id() {
     return this._id;
+  }
+
+  get coreEditorId() {
+    return this._coreEditorId;
   }
 
   get formatterFactory() {
@@ -139,6 +145,14 @@ export class Ketcher {
 
   addEditor(editor: Editor) {
     this.#editor = editor;
+  }
+
+  addCoreEditorId(id: string) {
+    this._coreEditorId = id;
+  }
+
+  removeCoreEditorId() {
+    this._coreEditorId = null;
   }
 
   // TODO: create options type
@@ -194,7 +208,11 @@ export class Ketcher {
       format,
       this.#formatterFactory,
       this.editor.struct(),
-      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this._coreEditorId
+        ? CoreEditor.provideEditorInstance(this._coreEditorId)
+            ?.drawingEntitiesManager
+        : undefined,
+      this._coreEditorId,
     );
 
     return molfile;
@@ -206,7 +224,11 @@ export class Ketcher {
       SupportedFormat.idt,
       this.#formatterFactory,
       this.editor.struct(),
-      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this._coreEditorId
+        ? CoreEditor.provideEditorInstance(this._coreEditorId)
+            ?.drawingEntitiesManager
+        : undefined,
+      this._coreEditorId,
     );
   }
 
@@ -234,20 +256,37 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
-    return getStructure(
-      this.id,
-      SupportedFormat.ket,
-      this.#formatterFactory,
-      (CoreEditor.provideEditorInstance()?._type ??
-        EditorType.Micromolecules) === EditorType.Micromolecules
-        ? this.editor.struct()
-        : CoreEditor.provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
-      (CoreEditor.provideEditorInstance()?._type ??
-        EditorType.Micromolecules) === EditorType.Micromolecules
-        ? undefined
-        : CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
-      this.editor.selection() as EditorSelection,
-    );
+    if (this._coreEditorId) {
+      return getStructure(
+        this.id,
+        SupportedFormat.ket,
+        this.#formatterFactory,
+        ((this._coreEditorId &&
+          CoreEditor.provideEditorInstance(this._coreEditorId)?._type) ??
+          EditorType.Micromolecules) === EditorType.Micromolecules
+          ? this.editor.struct()
+          : CoreEditor.provideEditorInstance(
+              this._coreEditorId,
+            )?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+        (CoreEditor.provideEditorInstance(this._coreEditorId)?._type ??
+          EditorType.Micromolecules) === EditorType.Micromolecules
+          ? undefined
+          : CoreEditor.provideEditorInstance(this._coreEditorId)
+              ?.drawingEntitiesManager,
+        this._coreEditorId,
+        this.editor.selection() as EditorSelection,
+      );
+    } else {
+      return getStructure(
+        this.id,
+        SupportedFormat.ket,
+        this.#formatterFactory,
+        this.editor.struct(),
+        undefined,
+        null,
+        this.editor.selection() as EditorSelection,
+      );
+    }
   }
 
   getFasta(): Promise<string> {
@@ -256,7 +295,11 @@ export class Ketcher {
       SupportedFormat.fasta,
       this.#formatterFactory,
       this.editor.struct(),
-      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this._coreEditorId
+        ? CoreEditor.provideEditorInstance(this._coreEditorId)
+            ?.drawingEntitiesManager
+        : undefined,
+      this._coreEditorId,
     );
   }
 
@@ -264,10 +307,13 @@ export class Ketcher {
     format: '1-letter' | '3-letter' = '1-letter',
   ): Promise<string> {
     if (format === '1-letter' || format === '3-letter') {
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = CoreEditor.provideEditorInstance(
+        this._coreEditorId as string,
+      );
+
       const indigo = this.indigo;
 
-      const ketSerializer = new KetSerializer();
+      const ketSerializer = new KetSerializer(this._coreEditorId);
       const serializedKet = ketSerializer.serialize(
         editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
         editor.drawingEntitiesManager,
@@ -299,7 +345,11 @@ export class Ketcher {
         : SupportedFormat.sequence,
       this.#formatterFactory,
       this.editor.struct(),
-      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this._coreEditorId
+        ? CoreEditor.provideEditorInstance(this._coreEditorId)
+            ?.drawingEntitiesManager
+        : undefined,
+      this._coreEditorId,
     );
   }
 
@@ -404,7 +454,9 @@ export class Ketcher {
   }
 
   containsReaction(): boolean {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(
+      this._coreEditorId as string,
+    );
     return (
       this.editor.struct().hasRxnArrow() ||
       editor?.drawingEntitiesManager?.micromoleculesHiddenEntities.hasRxnArrow()
@@ -449,7 +501,9 @@ export class Ketcher {
     structStr: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
-    const macromoleculesEditor = CoreEditor.provideEditorInstance();
+    const macromoleculesEditor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
@@ -457,8 +511,12 @@ export class Ketcher {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
-        deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        deleteAllEntitiesOnCanvas(this._coreEditorId);
+        await parseAndAddMacromoleculesOnCanvas(
+          structStr,
+          this.structService,
+          this._coreEditorId,
+        );
         macromoleculesEditor?.zoomToStructuresIfNeeded();
       } else {
         const struct: Struct = await prepareStructToRender(
@@ -501,7 +559,9 @@ export class Ketcher {
     structStr: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
-    const macromoleculesEditor = CoreEditor.provideEditorInstance();
+    const macromoleculesEditor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
@@ -510,7 +570,7 @@ export class Ketcher {
 
       if (window.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
-          !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
+          !macromoleculesEditor?.drawingEntitiesManager.hasDrawingEntities;
 
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
 
@@ -544,8 +604,13 @@ export class Ketcher {
         this.editor.struct(),
         this.editor.serverSettings,
       );
-      const ketSerializer = new KetSerializer();
-      this.setMolecule(ketSerializer.serialize(struct));
+      const ketSerializer = new KetSerializer(this._coreEditorId);
+      this.setMolecule(
+        ketSerializer.serialize(
+          struct,
+          new DrawingEntitiesManager(this._coreEditorId),
+        ),
+      );
     }, this.eventBus);
   }
 
@@ -560,17 +625,23 @@ export class Ketcher {
    * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
    */
   setZoom(value: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
     if (editor && value) editor.zoomTool.zoomTo(value);
   }
 
   setMode(mode: SupportedModes) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
     if (editor && mode) editor.events.selectMode.dispatch(ModeTypes[mode]);
   }
 
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
     const fileName = 'ketcher';
     let blobPart;
 
@@ -634,7 +705,7 @@ export class Ketcher {
 
   public reinitializeIndigo(structService: StructService) {
     this.structService = structService;
-    this._indigo = new Indigo(structService);
+    this._indigo = new Indigo(structService, this.coreEditorId);
   }
 
   public sendCustomAction(name: string) {
@@ -642,7 +713,9 @@ export class Ketcher {
   }
 
   public updateMonomersLibrary(rawMonomersData: string | JSON) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = this._coreEditorId
+      ? CoreEditor.provideEditorInstance(this._coreEditorId)
+      : undefined;
 
     ketcherProvider.getKetcher(this.id);
 

@@ -50,13 +50,14 @@ export function getStructure(
   formatterFactory: FormatterFactory,
   struct: Struct,
   drawingEntitiesManager?: DrawingEntitiesManager,
+  coreEditorId: string | null = null,
   selection?: EditorSelection,
 ): Promise<string> {
-  const serverSettings =
-    ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const serverSettings = ketcher.editor.serverSettings;
   const formatter = formatterFactory.create(structureFormat, serverSettings);
   const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
-    new DrawingEntitiesManager(),
+    new DrawingEntitiesManager(coreEditorId),
   );
 
   return formatter.getStructureFromStructAsync(
@@ -91,7 +92,10 @@ export function parseStruct(
   ketcherInstance: Ketcher,
 ) {
   const format = identifyStructFormat(structStr);
-  const factory = new FormatterFactory(structService);
+  const factory = new FormatterFactory(
+    structService,
+    ketcherInstance.coreEditorId,
+  );
   const options = ketcherInstance.editor.options();
 
   const service = factory.create(format, {
@@ -101,18 +105,24 @@ export function parseStruct(
   return service.getStructureFromStringAsync(structStr);
 }
 
-export function deleteAllEntitiesOnCanvas() {
-  const editor = CoreEditor.provideEditorInstance();
-  const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
-  editor.renderersContainer.update(modelChanges);
+export function deleteAllEntitiesOnCanvas(coreEditorId: string | null = null) {
+  const editor = coreEditorId
+    ? CoreEditor.provideEditorInstance(coreEditorId)
+    : undefined;
+  const modelChanges = editor?.drawingEntitiesManager.deleteAllEntities();
+  editor?.renderersContainer.update(modelChanges);
 }
 
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
+  coreEditorId: string | null = null,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
-  const ketSerializer = new KetSerializer();
+  if (!coreEditorId) {
+    return;
+  }
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
+  const ketSerializer = new KetSerializer(coreEditorId);
   const format = identifyStructFormat(struct);
   let ketStruct = struct;
   if (format !== SupportedFormat.ket) {
@@ -126,6 +136,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
+  assert(editor);
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,

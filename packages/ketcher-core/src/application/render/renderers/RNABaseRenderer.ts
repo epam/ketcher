@@ -10,11 +10,12 @@ const RNABASE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].body;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: RNABase, scale?: number) {
+  constructor(public monomer: RNABase, coreEditorId: string, scale?: number) {
     super(
       monomer,
       RNABASE_HOVERED_ELEMENT_ID,
       RNABASE_SYMBOL_ELEMENT_ID,
+      coreEditorId,
       scale,
     );
   }

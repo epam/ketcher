@@ -41,7 +41,6 @@ import {
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
-import { PointerEvent } from 'react';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -84,6 +83,7 @@ export const SequenceItemContextMenu = ({
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
+    editor?.id,
   );
   const menuItems = [
     {

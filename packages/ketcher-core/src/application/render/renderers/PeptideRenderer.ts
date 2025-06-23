@@ -13,11 +13,12 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = 'C';
 
-  constructor(public monomer: Peptide, scale?: number) {
+  constructor(public monomer: Peptide, coreEditorId: string, scale?: number) {
     super(
       monomer,
       PEPTIDE_HOVERED_ELEMENT_ID,
       PEPTIDE_SYMBOL_ELEMENT_ID,
+      coreEditorId,
       scale,
     );
   }

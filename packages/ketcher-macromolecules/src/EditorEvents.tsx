@@ -16,7 +16,7 @@
 import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
-  selectEditor,
+  selectCoreEditorId,
   selectEditorActiveTool,
   selectIsContextMenuActive,
   selectTool,
@@ -38,6 +38,7 @@ import {
   HydrogenBond,
   BackBoneSequenceNode,
   ToolName,
+  CoreEditor,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -55,7 +56,8 @@ import { loadMonomerLibrary } from 'state/library';
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
 export const EditorEvents = () => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
   const dispatch = useAppDispatch();

@@ -5,13 +5,13 @@ import { Coordinates } from '../internal';
 import { Command } from 'domain/entities/Command';
 
 export class FlexMode extends BaseMode {
-  constructor(previousMode?: LayoutMode) {
-    super('flex-layout-mode', previousMode);
+  constructor(coreEditorId: string, previousMode?: LayoutMode) {
+    super(coreEditorId, 'flex-layout-mode', previousMode);
   }
 
   initialize() {
     const command = super.initialize();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
@@ -28,14 +28,14 @@ export class FlexMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
   }
 
   applyAdditionalPasteOperations() {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     editor.drawingEntitiesManager.recalculateAntisenseChains();
 

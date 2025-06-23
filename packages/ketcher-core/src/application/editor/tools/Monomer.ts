@@ -96,6 +96,7 @@ class MonomerTool implements BaseTool {
         this.monomerPreview = variantMonomer;
         this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
           variantMonomer,
+          this.editor.id,
           this.MONOMER_PREVIEW_SCALE_FACTOR,
         );
       } else {

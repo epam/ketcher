@@ -26,6 +26,7 @@ import {
   SettingsManager,
   MULTITAIL_ARROW_KEY,
   IMAGE_KEY,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -60,6 +61,7 @@ export function loadStruct(struct) {
 export function parseStruct(
   struct: string | Struct,
   server,
+  coreEditorId: string | null,
   options?,
 ): Promise<Struct> {
   if (typeof struct === 'string') {
@@ -76,7 +78,7 @@ export function parseStruct(
     if (format === SupportedFormat.cdx) {
       struct = `base64::${struct.replace(/\s/g, '')}`;
     }
-    const factory = new FormatterFactory(server);
+    const factory = new FormatterFactory(server, coreEditorId);
     const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
     const service = factory.create(
       format,
@@ -147,7 +149,14 @@ export function load(struct: Struct, options?) {
     dispatch(setAnalyzingFile(true));
 
     try {
-      const parsedStruct = await parseStruct(struct, server, otherOptions);
+      const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+
+      const parsedStruct = await parseStruct(
+        struct,
+        server,
+        ketcher.coreEditorId,
+        otherOptions,
+      );
       const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],

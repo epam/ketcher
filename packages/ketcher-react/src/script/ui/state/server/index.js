@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
+import {
+  DrawingEntitiesManager,
+  ChemicalMimeType,
+  KetcherLogger,
+  KetSerializer,
+} from 'ketcher-core';
 import { appUpdate, setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
@@ -208,11 +213,16 @@ export function serverCall(editor, server, method, options, struct) {
   }
 
   const ketSerializer = new KetSerializer();
-  const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
-    ...selection,
-    atoms: selectedAtoms,
-    bonds: selectedBonds,
-  });
+  const serializedStruct = ketSerializer.serialize(
+    currentStruct,
+    new DrawingEntitiesManager(),
+    undefined,
+    {
+      ...selection,
+      atoms: selectedAtoms,
+      bonds: selectedBonds,
+    },
+  );
 
   return server.then(() =>
     server[method](

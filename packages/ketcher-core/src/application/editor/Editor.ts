@@ -79,6 +79,8 @@ import { getAminoAcidsToModify } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
+import { uniqueId } from 'lodash';
+import { CoreEditorProvider } from './EditorProvider';
 
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
@@ -96,8 +98,6 @@ interface ModifyAminoAcidsHandlerParams {
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
-
-let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -138,6 +138,7 @@ export class CoreEditor {
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private _id: string = uniqueId();
 
   constructor({
     ketcherId,
@@ -153,7 +154,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode || new SequenceMode();
+    this.mode = mode || new SequenceMode(this._id);
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -162,8 +163,11 @@ export class CoreEditor {
       this.updateMonomersLibrary(monomersLibraryUpdate);
     }
     this.subscribeEvents();
-    this.renderersContainer = new RenderersManager({ theme });
-    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.renderersContainer = new RenderersManager({
+      theme,
+      coreEditorId: this._id,
+    });
+    this.drawingEntitiesManager = new DrawingEntitiesManager(this._id);
     this.viewModel = new ViewModel();
     this.domEventSetup();
     this.setupContextMenuEvents();
@@ -174,7 +178,7 @@ export class CoreEditor {
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    editor = this;
+    CoreEditorProvider.addInstance(this);
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeEventListeners();
@@ -205,8 +209,12 @@ export class CoreEditor {
     }
   }
 
-  static provideEditorInstance(): CoreEditor {
-    return editor;
+  static provideEditorInstance(id: string): CoreEditor {
+    return CoreEditorProvider.getEditor(id);
+  }
+
+  public removeEditorInstance(): void {
+    CoreEditorProvider.removeInstance(this.id);
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
@@ -219,19 +227,25 @@ export class CoreEditor {
       return;
     }
 
-    const { monomersLibraryParsedJson, monomersLibrary } =
-      parseMonomersLibrary(monomersDataRaw);
+    const { monomersLibraryParsedJson, monomersLibrary } = parseMonomersLibrary(
+      monomersDataRaw,
+      this._id,
+    );
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     persistentMonomersLibrary = monomersLibrary;
     persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
   }
 
+  get id(): string {
+    return this._id;
+  }
+
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
-    } = parseMonomersLibrary(monomersDataRaw);
+    } = parseMonomersLibrary(monomersDataRaw, this._id);
 
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const existingMonomerIndex = this._monomersLibrary.findIndex(
@@ -377,7 +391,7 @@ export class CoreEditor {
         event.clientX <= canvasBoundingClientRect.right &&
         event.clientY >= canvasBoundingClientRect.top &&
         event.clientY <= canvasBoundingClientRect.bottom;
-      const sequenceSelections = SequenceRenderer.selections.map(
+      const sequenceSelections = SequenceRenderer.selections(this._id).map(
         (selectionRange) =>
           selectionRange.map((twoStrandedNodeSelection) => {
             return {
@@ -511,7 +525,9 @@ export class CoreEditor {
         const command = new Command();
         const history = new EditorHistory(this);
 
-        command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
+        command.addOperation(
+          new LineLengthChangeOperation(lineLengthUpdate, this._id),
+        );
         history.update(command);
       },
     );
@@ -759,7 +775,7 @@ export class CoreEditor {
     modificationType: string,
   ) {
     const modelChanges = new Command();
-    const editorHistory = new EditorHistory(editor);
+    const editorHistory = new EditorHistory(this);
     const aminoAcidsToModify = getAminoAcidsToModify(
       monomers,
       modificationType,
@@ -799,11 +815,11 @@ export class CoreEditor {
         );
       });
 
-      modelChanges.addOperation(new ReinitializeModeOperation());
-      editor.renderersContainer.update(modelChanges);
+      modelChanges.addOperation(new ReinitializeModeOperation(this._id));
+      this.renderersContainer.update(modelChanges);
       editorHistory.update(modelChanges);
-      editor.transientDrawingView.hideModifyAminoAcidsView();
-      editor.transientDrawingView.update();
+      this.transientDrawingView.hideModifyAminoAcidsView();
+      this.transientDrawingView.update();
     };
 
     if (bondsToDelete.size > 0) {
@@ -1049,7 +1065,7 @@ export class CoreEditor {
     reStruct.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
-    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.drawingEntitiesManager = new DrawingEntitiesManager(this._id);
   }
 
   private resetModeIfNeeded() {
@@ -1080,6 +1096,7 @@ export class CoreEditor {
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
         this.drawingEntitiesManager,
+        this._id,
       );
 
     if (this.mode instanceof SnakeMode) {
@@ -1115,14 +1132,15 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = RenderersManager.getRenderedStructuresBbox();
+    const structureBbox = RenderersManager.getRenderedStructuresBbox(this._id);
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 
   public scrollToTopLeftCorner() {
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = RenderersManager.getRenderedStructuresBbox(
+      this._id,
+    );
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),

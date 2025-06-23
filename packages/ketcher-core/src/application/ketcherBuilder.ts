@@ -56,7 +56,7 @@ export class KetcherBuilder {
       this.#structServiceProvider!.createStructService(mergedServiceOptions);
     const ketcher = new Ketcher(
       structService,
-      new FormatterFactory(structService),
+      new FormatterFactory(structService, null),
     );
     structService.addKetcherId(ketcher.id);
     ketcher[this.#structServiceProvider.mode] = true;

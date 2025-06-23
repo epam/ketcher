@@ -29,7 +29,7 @@ class ClearTool implements BaseTool {
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
 
     if (mode.modeName === 'sequence-layout-mode') {
-      modelChanges.addOperation(new ReinitializeModeOperation());
+      modelChanges.addOperation(new ReinitializeModeOperation(this.editor.id));
     }
 
     this.editor.transientDrawingView.clear();

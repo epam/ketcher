@@ -14,7 +14,6 @@ import {
   isAntisenseOptionVisible,
 } from './helpers';
 import { SequenceItemContextMenuNames } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
-import { PointerEvent } from 'react';
 
 type SelectedMonomersContextMenuType = {
   selectedMonomers?: BaseMonomer[];
@@ -33,6 +32,7 @@ export const SelectedMonomersContextMenu = ({
   );
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
+    editor?.id,
   );
   const menuItems = [
     {

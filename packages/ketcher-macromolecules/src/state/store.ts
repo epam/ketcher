@@ -40,6 +40,7 @@ export function configureAppStore(preloadedState = {}) {
 }
 
 export const store = configureAppStore();
+export const generateNewStore = () => configureAppStore();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -63,12 +63,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     public monomer: BaseMonomer,
     private monomerHoveredElementId: string,
     monomerSymbolElementId: string,
+    private _coreEditorId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = CoreEditor?.provideEditorInstance(this._coreEditorId);
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -294,7 +295,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       customAngle,
     );
 
-    return new AttachmentPoint(attachmentPointParams);
+    return new AttachmentPoint(attachmentPointParams, this._coreEditorId);
   }
 
   public removeAttachmentPoints() {

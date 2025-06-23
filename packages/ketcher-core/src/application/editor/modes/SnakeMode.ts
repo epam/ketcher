@@ -9,13 +9,13 @@ import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class SnakeMode extends BaseMode {
-  constructor(previousMode?: LayoutMode) {
-    super('snake-layout-mode', previousMode);
+  constructor(coreEditorId: string, previousMode?: LayoutMode) {
+    super(coreEditorId, 'snake-layout-mode', previousMode);
   }
 
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     // Prevent layout to be called if turn on snake mode by undo operation
     // because during undo to flex mode if monomers were not moved
@@ -37,7 +37,7 @@ export class SnakeMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     return Coordinates.modelToCanvas(
       editor.drawingEntitiesManager.bottomRightMonomerPosition,
@@ -46,8 +46,9 @@ export class SnakeMode extends BaseMode {
 
   scrollForView() {
     const zoom = ZoomTool.instance;
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = RenderersManager.getRenderedStructuresBbox(
+      this.coreEditorId,
+    );
 
     if (zoom.isFitToCanvasHeight(drawnEntitiesBoundingBox.height)) {
       zoom.scrollTo(
@@ -69,7 +70,7 @@ export class SnakeMode extends BaseMode {
 
   applyAdditionalPasteOperations() {
     const command = new Command();
-    command.addOperation(new ReinitializeModeOperation());
+    command.addOperation(new ReinitializeModeOperation(this.coreEditorId));
 
     return command;
   }

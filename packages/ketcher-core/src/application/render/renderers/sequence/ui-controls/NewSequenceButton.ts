@@ -18,12 +18,12 @@ export class NewSequenceButton {
   private rootElement?: D3SvgElementSelection<SVGGElement, void>;
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
-  constructor(private indexOfRowBefore: number) {
+  constructor(private indexOfRowBefore: number, private coreEditorId: string) {
     this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
   public show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
     const chain =
       SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =

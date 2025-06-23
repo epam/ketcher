@@ -67,7 +67,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private sideConnectionBondTurnPoint?: number;
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
-  constructor(public readonly polymerBond: PolymerBond) {
+  constructor(
+    public readonly polymerBond: PolymerBond,
+    private _coreEditorId: string,
+  ) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
@@ -116,7 +119,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
     const startCellDirection = cells?.[0].connections?.find(
@@ -167,7 +170,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
@@ -1080,7 +1083,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
@@ -1109,7 +1112,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(

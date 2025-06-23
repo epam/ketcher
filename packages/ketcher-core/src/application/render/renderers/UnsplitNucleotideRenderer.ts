@@ -14,11 +14,16 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
-  constructor(public monomer: UnsplitNucleotide, scale?: number) {
+  constructor(
+    public monomer: UnsplitNucleotide,
+    coreEditorId: string,
+    scale?: number,
+  ) {
     super(
       monomer,
       NUCLEOTIDE_HOVERED_ELEMENT_ID,
       NUCLEOTIDE_SYMBOL_ELEMENT_ID,
+      coreEditorId,
       scale,
     );
   }

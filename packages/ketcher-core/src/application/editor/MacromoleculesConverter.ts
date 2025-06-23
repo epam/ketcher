@@ -213,14 +213,12 @@ export class MacromoleculesConverter {
       if (polymerBond instanceof HydrogenBond) {
         const bond = new Bond({
           type: Bond.PATTERN.TYPE.HYDROGEN,
-          begin: monomerToAtomIdMap
-            .get(polymerBond.firstMonomer)
-            ?.values()
-            .next().value,
-          end: monomerToAtomIdMap
-            .get(polymerBond.secondMonomer)
-            ?.values()
-            .next().value,
+          begin:
+            monomerToAtomIdMap.get(polymerBond.firstMonomer)?.values().next()
+              .value ?? 0,
+          end:
+            monomerToAtomIdMap.get(polymerBond.secondMonomer)?.values().next()
+              .value ?? 0,
         });
         const bondId = struct.bonds.add(bond);
 
@@ -426,8 +424,11 @@ export class MacromoleculesConverter {
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
+    coreEditorId: string | null,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = coreEditorId
+      ? CoreEditor.provideEditorInstance(coreEditorId)
+      : undefined;
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();

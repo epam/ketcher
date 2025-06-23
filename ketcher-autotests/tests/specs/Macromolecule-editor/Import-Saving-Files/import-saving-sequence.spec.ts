@@ -1348,7 +1348,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
   {
     testCaseDescription:
       '12. Verify specific export format for "Any amino acid"',
-    sequenceDescription: '(X) as "Xaa',
+    sequenceDescription: '(X) as Xaa',
     HELMString:
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     sequenceString: 'Xaa',

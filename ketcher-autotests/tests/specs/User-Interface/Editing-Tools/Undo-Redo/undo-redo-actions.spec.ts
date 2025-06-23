@@ -26,6 +26,7 @@ import {
   selectUndoByKeyboard,
   selectRedoByKeyboard,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -662,7 +663,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     for (let i = 0; i < 5; i++) {
-      await page.keyboard.press('Control+_');
+      await ZoomOutByKeyboard(page);
     }
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);

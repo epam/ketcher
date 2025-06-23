@@ -7,11 +7,12 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
+  MolFileFormat,
   Monomer,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
@@ -23,7 +24,6 @@ import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
-  startNewSequence,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takePageScreenshot,
@@ -44,7 +44,6 @@ import {
   turnSyncEditModeOff,
 } from '@utils/macromolecules/monomer';
 import {
-  hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
   switchToRNAMode,
@@ -58,15 +57,12 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
-}
-
-async function callContextMenuForAnySymbol(page: Page) {
-  const anySymbol = getSymbolLocator(page, {}).first();
-  await anySymbol.click({ button: 'right', force: true });
 }
 
 test.describe('Sequence edit mode', () => {
@@ -83,7 +79,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Text-editing mode activates when users start a new sequence or edit an existing one.
     */
-    await startNewSequence(page);
     await takeEditorScreenshot(page);
   });
 
@@ -97,22 +92,25 @@ test.describe('Sequence edit mode', () => {
     */
     const x = 100;
     const y = 100;
-    await clickOnCanvas(page, x, y, { button: 'right' });
-    await takeEditorScreenshot(page);
-    await page.getByTestId('start_new_sequence').click();
+    await ContextMenu(page, { x, y }).open();
+    expect(
+      page.getByTestId(SequenceSymbolOption.StartNewSequence),
+    ).toBeVisible();
+    await page.keyboard.press('Escape');
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await takeEditorScreenshot(page);
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).open();
+    expect(page.getByTestId(SequenceSymbolOption.EditSequence)).toBeVisible();
+    expect(
+      page.getByTestId(SequenceSymbolOption.StartNewSequence),
+    ).toBeVisible();
   });
 
   test('Add/edit sequence', async ({ page }) => {
     test.slow();
-    await startNewSequence(page);
     await typeRNADNAAlphabet(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await typeRNADNAAlphabet(page);
@@ -135,7 +133,6 @@ test.describe('Sequence edit mode', () => {
     */
     const x = 400;
     const y = 400;
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, x, y);
@@ -149,7 +146,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Exiting text-editing mode occurs with a click Escape on keyboard.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
@@ -163,7 +159,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: After entering, only letters allowed for RNA are present on the canvas.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
@@ -175,7 +170,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: After entering, only letters allowed for DNA are present on the canvas.
     */
-    await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
@@ -186,7 +180,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, X, Z
     */
-    await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await keyboardTypeOnCanvas(page, 'abcdefghijklmnopqrstuvwxyz');
     await takeEditorScreenshot(page);
@@ -199,7 +192,6 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Enter starts a new chain aligned at the beginning of a new row.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'atgcu');
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'ucgta');
@@ -216,12 +208,10 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the end of sequence.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/rna-sequence.ket');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
@@ -238,12 +228,10 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the middle of sequence.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/rna-seq-g.ket');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
@@ -261,12 +249,12 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'KET/atuc.ket');
     await takeEditorScreenshot(page);
-    await getSymbolLocator(page, {
+    const symbolT = getSymbolLocator(page, {
       symbolAlias: 'T',
       nodeIndexOverall: 4,
-    }).click({ button: 'right' });
+    });
+    await ContextMenu(page, symbolT).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
-    await page.getByTestId('edit_sequence').click();
     await keyboardPressOnCanvas(page, 'u');
     await takeEditorScreenshot(page);
   });
@@ -280,12 +268,10 @@ test.describe('Sequence edit mode', () => {
     by entering symbols before the phosphate.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/rna-g.ket');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await selectSnakeLayoutModeTool(page);
@@ -300,11 +286,10 @@ test.describe('Sequence edit mode', () => {
     Description: It is not possible to add more monomers to cycled scructure. Error message appears.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
-    await page
-      .getByText('U', { exact: true })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolU = getSymbolLocator(page, {
+      symbolAlias: 'U',
+    });
+    await ContextMenu(page, symbolU).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowRight');
     await keyboardPressOnCanvas(page, 'a');
     await takeEditorScreenshot(page);
@@ -320,7 +305,10 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await startNewSequence(page);
+    await ContextMenu(page, { x: 200, y: 200 }).click(
+      SequenceSymbolOption.StartNewSequence,
+    );
+
     await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
 
     await keyboardPressOnCanvas(page, 'ArrowLeft');
@@ -338,10 +326,14 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
-    await hoverOnSequenceSymbol(page, 'A');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+    }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await hoverOnSequenceSymbol(page, 'K');
+    await getSymbolLocator(page, {
+      symbolAlias: 'K',
+    }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -355,10 +347,10 @@ test.describe('Sequence edit mode', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
-    await hoverOnSequenceSymbol(page, 'A');
+    await getMonomerLocator(page, Peptides.A).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await hoverOnSequenceSymbol(page, 'Aad');
+    await getMonomerLocator(page, Peptides.Aad).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -376,7 +368,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
 
     for (const symbol of sequenceSymbols) {
-      await hoverOnSequenceSymbol(page, symbol);
+      await getMonomerLocator(page, { monomerAlias: symbol }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
@@ -472,7 +464,11 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['A', 'C', '@'];
 
     for (const symbol of sequenceSymbols) {
-      await hoverOnSequenceSymbol(page, symbol);
+      await getSymbolLocator(page, {
+        symbolAlias: symbol,
+      })
+        .first()
+        .hover();
       await waitForMonomerPreview(page);
       await takePageScreenshot(page);
       await moveMouseAway(page);
@@ -560,7 +556,10 @@ test.describe('Sequence edit mode', () => {
     */
     await switchToRNAMode(page);
     await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-    await hoverOnSequenceSymbol(page, 'A', 0);
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -953,7 +952,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1317,7 +1316,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1351,7 +1350,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1507,7 +1506,8 @@ test.describe('Sequence edit mode', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1532,18 +1532,16 @@ test.describe('Sequence edit mode', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('copy').click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('paste').click();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('delete').click();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1563,7 +1561,8 @@ test.describe('Sequence edit mode', () => {
      * 4. Take a screenshot
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await callContextMenuForAnySymbol(page);
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1583,7 +1582,7 @@ test.describe('Sequence edit mode', () => {
      * 4. Take a screenshot
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await clickOnCanvas(page, 400, 400, { button: 'right' });
+    await ContextMenu(page, { x: 400, y: 400 }).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1607,11 +1606,10 @@ test.describe('Sequence edit mode', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('copy').click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('paste').click();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1648,11 +1646,10 @@ test.describe('Sequence edit mode', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('copy').click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('paste').click();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1661,7 +1658,7 @@ test.describe('Sequence edit mode', () => {
       page,
       'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1693,19 +1690,19 @@ test.describe('Sequence edit mode', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('copy').click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
     await CommonTopLeftToolbar(page).clearCanvas();
-    await clickOnCanvas(page, 400, 400, { button: 'right' });
-    await page.getByTestId('paste').click();
+    await ContextMenu(page, { x: 400, y: 400 }).click(
+      SequenceSymbolOption.Paste,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
-    await page.getByTestId('delete').click();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

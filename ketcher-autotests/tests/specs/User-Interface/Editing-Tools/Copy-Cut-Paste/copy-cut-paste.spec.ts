@@ -10,7 +10,6 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickOnBond,
-  INPUT_DELAY,
   waitForPageInit,
   waitForIndigoToLoad,
   waitForRender,
@@ -31,6 +30,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { INPUT_DELAY } from '@utils/globals';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;

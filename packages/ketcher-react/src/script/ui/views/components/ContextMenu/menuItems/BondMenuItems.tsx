@@ -76,7 +76,16 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
 
   return (
     <>
-      <Item {...props} onClick={handleEdit} disabled={isDisabled}>
+      <Item
+        {...props}
+        data-testid={
+          props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected bonds...-option'
+            : 'Edit...-option'
+        }
+        onClick={handleEdit}
+        disabled={isDisabled}
+      >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
           {props.propsFromTrigger?.extraItemsSelected
@@ -95,6 +104,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           <Item
             className={classNames}
             {...props}
+            data-testid={`${name}-option`}
             id={name}
             onClick={handleTypeChange}
             key={name}
@@ -106,12 +116,18 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         );
       })}
 
-      <Submenu {...props} label="Query bonds" className={styles.subMenu}>
+      <Submenu
+        {...props}
+        data-testid="Query bonds-option"
+        label="Query bonds"
+        className={styles.subMenu}
+      >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
           return (
             <Item
               className={styles.sameGroup}
+              data-testid={`${name}-option`}
               id={name}
               onClick={handleTypeChange}
               key={name}
@@ -125,16 +141,26 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       </Submenu>
 
       {shouldShowChangeDirection && (
-        <Item {...props} onClick={changeDirection}>
+        <Item
+          {...props}
+          data-testid="Change direction-option"
+          onClick={changeDirection}
+        >
           Change direction
         </Item>
       )}
-      <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
+      <Item
+        {...props}
+        data-testid="Attach S-Group...-option"
+        hidden={sGroupAttachHidden}
+        onClick={handleSGroupAttach}
+      >
         Attach S-Group...
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
       <Item
         {...props}
+        data-testid="Edit S-Group...-option"
         hidden={sGroupEditHidden}
         disabled={sGroupEditDisabled}
         onClick={handleSGroupEdit}
@@ -142,7 +168,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         Edit S-Group...
       </Item>
 
-      <Item {...props} onClick={handleDelete}>
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>

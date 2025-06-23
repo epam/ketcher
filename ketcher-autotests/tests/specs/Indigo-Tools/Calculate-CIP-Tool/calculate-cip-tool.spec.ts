@@ -25,7 +25,7 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile } from '@utils/formats';
+import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -501,7 +501,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         page,
         'Molfiles-V2000/structure-with-stereo-bonds.mol',
       );
-      const expectedFile = await getMolfile(page, 'v2000');
+      const expectedFile = await getMolfile(page, MolFileFormat.v2000);
       await saveToFile(
         'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
         expectedFile,
@@ -514,7 +514,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
           metaDataIndexes: METADATA_STRING_INDEX,
           expectedFileName:
             'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
-          fileFormat: 'v2000',
+          fileFormat: MolFileFormat.v2000,
         });
 
       expect(molFile).toEqual(molFileExpected);
@@ -536,7 +536,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       'Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -653,7 +653,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

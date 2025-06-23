@@ -2,27 +2,6 @@
 import { Locator, Page } from '@playwright/test';
 import { moveMouseAway } from '@utils';
 
-export async function hoverOnSequenceSymbol(
-  page: Page,
-  symbolText: string,
-  nthNumber?: number,
-) {
-  const symbolLocator = getSequenceSymbolLocator(page, symbolText, nthNumber);
-  await symbolLocator.hover();
-}
-
-export function getSequenceSymbolLocator(
-  page: Page,
-  symbolText: string,
-  nthNumber = 0,
-) {
-  return page
-    .getByTestId('ketcher-canvas')
-    .getByText(symbolText)
-    .nth(nthNumber)
-    .locator('..');
-}
-
 export async function selectSequenceRangeInEditMode(
   page: Page,
   fromSymbol: Locator,

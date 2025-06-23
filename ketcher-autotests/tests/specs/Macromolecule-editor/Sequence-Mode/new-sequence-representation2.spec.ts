@@ -364,6 +364,7 @@ for (const sequence of sequencesForAddingDash) {
       sequence.HELM || '',
     );
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: 4,
@@ -412,6 +413,7 @@ for (const sequence of sequencesForAddingDash) {
       sequence.HELM || '',
     );
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: 4,
@@ -464,6 +466,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
+  await resetZoomLevelToDefault(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,
@@ -524,6 +527,8 @@ test(`Case 45. Verify that when editing only one side of the sense/antisense dup
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
+  await resetZoomLevelToDefault(page);
+
   await turnSyncEditModeOff(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {

@@ -3,6 +3,7 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  MolFileFormat,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
@@ -85,7 +86,7 @@ test.describe('R-Group', () => {
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -103,7 +104,7 @@ test.describe('R-Group', () => {
       page,
       'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });

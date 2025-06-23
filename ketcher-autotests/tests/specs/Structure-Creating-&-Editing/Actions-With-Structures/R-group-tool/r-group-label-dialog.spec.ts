@@ -305,7 +305,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -321,7 +321,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
@@ -339,7 +339,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
@@ -363,7 +363,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
@@ -381,7 +381,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -394,7 +394,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -408,7 +408,7 @@ test.describe('R-Group Label Tool', () => {
       Description: The plus symbol does not appear near the R-group label.
       The minus symbol does not appear near the R-group label.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await LeftToolbar(page).chargePlus();
     await page.getByText('R8').click();
     await LeftToolbar(page).chargeMinus();
@@ -426,8 +426,8 @@ test.describe('R-Group Label Tool', () => {
     const x = 100;
     const y = 100;
     await openFileAndAddToCanvas(
-      'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
@@ -443,8 +443,8 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 500;
     await openFileAndAddToCanvas(
-      'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await LeftToolbar(page).chain();
     await page.getByText('R10').hover();
@@ -460,8 +460,8 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 500;
     await openFileAndAddToCanvas(
-      'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await selectRingButton(page, RingButton.Benzene);
     await page.getByText('R10').hover();
@@ -477,8 +477,8 @@ test.describe('R-Group Label Tool', () => {
       Description: The structure is layout correctly without R-group label loss.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-structure-with-r-group.mol',
       page,
+      'Molfiles-V2000/distorted-structure-with-r-group.mol',
     );
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -495,7 +495,7 @@ test.describe('R-Group Label Tool', () => {
     Test case: EPMLSOPKET-1568
     Description: User is able to save the structure with R-group label as .rxn file
     */
-    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/chain-with-r-group-expected.rxn',
@@ -510,8 +510,8 @@ test.describe('R-Group Label Tool', () => {
     Description: User is able to save the structure with R-group label as .rxn V3000 file
     */
     await openFileAndAddToCanvas(
-      'Rxn-V3000/chain-with-r-group-V3000.rxn',
       page,
+      'Rxn-V3000/chain-with-r-group-V3000.rxn',
     );
     await verifyFileExport(
       page,
@@ -526,7 +526,7 @@ test.describe('R-Group Label Tool', () => {
     Test case: EPMLSOPKET-1568
     Description: User is able to save the structure with R-group label as .smi file
     */
-    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/chain-with-r-group.smi');
     await verifyFileExport(
       page,
       'SMILES/chain-with-r-group-expected.smi',

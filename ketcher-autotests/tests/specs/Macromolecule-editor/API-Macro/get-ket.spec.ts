@@ -23,7 +23,7 @@ test.describe('getKet', () => {
   });
 
   test('with two monomers bonded', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await verifyFileExport(
       page,
       'KET/alanine-monomers-bonded-expected.ket',

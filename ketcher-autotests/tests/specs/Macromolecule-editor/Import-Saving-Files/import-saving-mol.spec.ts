@@ -59,8 +59,9 @@ test.describe('Import-Saving .mol Files', () => {
   test('Import monomers and chem', async () => {
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/monomers-and-chem.mol',
       page,
+      'Molfiles-V3000/monomers-and-chem.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -95,7 +96,7 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Export monomers and chem', async () => {
-    await openFileAndAddToCanvasMacro('KET/monomers-and-chem.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
@@ -110,7 +111,11 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Structure in center of canvas after opening
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/peptide-bzl.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -120,7 +125,11 @@ test.describe('Import-Saving .mol Files', () => {
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/peptide-bzl.mol',
+      MacroFileType.MOLv3000,
+    );
     await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -133,8 +142,9 @@ test.describe('Import-Saving .mol Files', () => {
     and when hovering, preview display changes made during modification
     */
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
       page,
+      'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+      MacroFileType.MOLv3000,
     );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -156,7 +166,11 @@ test.describe('Import-Saving .mol Files', () => {
     We have bug https://github.com/epam/ketcher/issues/3383
     */
       await selectFlexLayoutModeTool(page);
-      await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileType}.mol`, page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        `Molfiles-V3000/${fileType}.mol`,
+        MacroFileType.MOLv3000,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -168,7 +182,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
     */
-    await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/fifty-monomers.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/fifty-monomers-v3000-expected.mol',
@@ -183,7 +197,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
     */
-    await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/hundred-monomers.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
@@ -206,8 +220,9 @@ test.describe('Import-Saving .mol Files', () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasMacro(
-        'Molfiles-V3000/monomers-connected-with-bonds.mol',
         page,
+        'Molfiles-V3000/monomers-connected-with-bonds.mol',
+        MacroFileType.MOLv3000,
       );
       await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(monomer.text).locator('..').first().click();
@@ -245,7 +260,7 @@ test.describe('Import-Saving .mol Files', () => {
         PasteFromClipboardDialog(page).addToCanvasButton;
 
       await CommonTopLeftToolbar(page).openFile();
-      await openFile('Molfiles-V2000/empty-file.mol', page);
+      await openFile(page, 'Molfiles-V2000/empty-file.mol');
       await expect(addToCanvasButton).toBeDisabled();
 
       // Closing page since test expects it to have closed at the end
@@ -264,7 +279,12 @@ test.describe('Import-Saving .mol Files', () => {
     */
     const filename = 'Molfiles-V3000/corrupted-file.mol';
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(filename, page, undefined, true);
+    await openFileAndAddToCanvasMacro(
+      page,
+      filename,
+      MacroFileType.MOLv3000,
+      true,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -274,8 +294,9 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Sequence of Peptides displaying according to snake view mockup.
     */
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/snake-mode-peptides.mol',
       page,
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      MacroFileType.MOLv3000,
     );
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -290,8 +311,9 @@ test.describe('Import-Saving .mol Files', () => {
     Test fails because we have bug https://github.com/epam/ketcher/issues/5634
     */
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/snake-mode-peptides.mol',
       page,
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      MacroFileType.MOLv3000,
     );
     await verifyFileExport(
       page,
@@ -309,8 +331,9 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
       page,
+      'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -322,8 +345,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
       page,
+      'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -334,7 +357,11 @@ test.describe('Import-Saving .mol Files', () => {
     Description: .mol file with macro structures is imported correctly in macro mode
     */
     await selectFlexLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/three-presets.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/three-presets.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -345,8 +372,9 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/three-chems-connected.mol',
       page,
+      'Molfiles-V3000/three-chems-connected.mol',
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -358,8 +386,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
     await verifyFileExport(
       page,
@@ -377,8 +405,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
     await verifyFileExport(
       page,
@@ -396,8 +424,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
     await verifyFileExport(
       page,
@@ -415,8 +443,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -435,8 +463,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
 
     await verifyFileExport(
@@ -455,8 +483,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
     await verifyFileExport(
       page,
@@ -510,7 +538,11 @@ test.describe('Import modified .mol files from external editor', () => {
     } else {
       test(`for ${fileName}`, async () => {
         await selectFlexLayoutModeTool(page);
-        await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
+        await openFileAndAddToCanvasMacro(
+          page,
+          `Molfiles-V3000/${fileName}`,
+          MacroFileType.MOLv3000,
+        );
         const numberOfPressZoomOut = 4;
         await CommonTopRightToolbar(page).selectZoomOutTool(
           numberOfPressZoomOut,
@@ -550,8 +582,9 @@ test.describe('Base monomers on the canvas, their connection points and preview 
     test(`for ${fileName}`, async () => {
       await pageReload(page);
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
+        `Molfiles-V3000/Base-Templates/${fileName}.mol`,
+        MacroFileType.MOLv3000,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
@@ -604,8 +637,9 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
     test(`for ${fileName}`, async () => {
       await pageReload(page);
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
+        `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
+        MacroFileType.MOLv3000,
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
@@ -658,8 +692,9 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
     test(`for ${fileName}`, async () => {
       await pageReload(page);
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
+        `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
+        MacroFileType.MOLv3000,
       );
       await verifyFileExport(
         page,
@@ -708,8 +743,9 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
     test(`for ${fileName}`, async () => {
       await pageReload(page);
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
+        `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
+        MacroFileType.MOLv3000,
       );
       await verifyFileExport(
         page,
@@ -757,8 +793,9 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     test(`for ${fileName}`, async () => {
       await pageReload(page);
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,
+        `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
+        MacroFileType.MOLv3000,
       );
       await verifyFileExport(
         page,

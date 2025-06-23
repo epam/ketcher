@@ -33,7 +33,7 @@ test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await openFileAndAddToCanvasMacro(fileName, page);
+    await openFileAndAddToCanvasMacro(page, fileName);
     await shiftStructure(page);
   });
 

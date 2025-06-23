@@ -67,7 +67,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -79,7 +79,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -91,7 +91,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -101,7 +101,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Brackets rendering for whole s-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -117,7 +117,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1520
       Description: User is able to edit the Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3, 'right');
     await page.getByText('Edit S-Group...').click();
@@ -134,7 +134,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
@@ -148,7 +148,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -164,7 +164,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete whole Chain with Multiple S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
@@ -181,7 +181,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to add R-Group Label and Undo/Redo on structure with Multiple S-group.
     */
     const rGroupName = 'R8';
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await page.getByRole('button', { name: rGroupName }).click();
@@ -198,7 +198,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to copy and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
@@ -209,7 +209,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to cut and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -220,7 +220,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1523
       Description: User is able to save and open structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group-data.ket');
 
     await verifyFileExport(
       page,
@@ -237,7 +237,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 1
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
@@ -250,7 +250,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 200
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
@@ -265,7 +265,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: 0 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray, the "Apply" button is not active
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
@@ -280,7 +280,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: 201 is displayed and warning message "must be <=200" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
@@ -294,7 +294,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16893
       Description: -1 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
@@ -306,7 +306,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16938
       Description: Attachment points should be inside of S-Group
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
@@ -323,7 +323,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Multiple Group - Limit on minimum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18027
     // Verify minimum value of the Repeat count field
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await changeRepeatCountValue(page, '1');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -332,7 +332,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Multiple Group - Limit on maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET- EPMLSOPKET-18028
     // Verify maximum value of the Repeat count field
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await changeRepeatCountValue(page, '200');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -341,7 +341,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Multiple Group - Limit higher than maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18028
     // Verify system answer after putting a number higher than limit
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await changeRepeatCountValue(page, '201');
     await takeEditorScreenshot(page);
   });
@@ -349,7 +349,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Multiple Group - Value in the valid range', async ({ page }) => {
     // Test case: EPMLSOPKET-18029
     // Verify value in the valid range
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await changeRepeatCountValue(page, '50');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -361,7 +361,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: S-Group added to the structure and represent in .ket file.
       The test is currently not functioning correctly as the bug has not been fixed.
     */
-    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');

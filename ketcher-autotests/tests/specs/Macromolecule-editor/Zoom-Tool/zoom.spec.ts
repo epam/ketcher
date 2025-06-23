@@ -21,6 +21,7 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  MacroFileType,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
@@ -91,8 +92,8 @@ test.describe('Zoom Tool', () => {
     Description: "Zoom In"/"Zoom Out" buttons zooms into center of current view
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomInTool(10);
     await clickInTheMiddleOfTheScreen(page);
@@ -113,8 +114,8 @@ test.describe('Zoom Tool', () => {
 
     await Library(page).switchToRNATab();
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(10);
 
@@ -139,8 +140,8 @@ test.describe('Zoom Tool', () => {
     Description: Mouse scrolling IN/OUT - zooms into center of current mouse position
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
 
     await getMonomerLocator(page, Peptides.DTrp2M).hover();
@@ -156,8 +157,8 @@ test.describe('Zoom Tool', () => {
     Description: Button "Reset zoom" is reset zoom settings to 100%
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     for (let i = 0; i < 10; i++) {
       await ZoomOutByKeyboard(page);
@@ -178,8 +179,8 @@ test.describe('Zoom Tool', () => {
     Description: Hotkey "Ctrl + 0" is reset zoom settings to 100%
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     for (let i = 0; i < 10; i++) {
       await ZoomInByKeyboard(page);
@@ -198,8 +199,9 @@ test.describe('Zoom Tool', () => {
     to zoom in and zoom out by hot keys.
     */
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/monomers-and-chem.mol',
       page,
+      'Molfiles-V3000/monomers-and-chem.mol',
+      MacroFileType.MOLv3000,
     );
     for (let i = 0; i < 10; i++) {
       await ZoomInByKeyboard(page);
@@ -222,8 +224,8 @@ test.describe('Zoom Tool', () => {
     const wheelXDelta = -400;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
     for (let i = 0; i < 10; i++) {
       await ZoomInByKeyboard(page);
@@ -247,8 +249,8 @@ test.describe('Zoom Tool', () => {
     const MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM = -1000;
 
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-through-chem.ket',
       page,
+      'KET/peptides-connected-through-chem.ket',
     );
     await clickOnMiddleOfCanvas(page);
     await zoomWithMouseWheel(page, MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM);
@@ -359,8 +361,8 @@ test.describe('Zoom Tool', () => {
     Description: After zooming in to maximum on monomer, connection points looks undistorted.
     */
     await openFileAndAddToCanvasMacro(
-      `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
       page,
+      `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
     );
     await clickOnMiddleOfCanvas(page);
     await dragMouseTo(100, 100, page);

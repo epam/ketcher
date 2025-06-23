@@ -67,8 +67,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -91,8 +91,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -115,8 +115,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -139,8 +139,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -163,8 +163,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -187,8 +187,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -211,8 +211,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -235,8 +235,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -260,8 +260,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -285,8 +285,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -310,8 +310,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -335,8 +335,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -359,8 +359,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -383,8 +383,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -407,8 +407,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -431,8 +431,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -455,8 +455,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -479,8 +479,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -503,8 +503,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -527,8 +527,8 @@ test.describe('General Settings', () => {
     Description: require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -552,8 +552,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -577,8 +577,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await SettingsDialog(page).setOptionValue(
@@ -603,8 +603,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -628,8 +628,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -653,8 +653,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -676,8 +676,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -699,8 +699,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -722,8 +722,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -745,8 +745,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -768,8 +768,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -791,8 +791,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -814,8 +814,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -838,8 +838,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -862,8 +862,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -886,8 +886,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -910,8 +910,8 @@ test.describe('General Settings', () => {
         the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -933,8 +933,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -956,8 +956,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -979,8 +979,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1002,8 +1002,8 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/layout-with-catalyst.ket',
       page,
+      'KET/layout-with-catalyst.ket',
     );
     await setSettingsOptions(page, [
       {
@@ -1501,8 +1501,8 @@ test.describe('Negative cases for General Settings', () => {
     1000.1 should not be allowed to be entered
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(
@@ -1527,8 +1527,8 @@ test.describe('Negative cases for General Settings', () => {
     1000.1 should not be allowed to be entered
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(
@@ -1553,8 +1553,8 @@ test.describe('Negative cases for General Settings', () => {
     1000.1 should not be allowed to be entered
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(
@@ -1579,8 +1579,8 @@ test.describe('Negative cases for General Settings', () => {
     1000.1 should not be allowed to be entered
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(

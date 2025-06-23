@@ -25,7 +25,7 @@ test.describe('Paste Tool', () => {
 
   test('InfoModal with hotkey display for Paste action', async ({ page }) => {
     const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
-    await openFileAndAddToCanvas(anyStructure, page);
+    await openFileAndAddToCanvas(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
     await TopToolbar(page).copy();
     await TopToolbar(page).paste();

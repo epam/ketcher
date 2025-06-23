@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled';
 
-import { useResizeObserver } from 'src/hooks';
+import { useAppContext, useResizeObserver } from 'src/hooks';
 import { FileControls } from './FileControls';
 import { ClipboardControls } from './ClipboardControls';
 import { UndoRedo } from './UndoRedo';
@@ -158,7 +158,11 @@ export const TopToolbar = ({
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
-  const ketcher = ketcherProvider.getKetcher();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   const onCustomAction = useCallback(
     (name: string) => ketcher.sendCustomAction(name),

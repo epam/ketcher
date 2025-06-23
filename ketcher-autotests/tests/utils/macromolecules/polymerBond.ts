@@ -7,6 +7,7 @@ import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 export enum BondType {
   None = 0,

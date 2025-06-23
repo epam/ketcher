@@ -29,6 +29,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 export async function openEditDialogForTemplate(
   page: Page,

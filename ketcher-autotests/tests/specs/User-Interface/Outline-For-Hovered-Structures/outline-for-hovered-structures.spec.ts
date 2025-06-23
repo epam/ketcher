@@ -4,6 +4,7 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 // shift of coordinates relative to the center, for the hover of the entire structure:
@@ -24,7 +25,7 @@ test.describe('Outline for hovered structures', () => {
   }) => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
-    await page.keyboard.press('Control+KeyA');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Alt');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

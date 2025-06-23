@@ -18,6 +18,7 @@ const FunctionalGroupMenuItems: FC<
     <>
       <Item
         {...props}
+        data-testid="Expand Abbreviation-option"
         hidden={(params) => ExpandOrContractHidden(params, true)}
         onClick={(params) => handleExpandOrContract(params, true)}
       >
@@ -25,12 +26,17 @@ const FunctionalGroupMenuItems: FC<
       </Item>
       <Item
         {...props}
+        data-testid="Contract Abbreviation-option"
         hidden={(params) => ExpandOrContractHidden(params, false)}
         onClick={(params) => handleExpandOrContract(params, false)}
       >
         Contract Abbreviation
       </Item>
-      <Item {...props} onClick={handleRemove}>
+      <Item
+        {...props}
+        data-testid="Remove Abbreviation-option"
+        onClick={handleRemove}
+      >
         Remove Abbreviation
       </Item>
     </>

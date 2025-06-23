@@ -16,6 +16,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
@@ -1144,7 +1145,7 @@ test.describe('Connection rules for peptides: ', () => {
     }).first();
 
     const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .locator(rightMolecule.atomLocatorSelectors[atomIndex])
       .first();
 

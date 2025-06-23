@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
-import { Ketcher, MolfileFormat } from 'ketcher-core';
+import { Ketcher } from 'ketcher-core';
 import { getTestDataDirectory, readFileContent, saveToFile } from './readFile';
 import {
   getCdx,
@@ -18,6 +18,7 @@ import {
   getSmiles,
   getFasta,
   getExtendedSmiles,
+  FileFormat,
 } from '@utils/formats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -43,7 +44,7 @@ export enum FileType {
 
 type FileTypeHandler =
   | ((page: Page) => Promise<string>)
-  | ((page: Page, fileFormat?: MolfileFormat) => Promise<string>);
+  | ((page: Page, fileFormat?: FileFormat) => Promise<string>);
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
@@ -66,7 +67,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
 async function getFileContent(
   page: Page,
   fileType: FileType,
-  fileFormat?: MolfileFormat,
+  fileFormat?: FileFormat,
 ): Promise<string> {
   const handler = fileTypeHandlers[fileType];
 
@@ -76,7 +77,7 @@ async function getFileContent(
 
   // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
   return fileFormat
-    ? (handler as (page: Page, fileFormat: MolfileFormat) => Promise<string>)(
+    ? (handler as (page: Page, fileFormat: FileFormat) => Promise<string>)(
         page,
         fileFormat,
       )
@@ -87,7 +88,7 @@ export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
   fileType: FileType,
-  format?: MolfileFormat,
+  format?: FileFormat,
   metaDataIndexes: number[] = [],
 ) {
   const testDataDir = getTestDataDirectory();
@@ -162,7 +163,7 @@ async function receiveFile({
 }: {
   page: Page;
   fileName: string;
-  fileFormat?: MolfileFormat;
+  fileFormat?: FileFormat;
 }): Promise<string[]> {
   const fileExtension = fileName.split('.').pop();
 
@@ -208,7 +209,7 @@ export async function receiveFileComparisonData({
   page: Page;
   expectedFileName: string;
   metaDataIndexes?: number[];
-  fileFormat?: MolfileFormat;
+  fileFormat?: FileFormat;
 }): Promise<{
   file: string[];
   fileExpected: string[];

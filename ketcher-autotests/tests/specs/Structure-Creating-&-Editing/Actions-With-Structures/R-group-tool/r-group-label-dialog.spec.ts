@@ -15,6 +15,8 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   moveMouseAway,
+  ZoomOutByKeyboard,
+  RxnFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -262,7 +264,7 @@ test.describe('R-Group Label Tool', () => {
     // eslint-disable-next-line no-magic-numbers
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);
@@ -500,7 +502,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V2000/chain-with-r-group-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -517,7 +519,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 

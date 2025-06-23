@@ -11,12 +11,12 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   moveOnAtom,
-  clickOnAtom,
   pressButton,
   dragMouseTo,
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  getAtomByIndex,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -30,6 +30,7 @@ import {
   disableViewOnlyModeBySetOptions,
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
+  MolFileFormat,
 } from '@utils/formats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -41,6 +42,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -402,10 +404,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    const point1 = await getAtomByIndex(page, { label: 'C' }, 1);
+    await ContextMenu(page, point1).open();
     await takeEditorScreenshot(page);
   });
 
@@ -521,7 +525,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -545,7 +549,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

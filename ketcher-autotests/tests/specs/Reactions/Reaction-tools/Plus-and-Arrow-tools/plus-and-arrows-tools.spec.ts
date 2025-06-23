@@ -12,7 +12,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  INPUT_DELAY,
   getControlModifier,
   Point,
   waitForPageInit,
@@ -33,6 +32,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { INPUT_DELAY } from '@utils/globals';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {

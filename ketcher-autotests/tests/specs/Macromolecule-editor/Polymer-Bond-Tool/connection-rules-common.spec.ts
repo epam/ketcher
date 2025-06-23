@@ -16,6 +16,7 @@ import {
   Monomer,
   takeElementScreenshot,
   MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,
@@ -42,6 +43,7 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -354,7 +356,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -483,7 +485,7 @@ test.describe('Common connection rules: ', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('C', { exact: true })
       .first()

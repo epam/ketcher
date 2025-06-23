@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
 import {
   BondsSetting,
@@ -21,7 +20,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getMolfile } from '@utils/formats';
+import { getMolfile, MolFileFormat } from '@utils/formats';
 
 test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async ({
   page,
@@ -51,7 +50,7 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
     page,
     'Molfiles-V2000/mol-1855-to-open-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -89,7 +88,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
     page,
     'Molfiles-V3000/atom-properties-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -121,7 +120,7 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
     page,
     'Molfiles-V2000/markush-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -153,7 +152,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
     page,
     'Molfiles-V2000/sec-butyl-abr-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -185,7 +184,7 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
     page,
     'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -217,7 +216,7 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
     page,
     'Molfiles-V2000/r-group-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -255,7 +254,7 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
     page,
     'Molfiles-V2000/heteroatoms-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -287,7 +286,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
     page,
     'Molfiles-V3000/attached-data-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -319,7 +318,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
     page,
     'Molfiles-V3000/heteroatoms-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -351,7 +350,7 @@ test('Open and Save file - Open/Save file with Attached data 2/2 - save', async 
     page,
     'Molfiles-V2000/attached-data-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -383,7 +382,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
     page,
     'Molfiles-V2000/V2000-abs-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -415,7 +414,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
     page,
     'Molfiles-V3000/V3000-abs-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -433,7 +432,7 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
     page,
     'Molfiles-V3000/spiro-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -454,7 +453,7 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
     page,
     'Molfiles-V2000/two-connected-chains.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -569,31 +568,31 @@ test.describe('Open and Save file', () => {
         testName: 'Open/Save Alias and Pseudoatoms',
         pathToOpen: 'Molfiles-V2000/alias-and-pseudoatoms.mol',
         pathToExpected: 'Molfiles-V2000/alias-and-pseudoatoms-expected.mol',
-        format: 'v2000',
+        format: MolFileFormat.v2000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Rgroup',
         pathToOpen: 'Molfiles-V3000/rgroup-V3000.mol',
         pathToExpected: 'Molfiles-V3000/rgroup-V3000-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
         pathToOpen: 'Molfiles-V3000/multi-V3000.mol',
         pathToExpected: 'Molfiles-V3000/multi-V3000-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup - 2',
         pathToOpen: 'Molfiles-V3000/sgroup-different-V3000.mol',
         pathToExpected: 'Molfiles-V2000/sgroup-different-V2000-expected.mol',
-        format: 'v2000',
+        format: MolFileFormat.v2000,
       },
       {
         testName: 'Open/Save v3000 mol file with assigned Alias',
         pathToOpen: 'Molfiles-V3000/chain-with-alias.mol',
         pathToExpected: 'Molfiles-V3000/chain-with-alias-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
     ];
 
@@ -605,7 +604,7 @@ test.describe('Open and Save file', () => {
           page,
           file.pathToExpected,
           FileType.MOL,
-          file.format as MolfileFormat,
+          file.format,
         );
       });
     }
@@ -631,7 +630,7 @@ test.describe('Open and Save file', () => {
         page,
         'Molfiles-V3000/more-900-atoms-expected.mol',
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
       );
     },
   );
@@ -653,7 +652,7 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V2000/all-bond-properties-V2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -703,7 +702,7 @@ test.describe('Open and Save file', () => {
      * */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/molfile-with-als.mol');
-    const expectedFile = await getMolfile(page, 'v2000');
+    const expectedFile = await getMolfile(page, MolFileFormat.v2000);
     const isCorrectPadding = expectedFile.includes('N   ');
 
     expect(isCorrectPadding).toEqual(true);
@@ -729,7 +728,7 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -758,7 +757,7 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -783,7 +782,7 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -808,7 +807,7 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,

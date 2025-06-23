@@ -86,14 +86,23 @@ export const CommonTopRightToolbar = (page: Page) => {
       options: {
         enableFlexMode?: boolean;
         goToPeptides?: boolean;
-      } = { enableFlexMode: true, goToPeptides: true },
+        disableChainLengthRuler?: boolean;
+        disableAutozoom?: boolean;
+      } = {
+        enableFlexMode: true,
+        goToPeptides: true,
+        disableChainLengthRuler: true,
+        disableAutozoom: true,
+      },
     ) {
-      await page.evaluate(() => {
-        // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        window._ketcher_isChainLengthRulerDisabled = true;
-      });
+      if (options.disableChainLengthRuler !== false) {
+        await page.evaluate(() => {
+          // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          window._ketcher_isChainLengthRulerDisabled = true;
+        });
+      }
 
       const switcher = locators.ketcherModeSwitcherCombobox;
       await expect(switcher).toBeVisible();
@@ -101,7 +110,6 @@ export const CommonTopRightToolbar = (page: Page) => {
       const macroOption = page.getByTestId(Mode.Macromolecules);
       await expect(macroOption).toBeVisible();
       await macroOption.click();
-
       await expect(page.getByTestId('layout-mode')).toBeVisible();
 
       if (options.enableFlexMode) {
@@ -109,18 +117,19 @@ export const CommonTopRightToolbar = (page: Page) => {
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {
-        const nucleotidesSection = Library(page).rnaTab.nucleotidesSection;
-        await nucleotidesSection.waitFor({
+        await Library(page).rnaTab.nucleotidesSection.waitFor({
           state: 'visible',
         });
       }
 
-      await page.evaluate(() => {
-        // Temporary solution to disable autozoom for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        window._ketcher_isAutozoomDisabled = true;
-      });
+      if (options.disableAutozoom !== false) {
+        await page.evaluate(() => {
+          // Temporary solution to disable autozoom for the macro editor in e2e tests
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          window._ketcher_isAutozoomDisabled = true;
+        });
+      }
     },
 
     async turnOnMicromoleculesEditor() {

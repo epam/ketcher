@@ -436,29 +436,6 @@ export const selectFilteredPresets = createSelector(
       const baseName = item.base?.label?.toLowerCase();
       const idtName = item.idtAliases?.base?.toLowerCase();
       const modifications = item.idtAliases?.modifications;
-      let transformedIdtText = idtName;
-
-      if (idtName && item.name?.includes('MOE')) {
-        const base = idtName;
-        const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-        const internal = modifications?.internal ?? `i${base}`;
-        // const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
-        transformedIdtText = `${endpoint5}, ${internal}`;
-        // switch (position) {
-        //   case PresetPosition.Library:
-        //     transformedIdtText = `${endpoint5}, ${internal}`;
-        //     break;
-        //   case PresetPosition.ChainStart:
-        //     transformedIdtText = endpoint5;
-        //     break;
-        //   case PresetPosition.ChainMiddle:
-        //     transformedIdtText = internal;
-        //     break;
-        //   case PresetPosition.ChainEnd:
-        //     transformedIdtText = endpoint3;
-        //     break;
-        // }
-      }
 
       const slashCount = (searchText.match(/\//g) || []).length;
       const parts = searchText.split('/');
@@ -470,7 +447,7 @@ export const selectFilteredPresets = createSelector(
       if (searchText.startsWith('/') && searchText.length > 1) {
         const aliasRest = searchText.slice(1);
         return (
-          transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
+          idtName?.toLowerCase().startsWith(aliasRest) ||
           idtName?.startsWith(aliasRest) ||
           (modifications &&
             Object.values(modifications).some((mod) =>
@@ -484,9 +461,8 @@ export const selectFilteredPresets = createSelector(
         const aliasLastSymbol = searchText[searchText.length - 2];
 
         return (
-          (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-            transformedIdtText[transformedIdtText.length - 1] ===
-              aliasLastSymbol) ||
+          (idtName?.toLowerCase().endsWith(aliasRest) &&
+            idtName[idtName.length - 1] === aliasLastSymbol) ||
           (idtName?.endsWith(aliasRest) &&
             idtName[idtName.length - 1] === aliasLastSymbol) ||
           (modifications &&
@@ -507,7 +483,7 @@ export const selectFilteredPresets = createSelector(
         sugarName?.includes(searchText) ||
         phosphateName?.includes(searchText) ||
         baseName?.includes(searchText) ||
-        transformedIdtText?.toLowerCase().includes(searchText)
+        idtName?.toLowerCase().includes(searchText)
       );
     });
   },

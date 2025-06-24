@@ -24,6 +24,7 @@ import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';
 import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { Icon } from 'components';
 
 const {
   ringBondCount,
@@ -204,7 +205,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
         <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
-          Delete
+          <Icon name="deleteMenu" className={styles.icon} />
+          <span className={styles.contextMenuText}>Delete</span>
         </Item>
       </>
     );
@@ -221,9 +223,12 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         }
         onClick={handleEdit}
       >
-        {props.propsFromTrigger?.extraItemsSelected
-          ? 'Edit selected atoms...'
-          : 'Edit...'}
+        <Icon name="editMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>
+          {props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected atoms...'
+            : 'Edit...'}
+        </span>
       </Item>
       <Item
         {...props}
@@ -285,7 +290,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           </Item>
         )}
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
-        Delete
+        <Icon name="deleteMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>
   );

@@ -48,7 +48,6 @@ import {
   selectEditor,
   selectIsHandToolSelected,
   initKetcherId,
-  selectLibraryItemDrag,
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,

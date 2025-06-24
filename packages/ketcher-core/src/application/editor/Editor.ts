@@ -54,7 +54,6 @@ import {
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
-  AmbiguousMonomerType,
   AttachmentPointName,
   MonomerItemType,
   MonomerOrAmbiguousType,
@@ -75,7 +74,11 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { parseMonomersLibrary } from './helpers';
+import {
+  isLibraryItemRnaPreset,
+  isMonomerAmbiguous,
+  parseMonomersLibrary,
+} from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
@@ -556,21 +559,9 @@ export class CoreEditor {
       ) => {
         const { x, y } = position;
 
-        const isRnaPreset = (
-          item: IRnaPreset | MonomerOrAmbiguousType,
-        ): item is IRnaPreset => {
-          return 'sugar' in item;
-        };
-
-        const isAmbiguousMonomer = (
-          item: MonomerOrAmbiguousType,
-        ): item is AmbiguousMonomerType => {
-          return item.isAmbiguous === true;
-        };
-
         let modelChanges: Command;
 
-        if (isRnaPreset(item)) {
+        if (isLibraryItemRnaPreset(item)) {
           const { sugar, phosphate, base } = item;
           if (!sugar) {
             return;
@@ -588,7 +579,7 @@ export class CoreEditor {
               ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
               : undefined,
           }).command;
-        } else if (isAmbiguousMonomer(item)) {
+        } else if (isMonomerAmbiguous(item)) {
           modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),

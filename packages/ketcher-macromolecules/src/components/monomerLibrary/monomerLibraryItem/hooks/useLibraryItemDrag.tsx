@@ -1,10 +1,13 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
 import { selectEditor } from 'state/common';
-import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
+import {
+  IRnaPreset,
+  MonomerOrAmbiguousType,
+  ZoomTool,
+  LibraryItemDragEventName,
+} from 'ketcher-core';
 import { useDispatch, useSelector } from 'react-redux';
-
-export const LibraryItemDragAction = 'LibraryItemDrag';
 
 export type LibraryItemDragState = {
   item: IRnaPreset;
@@ -35,7 +38,7 @@ export const useLibraryItemDrag = (
         const { clientX: x, clientY: y } = event.sourceEvent;
 
         window.dispatchEvent(
-          new CustomEvent<LibraryItemDragState>(LibraryItemDragAction, {
+          new CustomEvent<LibraryItemDragState>(LibraryItemDragEventName, {
             detail: {
               item,
               position: { x, y },
@@ -65,7 +68,7 @@ export const useLibraryItemDrag = (
         }
 
         window.dispatchEvent(
-          new CustomEvent<LibraryItemDragState>(LibraryItemDragAction, {
+          new CustomEvent<LibraryItemDragState>(LibraryItemDragEventName, {
             detail: null,
           }),
         );

@@ -1,14 +1,16 @@
-import { IRnaPreset, MonomerOrAmbiguousType } from 'ketcher-core';
+import {
+  IRnaPreset,
+  LibraryItemDragEventName,
+  MonomerOrAmbiguousType,
+  ZoomTool,
+} from 'ketcher-core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './DragGhost.module.less';
 import { GhostRnaPreset } from './svg/GhostRnaPreset';
 import { GhostMonomer } from 'components/DragGhost/svg/GhostMonomer';
 import { useZoomTransform } from '../../hooks/useZoomTransform';
-import {
-  LibraryItemDragAction,
-  LibraryItemDragState,
-} from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
+import { LibraryItemDragState } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 
 // TODO: Extract this helper
 const isRnaPreset = (
@@ -23,6 +25,7 @@ export const DragGhost = () => {
 
   const ghostWrapperRef = useRef<HTMLDivElement>(null);
   const animateRef = useRef<number | null>(null);
+  const canvasBBoxRef = useRef<DOMRect | null>(null);
 
   const transform = useZoomTransform();
 
@@ -33,12 +36,36 @@ export const DragGhost = () => {
       setLibraryItemDragData(libraryItemDragData);
     };
 
-    window.addEventListener(LibraryItemDragAction, handleLibraryItemDrag);
+    window.addEventListener(LibraryItemDragEventName, handleLibraryItemDrag);
 
     return () => {
-      window.removeEventListener(LibraryItemDragAction, handleLibraryItemDrag);
+      window.removeEventListener(
+        LibraryItemDragEventName,
+        handleLibraryItemDrag,
+      );
     };
   }, []);
+
+  useEffect(() => {
+    if (!ZoomTool.instance || !libraryItemDragData) {
+      return;
+    }
+
+    const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
+    if (!canvasWrapper) {
+      return;
+    }
+
+    canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
+  }, [libraryItemDragData]);
+
+  const dragOverCanvas =
+    canvasBBoxRef.current &&
+    libraryItemDragData &&
+    libraryItemDragData.position.x >= canvasBBoxRef.current.left &&
+    libraryItemDragData.position.x <= canvasBBoxRef.current.right &&
+    libraryItemDragData.position.y >= canvasBBoxRef.current.top &&
+    libraryItemDragData.position.y <= canvasBBoxRef.current.bottom;
 
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
@@ -47,7 +74,11 @@ export const DragGhost = () => {
     }
 
     animateRef.current = requestAnimationFrame(() => {
-      element.style.transform = `translate(${libraryItemDragData.position.x}px, ${libraryItemDragData.position.y}px) scale(${transform.k})`;
+      element.style.transform = `translate(${
+        libraryItemDragData.position.x
+      }px, ${libraryItemDragData.position.y}px) scale(${
+        dragOverCanvas ? transform.k : 1
+      })`;
     });
 
     return () => {
@@ -56,7 +87,7 @@ export const DragGhost = () => {
         animateRef.current = null;
       }
     };
-  }, [libraryItemDragData, transform.k]);
+  }, [dragOverCanvas, libraryItemDragData, transform.k]);
 
   if (!libraryItemDragData) {
     return null;

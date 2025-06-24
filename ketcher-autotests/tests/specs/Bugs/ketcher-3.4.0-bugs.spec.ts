@@ -1,72 +1,45 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
-  clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  clickOnCanvas,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
-  pressButton,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   SdfFileFormat,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
-import {
-  createRNAAntisenseChain,
-  getMonomerLocator,
-  getSymbolLocator,
-  modifyInRnaBuilder,
-  turnSyncEditModeOff,
-} from '@utils/macromolecules/monomer';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { Phosphates } from '@constants/monomers/Phosphates';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   FileType,
   verifyFileExport,
-  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
-import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Presets } from '@constants/monomers/Presets';
 import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import {
-  MacromoleculesFileFormatName,
-  MacromoleculesFileFormatType,
-} from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 

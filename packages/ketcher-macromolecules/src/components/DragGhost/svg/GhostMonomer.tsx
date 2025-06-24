@@ -1,14 +1,27 @@
-import { monomerFactory, MonomerOrAmbiguousType } from 'ketcher-core';
+import {
+  AmbiguousMonomer,
+  AmbiguousMonomerRenderer,
+  isAmbiguousMonomerLibraryItem,
+  monomerFactory,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
+import { useMemo } from 'react';
 
 type Props = {
   monomerItem: MonomerOrAmbiguousType;
 };
 
 export const GhostMonomer = ({ monomerItem }: Props) => {
-  const [Monomer, MonomerRenderer] = monomerFactory(monomerItem);
-
-  const monomerInstance = new Monomer(monomerItem);
-  const monomerRenderer = new MonomerRenderer(monomerInstance);
+  const monomerRenderer = useMemo(() => {
+    if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+      const monomerInstance = new AmbiguousMonomer(monomerItem);
+      return new AmbiguousMonomerRenderer(monomerInstance);
+    } else {
+      const [Monomer, MonomerRenderer] = monomerFactory(monomerItem);
+      const monomerInstance = new Monomer(monomerItem);
+      return new MonomerRenderer(monomerInstance);
+    }
+  }, [monomerItem]);
 
   const monomerSymbolElementId = monomerRenderer.monomerSymbolElementId;
   const monomerSize = monomerRenderer.monomerSize;
@@ -28,8 +41,6 @@ export const GhostMonomer = ({ monomerItem }: Props) => {
         style={{
           filter: 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.4))',
         }}
-        // stroke="#FFF"
-        // strokeWidth="3"
       />
       <text
         x={width / 2}

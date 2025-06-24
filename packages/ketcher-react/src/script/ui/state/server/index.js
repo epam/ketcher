@@ -151,7 +151,9 @@ export function serverTransform(method, data, struct) {
 
     serverCall(state.editor, state.server, method, opts, struct)
       .then((res) => {
-        const loadedStruct = new KetSerializer().deserialize(res.struct);
+        const loadedStruct = new KetSerializer(
+          state.editor.editorId,
+        ).deserialize(res.struct);
 
         return dispatch(
           load(loadedStruct, {
@@ -212,7 +214,7 @@ export function serverCall(editor, server, method, options, struct) {
     resetStereoFlagsPosition(currentStruct);
   }
 
-  const ketSerializer = new KetSerializer();
+  const ketSerializer = new KetSerializer(editor.editorId);
   const serializedStruct = ketSerializer.serialize(
     currentStruct,
     new DrawingEntitiesManager(),

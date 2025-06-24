@@ -3,8 +3,8 @@ import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
-import { selectEditor } from 'state/common';
-import { BaseMonomer } from 'ketcher-core';
+import { selectCoreEditorId } from 'state/common';
+import { BaseMonomer, CoreEditor } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
   AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
@@ -25,7 +25,8 @@ export const SelectedMonomersContextMenu = ({
   contextMenuEvent,
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,

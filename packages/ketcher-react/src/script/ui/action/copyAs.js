@@ -29,11 +29,11 @@ export default function copyAs(type) {
         break;
       }
       case 'ket': {
-        serializer = new KetSerializer();
+        serializer = new KetSerializer(editor.editorId);
         break;
       }
       default: {
-        serializer = new KetSerializer();
+        serializer = new KetSerializer(editor.editorId);
         break;
       }
     }

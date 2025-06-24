@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import {
@@ -17,6 +17,7 @@ import {
   BackBoneSequenceNode,
   Chain,
   ITwoStrandedChainItem,
+  CoreEditor,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -66,7 +67,8 @@ export const SequenceItemContextMenu = ({
   selections,
   contextMenuEvent,
 }: SequenceItemContextMenuType) => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
   const selectedMonomers: BaseMonomer[] =

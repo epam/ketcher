@@ -93,7 +93,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.ketcherId = action.payload;
     },
     initCoreEditorId: (state, action: PayloadAction<string>) => {
-      console.log('editor', action.payload);
       state.editorId = action.payload;
     },
     initSuccess: (state) => {
@@ -233,9 +232,6 @@ export const selectKetcherId = (state: RootState): string => {
 export const selectCoreEditorId = (state: RootState): string => {
   return state.editor.editorId;
 };
-
-export const selectEditor = (state: RootState): CoreEditor =>
-  state.editor.editor;
 
 export const selectIsSequenceEditInRNABuilderMode = (
   state: RootState,

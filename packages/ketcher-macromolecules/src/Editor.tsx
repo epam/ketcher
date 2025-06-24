@@ -45,12 +45,12 @@ import {
 } from 'components/monomerLibrary';
 import {
   initCoreEditorId,
-  selectEditor,
   selectIsHandToolSelected,
   initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
+  selectCoreEditorId,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -180,7 +180,8 @@ function Editor({
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);

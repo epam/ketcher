@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { useAppSelector } from 'hooks';
-import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
+import {
+  CoreEditor,
+  MonomerItemType,
+  isAmbiguousMonomerLibraryItem,
+} from 'ketcher-core';
 import { debounce } from 'lodash';
 import React, { ReactElement, useCallback } from 'react';
 import {
@@ -31,7 +35,11 @@ import {
   GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor, selectShowPreview, showPreview } from 'state/common';
+import {
+  selectCoreEditorId,
+  selectShowPreview,
+  showPreview,
+} from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -49,7 +57,8 @@ import {
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 

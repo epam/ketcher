@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { moveMouseToTheMiddleOfTheScreen } from '@utils';
+import { moveMouseToTheMiddleOfTheScreen, waitForRender } from '@utils';
 
 export async function waitForMonomerPreview(page: Page) {
   await page
@@ -18,7 +18,9 @@ export async function hideMonomerPreview(page: Page) {
 export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
   await page.keyboard.down('Control');
-  await page.mouse.wheel(0, zoomLevelDelta);
+  await waitForRender(page, async () => {
+    await page.mouse.wheel(0, zoomLevelDelta);
+  });
   await page.keyboard.up('Control');
 }
 

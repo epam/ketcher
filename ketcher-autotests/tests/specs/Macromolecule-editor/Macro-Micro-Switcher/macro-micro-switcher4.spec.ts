@@ -14,6 +14,7 @@ import {
   selectFlexLayoutModeTool,
   dragMouseTo,
   moveMouseAway,
+  MolFileFormat,
 } from '@utils';
 import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import {
@@ -67,8 +68,8 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
    *       2. Take screenshot to witness canvas was rendered correct
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Micro bonds on macro canvas.ket',
     page,
+    'KET/Micro-Macro-Switcher/Micro bonds on macro canvas.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -90,8 +91,8 @@ test(`Verify that connections between monomers and molecules are maintained corr
    *       4. Take screenshot to witness canvas was rendered correct at micro
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All type of monomers connected to micro.ket',
     page,
+    'KET/Micro-Macro-Switcher/All type of monomers connected to micro.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -114,8 +115,8 @@ test(`Verify that switching between micro and macro modes displays molecules wit
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket',
     page,
+    'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -135,8 +136,8 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
    */
   await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All Bonds on Macro.ket',
     page,
+    'KET/Micro-Macro-Switcher/All Bonds on Macro.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -166,8 +167,8 @@ test(`Verify that all 16 bond types are displayed correctly in macromolecules mo
    * Will require to update screens after fix
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 });
@@ -190,8 +191,8 @@ test(`Verify that small molecules with any bond type retain their representation
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -212,8 +213,8 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
    */
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -224,8 +225,8 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
   );
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.ket',
   );
   await takeEditorScreenshot(page);
 });
@@ -244,8 +245,8 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
    */
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -253,12 +254,12 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
   );
   await takeEditorScreenshot(page);
 });
@@ -275,8 +276,8 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    *
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -302,8 +303,8 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    *
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -334,8 +335,8 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    *
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -369,8 +370,8 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
    */
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
 
@@ -378,14 +379,14 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
   );
   await takeEditorScreenshot(page);
 
@@ -411,8 +412,8 @@ test(`Verify that switching back from macromolecules mode to molecules mode does
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -435,8 +436,8 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
    * 3. Delete every bond one by one and take screenshot after each deletion
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
+    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
   await CommonLeftToolbar(page).selectEraseTool();
 
@@ -480,8 +481,8 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
    */
   test.slow();
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
+    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
   await CommonLeftToolbar(page).selectEraseTool();
 
@@ -537,8 +538,8 @@ test(`Verify that copying and pasting structures with all bond types in macromol
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
+    'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
   );
   await selectAllStructuresOnCanvas(page);
   await cutToClipboardByKeyboard(page);
@@ -568,8 +569,8 @@ test(`Verify that switching between different visualization modes (e.g., flex, s
    * Will require to update screens after fix
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Switching between different visualization modes.ket',
     page,
+    'KET/Micro-Macro-Switcher/Switching between different visualization modes.ket',
   );
 
   await selectSnakeLayoutModeTool(page);
@@ -593,8 +594,8 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
    * 4. Take screenshot to witness new molecule's state
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
+    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
@@ -641,8 +642,8 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
    * 3. Take screenshot to witness bond selection
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
+    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
@@ -687,8 +688,8 @@ test(`Check that when entering macromolecules mode all standard stereo-labels ar
    *
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
     page,
+    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
   await selectFlexLayoutModeTool(page);
   await takeEditorScreenshot(page, {
@@ -727,8 +728,8 @@ test(`Check that visible stereo-labels in macromolecules mode get selected with 
    *
    */
   await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
     page,
+    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
   await selectFlexLayoutModeTool(page);
   await selectAllStructuresOnCanvas(page);

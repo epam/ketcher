@@ -12,6 +12,7 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -127,8 +128,8 @@ test.describe('Erase Tool', () => {
     Description: RNA and its bonds are deleted when deleting monomer from RNA chain using Erase Tool.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/rna-with-fmoe-sugar.ket`,
       page,
+      `KET/rna-with-fmoe-sugar.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars.FMOE).click();
@@ -160,8 +161,8 @@ test.describe('Erase Tool', () => {
       bondType: MacroBondDataIds.Single,
     }).first();
     await openFileAndAddToCanvasAsNewProject(
-      `KET/two-chems-connected.ket`,
       page,
+      `KET/two-chems-connected.ket`,
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -178,8 +179,8 @@ test.describe('Erase Tool', () => {
     */
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasAsNewProject(
-      `KET/two-chems-connected.ket`,
       page,
+      `KET/two-chems-connected.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await bondLine.click();
@@ -196,8 +197,8 @@ test.describe('Erase Tool', () => {
     Description: Structure deleted.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/rna-with-fmoe-sugar.ket`,
       page,
+      `KET/rna-with-fmoe-sugar.ket`,
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -212,7 +213,7 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bonds and CHEN are deleted.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.A6OH).click();
@@ -225,8 +226,8 @@ test.describe('Erase Tool', () => {
     Description: Structures are deleted from canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -242,8 +243,8 @@ test.describe('Erase Tool', () => {
     Description: Part of structures are deleted from canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
@@ -258,7 +259,7 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Deleted entity from the middle of chain restored after pressing Undo.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
@@ -274,8 +275,8 @@ test.describe('Erase Tool', () => {
     Description: Elements return to the same place.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -292,8 +293,8 @@ test.describe('Erase Tool', () => {
     Description: Elements of RNA chain returns to the same place.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `Molfiles-V3000/rna-modified-sugars.mol`,
       page,
+      `Molfiles-V3000/rna-modified-sugars.mol`,
     );
     await selectSnakeLayoutModeTool(page);
     await selectPartOfMolecules(page);
@@ -313,8 +314,8 @@ test.describe('Erase Tool', () => {
     const x = 100;
     const y = 100;
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, x, y);
@@ -327,8 +328,8 @@ test.describe('Erase Tool', () => {
     Description: Monomers are deleted.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await CommonTopRightToolbar(page).selectZoomInTool(5);
@@ -368,7 +369,7 @@ test.describe('Erase Tool', () => {
     Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
     erased portions are not reflected in opened file.
     */
-    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.Bal).click();
     await getMonomerLocator(page, Peptides.D_2Nal).click();
@@ -382,8 +383,8 @@ test.describe('Erase Tool', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-flex-chain-expected.ket',
       page,
+      'KET/peptides-flex-chain-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -396,7 +397,7 @@ test.describe('Erase Tool', () => {
     Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
     erased portions are not reflected in opened file.
     */
-    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.Bal).click();
     await getMonomerLocator(page, Peptides.D_2Nal).click();
@@ -404,14 +405,14 @@ test.describe('Erase Tool', () => {
       page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/peptides-flex-chain-expected.mol',
       page,
+      'Molfiles-V3000/peptides-flex-chain-expected.mol',
     );
     await takeEditorScreenshot(page);
   });

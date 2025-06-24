@@ -1,0 +1,631 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "monomer1"
+            },
+            {
+                "$ref": "monomer2"
+            },
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "monomer4"
+            },
+            {
+                "$ref": "monomer5"
+            },
+            {
+                "$ref": "monomer6"
+            },
+            {
+                "$ref": "monomer7"
+            },
+            {
+                "$ref": "monomer8"
+            },
+            {
+                "$ref": "monomer9"
+            },
+            {
+                "$ref": "monomer10"
+            },
+            {
+                "$ref": "monomer11"
+            },
+            {
+                "$ref": "monomer12"
+            },
+            {
+                "$ref": "monomer13"
+            },
+            {
+                "$ref": "monomer14"
+            },
+            {
+                "$ref": "monomer15"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer2",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer4",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer4",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer5",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer6",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer7",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer7",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer8",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer8",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer9",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer9",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer10",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer10",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer11",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer12",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer13",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer13",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer14",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer0"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer6"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer6"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer12"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer12"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer15"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer7"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer7"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer13"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer8"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer8"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer14"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer9"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer4"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer10"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer5"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer11"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Hyp___trans-4-hydroxy-L-proline"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 7.275,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomerTemplate-Hyp___trans-4-hydroxy-L-proline": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.851,
+                    -0.724,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.717,
+                    -0.224,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.015,
+                    -0.224,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.851,
+                    -1.724,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.881,
+                    -0.724,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.624,
+                    -0.055,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.217,
+                    0.858,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.223,
+                    0.754,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.985,
+                    -1.719,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.717,
+                    1.724,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    7
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    9
+                ],
+                "stereo": 6
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Hyp___trans-4-hydroxy-L-proline",
+        "fullName": "trans-4-hydroxy-L-proline",
+        "alias": "Hyp",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 4,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        1
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 8.775,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer2": {
+        "type": "monomer",
+        "id": "2",
+        "position": {
+            "x": 10.275,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 11.775,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer4": {
+        "type": "monomer",
+        "id": "4",
+        "position": {
+            "x": 13.275,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer5": {
+        "type": "monomer",
+        "id": "5",
+        "position": {
+            "x": 14.775,
+            "y": -5.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer6": {
+        "type": "monomer",
+        "id": "6",
+        "position": {
+            "x": 7.275,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer7": {
+        "type": "monomer",
+        "id": "7",
+        "position": {
+            "x": 8.775,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer8": {
+        "type": "monomer",
+        "id": "8",
+        "position": {
+            "x": 10.275,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer9": {
+        "type": "monomer",
+        "id": "9",
+        "position": {
+            "x": 11.775,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline",
+        "seqid": 10
+    },
+    "monomer10": {
+        "type": "monomer",
+        "id": "10",
+        "position": {
+            "x": 13.275,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer11": {
+        "type": "monomer",
+        "id": "11",
+        "position": {
+            "x": 14.775,
+            "y": -6.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer12": {
+        "type": "monomer",
+        "id": "12",
+        "position": {
+            "x": 7.275,
+            "y": -8.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer13": {
+        "type": "monomer",
+        "id": "13",
+        "position": {
+            "x": 8.775,
+            "y": -8.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer14": {
+        "type": "monomer",
+        "id": "14",
+        "position": {
+            "x": 10.275,
+            "y": -8.2
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    },
+    "monomer15": {
+        "type": "monomer",
+        "id": "15",
+        "position": {
+            "x": 7.275,
+            "y": -9.7
+        },
+        "alias": "Hyp",
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
+    }
+}

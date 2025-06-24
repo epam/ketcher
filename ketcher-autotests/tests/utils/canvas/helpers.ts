@@ -29,6 +29,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 export async function openEditDialogForTemplate(
   page: Page,
@@ -257,7 +258,7 @@ export async function takeEditorScreenshot(
     const modifier = getControlModifier();
     await page.keyboard.press(`${modifier}+KeyB`);
   }
-  await takeElementScreenshot(page, 'ketcher-canvas', options);
+  await takeElementScreenshot(page, KETCHER_CANVAS, options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -517,7 +518,7 @@ export async function waitForElementInCanvas(
   page: Page,
   text: string,
 ): Promise<void> {
-  const canvas = page.getByTestId('ketcher-canvas');
+  const canvas = page.getByTestId(KETCHER_CANVAS);
   const targetElement = canvas.locator(`div:has-text("${text}")`);
   await expect(targetElement).toBeVisible();
 }

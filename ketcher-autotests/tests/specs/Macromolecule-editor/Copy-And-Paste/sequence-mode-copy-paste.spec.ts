@@ -9,7 +9,6 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
-  startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
@@ -18,10 +17,7 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  getSequenceSymbolLocator,
-  selectSequenceRangeInEditMode,
-} from '@utils/macromolecules/sequence';
+import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -29,6 +25,8 @@ import {
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -37,7 +35,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
@@ -60,7 +58,11 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     page,
   }) => {
     await page.keyboard.down('Control');
-    await getSequenceSymbolLocator(page, 'G').click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+    })
+      .first()
+      .click();
     await page.keyboard.up('Control');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -77,7 +79,11 @@ test.describe('Sequence mode copy&paste for view mode', () => {
       'pasting is performed in next row, and canvas is moved to make newly added sequence visible',
     async ({ page }) => {
       await page.keyboard.down('Control');
-      await getSequenceSymbolLocator(page, 'G').click();
+      await getSymbolLocator(page, {
+        symbolAlias: 'G',
+      })
+        .first()
+        .click();
       await page.keyboard.up('Control');
       await copyToClipboardByKeyboard(page);
 
@@ -95,23 +101,33 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
-    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
   });
 
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
-    const fromSymbol = await getSequenceSymbolLocator(page, 'G', 2);
-    const toSymbol = await getSequenceSymbolLocator(page, 'G', 4);
+    const fromSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 23,
+    });
+    const toSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 36,
+    });
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
     await copyToClipboardByKeyboard(page);
-    const cNthNumber = 5;
-    await getSequenceSymbolLocator(page, 'C', cNthNumber).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 26,
+    }).click();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
@@ -190,7 +206,6 @@ test.describe('Sequence-edit mode', () => {
     Test case: #3894
     Description: Pasted fragment is considered as new chain.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'tcgtuctucc');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Control');
@@ -249,7 +264,6 @@ test.describe('Sequence-edit mode', () => {
     Test case: #3916
     Description: Multiple unconnected fragments are pasted as separate chains in view mode.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
@@ -286,7 +300,6 @@ test.describe('Sequence-edit mode', () => {
     Test case: #3916
     Description: Pasting several separate monomers are prohibited in text-editing mode.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
@@ -308,8 +321,11 @@ test.describe('Sequence-edit mode', () => {
     }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
-    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
+
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -322,7 +338,6 @@ test.describe('Sequence-edit mode', () => {
     Test case: #3916
     Description: Bond R2-R1 between them is broken,and pasted fragment is merged with existing chain.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
     await getSymbolLocator(page, {
       symbolAlias: 'G',

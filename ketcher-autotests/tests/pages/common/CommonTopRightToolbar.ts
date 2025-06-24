@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
+import { Mode } from '../constants/commonTopRightToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -46,6 +47,8 @@ export const CommonTopRightToolbar = (page: Page) => {
       await waitForRender(page, async () => {
         await page.keyboard.press('Enter');
       });
+      await locators.zoomSelector.click({ force: true });
+      await zoomLocators.zoomOutButton.waitFor({ state: 'detached' });
     },
 
     async selectZoomOutTool(count = 1) {
@@ -83,22 +86,30 @@ export const CommonTopRightToolbar = (page: Page) => {
       options: {
         enableFlexMode?: boolean;
         goToPeptides?: boolean;
-      } = { enableFlexMode: true, goToPeptides: true },
+        disableChainLengthRuler?: boolean;
+        disableAutozoom?: boolean;
+      } = {
+        enableFlexMode: true,
+        goToPeptides: true,
+        disableChainLengthRuler: true,
+        disableAutozoom: true,
+      },
     ) {
-      await page.evaluate(() => {
-        // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        window._ketcher_isChainLengthRulerDisabled = true;
-      });
+      if (options.disableChainLengthRuler !== false) {
+        await page.evaluate(() => {
+          // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          window._ketcher_isChainLengthRulerDisabled = true;
+        });
+      }
 
       const switcher = locators.ketcherModeSwitcherCombobox;
       await expect(switcher).toBeVisible();
       await switcher.click();
-      const macroOption = page.getByTestId('macromolecules_mode');
+      const macroOption = page.getByTestId(Mode.Macromolecules);
       await expect(macroOption).toBeVisible();
       await macroOption.click();
-
       await expect(page.getByTestId('layout-mode')).toBeVisible();
 
       if (options.enableFlexMode) {
@@ -106,18 +117,19 @@ export const CommonTopRightToolbar = (page: Page) => {
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {
-        const nucleotidesSection = Library(page).rnaTab.nucleotidesSection;
-        await nucleotidesSection.waitFor({
+        await Library(page).rnaTab.nucleotidesSection.waitFor({
           state: 'visible',
         });
       }
 
-      await page.evaluate(() => {
-        // Temporary solution to disable autozoom for the macro editor in e2e tests
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        window._ketcher_isAutozoomDisabled = true;
-      });
+      if (options.disableAutozoom !== false) {
+        await page.evaluate(() => {
+          // Temporary solution to disable autozoom for the macro editor in e2e tests
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          window._ketcher_isAutozoomDisabled = true;
+        });
+      }
     },
 
     async turnOnMicromoleculesEditor() {
@@ -125,7 +137,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await switcher.waitFor({ state: 'visible' });
       await switcher.click();
 
-      const microOption = page.getByTestId('molecules_mode');
+      const microOption = page.getByTestId(Mode.Molecules);
       await microOption.waitFor({ state: 'visible' });
       await microOption.click();
     },

@@ -99,7 +99,6 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
-import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
@@ -192,9 +191,6 @@ function Editor({
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
-  const { show: showPolymerBondContextMenu } = useContextMenu({
-    id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
-  });
   const { show: showSelectedMonomersContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
@@ -242,7 +238,8 @@ function Editor({
         DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
       ]): void => {
         setContextMenuEvent(event);
-        showPolymerBondContextMenu({
+        setSelectedMonomers([]);
+        showSelectedMonomersContextMenu({
           event,
           props: {
             polymerBondRenderer,
@@ -250,6 +247,7 @@ function Editor({
         });
       },
     );
+
     editor?.events.rightClickSelectedMonomers.add(
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
@@ -413,7 +411,6 @@ function Editor({
         selections={selections}
         contextMenuEvent={contextMenuEvent}
       />
-      <PolymerBondContextMenu />
       <SelectedMonomersContextMenu
         selectedMonomers={selectedMonomers}
         contextMenuEvent={contextMenuEvent}

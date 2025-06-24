@@ -107,33 +107,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
     },
-    // createEditor: (
-    //   state,
-    //   action: PayloadAction<{
-    //     ketcherId: string;
-    //     theme: DeepPartial<ThemeType>;
-    //     canvas: SVGSVGElement;
-    //     monomersLibraryUpdate?: string | JSON;
-    //     onInit?: (editor: CoreEditor) => void;
-    //   }>,
-    // ) => {
-    //   const editor = new CoreEditor({
-    //     theme: action.payload.theme,
-    //     canvas: action.payload.canvas,
-    //     monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
-    //   });
-
-    //   // TODO: Figure out proper typing here and below
-    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //   // @ts-ignore
-    //   state.editor = editor;
-    //   action.payload.onInit?.(editor);
-    // },
-    // destroyEditor: (state) => {
-    //   state.editorLayoutMode = state.editor?.mode.modeName;
-    //   state.editor?.switchToMicromolecules();
-    //   state.editor = undefined;
-    // },
+    destroyEditor: (state) => {
+      state.editorLayoutMode = state.editor?.mode.modeName;
+      state.editor?.destroy();
+      state.editor = undefined;
+    },
     showPreview: (
       state,
       action: PayloadAction<EditorStatePreview | undefined>,

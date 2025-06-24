@@ -15,6 +15,8 @@ import {
   ZoomInByKeyboard,
   Monomer,
   takeElementScreenshot,
+  MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,
@@ -41,6 +43,7 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -167,8 +170,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(30000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     // Peptide
     await dragBondFromMonomerCenterAwayTo(page, Chem.SMPEG2, 500, 400);
@@ -217,8 +220,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(50000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     // Peptide
     await dragBondFromMonomerCenterTo(page, Chem.SMPEG2, Chem.sDBL);
@@ -267,8 +270,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     await selectSnakeLayoutModeTool(page);
 
@@ -313,8 +316,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
       page,
+      'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
     );
 
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
@@ -353,7 +356,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -386,8 +389,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(20000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
       page,
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
     );
 
     await bondTwoMonomersByCenterToCenterByNames(
@@ -417,9 +420,8 @@ test.describe('Common connection rules: ', () => {
   //    */
   //   test.setTimeout(20000);
   //
-  //   await openFileAndAddToCanvasMacro(
+  //   await openFileAndAddToCanvasMacro(page,
   //     'KET/Common-Bond-Tests/Micro and macro connected.ket',
-  //     page,
   //   );
   //
   //   const leftMonomerLocator = page
@@ -457,8 +459,9 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(20000);
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      MacroFileType.MOLv3000,
     );
 
     await hoverMouseOverMonomer(page, Peptides.C);
@@ -476,12 +479,13 @@ test.describe('Common connection rules: ', () => {
     await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      MacroFileType.MOLv3000,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('C', { exact: true })
       .first()
@@ -500,8 +504,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
       page,
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
     );
     await bondTwoMonomersByCenterToCenterByNames(
       page,

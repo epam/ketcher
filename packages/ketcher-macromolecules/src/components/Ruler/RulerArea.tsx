@@ -90,9 +90,9 @@ export const RulerArea = () => {
     const visibleRightEdge =
       scrollLeft + (canvasContainer?.clientWidth || canvasWidth);
 
-    // If input would go beyond right visible edge, cap it, take into account input width (26px)
-    if (inputPosition + 26 > visibleRightEdge) {
-      inputPosition = visibleRightEdge - 26;
+    // If input would go beyond right visible edge, cap it, take into account input width (35px)
+    if (inputPosition + 35 > visibleRightEdge) {
+      inputPosition = visibleRightEdge - 35;
     }
 
     // If input would go beyond left visible edge, cap it

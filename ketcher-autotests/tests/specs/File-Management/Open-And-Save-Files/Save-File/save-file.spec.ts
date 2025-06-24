@@ -6,14 +6,12 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getMolfile } from '@utils/formats';
+import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -55,7 +53,7 @@ test.describe('Save files', () => {
       page,
       'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -70,7 +68,7 @@ test.describe('Save files', () => {
       page,
       'Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -99,7 +97,7 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-1851
     Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
     await verifyFileExport(
       page,
       'KET/two-benzene-connected-expected.smi',
@@ -114,16 +112,16 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -137,15 +135,15 @@ test.describe('Save files', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
+      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
     );
 
     await verifyFileExport(
       page,
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -183,24 +181,12 @@ test.describe('Save files', () => {
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await CommonTopLeftToolbar(page).saveFile();
 
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      MolFileFormat.v2000,
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Support for exporting to "InChiKey" file format', async ({ page }) => {
@@ -225,13 +211,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V2000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
   });
 
@@ -240,13 +226,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expectedV3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
   });
 });
@@ -317,7 +303,7 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2253
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
@@ -330,7 +316,7 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2254
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
@@ -345,7 +331,7 @@ test.describe('Open/Save/Paste files', () => {
     of atoms and bonds that are not supported in the SMILES. 
     Query properties will not be reflected in the file saved."
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
@@ -362,8 +348,8 @@ test.describe('Open/Save/Paste files', () => {
      * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
      */
     await openFileAndAddToCanvas(
-      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
       page,
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
     );
 
     await verifyFileExport(

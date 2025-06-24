@@ -23,6 +23,10 @@ class KetcherProvider {
     this.ketcherInstances.delete(id);
   }
 
+  getIndexById(id: string) {
+    return Array.from(this.ketcherInstances.keys()).indexOf(id);
+  }
+
   getKetcher(id?: string) {
     if (!id) {
       return [...this.ketcherInstances.values()][

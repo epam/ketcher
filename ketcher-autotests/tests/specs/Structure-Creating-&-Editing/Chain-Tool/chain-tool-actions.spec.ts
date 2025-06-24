@@ -12,6 +12,7 @@ import {
   clickOnAtom,
   clickOnBond,
   BondType,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -51,12 +52,12 @@ test.describe('Chain Tool verification', () => {
   test('Chain tool - Save and render', async ({ page }) => {
     // Test case: EPMLSOPKET-1479
     // Saving open .ket file with collection of chains in a .mol file
-    await openFileAndAddToCanvas('KET/chains.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chains.ket');
     await verifyFileExport(
       page,
       'Molfiles-V2000/chains-expected-file.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -65,8 +66,8 @@ test.describe('Chain Tool verification', () => {
     // Moving and deleting part of the chain on the canvas
     const bondNumber = 3;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chains-expected-file.mol',
       page,
+      'Molfiles-V2000/chains-expected-file.mol',
     );
     await clickOnBond(page, BondType.SINGLE, bondNumber);
     await page.keyboard.press('Delete');

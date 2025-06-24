@@ -245,8 +245,9 @@ export class SequenceRenderer {
           chainIndex,
           coreEditorId,
           Math.max(
-            chain.length,
-            (sequenceViewModel.chains.at(chainIndex + 1) ?? []).length,
+            chain.lastRow.sequenceViewModelItems.length,
+            sequenceViewModel.chains[chainIndex + 1]?.firstRow
+              ?.sequenceViewModelItems.length || 0,
           ),
         );
       }
@@ -263,11 +264,12 @@ export class SequenceRenderer {
     currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
     previousChainLength: number = SequenceRenderer.lastChainLength,
   ) {
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     return new Vec2(
       currentChainStartPosition.x,
       currentChainStartPosition.y +
         80 +
-        47 * Math.floor((previousChainLength - 1) / 30),
+        47 * Math.floor((previousChainLength - 1) / lineLength),
     );
   }
 

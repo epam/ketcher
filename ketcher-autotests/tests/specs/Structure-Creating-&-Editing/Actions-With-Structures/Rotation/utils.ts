@@ -3,8 +3,8 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
   clickOnCanvas,
-  getControlModifier,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -83,9 +83,8 @@ export async function addStructureAndSelect(
   page: Page,
   fileName: string = anyStructure,
 ) {
-  await openFileAndAddToCanvas(fileName, page);
-  const modifier = getControlModifier();
-  await page.keyboard.press(`${modifier}+KeyA`);
+  await openFileAndAddToCanvas(page, fileName);
+  await selectAllStructuresOnCanvas(page);
   await page.getByTestId('floating-tools').isVisible();
 }
 

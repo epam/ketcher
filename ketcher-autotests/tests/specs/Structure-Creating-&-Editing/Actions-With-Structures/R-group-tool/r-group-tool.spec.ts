@@ -3,6 +3,7 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  MolFileFormat,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
@@ -45,8 +46,8 @@ test.describe('R-Group', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -63,8 +64,8 @@ test.describe('R-Group', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -78,14 +79,14 @@ test.describe('R-Group', () => {
     Description: The file is saved as .mol V2000 file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -96,14 +97,14 @@ test.describe('R-Group', () => {
      * Description: The file is saved as .mol V3000 file.
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -114,8 +115,8 @@ test.describe('R-Group', () => {
     Description: The file is opened as .smi file.
     */
     await openFileAndAddToCanvas(
-      'SMILES/r-group-with-allkind-attachment-points.smi',
       page,
+      'SMILES/r-group-with-allkind-attachment-points.smi',
     );
     await takeEditorScreenshot(page);
   });

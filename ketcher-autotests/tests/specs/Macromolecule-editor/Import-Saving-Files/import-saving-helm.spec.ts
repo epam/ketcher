@@ -706,14 +706,16 @@ const correctHELMStrings: IHELMString[] = [
 test.describe('Import correct HELM sequence: ', () => {
   for (const correctHELMString of correctHELMStrings) {
     test(`${correctHELMString.helmDescription}`, async () => {
-      /* 
-    Test case1: https://github.com/epam/ketcher/issues/5215
-    Test case2: https://github.com/epam/ketcher/issues/5438
-    Description: Load correct HELM sequences and compare canvas with the template
-    Case:
-        1. Load correct HELM via paste from clipboard way
-        2. Take screenshot of the canvas to compare it with example
-    */
+      /*
+       * Test case1: https://github.com/epam/ketcher/issues/5215
+       * Test case2: https://github.com/epam/ketcher/issues/5438
+       * Description: Load correct HELM sequences and compare canvas with the template
+       *
+       * Version 3.5
+       * Case:
+       *     1. Load correct HELM via paste from clipboard way
+       *     2. Take screenshot of the canvas to compare it with example
+       */
       test.setTimeout(25000);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -738,14 +740,15 @@ test.describe('Import correct HELM sequence: ', () => {
 test.describe('Export to HELM: ', () => {
   for (const correctHELMString of correctHELMStrings) {
     test(`${correctHELMString.helmDescription}`, async () => {
-      /* 
-    Test case: https://github.com/epam/ketcher/issues/5215
-    Description: Load correct HELM sequences and compare canvas with the template
-    Case:
-        1. Load correct HELM via paste from clipboard way
-        2. Export canvas to HELM
-        2. Compare export result with source HELM string
-    */
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/5215
+       * Description: Load correct HELM sequences and compare canvas with the template
+       * Version 3.5
+       * Case:
+       *     1. Load correct HELM via paste from clipboard way
+       *     2. Export canvas to HELM
+       *     2. Compare export result with source HELM string
+       */
       test.setTimeout(25000);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1214,14 +1217,15 @@ const incorrectHELMStrings: IHELMString[] = [
 test.describe('Import incorrect HELM sequence: ', () => {
   for (const incorrectHELMString of incorrectHELMStrings) {
     test(`${incorrectHELMString.helmDescription}`, async () => {
-      /* 
-      Test case: https://github.com/epam/ketcher/issues/5215
-      Description: Load INCORRECT HELM sequences and compare canvas (with error message) with the template
-      Case:
-        1. Load icorrect HELM
-        2. Get error message
-        3. Take screenshot to compare it with example
-      */
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/5215
+       * Description: Load INCORRECT HELM sequences and compare canvas (with error message) with the template
+       * Version 3.5
+       * Case:
+       *   1. Load icorrect HELM
+       *   2. Get error message
+       *   3. Take screenshot to compare it with example
+       */
       test.setTimeout(20000);
       const errorExpected = true;
 

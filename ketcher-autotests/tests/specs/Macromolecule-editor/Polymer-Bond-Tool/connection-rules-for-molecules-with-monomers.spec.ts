@@ -3,18 +3,23 @@ import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MicroAtomOption,
+  MicroBondOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
-  clickOnAtom,
-  clickOnBond,
+  getAtomByIndex,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
+import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
@@ -87,11 +92,11 @@ test.describe('Connection rules for molecules with monomers: ', () => {
      *  Description: Allow connection of molecule with monomer
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
-    await clickOnAtom(page, 'C', 10, 'right');
-    await page.getByText('Delete').click();
+    const point = await getAtomByIndex(page, { label: 'C' }, 10);
+    await ContextMenu(page, point).click(MicroAtomOption.Delete);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -105,11 +110,11 @@ test.describe('Connection rules for molecules with monomers: ', () => {
      *  Description: Allow connection of molecule with monomer
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
-    await clickOnBond(page, BondType.SINGLE, 18, 'right');
-    await page.getByText('Delete').click();
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 18);
+    await ContextMenu(page, point).click(MicroBondOption.Delete);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);

@@ -2,6 +2,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  clearCanvasByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   takeEditorScreenshot,
@@ -105,11 +106,11 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -121,8 +122,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `Molfiles-V3000/monomers-and-chem.mol`,
       page,
+      `Molfiles-V3000/monomers-and-chem.mol`,
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -154,7 +155,7 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: After click Undo structure back for same place.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -168,7 +169,7 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Undo/Redo functionality works properly.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -185,8 +186,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: All structure is deleted.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -202,8 +203,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: When you switch back to Macromonecules structure is still deleted from canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

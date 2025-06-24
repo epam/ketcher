@@ -14,17 +14,18 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   moveMouseAway,
+  MacroFileType,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  getSequenceSymbolLocator,
-  selectSequenceRangeInEditMode,
-} from '@utils/macromolecules/sequence';
+import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,7 +34,7 @@ test.describe('Sequence mode selection for view mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
@@ -52,8 +53,15 @@ test.describe('Sequence mode selection for view mode', () => {
 
   test('Select letters with Shift+Lclick', async ({ page }) => {
     await page.keyboard.down('Shift');
-    await getSequenceSymbolLocator(page, 'G').click();
-    await getSequenceSymbolLocator(page, 'G', 1).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+    })
+      .first()
+      .click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 21,
+    }).click();
     await page.keyboard.up('Shift');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -61,7 +69,11 @@ test.describe('Sequence mode selection for view mode', () => {
 
   test('Select entire chain with Ctrl+Lclick', async ({ page }) => {
     await page.keyboard.down('Control');
-    await getSequenceSymbolLocator(page, 'G').click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+    })
+      .first()
+      .click();
     await page.keyboard.up('Control');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -75,19 +87,26 @@ test.describe('Sequence mode selection for edit mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {
-    const fromSymbol = await getSequenceSymbolLocator(page, 'G');
-    const number = 5;
-    const toSymbol = await getSequenceSymbolLocator(page, 'G', number);
+    const fromSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 20,
+    });
+    const toSymbol = getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 39,
+    });
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
@@ -145,22 +164,25 @@ test.describe('Sequence mode selection for view mode', () => {
       description:
         'Click on a single DNA symbol using Select tool and verify that corresponding nucleotide is selected.',
       file: 'Molfiles-V3000/dna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'Click on a single RNA symbol using Select tool and verify that corresponding nucleotide is selected.',
       file: 'Molfiles-V3000/rna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'Click on a single Peptide symbol using Select tool and verify that corresponding nucleotide is selected.',
       file: 'KET/peptides-connected-with-bonds.ket',
+      fileType: MacroFileType.Ket,
     },
   ];
 
   for (const data of testData) {
     test(`Ensure that ${data.description}`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro(data.file, page);
+      await openFileAndAddToCanvasMacro(page, data.file, data.fileType);
       await selectSequenceLayoutModeTool(page);
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
@@ -183,7 +205,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Description: All selected nucleotides are highlighted.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
   });
@@ -196,7 +218,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Description: Selection is cleared.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
@@ -213,7 +235,7 @@ test.describe('Sequence mode selection for view mode', () => {
     const x = 500;
     const y = 500;
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, x, y);
@@ -228,7 +250,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Description: Selection is cleared.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -243,7 +265,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Description: Selection is preserved after Zoom In/Zoom Out.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
     await takeEditorScreenshot(page);
@@ -259,11 +281,13 @@ test.describe('Sequence mode selection for view mode', () => {
     Description: Selection is cleared.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.getByText('G').first().click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    }).first();
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

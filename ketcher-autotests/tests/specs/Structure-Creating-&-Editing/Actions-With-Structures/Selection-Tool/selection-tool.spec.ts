@@ -15,6 +15,7 @@ import {
   waitForPageInit,
   waitForRender,
   selectAllStructuresOnCanvas,
+  getAtomByIndex,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -24,6 +25,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +40,8 @@ test.describe('Selection tools', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'C', 0, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -50,7 +53,7 @@ test.describe('Selection tools', () => {
     Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3")
     are highlighted with rounded rectangles.
     */
-    await openFileAndAddToCanvas('KET/atoms-and-bonds.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/atoms-and-bonds.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
@@ -61,7 +64,7 @@ test.describe('Selection tools', () => {
     Description: Selected atoms are replaces with those assigned to the hotkey.
     Selected tool remains active and the atom does not appear under mouse cursor.
     */
-    await openFileAndAddToCanvas('KET/two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-atoms.ket');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('o');
     await takeEditorScreenshot(page);
@@ -98,7 +101,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15508
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
     await takeEditorScreenshot(page);
@@ -111,7 +114,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15509
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
     await takeEditorScreenshot(page);
@@ -122,7 +125,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15510
     Description: All selected structures are deleted from the canvas.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
@@ -136,7 +139,7 @@ test.describe('Selection tools', () => {
     Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Down.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 50; i++) {
@@ -158,7 +161,7 @@ test.describe('Selection tools', () => {
     */
       test.slow();
 
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
@@ -183,7 +186,7 @@ test.describe('Selection tools', () => {
     */
       test.slow();
 
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
@@ -208,7 +211,7 @@ test.describe('Selection tools', () => {
     */
       test.slow();
 
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
@@ -228,7 +231,7 @@ test.describe('Selection tools', () => {
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Down.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
@@ -249,7 +252,7 @@ test.describe('Selection tools', () => {
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Up.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
@@ -270,7 +273,7 @@ test.describe('Selection tools', () => {
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key presswith Shift key. In this test to 100px Right.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
@@ -291,7 +294,7 @@ test.describe('Selection tools', () => {
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Left.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
@@ -316,7 +319,7 @@ test.describe('Selection tools', () => {
 
     const pointx1 = 750;
     const pointy1 = 300;
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 0);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
@@ -375,7 +378,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
@@ -395,7 +398,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
@@ -415,7 +418,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
@@ -435,7 +438,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
@@ -454,7 +457,7 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     Structure is visible on the canvas.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
@@ -497,8 +500,8 @@ test.describe('Selection tools', () => {
     Description: All structures selected on the canvas are highlighted in green.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/several-templates-selection-tool.mol',
       page,
+      'Molfiles-V2000/several-templates-selection-tool.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -509,7 +512,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-17668
     Description: All chain structures selected on the canvas are highlighted in green.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });

@@ -18,6 +18,7 @@ import { resetCurrentTool } from '@utils/canvas/tools';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
@@ -88,8 +89,7 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await page.getByText('CO2Et').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('CO2Et'));
     await zoomSelector.click();
     await zoomInButton.click();
 
@@ -107,8 +107,7 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await page.getByText('CO2Et').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('CO2Et'));
     await zoomSelector.click();
     await zoomOut.click();
 
@@ -182,8 +181,8 @@ test.describe('Zoom changes', () => {
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/clean-diff-properties.mol',
       page,
+      'Molfiles-V2000/clean-diff-properties.mol',
     );
     await zoomSelector.click();
     await zoomInButton.click();
@@ -208,8 +207,8 @@ test.describe('Zoom changes', () => {
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/all-kind-of-r-group.mol',
       page,
+      'Molfiles-V2000/all-kind-of-r-group.mol',
     );
 
     await zoomSelector.click();
@@ -242,7 +241,7 @@ test.describe('Zoom changes', () => {
       Description: The correct structure fits on the canvas, and the zoom percentage 
       has decreased on the "Zoom panel"
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol');
     await expect(page).toHaveScreenshot();
   });
 

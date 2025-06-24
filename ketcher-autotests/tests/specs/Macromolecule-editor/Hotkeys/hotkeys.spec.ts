@@ -15,6 +15,7 @@ import {
   selectRedoByKeyboard,
   waitForRender,
   getControlModifier,
+  clearCanvasByKeyboard,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -31,8 +32,8 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Delete');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -41,8 +42,8 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -53,8 +54,8 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Clear canvas action Undo and then Redo.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
     await selectRedoByKeyboard(page);
@@ -66,8 +67,8 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Clear canvas action Undo and then Redo.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
 
@@ -101,8 +102,8 @@ test.describe('Hotkeys', () => {
     */
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
       await ZoomInByKeyboard(page);
@@ -117,8 +118,8 @@ test.describe('Hotkeys', () => {
     */
     const numberOfPressZoomOut = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await ZoomOutByKeyboard(page);
@@ -133,8 +134,8 @@ test.describe('Hotkeys', () => {
     */
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
       await ZoomInByKeyboard(page);
@@ -150,8 +151,8 @@ test.describe('Hotkeys', () => {
     Description: All Monomers are selected.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -165,8 +166,8 @@ test.describe('Hotkeys', () => {
     Description: Selection tool not switches to deletion tool.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');

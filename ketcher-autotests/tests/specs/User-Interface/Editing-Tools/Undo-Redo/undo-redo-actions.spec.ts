@@ -26,6 +26,7 @@ import {
   selectUndoByKeyboard,
   selectRedoByKeyboard,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -434,7 +435,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Mapping tool is removed;
     Redo: the Mapping tool is restored.
     */
-    await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reaction-chain.ket');
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );
@@ -452,7 +453,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Data S-group is removed;
     Redo: the Data S-group is restored;
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
@@ -469,7 +470,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Multiple Group is removed;
     Redo: the Multiple Group is restored;
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
@@ -484,7 +485,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the SRU Polymer is removed;
     Redo: the SRU Polymer is restored;
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
@@ -499,7 +500,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Superatom is removed;
     Redo: the Superatom is restored;
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -554,7 +555,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Attachment Point tool is removed;
     Redo: the Attachment Point tool is restored;
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -569,7 +570,7 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-1757
     Description: Undo/Redo action should work correctly
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 2);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -600,7 +601,7 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -617,7 +618,7 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -634,7 +635,7 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-1759
     Description: Undo/Redo hotkeys action should work correctly
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -655,14 +656,14 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-1760
     Description: Undo/Redo hotkeys action should work correctly
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     for (let i = 0; i < 5; i++) {
-      await page.keyboard.press('Control+_');
+      await ZoomOutByKeyboard(page);
     }
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);
@@ -684,7 +685,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     const yDelta = 300;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');

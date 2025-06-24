@@ -10,6 +10,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -81,7 +82,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/text-object-for-test.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -96,7 +97,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete created text object in the text editor field', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/test-text-object.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
     await page.getByText('TEST').dblclick();
     await pressButton(page, 'Cancel');
     await page.getByText('TEST').dblclick();
@@ -191,7 +192,7 @@ test.describe('Text tools test cases', () => {
   });
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
@@ -203,7 +204,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     const text2 = 'Ketcher is a cool tool';
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
@@ -217,7 +218,7 @@ test.describe('Text tools test cases', () => {
   test(' Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await page
@@ -275,7 +276,7 @@ test.describe('Text tools test cases', () => {
 
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);

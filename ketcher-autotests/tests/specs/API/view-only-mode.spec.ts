@@ -11,13 +11,12 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   moveOnAtom,
-  resetCurrentTool,
-  clickOnAtom,
   pressButton,
   dragMouseTo,
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  getAtomByIndex,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -31,6 +30,7 @@ import {
   disableViewOnlyModeBySetOptions,
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
+  MolFileFormat,
 } from '@utils/formats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -42,6 +42,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -132,8 +133,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: All editing tools are disabled in toolbars for elements
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page, { timeout: 10000 });
@@ -148,8 +149,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await enableViewOnlyModeBySetOptions(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await takePageScreenshot(page);
   });
@@ -288,7 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(`KET/images-png-50-with-50-structures.ket`, page);
+    await openFile(page, `KET/images-png-50-with-50-structures.ket`);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();
     await takeEditorScreenshot(page);
@@ -387,13 +388,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('350');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -406,10 +404,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    const point1 = await getAtomByIndex(page, { label: 'C' }, 1);
+    await ContextMenu(page, point1).open();
     await takeEditorScreenshot(page);
   });
 
@@ -505,8 +505,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       page,
+      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -525,12 +525,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       page,
+      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -549,12 +549,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       page,
+      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });

@@ -30,6 +30,8 @@ import {
   selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
+  MacroFileType,
+  MolFileFormat,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -124,7 +126,11 @@ test.describe('Macro-Micro-Switcher2', () => {
         Test case: Macro-Micro-Switcher/#3747
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
         */
-      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        testInfo.fileName,
+        MacroFileType.MOLv3000,
+      );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -148,8 +154,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: AP label selection works but not saves to KET.
       */
     await openFileAndAddToCanvas(
-      'KET/structure-with-two-attachment-points.ket',
       page,
+      'KET/structure-with-two-attachment-points.ket',
     );
     await page.keyboard.down('Shift');
     await page.getByText('R1').click();
@@ -163,8 +169,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/structure-with-two-attachment-points-expected.ket',
       page,
+      'KET/structure-with-two-attachment-points-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -177,8 +183,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: Attachment points and leaving groups are correctly represented in KET format.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -188,8 +194,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -202,14 +208,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: We can save bond between micro and macro structures to Mol V3000 format.
       */
     await openFileAndAddToCanvas(
-      'KET/chem-connected-to-micro-structure.ket',
       page,
+      'KET/chem-connected-to-micro-structure.ket',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -221,18 +227,18 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       page,
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -245,8 +251,8 @@ test.describe('Macro-Micro-Switcher2', () => {
         Description: We can connect molecule to attachment point and when delete bond attachment point remains.
       */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-with-oxygen.ket',
       page,
+      'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -266,16 +272,16 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: #4532
       Description: It is possible to save micro-macro connection to mol v3000 file.
       */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
     await verifyFileExport(
       page,
       'Molfiles-V3000/micro-macro-structure-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/micro-macro-structure-expected.mol',
       page,
+      'Molfiles-V3000/micro-macro-structure-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -291,8 +297,8 @@ test.describe('Macro-Micro-Switcher2', () => {
      *
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
@@ -315,8 +321,8 @@ test.describe('Macro-Micro-Switcher2', () => {
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -417,8 +423,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -439,8 +445,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await doubleClickOnAtom(page, 'Zn');
@@ -460,8 +466,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -469,8 +475,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties-expected.ket',
       page,
+      'KET/single-atom-properties-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -488,18 +494,18 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/single-atom-properties-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/single-atom-properties-expected.mol',
       page,
+      'Molfiles-V3000/single-atom-properties-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -518,8 +524,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -542,23 +548,20 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('50');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).setZoomInputValue('120');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).setZoomInputValue('150');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -579,8 +582,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -605,8 +608,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -638,8 +641,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, 400, 400);
@@ -667,8 +670,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
@@ -677,8 +680,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties-saved-in-macro-expected.ket',
       page,
+      'KET/single-atom-properties-saved-in-macro-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -697,19 +700,19 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/single-atom-properties.ket',
       page,
+      'KET/single-atom-properties.ket',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       page,
+      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -726,8 +729,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Verify that Flex mode is opened
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-atoms.ket',
       page,
+      'KET/benzene-ring-with-two-atoms.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
@@ -1010,8 +1013,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Undo/redo
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-two-atoms.ket',
       page,
+      'KET/benzene-ring-with-two-atoms.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,

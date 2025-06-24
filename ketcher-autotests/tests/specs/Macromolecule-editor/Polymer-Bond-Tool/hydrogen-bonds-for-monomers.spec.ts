@@ -29,6 +29,9 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 test.setTimeout(40000);
@@ -138,9 +141,9 @@ async function loadTwoMonomers(
   leftMonomer: IMonomer,
   rightMonomer: IMonomer,
 ) {
-  await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+  await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
-  const canvasLocator = page.getByTestId('ketcher-canvas').first();
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
 
   const leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
@@ -151,7 +154,7 @@ async function loadTwoMonomers(
   await dragMouseTo(500, 370, page);
   await moveMouseAway(page);
 
-  await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+  await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
 
   const rightMonomerLocator =
     (await canvasLocator
@@ -181,7 +184,7 @@ async function bondTwoMonomersByCenterToCenter(
   rightMonomer: IMonomer,
   bondType?: MacroBondType,
 ) {
-  const canvasLocator = page.getByTestId('ketcher-canvas').first();
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
 
   let leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
@@ -238,13 +241,6 @@ async function hoverOverConnectionLine(page: Page) {
   await bondLine.hover({ force: true });
 }
 
-async function callContexMenuOverConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.click({ button: 'right', force: true });
-}
-
 async function clickOnConnectionLine(page: Page) {
   const bondLine = getBondLocator(page, {
     bondType: MacroBondDataIds.Hydrogen,
@@ -283,7 +279,10 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
       await hoverOverConnectionLine(page);
 
-      await callContexMenuOverConnectionLine(page);
+      const bondLine = getBondLocator(page, {
+        bondType: MacroBondDataIds.Hydrogen,
+      }).first();
+      await ContextMenu(page, bondLine).open();
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -570,36 +569,31 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
 async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
+  const canvasLocator = page
+    .getByTestId(KETCHER_CANVAS)
+    .getByText(locatorText, { exact: true });
   await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
+    await ContextMenu(page, canvasLocator).click(
+      MonomerOnMicroOption.ExpandMonomer,
+    );
   });
 }
 
 async function collapseMonomer(page: Page) {
-  // await clickInTheMiddleOfTheScreen(page, 'right');
-  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
   const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
-
-  if (await attachmentPoint.isVisible()) {
-    await attachmentPoint.click({
-      button: 'right',
-    });
-  } else {
-    await canvasLocator.getByText('O', { exact: true }).first().click({
-      button: 'right',
-    });
-  }
   await waitForRender(page, async () => {
-    await page.getByText('Collapse monomer').click();
+    if (await attachmentPoint.isVisible()) {
+      await ContextMenu(page, attachmentPoint).click(
+        MonomerOnMicroOption.CollapseMonomer,
+      );
+    } else {
+      await ContextMenu(
+        page,
+        canvasLocator.getByText('O', { exact: true }).first(),
+      ).click(MonomerOnMicroOption.CollapseMonomer);
+    }
   });
 }
 
@@ -660,7 +654,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
+    await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
     await takeEditorScreenshot(page);
@@ -821,8 +815,8 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   test.setTimeout(25000);
 
   await openFileAndAddToCanvasMacro(
-    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
     page,
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
   );
   await moveMouseAway(page);
   await zoomWithMouseWheel(page, 100);
@@ -886,8 +880,8 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   test.setTimeout(25000);
 
   await openFileAndAddToCanvasMacro(
-    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
     page,
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
   );
   await moveMouseAway(page);
   await zoomWithMouseWheel(page, 100);

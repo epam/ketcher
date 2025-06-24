@@ -21,6 +21,7 @@ import {
   moveOnAtom,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  getCachedBodyCenter,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -37,6 +38,10 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+import { expandAbbreviation, removeAbbreviation } from '@utils/sgroup/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -56,14 +61,6 @@ async function saveToTemplates(page: Page) {
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
-async function changeStatusOfAbbreviation(
-  page: Page,
-  abbreviationStatus: string,
-) {
-  await clickInTheMiddleOfTheScreen(page, 'right');
-  await page.getByText(abbreviationStatus).click();
-}
-
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -77,17 +74,17 @@ test.describe('Functional Groups', () => {
     Description: Functional Group contract and remove abbreviation
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-groups-expanded.mol',
       page,
+      'Molfiles-V2000/functional-groups-expanded.mol',
     );
 
-    await changeStatusOfAbbreviation(page, 'Contract Abbreviation');
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      SuperatomOption.ContractAbbreviation,
+    );
     await takeEditorScreenshot(page);
 
-    await page.getByText('Bz').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Remove Abbreviation').click();
-    });
+    await removeAbbreviation(page, page.getByText('Bz'));
     await takeEditorScreenshot(page);
   });
 
@@ -99,14 +96,20 @@ test.describe('Functional Groups', () => {
     Description: Functional Group expand and remove abbreviation
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-contracted.mol',
       page,
+      'Molfiles-V2000/functional-group-contracted.mol',
     );
 
-    await changeStatusOfAbbreviation(page, 'Expand Abbreviation');
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      SuperatomOption.ExpandAbbreviation,
+    );
+
     await takeEditorScreenshot(page);
 
-    await changeStatusOfAbbreviation(page, 'Remove Abbreviation');
+    await ContextMenu(page, middleOfTheScreen).click(
+      SuperatomOption.RemoveAbbreviation,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -127,8 +130,8 @@ test.describe('Functional Groups', () => {
     Description: Functional group is copied and pasted as expanded.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-groups-expanded.mol',
       page,
+      'Molfiles-V2000/functional-groups-expanded.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -141,8 +144,8 @@ test.describe('Functional Groups', () => {
     Description: Functional group is cut and pasted as expanded.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-groups-expanded.mol',
       page,
+      'Molfiles-V2000/functional-groups-expanded.mol',
     );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -157,8 +160,8 @@ test.describe('Functional Groups', () => {
     Description: Functional group is copied and pasted as expanded.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-contracted.mol',
       page,
+      'Molfiles-V2000/functional-group-contracted.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -173,8 +176,8 @@ test.describe('Functional Groups', () => {
     Description: Functional group is cut and pasted as expanded.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-contracted.mol',
       page,
+      'Molfiles-V2000/functional-group-contracted.mol',
     );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -186,7 +189,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2916
     Description: Contracted FG is connected to the structure.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/structure-co2et.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/structure-co2et.mol');
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -198,7 +201,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/custom-template.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/custom-template.mol');
 
     await saveToTemplates(page);
 
@@ -225,8 +228,8 @@ test.describe('Functional Groups', () => {
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/V3000-contracted-and-expanded-fg.mol',
       page,
+      'Molfiles-V3000/V3000-contracted-and-expanded-fg.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -238,7 +241,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2894
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
-    await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/expanded-and-contracted-fg.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -266,8 +269,8 @@ test.describe('Functional Groups', () => {
     const y = 400;
     const smallShift = 10;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await page.mouse.move(x, y);
     await page.mouse.move(x + smallShift, y);
@@ -280,8 +283,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Bond' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
@@ -295,8 +298,8 @@ test.describe('Functional Groups', () => {
     */
     const atomToolbar = RightToolbar(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
@@ -310,8 +313,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Chain' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chain();
     await clickOnAtom(page, 'C', anyAtom);
@@ -324,8 +327,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Template' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await selectRingButton(page, RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
@@ -338,8 +341,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Charge Plus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'C', anyAtom);
@@ -352,8 +355,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Charge Minus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'C', anyAtom);
@@ -366,8 +369,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Erase' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', anyAtom);
@@ -380,8 +383,8 @@ test.describe('Functional Groups', () => {
     Description: When click 'S-Group tool to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -396,8 +399,8 @@ test.describe('Functional Groups', () => {
     Description: When click 'S-Group tool to contracted Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-contracted.mol',
       page,
+      'Molfiles-V2000/functional-group-contracted.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -412,8 +415,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'R-Group Label Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
@@ -428,8 +431,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'R-Group Fragment Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', anyAtom);
@@ -444,8 +447,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Attachment Point Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', anyAtom);
@@ -462,10 +465,8 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.SO3H, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 
@@ -479,10 +480,8 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.PO4H2, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 
@@ -534,7 +533,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
       .getByText('me')
       .first()
@@ -548,8 +547,8 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Atom' by hotkey to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-expanded.mol',
       page,
+      'Molfiles-V2000/functional-group-expanded.mol',
     );
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('n');
@@ -566,10 +565,8 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
 
     await clickInTheMiddleOfTheScreen(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -590,7 +587,7 @@ test.describe('Functional Groups', () => {
     */
     const x = 540;
     const y = 350;
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
@@ -685,7 +682,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11849
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
@@ -700,16 +697,20 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11851
     Description: Unknown superatom expand and contract.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/unknown-superatom.mol', page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/unknown-superatom.mol');
     await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
+      await ContextMenu(page, middleOfTheScreen).click(
+        SuperatomOption.ExpandAbbreviation,
+      );
     });
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
+      await ContextMenu(page, middleOfTheScreen).click(
+        SuperatomOption.ContractAbbreviation,
+      );
     });
     await takeEditorScreenshot(page);
   });
@@ -727,10 +728,8 @@ test.describe('Functional Groups', () => {
     await drawFGAndDrag(FunctionalGroups.Boc, MAX_BOND_LENGTH, page);
 
     await selectAllStructuresOnCanvas(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 
@@ -742,13 +741,15 @@ test.describe('Functional Groups', () => {
     Description: Functional Group contract and remove abbreviation
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/custom-structure-with-expanded-fg.mol',
       page,
+      'Molfiles-V2000/custom-structure-with-expanded-fg.mol',
     );
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
+      await ContextMenu(page, middleOfTheScreen).click(
+        SuperatomOption.ContractAbbreviation,
+      );
     });
     await takeEditorScreenshot(page);
   });
@@ -767,10 +768,7 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await resetCurrentTool(page);
-    await page.getByText('Boc').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('Boc'));
     await page.keyboard.press('n');
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);

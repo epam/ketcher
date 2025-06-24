@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
 import {
   BondsSetting,
@@ -21,7 +20,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getMolfile } from '@utils/formats';
+import { getMolfile, MolFileFormat } from '@utils/formats';
 
 test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async ({
   page,
@@ -32,7 +31,7 @@ test('Open and Save files - Open/Save structure with atom properties 1/2 - open'
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol-1855-to-open.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -46,12 +45,12 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol-1855-to-open.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/mol-1855-to-open-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -65,8 +64,8 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas(
-    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
     page,
+    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
   );
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
@@ -82,14 +81,14 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas(
-    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
     page,
+    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
   );
   await verifyFileExport(
     page,
     'Molfiles-V3000/atom-properties-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -102,7 +101,7 @@ test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/markush.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/markush.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -116,12 +115,12 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/markush.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/markush.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/markush-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -134,7 +133,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/sec-butyl-abr.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -148,12 +147,12 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/sec-butyl-abr.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/sec-butyl-abr-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -166,7 +165,7 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/sec-butyl-abr-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/sec-butyl-abr-V3000.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -180,12 +179,12 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/sec-butyl-abr-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/sec-butyl-abr-V3000.mol');
   await verifyFileExport(
     page,
     'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -198,7 +197,7 @@ test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/Rgroup.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/Rgroup.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -212,12 +211,12 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/Rgroup.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/Rgroup.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/r-group-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -231,8 +230,8 @@ test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', asyn
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas(
-    'Molfiles-V2000/heteroatoms-structure.mol',
     page,
+    'Molfiles-V2000/heteroatoms-structure.mol',
   );
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
@@ -248,14 +247,14 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas(
-    'Molfiles-V2000/heteroatoms-structure.mol',
     page,
+    'Molfiles-V2000/heteroatoms-structure.mol',
   );
   await verifyFileExport(
     page,
     'Molfiles-V2000/heteroatoms-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -268,7 +267,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 -
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/attached-data-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/attached-data-V3000.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -282,12 +281,12 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/attached-data-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/attached-data-V3000.mol');
   await verifyFileExport(
     page,
     'Molfiles-V3000/attached-data-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -300,7 +299,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', as
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/heteroatoms-V3000.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -314,12 +313,12 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/heteroatoms-V3000.mol');
   await verifyFileExport(
     page,
     'Molfiles-V3000/heteroatoms-V3000-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -332,7 +331,7 @@ test('Open and Save file - Open/Save file with Attached data 1/2 - open', async 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -346,12 +345,12 @@ test('Open and Save file - Open/Save file with Attached data 2/2 - save', async 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/attached-data-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -364,7 +363,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - ope
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/V2000-abs.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -378,12 +377,12 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/V2000-abs.mol');
   await verifyFileExport(
     page,
     'Molfiles-V2000/V2000-abs-expected.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -396,7 +395,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/V3000-abs.mol');
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -410,12 +409,12 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V3000/V3000-abs.mol');
   await verifyFileExport(
     page,
     'Molfiles-V3000/V3000-abs-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -428,12 +427,12 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Molfiles-V2000/spiro2.mol', page);
+  await openFileAndAddToCanvas(page, 'Molfiles-V2000/spiro2.mol');
   await verifyFileExport(
     page,
     'Molfiles-V3000/spiro-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 });
 
@@ -447,14 +446,14 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas(
-    'Molfiles-V3000/two-connected-chains-v3000.mol',
     page,
+    'Molfiles-V3000/two-connected-chains-v3000.mol',
   );
   await verifyFileExport(
     page,
     'Molfiles-V2000/two-connected-chains.mol',
     FileType.MOL,
-    'v2000',
+    MolFileFormat.v2000,
   );
 });
 
@@ -462,8 +461,8 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   // Related Github issue https://github.com/epam/ketcher/issues/2774
   await waitForPageInit(page);
   await openFileAndAddToCanvas(
-    'Molfiles-V3000/RGroup-With-Fragments.mol',
     page,
+    'Molfiles-V3000/RGroup-With-Fragments.mol',
   );
   await takeEditorScreenshot(page);
 });
@@ -531,7 +530,7 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
-        await openFileAndAddToCanvas(file.path, page);
+        await openFileAndAddToCanvas(page, file.path);
         await takeEditorScreenshot(page);
       });
     }
@@ -551,8 +550,8 @@ test.describe('Open and Save file', () => {
         test.slow();
 
         await openFileAndAddToCanvasAsNewProject(
-          'Molfiles-V3000/more-900-atoms.mol',
           page,
+          'Molfiles-V3000/more-900-atoms.mol',
         );
         await takeEditorScreenshot(page);
       },
@@ -569,43 +568,43 @@ test.describe('Open and Save file', () => {
         testName: 'Open/Save Alias and Pseudoatoms',
         pathToOpen: 'Molfiles-V2000/alias-and-pseudoatoms.mol',
         pathToExpected: 'Molfiles-V2000/alias-and-pseudoatoms-expected.mol',
-        format: 'v2000',
+        format: MolFileFormat.v2000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Rgroup',
         pathToOpen: 'Molfiles-V3000/rgroup-V3000.mol',
         pathToExpected: 'Molfiles-V3000/rgroup-V3000-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
         pathToOpen: 'Molfiles-V3000/multi-V3000.mol',
         pathToExpected: 'Molfiles-V3000/multi-V3000-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup - 2',
         pathToOpen: 'Molfiles-V3000/sgroup-different-V3000.mol',
         pathToExpected: 'Molfiles-V2000/sgroup-different-V2000-expected.mol',
-        format: 'v2000',
+        format: MolFileFormat.v2000,
       },
       {
         testName: 'Open/Save v3000 mol file with assigned Alias',
         pathToOpen: 'Molfiles-V3000/chain-with-alias.mol',
         pathToExpected: 'Molfiles-V3000/chain-with-alias-expected.mol',
-        format: 'v3000',
+        format: MolFileFormat.v3000,
       },
     ];
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
-        await openFileAndAddToCanvas(file.pathToOpen, page);
+        await openFileAndAddToCanvas(page, file.pathToOpen);
 
         await verifyFileExport(
           page,
           file.pathToExpected,
           FileType.MOL,
-          file.format as MolfileFormat,
+          file.format,
         );
       });
     }
@@ -624,14 +623,14 @@ test.describe('Open and Save file', () => {
       test.slow();
 
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V3000/more-900-atoms.mol',
         page,
+        'Molfiles-V3000/more-900-atoms.mol',
       );
       await verifyFileExport(
         page,
         'Molfiles-V3000/more-900-atoms-expected.mol',
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
       );
     },
   );
@@ -646,14 +645,14 @@ test.describe('Open and Save file', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/all-bond-properties-V3000.mol',
       page,
+      'Molfiles-V3000/all-bond-properties-V3000.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/all-bond-properties-V2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -667,8 +666,8 @@ test.describe('Open and Save file', () => {
        */
 
       await openFileAndAddToCanvas(
-        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
         page,
+        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
       );
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
@@ -687,8 +686,8 @@ test.describe('Open and Save file', () => {
 
     for (let i = 1; i < 9; i++) {
       await openFileAndAddToCanvas(
-        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
         page,
+        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
       );
     }
   });
@@ -702,8 +701,8 @@ test.describe('Open and Save file', () => {
      * Alias is located on the atom to which we assigned it
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/molfile-with-als.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/molfile-with-als.mol');
+    const expectedFile = await getMolfile(page, MolFileFormat.v2000);
     const isCorrectPadding = expectedFile.includes('N   ');
 
     expect(isCorrectPadding).toEqual(true);
@@ -718,7 +717,7 @@ test.describe('Open and Save file', () => {
   The Bond length setting is applied and it should be save to mol 2000
   */
 
-    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Px },
       { option: BondsSetting.BondLength, value: '79.8' },
@@ -729,11 +728,11 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
       page,
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -747,7 +746,7 @@ test.describe('Open and Save file', () => {
   The Bond length setting is applied and it should be save to mol 3000
   */
 
-    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
     await setSettingsOptions(page, [
       { option: BondsSetting.BondLengthUnits, value: MeasurementUnit.Cm },
       { option: BondsSetting.BondLength, value: '1.8' },
@@ -758,11 +757,11 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
       page,
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -775,7 +774,7 @@ test.describe('Open and Save file', () => {
   Description: add new option Set ACS Settings and check saving to different format
   */
 
-    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -783,11 +782,11 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
       page,
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -800,7 +799,7 @@ test.describe('Open and Save file', () => {
   Description: add new option Set ACS Settings and check saving to different format
   */
 
-    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -808,11 +807,11 @@ test.describe('Open and Save file', () => {
       page,
       'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
       page,
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
     );
     await takeEditorScreenshot(page);
   });

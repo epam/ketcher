@@ -44,6 +44,7 @@ describe('Save modal', () => {
           bonds: [],
           monomerToAtomBonds: [],
           atoms: [],
+          rxnArrows: [],
         },
         viewModel: {
           initialize: jest.fn(),

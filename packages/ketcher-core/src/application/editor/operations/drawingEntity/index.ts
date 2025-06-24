@@ -2,6 +2,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseBond } from 'domain/entities/BaseBond';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
 
@@ -46,7 +47,10 @@ export class DrawingEntityMoveOperation implements Operation {
     // they have two drawing modes: straight and curved.
     // During switching snake/flex layout modes and undo/redo
     // we need to redraw them to apply the correct drawing mode.
-    if (this.drawingEntity instanceof BaseBond) {
+    if (
+      this.drawingEntity instanceof BaseBond ||
+      this.drawingEntity instanceof RxnArrow
+    ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);
@@ -54,7 +58,10 @@ export class DrawingEntityMoveOperation implements Operation {
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
-    if (this.drawingEntity instanceof BaseBond) {
+    if (
+      this.drawingEntity instanceof BaseBond ||
+      this.drawingEntity instanceof RxnArrow
+    ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);

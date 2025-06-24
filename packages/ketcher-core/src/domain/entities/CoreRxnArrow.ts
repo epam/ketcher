@@ -8,8 +8,9 @@ export class RxnArrow extends DrawingEntity {
   public renderer?: RxnArrowRenderer = undefined;
 
   constructor(
-    public mode: RxnArrowMode,
-    private startEndPosition: [Vec2, Vec2],
+    public type: RxnArrowMode,
+    public startEndPosition: [Vec2, Vec2],
+    public height?: number,
   ) {
     super();
   }
@@ -18,8 +19,16 @@ export class RxnArrow extends DrawingEntity {
     return this.startEndPosition[0];
   }
 
+  private set startPosition(newStartPosition: Vec2) {
+    this.startEndPosition[0] = newStartPosition;
+  }
+
   public get endPosition() {
     return this.startEndPosition[1];
+  }
+
+  private set endPosition(newEndPosition: Vec2) {
+    this.startEndPosition[1] = newEndPosition;
   }
 
   public get center(): Vec2 {
@@ -32,5 +41,16 @@ export class RxnArrow extends DrawingEntity {
   public setRenderer(renderer: RxnArrowRenderer): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
+  }
+
+  public override moveRelative(delta: Vec2): void {
+    this.startPosition = this.startPosition.add(delta);
+    this.endPosition = this.endPosition.add(delta);
+  }
+
+  public override moveAbsolute(position: Vec2) {
+    const delta = Vec2.diff(position, this.startPosition);
+
+    this.moveRelative(delta);
   }
 }

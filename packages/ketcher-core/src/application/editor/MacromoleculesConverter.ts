@@ -4,13 +4,20 @@ import {
   Bond,
   FunctionalGroup,
   Pile,
+  RxnArrow as MicromoleculesRxnArrow,
   SGroup,
   SGroupAttachmentPoint,
   Struct,
   Vec2,
 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
+import {
+  ReAtom,
+  ReBond,
+  ReRxnArrow,
+  ReSGroup,
+  ReStruct,
+} from 'application/render';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
@@ -297,6 +304,16 @@ export class MacromoleculesConverter {
       const bondId = struct.bonds.add(bond);
 
       reStruct?.bonds.set(bondId, new ReBond(bond));
+    });
+
+    drawingEntitiesManager.rxnArrows.forEach((rxnArrow) => {
+      const micromoleculeRxnArrow = new MicromoleculesRxnArrow({
+        mode: rxnArrow.type,
+        pos: [rxnArrow.startPosition, rxnArrow.endPosition],
+        height: rxnArrow.height,
+      });
+      const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
+      reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
     });
 
     struct.findConnectedComponents();
@@ -680,9 +697,10 @@ export class MacromoleculesConverter {
 
     // Arrows and pluses
     struct.rxnArrows.forEach((rxnArrow) => {
-      const arrowAddCommand = drawingEntitiesManager.addReactionArrow(
+      const arrowAddCommand = drawingEntitiesManager.addRxnArrow(
         rxnArrow.mode,
         rxnArrow.pos as [Vec2, Vec2],
+        rxnArrow.height,
       );
       command.merge(arrowAddCommand);
     });

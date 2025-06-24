@@ -21,25 +21,25 @@ import { Operation } from 'domain/entities/Operation';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 
 export class RxnArrowAddOperation implements Operation {
-  public arrow: RxnArrow;
+  public rxnArrow: RxnArrow;
   public priority = 2;
 
   constructor(
-    public addArrowChangeModel: (atom?: RxnArrow) => RxnArrow,
-    public deleteArrowChangeModel: (atom: RxnArrow) => void,
+    public addArrowChangeModel: (arrow?: RxnArrow) => RxnArrow,
+    public deleteArrowChangeModel: (arrow: RxnArrow) => void,
   ) {
-    this.arrow = this.addArrowChangeModel();
+    this.rxnArrow = this.addArrowChangeModel();
   }
 
   public execute(renderersManager: RenderersManager) {
-    this.arrow = this.addArrowChangeModel(this.arrow);
-    renderersManager.addRxnArrow(this.arrow);
+    this.rxnArrow = this.addArrowChangeModel(this.rxnArrow);
+    renderersManager.addRxnArrow(this.rxnArrow);
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.arrow) {
-      this.deleteArrowChangeModel(this.arrow);
-      renderersManager.deleteRxnArrow(this.arrow);
+    if (this.rxnArrow) {
+      this.deleteArrowChangeModel(this.rxnArrow);
+      renderersManager.deleteRxnArrow(this.rxnArrow);
     }
   }
 }
@@ -48,18 +48,18 @@ export class RxnArrowDeleteOperation implements Operation {
   public priority = 2;
 
   constructor(
-    public arrow: RxnArrow,
-    public deleteArrowChangeModel: () => void,
-    public addArrowChangeModel: (atom?: RxnArrow) => RxnArrow,
+    public rxnArrow: RxnArrow,
+    public deleteArrowChangeModel: (arrow: RxnArrow) => void,
+    public addArrowChangeModel: (arrow: RxnArrow) => RxnArrow,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
-    this.deleteArrowChangeModel();
-    renderersManager.addRxnArrow(this.arrow);
+    this.deleteArrowChangeModel(this.rxnArrow);
+    renderersManager.deleteRxnArrow(this.rxnArrow);
   }
 
   public invert(renderersManager: RenderersManager) {
-    this.addArrowChangeModel(this.arrow);
-    renderersManager.deleteRxnArrow(this.arrow);
+    this.addArrowChangeModel(this.rxnArrow);
+    renderersManager.addRxnArrow(this.rxnArrow);
   }
 }

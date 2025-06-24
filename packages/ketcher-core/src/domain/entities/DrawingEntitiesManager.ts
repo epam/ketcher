@@ -114,7 +114,10 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
-import { RxnArrowAddOperation } from 'application/editor/operations/coreRxn/rxnArrow';
+import {
+  RxnArrowAddOperation,
+  RxnArrowDeleteOperation,
+} from 'application/editor/operations/coreRxn/rxnArrow';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
@@ -187,6 +190,7 @@ export class DrawingEntitiesManager {
       ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
       ...(this.atoms as Map<number, DrawingEntity>),
       ...(this.bonds as Map<number, DrawingEntity>),
+      ...(this.rxnArrows as Map<number, DrawingEntity>),
     ];
   }
 
@@ -317,6 +321,8 @@ export class DrawingEntitiesManager {
       return this.deleteBond(drawingEntity);
     } else if (drawingEntity instanceof Atom) {
       return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
+    } else if (drawingEntity instanceof RxnArrow) {
+      return this.deleteRxnArrow(drawingEntity);
     } else {
       return new Command();
     }
@@ -453,27 +459,29 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    [...this.atoms.values(), ...this.monomers.values()].forEach(
-      (drawingEntity) => {
-        if (
-          drawingEntity instanceof BaseMonomer &&
-          drawingEntity.monomerItem.props.isMicromoleculeFragment &&
-          !isMonomerSgroupWithAttachmentPoints(drawingEntity)
-        ) {
-          return;
-        }
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
 
-        if (drawingEntity.selected) {
-          command.merge(
-            this.createDrawingEntityMovingCommand(
-              drawingEntity,
-              partOfMovementOffset,
-              fullMovementOffset,
-            ),
-          );
-        }
-      },
-    );
+      if (drawingEntity.selected) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
+      }
+    });
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -1797,6 +1805,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.functionalGroups = new Pool();
     this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
     this.micromoleculesHiddenEntities.frags = new Pool();
+    this.micromoleculesHiddenEntities.rxnArrows = new Pool();
+    // this.micromoleculesHiddenEntities.rxnPluses = new Pool();
+    // this.micromoleculesHiddenEntities.multitailArrows = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -1918,6 +1929,20 @@ export class DrawingEntitiesManager {
 
       command.merge(bondAddCommand);
       mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
+    });
+
+    this.rxnArrows.forEach((rxnArrow) => {
+      const rxnArrowAddCommand = targetDrawingEntitiesManager.addRxnArrow(
+        rxnArrow.type,
+        rxnArrow.startEndPosition,
+        rxnArrow.height,
+      );
+
+      const addedRxnArrow = rxnArrowAddCommand.operations[0]
+        .rxnArrow as RxnArrow;
+
+      command.merge(rxnArrowAddCommand);
+      mergedDrawingEntities.rxnArrows.set(addedRxnArrow.id, addedRxnArrow);
     });
 
     this.micromoleculesHiddenEntities.mergeInto(
@@ -2051,6 +2076,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteBond(bond);
       editor.renderersContainer.addBond(bond);
     });
+
+    this.rxnArrows.forEach((rxnArrow) => {
+      editor.renderersContainer.deleteRxnArrow(rxnArrow);
+      editor.renderersContainer.addRxnArrow(rxnArrow);
+    });
   }
 
   public applyMonomersSequenceLayout() {
@@ -2067,6 +2097,8 @@ export class DrawingEntitiesManager {
 
   public clearCanvas() {
     const editor = CoreEditor.provideEditorInstance();
+
+    // TODO rewrite to work with base class (drawingEntity)
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -2086,6 +2118,10 @@ export class DrawingEntitiesManager {
 
     this.bonds.forEach((bond) => {
       editor.renderersContainer.deleteBond(bond);
+    });
+
+    this.rxnArrows.forEach((bond) => {
+      editor.renderersContainer.deleteRxnArrow(bond);
     });
 
     SequenceRenderer.clear();
@@ -3222,11 +3258,14 @@ export class DrawingEntitiesManager {
     });
   }
 
-  private deleteRxnArrowModelChange() {}
+  private deleteRxnArrowModelChange(rxnArrow: RxnArrow) {
+    this.rxnArrows.delete(rxnArrow.id);
+  }
 
   private addRxnArrowModelChange(
-    mode: RxnArrowMode,
+    type: RxnArrowMode,
     position: [Vec2, Vec2],
+    height?: number,
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
@@ -3235,18 +3274,40 @@ export class DrawingEntitiesManager {
       return _arrow;
     }
 
-    const rxnArrow = new RxnArrow(mode, position);
+    const rxnArrow = new RxnArrow(type, position, height);
 
     this.rxnArrows.set(rxnArrow.id, rxnArrow);
 
     return rxnArrow;
   }
 
-  public addReactionArrow(mode: RxnArrowMode, position: [Vec2, Vec2]) {
+  public addRxnArrow(
+    type: RxnArrowMode,
+    position: [Vec2, Vec2],
+    height?: number,
+  ) {
     const command = new Command();
     const operation = new RxnArrowAddOperation(
-      this.addRxnArrowModelChange.bind(this, mode, position),
+      this.addRxnArrowModelChange.bind(this, type, position, height),
       this.deleteRxnArrowModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteRxnArrow(rxnArrow: RxnArrow) {
+    const command = new Command();
+    const operation = new RxnArrowDeleteOperation(
+      rxnArrow,
+      this.deleteRxnArrowModelChange.bind(this),
+      this.addRxnArrowModelChange.bind(
+        this,
+        rxnArrow.type,
+        rxnArrow.startEndPosition,
+        rxnArrow.height,
+      ),
     );
 
     command.addOperation(operation);

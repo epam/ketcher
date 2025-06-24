@@ -21,6 +21,7 @@ import {
   Struct,
   UnresolvedMonomer,
   Vec2,
+  RxnArrow as MicromoleculeRxnArrow,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
@@ -974,6 +975,16 @@ export class KetSerializer implements Serializer<Struct> {
         }
       });
     }
+
+    drawingEntitiesManager.rxnArrows.forEach((rxnArrow) => {
+      const arrow = new MicromoleculeRxnArrow({
+        mode: rxnArrow.type,
+        pos: [rxnArrow.startPosition, rxnArrow.endPosition],
+        height: rxnArrow.height,
+      });
+
+      struct.rxnArrows.add(arrow);
+    });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 

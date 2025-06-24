@@ -1,6 +1,4 @@
 import { KetSerializer } from 'domain/serializers';
-import { IRnaPreset } from './tools';
-import { AmbiguousMonomerType, MonomerOrAmbiguousType } from 'domain/types';
 
 export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
   const monomersLibraryParsedJson =
@@ -13,16 +11,4 @@ export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
   );
 
   return { monomersLibraryParsedJson, monomersLibrary };
-};
-
-export const isLibraryItemRnaPreset = (
-  item: IRnaPreset | MonomerOrAmbiguousType,
-): item is IRnaPreset => {
-  return 'sugar' in item;
-};
-
-export const isMonomerAmbiguous = (
-  item: MonomerOrAmbiguousType,
-): item is AmbiguousMonomerType => {
-  return item.isAmbiguous === true;
 };

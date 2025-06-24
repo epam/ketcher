@@ -21,7 +21,6 @@ import {
   SettingsManager,
   type EditorLineLength,
   type SingleChainMacromoleculeProperties,
-  IRnaPreset,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';

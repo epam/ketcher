@@ -74,16 +74,16 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import {
-  isLibraryItemRnaPreset,
-  isMonomerAmbiguous,
-  parseMonomersLibrary,
-} from './helpers';
+import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
-import { getAminoAcidsToModify } from 'domain/helpers/monomers';
+import {
+  getAminoAcidsToModify,
+  isAmbiguousMonomerLibraryItem,
+  isLibraryItemRnaPreset,
+} from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
@@ -579,7 +579,7 @@ export class CoreEditor {
               ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
               : undefined,
           }).command;
-        } else if (isMonomerAmbiguous(item)) {
+        } else if (isAmbiguousMonomerLibraryItem(item)) {
           modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),

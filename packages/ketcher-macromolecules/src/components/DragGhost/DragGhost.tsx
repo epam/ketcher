@@ -1,7 +1,6 @@
 import {
-  IRnaPreset,
+  isLibraryItemRnaPreset,
   LibraryItemDragEventName,
-  MonomerOrAmbiguousType,
   ZoomTool,
 } from 'ketcher-core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -11,13 +10,6 @@ import { GhostRnaPreset } from './svg/GhostRnaPreset';
 import { GhostMonomer } from 'components/DragGhost/svg/GhostMonomer';
 import { useZoomTransform } from '../../hooks/useZoomTransform';
 import { LibraryItemDragState } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-
-// TODO: Extract this helper
-const isRnaPreset = (
-  item: IRnaPreset | MonomerOrAmbiguousType,
-): item is IRnaPreset => {
-  return 'sugar' in item;
-};
 
 export const DragGhost = () => {
   const [libraryItemDragData, setLibraryItemDragData] =
@@ -95,7 +87,7 @@ export const DragGhost = () => {
 
   return (
     <div className={styles.dragGhost} ref={ghostWrapperRef}>
-      {isRnaPreset(libraryItemDragData.item) ? (
+      {isLibraryItemRnaPreset(libraryItemDragData.item) ? (
         <GhostRnaPreset preset={libraryItemDragData.item} />
       ) : (
         <GhostMonomer monomerItem={libraryItemDragData.item} />

@@ -613,15 +613,25 @@ class Editor implements KetcherEditor {
       delete tool.ci;
     }
 
-    if (ci && setHover(ci, true, this.render)) tool.ci = ci;
+    if (ci && setHover(ci, true, this.render)) {
+      tool.ci = ci;
+    }
 
-    if (!event) return;
+    if (!ci) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        isShow: false,
+      });
+      return;
+    }
 
-    setFunctionalGroupsTooltip({
-      editor: this,
-      event,
-      isShow: true,
-    });
+    if (event) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        event,
+        isShow: true,
+      });
+    }
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
@@ -923,9 +933,8 @@ function useToolIfNeeded(
   editor.lastEvent = event;
   const conditions = [
     eventHandlerName in editorTool,
-    clientArea.contains(event.target as Node) ||
-      editorTool.isSelectionRunning?.(),
-    eventHandlerName === 'mousemove' || isContextMenuClosed(editor.contextMenu),
+    clientArea.contains(event.target) || editorTool.isSelectionRunning?.(),
+    isContextMenuClosed(editor.contextMenu),
   ];
 
   if (conditions.every((condition) => condition)) {
@@ -1002,6 +1011,17 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         !isMouseMainButtonPressed(event)
       ) {
         return true;
+      }
+
+      if (eventName === 'mousemove') {
+        const itemUnderCursor = editor.findItem(event, [
+          'atoms',
+          'bonds',
+          'sgroups',
+        ]);
+        if (!itemUnderCursor) {
+          editor.hover(null);
+        }
       }
 
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {

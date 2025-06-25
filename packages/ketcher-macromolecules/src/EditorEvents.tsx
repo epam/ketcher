@@ -120,8 +120,13 @@ export const EditorEvents = () => {
     };
   }, [editor]);
 
+  /*
+   * Redux freezes payload object which lead to the issues on changing MonomerItem properties after showing preview
+   * TODO: Ideally perform a deep clone but now it leads to the error when cloning Struct class
+   */
   const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
+    (payload) =>
+      dispatch(showPreview({ ...payload, monomer: { ...payload.monomer } })),
     [dispatch],
   );
 

@@ -1,4 +1,7 @@
 import { Page, Locator } from '@playwright/test';
+import { clickOnAtom } from '@utils/clicks';
+import { AtomLabelType } from '@utils/clicks/types';
+import { waitForRender } from '@utils/common';
 
 type AttachmentPointsDialogLocators = {
   closeWindowButton: Locator;
@@ -34,11 +37,23 @@ export const AttachmentPointsDialog = (page: Page) => {
     },
 
     async apply() {
-      await locators.applyButton.click();
+      await waitForRender(page, async () => {
+        await locators.applyButton.click();
+      });
     },
 
     async cancel() {
       await locators.cancelButton.click();
+    },
+
+    async setAttachmentPoints(
+      atom: { label: AtomLabelType; index: number },
+      { primary = false, secondary = false },
+    ) {
+      await clickOnAtom(page, atom.label, atom.index);
+      await locators.primaryAttachmentPointCheckbox.setChecked(primary);
+      await locators.secondaryAttachmentPointCheckbox.setChecked(secondary);
+      await this.apply();
     },
   };
 };

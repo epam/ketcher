@@ -7,7 +7,6 @@ import {
   PeptideNaturalAnalogCount,
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
-import { delay } from '@utils/canvas';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type PeptidesTabLocators = {

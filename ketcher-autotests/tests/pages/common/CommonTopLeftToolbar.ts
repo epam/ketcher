@@ -2,6 +2,7 @@
 import { Page, Locator } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type TopLeftToolbarLocators = {
   clearCanvasButton: Locator;
@@ -91,12 +92,12 @@ export const CommonTopLeftToolbar = (page: Page) => {
     },
 
     async calculateProperties() {
-      await waitForRender(page, async () => {
+      await waitForCalculateProperties(page, async () => {
         await locators.calculateMacromoleculePropertiesButton.click({
           timeout: 1000,
         });
-        await page.waitForTimeout(1000);
       });
+      await page.waitForTimeout(1000);
     },
   };
 };

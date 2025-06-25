@@ -363,6 +363,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
         return (
           <StyledMonomersCountPanelItem
             monomerShortName={monomerShortName}
+            data-testid={monomerShortName + '-option'}
             isPeptide={props.isPeptide}
             disabled={count === 0}
             key={monomerShortName}
@@ -403,7 +404,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
       {props.hint && (
         <StyledTooltip title={props.hint}>
           <PropertyHintIconWrapper>
-            <PropertyHintIcon name="about" />
+            <PropertyHintIcon name="about" dataTestId={props.name + '-info'} />
           </PropertyHintIconWrapper>
         </StyledTooltip>
       )}
@@ -1026,7 +1027,7 @@ export const MacromoleculePropertiesWindow = () => {
     }
 
     return (
-      <GrossFormula>
+      <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
           .map((atomNameWithAmount, i) => {

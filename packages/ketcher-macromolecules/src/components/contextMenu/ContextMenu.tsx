@@ -14,6 +14,7 @@ interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
+  icon?: ReactElement;
   disabled?:
     | boolean
     | (({
@@ -61,6 +62,7 @@ const assembleMenuItems = (
       {
         name,
         title,
+        icon,
         hidden,
         disabled,
         isMenuTitle,
@@ -73,7 +75,7 @@ const assembleMenuItems = (
     ) => {
       const item =
         subMenuItems && subMenuItems.length ? (
-          <Submenu label={title} data-testid={name}>
+          <Submenu label={title} data-testid={name} key={name}>
             {assembleMenuItems(subMenuItems, handleMenuChange)}
           </Submenu>
         ) : (
@@ -99,7 +101,8 @@ const assembleMenuItems = (
             }}
             onMouseOut={() => onMouseOut?.(name)}
           >
-            <span>{title}</span>
+            {icon && <span className="context_menu-icon">{icon}</span>}
+            <span className="context_menu-text">{title}</span>
           </Item>
         );
       items.push(item);

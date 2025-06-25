@@ -37,6 +37,7 @@
   --contexify-itemContent-padding: 3px 20px;
   --contexify-activeItem-radius: 0;
 
+
   position: fixed;
   user-select: none;
   box-sizing: border-box;
@@ -48,8 +49,16 @@
   .icon {
     width: 20px;
     height: 20px;
-    margin: 0 10px 0 -10px;
+    display: flex;
+    align-items: center;
+    margin: 0 12px 3px 0;
   }
+
+  .contextMenuText {
+    display: flex;
+    align-items: center;
+    line-height: var(--ketcher-font-size-regular);
+  }  
 
   :global(.contexify_submenu) {
     max-height: 400px;

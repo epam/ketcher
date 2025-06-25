@@ -12,8 +12,10 @@ import assert from 'assert';
 import {
   BaseMonomer,
   Chem,
+  HydrogenBond,
   LinkerSequenceNode,
   MonomerSequenceNode,
+  MonomerToAtomBond,
   Phosphate,
   Pool,
   RNABase,
@@ -83,7 +85,6 @@ import {
   BondAddOperation,
   BondDeleteOperation,
 } from 'application/editor/operations/coreBond/bond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
@@ -94,7 +95,6 @@ import {
   HalfMonomerSize,
 } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
@@ -112,7 +112,7 @@ import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger, SettingsManager } from 'utilities';
-import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+import { EmptyMonomer } from './EmptyMonomer';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -798,7 +798,7 @@ export class DrawingEntitiesManager {
       this.deletePolymerBondChangeModel.bind(this, polymerBond),
       (_polymerBond?: PolymerBond | HydrogenBond) =>
         this.finishPolymerBondCreationModelChange(
-          polymerBond.firstMonomer,
+          polymerBond.firstMonomer as BaseMonomer,
           polymerBond.secondMonomer as BaseMonomer,
           firstAttachmentPoint,
           secondAttachmentPoint,
@@ -852,7 +852,7 @@ export class DrawingEntitiesManager {
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
     bondType?: MACROMOLECULES_BOND_TYPES,
-    _polymerBond?: PolymerBond,
+    _polymerBond?: PolymerBond | HydrogenBond,
   ) {
     if (_polymerBond) {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
@@ -1711,7 +1711,7 @@ export class DrawingEntitiesManager {
   }
 
   private redrawBondsModelChange(
-    bond: PolymerBond | MonomerToAtomBond,
+    bond: PolymerBond | HydrogenBond | MonomerToAtomBond,
     startPosition?: Vec2,
     endPosition?: Vec2,
   ) {
@@ -1860,8 +1860,12 @@ export class DrawingEntitiesManager {
       assert(polymerBond.secondMonomer);
       const polymerBondCreateCommand =
         targetDrawingEntitiesManager.createPolymerBond(
-          monomerToNewMonomer.get(polymerBond.firstMonomer) as BaseMonomer,
-          monomerToNewMonomer.get(polymerBond.secondMonomer) as BaseMonomer,
+          monomerToNewMonomer.get(
+            polymerBond.firstMonomer as BaseMonomer,
+          ) as BaseMonomer,
+          monomerToNewMonomer.get(
+            polymerBond.secondMonomer as BaseMonomer,
+          ) as BaseMonomer,
           polymerBond.firstMonomer.getAttachmentPointByBond(
             polymerBond,
           ) as AttachmentPointName,
@@ -1985,8 +1989,8 @@ export class DrawingEntitiesManager {
         }
       } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
         filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
-          entity.firstMonomer,
-          entity.secondMonomer,
+          entity.firstMonomer as BaseMonomer,
+          entity.secondMonomer as BaseMonomer,
           AttachmentPointName.HYDROGEN,
           AttachmentPointName.HYDROGEN,
           MACROMOLECULES_BOND_TYPES.HYDROGEN,
@@ -2052,7 +2056,7 @@ export class DrawingEntitiesManager {
       xmax = Math.max(xmax, monomer.position.x);
       ymax = Math.max(ymax, monomer.position.y);
     });
-    this.polymerBonds.forEach((bond: PolymerBond) => {
+    this.polymerBonds.forEach((bond: PolymerBond | HydrogenBond) => {
       xmin = Math.min(xmin, bond.position.x);
       ymin = Math.min(ymin, bond.position.y);
       xmax = Math.max(xmax, bond.position.x);
@@ -3198,7 +3202,7 @@ export class DrawingEntitiesManager {
   }
 
   private checkBondForOverlapsByMonomers(
-    polymerBond: PolymerBond,
+    polymerBond: PolymerBond | HydrogenBond,
     monomers?: BaseMonomer[],
   ) {
     const editor = this.coreEditorId

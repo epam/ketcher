@@ -1,23 +1,25 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from './BaseBond';
 import { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
+import { IBaseMonomer } from './types';
 
 export class HydrogenBond extends BaseBond {
-  public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
-  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
+  constructor(
+    public firstMonomer: IBaseMonomer,
+    public secondMonomer?: IBaseMonomer,
+  ) {
     super();
     this.firstMonomer = firstMonomer;
     this.secondMonomer = secondMonomer;
   }
 
-  public setFirstMonomer(monomer: BaseMonomer) {
+  public setFirstMonomer(monomer: IBaseMonomer) {
     this.firstMonomer = monomer;
   }
 
-  public setSecondMonomer(monomer: BaseMonomer) {
+  public setSecondMonomer(monomer: IBaseMonomer) {
     this.secondMonomer = monomer;
   }
 
@@ -44,16 +46,16 @@ export class HydrogenBond extends BaseBond {
     return true;
   }
 
-  get firstEndEntity(): BaseMonomer {
-    return this.firstMonomer;
+  get firstEndEntity(): IBaseMonomer {
+    return this.firstMonomer as IBaseMonomer;
   }
 
-  get secondEndEntity(): BaseMonomer | undefined {
+  get secondEndEntity(): IBaseMonomer | undefined {
     return this.secondMonomer;
   }
 
-  public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
-    return super.getAnotherEntity(monomer) as BaseMonomer;
+  public getAnotherMonomer(monomer: IBaseMonomer): IBaseMonomer | undefined {
+    return super.getAnotherEntity(monomer) as IBaseMonomer;
   }
 
   public get isHorizontal() {

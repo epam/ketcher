@@ -1,7 +1,10 @@
-import { select } from 'd3';
+import { selectAll } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
 import { ZoomTool } from 'application/editor';
-import { drawnStructuresSelector } from 'application/editor/constants';
+import {
+  drawnStructuresSelector,
+  editorSelector,
+} from 'application/editor/constants';
 import { HydrogenBond, PolymerBond } from 'domain/entities';
 import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
@@ -15,6 +18,7 @@ import {
   LineLengthHighlightView,
   LineLengthHighlightViewParams,
 } from './LineLengthHighlightView';
+import { ketcherProvider } from 'application/utils';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -30,8 +34,12 @@ export class TransientDrawingView {
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
 
-  constructor() {
-    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+  constructor(ketcherId: string) {
+    const canvas =
+      ZoomTool.instance?.canvas ||
+      selectAll(editorSelector)[ketcherProvider.getIndexById(ketcherId)].select(
+        drawnStructuresSelector,
+      );
     this.defaultLayer = canvas
       .append('g')
       .attr('class', 'transient-views-layer');

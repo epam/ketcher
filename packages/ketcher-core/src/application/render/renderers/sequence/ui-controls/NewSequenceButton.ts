@@ -2,8 +2,12 @@ import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
 import { CoreEditor } from 'application/editor';
 import ZoomTool from '../../../../editor/tools/Zoom';
-import { select } from 'd3';
-import { drawnStructuresSelector } from 'application/editor/constants';
+import { selectAll } from 'd3';
+import {
+  drawnStructuresSelector,
+  editorSelector,
+} from 'application/editor/constants';
+import { ketcherProvider } from 'application/utils';
 
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
@@ -19,7 +23,12 @@ export class NewSequenceButton {
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
   constructor(private indexOfRowBefore: number, private coreEditorId: string) {
-    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const editor = CoreEditor.provideEditorInstance(coreEditorId);
+    this.canvas =
+      ZoomTool.instance?.canvas ||
+      selectAll(editorSelector)[
+        ketcherProvider.getIndexById(editor.ketcherId)
+      ].select(drawnStructuresSelector);
   }
 
   public show() {

@@ -355,7 +355,10 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
-    const bondRenderer = new MonomerToAtomBondRenderer(bond);
+    const bondRenderer = new MonomerToAtomBondRenderer(
+      bond,
+      this._coreEditorId,
+    );
     this.redrawDrawingEntity(bond.atom);
 
     bondRenderer.show();

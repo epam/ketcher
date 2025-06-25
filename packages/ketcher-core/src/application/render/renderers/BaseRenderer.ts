@@ -1,12 +1,15 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
-import { select } from 'd3';
+import { select, selectAll } from 'd3';
 import {
   canvasSelector,
   drawnStructuresSelector,
+  editorSelector,
 } from 'application/editor/constants';
+import { ketcherProvider } from 'application/utils';
+import { CoreEditor } from 'application/editor';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -43,10 +46,18 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
-  protected constructor(public drawingEntity: DrawingEntity) {
+  protected constructor(
+    public drawingEntity: DrawingEntity,
+    coreEditorId: string,
+  ) {
+    const editor = CoreEditor.provideEditorInstance(coreEditorId);
     this.canvasWrapper =
       ZoomTool.instance?.canvasWrapper || select(canvasSelector);
-    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    this.canvas =
+      ZoomTool.instance?.canvas ||
+      selectAll(editorSelector)[
+        ketcherProvider.getIndexById(editor.ketcherId)
+      ].select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {

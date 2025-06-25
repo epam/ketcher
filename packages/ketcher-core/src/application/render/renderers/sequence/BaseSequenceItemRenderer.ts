@@ -47,7 +47,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private previousRowsWithAntisense = 0,
     public twoStrandedNode: ITwoStrandedChainItem,
   ) {
-    super(node.monomer);
+    super(node.monomer, _coreEditorId);
     this.editorEvents = editorEvents;
   }
 

@@ -93,11 +93,8 @@ export const CommonTopLeftToolbar = (page: Page) => {
 
     async calculateProperties() {
       await waitForCalculateProperties(page, async () => {
-        await locators.calculateMacromoleculePropertiesButton.click({
-          timeout: 1000,
-        });
+        await locators.calculateMacromoleculePropertiesButton.click();
       });
-      await page.waitForTimeout(1000);
     },
   };
 };

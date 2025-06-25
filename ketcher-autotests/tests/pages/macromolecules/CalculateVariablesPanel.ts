@@ -100,9 +100,13 @@ export const CalculateVariablesPanel = (page: Page) => {
 
     async setMolecularMassUnits(value: MolecularMassUnit) {
       await locators.molecularMassUnitsCombobox.click();
-      await waitForCalculateProperties(page, async () => {
-        await page.getByTestId(value).click();
-      });
+      await waitForCalculateProperties(
+        page,
+        async () => {
+          await page.getByTestId(value).click();
+        },
+        5000,
+      );
     },
 
     async getIsoelectricPointValue() {
@@ -134,7 +138,7 @@ export const CalculateVariablesPanel = (page: Page) => {
         await page.getByTestId(value).click();
       });
       // to avoid render problems on quick changing of few unit selectors in row
-      await delay(0.5);
+      // await delay(0.5);
     },
 
     async getOligonucleotidesValue() {
@@ -156,7 +160,7 @@ export const CalculateVariablesPanel = (page: Page) => {
         await page.getByTestId(value).click();
       });
       // to avoid render problems on quick changing of few unit selectors in row
-      await delay(0.5);
+      // await delay(0.5);
     },
 
     async getNaturalAnalogCount(

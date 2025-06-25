@@ -9,7 +9,7 @@ const emptyFunction: AnyFunction = async () => {};
 export const waitForCalculateProperties = async (
   page: Page,
   callback = emptyFunction,
-  timeout = 500,
+  timeout = 1000,
 ) => {
   await callback();
 

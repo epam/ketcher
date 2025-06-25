@@ -318,6 +318,7 @@ test.describe('Calculate Properties tests', () => {
      */
     await keyboardTypeOnCanvas(page, 'AAA');
     await CommonTopLeftToolbar(page).calculateProperties();
+    await page.waitForTimeout(1000);
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '925.653',
     );
@@ -1632,6 +1633,7 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await CommonTopLeftToolbar(page).calculateProperties();
+    await page.waitForTimeout(3000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

@@ -12,6 +12,7 @@ import assert from 'assert';
 import {
   BaseMonomer,
   Chem,
+  KetFileMultitailArrowNode,
   LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
@@ -119,6 +120,12 @@ import {
   RxnArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnArrow';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import {
+  MultitailArrowAddOperation,
+  MultitailArrowDeleteOperation,
+} from 'application/editor/operations/coreRxn/multitailArrow';
+import { KetFileNode } from 'domain/serializers';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -146,6 +153,7 @@ export class DrawingEntitiesManager {
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
   public rxnArrows: Map<number, RxnArrow> = new Map();
+  public multitailArrows: Map<number, MultitailArrow> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -191,6 +199,7 @@ export class DrawingEntitiesManager {
       ...(this.atoms as Map<number, DrawingEntity>),
       ...(this.bonds as Map<number, DrawingEntity>),
       ...(this.rxnArrows as Map<number, DrawingEntity>),
+      ...(this.multitailArrows as Map<number, DrawingEntity>),
     ];
   }
 
@@ -323,6 +332,8 @@ export class DrawingEntitiesManager {
       return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
     } else if (drawingEntity instanceof RxnArrow) {
       return this.deleteRxnArrow(drawingEntity);
+    } else if (drawingEntity instanceof MultitailArrow) {
+      return this.deleteMultitailArrow(drawingEntity);
     } else {
       return new Command();
     }
@@ -463,6 +474,7 @@ export class DrawingEntitiesManager {
       ...this.atoms.values(),
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -1807,7 +1819,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.frags = new Pool();
     this.micromoleculesHiddenEntities.rxnArrows = new Pool();
     // this.micromoleculesHiddenEntities.rxnPluses = new Pool();
-    // this.micromoleculesHiddenEntities.multitailArrows = new Pool();
+    this.micromoleculesHiddenEntities.multitailArrows = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -1945,6 +1957,18 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.rxnArrows.set(addedRxnArrow.id, addedRxnArrow);
     });
 
+    this.multitailArrows.forEach((multitailArrow) => {
+      const arrowAddCommand = targetDrawingEntitiesManager.addMultitailArrow(
+        multitailArrow.toKetNode(),
+      );
+
+      const addedArrow = arrowAddCommand.operations[0]
+        .multitailArrow as MultitailArrow;
+
+      command.merge(arrowAddCommand);
+      mergedDrawingEntities.multitailArrows.set(addedArrow.id, addedArrow);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2016,6 +2040,18 @@ export class DrawingEntitiesManager {
           entity,
           entity.cip,
         );
+      } else if (entity instanceof RxnArrow) {
+        filteredDrawingEntitiesManager.addRxnArrowModelChange(
+          entity.type,
+          entity.startEndPosition,
+          entity.height,
+          entity,
+        );
+      } else if (entity instanceof MultitailArrow) {
+        filteredDrawingEntitiesManager.addMultitailArrowArrowModelChange(
+          entity.toKetNode(),
+          entity,
+        );
       }
     });
 
@@ -2081,6 +2117,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteRxnArrow(rxnArrow);
       editor.renderersContainer.addRxnArrow(rxnArrow);
     });
+
+    this.multitailArrows.forEach((multitailArrow) => {
+      editor.renderersContainer.deleteMultitailArrow(multitailArrow);
+      editor.renderersContainer.addMultitailArrow(multitailArrow);
+    });
   }
 
   public applyMonomersSequenceLayout() {
@@ -2122,6 +2163,10 @@ export class DrawingEntitiesManager {
 
     this.rxnArrows.forEach((bond) => {
       editor.renderersContainer.deleteRxnArrow(bond);
+    });
+
+    this.multitailArrows.forEach((bond) => {
+      editor.renderersContainer.deleteMultitailArrow(bond);
     });
 
     SequenceRenderer.clear();
@@ -3307,6 +3352,57 @@ export class DrawingEntitiesManager {
         rxnArrow.type,
         rxnArrow.startEndPosition,
         rxnArrow.height,
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  private deleteMultitailArrowModelChange(multitailArrow: MultitailArrow) {
+    this.multitailArrows.delete(multitailArrow.id);
+  }
+
+  private addMultitailArrowArrowModelChange(
+    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    _arrow?: MultitailArrow,
+  ) {
+    if (_arrow) {
+      this.multitailArrows.set(_arrow.id, _arrow);
+
+      return _arrow;
+    }
+
+    const multitailArrow = MultitailArrow.fromKet(multitailArrowKetNode);
+
+    this.multitailArrows.set(multitailArrow.id, multitailArrow);
+
+    return multitailArrow;
+  }
+
+  public addMultitailArrow(
+    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+  ) {
+    const command = new Command();
+    const operation = new MultitailArrowAddOperation(
+      this.addMultitailArrowArrowModelChange.bind(this, multitailArrowKetNode),
+      this.deleteMultitailArrowModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteMultitailArrow(multitailArrow: MultitailArrow) {
+    const command = new Command();
+    const operation = new MultitailArrowDeleteOperation(
+      multitailArrow,
+      this.deleteMultitailArrowModelChange.bind(this),
+      this.addMultitailArrowArrowModelChange.bind(
+        this,
+        multitailArrow.toKetNode(),
       ),
     );
 

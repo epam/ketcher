@@ -7,6 +7,7 @@ import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
+import { Vec2 } from 'domain/entities';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -81,6 +82,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get y() {
     return this.rootBBox?.y || 0;
+  }
+
+  public get selectionPoints(): Vec2[] | undefined {
+    return undefined;
   }
 
   public abstract show(theme, force?: boolean): void;

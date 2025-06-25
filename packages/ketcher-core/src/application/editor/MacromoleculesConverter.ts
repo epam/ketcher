@@ -5,6 +5,7 @@ import {
   FunctionalGroup,
   Pile,
   RxnArrow as MicromoleculesRxnArrow,
+  MultitailArrow as MicromoleculesMultitailArrow,
   SGroup,
   SGroupAttachmentPoint,
   Struct,
@@ -14,6 +15,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   ReAtom,
   ReBond,
+  ReMultitailArrow,
   ReRxnArrow,
   ReSGroup,
   ReStruct,
@@ -314,6 +316,16 @@ export class MacromoleculesConverter {
       });
       const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
       reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
+    });
+
+    drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
+      const micromoleculeMultitailArrow =
+        MicromoleculesMultitailArrow.fromKetNode(multitailArrow.toKetNode());
+      const arrowId = struct.multitailArrows.add(micromoleculeMultitailArrow);
+      reStruct?.multitailArrows.set(
+        arrowId,
+        new ReMultitailArrow(micromoleculeMultitailArrow),
+      );
     });
 
     struct.findConnectedComponents();
@@ -701,6 +713,13 @@ export class MacromoleculesConverter {
         rxnArrow.mode,
         rxnArrow.pos as [Vec2, Vec2],
         rxnArrow.height,
+      );
+      command.merge(arrowAddCommand);
+    });
+
+    struct.multitailArrows.forEach((multitailArrow) => {
+      const arrowAddCommand = drawingEntitiesManager.addMultitailArrow(
+        multitailArrow.toKetNode(),
       );
       command.merge(arrowAddCommand);
     });

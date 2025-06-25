@@ -22,6 +22,7 @@ import {
   UnresolvedMonomer,
   Vec2,
   RxnArrow as MicromoleculeRxnArrow,
+  MultitailArrow as MicromoleculeMultitailArrow,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
@@ -984,6 +985,14 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.rxnArrows.add(arrow);
+    });
+
+    drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
+      const arrow = MicromoleculeMultitailArrow.fromKetNode(
+        multitailArrow.toKetNode(),
+      );
+
+      struct.multitailArrows.add(arrow);
     });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);

@@ -34,6 +34,8 @@ import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -367,6 +369,16 @@ export class RenderersManager {
   }
 
   public deleteRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addMultitailArrow(arrow: MultitailArrow) {
+    const arrowRenderer = new MultitailArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteMultitailArrow(arrow: MultitailArrow) {
     arrow.renderer?.remove();
   }
 

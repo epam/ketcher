@@ -5,6 +5,7 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 
 export interface Operation {
   priority?: number;
@@ -14,6 +15,7 @@ export interface Operation {
   monomerToAtomBond?: MonomerToAtomBond;
   polymerBond?: PolymerBond;
   rxnArrow?: RxnArrow;
+  multitailArrow?: MultitailArrow;
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;
   executeAfterAllOperations?(renderersManager: RenderersManager): void;

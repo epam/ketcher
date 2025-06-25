@@ -3,6 +3,7 @@ import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseBond } from 'domain/entities/BaseBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
 
@@ -49,7 +50,8 @@ export class DrawingEntityMoveOperation implements Operation {
     // we need to redraw them to apply the correct drawing mode.
     if (
       this.drawingEntity instanceof BaseBond ||
-      this.drawingEntity instanceof RxnArrow
+      this.drawingEntity instanceof RxnArrow ||
+      this.drawingEntity instanceof MultitailArrow
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
@@ -60,7 +62,8 @@ export class DrawingEntityMoveOperation implements Operation {
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     if (
       this.drawingEntity instanceof BaseBond ||
-      this.drawingEntity instanceof RxnArrow
+      this.drawingEntity instanceof RxnArrow ||
+      this.drawingEntity instanceof MultitailArrow
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {

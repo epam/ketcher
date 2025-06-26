@@ -3,14 +3,16 @@ import { waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectSequenceLayoutModeTool,
   MonomerType,
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   waitForRender,
 } from '@utils';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools';
 import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,

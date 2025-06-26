@@ -337,6 +337,7 @@ test.describe('Open/Save/Paste files', () => {
       MoleculesFileFormatType.DaylightSMILES,
     );
     await SaveStructureDialog(page).warningsTab.click();
+    await SaveStructureDialog(page).warningsTab.click();
     await takeEditorScreenshot(page);
   });
 

@@ -4,15 +4,14 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
-  cutAndPaste,
   MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { cutAndPaste, selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   FileType,
   verifyFileExport,

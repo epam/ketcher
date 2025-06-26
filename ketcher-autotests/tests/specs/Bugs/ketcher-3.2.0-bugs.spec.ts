@@ -172,6 +172,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ACGTUNBDHKWYMRSV',
     );
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {

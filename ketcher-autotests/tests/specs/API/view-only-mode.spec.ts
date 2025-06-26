@@ -13,11 +13,11 @@ import {
   moveOnAtom,
   pressButton,
   dragMouseTo,
-  selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   getAtomByIndex,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';

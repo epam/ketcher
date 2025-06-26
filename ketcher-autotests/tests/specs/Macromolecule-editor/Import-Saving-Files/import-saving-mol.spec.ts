@@ -142,6 +142,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: After importing a file with modified monomers, it is clear which monomer is modified,
     and when hovering, preview display changes made during modification
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',

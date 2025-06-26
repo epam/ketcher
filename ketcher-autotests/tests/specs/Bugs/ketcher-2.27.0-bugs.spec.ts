@@ -9,7 +9,6 @@ import {
   MacroFileType,
   selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   takePageScreenshot,
   selectSequenceLayoutModeTool,
@@ -22,6 +21,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { waitForPageInit } from '@utils/common';
 import {
   connectMonomersWithBonds,

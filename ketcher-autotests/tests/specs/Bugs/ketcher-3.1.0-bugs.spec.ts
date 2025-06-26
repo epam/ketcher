@@ -42,6 +42,7 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils/keyboard/index';
 import { Bases } from '@constants/monomers/Bases';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -401,6 +402,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       await keyboardPressOnCanvas(page, 'ArrowUp');
     }
     await page.keyboard.up('Shift');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

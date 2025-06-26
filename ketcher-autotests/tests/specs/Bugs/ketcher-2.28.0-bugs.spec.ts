@@ -332,6 +332,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await keyboardTypeOnCanvas(page, 'UUU');
   await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
+  await resetZoomLevelToDefault(page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

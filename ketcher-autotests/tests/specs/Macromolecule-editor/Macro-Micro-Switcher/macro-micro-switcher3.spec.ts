@@ -1013,9 +1013,7 @@ test.describe('Check that in preview expanded monomers exported both to PNG in t
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1055,9 +1053,8 @@ test.describe('Check that in preview expanded monomers exported both to SVG in t
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1103,9 +1100,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1151,9 +1146,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1201,9 +1194,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1251,9 +1242,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1288,9 +1277,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in PNG
         MoleculesFileFormatType.PNGImage,
       );
 
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1326,9 +1313,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in SVG
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1410,9 +1395,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
         MoleculesFileFormatType.PNGImage,
       );
 
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1454,9 +1437,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 

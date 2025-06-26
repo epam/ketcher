@@ -46,6 +46,7 @@ describe('Save modal', () => {
           atoms: [],
           rxnArrows: [],
           multitailArrows: [],
+          rxnPluses: [],
         },
         viewModel: {
           initialize: jest.fn(),

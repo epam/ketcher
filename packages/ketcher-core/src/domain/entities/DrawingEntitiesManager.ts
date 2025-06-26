@@ -126,6 +126,11 @@ import {
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
 import { KetFileNode } from 'domain/serializers';
+import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import {
+  RxnPlusAddOperation,
+  RxnPlusDeleteOperation,
+} from 'application/editor/operations/coreRxn/rxnPlus';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -154,6 +159,7 @@ export class DrawingEntitiesManager {
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
   public rxnArrows: Map<number, RxnArrow> = new Map();
   public multitailArrows: Map<number, MultitailArrow> = new Map();
+  public rxnPluses: Map<number, RxnPlus> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -200,6 +206,7 @@ export class DrawingEntitiesManager {
       ...(this.bonds as Map<number, DrawingEntity>),
       ...(this.rxnArrows as Map<number, DrawingEntity>),
       ...(this.multitailArrows as Map<number, DrawingEntity>),
+      ...(this.rxnPluses as Map<number, DrawingEntity>),
     ];
   }
 
@@ -334,6 +341,8 @@ export class DrawingEntitiesManager {
       return this.deleteRxnArrow(drawingEntity);
     } else if (drawingEntity instanceof MultitailArrow) {
       return this.deleteMultitailArrow(drawingEntity);
+    } else if (drawingEntity instanceof RxnPlus) {
+      return this.deleteRxnPlus(drawingEntity);
     } else {
       return new Command();
     }
@@ -475,6 +484,7 @@ export class DrawingEntitiesManager {
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -1818,7 +1828,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
     this.micromoleculesHiddenEntities.frags = new Pool();
     this.micromoleculesHiddenEntities.rxnArrows = new Pool();
-    // this.micromoleculesHiddenEntities.rxnPluses = new Pool();
+    this.micromoleculesHiddenEntities.rxnPluses = new Pool();
     this.micromoleculesHiddenEntities.multitailArrows = new Pool();
   }
 
@@ -1969,6 +1979,17 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.multitailArrows.set(addedArrow.id, addedArrow);
     });
 
+    this.rxnPluses.forEach((rxnPlus) => {
+      const plusAddCommand = targetDrawingEntitiesManager.addRxnPlus(
+        rxnPlus.position,
+      );
+
+      const addedPlus = plusAddCommand.operations[0].rxnPlus as RxnPlus;
+
+      command.merge(plusAddCommand);
+      mergedDrawingEntities.rxnPluses.set(addedPlus.id, addedPlus);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -2052,6 +2073,11 @@ export class DrawingEntitiesManager {
           entity.toKetNode(),
           entity,
         );
+      } else if (entity instanceof RxnPlus) {
+        filteredDrawingEntitiesManager.addRxnPlusModelChange(
+          entity.position,
+          entity,
+        );
       }
     });
 
@@ -2122,6 +2148,11 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteMultitailArrow(multitailArrow);
       editor.renderersContainer.addMultitailArrow(multitailArrow);
     });
+
+    this.rxnPluses.forEach((rxnPlus) => {
+      editor.renderersContainer.deleteRxnPlus(rxnPlus);
+      editor.renderersContainer.addRxnPlus(rxnPlus);
+    });
   }
 
   public applyMonomersSequenceLayout() {
@@ -2167,6 +2198,10 @@ export class DrawingEntitiesManager {
 
     this.multitailArrows.forEach((bond) => {
       editor.renderersContainer.deleteMultitailArrow(bond);
+    });
+
+    this.rxnPluses.forEach((rxnPlus) => {
+      editor.renderersContainer.deleteRxnPlus(rxnPlus);
     });
 
     SequenceRenderer.clear();
@@ -3404,6 +3439,49 @@ export class DrawingEntitiesManager {
         this,
         multitailArrow.toKetNode(),
       ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  private deleteRxnPlusModelChange(rxnPlus: RxnPlus) {
+    this.rxnPluses.delete(rxnPlus.id);
+  }
+
+  private addRxnPlusModelChange(position: Vec2, _rxnPlus?: RxnPlus) {
+    if (_rxnPlus) {
+      this.rxnPluses.set(_rxnPlus.id, _rxnPlus);
+
+      return _rxnPlus;
+    }
+
+    const rxnPlus = new RxnPlus(position);
+
+    this.rxnPluses.set(rxnPlus.id, rxnPlus);
+
+    return rxnPlus;
+  }
+
+  public addRxnPlus(position: Vec2) {
+    const command = new Command();
+    const operation = new RxnPlusAddOperation(
+      this.addRxnPlusModelChange.bind(this, position),
+      this.deleteRxnPlusModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteRxnPlus(rxnPlus: RxnPlus) {
+    const command = new Command();
+    const operation = new RxnPlusDeleteOperation(
+      rxnPlus,
+      this.deleteRxnPlusModelChange.bind(this),
+      this.addRxnPlusModelChange.bind(this, rxnPlus.position),
     );
 
     command.addOperation(operation);

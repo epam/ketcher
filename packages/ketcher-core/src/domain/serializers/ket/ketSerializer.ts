@@ -23,6 +23,7 @@ import {
   Vec2,
   RxnArrow as MicromoleculeRxnArrow,
   MultitailArrow as MicromoleculeMultitailArrow,
+  RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
@@ -993,6 +994,14 @@ export class KetSerializer implements Serializer<Struct> {
       );
 
       struct.multitailArrows.add(arrow);
+    });
+
+    drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
+      const micromoleculeRxnPlus = new MicromoleculeRxnPlus({
+        pp: rxnPlus.position,
+      });
+
+      struct.rxnPluses.add(micromoleculeRxnPlus);
     });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);

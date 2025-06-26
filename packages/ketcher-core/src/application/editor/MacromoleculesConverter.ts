@@ -6,6 +6,7 @@ import {
   Pile,
   RxnArrow as MicromoleculesRxnArrow,
   MultitailArrow as MicromoleculesMultitailArrow,
+  RxnPlus as MicromoleculesRxnPlus,
   SGroup,
   SGroupAttachmentPoint,
   Struct,
@@ -17,6 +18,7 @@ import {
   ReBond,
   ReMultitailArrow,
   ReRxnArrow,
+  ReRxnPlus,
   ReSGroup,
   ReStruct,
 } from 'application/render';
@@ -326,6 +328,15 @@ export class MacromoleculesConverter {
         arrowId,
         new ReMultitailArrow(micromoleculeMultitailArrow),
       );
+    });
+
+    drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
+      const micromoleculeRxnPlus = new MicromoleculesRxnPlus({
+        pp: rxnPlus.position,
+      });
+      const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
+
+      reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
     });
 
     struct.findConnectedComponents();
@@ -721,7 +732,14 @@ export class MacromoleculesConverter {
       const arrowAddCommand = drawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
       );
+
       command.merge(arrowAddCommand);
+    });
+
+    struct.rxnPluses.forEach((rxnPlus) => {
+      const rxnPlusAddCommand = drawingEntitiesManager.addRxnPlus(rxnPlus.pp);
+
+      command.merge(rxnPlusAddCommand);
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

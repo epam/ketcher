@@ -142,12 +142,13 @@ export async function screenshotDialog(page: Page, dialogId: string) {
 
 export async function takeElementScreenshot(
   page: Page,
-  elementId: string,
+  elementLocator: Locator,
   options?: {
     mask?: Locator[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
+    delay?: number;
   },
 ) {
   if (options?.hideMonomerPreview) {
@@ -156,14 +157,12 @@ export async function takeElementScreenshot(
     });
     await page.getByTestId('polymer-library-preview').isHidden();
   }
+  let element = elementLocator;
 
-  let element = page.getByTestId(elementId);
-
-  if ((await element.count()) > 1) {
-    element = element.filter({ has: page.locator(':visible') });
-    element = element.first();
+  if ((await elementLocator.count()) > 1) {
+    element = element.filter({ has: page.locator(':visible') }).first();
   }
-
+  await element.waitFor({ state: 'visible' });
   await expect(element).toHaveScreenshot(options);
 }
 
@@ -210,7 +209,7 @@ export async function takePresetsScreenshot(
   page: Page,
   options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, 'rna-accordion', options);
+  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
 }
 
 export async function takeRNABuilderScreenshot(
@@ -222,7 +221,11 @@ export async function takeRNABuilderScreenshot(
     timeout?: number;
   },
 ) {
-  await takeElementScreenshot(page, 'rna-editor-expanded', options);
+  await takeElementScreenshot(
+    page,
+    page.getByTestId('rna-editor-expanded'),
+    options,
+  );
 }
 
 export async function takeMonomerLibraryScreenshot(
@@ -240,7 +243,11 @@ export async function takeMonomerLibraryScreenshot(
     const modifier = getControlModifier();
     await page.keyboard.press(`${modifier}+KeyB`);
   }
-  await takeElementScreenshot(page, 'monomer-library', options);
+  await takeElementScreenshot(
+    page,
+    page.getByTestId('monomer-library'),
+    options,
+  );
 }
 
 export async function takeEditorScreenshot(
@@ -258,23 +265,23 @@ export async function takeEditorScreenshot(
     const modifier = getControlModifier();
     await page.keyboard.press(`${modifier}+KeyB`);
   }
-  await takeElementScreenshot(page, KETCHER_CANVAS, options);
+  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'left-toolbar-buttons');
+  await takeElementScreenshot(page, page.getByTestId('left-toolbar-buttons'));
 }
 
 export async function takeLeftToolbarMacromoleculeScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'left-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('left-toolbar'));
 }
 
 export async function takeRightToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'right-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('right-toolbar'));
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'top-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('top-toolbar'));
 }
 
 export async function takePolymerEditorScreenshot(page: Page) {

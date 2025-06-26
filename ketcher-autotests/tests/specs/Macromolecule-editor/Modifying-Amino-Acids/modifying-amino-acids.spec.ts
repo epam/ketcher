@@ -2370,10 +2370,10 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2422,10 +2422,10 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2474,10 +2474,10 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2526,10 +2526,10 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2578,10 +2578,10 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2630,10 +2630,10 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2682,10 +2682,10 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists

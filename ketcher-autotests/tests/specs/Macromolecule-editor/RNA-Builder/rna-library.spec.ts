@@ -1422,7 +1422,7 @@ test.describe('RNA Library', () => {
 
     // Case 23
     await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await takeElementScreenshot(page, Chem.Test_6_Ch.testId, {
+    await takeElementScreenshot(page, page.getByTestId(Chem.Test_6_Ch.testId), {
       maxDiffPixelRatio: 0.03,
       hideMonomerPreview: true,
     });

@@ -491,7 +491,11 @@ test.describe('Common connection rules: ', () => {
       .first()
       .hover();
     await waitForMonomerPreviewMicro(page);
-    await takeElementScreenshot(page, 'monomer-preview-micro');
+
+    await takeElementScreenshot(
+      page,
+      page.getByTestId('monomer-preview-micro'),
+    );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

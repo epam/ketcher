@@ -18,7 +18,7 @@
      - [Snake and Flex Modes](#snake-and-flex-modes)
      - [Creating Antisense Chains](#creating-antisense-chains)
      - [Macromolecules Properties](#macromolecules-properties)
-    - [Macromolecules and Molecules Mode Integration](#macromolecules-and-molecules-mode-integration)
+     - [Macromolecules and Molecules Mode Integration](#macromolecules-and-molecules-mode-integration)
 - [Working with Files](#working-with-files)
 - [Hotkeys](#hotkeys)
 
@@ -473,7 +473,7 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-canvas-3.4..png width = "1000"/>
+<img src=images/Macro-canvas-3.5..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
@@ -504,6 +504,18 @@ The left toolbar consists of the following elements:
 - **Bond tool** (4) used to establish bonds (both single covalent (1) and hydrogen (2)) between elements on canvas in snake and flex layout modes:
 
 <img src=images/Macro-Bonds-3.0..png width = "100"/>
+
+Below the main toolbar a handle and the input feild are visible:
+
+<img src=images/Ruler-Handle-3.5..png width = "50"/>
+
+When hovered, the ruler is visible – it can be used to change the number of monomers in a line in snake and sequence layout modes by dragging the handle or by inputting a number in the field:
+
+ <img src=images/Ruler-Hover-3.5..png width = "800"/>
+
+ <img src=images/Ruler-Snake-3.5..gif width = "500"/>
+
+  <img src=images/Ruler-Sequence-3.5..gif width = "500"/>
 
 ## Macromolecules Library
 
@@ -598,7 +610,9 @@ Backbone connections (R1-R2) are established automatically within one sequence. 
 
 In addition to typing and pasting text or formats who always result in natural monomers, other formats can also be pasted and monomers can be added by clicking on their library cards - this allows the user to add modified monomers to the canvas.
 
-Already existing monomers can also be replaced by selecting them and clicking on a library card, or modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above).
+Already existing monomers can also be replaced by selecting them and clicking on a library card. Nuclotides can be modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above), and amino acids can be modified by choosing an appropriate modification from the right-click drop-down menu:
+
+<img src=images/Modify-AAs-Sequence-3.5..png width = "500"/>
 
 ## Snake and Flex Modes
 
@@ -675,6 +689,12 @@ Hydrogen bonds can only be **created** between monomer centers as they do not re
 <img src=images/H-Bond-3.0..gif width = "150"/>
 
 Bond preview and _Edit Connection Points..._ dialog are not available for hydrogen bonds.
+
+### Monomer modification and replacement
+
+Similarely to sequence layout mode, amino acids in snake and flex modes can be modified from the context menu:
+
+<img src=images/Modify-AAs-Snake-3.5..png width = "500"/>
 
 ### Snake and Flex Modes Differences
 
@@ -766,13 +786,13 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
      - *Hydrophobicity* - Represented as a graph with the x-axis signifying amino-acid count, and the y-axis the hydrophobicity score of the natural analogue; The method used is from _Black S.D. and Mould D.R. (1991)_;
      - *Amino Acid Count* - Represents the count of every amino acid with the same natural analogue.
 
-<img src=images/Calculate-Properties-3.4..png width = "800"/>
+<img src=images/Calculate-Properties-3.5..png width = "800"/>
 
 - Nucleic acid specific properties are:
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
      - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleozide.
  
-<img src=images/Calculate-Properties-2-3.4..png width = "800"/>
+<img src=images/Calculate-Properties-2-3.5..png width = "800"/>
 
 The *Calculate Properties* window is available in all modes.
 

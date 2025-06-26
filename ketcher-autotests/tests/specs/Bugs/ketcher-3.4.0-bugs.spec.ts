@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -19,9 +19,14 @@ import {
   selectSequenceLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   takePageScreenshot,
+  clickOnAtom,
+  waitForMonomerPreview,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
@@ -502,5 +507,200 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 20: Alt+C hotkey open the “Calculate Properties” window', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Bug: https://github.com/epam/ketcher/issues/7015
+     * Description: Alt+C hotkey open the “Calculate Properties” window.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Open the "Calculate Properties" window by Alt+C hotkey
+     */
+    await takePageScreenshot(page);
+    await page.keyboard.press('Alt+C');
+    await takePageScreenshot(page);
+  });
+
+  test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Bug: https://github.com/epam/ketcher/issues/7014
+     * Description: Tooltip displayed for the “Calculate Properties” button in main toolbar.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Hover over the “Calculate Properties” button in main toolbar
+     * 3. Verify that tooltip is displayed
+     */
+    const icon = {
+      testId: 'calculate-macromolecule-properties-button',
+      title: 'Calculate properties (Alt+C)',
+    };
+    const iconButton = page.getByTestId(icon.testId);
+    await expect(iconButton).toHaveAttribute('title', icon.title);
+    await iconButton.hover();
+    await expect(icon.title).toBeTruthy();
+    await takeTopToolbarScreenshot(page);
+    await iconButton.click();
+    await takeTopToolbarScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 22: Correct Melting temperature value', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Bug: https://github.com/epam/ketcher/issues/7059
+     * Description: Correct Melting temperature value.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 23: Able to collapse monomer back after flipping and changing mode from Micro to Macro and back', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/7024
+     * Description: Able to collapse monomer back after flipping and changing mode from Micro to Macro and back
+     * Scenario:
+     * 1. Load from KET
+     * 2. Go to Micro mode
+     * 3. Expand monomer and flip in vertically
+     * 4. Go to Macromolecules mode and back to Molecules mode
+     * 5. Try to collapse monomer
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
+    await expandMonomer(page, page.getByText('Edc'));
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAllStructuresOnCanvas(page);
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'O', 0, 'right');
+    await page.getByText('Collapse monomer').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 24: App not crashes when adding Ambiguous Amino Acids to peptide sequence with open Calculate Properties window', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/7039
+     * Description: App not crashes when adding Ambiguous Amino Acids to peptide sequence with open Calculate Properties window
+     * Scenario:
+     * 1. Open Ketcher in Macro mode
+     * 2. Add a peptide sequence to the canvas.
+     * 3. Open the Calculate Properties window.
+     * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
+     */
+    await switchToPeptideMode(page);
+    await keyboardTypeOnCanvas(page, 'QWERTYASDF');
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await Library(page).selectMonomer(Peptides.X);
+    await Library(page).selectMonomer(Peptides.B);
+    await Library(page).selectMonomer(Peptides.J);
+    await Library(page).selectMonomer(Peptides.Z);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 25: Rotation work for expanded monomers on Molecules mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/7007
+     * Description: Rotation work for expanded monomers on Molecules mode
+     * Scenario:
+     * 1. Open Ketcher in Micro mode
+     * 2. Load from KET
+     * 3. Expand monomer and rotate it
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
+    await expandMonomer(page, page.getByText('Edc'));
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAllStructuresOnCanvas(page);
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 26: Limit size of structures in preview', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/4212
+     * Description: Limit size of structures in preview.
+     * Scale is no larger than on the canvas with zoom 100%
+     * Scenario:
+     * 1. Add some molecules and structures on canvas in micro mode ( e.g. Benzene ring, molecules )
+     * 2. Switch to Macro mode and hover over abbreviations
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/benzene-ring-with-attachment-point.ket',
+    );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await getMonomerLocator(page, {
+      monomerAlias: 'F1',
+    }).hover();
+    await waitForMonomerPreview(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(
+    'Case 27: System not removes monomers from Molecules mode canvas when switched from Macro mode (bonds remain!) if ketcher in embedded mode (custom style iframe)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7243
+       * Bug: https://github.com/epam/ketcher/issues/6974
+       * Description: System not removes monomers from Molecules mode canvas when switched from
+       * Macro mode (bonds remain!) if ketcher in embedded mode (custom style iframe)
+       * Scenario:
+       * 1. Open Ketcher in iFrame mode locally
+       * 2. Go to Macro - Flex mode (empty canvas!)
+       * 3. Add simple preset on the canvas
+       * 4. Switch to Micro mode
+       * 5. Take screenshot
+       */
+      await selectFlexLayoutModeTool(page);
+      await Library(page).selectMonomer(Presets.A);
+      await clickInTheMiddleOfTheScreen(page);
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/7027
+     * Description: Leaving group atom(s) should be highlighted in one way on monomer hover and on hover over that atom(s)
+     * Scenario:
+     * 1. Load from KET
+     * 2. Expand monomer
+     * 3. Hover over leaving group atom(s)
+     * 4. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
+    await expandMonomer(page, page.getByText('Edc'));
+    await page.mouse.move(650, 350);
+    await takeEditorScreenshot(page);
   });
 });

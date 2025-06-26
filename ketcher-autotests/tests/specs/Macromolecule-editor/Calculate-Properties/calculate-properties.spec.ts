@@ -146,7 +146,7 @@ test.describe('Calculate Properties tests', () => {
     const iconButton = page.getByTestId(icon.testId);
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    await expect(icon.title).toBeTruthy();
     await takeTopToolbarScreenshot(page);
     await iconButton.click();
     await takeTopToolbarScreenshot(page);

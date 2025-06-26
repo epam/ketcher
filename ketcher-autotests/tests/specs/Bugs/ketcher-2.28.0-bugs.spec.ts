@@ -23,11 +23,13 @@ import {
   selectCanvasArea,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import {
   FileType,
   verifyFileExport,

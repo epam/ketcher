@@ -126,6 +126,7 @@ test.describe('Import-Saving .mol Files', () => {
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',

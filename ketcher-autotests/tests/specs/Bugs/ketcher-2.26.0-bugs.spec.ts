@@ -13,18 +13,14 @@ import {
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
   BondType,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   resetCurrentTool,
   waitForMonomerPreview,
   dragMouseTo,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -35,13 +31,19 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   copyToClipboardByIcon,
   moveMouseAway,
-  getAtomByIndex,
   getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -307,7 +309,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await page.mouse.wheel(0, 400);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      mask: [SettingsDialog(page).resetButton],
+    });
   });
 
   test('Case 9: The reaction can be saved to MOL V3000', async () => {
@@ -668,7 +672,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await expect(setACSSettings).toBeVisible();
     await expect(setACSSettings).toHaveText('Set ACS Settings');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      mask: [SettingsDialog(page).resetButton],
+    });
   });
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
@@ -794,6 +800,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).clearCanvas();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 

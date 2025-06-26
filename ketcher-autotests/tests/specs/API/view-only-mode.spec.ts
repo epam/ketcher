@@ -15,8 +15,8 @@ import {
   dragMouseTo,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  getAtomByIndex,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';

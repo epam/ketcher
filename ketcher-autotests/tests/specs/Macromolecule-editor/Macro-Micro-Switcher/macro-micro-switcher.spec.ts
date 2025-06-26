@@ -74,7 +74,10 @@ import {
   MacroBondType,
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  resetZoomLevelToDefault,
+} from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -147,6 +150,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
+  await resetZoomLevelToDefault(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -291,6 +295,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     const monomerOnTheCanvas = page
       .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') })
@@ -319,6 +324,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await page.getByText('Edc').hover();
     await dragMouseTo(x1, y1, page);
     await page.getByText('Edc').hover();
@@ -492,6 +498,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     const test6Ch = page
       .getByTestId(KETCHER_CANVAS)
       .getByText(Chem.Test_6_Ch.alias);

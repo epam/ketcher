@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
   MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -11,7 +10,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { cutAndPaste, selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas';
 import {
   FileType,
   verifyFileExport,

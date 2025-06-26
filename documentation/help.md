@@ -511,11 +511,13 @@ Below the main toolbar a handle and the input feild are visible:
 
 When hovered, the ruler is visible – it can be used to change the number of monomers in a line in snake and sequence layout modes by dragging the handle or by inputting a number in the field:
 
- <img src=images/Ruler-Hover-3.5..png width = "800"/>
+<img src=images/Ruler-Hover-3.5..png width = "800"/>
 
- <img src=images/Ruler-Snake-3.5..gif width = "500"/>
+<img src=images/Ruler-Snake-3.5..gif width = "500"/>
 
-  <img src=images/Ruler-Sequence-3.5..gif width = "500"/>
+<img src=images/Ruler-Sequence-3.5..gif width = "500"/>
+
+Different numbers for monomers in a line can be set in different layout modes. The numbers are saved in browser cache, and will be applied upon opening Ketcher again.
 
 ## Macromolecules Library
 

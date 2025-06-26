@@ -319,6 +319,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const x2 = 500;
     const y2 = 500;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
@@ -494,6 +495,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);

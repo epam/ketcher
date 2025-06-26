@@ -13,6 +13,8 @@ import {
   MacroFileType,
   readFileContent,
   SequenceFileFormat,
+  resetCurrentTool,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   FileType,
@@ -722,6 +724,7 @@ for (const correctSequence of correctSequences) {
       [MacroFileType.Sequence, correctSequence.sequenceType],
       correctSequence.sequenceString,
     );
+    await resetZoomLevelToDefault(page);
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

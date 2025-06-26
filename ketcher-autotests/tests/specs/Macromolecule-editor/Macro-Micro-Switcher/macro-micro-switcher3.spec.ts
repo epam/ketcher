@@ -23,6 +23,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   getCachedBodyCenter,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -1580,6 +1581,8 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
         page,
         monomerComposition.KETFile,
       );
+      await resetZoomLevelToDefault(page);
+      await ZoomOutByKeyboard(page);
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);

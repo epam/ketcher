@@ -15,6 +15,8 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   MolFileFormat,
+  resetCurrentTool,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -1157,7 +1159,7 @@ test('9. Check that Right-clicking on a selection that includes an amino-acid (i
     page,
     'KET/Modifying-Amino-Acids/All types of monomers on the canvas and all amino acid modifications.ket',
   );
-
+  await resetZoomLevelToDefault(page);
   await selectAllStructuresOnCanvas(page);
 
   const randomPeptide = getMonomerLocator(page, {
@@ -1475,7 +1477,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
     MacroFileType.HELM,
     'PEPTIDE1{R.R.R}|PEPTIDE2{A}|PEPTIDE3{C}|PEPTIDE4{D}$PEPTIDE1,PEPTIDE2,1:R3-1:R1|PEPTIDE1,PEPTIDE3,2:R3-1:R2|PEPTIDE1,PEPTIDE4,3:R3-1:R3$$$V2.0',
   );
-
+  await resetZoomLevelToDefault(page);
   await selectAllStructuresOnCanvas(page);
 
   const peptide = getMonomerLocator(page, {
@@ -1523,7 +1525,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       MacroFileType.HELM,
       aminoAcidForPhosphorylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1582,7 +1584,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       MacroFileType.HELM,
       aminoAcidForSideChainAcetylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1641,7 +1643,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       MacroFileType.HELM,
       aminoAcidForCitrullination.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1700,7 +1702,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       MacroFileType.HELM,
       aminoAcidForHydroxylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1759,7 +1761,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       MacroFileType.HELM,
       aminoAcidForNMethylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {

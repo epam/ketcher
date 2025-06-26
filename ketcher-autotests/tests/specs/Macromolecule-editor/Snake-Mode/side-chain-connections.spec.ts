@@ -111,6 +111,7 @@ test.describe('Side chain connections', () => {
       page,
       `KET/Side-Chain-Connections/1.1.ket`,
     );
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

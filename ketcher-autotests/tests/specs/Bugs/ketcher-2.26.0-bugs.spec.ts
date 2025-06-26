@@ -818,6 +818,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
     await page.keyboard.press('Escape');
+    await resetZoomLevelToDefault(page);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 7,

@@ -14,7 +14,6 @@ import {
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
@@ -23,6 +22,7 @@ import {
   setMolecule,
   MolFileFormat,
 } from '@utils';
+import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   FileType,

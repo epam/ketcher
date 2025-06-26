@@ -19,14 +19,14 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
   selectCanvasArea,
-  selectFlexLayoutModeTool,
   selectFunctionalGroups,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
+  selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
 } from '@utils/canvas/tools';

@@ -22,8 +22,8 @@ import {
   takeElementScreenshot,
   waitForMonomerPreview,
   copyContentToClipboard,
-  getAtomByIndex,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';
 import {
   modifyInRnaBuilder,

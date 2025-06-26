@@ -6,15 +6,11 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Page, test } from '@playwright/test';
 import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   addMonomerToCenterOfCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -33,6 +29,12 @@ import {
   MolFileFormat,
   SequenceFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {

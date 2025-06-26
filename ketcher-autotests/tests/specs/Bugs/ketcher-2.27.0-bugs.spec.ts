@@ -10,19 +10,19 @@ import {
   resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProjectMacro,
   takePageScreenshot,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   pressButton,
   takeMonomerLibraryScreenshot,
-  selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
 } from '@utils/canvas/tools';
 import { waitForPageInit } from '@utils/common';
 import {

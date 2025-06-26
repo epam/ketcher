@@ -32,7 +32,6 @@ import {
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -103,6 +102,7 @@ import {
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1968,11 +1968,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await setAttachmentPoints(
-      page,
+    await AttachmentPointsDialog(page).setAttachmentPoints(
       { label: 'C', index: 2 },
       { primary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });

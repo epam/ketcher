@@ -3,7 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
@@ -27,6 +26,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(page, RingButton.Benzene);
@@ -122,8 +122,9 @@ test.describe('Open Ketcher', () => {
 
     await page.keyboard.press('Control+r');
     await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
   });
 
@@ -142,8 +143,9 @@ test.describe('Open Ketcher', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', atomIndex);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
     await resetCurrentTool(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
@@ -210,9 +212,12 @@ test.describe('Open Ketcher', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await page.getByTestId('OK').click();
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
 
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');

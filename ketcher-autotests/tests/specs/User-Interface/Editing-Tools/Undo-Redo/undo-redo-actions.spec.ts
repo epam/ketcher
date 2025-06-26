@@ -14,7 +14,6 @@ import {
   openFileAndAddToCanvas,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
@@ -45,6 +44,7 @@ import {
   GeneralSetting,
   ResetToSelectToolOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -558,9 +558,12 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -573,17 +576,22 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
 
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
 
     await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
 
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -604,9 +612,12 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -621,9 +632,12 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -638,9 +652,12 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);
     }
@@ -659,9 +676,12 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     for (let i = 0; i < 5; i++) {
       await ZoomOutByKeyboard(page);
     }

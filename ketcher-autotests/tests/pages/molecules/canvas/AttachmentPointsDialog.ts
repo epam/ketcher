@@ -47,10 +47,15 @@ export const AttachmentPointsDialog = (page: Page) => {
     },
 
     async setAttachmentPoints(
-      atom: { label: AtomLabelType; index: number },
+      atom: { label: AtomLabelType; index: number } | { x: number; y: number },
       { primary = false, secondary = false },
     ) {
-      await clickOnAtom(page, atom.label, atom.index);
+      if ('x' in atom && 'y' in atom) {
+        await page.mouse.click(atom.x, atom.y, { button: 'right' });
+      } else {
+        await clickOnAtom(page, atom.label, atom.index);
+      }
+
       await locators.primaryAttachmentPointCheckbox.setChecked(primary);
       await locators.secondaryAttachmentPointCheckbox.setChecked(secondary);
       await this.apply();

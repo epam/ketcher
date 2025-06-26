@@ -232,7 +232,11 @@ export const RulerArea = () => {
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
       />
-      <RulerScale transform={transform} layoutMode={layoutMode} />
+      <RulerScale
+        transform={transform}
+        layoutMode={layoutMode}
+        lineLengthValue={lineLengthValue}
+      />
     </div>
   ) : null;
 };

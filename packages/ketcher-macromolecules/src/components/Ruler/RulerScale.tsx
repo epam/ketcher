@@ -14,30 +14,32 @@ import {
 type Props = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
+  lineLengthValue: number;
 };
 
-const RulerScale = ({ transform, layoutMode }: Props) => {
+const RulerScale = ({ transform, layoutMode, lineLengthValue }: Props) => {
   const ref = useRef<SVGSVGElement>(null);
 
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const positions = useMemo(() => {
-    return Array.from(
-      { length: layoutMode === 'snake-layout-mode' ? 101 : 20 },
-      (_, i) => {
-        if (layoutMode === 'sequence-layout-mode') {
-          return (
-            SequenceModeStartOffset +
-            i * 10 * SequenceModeItemWidth +
-            (i - 1) * SequenceModeIndentWidth
-          );
-        } else if (layoutMode === 'snake-layout-mode') {
-          return SnakeModeStartOffset + i * SnakeModeItemWidth;
-        }
-        return 0;
-      },
-    );
-  }, [layoutMode]);
+    if (layoutMode === 'sequence-layout-mode') {
+      const count = Math.floor(lineLengthValue / 10) + 1;
+      return Array.from(
+        { length: count },
+        (_, i) =>
+          SequenceModeStartOffset +
+          i * 10 * SequenceModeItemWidth +
+          (i > 0 ? (i - 1) * SequenceModeIndentWidth : 0),
+      );
+    } else if (layoutMode === 'snake-layout-mode') {
+      return Array.from(
+        { length: lineLengthValue + 1 },
+        (_, i) => SnakeModeStartOffset + i * SnakeModeItemWidth,
+      );
+    }
+    return [];
+  }, [layoutMode, lineLengthValue]);
 
   const svgChildren = useMemo(() => {
     const children: ReactElement[] = [];

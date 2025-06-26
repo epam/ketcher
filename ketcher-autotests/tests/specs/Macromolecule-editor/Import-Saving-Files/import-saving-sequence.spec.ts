@@ -13,7 +13,6 @@ import {
   MacroFileType,
   readFileContent,
   SequenceFileFormat,
-  resetCurrentTool,
   resetZoomLevelToDefault,
 } from '@utils';
 import {

@@ -345,6 +345,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/three-monomers-connected-with-bonds.ket',
     );
+    await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);

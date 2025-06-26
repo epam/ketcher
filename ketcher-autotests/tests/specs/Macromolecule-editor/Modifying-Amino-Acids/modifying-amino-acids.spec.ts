@@ -15,7 +15,6 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   MolFileFormat,
-  resetCurrentTool,
   resetZoomLevelToDefault,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

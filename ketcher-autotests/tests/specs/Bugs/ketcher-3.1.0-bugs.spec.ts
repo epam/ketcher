@@ -348,7 +348,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptides.D_OAla);
     await waitForMonomerPreview(page);
-    await takeElementScreenshot(page, 'polymer-library-preview');
+    await takeElementScreenshot(
+      page,
+      page.getByTestId('polymer-library-preview'),
+    );
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {

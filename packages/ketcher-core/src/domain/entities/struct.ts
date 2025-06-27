@@ -838,11 +838,6 @@ export class Struct {
   markFragments(properties?) {
     const components = this.findConnectedComponents();
     components.forEach((comp) => {
-      const [firstAtom] = comp;
-      const sgroup = this.getGroupFromAtomId(firstAtom);
-      if (sgroup instanceof MonomerMicromolecule) {
-        return;
-      }
       this.markFragment(comp, properties);
     });
   }

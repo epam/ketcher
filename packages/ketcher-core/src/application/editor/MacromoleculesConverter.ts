@@ -415,9 +415,16 @@ export class MacromoleculesConverter {
 
   // This method returns array of arrays of fragmentIds grouped by sgroup
   // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
-  public static getFragmentsGroupedBySgroup(struct: Struct) {
+  public static getFragmentsGroupedBySgroup(
+    struct: Struct,
+    fragmentsConvertedToMonomers: Map<number, BaseMonomer>,
+  ) {
     const groupedFragments: number[][] = [];
     struct.frags.forEach((_fragment, fragmentId) => {
+      if (fragmentsConvertedToMonomers.has(fragmentId)) {
+        return;
+      }
+
       const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
         fragmentsGroup.includes(fragmentId),
       );
@@ -473,18 +480,31 @@ export class MacromoleculesConverter {
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();
+
     struct.sgroups.forEach((sgroup) => {
       if (sgroup instanceof MonomerMicromolecule) {
-        command.merge(
-          this.convertMonomerMicromoleculeToMonomer(
-            sgroup,
-            drawingEntitiesManager,
-            sgroupToMonomer,
-          ),
+        const monomerAddCommand = this.convertMonomerMicromoleculeToMonomer(
+          sgroup,
+          drawingEntitiesManager,
+          sgroupToMonomer,
         );
+
+        command.merge(monomerAddCommand);
+
+        const monomerFragmentId = struct.atoms.get(sgroup.atoms[0])?.fragment;
+        if (monomerFragmentId !== undefined) {
+          fragmentIdToMonomer.set(
+            monomerFragmentId,
+            monomerAddCommand.operations[0].monomer as BaseMonomer,
+          );
+        }
       }
     });
-    const fragments = this.getFragmentsGroupedBySgroup(struct);
+
+    const fragments = this.getFragmentsGroupedBySgroup(
+      struct,
+      fragmentIdToMonomer,
+    );
 
     let fragmentNumber = 1;
     const fragmentIdToAtomIdMap = new Map<number, Map<number, number>>();

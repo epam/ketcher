@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
   selectSnakeLayoutModeTool,
@@ -107,10 +108,12 @@ test.describe('Side chain connections', () => {
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
+    await page.waitForTimeout(200);
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/1.1.ket`,
     );
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

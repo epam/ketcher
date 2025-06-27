@@ -19,15 +19,17 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
   selectCanvasArea,
-  selectFlexLayoutModeTool,
   selectFunctionalGroups,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import {
   FileType,
   verifyFileExport,
@@ -332,6 +334,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await keyboardTypeOnCanvas(page, 'UUU');
   await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
+  await resetZoomLevelToDefault(page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

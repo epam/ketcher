@@ -22,6 +22,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -375,6 +376,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
+      await resetZoomLevelToDefault(page);
       await LeftToolbar(page).selectArrowTool(
         ArrowType.ArrowEquilibriumFilledHalfBow,
       );

@@ -1,6 +1,6 @@
 import { SnakeLayoutCellWidth } from 'ketcher-core';
 
-export const SequenceModeStartOffset = 45;
+export const SequenceModeStartOffset = 40;
 export const SequenceModeItemWidth = 20;
 export const SequenceModeIndentWidth = 10;
 export const SnakeModeStartOffset = 25;

@@ -21,8 +21,12 @@ import {
   takePageScreenshot,
   clickOnAtom,
   waitForMonomerPreview,
+  MolFileFormat,
+  copyAndPaste,
+  clickOnCanvas,
+  openFile,
 } from '@utils';
-import { waitForPageInit } from '@utils/common';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -53,6 +57,28 @@ import {
   rotateToCoordinates,
 } from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
+
+async function openPPTXFileAndValidateStructurePreview(
+  page: Page,
+  filePath: string,
+  numberOf: {
+    Structure: number;
+  } = { Structure: 1 },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await openFile(page, filePath);
+  });
+  const openPPTXFileDialog = OpenPPTXFileDialog(page);
+  if (numberOf.Structure !== 1) {
+    await openPPTXFileDialog.selectStructure(numberOf);
+  }
+  await takeEditorScreenshot(page);
+  await openPPTXFileDialog.pressOpenAsNewProjectButton();
+}
 
 let page: Page;
 
@@ -564,7 +590,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
     await CommonTopLeftToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    expect(
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
+    ).toEqual('35.6');
     await CommonTopLeftToolbar(page).calculateProperties();
   });
 
@@ -701,6 +729,278 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, page.getByText('Edc'));
     await page.mouse.move(650, 350);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 29: Layout not changes when switching from micro mode to sequence mode and back', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/5085
+     * Description: Layout not changes when switching from micro mode to sequence mode and back
+     * Scenario:
+     * 1. Open Ketcher in Micro mode
+     * 2. Load from KET
+     * 3. Switch to Sequence mode
+     * 4. Switch back to Micro mode
+     * 5. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Layout changes when switching from micro mode to sequence mode and back.ket',
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 30: Can edit concentration values of unipositive ions and oligonucleotides in Calculate Properties', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/7118
+     * Description: Can edit concentration values of unipositive ions and oligonucleotides in Calculate Properties.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Change the concentration values of unipositive ions and oligonucleotides
+     * 5. Verify that the values are updated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
+    ).toEqual('14.6');
+    await CalculateVariablesPanel(page).setUnipositiveIonsValue('300');
+    await CalculateVariablesPanel(page).setOligonucleotidesValue('300');
+    expect(
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
+    ).toEqual('18.7');
+  });
+
+  test('Case 31: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2772
+     * Description: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Save canvas to SDF v3000 and check the result
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Saving monomers to SDF v300o works wrong.ket',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'SDF/Saving monomers to SDF v300o works wrong-expected.sdf',
+      FileType.SDF,
+      SdfFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SDF/Saving monomers to SDF v300o works wrong-expected.sdf',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 32: Ketcher not fails to save structure in MOL V3000 format when encountering custom attachment labels like “Ch”', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2781
+     * Description: Ketcher not fails to save structure in MOL V3000 format when encountering custom attachment labels like “Ch”
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from MOL
+     * 3. Save canvas to MOL v3000 and check the result
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/DnaBadPairs.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/DnaBadPairs-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/DnaBadPairs-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 33: Save a reaction with Multi-Tailed Arrow to Daylight SMARTS format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2462
+     * Description: Save a reaction with Multi-Tailed Arrow to Daylight SMARTS format
+     * Scenario:
+     * 1. Add to Canvas reaction with Multi-Tailed Arrow
+     * 2. Save canvas to Daylight SMARTS format
+     * 3. Load it back
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Reaction-with-Multi-Tailed-Arrow.ket',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'SMARTS/Reaction-with-Multi-Tailed-Arrow-expected.smarts',
+      FileType.SMARTS,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMARTS/Reaction-with-Multi-Tailed-Arrow-expected.smarts',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 34: Export to KET format work. System not throw exception', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2858
+     * Description: Export to any format work. System not throw exception
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Save canvas to KET and check the result
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/svg-colored-images-with-elements.ket',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/Bugs/svg-colored-images-with-elements-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/svg-colored-images-with-elements-expected.ket',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 35: System not reverse reaction order on Calculated Values dialog', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2859
+     * Description: System not reverse reaction order on Calculated Values dialog
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Press Calculated Values button (or press Alt+c)
+     */
+    const chemicalFormulaWrapper = page.getByTestId('Chemical Formula-wrapper');
+    const molecularWeight = page
+      .getByTestId('Molecular Weight-wrapper')
+      .locator('input[type="text"]');
+    const exactMass = page
+      .getByTestId('Exact Mass-wrapper')
+      .locator('input[type="text"]');
+    const elementalAnalysis = page
+      .getByTestId('Elemental Analysis-wrapper')
+      .locator('textarea');
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/ket-cascade-reaction-3-1-2-1-1.ket',
+    );
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
+    await expect(chemicalFormulaWrapper).toContainText('[C7H14] > [C4H8]');
+    await expect(molecularWeight).toHaveValue('[98.186] > [56.106]');
+    await expect(exactMass).toHaveValue('[98.110] > [56.063]');
+    await expect(elementalAnalysis).toHaveValue(
+      '[C 85.6 H 14.4] > [C 85.6 H 14.4]',
+    );
+  });
+
+  test('Case 36: Copy to clipboard work if Multi-Tailed Arrow present on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2860
+     * Description: Copy to clipboard work if Multi-Tailed Arrow present on the canvas
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Select all object on the canvas (press Ctrl+a) and copy it to clipboard (press Ctrl+c)
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/benzene-ring-and-multitailed-arrow.ket',
+    );
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 37: Saving of 3:3 reaction to SDF v2000 not causes exception: Convert error! core: <reaction> is not a base molecule', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2805
+     * Description: Saving of 3:3 reaction to SDF v2000 not causes exception: Convert error! core: <reaction> is not a base molecule
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Save canvas to SDF v2000 and check the result
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'RDF-V2000/rdf-rxn-v2000-reaction-3x3-new.rdf',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'SDF/rdf-rxn-v2000-reaction-3x3-new-expected.sdf',
+      FileType.SDF,
+      SdfFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SDF/rdf-rxn-v2000-reaction-3x3-new-expected.sdf',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 38: System not shifts text label to the right', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/1683
+     * Description: System not shifts text label to the right
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open from pptx file
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Shifted.labels.pptx',
+    );
     await takeEditorScreenshot(page);
   });
 });

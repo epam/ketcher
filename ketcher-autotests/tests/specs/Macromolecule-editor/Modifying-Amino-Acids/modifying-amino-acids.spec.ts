@@ -49,7 +49,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await CommonTopLeftToolbar(page).clearCanvas();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSnakeLayoutModeTool(page);
+  await selectFlexLayoutModeTool(page);
   await CommonTopRightToolbar(page).resetZoom();
 });
 

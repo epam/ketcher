@@ -161,8 +161,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 9.525,
-            "y": -5.95
+            "x": 10.4,
+            "y": -6.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -396,8 +396,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 11.025,
-            "y": -5.95
+            "x": 11.9,
+            "y": -6.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -406,8 +406,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 12.525,
-            "y": -5.95
+            "x": 13.4,
+            "y": -6.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -416,8 +416,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 9.525,
-            "y": -7.45
+            "x": 10.4,
+            "y": -8.325000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -426,8 +426,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.025,
-            "y": -7.45
+            "x": 11.9,
+            "y": -8.325000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -436,8 +436,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 12.525,
-            "y": -7.45
+            "x": 13.4,
+            "y": -8.325000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -446,8 +446,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 9.525,
-            "y": -8.95
+            "x": 10.4,
+            "y": -9.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine",
@@ -457,8 +457,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 11.025,
-            "y": -8.95
+            "x": 11.9,
+            "y": -9.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"
@@ -467,8 +467,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 12.525,
-            "y": -8.95
+            "x": 13.4,
+            "y": -9.825000000000001
         },
         "alias": "ThrPO3",
         "templateId": "ThrPO3___O-phospho-L-threonine"

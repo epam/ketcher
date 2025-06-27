@@ -8,8 +8,9 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
   constructor(
     public monomerToAtomBond: MonomerToAtomBond,
     private monomerNode: SubChainNode,
+    coreEditorId: string,
   ) {
-    super(monomerToAtomBond);
+    super(monomerToAtomBond, coreEditorId);
   }
 
   private get monomer() {

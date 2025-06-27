@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { useAppSelector } from 'hooks';
-import { selectEditor } from 'state/common';
+import { selectCoreEditorId } from 'state/common';
 import { useEffect, useRef, useState } from 'react';
 import {
   AttachmentPoint,
@@ -16,6 +16,7 @@ import {
   LeavingGroup,
   UsageInMacromolecule,
   AttachmentPointName,
+  CoreEditor,
 } from 'ketcher-core';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 import { getConnectedAttachmentPoints } from 'helpers';
@@ -68,7 +69,8 @@ const MonomerConnection = ({
   polymerBond,
   isReconnectionDialog,
 }: MonomerConnectionProps): React.ReactElement => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const initialFirstMonomerAttachmentPointRef = useRef(
     polymerBond?.firstMonomerAttachmentPoint,
   );

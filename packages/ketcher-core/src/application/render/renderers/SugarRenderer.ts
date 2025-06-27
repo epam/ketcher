@@ -13,8 +13,14 @@ export class SugarRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
-  constructor(public monomer: Sugar, scale?: number) {
-    super(monomer, SUGAR_HOVERED_ELEMENT_ID, SUGAR_SYMBOL_ELEMENT_ID, scale);
+  constructor(public monomer: Sugar, coreEditorId: string, scale?: number) {
+    super(
+      monomer,
+      SUGAR_HOVERED_ELEMENT_ID,
+      SUGAR_SYMBOL_ELEMENT_ID,
+      coreEditorId,
+      scale,
+    );
   }
 
   public get textColor() {

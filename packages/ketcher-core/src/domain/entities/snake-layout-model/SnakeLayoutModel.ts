@@ -25,14 +25,16 @@ export interface TwoStrandedSnakeLayoutNode {
 }
 
 export class SnakeLayoutModel {
+  private coreEditorId: string;
   private nodes: TwoStrandedSnakeLayoutNode[] = [];
   private monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     TwoStrandedSnakeLayoutNode
   > = new Map();
 
-  constructor(chainsCollection: ChainsCollection) {
+  constructor(chainsCollection: ChainsCollection, coreEditorId: string) {
     this.fillNodes(chainsCollection);
+    this.coreEditorId = coreEditorId;
   }
 
   private addNode(snakeLayoutNode: SnakeLayoutNode, chain) {
@@ -103,7 +105,7 @@ export class SnakeLayoutModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this.coreEditorId);
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {

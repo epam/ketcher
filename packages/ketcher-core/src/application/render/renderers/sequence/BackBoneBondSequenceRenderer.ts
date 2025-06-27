@@ -2,8 +2,8 @@ import { BaseSequenceRenderer } from 'application/render/renderers/sequence/Base
 import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class BackBoneBondSequenceRenderer extends BaseSequenceRenderer {
-  constructor(polymerBond: PolymerBond) {
-    super(polymerBond);
+  constructor(polymerBond: PolymerBond, coreEditorId: string) {
+    super(polymerBond, coreEditorId);
   }
 
   public get isSnake(): false {

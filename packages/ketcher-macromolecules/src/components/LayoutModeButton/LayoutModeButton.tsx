@@ -19,12 +19,14 @@ import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
+import { CoreEditor } from 'ketcher-core';
 
 export const LayoutModeButton = () => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const layoutMode = useLayoutMode();
   const [activeMode, setActiveMode] = useState(layoutMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(

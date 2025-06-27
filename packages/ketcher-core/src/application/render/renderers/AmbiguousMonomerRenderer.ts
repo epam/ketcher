@@ -26,7 +26,11 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     variant?: string;
   };
 
-  constructor(public monomer: AmbiguousMonomer, scale?: number) {
+  constructor(
+    public monomer: AmbiguousMonomer,
+    private coreEditorId: string,
+    scale?: number,
+  ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 
@@ -34,6 +38,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       monomer,
       monomerSymbolElementsIds.hover,
       monomerSymbolElementsIds.body,
+      coreEditorId,
       scale,
     );
 
@@ -136,15 +141,18 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       customAngle,
     );
 
-    return new PreviewAttachmentPoint({
-      ...attachmentPointParams,
-      connected:
-        connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
-      selected: selectedAttachmentPoint === attachmentPointName,
-      usage,
-      canvas: params.canvas,
-      applyZoomForPositionCalculation: false,
-    });
+    return new PreviewAttachmentPoint(
+      {
+        ...attachmentPointParams,
+        connected:
+          connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
+        selected: selectedAttachmentPoint === attachmentPointName,
+        usage,
+        canvas: params.canvas,
+        applyZoomForPositionCalculation: false,
+      },
+      this.coreEditorId,
+    );
   }
 
   public showExternal(params: PreviewAttachmentPointParams) {

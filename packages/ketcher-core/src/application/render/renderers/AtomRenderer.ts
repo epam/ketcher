@@ -18,8 +18,8 @@ export class AtomRenderer extends BaseRenderer {
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
 
-  constructor(public atom: Atom) {
-    super(atom);
+  constructor(public atom: Atom, private _coreEditorId: string) {
+    super(atom, _coreEditorId);
     atom.setRenderer(this);
   }
 
@@ -32,7 +32,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     const rootElement = this.canvas
       .insert('g', ':first-child')
@@ -123,7 +123,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
-    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const viewModel = CoreEditor.provideEditorInstance(
+      this._coreEditorId,
+    ).viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     if (atomHaldEdges?.length === 0) {
@@ -150,7 +152,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get isAtomTerminal() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -160,7 +162,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get isLabelVisible() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
@@ -537,10 +539,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private bisectLargestSector(): Vec2 {
-    const { neighborAngle, largestAngle } =
-      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
-        this.atom,
-      );
+    const { neighborAngle, largestAngle } = CoreEditor.provideEditorInstance(
+      this._coreEditorId,
+    ).viewModel.getLargestSectorFromAtomNeighbours(this.atom);
 
     const bisectAngle = neighborAngle + largestAngle / 2;
     return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));

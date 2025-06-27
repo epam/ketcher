@@ -46,8 +46,10 @@ import {
   SvgPreview,
 } from './Save.styles';
 import styled from '@emotion/styled';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { openErrorModal } from 'state/modal';
+import { selectCoreEditorId } from 'state/common';
+
 // TODO: Make it type safe by using `SupportedFormats` as id
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -94,11 +96,12 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
-    const ketSerializer = new KetSerializer();
+    const ketSerializer = new KetSerializer(coreEditorId);
     const serializedKet = ketSerializer.serialize(
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
@@ -189,7 +192,7 @@ export const Save = ({
 
   useEffect(() => {
     if (currentFileFormat === 'ket') {
-      const ketSerializer = new KetSerializer();
+      const ketSerializer = new KetSerializer(coreEditorId);
       const serializedKet = ketSerializer.serialize(
         editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
         editor.drawingEntitiesManager,

@@ -32,6 +32,7 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 
 export class SequenceNodeRendererFactory {
   static fromNode(
+    coreEditorId: string,
     node: SubChainNode | BackBoneSequenceNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
@@ -88,6 +89,7 @@ export class SequenceNodeRendererFactory {
     }
 
     return new RendererClass(
+      coreEditorId,
       node,
       firstMonomerInChainPosition,
       monomerIndexInChain,

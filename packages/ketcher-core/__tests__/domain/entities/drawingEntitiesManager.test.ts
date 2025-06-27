@@ -23,7 +23,7 @@ import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const command = drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
       new Vec2(0, 0),
@@ -34,7 +34,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should create polymer bond', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const { command, polymerBond } =
       drawingEntitiesManager.startPolymerBondCreation(
         new Peptide(peptideMonomerItem),
@@ -51,7 +51,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should create correct polymer bond when second monomer has only R2 point', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const firstPeptide = new Peptide(peptideMonomerItem);
     firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
     firstPeptide.potentialAttachmentPointsToBonds = { R1: null, R2: null };
@@ -129,7 +129,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should select drawing entity', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const drawingEntity = new Peptide(peptideMonomerItem);
     const command = drawingEntitiesManager.selectDrawingEntity(drawingEntity);
     expect(drawingEntity.selected).toBeTruthy();
@@ -138,7 +138,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should move peptide', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const renderersManager = new RenderersManager({ theme: {} });
     jest.spyOn(renderersManager, 'moveDrawingEntity').mockImplementation();
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
@@ -155,7 +155,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should hover drawing entity', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const peptide = new Peptide(peptideMonomerItem);
     const command = drawingEntitiesManager.intendToSelectDrawingEntity(peptide);
     expect(peptide.hovered).toBeTruthy();
@@ -164,7 +164,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should cancel the intention of polymer bond creation and turn off hover', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(null);
     const peptide = new Peptide(peptideMonomerItem);
     drawingEntitiesManager.intendToSelectDrawingEntity(peptide);
     expect(peptide.hovered).toBeTruthy();

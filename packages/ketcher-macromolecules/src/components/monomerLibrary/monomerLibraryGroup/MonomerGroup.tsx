@@ -21,11 +21,12 @@ import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
+  CoreEditor,
   isAmbiguousMonomerLibraryItem,
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectEditor, selectTool, showPreview } from 'state/common';
+import { selectCoreEditorId, selectTool, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
 import {
@@ -43,7 +44,8 @@ const MonomerGroup = ({
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     let monomerDisabled = false;

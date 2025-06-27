@@ -30,6 +30,8 @@ import {
   Atom,
   isClipboardAPIAvailable,
   legacyCopy,
+  ketcherProvider,
+  DrawingEntitiesManager,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -126,6 +128,7 @@ class SaveDialog extends Component {
   }
 
   componentDidMount() {
+    console.log('props', this.props);
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
     this.changeType(this.isRxn ? 'rxn' : 'mol').then(
@@ -151,8 +154,9 @@ class SaveDialog extends Component {
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
-      const ketSerialize = new KetSerializer();
-      const structStr = ketSerialize.serialize(struct);
+      const ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
+      const ketSerialize = new KetSerializer(ketcher._coreEditorId);
+      const structStr = ketSerialize.serialize(struct, ketcher._coreEditorId);
       this.setState({
         disableControls: true,
         tabIndex: 0,
@@ -210,7 +214,7 @@ class SaveDialog extends Component {
           }
           return service.getStructureFromStructAsync(
             struct,
-            undefined,
+            new DrawingEntitiesManager(),
             selection,
           );
         }
@@ -526,17 +530,19 @@ class SaveDialog extends Component {
 
   render() {
     return (
-      <Dialog
-        testId="save-structure-dialog"
-        className={classes.dialog}
-        title="Save Structure"
-        params={this.props}
-        buttons={this.getButtons()}
-        needMargin={false}
-        withDivider={true}
-      >
-        {this.renderForm()}
-      </Dialog>
+      <>
+        <Dialog
+          testId="save-structure-dialog"
+          className={classes.dialog}
+          title="Save Structure"
+          params={this.props}
+          buttons={this.getButtons()}
+          needMargin={false}
+          withDivider={true}
+        >
+          {this.renderForm()}
+        </Dialog>
+      </>
     );
   }
 }
@@ -546,17 +552,21 @@ const serverSettingsSelector = createSelector([getOptions], (options) =>
   options.getServerSettings(),
 );
 
-const mapStateToProps = (state) => ({
-  server: state.options.app.server ? state.server : null,
-  struct: state.editor.struct(),
-  options: serverSettingsSelector(state),
-  formState: state.modal.form,
-  moleculeErrors: state.modal.form.moleculeErrors,
-  checkState: state.options.check,
-  bondThickness: state.options.settings.bondThickness,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
-  editor: state.editor,
-});
+const mapStateToProps = (state) => {
+  console.log('state', state);
+  return {
+    server: state.options.app.server ? state.server : null,
+    struct: state.editor.struct(),
+    options: serverSettingsSelector(state),
+    formState: state.modal.form,
+    moleculeErrors: state.modal.form.moleculeErrors,
+    checkState: state.options.check,
+    bondThickness: state.options.settings.bondThickness,
+    ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
+    editor: state.editor,
+    coreEditorId: state.coreEditorId,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   onCheck: (checkOptions) => dispatch(check(checkOptions)),

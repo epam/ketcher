@@ -9,6 +9,7 @@ import { CoreEditor, SequenceMode } from 'application/editor';
 
 export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
+  coreEditorId: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -20,7 +21,7 @@ export class ModifyAminoAcidsView extends TransientView {
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: ModifyAminoAcidsViewParams,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(params.coreEditorId);
     const { monomersToModify } = params;
 
     if (editor.mode instanceof SequenceMode) {

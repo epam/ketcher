@@ -1,5 +1,5 @@
+import { ketcherProvider } from 'application/ketcherProvider';
 import { ShowHydrogenLabels } from 'application/render';
-import { ketcherProvider } from 'application/utils';
 
 enum IndigoShowHydrogenLabelsMode {
   OFF = 'none',

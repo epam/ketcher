@@ -86,7 +86,7 @@ class SelectRectangle implements BaseTool {
     };
 
     const onStartBrush = () => {
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = CoreEditor.provideEditorInstance(this.editor.id);
       if (editor.isSequenceEditInRNABuilderMode) {
         this.brushArea.select('rect.selection').style('stroke', 'transparent');
       } else {
@@ -96,7 +96,7 @@ class SelectRectangle implements BaseTool {
 
     const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = CoreEditor.provideEditorInstance(this.editor.id);
       if (
         !selection ||
         editor.isSequenceEditMode ||
@@ -176,7 +176,8 @@ class SelectRectangle implements BaseTool {
   }
 
   mousedown(event: MouseEvent) {
-    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+    if (CoreEditor.provideEditorInstance(this.editor.id).isSequenceAnyEditMode)
+      return;
 
     const renderer = event.target?.__data__;
 
@@ -211,7 +212,7 @@ class SelectRectangle implements BaseTool {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
       );
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(this.editor.id);
       const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntitiesToSelect,
@@ -254,7 +255,7 @@ class SelectRectangle implements BaseTool {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
       );
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(this.editor.id);
     }
 
     modelChanges.merge(
@@ -309,6 +310,7 @@ class SelectRectangle implements BaseTool {
     cursorPosition: Vec2,
     connectedPosition: Vec2,
     snappedAngle: number | undefined,
+    coreEditorId: string,
   ) {
     const currentDistance = Vec2.diff(
       cursorPosition,
@@ -321,7 +323,7 @@ class SelectRectangle implements BaseTool {
       return { bondLengthSnapPosition: null };
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(coreEditorId);
     let angle: number;
     if (editor.mode.modeName === 'snake-layout-mode') {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
@@ -691,6 +693,7 @@ class SelectRectangle implements BaseTool {
       cursorPositionInAngstroms,
       connectedMonomer.position,
       snappedAngleRad,
+      this.editor.id,
     );
 
     let snapPosition: Vec2 | undefined;
@@ -907,7 +910,7 @@ class SelectRectangle implements BaseTool {
     if (!(this.editor.selectedTool instanceof EraserTool)) {
       const modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(this.editor.id);
 
       this.editor.renderersContainer.update(modelChanges);
     }

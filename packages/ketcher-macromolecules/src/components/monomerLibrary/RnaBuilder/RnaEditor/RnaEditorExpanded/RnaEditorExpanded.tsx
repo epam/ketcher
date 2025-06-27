@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities } from 'ketcher-core';
+import { CoreEditor, Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -60,7 +60,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
@@ -106,7 +106,8 @@ export const RnaEditorExpanded = ({
   const activePreset = useAppSelector(selectActivePreset);
   const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const presets = useAppSelector(selectAllPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,

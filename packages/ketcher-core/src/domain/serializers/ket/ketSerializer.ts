@@ -144,6 +144,8 @@ function parseNode(node: any, struct: any) {
   }
 }
 export class KetSerializer implements Serializer<Struct> {
+  constructor(private _coreEditorId: string | null) {}
+
   deserializeMicromolecules(content: string): Struct {
     const ket = JSON.parse(content);
     if (!validate(ket)) {
@@ -254,7 +256,10 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    if (!this._coreEditorId) {
+      return { error: true };
+    }
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
@@ -465,7 +470,9 @@ export class KetSerializer implements Serializer<Struct> {
       this.parseAndValidateMacromolecules(fileContent);
     if (hasValidationErrors || !parsedFileContent) return;
     const command = new Command();
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const drawingEntitiesManager = new DrawingEntitiesManager(
+      this._coreEditorId,
+    );
     const monomerIdsMap = {};
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
@@ -530,6 +537,7 @@ export class KetSerializer implements Serializer<Struct> {
       MacromoleculesConverter.convertStructToDrawingEntities(
         deserializedMicromolecules,
         drawingEntitiesManager,
+        this._coreEditorId,
       );
     const localAtomIdToGlobalAtomId = new Map<number, number>();
 
@@ -621,6 +629,7 @@ export class KetSerializer implements Serializer<Struct> {
               superatomMonomerToUsedAttachmentPoint,
               firstMonomer,
               secondMonomer,
+              this._coreEditorId,
             );
 
             command.merge(bondAdditionCommand);
@@ -1036,7 +1045,7 @@ export class KetSerializer implements Serializer<Struct> {
 
   serialize(
     _struct: Struct,
-    drawingEntitiesManager = new DrawingEntitiesManager(),
+    drawingEntitiesManager = new DrawingEntitiesManager(null),
     selection?: EditorSelection,
     isBeautified = true, // TODO make false by default
     needSetSelectionToMacromolecules = false,
@@ -1048,9 +1057,11 @@ export class KetSerializer implements Serializer<Struct> {
       selection,
       true,
     );
+
     MacromoleculesConverter.convertStructToDrawingEntities(
       populatedStruct,
       drawingEntitiesManager,
+      this._coreEditorId,
     );
 
     const {

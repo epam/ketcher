@@ -69,6 +69,7 @@ import {
   pickStandardServerOptions,
   CalculateMacromoleculePropertiesData,
   CalculateMacromoleculePropertiesResult,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -343,9 +344,18 @@ class IndigoService implements StructService {
           }
         }
       };
-      const monomerLibrary = JSON.stringify(
-        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
-      );
+      let monomerLibrary;
+      if (this.ketcherId) {
+        const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+        const coreEditorId = ketcher.coreEditorId;
+
+        if (coreEditorId) {
+          monomerLibrary = JSON.stringify(
+            CoreEditor.provideEditorInstance(coreEditorId)
+              ?.monomersLibraryParsedJson,
+          );
+        }
+      }
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),
         'bond-length-unit': options?.['bond-length-unit'],

@@ -26,19 +26,24 @@ const polymerBondRendererMap = new Map<
 export class PolymerBondRendererFactory {
   public static createInstance(
     polymerBond: PolymerBond | HydrogenBond,
+    coreEditorId: string,
   ): PolymerBondRendererClass {
-    const mode = checkIfIsSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
+    const mode = checkIfIsSnakeMode(coreEditorId)
+      ? LayoutMode.Snake
+      : LayoutMode.Flex;
     return polymerBond instanceof HydrogenBond
-      ? new SnakeModePolymerBondRenderer(polymerBond)
+      ? new SnakeModePolymerBondRenderer(polymerBond, coreEditorId)
       : (PolymerBondRendererFactory.createInstanceByMode(
           mode,
           polymerBond,
+          coreEditorId,
         ) as PolymerBondRendererClass);
   }
 
   public static createInstanceByMode(
     mode: LayoutMode,
     polymerBond: PolymerBond,
+    coreEditorId: string,
   ): PolymerBondRendererClass | never {
     const RendererClass = polymerBondRendererMap.get(mode);
     if (!RendererClass) {
@@ -46,11 +51,11 @@ export class PolymerBondRendererFactory {
         `PolymerBondRenderer for the layout mode “${mode}” not found.`,
       );
     }
-    return new RendererClass(polymerBond);
+    return new RendererClass(polymerBond, coreEditorId);
   }
 }
 
-function checkIfIsSnakeMode(): boolean {
-  const editor = CoreEditor.provideEditorInstance();
+function checkIfIsSnakeMode(coreEditorId: string): boolean {
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   return editor?.mode.modeName === 'snake-layout-mode';
 }

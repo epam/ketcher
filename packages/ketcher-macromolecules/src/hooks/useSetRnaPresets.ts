@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
-import { selectEditor } from 'state/common';
+import { selectCoreEditorId } from 'state/common';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { getPresets } from 'helpers';
 import {
@@ -17,10 +17,12 @@ import {
   loadMonomerLibrary,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
+import { CoreEditor } from 'ketcher-core';
 
 function useSetRnaPresets() {
   const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   useEffect(() => {
     if (!editor) return;

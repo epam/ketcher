@@ -10,6 +10,7 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 
 export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
   constructor(
+    coreEditorId: string,
     public node: Nucleoside | Nucleotide,
     _firstNodeInChainPosition: Vec2,
     _monomerIndexInChain: number,
@@ -23,6 +24,7 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     _twoStrandedNode: ITwoStrandedChainItem,
   ) {
     super(
+      coreEditorId,
       node,
       _firstNodeInChainPosition,
       _monomerIndexInChain,

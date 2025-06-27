@@ -17,10 +17,10 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { SequenceType } from 'ketcher-core';
+import { SequenceType, CoreEditor } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { setSelectedTabIndex } from 'state/library';
@@ -67,7 +67,8 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     editor?.events.changeSequenceTypeEnterMode,

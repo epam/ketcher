@@ -26,16 +26,19 @@ import {
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
-  constructor() {}
+  private _coreEditorId: string;
+  constructor(coreEditorId: string) {
+    this._coreEditorId = coreEditorId;
+  }
 
   public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     editor.mode.initialize(false);
   }
@@ -45,15 +48,19 @@ export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
     private previousPosition: SequencePointer,
     private nextPosition: SequencePointer,
+    private _coreEditorId: string,
   ) {
     this.execute();
   }
 
   public execute() {
-    SequenceRenderer.setCaretPosition(this.nextPosition);
+    SequenceRenderer.setCaretPosition(this.nextPosition, this._coreEditorId);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    SequenceRenderer.setCaretPosition(this.previousPosition);
+    SequenceRenderer.setCaretPosition(
+      this.previousPosition,
+      this._coreEditorId,
+    );
   }
 }

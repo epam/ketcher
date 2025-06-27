@@ -62,5 +62,6 @@ export * from './AmbiguousMonomer';
 export * from './MonomerToAtomBond';
 export * from './HydrogenBond';
 export * from './BackBoneSequenceNode';
+export * from './DrawingEntitiesManager';
 export * from './DrawingEntitiesManager.replaceMonomer';
 export * from './Command';

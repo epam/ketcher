@@ -10,8 +10,11 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
   private selected: boolean;
   private usage: UsageInMacromolecule;
 
-  constructor(constructorParams: PreviewAttachmentPointConstructorParams) {
-    super(constructorParams, true);
+  constructor(
+    constructorParams: PreviewAttachmentPointConstructorParams,
+    coreEditorId: string,
+  ) {
+    super(constructorParams, coreEditorId, true);
 
     this.connected = constructorParams.connected;
     this.selected = constructorParams.selected;

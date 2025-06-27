@@ -41,7 +41,10 @@ export class SequenceViewModel {
 
   private chainToHasAntisense: Map<Chain, boolean> = new Map();
 
-  constructor(public chainsCollection: ChainsCollection) {
+  constructor(
+    public chainsCollection: ChainsCollection,
+    private _coreEditorId: string,
+  ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
     this.postProcessNodes(chainsCollection);
@@ -84,7 +87,7 @@ export class SequenceViewModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {

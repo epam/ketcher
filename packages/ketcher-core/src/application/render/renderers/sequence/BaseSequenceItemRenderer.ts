@@ -34,6 +34,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public antisenseNodeRenderer?: this | undefined;
 
   constructor(
+    private _coreEditorId: string,
     public node: SubChainNode | BackBoneSequenceNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
@@ -46,7 +47,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private previousRowsWithAntisense = 0,
     public twoStrandedNode: ITwoStrandedChainItem,
   ) {
-    super(node.monomer);
+    super(node.monomer, _coreEditorId);
     this.editorEvents = editorEvents;
   }
 
@@ -116,21 +117,27 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return CoreEditor.provideEditorInstance(this._coreEditorId)
+      .isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return CoreEditor.provideEditorInstance(this._coreEditorId)
+      .isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
+    const editorMode = CoreEditor.provideEditorInstance(
+      this._coreEditorId,
+    ).mode;
 
     return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
+    const editorMode = CoreEditor.provideEditorInstance(
+      this._coreEditorId,
+    ).mode;
 
     return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }

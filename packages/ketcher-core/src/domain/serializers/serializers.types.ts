@@ -14,10 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { Struct, Vec2 } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export interface Serializer<T> {
   deserialize: (content: string) => T;
-  serialize: (struct: T) => string;
+  serialize: (
+    struct: T,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) => string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

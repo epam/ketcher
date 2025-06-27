@@ -32,7 +32,10 @@ import { MolfileV2000Formatter } from './molfileV2000Formatter';
 export class FormatterFactory {
   #structService: StructService;
 
-  constructor(structService: StructService) {
+  constructor(
+    structService: StructService,
+    private coreEditorId: string | null,
+  ) {
     this.#structService = structService;
   }
 
@@ -78,14 +81,14 @@ export class FormatterFactory {
     let formatter: StructFormatter;
     switch (format) {
       case SupportedFormat.ket:
-        formatter = new KetFormatter(new KetSerializer());
+        formatter = new KetFormatter(new KetSerializer(this.coreEditorId));
         break;
 
       case SupportedFormat.mol:
         if (queryPropertiesAreUsed) {
           formatter = new ServerFormatter(
             this.#structService,
-            new KetSerializer(),
+            new KetSerializer(this.coreEditorId),
             format,
             structServiceOptions,
           );
@@ -113,7 +116,7 @@ export class FormatterFactory {
       default:
         formatter = new ServerFormatter(
           this.#structService,
-          new KetSerializer(),
+          new KetSerializer(this.coreEditorId),
           format,
           structServiceOptions,
         );

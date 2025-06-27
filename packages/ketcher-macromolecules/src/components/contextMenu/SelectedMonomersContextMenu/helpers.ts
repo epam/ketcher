@@ -137,11 +137,12 @@ const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
 export const getModifyAminoAcidsMenuItems = (
   selectedMonomers: BaseMonomer[],
+  coreEditorId: string,
 ) => {
   const modificationsForSelection = new Set<string>();
   const modificationTypesDisabledByAttachmentPoints = new Set<string>();
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =
@@ -218,6 +219,7 @@ export const getModifyAminoAcidsMenuItems = (
         onMouseOver: () => {
           editor.transientDrawingView.showModifyAminoAcidsView({
             monomersToModify: [...aminoAcidsToModify.keys()],
+            coreEditorId: editor.id,
           });
           editor.transientDrawingView.update();
         },

@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
+import { zoom, select, selectAll, ZoomTransform, ZoomBehavior, drag } from 'd3';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { canvasSelector, drawnStructuresSelector } from '../constants';
+import {
+  canvasSelector,
+  drawnStructuresSelector,
+  editorSelector,
+} from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
 import { StructureBbox } from 'application/render/renderers/types';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 export enum SCROLL_POSITION {
   CENTER = 'CENTER',
@@ -42,7 +47,6 @@ const AUTO_SCROLL_OFFSET_X = 10;
 const AUTO_SCROLL_OFFSET_Y = 10;
 
 export class ZoomTool implements BaseTool {
-  public canvas: D3SvgElementSelection<SVGSVGElement, void>;
   public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
@@ -71,20 +75,35 @@ export class ZoomTool implements BaseTool {
     return ZoomTool._instance;
   }
 
-  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
-    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+  static initInstance(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    ketcherId: string,
+  ) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager, ketcherId);
     return ZoomTool._instance;
   }
 
-  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
+  private constructor(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    private ketcherId: string,
+  ) {
     this.canvasWrapper = select(canvasSelector);
-    this.canvas = select(drawnStructuresSelector);
-
     this.zoomLevel = 1;
     this.zoomTransform = new ZoomTransform(1, 0, 0);
     this.drawingEntitiesManager = drawingEntitiesManager;
 
     this.initActions();
+  }
+
+  canvas(ketcherId: string) {
+    return selectAll(editorSelector)
+      .filter(function (_, i) {
+        return i === ketcherProvider.getIndexById(ketcherId);
+      })
+      .select(drawnStructuresSelector) as D3SvgElementSelection<
+      SVGSVGElement,
+      void
+    >;
   }
 
   initActions() {
@@ -126,7 +145,7 @@ export class ZoomTool implements BaseTool {
   }
 
   zoomAction({ transform }) {
-    this.canvas.attr('transform', transform);
+    this.canvas(this.ketcherId).attr('transform', transform);
     this.zoomLevel = transform.k;
     this.zoomTransform = transform;
     this.drawScrollBars();
@@ -154,7 +173,7 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(forceHide = false) {
-    if (this.canvas.node() && this.canvasWrapper.node()) {
+    if (this.canvas(this.ketcherId).node() && this.canvasWrapper.node()) {
       this.initScrollBars();
       this.renderScrollBar(this.scrollBars.horizontal, forceHide);
       this.renderScrollBar(this.scrollBars.vertical, forceHide);
@@ -306,7 +325,9 @@ export class ZoomTool implements BaseTool {
   }
 
   initScrollBars() {
-    const boundingBox = this.canvas.node()?.getBoundingClientRect() as DOMRect;
+    const boundingBox = this.canvas(this.ketcherId)
+      .node()
+      ?.getBoundingClientRect() as DOMRect;
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;

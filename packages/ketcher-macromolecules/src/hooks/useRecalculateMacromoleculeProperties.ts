@@ -2,6 +2,7 @@ import { IndigoProvider } from 'ketcher-react';
 import {
   Chain,
   ChainsCollection,
+  CoreEditor,
   getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
@@ -11,7 +12,7 @@ import {
 } from 'ketcher-core';
 import {
   molarMeasurementUnitToNumber,
-  selectEditor,
+  selectCoreEditorId,
   selectOligonucleotidesMeasurementUnit,
   selectOligonucleotidesValue,
   selectUnipositiveIonsMeasurementUnit,
@@ -22,7 +23,8 @@ import { useAppDispatch, useAppSelector } from './stateHooks';
 
 export const useRecalculateMacromoleculeProperties = () => {
   const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const unipositiveIonsMeasurementUnit = useAppSelector(
     selectUnipositiveIonsMeasurementUnit,
   );
@@ -40,7 +42,7 @@ export const useRecalculateMacromoleculeProperties = () => {
     const indigo = IndigoProvider.getIndigo() as StructService;
     const selectionDrawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
-    const ketSerializer = new KetSerializer();
+    const ketSerializer = new KetSerializer(coreEditorId);
     const drawingEntitiesManagerToCalculateProperties =
       selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager

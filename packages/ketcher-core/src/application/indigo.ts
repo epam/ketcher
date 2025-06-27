@@ -31,6 +31,7 @@ import { StructOrString } from 'application/indigo.types';
 import { KetSerializer } from 'domain/serializers';
 import { SequenceType, Struct } from 'domain/entities';
 import { defaultBondThickness } from './editor';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 const defaultTypes: Array<CheckTypes> = [
   'radicals',
@@ -77,12 +78,16 @@ type GenerateImageOptions = {
 function convertStructToString(
   struct: StructOrString,
   serializer: KetSerializer,
+  coreEditorId: string | null,
 ): string {
   if (typeof struct !== 'string') {
     const aidMap = new Map();
     const result = struct.clone(null, null, false, aidMap);
 
-    return serializer.serialize(result);
+    return serializer.serialize(
+      result,
+      new DrawingEntitiesManager(coreEditorId),
+    );
   }
 
   return struct;
@@ -91,10 +96,12 @@ function convertStructToString(
 export class Indigo {
   #structService: StructService;
   #ketSerializer: KetSerializer;
+  #coreEditorId: string | null;
 
-  constructor(structService) {
+  constructor(structService, coreEditorId) {
     this.#structService = structService;
-    this.#ketSerializer = new KetSerializer();
+    this.#ketSerializer = new KetSerializer(coreEditorId);
+    this.#coreEditorId = coreEditorId;
   }
 
   info(): Promise<InfoResult> {
@@ -110,7 +117,11 @@ export class Indigo {
 
     return this.#structService.convert(
       {
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: outputFormat,
         input_format: inputFormat,
       },
@@ -124,7 +135,11 @@ export class Indigo {
     return this.#structService
       .layout(
         {
-          struct: convertStructToString(struct, this.#ketSerializer),
+          struct: convertStructToString(
+            struct,
+            this.#ketSerializer,
+            this.#coreEditorId,
+          ),
           output_format: ChemicalMimeType.KET,
         },
         options,
@@ -135,7 +150,11 @@ export class Indigo {
   clean(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .clean({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
@@ -144,7 +163,11 @@ export class Indigo {
   aromatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .aromatize({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
@@ -153,7 +176,11 @@ export class Indigo {
   dearomatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .dearomatize({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
@@ -162,7 +189,11 @@ export class Indigo {
   calculateCip(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .calculateCip({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
@@ -173,7 +204,11 @@ export class Indigo {
 
     return this.#structService
       .automap({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
         mode,
       })
@@ -184,7 +219,11 @@ export class Indigo {
     const types = options?.types || defaultTypes;
 
     return this.#structService.check({
-      struct: convertStructToString(struct, this.#ketSerializer),
+      struct: convertStructToString(
+        struct,
+        this.#ketSerializer,
+        this.#coreEditorId,
+      ),
       types,
     });
   }
@@ -196,7 +235,11 @@ export class Indigo {
     const properties = options?.properties || defaultCalcProps;
 
     return this.#structService.calculate({
-      struct: convertStructToString(struct, this.#ketSerializer),
+      struct: convertStructToString(
+        struct,
+        this.#ketSerializer,
+        this.#coreEditorId,
+      ),
       properties,
     });
   }
@@ -217,7 +260,7 @@ export class Indigo {
     const backgroundColor = options?.backgroundColor || '';
     const bondThickness = options?.bondThickness || defaultBondThickness;
     return this.#structService.generateImageAsBase64(
-      convertStructToString(struct, this.#ketSerializer),
+      convertStructToString(struct, this.#ketSerializer, this.#coreEditorId),
       {
         outputFormat,
         backgroundColor,
@@ -229,7 +272,11 @@ export class Indigo {
   toggleExplicitHydrogens(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .toggleExplicitHydrogens({
-        struct: convertStructToString(struct, this.#ketSerializer),
+        struct: convertStructToString(
+          struct,
+          this.#ketSerializer,
+          this.#coreEditorId,
+        ),
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));

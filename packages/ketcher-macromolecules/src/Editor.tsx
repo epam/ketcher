@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Provider } from 'react-redux';
-import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -28,8 +28,9 @@ import {
   NodeSelection,
   NodesSelection,
   SequenceMode,
+  ketcherProvider,
 } from 'ketcher-core';
-import { store } from 'state';
+import { generateNewStore } from 'state';
 import {
   defaultTheme,
   EditorTheme,
@@ -43,14 +44,13 @@ import {
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
 import {
-  createEditor,
-  destroyEditor,
-  selectEditor,
+  initCoreEditorId,
   selectIsHandToolSelected,
   initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
+  selectCoreEditorId,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -140,7 +140,11 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  store.dispatch(initKetcherId(ketcherId));
+  const store = useMemo(() => generateNewStore(), []);
+
+  useEffect(() => {
+    store.dispatch(initKetcherId(ketcherId));
+  }, [ketcherId, store]);
 
   return (
     <Provider store={store}>
@@ -166,6 +170,7 @@ function EditorContainer({
 }
 
 function Editor({
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -174,7 +179,8 @@ function Editor({
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
@@ -190,18 +196,26 @@ function Editor({
   });
 
   useEffect(() => {
-    dispatch(
-      createEditor({
-        theme,
-        canvas: canvasRef.current,
-        monomersLibraryUpdate,
-        onInit,
-      }),
-    );
+    const ketcher = ketcherProvider.getKetcher(ketcherId);
+    const editor = new CoreEditor({
+      ketcherId,
+      theme,
+      canvas: canvasRef.current as SVGSVGElement,
+      monomersLibraryUpdate,
+    });
+    onInit?.(editor);
+    ketcher.addCoreEditorId(editor.id);
+    dispatch(initCoreEditorId(editor.id));
 
     return () => {
-      dispatch(destroyEditor(null));
+      ketcher.removeCoreEditorId();
+      editor?.removeEditorInstance();
+      editor?.switchToMicromolecules();
     };
+
+    // return () => {
+    //   dispatch(destroyEditor(null));
+    // };
   }, [dispatch]);
 
   useSetRnaPresets();

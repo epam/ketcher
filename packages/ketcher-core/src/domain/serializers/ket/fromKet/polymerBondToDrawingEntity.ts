@@ -13,6 +13,7 @@ export function polymerBondToDrawingEntity(
   superatomMonomerToUsedAttachmentPoint: Map<BaseMonomer, Set<string>>,
   firstMonomer: BaseMonomer,
   secondMonomer: BaseMonomer,
+  coreEditorId: string | null,
 ) {
   const command = new Command();
 
@@ -63,10 +64,13 @@ export function polymerBondToDrawingEntity(
       secondAttachmentPoint as AttachmentPointName,
     )
   ) {
-    const editor = CoreEditor.provideEditorInstance();
-    editor.events.error.dispatch(
-      'There is no free attachment point for bond creation.',
-    );
+    if (coreEditorId) {
+      const editor = CoreEditor.provideEditorInstance(coreEditorId);
+      editor.events.error.dispatch(
+        'There is no free attachment point for bond creation.',
+      );
+    }
+
     return new Command();
   }
 

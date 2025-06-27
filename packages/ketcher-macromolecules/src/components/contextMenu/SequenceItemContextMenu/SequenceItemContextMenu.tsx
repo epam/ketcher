@@ -8,7 +8,7 @@ import {
 } from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import {
@@ -20,6 +20,7 @@ import {
   BackBoneSequenceNode,
   Chain,
   ITwoStrandedChainItem,
+  CoreEditor,
   BaseSequenceItemRenderer,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
@@ -45,7 +46,6 @@ import {
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
-import { PointerEvent } from 'react';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -71,7 +71,8 @@ export const SequenceItemContextMenu = ({
   selections,
   contextMenuEvent,
 }: SequenceItemContextMenuType) => {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
   const selectedMonomers: BaseMonomer[] =
@@ -88,6 +89,7 @@ export const SequenceItemContextMenu = ({
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
+    editor?.id,
   );
   const hasHydrogenBonds =
     selections?.some((selectionRange) => {

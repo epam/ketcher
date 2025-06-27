@@ -24,7 +24,8 @@ import {
 } from 'state/rna-builder';
 import { StyledActionButton } from 'components/modal/Delete/styledComponents';
 import styled from '@emotion/styled';
-import { selectEditor } from 'state/common';
+import { selectCoreEditorId } from 'state/common';
+import { CoreEditor } from 'ketcher-core';
 
 export interface Props {
   onClose: () => void;
@@ -40,7 +41,8 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
   );
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);

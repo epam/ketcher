@@ -19,9 +19,10 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectSequenceSelection } from 'state/rna-builder';
 import { ActionButton } from 'components/shared/actionButton';
 import styled from '@emotion/styled';
-import { selectEditor } from 'state/common';
+import { selectCoreEditorId } from 'state/common';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
+import { CoreEditor } from 'ketcher-core';
 
 export interface Props {
   onClose: () => void;
@@ -35,7 +36,8 @@ const TextWrapper = styled.div`
 const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const sequenceSelection = useAppSelector(selectSequenceSelection);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const countOfNucleoelements = getCountOfNucleoelements(sequenceSelection);
   const onCloseCallback = useCallback(() => {
     onClose();

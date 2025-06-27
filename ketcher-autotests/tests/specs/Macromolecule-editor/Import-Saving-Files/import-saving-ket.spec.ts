@@ -14,6 +14,7 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -120,7 +121,7 @@ test.describe('Import-Saving .ket Files', () => {
     Description: Structure in center of canvas after opening
     */
     await openFileAndAddToCanvasMacro(page, 'KET/hundred-monomers.ket');
-
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'KET/hundred-monomers-expected.ket',
@@ -151,9 +152,11 @@ test.describe('Import-Saving .ket Files', () => {
     */
     await Library(page).selectMonomer(Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
+    await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -765,10 +768,12 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
 
   await openFileAndAddToCanvasAsNewProject(page, KETFile);
+  await resetZoomLevelToDefault(page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await verifyFileExport(page, KETFileExpected, FileType.KET);
   await openFileAndAddToCanvasAsNewProject(page, KETFileExpected);
+  await resetZoomLevelToDefault(page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

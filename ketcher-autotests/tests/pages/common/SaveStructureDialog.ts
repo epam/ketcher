@@ -68,6 +68,16 @@ export const SaveStructureDialog = (page: Page) => {
       return locators.warningTextarea.inputValue();
     },
 
+    async switchToWarningsTab() {
+      await locators.warningsTab.click();
+      await locators.warningTextarea.first().waitFor({ state: 'visible' });
+    },
+
+    async switchToPreviewTab() {
+      await locators.previewTab.click();
+      await locators.saveStructureTextarea.waitFor({ state: 'visible' });
+    },
+
     async save() {
       await locators.saveButton.click();
     },

@@ -3,16 +3,18 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   MolFileFormat,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas';
 import {
   FileType,
   verifyFileExport,

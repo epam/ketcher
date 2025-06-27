@@ -98,6 +98,7 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Export monomers and chem', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
@@ -126,6 +127,7 @@ test.describe('Import-Saving .mol Files', () => {
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -142,6 +144,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: After importing a file with modified monomers, it is clear which monomer is modified,
     and when hovering, preview display changes made during modification
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
@@ -280,6 +283,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
     const filename = 'Molfiles-V3000/corrupted-file.mol';
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
+
     await openFileAndAddToCanvasMacro(
       page,
       filename,
@@ -316,6 +321,7 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/snake-mode-peptides.mol',
       MacroFileType.MOLv3000,
     );
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/snake-mode-peptides-expected.mol',
@@ -409,6 +415,8 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
+    await resetZoomLevelToDefault(page);
+
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
@@ -428,6 +436,8 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
+    await resetZoomLevelToDefault(page);
+
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
@@ -447,6 +457,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
+    await resetZoomLevelToDefault(page);
 
     await verifyFileExport(
       page,
@@ -467,6 +478,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
+    await resetZoomLevelToDefault(page);
 
     await verifyFileExport(
       page,

@@ -79,8 +79,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 11.025,
+            "y": -3.7
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"
@@ -250,8 +250,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 11.025,
+            "y": -5.2
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"
@@ -260,8 +260,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 1.25,
-            "y": -4.25
+            "x": 11.025,
+            "y": -6.7
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"
@@ -270,8 +270,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 1.25,
-            "y": -5.75
+            "x": 11.025,
+            "y": -8.2
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"
@@ -280,8 +280,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 1.25,
-            "y": -7.25
+            "x": 11.025,
+            "y": -9.7
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"
@@ -290,8 +290,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 1.25,
-            "y": -8.75
+            "x": 11.025,
+            "y": -11.2
         },
         "alias": "meP",
         "templateId": "meP___N-Methyl-Proline"

@@ -272,8 +272,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 7.275,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -514,8 +514,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.75,
-            "y": -1.25
+            "x": 8.775,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -524,8 +524,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.25,
-            "y": -1.25
+            "x": 10.275,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -534,8 +534,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 5.75,
-            "y": -1.25
+            "x": 11.775,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -544,8 +544,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 7.25,
-            "y": -1.25
+            "x": 13.275,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -554,8 +554,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 8.75,
-            "y": -1.25
+            "x": 14.775,
+            "y": -5.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -564,8 +564,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 7.275,
+            "y": -7.45
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -574,8 +574,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 2.75,
-            "y": -2.75
+            "x": 8.775,
+            "y": -7.45
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -584,8 +584,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 4.25,
-            "y": -2.75
+            "x": 10.275,
+            "y": -7.45
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -594,8 +594,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 5.75,
-            "y": -2.75
+            "x": 11.775,
+            "y": -7.45
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -604,8 +604,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 7.25,
-            "y": -2.75
+            "x": 13.275,
+            "y": -7.45
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -614,8 +614,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 1.25,
-            "y": -4.25
+            "x": 7.275,
+            "y": -8.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -624,8 +624,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 2.75,
-            "y": -4.25
+            "x": 8.775,
+            "y": -8.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine",
@@ -635,8 +635,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 4.25,
-            "y": -4.25
+            "x": 10.275,
+            "y": -8.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -645,8 +645,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 5.75,
-            "y": -4.25
+            "x": 11.775,
+            "y": -8.95
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"

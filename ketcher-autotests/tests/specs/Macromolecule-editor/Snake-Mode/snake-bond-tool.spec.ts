@@ -658,6 +658,7 @@ test.describe('Snake Bond Tool', () => {
       page,
       `KET/long-peptide-chain.ket`,
     );
+    await resetZoomLevelToDefault(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

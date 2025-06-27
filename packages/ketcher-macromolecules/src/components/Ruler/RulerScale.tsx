@@ -17,29 +17,34 @@ type Props = {
   lineLengthValue: number;
 };
 
-const RulerScale = ({ transform, layoutMode, lineLengthValue }: Props) => {
+const RulerScale = ({
+  transform,
+  layoutMode,
+  lineLengthValue: _lineLengthValue,
+}: Props) => {
   const ref = useRef<SVGSVGElement>(null);
-
+  const canvasWidth = ref.current?.ownerSVGElement?.width.baseVal.value || 1000;
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const positions = useMemo(() => {
     if (layoutMode === 'sequence-layout-mode') {
-      const count = Math.floor(lineLengthValue / 10) + 1;
+      const maxDivisions = Math.floor(canvasWidth / SequenceModeItemWidth);
       return Array.from(
-        { length: count },
+        { length: maxDivisions + 1 },
         (_, i) =>
           SequenceModeStartOffset +
           i * 10 * SequenceModeItemWidth +
           (i > 0 ? (i - 1) * SequenceModeIndentWidth : 0),
       );
     } else if (layoutMode === 'snake-layout-mode') {
+      const maxDivisions = Math.floor(canvasWidth / SnakeModeItemWidth);
       return Array.from(
-        { length: lineLengthValue + 1 },
+        { length: maxDivisions + 1 },
         (_, i) => SnakeModeStartOffset + i * SnakeModeItemWidth,
       );
     }
     return [];
-  }, [layoutMode, lineLengthValue]);
+  }, [layoutMode, canvasWidth]);
 
   const svgChildren = useMemo(() => {
     const children: ReactElement[] = [];

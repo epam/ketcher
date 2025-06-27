@@ -60,17 +60,17 @@ export const RulerArea = () => {
 
   const translateValue = useMemo(() => {
     if (layoutMode === 'sequence-layout-mode') {
-      return (
-        SequenceModeStartOffset +
-        indentsInSequenceMode * SequenceModeIndentWidth +
-        lineLengthValue * SequenceModeItemWidth
-      );
-    } else if (layoutMode === 'snake-layout-mode') {
+      const step = 10 * SequenceModeItemWidth + SequenceModeIndentWidth;
+      const index = Math.floor(lineLengthValue / 10);
+      return SequenceModeStartOffset + index * step;
+    }
+
+    if (layoutMode === 'snake-layout-mode') {
       return SnakeModeStartOffset + lineLengthValue * SnakeModeItemWidth;
     }
 
     return 0;
-  }, [layoutMode, indentsInSequenceMode, lineLengthValue]);
+  }, [layoutMode, lineLengthValue]);
 
   const [inputOffsetX, handleOffsetX] = useMemo(() => {
     const translateValueWithZoomAndDrag =

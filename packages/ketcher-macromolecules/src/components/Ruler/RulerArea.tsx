@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ZoomTool } from 'ketcher-core';
-import { D3DragEvent, ZoomTransform } from 'd3';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { D3DragEvent } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
@@ -18,6 +17,7 @@ import {
 } from './RulerArea.constants';
 
 import styles from './RulerArea.module.less';
+import { useZoomTransform } from '../../hooks/useZoomTransform';
 
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
@@ -26,35 +26,11 @@ export const RulerArea = () => {
 
   const editor = useSelector(selectEditor);
 
-  const [transform, setTransform] = useState<ZoomTransform>(
-    new ZoomTransform(1, 0, 0),
-  );
-
   const dragStartX = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  useEffect(() => {
-    const zoom = ZoomTool.instance;
-    if (!zoom) {
-      return;
-    }
-
-    const zoomEventHandler = (transform: ZoomTransform | undefined) => {
-      if (!transform) {
-        return;
-      }
-
-      setTransform(transform);
-    };
-
-    zoom.subscribeOnZoomEvent(zoomEventHandler);
-
-    return () => {
-      zoom.unsubscribeOnZoomEvent(zoomEventHandler);
-    };
-    // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
-  }, [ZoomTool.instance]);
+  const transform = useZoomTransform();
 
   const indentsInSequenceMode = lineLengthValue / 10 - 1;
 

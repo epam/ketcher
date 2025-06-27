@@ -19,6 +19,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { IRnaPreset } from 'application/editor';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -270,6 +271,12 @@ export function isAmbiguousMonomerLibraryItem(
 ): monomer is AmbiguousMonomerType {
   return Boolean(monomer && monomer.isAmbiguous);
 }
+
+export const isLibraryItemRnaPreset = (
+  item: IRnaPreset | MonomerOrAmbiguousType,
+): item is IRnaPreset => {
+  return 'sugar' in item;
+};
 
 export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,

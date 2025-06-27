@@ -105,6 +105,7 @@ import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButto
 import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 import { RulerArea } from 'components/Ruler/RulerArea';
+import { DragGhost } from 'components/DragGhost/DragGhost';
 
 import './theme.less';
 
@@ -394,6 +395,7 @@ function Editor({
         </Layout.InsideRoot>
       </Layout>
       <Preview />
+      <DragGhost />
       <SequenceItemContextMenu
         selections={selections}
         contextMenuEvent={contextMenuEvent}

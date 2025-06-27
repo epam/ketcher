@@ -205,6 +205,7 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
+  setLibraryItemDrag,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

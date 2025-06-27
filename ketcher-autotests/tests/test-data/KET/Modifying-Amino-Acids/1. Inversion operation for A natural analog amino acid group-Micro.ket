@@ -521,8 +521,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 5.9,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -664,8 +664,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.75,
-            "y": -1.25
+            "x": 7.4,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -674,8 +674,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.25,
-            "y": -1.25
+            "x": 8.9,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -684,8 +684,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 5.75,
-            "y": -1.25
+            "x": 10.4,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -694,8 +694,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 7.25,
-            "y": -1.25
+            "x": 11.9,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -704,8 +704,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 8.75,
-            "y": -1.25
+            "x": 13.4,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -714,8 +714,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 10.25,
-            "y": -1.25
+            "x": 14.9,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -724,8 +724,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 11.75,
-            "y": -1.25
+            "x": 16.4,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -734,8 +734,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 13.25,
-            "y": -1.25
+            "x": 17.9,
+            "y": -6.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -744,8 +744,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 5.9,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -754,8 +754,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 2.75,
-            "y": -2.75
+            "x": 7.4,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -764,8 +764,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 4.25,
-            "y": -2.75
+            "x": 8.9,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -774,8 +774,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 5.75,
-            "y": -2.75
+            "x": 10.4,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -784,8 +784,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 7.25,
-            "y": -2.75
+            "x": 11.9,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -794,8 +794,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 8.75,
-            "y": -2.75
+            "x": 13.4,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -804,8 +804,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 10.25,
-            "y": -2.75
+            "x": 14.9,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -814,8 +814,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 11.75,
-            "y": -2.75
+            "x": 16.4,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -824,8 +824,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 13.25,
-            "y": -2.75
+            "x": 17.9,
+            "y": -8.325000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -834,8 +834,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 1.25,
-            "y": -4.25
+            "x": 5.9,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -844,8 +844,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 2.75,
-            "y": -4.25
+            "x": 7.4,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine",
@@ -855,8 +855,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 4.25,
-            "y": -4.25
+            "x": 8.9,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -865,8 +865,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 5.75,
-            "y": -4.25
+            "x": 10.4,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -875,8 +875,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 7.25,
-            "y": -4.25
+            "x": 11.9,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -885,8 +885,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 8.75,
-            "y": -4.25
+            "x": 13.4,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -895,8 +895,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 10.25,
-            "y": -4.25
+            "x": 14.9,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -905,8 +905,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 11.75,
-            "y": -4.25
+            "x": 16.4,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -915,8 +915,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 13.25,
-            "y": -4.25
+            "x": 17.9,
+            "y": -9.825000000000001
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"

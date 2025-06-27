@@ -52,8 +52,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 11.15,
+            "y": -7.575000000000001
         },
         "alias": "meU",
         "templateId": "meU___N-Methyl-Selenocysteine"
@@ -249,8 +249,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.75,
-            "y": -1.25
+            "x": 12.65,
+            "y": -7.575000000000001
         },
         "alias": "meU",
         "templateId": "meU___N-Methyl-Selenocysteine"
@@ -259,8 +259,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 11.15,
+            "y": -9.075000000000001
         },
         "alias": "meU",
         "templateId": "meU___N-Methyl-Selenocysteine",

@@ -115,8 +115,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.25,
-            "y": -1.25
+            "x": 10.4,
+            "y": -6.825000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -305,8 +305,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.75,
-            "y": -1.25
+            "x": 11.9,
+            "y": -6.825000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -315,8 +315,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.25,
-            "y": -1.25
+            "x": 13.4,
+            "y": -6.825000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -325,8 +325,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 1.25,
-            "y": -2.75
+            "x": 10.4,
+            "y": -8.325000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine",
@@ -336,8 +336,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 2.75,
-            "y": -2.75
+            "x": 11.9,
+            "y": -8.325000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -346,8 +346,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 4.25,
-            "y": -2.75
+            "x": 13.4,
+            "y": -8.325000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -356,8 +356,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 1.25,
-            "y": -4.25
+            "x": 10.4,
+            "y": -9.825000000000001
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"

@@ -131,6 +131,7 @@ import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
+import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -2066,6 +2067,7 @@ export class DrawingEntitiesManager {
           entity.type,
           entity.startEndPosition,
           entity.height,
+          entity.initiallySelected,
           entity,
         );
       } else if (entity instanceof MultitailArrow) {
@@ -2076,6 +2078,7 @@ export class DrawingEntitiesManager {
       } else if (entity instanceof RxnPlus) {
         filteredDrawingEntitiesManager.addRxnPlusModelChange(
           entity.position,
+          entity.initiallySelected,
           entity,
         );
       }
@@ -3346,6 +3349,7 @@ export class DrawingEntitiesManager {
     type: RxnArrowMode,
     position: [Vec2, Vec2],
     height?: number,
+    initiallySelected?: initiallySelectedType,
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
@@ -3354,7 +3358,7 @@ export class DrawingEntitiesManager {
       return _arrow;
     }
 
-    const rxnArrow = new RxnArrow(type, position, height);
+    const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
 
     this.rxnArrows.set(rxnArrow.id, rxnArrow);
 
@@ -3365,10 +3369,17 @@ export class DrawingEntitiesManager {
     type: RxnArrowMode,
     position: [Vec2, Vec2],
     height?: number,
+    initiallySelected?: initiallySelectedType,
   ) {
     const command = new Command();
     const operation = new RxnArrowAddOperation(
-      this.addRxnArrowModelChange.bind(this, type, position, height),
+      this.addRxnArrowModelChange.bind(
+        this,
+        type,
+        position,
+        height,
+        initiallySelected,
+      ),
       this.deleteRxnArrowModelChange.bind(this),
     );
 
@@ -3387,6 +3398,7 @@ export class DrawingEntitiesManager {
         rxnArrow.type,
         rxnArrow.startEndPosition,
         rxnArrow.height,
+        rxnArrow.initiallySelected,
       ),
     );
 
@@ -3450,24 +3462,28 @@ export class DrawingEntitiesManager {
     this.rxnPluses.delete(rxnPlus.id);
   }
 
-  private addRxnPlusModelChange(position: Vec2, _rxnPlus?: RxnPlus) {
+  private addRxnPlusModelChange(
+    position: Vec2,
+    initiallySelected?: initiallySelectedType,
+    _rxnPlus?: RxnPlus,
+  ) {
     if (_rxnPlus) {
       this.rxnPluses.set(_rxnPlus.id, _rxnPlus);
 
       return _rxnPlus;
     }
 
-    const rxnPlus = new RxnPlus(position);
+    const rxnPlus = new RxnPlus(position, initiallySelected);
 
     this.rxnPluses.set(rxnPlus.id, rxnPlus);
 
     return rxnPlus;
   }
 
-  public addRxnPlus(position: Vec2) {
+  public addRxnPlus(position: Vec2, initiallySelected?: initiallySelectedType) {
     const command = new Command();
     const operation = new RxnPlusAddOperation(
-      this.addRxnPlusModelChange.bind(this, position),
+      this.addRxnPlusModelChange.bind(this, position, initiallySelected),
       this.deleteRxnPlusModelChange.bind(this),
     );
 
@@ -3481,7 +3497,11 @@ export class DrawingEntitiesManager {
     const operation = new RxnPlusDeleteOperation(
       rxnPlus,
       this.deleteRxnPlusModelChange.bind(this),
-      this.addRxnPlusModelChange.bind(this, rxnPlus.position),
+      this.addRxnPlusModelChange.bind(
+        this,
+        rxnPlus.position,
+        rxnPlus.initiallySelected,
+      ),
     );
 
     command.addOperation(operation);

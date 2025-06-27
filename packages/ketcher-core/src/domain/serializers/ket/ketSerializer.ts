@@ -983,6 +983,7 @@ export class KetSerializer implements Serializer<Struct> {
         mode: rxnArrow.type,
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
+        initiallySelected: rxnArrow.initiallySelected,
       });
 
       struct.rxnArrows.add(arrow);
@@ -999,6 +1000,7 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
       const micromoleculeRxnPlus = new MicromoleculeRxnPlus({
         pp: rxnPlus.position,
+        initiallySelected: rxnPlus.initiallySelected,
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);

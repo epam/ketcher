@@ -315,6 +315,7 @@ export class MacromoleculesConverter {
         mode: rxnArrow.type,
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
+        initiallySelected: rxnArrow.initiallySelected,
       });
       const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
       reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
@@ -333,6 +334,7 @@ export class MacromoleculesConverter {
     drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
       const micromoleculeRxnPlus = new MicromoleculesRxnPlus({
         pp: rxnPlus.position,
+        initiallySelected: rxnPlus.initiallySelected,
       });
       const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
 
@@ -724,6 +726,7 @@ export class MacromoleculesConverter {
         rxnArrow.mode,
         rxnArrow.pos as [Vec2, Vec2],
         rxnArrow.height,
+        rxnArrow.initiallySelected,
       );
       command.merge(arrowAddCommand);
     });
@@ -737,7 +740,10 @@ export class MacromoleculesConverter {
     });
 
     struct.rxnPluses.forEach((rxnPlus) => {
-      const rxnPlusAddCommand = drawingEntitiesManager.addRxnPlus(rxnPlus.pp);
+      const rxnPlusAddCommand = drawingEntitiesManager.addRxnPlus(
+        rxnPlus.pp,
+        rxnPlus.initiallySelected,
+      );
 
       command.merge(rxnPlusAddCommand);
     });

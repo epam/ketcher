@@ -34,7 +34,7 @@ export class BondRenderer extends BaseRenderer {
     | undefined;
 
   constructor(public bond: Bond, private _coreEditorId: string) {
-    super(bond, _coreEditorId);
+    super(bond);
     bond.setRenderer(this);
   }
 

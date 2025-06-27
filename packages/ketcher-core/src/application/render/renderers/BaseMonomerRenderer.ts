@@ -66,7 +66,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     private _coreEditorId: string,
     private scale?: number,
   ) {
-    super(monomer as DrawingEntity, _coreEditorId);
+    super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
     this.editor = CoreEditor?.provideEditorInstance(this._coreEditorId);

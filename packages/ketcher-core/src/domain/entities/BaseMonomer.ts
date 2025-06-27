@@ -1,10 +1,11 @@
+import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   AttachmentPointName,
   AttachmentPointsToBonds,
   MonomerItemType,
 } from 'domain/types';
-
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -21,22 +22,13 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
-
-import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { Struct } from 'domain/entities/struct';
-import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
-import { IBaseMonomer } from './types';
-import { PolymerBond } from './PolymerBond';
-import { MonomerToAtomBond } from './MonomerToAtomBond';
-import { HydrogenBond } from './HydrogenBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
 
-export abstract class BaseMonomer
-  extends DrawingEntity
-  implements IBaseMonomer
-{
+export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
   public attachmentPointsToBonds: AttachmentPointsToBonds = {};
 
@@ -150,12 +142,10 @@ export abstract class BaseMonomer
   }
 
   public abstract getValidSourcePoint(
-    monomer?: IBaseMonomer,
+    monomer?: BaseMonomer,
   ): AttachmentPointName | undefined;
 
-  public abstract getValidTargetPoint(
-    monomer: IBaseMonomer,
-  ): string | undefined;
+  public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
@@ -596,7 +586,7 @@ export abstract class BaseMonomer
     | typeof PeptideSubChain;
 
   public isMonomerTypeDifferentForChaining(
-    monomerToChain: SubChainNode | IBaseMonomer,
+    monomerToChain: SubChainNode | BaseMonomer,
   ) {
     return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
   }
@@ -606,12 +596,12 @@ export abstract class BaseMonomer
       this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
     const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
     const namesToCompareNaturalAnalog = [
-      ...[this.label],
-      ...[this.monomerItem.props.MonomerName],
+      ...([this.label] || []),
+      ...([this.monomerItem.props.MonomerName] || []),
     ];
     const naturalAnaloguesToCompare = [
-      ...[naturalAnalogThreeLettersCode],
-      ...[naturalAnalogCode],
+      ...([naturalAnalogThreeLettersCode] || []),
+      ...([naturalAnalogCode] || []),
     ];
 
     return namesToCompareNaturalAnalog.every(
@@ -620,7 +610,7 @@ export abstract class BaseMonomer
   }
 
   public get sideConnections() {
-    const sideConnections: (PolymerBond | HydrogenBond)[] = [];
+    const sideConnections: PolymerBond[] = [];
     this.forEachBond((bond) => {
       if (!(bond instanceof MonomerToAtomBond) && bond.isSideChainConnection) {
         sideConnections.push(bond);
@@ -645,39 +635,5 @@ export abstract class BaseMonomer
     }
 
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
-  }
-}
-
-function getEmptyMonomerItem() {
-  return {
-    label: '',
-    struct: new Struct(),
-    props: {
-      MonomerNaturalAnalogCode: '',
-      MonomerName: '',
-      Name: '',
-    },
-  };
-}
-
-export class EmptyMonomer extends BaseMonomer {
-  constructor() {
-    super(getEmptyMonomerItem(), undefined, { generateId: false });
-  }
-
-  public getValidSourcePoint() {
-    return undefined;
-  }
-
-  public getValidTargetPoint() {
-    return undefined;
-  }
-
-  public get SubChainConstructor() {
-    return EmptySubChain;
-  }
-
-  public isMonomerTypeDifferentForChaining() {
-    return true;
   }
 }

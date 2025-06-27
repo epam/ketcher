@@ -15,7 +15,7 @@ export abstract class DrawingEntity {
   public baseRenderer?: BaseRenderer;
 
   protected constructor(
-    protected _position: Vec2 = new Vec2(0, 0),
+    private _position: Vec2 = new Vec2(0, 0),
     private config: DrawingEntityConfig = {
       generateId: true,
     },

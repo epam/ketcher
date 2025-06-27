@@ -4,7 +4,6 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { HydrogenBond } from './HydrogenBond';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint() {
@@ -26,7 +25,7 @@ export class RNABase extends BaseMonomer {
   }
 
   public override get sideConnections() {
-    const sideConnections: (HydrogenBond | PolymerBond)[] = [];
+    const sideConnections: PolymerBond[] = [];
     this.forEachBond((polymerBond, attachmentPointName) => {
       if (
         !(polymerBond instanceof MonomerToAtomBond) &&

@@ -71,7 +71,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     public readonly polymerBond: PolymerBond,
     private _coreEditorId: string,
   ) {
-    super(polymerBond as DrawingEntity, _coreEditorId);
+    super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
     this.calculateIsSnakeBond();

@@ -83,7 +83,7 @@ import { uniqueId } from 'lodash';
 import { CoreEditorProvider } from './EditorProvider';
 
 interface ICoreEditorConstructorParams {
-  ketcherId: string;
+  ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -101,7 +101,7 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 
 export class CoreEditor {
   public events: IEditorEvents;
-  public ketcherId: string;
+  public ketcherId?: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -177,16 +177,12 @@ export class CoreEditor {
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
-    this.zoomTool = ZoomTool.initInstance(
-      this.drawingEntitiesManager,
-      ketcherId,
-    );
-    this.transientDrawingView = new TransientDrawingView(ketcherId);
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     CoreEditorProvider.addInstance(this);
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
-
     this.initializeEventListeners();
   }
 
@@ -219,7 +215,9 @@ export class CoreEditor {
     return CoreEditorProvider.getEditor(id);
   }
 
-  public removeEditorInstance(): void {}
+  public removeEditorInstance(): void {
+    CoreEditorProvider.removeInstance(this.id);
+  }
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
@@ -1173,5 +1171,6 @@ export class CoreEditor {
 
   public destroy() {
     this.unsubscribeEvents();
+    editor = undefined;
   }
 }

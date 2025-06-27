@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { zoom, select, selectAll, ZoomTransform, ZoomBehavior, drag } from 'd3';
+import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
 import { BaseTool } from 'application/editor/tools/Tool';
-import {
-  canvasSelector,
-  drawnStructuresSelector,
-  editorSelector,
-} from '../constants';
+import { canvasSelector, drawnStructuresSelector } from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
 import { StructureBbox } from 'application/render/renderers/types';
-import { ketcherProvider } from 'application/utils';
 
 export enum SCROLL_POSITION {
   CENTER = 'CENTER',
@@ -76,22 +71,14 @@ export class ZoomTool implements BaseTool {
     return ZoomTool._instance;
   }
 
-  static initInstance(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    ketcherId: string,
-  ) {
-    ZoomTool._instance = new ZoomTool(drawingEntitiesManager, ketcherId);
+  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
     return ZoomTool._instance;
   }
 
-  private constructor(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    ketcherId: string,
-  ) {
+  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
     this.canvasWrapper = select(canvasSelector);
-    this.canvas = selectAll(editorSelector)[
-      ketcherProvider.getIndexById(ketcherId)
-    ].select(drawnStructuresSelector);
+    this.canvas = select(drawnStructuresSelector);
 
     this.zoomLevel = 1;
     this.zoomTransform = new ZoomTransform(1, 0, 0);

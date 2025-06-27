@@ -19,7 +19,7 @@ export class AtomRenderer extends BaseRenderer {
   private cipTextElementBBox?: SVGRect;
 
   constructor(public atom: Atom, private _coreEditorId: string) {
-    super(atom, _coreEditorId);
+    super(atom);
     atom.setRenderer(this);
   }
 

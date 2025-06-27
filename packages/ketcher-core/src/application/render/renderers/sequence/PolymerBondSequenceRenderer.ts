@@ -13,11 +13,10 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
 
   constructor(
     public polymerBond: PolymerBond,
-    coreEditorId: string,
     private firstNode?: SubChainNode,
     private secondNode?: SubChainNode,
   ) {
-    super(polymerBond, coreEditorId);
+    super(polymerBond);
   }
 
   private get isHydrogenBond() {

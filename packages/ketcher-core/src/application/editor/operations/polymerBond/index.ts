@@ -111,7 +111,7 @@ export class PolymerBondFinishCreationOperation implements Operation {
   constructor(
     private finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,
-    ) => PolymerBond | HydrogenBond,
+    ) => PolymerBond,
     private deletePolymerBondCreationModelChange: (polymerBond) => void,
   ) {
     this.polymerBond = this.finishPolymerBondCreationModelChange();

@@ -12,11 +12,8 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | undefined;
 
-  constructor(
-    public monomerToAtomBond: MonomerToAtomBond,
-    _coreEditorId: string,
-  ) {
-    super(monomerToAtomBond, _coreEditorId);
+  constructor(public monomerToAtomBond: MonomerToAtomBond) {
+    super(monomerToAtomBond);
     this.monomerToAtomBond.setRenderer(this);
   }
 

@@ -64,8 +64,6 @@ import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
-import { ketcherProvider } from 'application/utils';
-import { editorSelector } from '../constants';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -202,13 +200,9 @@ export class SequenceMode extends BaseMode {
       zoom.scrollTo(firstMonomerPosition);
     }
 
-    if (this.isEditMode && editor.ketcherId) {
-      const ketcherRootElement =
-        document.querySelectorAll(editorSelector)[
-          ketcherProvider.getIndexById(editor.ketcherId)
-        ];
+    if (this.isEditMode) {
       const drawnStructuresElement =
-        ketcherRootElement.querySelector('.drawn-structures');
+        document.querySelector('.drawn-structures');
       const isScrollToTheBottomNeeded =
         drawnStructuresElement &&
         drawnStructuresElement.getBoundingClientRect().bottom >

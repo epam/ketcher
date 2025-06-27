@@ -29,8 +29,8 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private path = '';
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
-  constructor(public readonly polymerBond: PolymerBond, _coreEditorId: string) {
-    super(polymerBond as DrawingEntity, _coreEditorId);
+  constructor(public readonly polymerBond: PolymerBond) {
+    super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
   }

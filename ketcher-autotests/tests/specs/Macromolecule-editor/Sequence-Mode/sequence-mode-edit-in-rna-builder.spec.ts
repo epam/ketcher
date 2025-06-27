@@ -120,6 +120,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
     await Library(page).selectMonomer(Sugars._25R);
+    await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.cancel();

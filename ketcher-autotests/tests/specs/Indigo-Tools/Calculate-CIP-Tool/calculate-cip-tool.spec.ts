@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   BondType,
   clickInTheMiddleOfTheScreen,
-  resetCurrentTool,
   copyAndPaste,
   cutAndPaste,
   receiveFileComparisonData,
@@ -22,6 +21,7 @@ import {
   pressButton,
   addMonomerToCenterOfCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';

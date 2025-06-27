@@ -103,8 +103,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 9.525,
-            "y": -6.7
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"
@@ -306,8 +306,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 11.025,
-            "y": -6.7
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"
@@ -316,8 +316,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 12.525,
-            "y": -6.7
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"
@@ -326,8 +326,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 9.525,
-            "y": -8.2
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine",
@@ -337,8 +337,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.025,
-            "y": -8.2
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"
@@ -347,8 +347,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 12.525,
-            "y": -8.2
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"

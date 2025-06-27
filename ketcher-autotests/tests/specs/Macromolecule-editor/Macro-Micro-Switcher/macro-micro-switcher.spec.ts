@@ -257,6 +257,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(page, 'KET/stereo-and-structure.ket');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -484,6 +485,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

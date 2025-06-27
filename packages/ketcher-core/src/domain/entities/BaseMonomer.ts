@@ -1,11 +1,10 @@
-import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   AttachmentPointName,
   AttachmentPointsToBonds,
   MonomerItemType,
 } from 'domain/types';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -22,8 +21,13 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+
+import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
+import { Struct } from 'domain/entities/struct';
+import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
+import { PolymerBond } from './PolymerBond';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
+import { HydrogenBond } from './HydrogenBond';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
@@ -596,12 +600,12 @@ export abstract class BaseMonomer extends DrawingEntity {
       this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
     const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
     const namesToCompareNaturalAnalog = [
-      ...([this.label] || []),
-      ...([this.monomerItem.props.MonomerName] || []),
+      ...[this.label],
+      ...[this.monomerItem.props.MonomerName],
     ];
     const naturalAnaloguesToCompare = [
-      ...([naturalAnalogThreeLettersCode] || []),
-      ...([naturalAnalogCode] || []),
+      ...[naturalAnalogThreeLettersCode],
+      ...[naturalAnalogCode],
     ];
 
     return namesToCompareNaturalAnalog.every(
@@ -610,7 +614,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get sideConnections() {
-    const sideConnections: PolymerBond[] = [];
+    const sideConnections: (PolymerBond | HydrogenBond)[] = [];
     this.forEachBond((bond) => {
       if (!(bond instanceof MonomerToAtomBond) && bond.isSideChainConnection) {
         sideConnections.push(bond);
@@ -635,5 +639,39 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
 
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+  }
+}
+
+function getEmptyMonomerItem() {
+  return {
+    label: '',
+    struct: new Struct(),
+    props: {
+      MonomerNaturalAnalogCode: '',
+      MonomerName: '',
+      Name: '',
+    },
+  };
+}
+
+export class EmptyMonomer extends BaseMonomer {
+  constructor() {
+    super(getEmptyMonomerItem(), undefined, { generateId: false });
+  }
+
+  public getValidSourcePoint() {
+    return undefined;
+  }
+
+  public getValidTargetPoint() {
+    return undefined;
+  }
+
+  public get SubChainConstructor() {
+    return EmptySubChain;
+  }
+
+  public isMonomerTypeDifferentForChaining() {
+    return true;
   }
 }

@@ -42,7 +42,6 @@ import {
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
 import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -81,9 +80,10 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { uniqueId } from 'lodash';
 import { CoreEditorProvider } from './EditorProvider';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 interface ICoreEditorConstructorParams {
-  ketcherId?: string;
+  ketcherId: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -101,7 +101,7 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 
 export class CoreEditor {
   public events: IEditorEvents;
-  public ketcherId?: string;
+  public ketcherId: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -177,12 +177,16 @@ export class CoreEditor {
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
-    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
-    this.transientDrawingView = new TransientDrawingView();
+    this.zoomTool = ZoomTool.initInstance(
+      this.drawingEntitiesManager,
+      ketcherId,
+    );
+    this.transientDrawingView = new TransientDrawingView(ketcherId);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     CoreEditorProvider.addInstance(this);
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
+
     this.initializeEventListeners();
   }
 
@@ -215,9 +219,7 @@ export class CoreEditor {
     return CoreEditorProvider.getEditor(id);
   }
 
-  public removeEditorInstance(): void {
-    CoreEditorProvider.removeInstance(this.id);
-  }
+  public removeEditorInstance(): void {}
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
@@ -1171,6 +1173,5 @@ export class CoreEditor {
 
   public destroy() {
     this.unsubscribeEvents();
-    editor = undefined;
   }
 }

@@ -40,7 +40,6 @@ import {
 import {
   deleteAllEntitiesOnCanvas,
   getStructure,
-  ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
@@ -55,6 +54,7 @@ import {
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { ketcherProvider } from './ketcherProvider';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };

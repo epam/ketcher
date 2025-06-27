@@ -47,7 +47,7 @@ import {
 } from 'domain/services';
 import { KetcherLogger } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {

@@ -85,7 +85,7 @@ export class SequenceRenderer {
     );
     this.removeNewSequenceButtons();
     this.showNodes(SequenceRenderer.sequenceViewModel, coreEditorId);
-    this.showBonds(SequenceRenderer.chainsCollection);
+    this.showBonds(SequenceRenderer.chainsCollection, coreEditorId);
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain, coreEditorId);
     }
@@ -273,7 +273,10 @@ export class SequenceRenderer {
     );
   }
 
-  private static showBonds(chainsCollection: ChainsCollection) {
+  private static showBonds(
+    chainsCollection: ChainsCollection,
+    coreEditorId: string,
+  ) {
     const handledMonomersToAttachmentPoints: Map<
       BaseMonomer,
       Set<AttachmentPointName>
@@ -306,6 +309,7 @@ export class SequenceRenderer {
 
                 const bondRenderer = new PolymerBondSequenceRenderer(
                   polymerBond,
+                  coreEditorId,
                 );
 
                 bondRenderer.show();
@@ -324,6 +328,7 @@ export class SequenceRenderer {
                 const bondRenderer = new MonomerToAtomBondSequenceRenderer(
                   polymerBond,
                   node,
+                  coreEditorId,
                 );
 
                 bondRenderer.show();
@@ -338,7 +343,7 @@ export class SequenceRenderer {
               }
               if (!polymerBond.isSideChainConnection) {
                 polymerBond.setRenderer(
-                  new BackBoneBondSequenceRenderer(polymerBond),
+                  new BackBoneBondSequenceRenderer(polymerBond, coreEditorId),
                 );
                 return;
               }
@@ -372,9 +377,13 @@ export class SequenceRenderer {
               ) {
                 bondRenderer = new PolymerBondSequenceRenderer(
                   new PolymerBond(monomer, connectedSugarToBase),
+                  coreEditorId,
                 );
               } else {
-                bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
+                bondRenderer = new PolymerBondSequenceRenderer(
+                  polymerBond,
+                  coreEditorId,
+                );
               }
               bondRenderer.show();
               polymerBond.setRenderer(bondRenderer);
@@ -405,6 +414,7 @@ export class SequenceRenderer {
           .R1 as PolymerBond;
         const bondRenderer = new PolymerBondSequenceRenderer(
           polymerBond,
+          coreEditorId,
           chain.firstNode,
           chain.lastNonEmptyNode,
         );

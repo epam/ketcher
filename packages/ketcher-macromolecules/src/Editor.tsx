@@ -198,6 +198,7 @@ function Editor({
   useEffect(() => {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
     const editor = new CoreEditor({
+      ketcherId,
       theme,
       canvas: canvasRef.current as SVGSVGElement,
       monomersLibraryUpdate,

@@ -11,42 +11,7 @@ import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
-
-class KetcherProvider {
-  private ketcherInstances = new Map<string, Ketcher>();
-
-  addKetcherInstance(instance: Ketcher) {
-    this.ketcherInstances.set(instance.id, instance);
-  }
-
-  removeKetcherInstance(id) {
-    this.ketcherInstances.delete(id);
-  }
-
-  getIndexById(id: string) {
-    return Array.from(this.ketcherInstances.keys()).indexOf(id);
-  }
-
-  getKetcher(id?: string) {
-    if (!id) {
-      return [...this.ketcherInstances.values()][
-        this.ketcherInstances.size - 1
-      ];
-    }
-
-    const ketcher = this.ketcherInstances.get(id);
-
-    if (!ketcher) {
-      throw Error(`couldnt find ketcher instance ${id}`);
-    }
-
-    return ketcher;
-  }
-}
-
-const ketcherProvider = new KetcherProvider();
-
-export { ketcherProvider };
+import { ketcherProvider } from './ketcherProvider';
 
 export function getStructure(
   ketcherId: string,

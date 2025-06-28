@@ -21,6 +21,9 @@ import {
   Struct,
   UnresolvedMonomer,
   Vec2,
+  RxnArrow as MicromoleculeRxnArrow,
+  MultitailArrow as MicromoleculeMultitailArrow,
+  RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
@@ -974,6 +977,34 @@ export class KetSerializer implements Serializer<Struct> {
         }
       });
     }
+
+    drawingEntitiesManager.rxnArrows.forEach((rxnArrow) => {
+      const arrow = new MicromoleculeRxnArrow({
+        mode: rxnArrow.type,
+        pos: [rxnArrow.startPosition, rxnArrow.endPosition],
+        height: rxnArrow.height,
+        initiallySelected: rxnArrow.initiallySelected,
+      });
+
+      struct.rxnArrows.add(arrow);
+    });
+
+    drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
+      const arrow = MicromoleculeMultitailArrow.fromKetNode(
+        multitailArrow.toKetNode(),
+      );
+
+      struct.multitailArrows.add(arrow);
+    });
+
+    drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
+      const micromoleculeRxnPlus = new MicromoleculeRxnPlus({
+        pp: rxnPlus.position,
+        initiallySelected: rxnPlus.initiallySelected,
+      });
+
+      struct.rxnPluses.add(micromoleculeRxnPlus);
+    });
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 

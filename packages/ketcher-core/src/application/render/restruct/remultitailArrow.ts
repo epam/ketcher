@@ -86,15 +86,14 @@ export class ReMultitailArrow extends ReObject {
     return this.multitailArrow.getReferenceLines(referencePositions);
   }
 
-  drawSingleLineHover(
+  static drawSingleLineHover(
     builder: PathBuilder,
-    renderOptions: RenderOptions,
+    offset: number,
     lineStart: Vec2,
     lineEnd: Vec2,
     verticalDirection: -1 | 1,
     horizontalDirection: -1 | 1,
   ): void {
-    const offset = this.getFrameOffset(renderOptions);
     const cubicBezierOffset =
       horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
     const start = lineStart.add(
@@ -137,20 +136,27 @@ export class ReMultitailArrow extends ReObject {
           new Vec2(offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET, -offset),
         ),
       );
-    this.drawSingleLineHover(builder, renderOptions, topSpine, topTail, -1, -1);
+    ReMultitailArrow.drawSingleLineHover(
+      builder,
+      offset,
+      topSpine,
+      topTail,
+      -1,
+      -1,
+    );
     tailsPoints.forEach((tailPoint) => {
-      this.drawSingleLineHover(
+      ReMultitailArrow.drawSingleLineHover(
         builder,
-        renderOptions,
+        offset,
         new Vec2(topSpine.x, tailPoint.y),
         tailPoint,
         -1,
         -1,
       );
     });
-    this.drawSingleLineHover(
+    ReMultitailArrow.drawSingleLineHover(
       builder,
-      renderOptions,
+      offset,
       bottomSpine,
       bottomTail,
       -1,
@@ -168,9 +174,9 @@ export class ReMultitailArrow extends ReObject {
           new Vec2(offset, offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET),
         ),
       );
-    this.drawSingleLineHover(
+    ReMultitailArrow.drawSingleLineHover(
       builder,
-      renderOptions,
+      offset,
       new Vec2(topSpine.x, head.y),
       head,
       1,

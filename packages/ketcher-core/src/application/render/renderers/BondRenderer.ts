@@ -10,7 +10,7 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import {
@@ -431,7 +431,7 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
-  private createBondHoverablePath(paths: BondSVGPath[]): void {
+  private createBondHoverablePath(paths: SVGPathAttributes[]): void {
     if (!this.rootElement) {
       return;
     }
@@ -529,7 +529,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let bondSVGPaths: BondSVGPath[] = [];
+    let bondSVGPaths: SVGPathAttributes[] = [];
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {

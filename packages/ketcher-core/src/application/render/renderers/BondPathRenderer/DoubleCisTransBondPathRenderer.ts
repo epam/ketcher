@@ -1,11 +1,11 @@
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   BondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 
 class DoubleCisTransBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     const normal = firstHalfEdge.leftNormal;
@@ -15,7 +15,7 @@ class DoubleCisTransBondPathRenderer {
     const secondLineStart = startPosition.addScaled(normal, -BondWidth);
     const secondLineEnd = endPosition.addScaled(normal, BondWidth);
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: `
           M${firstLineStart.x},${firstLineStart.y}
           L${firstLineEnd.x},${firstLineEnd.y}

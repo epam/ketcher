@@ -41,7 +41,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
 });
 
 test.afterEach(async () => {

@@ -521,8 +521,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 5.025,
-            "y": -5.95
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -679,8 +679,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 6.525,
-            "y": -5.95
+            "x": 2.75,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -689,8 +689,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 8.025,
-            "y": -5.95
+            "x": 4.25,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -699,8 +699,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 9.525,
-            "y": -5.95
+            "x": 5.75,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -709,8 +709,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.025,
-            "y": -5.95
+            "x": 7.25,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -719,8 +719,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 12.525,
-            "y": -5.95
+            "x": 8.75,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -729,8 +729,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 14.025,
-            "y": -5.95
+            "x": 10.25,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -739,8 +739,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 15.525,
-            "y": -5.95
+            "x": 11.75,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -749,8 +749,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 17.025,
-            "y": -5.95
+            "x": 13.25,
+            "y": -1.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -759,8 +759,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 5.025,
-            "y": -7.45
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -769,8 +769,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 6.525,
-            "y": -7.45
+            "x": 2.75,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -779,8 +779,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 8.025,
-            "y": -7.45
+            "x": 4.25,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -789,8 +789,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 9.525,
-            "y": -7.45
+            "x": 5.75,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -799,8 +799,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 11.025,
-            "y": -7.45
+            "x": 7.25,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -809,8 +809,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 12.525,
-            "y": -7.45
+            "x": 8.75,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -819,8 +819,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 14.025,
-            "y": -7.45
+            "x": 10.25,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -829,8 +829,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 15.525,
-            "y": -7.45
+            "x": 11.75,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -839,8 +839,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 17.025,
-            "y": -7.45
+            "x": 13.25,
+            "y": -2.75
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -849,8 +849,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 5.025,
-            "y": -8.95
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -859,8 +859,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 6.525,
-            "y": -8.95
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -869,8 +869,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 8.025,
-            "y": -8.95
+            "x": 4.25,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -879,8 +879,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 9.525,
-            "y": -8.95
+            "x": 5.75,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine",
@@ -890,8 +890,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 11.025,
-            "y": -8.95
+            "x": 7.25,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -900,8 +900,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 12.525,
-            "y": -8.95
+            "x": 8.75,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -910,8 +910,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 14.025,
-            "y": -8.95
+            "x": 10.25,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -920,8 +920,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 15.525,
-            "y": -8.95
+            "x": 11.75,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"
@@ -930,8 +930,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 17.025,
-            "y": -8.95
+            "x": 13.25,
+            "y": -4.25
         },
         "alias": "meA",
         "templateId": "meA___N-Methyl-Alanine"

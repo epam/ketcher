@@ -192,7 +192,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    test.slow();
+    await resetZoomLevelToDefault(page);
     await Library(page).selectMonomer(Sugars._25R);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
@@ -296,7 +296,7 @@ test.describe('Import-Saving .ket Files', () => {
     Description: There should be possible to load monomers which not found in Monomer library
     */
     await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
-
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'KET/unresolved-monomers-expected.ket',

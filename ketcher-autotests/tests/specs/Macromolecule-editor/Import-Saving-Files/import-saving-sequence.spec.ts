@@ -14,6 +14,7 @@ import {
   readFileContent,
   SequenceFileFormat,
   resetZoomLevelToDefault,
+  delay,
 } from '@utils';
 import {
   FileType,
@@ -83,6 +84,7 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
+    await delay(0.1);
     await takeEditorScreenshot(page);
   });
 

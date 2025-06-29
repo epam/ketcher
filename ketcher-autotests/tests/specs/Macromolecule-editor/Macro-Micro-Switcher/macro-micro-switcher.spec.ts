@@ -349,6 +349,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
@@ -485,8 +486,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await resetZoomLevelToDefault(page);
     await IndigoFunctionsToolbar(page).cleanUp();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

@@ -18,7 +18,6 @@ import {
   resetZoomLevelToDefault,
   saveToTemplates,
   screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -28,6 +27,7 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clearLocalStorage,

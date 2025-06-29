@@ -18,7 +18,6 @@ import {
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
-  resetCurrentTool,
   waitForMonomerPreview,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
@@ -37,6 +36,7 @@ import {
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {

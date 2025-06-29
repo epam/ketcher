@@ -12,10 +12,10 @@ import {
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
-  selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
+  selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
 } from '@utils/canvas/tools/helpers';

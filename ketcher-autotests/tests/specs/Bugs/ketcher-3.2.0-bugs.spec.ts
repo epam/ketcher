@@ -10,7 +10,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -20,6 +19,7 @@ import {
   setMolecule,
   MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,

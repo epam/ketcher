@@ -3,11 +3,11 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
-  resetCurrentTool,
   selectButtonById,
   takeEditorScreenshot,
   waitForRender,
 } from '..';
+import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
 import { AtomLabelType } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';

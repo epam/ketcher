@@ -482,6 +482,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Clean Up button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);

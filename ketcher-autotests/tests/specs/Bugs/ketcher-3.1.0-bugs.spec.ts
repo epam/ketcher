@@ -7,7 +7,6 @@ import {
   takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
@@ -20,6 +19,7 @@ import {
   waitForMonomerPreview,
   copyContentToClipboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,

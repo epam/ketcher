@@ -62,6 +62,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -282,9 +283,11 @@ test.describe('Template Manupulations', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnCanvas(page, point.x, point.y);
-    await page.getByLabel('Primary attachment point').check();
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
+    await AttachmentPointsDialog(page).apply();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );

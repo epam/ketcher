@@ -44,10 +44,7 @@ import {
   GeneralSetting,
   ResetToSelectToolOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
-import {
-  AttachmentPointsDialog,
-  setAttachmentPoints,
-} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;

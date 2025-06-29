@@ -102,10 +102,7 @@ import {
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import {
-  AttachmentPointsDialog,
-  setAttachmentPoints,
-} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const topLeftCorner = {
   x: -325,

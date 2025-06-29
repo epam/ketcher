@@ -26,10 +26,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import {
-  AttachmentPointsDialog,
-  setAttachmentPoints,
-} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(page, RingButton.Benzene);

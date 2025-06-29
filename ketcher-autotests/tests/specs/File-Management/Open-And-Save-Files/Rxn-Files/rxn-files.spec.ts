@@ -37,10 +37,7 @@ import {
   setACSSettings,
   setSettingsOptions,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
-import {
-  AttachmentPointsDialog,
-  setAttachmentPoints,
-} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();

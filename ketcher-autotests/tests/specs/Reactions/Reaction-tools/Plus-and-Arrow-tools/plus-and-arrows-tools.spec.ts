@@ -23,7 +23,6 @@ import {
   clickOnCanvas,
   resetZoomLevelToDefault,
 } from '@utils';
-import { pageReloadMicro } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

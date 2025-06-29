@@ -13,7 +13,6 @@ import {
   waitForRender,
   clickOnBond,
   openFileAndAddToCanvasAsNewProject,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   clickOnAtom,
   selectSnakeLayoutModeTool,
@@ -21,6 +20,7 @@ import {
   pressButton,
   addMonomerToCenterOfCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';

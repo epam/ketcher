@@ -7,7 +7,6 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
   selectAllStructuresOnCanvas,
   ZoomInByKeyboard,
@@ -15,14 +14,17 @@ import {
   ZoomOutByKeyboard,
   pasteFromClipboardByKeyboard,
   dragMouseTo,
-  selectSequenceLayoutModeTool,
-  selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   MonomerType,
   MolFileFormat,
 } from '@utils';
+import {
+  selectSequenceLayoutModeTool,
+  selectFlexLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   createDNAAntisenseChain,

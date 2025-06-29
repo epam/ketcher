@@ -9,7 +9,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
@@ -20,6 +19,7 @@ import {
   SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,

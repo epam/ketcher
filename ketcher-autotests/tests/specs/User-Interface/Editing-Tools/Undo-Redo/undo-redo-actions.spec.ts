@@ -44,7 +44,10 @@ import {
   GeneralSetting,
   ResetToSelectToolOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
-import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import {
+  AttachmentPointsDialog,
+  setAttachmentPoints,
+} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -556,14 +559,11 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Attachment Point tool is restored;
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -574,24 +574,21 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 2);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+      { label: 'C', index: 2 },
+      { primary: true },
+    );
+    await setAttachmentPoints(
       page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
-
-    await clickOnAtom(page, 'C', 4);
-    await AttachmentPointsDialog(
+      { label: 'C', index: 3 },
+      { secondary: true },
+    );
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+    );
 
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -610,14 +607,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -630,14 +624,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -650,14 +641,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);
     }
@@ -674,14 +662,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     for (let i = 0; i < 5; i++) {
       await ZoomOutByKeyboard(page);
     }

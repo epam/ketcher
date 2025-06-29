@@ -26,7 +26,10 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import {
+  AttachmentPointsDialog,
+  setAttachmentPoints,
+} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(page, RingButton.Benzene);
@@ -120,11 +123,7 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await page.keyboard.press('Control+r');
-    await clickOnCanvas(page, x, y);
-    await AttachmentPointsDialog(
-      page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await setAttachmentPoints(page, { x, y }, { primary: true });
     await takeEditorScreenshot(page);
   });
 
@@ -141,11 +140,11 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', atomIndex);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
+      { label: 'C', index: atomIndex },
+      { primary: true },
+    );
     await resetCurrentTool(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
@@ -209,16 +208,12 @@ test.describe('Open Ketcher', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
-    await AttachmentPointsDialog(
+    await setAttachmentPoints(
       page,
-    ).primaryAttachmentPointCheckbox.setChecked(true);
-    await AttachmentPointsDialog(
-      page,
-    ).secondaryAttachmentPointCheckbox.setChecked(true);
-
+      { x, y },
+      { primary: true, secondary: true },
+    );
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');
     await clickOnCanvas(page, x, y);

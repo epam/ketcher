@@ -37,7 +37,10 @@ import {
   setACSSettings,
   setSettingsOptions,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import {
+  AttachmentPointsDialog,
+  setAttachmentPoints,
+} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
@@ -91,8 +94,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await AttachmentPointsDialog(page).setAttachmentPoints(
+    await setAttachmentPoints(
+      page,
       { label: 'C', index: 2 },
       { primary: true },
     );

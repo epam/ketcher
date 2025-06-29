@@ -282,6 +282,7 @@ test.describe('Template Manupulations', () => {
     const point = await getAtomByIndex(page, { label: 'S' }, 0);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+    await clickOnCanvas(page, point.x, point.y);
     await AttachmentPointsDialog(
       page,
     ).primaryAttachmentPointCheckbox.setChecked(true);

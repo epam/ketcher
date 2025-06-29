@@ -102,7 +102,10 @@ import {
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import {
+  AttachmentPointsDialog,
+  setAttachmentPoints,
+} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1968,7 +1971,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await AttachmentPointsDialog(page).setAttachmentPoints(
+    await setAttachmentPoints(
+      page,
       { label: 'C', index: 2 },
       { primary: true },
     );

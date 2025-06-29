@@ -1,7 +1,9 @@
 import { Page, Locator } from '@playwright/test';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { clickOnAtom } from '@utils/clicks';
 import { AtomLabelType } from '@utils/clicks/types';
 import { waitForRender } from '@utils/common';
+import { LeftToolbar } from '../LeftToolbar';
 
 type AttachmentPointsDialogLocators = {
   closeWindowButton: Locator;
@@ -45,23 +47,30 @@ export const AttachmentPointsDialog = (page: Page) => {
     async cancel() {
       await locators.cancelButton.click();
     },
-
-    async setAttachmentPoints(
-      atom: { label: AtomLabelType; index: number } | { x: number; y: number },
-      { primary = false, secondary = false },
-    ) {
-      if ('x' in atom && 'y' in atom) {
-        await page.mouse.click(atom.x, atom.y, { button: 'right' });
-      } else {
-        await clickOnAtom(page, atom.label, atom.index);
-      }
-
-      await locators.primaryAttachmentPointCheckbox.setChecked(primary);
-      await locators.secondaryAttachmentPointCheckbox.setChecked(secondary);
-      await this.apply();
-    },
   };
 };
+
+export async function setAttachmentPoints(
+  page: Page,
+  atom: { label: AtomLabelType; index: number } | { x: number; y: number },
+  { primary = false, secondary = false },
+) {
+  await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+
+  if ('x' in atom && 'y' in atom) {
+    await page.mouse.click(atom.x, atom.y, { button: 'left' });
+  } else {
+    await clickOnAtom(page, atom.label, atom.index);
+  }
+
+  await AttachmentPointsDialog(page).primaryAttachmentPointCheckbox.setChecked(
+    primary,
+  );
+  await AttachmentPointsDialog(
+    page,
+  ).secondaryAttachmentPointCheckbox.setChecked(secondary);
+  await AttachmentPointsDialog(page).apply();
+}
 
 export type AttachmentPointsDialogType = ReturnType<
   typeof AttachmentPointsDialog

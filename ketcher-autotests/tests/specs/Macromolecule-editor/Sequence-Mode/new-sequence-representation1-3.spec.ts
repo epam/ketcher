@@ -40,7 +40,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
+  await selectSequenceLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {

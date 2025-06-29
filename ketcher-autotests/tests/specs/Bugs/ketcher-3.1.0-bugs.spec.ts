@@ -3,7 +3,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -15,14 +14,17 @@ import {
   delay,
   openLayoutModeMenu,
   BondType,
-  selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectSequenceLayoutModeTool,
   takeElementScreenshot,
   waitForMonomerPreview,
   copyContentToClipboard,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';
 import {

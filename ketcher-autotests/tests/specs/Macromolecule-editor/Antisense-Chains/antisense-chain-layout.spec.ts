@@ -7,7 +7,6 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
   MonomerType,
   ZoomInByKeyboard,
@@ -16,7 +15,10 @@ import {
   selectAllStructuresOnCanvas,
   selectSequenceLayoutModeTool,
 } from '@utils';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,

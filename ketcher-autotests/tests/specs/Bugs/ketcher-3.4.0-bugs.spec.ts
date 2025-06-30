@@ -25,6 +25,10 @@ import {
   copyAndPaste,
   clickOnCanvas,
   openFile,
+  pressButton,
+  clickOnTheCanvas,
+  selectUserTemplate,
+  TemplateLibrary,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
@@ -60,6 +64,16 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
+import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BondsSetting,
+  MeasurementUnit,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  setSettingsOptions,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -241,6 +255,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Add a Phosphates to the sequence.
      * 4. Observe the numbering of the added component.
      */
+    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAPPPPPAAAAAAAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -344,6 +359,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Save canvas to Fasta or Sequence file
      * 4. Take screenshot
      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSequenceLayoutModeTool(page);
     await Library(page).selectMonomer(Peptides.O);
     await Library(page).selectMonomer(Peptides.K);
     await CommonTopLeftToolbar(page).saveFile();
@@ -526,6 +543,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -634,6 +653,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the Calculate Properties window.
      * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSequenceLayoutModeTool(page);
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -645,6 +666,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await CommonTopLeftToolbar(page).calculateProperties();
   });
 
   test('Case 25: Rotation work for expanded monomers on Molecules mode', async () => {
@@ -784,6 +806,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('18.7');
+    await CommonTopLeftToolbar(page).calculateProperties();
   });
 
   test('Case 31: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas', async () => {
@@ -1002,5 +1025,388 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'PPTX/Shifted.labels.pptx',
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 39: Saved Ellipse and Line Shapes in CDXML format are correctly displayed after opening', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2047
+     * Description: Saved Ellipse and Line Shapes in CDXML format are correctly displayed after opening
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open from KET file
+     * 3. Save canvas to CDXML format
+     * 4. Open saved file
+     * 5. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/simple-objects-line-and-shape.ket',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/Bugs/simple-objects-line-and-shape-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/Bugs/simple-objects-line-and-shape-expected.cdxml',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 40: Indigo calculate properties for Peptides tab if Phosphate is missing in mixed chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2902
+     * Description: Indigo calculate properties for Peptides tab if Phosphate is missing in mixed chain.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '354.319',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C13H18N6O6',
+    );
+    await CalculateVariablesPanel(page).peptidesTab.click();
+    expect(
+      await CalculateVariablesPanel(page).getIsoelectricPointValue(),
+    ).toEqual('4.01');
+    expect(
+      await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
+    ).toEqual('0');
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 41: Able to export single expanded monomer to SVG Image, system not throws error: array: invalid index 0 (size=0)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2888
+     * Description: Able to export single expanded monomer to SVG Image, system not throws error: array: invalid index 0 (size=0)
+     * Scenario:
+     * 1. Load from KET
+     * 2. Go to Micro mode
+     * 3. Expand monomer (and flip Vertically - OPTIONALLY)
+     * 4. Save canvas to SVG Image and check the result
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
+    await expandMonomer(page, page.getByText('Edc'));
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAllStructuresOnCanvas(page);
+    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 42: System not ignores carrige return in text blocks in loaded CDX', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/1679
+     * Description: System not ignores carrige return in text blocks in loaded CDX
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open from pptx file
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Text.messages.pptx',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 43: Indigo not fails to calculate properties when two chains are connected via a CHEM', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2904
+     * Description: Indigo not fails to calculate properties when two chains are connected via a CHEM.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/sequenses-connected-through-chem.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '471.443',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C21H23N6O7',
+    );
+    await CalculateVariablesPanel(page).peptidesTab.click();
+    expect(
+      await CalculateVariablesPanel(page).getIsoelectricPointValue(),
+    ).toEqual('4.01');
+    expect(
+      await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
+    ).toEqual('0');
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 44: Correct Calculate Properties result when monomers are connected via not a R2-R1', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2905
+     * Description: Correct Calculate Properties result when monomers are connected via not a R2-R1.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/a-a-monomers-connected-through-r2-r2.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '144.172',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C6H12N2O2',
+    );
+    expect(
+      await CalculateVariablesPanel(page).getIsoelectricPointValue(),
+    ).toEqual('4.01');
+    expect(
+      await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
+    ).toEqual('0');
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 45: Calculated Values work if reaction arrow overlaps reactant bounding box', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2897
+     * Description: Calculated Values work if reaction arrow overlaps reactant bounding box.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Press Calculated Values button
+     */
+    const chemicalFormulaWrapper = page.getByTestId('Chemical Formula-wrapper');
+    const molecularWeight = page
+      .getByTestId('Molecular Weight-wrapper')
+      .locator('input[type="text"]');
+    const exactMass = page
+      .getByTestId('Exact Mass-wrapper')
+      .locator('input[type="text"]');
+    const elementalAnalysis = page
+      .getByTestId('Elemental Analysis-wrapper')
+      .locator('textarea');
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Calculated Values work if reaction arrow overlaps reactant bounding box.ket',
+    );
+    await IndigoFunctionsToolbar(page).calculatedValues();
+    await expect(chemicalFormulaWrapper).toContainText(
+      '[C8H10BrN3O]+[C18H15P] > [C8H10BrN3O]',
+    );
+    await expect(molecularWeight).toHaveValue(
+      '[244.089]+[262.285] > [244.089]',
+    );
+    await expect(exactMass).toHaveValue('[243.001]+[262.091] > [243.001]');
+    await expect(elementalAnalysis).toHaveValue(
+      '[C 39.4 H 4.1 Br 32.7 N 17.2 O 6.5]+[C 82.4 H 5.8 P 11.8] > [C 39.4 H 4.1 Br 32.7 N 17.2 O 6.5]',
+    );
+  });
+
+  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2931
+     * Description: Calculated values work for "rich" monomer chain.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
+    ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2917
+     * Description: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM).
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'CHEM1{[[H]([*:1])[He]1[Li][Be]2[K]3[Ca]4[Sc]5C([B]2)[N]O2[V]6[Ti]5[Rb]5[Kr]7[Br]4[SeH]4[In]8[Cd]9[Ag]%10[Pd]%11[Os]%12[Re]([W][Ru][Rh]%11[Zn][Ga]%11S([PH])[Cl]1[Ar]3[AsH]4[Ge]%10%11)[Db][Sg]1[Bh]3[Hs]4[Pm]%10[Nd]%11[Pr]1[Ce]([La])[Th][Pa][U]%11[Np][Pu]1[Am][Cm]%11[Gd]%13[Eu]([Sm]%101)[Ds]1[Mt]4[Au]([Pt]9[Ir]%123)[Hg]3[Tl]4[PbH]9[BiH]%10[PoH]%12[Xe]%14[I]([TeH]9[SbH]7[SnH]83)[Sr]5[Y]3[Cr]6[Mn]5[Ne](F2)[Na][Mg]2[Co]6[Fe]5[Nb]5[Zr]3[Cs]%14[Ba]3[Rn]7[At]%12[Mc]8[Fl]9[Nh]%10[Cn]([Tb]%13[Dy]%10[Ho]9[Er]9[Tm]%12[Yb]([No]([Md][Fm]9[Es][Cf]%10[Bk]%11)[Lr])[Lu]([Ac])[Og][Ts]([Fr]7[Ra]([Rf])[Ta][Hf]3[Mo]5[Tc][Ni]6[Cu][Si][Al]2)[Lv]%128)[Rg]41 |^3:8,34,115,^1:9,10,16,18,28,30,31,33,60,62,65,67,84,116,$;_R1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;$|]}$$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'CH17AcAgAlAmArAsAtAuBBaBeBhBiBkBrCaCdCeCfClCmCnCoCrCsCuDbDsDyErEsEuFFeFlFmFrGaGdGeHeHfHgHoHsIInIrKKrLaLiLrLuLvMcMdMgMnMoMtNNaNbNdNeNhNiNoNpOOgOsPPaPbPdPmPoPrPtPuRaRbReRfRgRhRnRuSSbScSeSgSiSmSnSrTaTbTcTeThTiTlTmTsUVWXeYYbZnZr',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 48: System calculate melting temperature for GC nucleotides pair', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2939
+     * Description: System calculate melting temperature for GC nucleotides pair.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(G)P.R(C)}|RNA2{R(G)P.R(C)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '1176.844',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C38H50N16O24P2',
+    );
+    expect(
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
+    ).toEqual('17');
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 49: System not count bases that are not part of a nucleotide/nucleoside as RNA/DNA', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2930
+     * Description: System not count bases that are not part of a nucleotide/nucleoside as RNA/DNA.
+     * "Calculate Properties" window should set to blank and be grayed out, and the window should contain an error message: "Select monomer, chain or part of a chain".
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Go to RNA/DNA tab
+     * 5. Verify that the properties are not calculated for bases that are not part of a nucleotide/nucleoside
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/System shouldnt count bases that are not part of a nucleotide_nucleoside as RNA_DNA.ket',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).rnaTab.click();
+    await takePageScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 50: Melting temperature value is missed if UPC or NAC value set to zero', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2987
+     * Description: Melting temperature value is missed if UPC or NAC value set to zero.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await CalculateVariablesPanel(page).setUnipositiveIonsValue('0');
+    await takePageScreenshot(page);
+    await CalculateVariablesPanel(page).setUnipositiveIonsValue('140');
+    await CalculateVariablesPanel(page).setOligonucleotidesValue('0');
+    await takePageScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
+  });
+
+  test('Case 51: Correct structure for PHE-L-Phenylalanine in template library', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/4838
+     * Description: Correct structure for PHE-L-Phenylalanine in template library.
+     * Scenario:
+     * 1. Open L-aminoacids or D-aminoacids in template library
+     * 2. Put selected template to canvas
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openStructureLibrary(page);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.PHEDPhenylalanine, page);
+    await clickOnTheCanvas(page, 200, 200);
+    await openStructureLibrary(page);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'L-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.PHELPhenylalanine, page);
+    await clickOnTheCanvas(page, 100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 52: Settings for the "attachment point tool" update with changed pixel settings', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/4189
+     * Description: Settings for the "attachment point tool" update with changed pixel settings.
+     * Scenario:
+     * 1. Put benzene ring with attachment point on the canvas
+     * 2. Go to Setting->Bonds and change Bond thickness to 5
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/benzene-ring-with-ap.ket',
+    );
+    await takeEditorScreenshot(page);
+    await setSettingsOptions(page, [
+      {
+        option: BondsSetting.BondThicknessUnits,
+        value: MeasurementUnit.Px,
+      },
+      { option: BondsSetting.BondThickness, value: '5' },
+    ]);
+    await takeEditorScreenshot(page);
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
+    await SettingsDialog(page).apply();
   });
 });

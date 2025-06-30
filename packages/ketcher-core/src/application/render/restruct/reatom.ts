@@ -375,7 +375,7 @@ class ReAtom extends ReObject {
           .text(
             position.x,
             position.y,
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class],
+            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class] || '',
           )
           .attr({
             'font-weight': 700,

@@ -8,7 +8,6 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasMacro,
-  selectAllStructuresOnCanvas,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
@@ -20,6 +19,7 @@ import {
   MonomerType,
   MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,

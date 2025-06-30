@@ -5,8 +5,6 @@ import {
   takeEditorScreenshot,
   BondType,
   clickInTheMiddleOfTheScreen,
-  copyAndPaste,
-  cutAndPaste,
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
@@ -15,12 +13,18 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   clickOnAtom,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   pressButton,
   addMonomerToCenterOfCanvas,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';

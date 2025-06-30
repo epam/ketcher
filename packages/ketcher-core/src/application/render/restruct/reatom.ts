@@ -720,7 +720,7 @@ class ReAtom extends ReObject {
         this.visel,
         cipGroup,
         ps,
-        true,
+        false,
       );
 
       this.cip = { path: cipGroup, text: cipText, rectangle: rect };

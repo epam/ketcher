@@ -90,6 +90,8 @@ export enum TemplateLibrary {
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
   Arabinofuranose = 'Arabinofuranose',
+  PHEDPhenylalanine = 'PHE-D-Phenylalanine',
+  PHELPhenylalanine = 'PHE-L-Phenylalanine',
 }
 
 export async function selectSaltsAndSolvents(

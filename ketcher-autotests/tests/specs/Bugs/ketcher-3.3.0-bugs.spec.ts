@@ -6,23 +6,25 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
   clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectSequenceLayoutModeTool,
+  selectFlexLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
 import {

@@ -6,12 +6,12 @@ import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
-  selectImageTool,
   clickOnCanvas,
   MacroFileType,
   delay,
   StructureFormat,
 } from '@utils';
+import { selectImageTool } from '@utils/canvas/tools/helpers';
 import { MolfileFormat } from 'ketcher-core';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';

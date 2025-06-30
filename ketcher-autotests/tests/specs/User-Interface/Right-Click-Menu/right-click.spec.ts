@@ -14,6 +14,7 @@ import {
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   moveMouseAway,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -233,6 +234,7 @@ test.describe('Right-click menu', () => {
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
+    await resetZoomLevelToDefault(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await ContextMenu(page, point).click(
       MicroAtomOption.EnhancedStereochemistry,

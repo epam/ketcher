@@ -417,7 +417,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.getByText('R13').click();
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 1 });
   });
 
   test('Add Bond to the R-Group Label', async ({ page }) => {

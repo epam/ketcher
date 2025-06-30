@@ -50,6 +50,12 @@ interface SGroupdrawBracketsOptions {
   superatomClass?: SUPERATOM_CLASS;
 }
 
+export const SUPERATOM_CLASS_TEXT = {
+  [SUPERATOM_CLASS.BASE]: 'Base',
+  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
+  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+};
+
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
@@ -107,7 +113,7 @@ class ReSGroup extends ReObject {
         }
         case 'SUP': {
           SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name || sgroup.data.class;
+            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;

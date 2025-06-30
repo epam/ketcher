@@ -29,9 +29,9 @@ import assert from 'assert';
 import { isNumber } from 'lodash';
 
 export enum SUPERATOM_CLASS {
-  SUGAR = 'Sugar',
-  BASE = 'Base',
-  PHOSPHATE = 'Phosphate',
+  SUGAR = 'SUGAR',
+  BASE = 'BASE',
+  PHOSPHATE = 'PHOSPHATE',
 }
 
 export class SGroupBracketParams {
@@ -68,6 +68,7 @@ export class SGroup {
     ANY: 'ANY',
     GEN: 'GEN',
     queryComponent: 'queryComponent',
+    nucleotideComponent: 'nucleotideComponent',
   };
 
   type: string;

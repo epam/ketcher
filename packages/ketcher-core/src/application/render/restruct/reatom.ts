@@ -47,6 +47,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
+import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 
 interface ElemAttr {
   text: string;
@@ -371,7 +372,11 @@ class ReAtom extends ReObject {
           options.font.length,
         );
         const path = render.paper
-          .text(position.x, position.y, sgroup.data.name)
+          .text(
+            position.x,
+            position.y,
+            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class] || '',
+          )
           .attr({
             'font-weight': 700,
             'font-size': options.fontszInPx,

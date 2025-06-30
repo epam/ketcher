@@ -66,6 +66,7 @@ export interface IEditorEvents {
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
   toggleLineLengthHighlighting: Subscription;
+  setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
 }
 
@@ -133,6 +134,7 @@ export function resetEditorEvents() {
     modifyAminoAcids: new Subscription(),
     setEditorLineLength: new Subscription(),
     toggleLineLengthHighlighting: new Subscription(),
+    setLibraryItemDragState: new Subscription(),
     placeLibraryItemOnCanvas: new Subscription(),
   };
 }

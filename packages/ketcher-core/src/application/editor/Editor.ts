@@ -1,5 +1,9 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { Editor, EditorType } from 'application/editor/editor.types';
+import {
+  Editor,
+  EditorType,
+  LibraryItemDragState,
+} from 'application/editor/editor.types';
 import {
   editorEvents,
   hotkeysConfiguration,
@@ -128,6 +132,8 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  public libraryItemDragState: LibraryItemDragState = null;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -552,11 +558,19 @@ export class CoreEditor {
       },
     );
 
+    this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
+      this.libraryItemDragState = state;
+    });
+
     this.events.placeLibraryItemOnCanvas.add(
       (
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
+        if (!this.libraryItemDragState) {
+          return;
+        }
+
         const { x, y } = position;
 
         let modelChanges: Command;

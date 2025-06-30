@@ -36,4 +36,4 @@ export * from './editorSettings';
 export * from './tools';
 export * from 'application/editor/tools/types';
 export type { FlipDirection } from 'application/editor/shared/utils.types';
-export { LibraryItemDragEventName } from './constants';
+export type { LibraryItemDragState } from 'application/editor/editor.types';

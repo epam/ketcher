@@ -1,6 +1,6 @@
 import {
   isLibraryItemRnaPreset,
-  LibraryItemDragEventName,
+  LibraryItemDragState,
   ZoomTool,
 } from 'ketcher-core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -9,9 +9,12 @@ import styles from './DragGhost.module.less';
 import { GhostRnaPreset } from './svg/GhostRnaPreset';
 import { GhostMonomer } from 'components/DragGhost/svg/GhostMonomer';
 import { useZoomTransform } from '../../hooks/useZoomTransform';
-import { LibraryItemDragState } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
+import { useSelector } from 'react-redux';
+import { selectEditor } from 'state/common';
 
 export const DragGhost = () => {
+  const editor = useSelector(selectEditor);
+
   const [libraryItemDragData, setLibraryItemDragData] =
     useState<LibraryItemDragState>(null);
 
@@ -22,21 +25,20 @@ export const DragGhost = () => {
   const transform = useZoomTransform();
 
   useEffect(() => {
-    const handleLibraryItemDrag = (event: Event) => {
-      const libraryItemDragData = (event as CustomEvent<LibraryItemDragState>)
-        .detail;
-      setLibraryItemDragData(libraryItemDragData);
+    if (!editor) {
+      return;
+    }
+
+    const handleLibraryItemDrag = (state: LibraryItemDragState) => {
+      setLibraryItemDragData(state);
     };
 
-    window.addEventListener(LibraryItemDragEventName, handleLibraryItemDrag);
+    editor.events.setLibraryItemDragState.add(handleLibraryItemDrag);
 
     return () => {
-      window.removeEventListener(
-        LibraryItemDragEventName,
-        handleLibraryItemDrag,
-      );
+      editor.events.setLibraryItemDragState.remove(handleLibraryItemDrag);
     };
-  }, []);
+  }, [editor]);
 
   useEffect(() => {
     if (!ZoomTool.instance || !libraryItemDragData) {

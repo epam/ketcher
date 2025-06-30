@@ -165,6 +165,7 @@ class RnaPresetTool implements Tool {
 
     this.sugarPreviewRenderer = new SugarRenderer(
       this.sugarPreview,
+      this.editor.id,
       this.MONOMER_PREVIEW_SCALE_FACTOR,
     );
 
@@ -175,6 +176,7 @@ class RnaPresetTool implements Tool {
       this.rnaBasePreview = new RNABase(this.rnaBase) as RNABase;
       this.rnaBasePreviewRenderer = new RNABaseRenderer(
         this.rnaBasePreview,
+        this.editor.id,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
       );
 
@@ -188,6 +190,7 @@ class RnaPresetTool implements Tool {
 
       this.phosphatePreviewRenderer = new PhosphateRenderer(
         this.phosphatePreview,
+        this.editor.id,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
       );
 

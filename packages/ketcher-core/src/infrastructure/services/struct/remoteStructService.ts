@@ -47,7 +47,7 @@ import {
 } from 'domain/services';
 import { KetcherLogger } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -233,9 +233,13 @@ export class RemoteStructService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
-    const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
-    );
+    let editor;
+    if (this.ketcherId) {
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+      editor = CoreEditor.provideEditorInstance(ketcher.id);
+    }
+
+    const monomerLibrary = JSON.stringify(editor?.monomersLibraryParsedJson);
     const expandedOptions = {
       monomerLibrary,
       ...this.getStandardServerOptions(options),

@@ -33,8 +33,8 @@ export class BondRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
 
-  constructor(public bond: Bond) {
-    super(bond);
+  constructor(public bond: Bond, private _coreEditorId: string) {
+    super(bond, _coreEditorId);
     bond.setRenderer(this);
   }
 
@@ -265,7 +265,7 @@ export class BondRenderer extends BaseRenderer {
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
@@ -478,7 +478,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private get halfEdges() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
@@ -518,7 +518,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
 
     this.rootElement = this.appendRootElement();

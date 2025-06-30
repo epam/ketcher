@@ -4,6 +4,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from './HydrogenBond';
 
 export interface Operation {
   priority?: number;
@@ -11,7 +12,7 @@ export interface Operation {
   atom?: Atom;
   bond?: Bond;
   monomerToAtomBond?: MonomerToAtomBond;
-  polymerBond?: PolymerBond;
+  polymerBond?: PolymerBond | HydrogenBond;
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;
   executeAfterAllOperations?(renderersManager: RenderersManager): void;

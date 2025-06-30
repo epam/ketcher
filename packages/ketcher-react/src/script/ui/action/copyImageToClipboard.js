@@ -29,7 +29,7 @@ async function copyImageToClipboard() {
   const errorHandler = editor.errorHandler;
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
-    const ketSerializer = new KetSerializer();
+    const ketSerializer = new KetSerializer(ketcher.coreEditorId);
     const structStr = ketSerializer.serialize(struct);
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',

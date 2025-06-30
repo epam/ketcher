@@ -17,7 +17,6 @@
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   MolarMeasurementUnit,
-  selectEditor,
   selectIsMacromoleculesPropertiesWindowOpened,
   selectMacromoleculesProperties,
   selectOligonucleotidesMeasurementUnit,
@@ -29,6 +28,7 @@ import {
   setUnipositiveIonsMeasurementUnit,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
+  selectCoreEditorId,
 } from 'state/common';
 import styled from '@emotion/styled';
 import _round from 'lodash/round';
@@ -43,6 +43,7 @@ import {
   useState,
 } from 'react';
 import {
+  CoreEditor,
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
   SingleChainMacromoleculeProperties,
@@ -913,7 +914,8 @@ let selectEntitiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const macromoleculesProperties = useAppSelector(
     selectMacromoleculesProperties,
   );

@@ -61,6 +61,7 @@ export class AttachmentPoint {
 
   constructor(
     constructorParams: AttachmentPointConstructorParams,
+    private _coreEditorId: string,
     skipInit?: boolean,
   ) {
     this.rootElement = constructorParams.rootElement;
@@ -239,7 +240,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond

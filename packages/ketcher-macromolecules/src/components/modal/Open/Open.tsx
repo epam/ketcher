@@ -40,11 +40,12 @@ import {
   stylesForExpanded,
 } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { openErrorModal } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { selectCoreEditorId } from 'state/common';
 
 export interface Props {
   onClose: () => void;
@@ -215,6 +216,7 @@ const addToCanvas = ({
 
 // TODO: replace after the implementation of the function for processing the structure from the file
 const onOk = async ({
+  coreEditorId,
   struct,
   formatSelection,
   additionalSelection,
@@ -223,6 +225,7 @@ const onOk = async ({
   setIsLoading,
   dispatch,
 }: {
+  coreEditorId: string;
   struct: string;
   formatSelection: string;
   additionalSelection: string;
@@ -234,8 +237,8 @@ const onOk = async ({
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
   const isFasta = formatSelection === FASTA;
-  const ketSerializer = new KetSerializer();
-  const editor = CoreEditor.provideEditorInstance();
+  const ketSerializer = new KetSerializer(coreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   let inputFormat;
   let fileData = struct;
 
@@ -307,6 +310,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [additionalSelection, setAdditionalSelection] = useState(RNA);
   const [peptideLettersFormatSelection, setPeptideLettersFormatSelection] =
     useState(ONE_LETTER);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
 
   useEffect(() => {
     const splittedFilenameByDot = fileName?.split('.');
@@ -347,6 +351,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const addToCanvasHandler = () => {
     onOk({
+      coreEditorId,
       struct: structStr,
       formatSelection,
       additionalSelection,
@@ -358,7 +363,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(coreEditorId);
     const history = new EditorHistory(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
@@ -367,6 +372,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     editor.zoomToStructuresIfNeeded();
 
     onOk({
+      coreEditorId,
       struct: structStr,
       formatSelection,
       additionalSelection,

@@ -18,7 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectEditorLayoutMode,
   selectIsSequenceEditInRNABuilderMode,
   selectKetcherId,
@@ -28,6 +28,7 @@ import {
   DEFAULT_LAYOUT_MODE,
   HAS_CONTENT_LAYOUT_MODE,
   ketcherProvider,
+  CoreEditor,
 } from 'ketcher-core';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -38,7 +39,8 @@ export function useLayoutMode() {
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const isBlank = ketcher?.editor?.struct().isBlank();
   const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     previousLayoutMode || fallbackMode,
@@ -63,7 +65,8 @@ export function useLayoutMode() {
 }
 
 export function useSequenceEditInRNABuilderMode() {
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const isSequenceEditInRNABuilderModeInitial = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );

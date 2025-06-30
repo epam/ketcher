@@ -12,11 +12,15 @@ import {
   setActiveMonomerKey,
 } from 'state/rna-builder';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { LibraryNameType } from 'src/constants';
-import { IRnaPreset, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
+import {
+  CoreEditor,
+  IRnaPreset,
+  isAmbiguousMonomerLibraryItem,
+} from 'ketcher-core';
 
 import { RnaAccordionContainer } from './styles';
 import { useDispatch } from 'react-redux';
@@ -43,7 +47,8 @@ export const RnaElements = ({
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,

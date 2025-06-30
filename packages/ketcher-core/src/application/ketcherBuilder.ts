@@ -23,7 +23,7 @@ import {
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
-import { ketcherProvider } from './utils';
+import { ketcherProvider } from './ketcherProvider';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -56,7 +56,7 @@ export class KetcherBuilder {
       this.#structServiceProvider!.createStructService(mergedServiceOptions);
     const ketcher = new Ketcher(
       structService,
-      new FormatterFactory(structService),
+      new FormatterFactory(structService, null),
     );
     structService.addKetcherId(ketcher.id);
     ketcher[this.#structServiceProvider.mode] = true;

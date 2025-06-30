@@ -54,8 +54,11 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
-  constructor({ theme }) {
+  private _coreEditorId: string;
+
+  constructor({ theme, coreEditorId }) {
     this.theme = theme;
+    this._coreEditorId = coreEditorId;
   }
 
   public hoverDrawingEntity(drawingEntity: DrawingEntity) {
@@ -85,10 +88,13 @@ export class RenderersManager {
     let monomerRenderer;
 
     if (monomer instanceof AmbiguousMonomer) {
-      monomerRenderer = new AmbiguousMonomerRenderer(monomer);
+      monomerRenderer = new AmbiguousMonomerRenderer(
+        monomer,
+        this._coreEditorId,
+      );
     } else {
       const MonomerRenderer = monomerFactory(monomer.monomerItem)[1];
-      monomerRenderer = new MonomerRenderer(monomer);
+      monomerRenderer = new MonomerRenderer(monomer, this._coreEditorId);
     }
 
     this.monomers.set(monomer.id, monomerRenderer);
@@ -135,8 +141,10 @@ export class RenderersManager {
     polymerBond: PolymerBond | HydrogenBond,
     redrawAttachmentPoints = true,
   ): void {
-    const polymerBondRenderer =
-      PolymerBondRendererFactory.createInstance(polymerBond);
+    const polymerBondRenderer = PolymerBondRendererFactory.createInstance(
+      polymerBond,
+      this._coreEditorId,
+    );
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     if (redrawAttachmentPoints) {
@@ -239,7 +247,7 @@ export class RenderersManager {
   }
 
   private recalculateMonomersEnumeration() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -264,8 +272,10 @@ export class RenderersManager {
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
-    const polymerBondRenderer =
-      PolymerBondRendererFactory.createInstance(polymerBond);
+    const polymerBondRenderer = PolymerBondRendererFactory.createInstance(
+      polymerBond,
+      this._coreEditorId,
+    );
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
@@ -308,7 +318,7 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(this._coreEditorId);
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
@@ -321,7 +331,7 @@ export class RenderersManager {
   }
 
   public addAtom(atom: Atom) {
-    const atomRenderer = new AtomRenderer(atom);
+    const atomRenderer = new AtomRenderer(atom, this._coreEditorId);
 
     this.atoms.set(atom.id, atomRenderer);
     atomRenderer.show();
@@ -333,7 +343,7 @@ export class RenderersManager {
   }
 
   public addBond(bond: Bond) {
-    const bondRenderer = new BondRenderer(bond);
+    const bondRenderer = new BondRenderer(bond, this._coreEditorId);
 
     this.bonds.set(bond.id, bondRenderer);
     bondRenderer.show();
@@ -345,7 +355,10 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
-    const bondRenderer = new MonomerToAtomBondRenderer(bond);
+    const bondRenderer = new MonomerToAtomBondRenderer(
+      bond,
+      this._coreEditorId,
+    );
     this.redrawDrawingEntity(bond.atom);
 
     bondRenderer.show();
@@ -364,12 +377,15 @@ export class RenderersManager {
     }
   }
 
-  public static getRenderedStructuresBbox(monomers?: BaseMonomer[]) {
+  public static getRenderedStructuresBbox(
+    coreEditorId: string,
+    monomers?: BaseMonomer[],
+  ) {
     let left;
     let right;
     let top;
     let bottom;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
     (monomers || editor.drawingEntitiesManager.monomers).forEach((monomer) => {
       const monomerPosition = monomer.renderer?.scaledMonomerPosition;

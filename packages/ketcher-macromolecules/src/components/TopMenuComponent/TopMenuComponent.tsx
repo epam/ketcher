@@ -17,7 +17,7 @@
 import { Menu } from 'components/menu';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  selectEditor,
+  selectCoreEditorId,
   selectEditorActiveTool,
   selectIsSequenceEditInRNABuilderMode,
   selectTool,
@@ -25,7 +25,7 @@ import {
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { BaseMonomer } from 'ketcher-core';
+import { BaseMonomer, CoreEditor } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -40,7 +40,8 @@ import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 export function TopMenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-  const editor = useAppSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );

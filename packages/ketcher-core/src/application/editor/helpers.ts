@@ -1,11 +1,14 @@
 import { KetSerializer } from 'domain/serializers';
 
-export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
+export const parseMonomersLibrary = (
+  monomersDataRaw: string | JSON,
+  coreEditorId: string,
+) => {
   const monomersLibraryParsedJson =
     typeof monomersDataRaw === 'string'
       ? JSON.parse(monomersDataRaw)
       : monomersDataRaw;
-  const serializer = new KetSerializer();
+  const serializer = new KetSerializer(coreEditorId);
   const monomersLibrary = serializer.convertMonomersLibrary(
     monomersLibraryParsedJson,
   );

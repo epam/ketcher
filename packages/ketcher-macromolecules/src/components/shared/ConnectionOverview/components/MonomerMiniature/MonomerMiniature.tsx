@@ -10,6 +10,8 @@ import {
 import { useLayoutEffect, useRef } from 'react';
 
 import { Container } from './MonomerMiniature.styles';
+import { useAppSelector } from 'hooks';
+import { selectCoreEditorId } from 'state/common';
 
 interface Props {
   monomer: BaseMonomer;
@@ -27,6 +29,7 @@ const MonomerMiniature = ({
   usage,
 }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
 
   useLayoutEffect(() => {
     const svg = svgRef.current;
@@ -41,7 +44,10 @@ const MonomerMiniature = ({
           monomer.variantMonomerItem,
           positionInAngstrom,
         );
-        const renderer = new AmbiguousMonomerRenderer(variantMonomer);
+        const renderer = new AmbiguousMonomerRenderer(
+          variantMonomer,
+          coreEditorId,
+        );
         renderer.showExternal({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore

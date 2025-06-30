@@ -24,8 +24,8 @@ import {
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
-import { ThemeType } from 'theming/defaultTheme';
-import { DeepPartial } from '../../types';
+// import { ThemeType } from 'theming/defaultTheme';
+// import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
 
 export enum MolarMeasurementUnit {
@@ -42,6 +42,7 @@ export const molarMeasurementUnitToNumber = {
 
 interface EditorState {
   ketcherId: string;
+  editorId: string;
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
@@ -60,6 +61,7 @@ interface EditorState {
 
 const initialState: EditorState = {
   ketcherId: '',
+  editorId: '',
   isReady: null,
   activeTool: 'select',
   editor: undefined,
@@ -90,6 +92,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     initKetcherId: (state, action: PayloadAction<string>) => {
       state.ketcherId = action.payload;
     },
+    initCoreEditorId: (state, action: PayloadAction<string>) => {
+      state.editorId = action.payload;
+    },
     initSuccess: (state) => {
       state.isReady = true;
     },
@@ -101,28 +106,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
-    },
-    createEditor: (
-      state,
-      action: PayloadAction<{
-        ketcherId: string;
-        theme: DeepPartial<ThemeType>;
-        canvas: SVGSVGElement;
-        monomersLibraryUpdate?: string | JSON;
-        onInit?: (editor: CoreEditor) => void;
-      }>,
-    ) => {
-      const editor = new CoreEditor({
-        theme: action.payload.theme,
-        canvas: action.payload.canvas,
-        monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
-      });
-
-      // TODO: Figure out proper typing here and below
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.editor = editor;
-      action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor?.mode.modeName;
@@ -191,6 +174,7 @@ export const {
   initSuccess,
   initFailure,
   initKetcherId,
+  initCoreEditorId,
   selectTool,
   setPosition,
   createEditor,
@@ -223,8 +207,9 @@ export const selectKetcherId = (state: RootState): string => {
   return state.editor.ketcherId;
 };
 
-export const selectEditor = (state: RootState): CoreEditor =>
-  state.editor.editor;
+export const selectCoreEditorId = (state: RootState): string => {
+  return state.editor.editorId;
+};
 
 export const selectIsSequenceEditInRNABuilderMode = (
   state: RootState,

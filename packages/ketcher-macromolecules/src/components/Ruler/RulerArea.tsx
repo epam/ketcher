@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ZoomTool } from 'ketcher-core';
+import { CoreEditor, ZoomTool } from 'ketcher-core';
 import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
-import { selectEditor, selectEditorLineLength } from 'state/common';
-import { useLayoutMode } from 'hooks';
+import { selectCoreEditorId, selectEditorLineLength } from 'state/common';
+import { useAppSelector, useLayoutMode } from 'hooks';
 import clsx from 'clsx';
 
 import RulerInput from './RulerInput';
@@ -24,7 +24,8 @@ export const RulerArea = () => {
   const editorLineLength = useSelector(selectEditorLineLength);
   const lineLengthValue = editorLineLength[layoutMode];
 
-  const editor = useSelector(selectEditor);
+  const coreEditorId = useAppSelector(selectCoreEditorId);
+  const editor = CoreEditor.provideEditorInstance(coreEditorId);
 
   const [transform, setTransform] = useState<ZoomTransform>(
     new ZoomTransform(1, 0, 0),

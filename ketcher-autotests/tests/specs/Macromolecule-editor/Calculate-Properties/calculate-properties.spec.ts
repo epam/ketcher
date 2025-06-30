@@ -14,13 +14,15 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
   selectPartOfMolecules,
-  selectSequenceLayoutModeTool,
   takeElementScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

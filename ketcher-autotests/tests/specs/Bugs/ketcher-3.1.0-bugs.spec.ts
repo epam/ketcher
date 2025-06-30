@@ -11,7 +11,6 @@ import {
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
   delay,
-  openLayoutModeMenu,
   BondType,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -24,6 +23,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
+  openLayoutModeMenu,
 } from '@utils/canvas/tools/helpers';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';

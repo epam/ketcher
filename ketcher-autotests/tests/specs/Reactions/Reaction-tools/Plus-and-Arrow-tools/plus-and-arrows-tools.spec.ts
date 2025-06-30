@@ -4,7 +4,6 @@ import {
   copyAndPaste,
   cutAndPaste,
   saveStructureWithReaction,
-  screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
@@ -24,7 +23,6 @@ import {
   clickOnCanvas,
   resetZoomLevelToDefault,
 } from '@utils';
-import { pageReloadMicro } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -149,7 +147,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -431,16 +433,17 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await pageReloadMicro(page);
-      await configureInitialState(page);
-
       await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
 
       await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+      await pasteFromClipboardByKeyboard(page);
 
       await clickOnTheCanvas(page, 0, -100);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
     });
 
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
@@ -456,7 +459,11 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + 300, point.y - 100, page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
     });
   });
 
@@ -819,7 +826,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
   });
 
   test('Cut/paste retrosynthetic arrow', async ({ page }) => {
@@ -831,6 +842,10 @@ test.describe('Plus and Arrows tools ', () => {
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
   });
 });

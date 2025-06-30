@@ -32,7 +32,6 @@ import {
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -106,6 +105,7 @@ import {
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -349,6 +349,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
@@ -481,12 +482,13 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Clean Up button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await Library(page).selectMonomer(Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await resetZoomLevelToDefault(page);
     await IndigoFunctionsToolbar(page).cleanUp();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -1984,7 +1986,6 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       { label: 'C', index: 2 },
       { primary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });

@@ -13,8 +13,6 @@ import {
   clickOnBond,
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
-  AttachmentPoint,
-  setAttachmentPoints,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -32,6 +30,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -106,10 +105,11 @@ test.describe('Multiple S-Group tool', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+    );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -314,12 +314,10 @@ test.describe('Multiple S-Group tool', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });

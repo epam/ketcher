@@ -2,9 +2,10 @@ import { IRnaPreset, monomerFactory } from 'ketcher-core';
 
 type Props = {
   preset: IRnaPreset;
+  zoomFactor: number;
 };
 
-export const GhostRnaPreset = ({ preset }: Props) => {
+export const GhostRnaPreset = ({ preset, zoomFactor }: Props) => {
   const { sugar, phosphate, base } = preset;
 
   if (!sugar) {
@@ -35,8 +36,10 @@ export const GhostRnaPreset = ({ preset }: Props) => {
   const phosphateSize = phosphateRenderer?.monomerSize;
   const baseSize = baseRenderer?.monomerSize;
 
-  const sugarX = 0;
-  const sugarY = 0;
+  const scaledOffset = (zoomFactor - 1) * 30;
+
+  const sugarX = scaledOffset;
+  const sugarY = scaledOffset;
 
   const phosphateX = phosphateSize ? sugarX + sugarSize.width + 30 : 0;
   const phosphateY = sugarY;
@@ -44,19 +47,17 @@ export const GhostRnaPreset = ({ preset }: Props) => {
   const baseX = sugarX + (sugarSize.width - (baseSize?.width || 0)) / 2;
   const baseY = sugarY + sugarSize.height + 30;
 
-  const totalWidth =
-    Math.max(
-      sugarX + sugarSize.width,
-      phosphateSize ? phosphateX + phosphateSize.width : 0,
-      baseSize ? baseX + baseSize.width : 0,
-    ) + 20;
+  const totalWidth = Math.max(
+    sugarX + sugarSize.width,
+    phosphateSize ? phosphateX + phosphateSize.width : 0,
+    baseSize ? baseX + baseSize.width : 0,
+  );
 
-  const totalHeight =
-    Math.max(
-      sugarY + sugarSize.height,
-      phosphateSize ? phosphateY + phosphateSize.height : 0,
-      baseSize ? baseY + baseSize.height : 0,
-    ) + 20;
+  const totalHeight = Math.max(
+    sugarY + sugarSize.height,
+    phosphateSize ? phosphateY + phosphateSize.height : 0,
+    baseSize ? baseY + baseSize.height : 0,
+  );
 
   return (
     <svg

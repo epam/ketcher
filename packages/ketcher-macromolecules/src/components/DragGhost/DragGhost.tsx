@@ -90,7 +90,10 @@ export const DragGhost = () => {
   return (
     <div className={styles.dragGhost} ref={ghostWrapperRef}>
       {isLibraryItemRnaPreset(libraryItemDragData.item) ? (
-        <GhostRnaPreset preset={libraryItemDragData.item} />
+        <GhostRnaPreset
+          preset={libraryItemDragData.item}
+          zoomFactor={transform.k}
+        />
       ) : (
         <GhostMonomer monomerItem={libraryItemDragData.item} />
       )}

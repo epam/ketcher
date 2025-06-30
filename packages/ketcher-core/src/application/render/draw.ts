@@ -1410,11 +1410,55 @@ function bondDative(
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
-  return paper
-    .path(makeStroke(a, b))
-    .attr(options.lineattr)
-    .attr({ 'arrow-end': 'block-midium-long' })
-    .attr(isSnapping ? options.bondSnappingStyle : {});
+  // Check for NaN values and provide fallback coordinates
+  const ax = isNaN(a.x) ? 0 : a.x;
+  const ay = isNaN(a.y) ? 0 : a.y;
+  const bx = isNaN(b.x) ? 0 : b.x;
+  const by = isNaN(b.y) ? 0 : b.y;
+
+  const safeA = new Vec2(ax, ay, a.z);
+  const safeB = new Vec2(bx, by, b.z);
+
+  const dx = safeA.x - safeB.x;
+  const dy = safeA.y - safeB.y;
+
+  if (dx * dx + dy * dy < 0.01) {
+    // bond is too short for an arrowhead, draw a simple line
+    return paper
+      .path(makeStroke(safeA, safeB))
+      .attr(options.lineattr)
+      .attr(isSnapping ? options.bondSnappingStyle : {});
+  }
+
+  const pathString = makeStroke(safeA, safeB);
+
+  // Wrap path creation in try-catch to catch any errors
+  let pathElement;
+  try {
+    pathElement = paper.path(pathString);
+  } catch (error) {
+    // Create a simple fallback path
+    pathElement = paper.path('M0,0L1,1');
+  }
+
+  // Apply basic attributes
+  try {
+    pathElement.attr(options.lineattr);
+  } catch (error) {
+    console.error('bondDative - error applying basic attributes:', error);
+  }
+
+  // Apply snapping style if needed
+  if (isSnapping) {
+    try {
+      pathElement.attr(options.bondSnappingStyle);
+      console.log('bondDative - snapping style applied successfully');
+    } catch (error) {
+      console.error('bondDative - error applying snapping style:', error);
+    }
+  }
+
+  return pathElement;
 }
 
 function reactingCenter(

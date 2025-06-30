@@ -1,13 +1,9 @@
 import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  BondType,
-  selectButtonById,
-  takeEditorScreenshot,
-  waitForRender,
-} from '..';
+import { BondType, takeEditorScreenshot, waitForRender } from '..';
 import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
+import { selectButtonById } from '../canvas/tools/helpers';
 import { AtomLabelType } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';

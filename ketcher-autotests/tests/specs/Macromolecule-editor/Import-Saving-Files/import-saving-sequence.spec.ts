@@ -15,6 +15,7 @@ import {
   SequenceFileFormat,
   resetZoomLevelToDefault,
   delay,
+  ZoomInByKeyboard,
 } from '@utils';
 import {
   FileType,
@@ -84,7 +85,7 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
-    await delay(0.1);
+    await delay(0.2);
     await takeEditorScreenshot(page);
   });
 
@@ -726,7 +727,9 @@ for (const correctSequence of correctSequences) {
       correctSequence.sequenceString,
     );
     await resetZoomLevelToDefault(page);
-    await zoomWithMouseWheel(page, -200);
+    await ZoomInByKeyboard(page);
+    await ZoomInByKeyboard(page);
+    await ZoomInByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

@@ -133,7 +133,8 @@ export class CoreEditor {
     y: 0,
   } as DOMRect;
 
-  public libraryItemDragState: LibraryItemDragState = null;
+  private libraryItemDragState: LibraryItemDragState = null;
+  private libraryItemDragCancelled = false;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -342,6 +343,21 @@ export class CoreEditor {
       ) as IKetMonomerGroupTemplate[];
   }
 
+  public get isLibraryItemDragCancelled() {
+    return this.libraryItemDragCancelled;
+  }
+
+  public set isLibraryItemDragCancelled(value: boolean) {
+    this.libraryItemDragCancelled = value;
+  }
+
+  public cancelLibraryItemDrag() {
+    if (this.libraryItemDragState) {
+      this.libraryItemDragCancelled = true;
+      this.events.setLibraryItemDragState.dispatch(null);
+    }
+  }
+
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
@@ -385,6 +401,11 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       event.preventDefault();
+
+      if (this.libraryItemDragState) {
+        this.cancelLibraryItemDrag();
+        return;
+      }
 
       const eventData = event.target?.__data__;
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
@@ -567,10 +588,6 @@ export class CoreEditor {
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
-        if (!this.libraryItemDragState) {
-          return;
-        }
-
         const { x, y } = position;
 
         let modelChanges: Command;

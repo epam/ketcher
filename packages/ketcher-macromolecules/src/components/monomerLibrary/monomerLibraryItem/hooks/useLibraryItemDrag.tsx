@@ -11,7 +11,11 @@ export const useLibraryItemDrag = (
   const editor = useSelector(selectEditor);
 
   useEffect(() => {
-    if (!editor || !itemRef.current) {
+    if (
+      !editor ||
+      editor.mode.modeName === 'sequence-layout-mode' ||
+      !itemRef.current
+    ) {
       return;
     }
 
@@ -20,43 +24,47 @@ export const useLibraryItemDrag = (
     const dragBehavior = drag<HTMLElement, unknown>()
       .on('start', null)
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
-        const { clientX: x, clientY: y } = event.sourceEvent;
+        if (editor.isLibraryItemDragCancelled) {
+          return;
+        }
 
+        const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
           item,
           position: { x, y },
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
-        const { clientX: x, clientY: y } = event.sourceEvent;
-        const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
-          .node()
-          ?.getBoundingClientRect();
-        if (canvasWrapperBoundingClientRect) {
-          const { top, left, right, bottom } = canvasWrapperBoundingClientRect;
-          const transform = ZoomTool.instance.zoomTransform;
-          const adjustedX = x - left + 15;
-          const adjustedY = y - top + 15;
-          const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
-          const mouseWithinCanvas =
-            x >= left && x <= right && y >= top && y <= bottom;
-          if (mouseWithinCanvas) {
-            editor.events.placeLibraryItemOnCanvas.dispatch(item, {
-              x: scaledX,
-              y: scaledY,
-            });
+        if (!editor.isLibraryItemDragCancelled) {
+          const { clientX: x, clientY: y } = event.sourceEvent;
+          const canvasWrapperBoundingClientRect =
+            ZoomTool.instance.canvasWrapper.node()?.getBoundingClientRect();
+          if (canvasWrapperBoundingClientRect) {
+            const { top, left, right, bottom } =
+              canvasWrapperBoundingClientRect;
+            const transform = ZoomTool.instance.zoomTransform;
+            const adjustedX = x - left + 15;
+            const adjustedY = y - top + 15;
+            const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
+            const mouseWithinCanvas =
+              x >= left && x <= right && y >= top && y <= bottom;
+            if (mouseWithinCanvas) {
+              editor.events.placeLibraryItemOnCanvas.dispatch(item, {
+                x: scaledX,
+                y: scaledY,
+              });
+            }
           }
         }
 
         editor.events.setLibraryItemDragState.dispatch(null);
+        editor.isLibraryItemDragCancelled = false;
       });
 
-    if (editor.mode.modeName !== 'sequence-layout-mode') {
-      itemElement.call(dragBehavior);
-    }
+    itemElement.call(dragBehavior);
 
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, item, itemRef]);
+  }, [editor, editor?.mode.modeName, item, itemRef]);
 };

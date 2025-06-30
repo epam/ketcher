@@ -199,6 +199,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.cancelLibraryItemDrag();
     },
   },
   undo: {

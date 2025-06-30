@@ -55,7 +55,7 @@ export const RulerArea = () => {
     let inputPosition = translateValueWithZoomAndDrag + 10;
 
     const canvasWidth = editor?.canvas.width.baseVal.value;
-    if (canvasWidth === 0) {
+    if (!canvasWidth) {
       return [inputPosition, handlePosition];
     }
 
@@ -86,7 +86,7 @@ export const RulerArea = () => {
 
   const updateSettings = useCallback(
     (value: number) => {
-      editor.events.setEditorLineLength.dispatch({ [layoutMode]: value });
+      editor?.events.setEditorLineLength.dispatch({ [layoutMode]: value });
     },
     [editor?.events?.setEditorLineLength, layoutMode],
   );
@@ -141,7 +141,10 @@ export const RulerArea = () => {
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       setIsDragging(true);
       dragStartX.current = event.sourceEvent.clientX;
-      editor.events.toggleLineLengthHighlighting.dispatch(true, translateValue);
+      editor?.events.toggleLineLengthHighlighting.dispatch(
+        true,
+        translateValue,
+      );
     },
     [editor?.events?.toggleLineLengthHighlighting, translateValue],
   );
@@ -152,7 +155,7 @@ export const RulerArea = () => {
         event.sourceEvent.clientX,
       );
       setDragDelta(dragDelta);
-      editor.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
+      editor?.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
     },
     [editor?.events?.toggleLineLengthHighlighting, calculateDragPosition],
   );
@@ -170,7 +173,7 @@ export const RulerArea = () => {
 
       setDragDelta(0);
       dragStartX.current = 0;
-      editor.events.toggleLineLengthHighlighting.dispatch(false);
+      editor?.events.toggleLineLengthHighlighting.dispatch(false);
     },
     [
       calculateDragPosition,

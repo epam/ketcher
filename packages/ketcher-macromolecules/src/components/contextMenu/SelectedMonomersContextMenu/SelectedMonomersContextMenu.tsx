@@ -118,25 +118,25 @@ export const SelectedMonomersContextMenu = ({
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
     switch (true) {
       case menuItemId === 'copy':
-        editor.events.copySelectedStructure.dispatch();
+        editor?.events.copySelectedStructure.dispatch();
         break;
       case menuItemId === 'create_antisense_rna_chain':
-        editor.events.createAntisenseChain.dispatch(false);
+        editor?.events.createAntisenseChain.dispatch(false);
         break;
       case menuItemId === 'create_antisense_dna_chain':
-        editor.events.createAntisenseChain.dispatch(true);
+        editor?.events.createAntisenseChain.dispatch(true);
         break;
       case menuItemId === 'delete':
-        editor.events.deleteSelectedStructure.dispatch();
+        editor?.events.deleteSelectedStructure.dispatch();
         break;
       case menuItemId === 'paste':
-        editor.events.pasteFromClipboard.dispatch();
+        editor?.events.pasteFromClipboard.dispatch();
         break;
       case menuItemId === 'edit_connection_points': {
         const polymerBond = props?.polymerBondRenderer?.polymerBond;
         if (!polymerBond) return;
 
-        editor.events.openMonomerConnectionModal.dispatch({
+        editor?.events.openMonomerConnectionModal.dispatch({
           firstMonomer: polymerBond.firstMonomer,
           secondMonomer: polymerBond.secondMonomer,
           polymerBond,
@@ -149,7 +149,7 @@ export const SelectedMonomersContextMenu = ({
           AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
           '',
         );
-        editor.events.modifyAminoAcids.dispatch({
+        editor?.events.modifyAminoAcids.dispatch({
           monomers: monomersForAminoAcidModification,
           modificationType,
         });

@@ -11,7 +11,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  resetCurrentTool,
   moveOnAtom,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
@@ -22,6 +21,7 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

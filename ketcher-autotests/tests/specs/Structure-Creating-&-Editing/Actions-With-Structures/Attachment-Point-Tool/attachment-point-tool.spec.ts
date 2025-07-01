@@ -4,7 +4,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   dragMouseTo,
-  resetCurrentTool,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   waitForPageInit,
@@ -13,6 +12,7 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

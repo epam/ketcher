@@ -11,12 +11,12 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   takeEditorScreenshot,
   drawFGAndDrag,
   drawSaltAndDrag,
   waitForPageInit,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 const SHIFT = 50;
 

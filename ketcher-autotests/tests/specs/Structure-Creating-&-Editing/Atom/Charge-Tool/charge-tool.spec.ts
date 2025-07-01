@@ -7,10 +7,10 @@ import {
   takeLeftToolbarScreenshot,
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
-  resetCurrentTool,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Charge tool', () => {

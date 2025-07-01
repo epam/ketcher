@@ -99,6 +99,7 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Export monomers and chem', async () => {
+    await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
     await resetZoomLevelToDefault(page);
     await verifyFileExport(
@@ -107,6 +108,7 @@ test.describe('Import-Saving .mol Files', () => {
       FileType.MOL,
       MolFileFormat.v3000,
     );
+    await selectFlexLayoutModeTool(page);
   });
 
   test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {

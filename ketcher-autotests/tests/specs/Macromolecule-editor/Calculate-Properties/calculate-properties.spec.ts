@@ -1635,7 +1635,7 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await CommonTopLeftToolbar(page).calculateProperties();
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

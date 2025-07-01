@@ -2,7 +2,6 @@ import { Page, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   pressButton,
-  resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -13,6 +12,7 @@ import {
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

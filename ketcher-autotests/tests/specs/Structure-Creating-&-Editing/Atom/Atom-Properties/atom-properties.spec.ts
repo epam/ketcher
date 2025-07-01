@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  resetCurrentTool,
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
@@ -16,6 +15,7 @@ import {
   MolFileFormat,
   RxnFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import {
   copyAndPaste,

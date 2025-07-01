@@ -20,7 +20,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   SequenceType,
-  switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takePageScreenshot,
   typePeptideAlphabet,
@@ -31,6 +30,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
+  switchSequenceEnteringButtonType,
 } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {

@@ -11,7 +11,8 @@ import {
   waitForRender,
 } from '@utils';
 import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
-import { getAtomByIndex, getRightAtomByAttributes } from '@utils/canvas/atoms';
+import { getRightAtomByAttributes } from '@utils/canvas/atoms/getRightAtomByAttributes/getRightAtomByAttributes';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

@@ -13,11 +13,11 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
-  getAtomByIndex,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

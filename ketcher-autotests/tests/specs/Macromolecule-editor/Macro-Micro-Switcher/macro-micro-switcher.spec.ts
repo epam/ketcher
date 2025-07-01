@@ -30,9 +30,6 @@ import {
   readFileContent,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
@@ -40,7 +37,13 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { getAtomByIndex, MacroFileType, SequenceType } from '@utils/canvas';
+import {
+  switchSequenceEnteringButtonType,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { MacroFileType, SequenceType } from '@utils/canvas';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   addSuperatomAttachmentPoint,

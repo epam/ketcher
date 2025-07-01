@@ -5,14 +5,16 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  copyAndPaste,
-  cutAndPaste,
   waitForRender,
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   FileType,

@@ -3,9 +3,7 @@ import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
   copyToClipboardByKeyboard,
-  cutAndPaste,
   cutToClipboardByKeyboard,
   dragMouseTo,
   moveMouseAway,
@@ -29,7 +27,11 @@ import {
   copyContentToClipboard,
   getCachedBodyCenter,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,

@@ -9,12 +9,11 @@ import {
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
   waitForPageInit,
-  copyAndPaste,
-  cutAndPaste,
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
+import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';

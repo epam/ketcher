@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   openFile,
   selectOptionInDropdown,
-  selectSnakeLayoutModeTool,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -15,8 +14,8 @@ import {
   SequenceFileFormat,
   resetZoomLevelToDefault,
   delay,
-  ZoomInByKeyboard,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -727,9 +726,6 @@ for (const correctSequence of correctSequences) {
       correctSequence.sequenceString,
     );
     await resetZoomLevelToDefault(page);
-    await ZoomInByKeyboard(page);
-    await ZoomInByKeyboard(page);
-    await ZoomInByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

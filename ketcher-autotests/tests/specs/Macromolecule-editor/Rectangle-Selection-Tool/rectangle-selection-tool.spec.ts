@@ -5,16 +5,18 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
-  selectRectangleArea,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseAway,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   clickInTheMiddleOfTheScreen,
   resetZoomLevelToDefault,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectSnakeLayoutModeTool,
+  selectRectangleArea,
+} from '@utils/canvas/tools/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@constants/monomers/Peptides';

@@ -6,14 +6,16 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  copyAndPaste,
-  cutAndPaste,
   waitForPageInit,
   resetCurrentTool,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

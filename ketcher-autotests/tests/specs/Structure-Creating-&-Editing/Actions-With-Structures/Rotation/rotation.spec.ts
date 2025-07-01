@@ -3,12 +3,12 @@ import {
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
   ZoomOutByKeyboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   COORDINATES_TO_PERFORM_ROTATION,

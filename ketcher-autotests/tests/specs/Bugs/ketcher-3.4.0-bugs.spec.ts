@@ -7,8 +7,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -16,13 +14,11 @@ import {
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   SdfFileFormat,
-  selectSequenceLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   takePageScreenshot,
   clickOnAtom,
   waitForMonomerPreview,
   MolFileFormat,
-  copyAndPaste,
   clickOnCanvas,
   openFile,
   pressButton,
@@ -30,6 +26,14 @@ import {
   selectUserTemplate,
   TemplateLibrary,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   getMonomerLocator,

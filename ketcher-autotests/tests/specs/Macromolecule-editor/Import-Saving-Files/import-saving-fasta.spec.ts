@@ -4,14 +4,16 @@ import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   openFile,
-  selectSnakeLayoutModeTool,
   moveMouseAway,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
   MacroFileType,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,

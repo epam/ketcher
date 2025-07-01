@@ -18,10 +18,10 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseAway,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';

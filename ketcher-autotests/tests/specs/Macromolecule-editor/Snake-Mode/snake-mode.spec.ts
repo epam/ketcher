@@ -5,11 +5,13 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
+} from '@utils';
+import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils';
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,

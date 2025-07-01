@@ -4,11 +4,8 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
-  selectRectangleArea,
-  selectFlexLayoutModeTool,
   selectPartOfMolecules,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
@@ -16,6 +13,11 @@ import {
   moveMouseAway,
   MacroFileType,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectRectangleArea,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

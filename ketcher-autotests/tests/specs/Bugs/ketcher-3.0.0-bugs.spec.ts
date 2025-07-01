@@ -31,10 +31,10 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
+  selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools';
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {

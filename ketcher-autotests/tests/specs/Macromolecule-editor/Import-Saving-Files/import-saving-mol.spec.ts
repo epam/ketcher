@@ -7,17 +7,19 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   moveMouseAway,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   readFileContent,
   MonomerType,
-  selectSequenceLayoutModeTool,
   MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

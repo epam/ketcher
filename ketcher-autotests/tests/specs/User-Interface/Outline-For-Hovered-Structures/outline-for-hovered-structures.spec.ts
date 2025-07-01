@@ -4,8 +4,8 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 // shift of coordinates relative to the center, for the hover of the entire structure:
 const screenCenterShift = 50;

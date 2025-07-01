@@ -5,14 +5,16 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,

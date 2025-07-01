@@ -18,14 +18,15 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   closeErrorMessage,
   closeOpenStructure,

@@ -6,10 +6,8 @@ import { Page, test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
-  selectFlexLayoutModeTool,
   waitForRender,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
@@ -18,12 +16,16 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   resetZoomLevelToDefault,
   waitForPageInit,
   MacroFileType,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';

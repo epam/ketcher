@@ -6,17 +6,19 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   dragMouseTo,
   moveMouseAway,
   MolFileFormat,
 } from '@utils';
-import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,

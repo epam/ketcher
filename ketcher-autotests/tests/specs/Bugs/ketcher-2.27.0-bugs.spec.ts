@@ -23,7 +23,7 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools';
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import {
   connectMonomersWithBonds,

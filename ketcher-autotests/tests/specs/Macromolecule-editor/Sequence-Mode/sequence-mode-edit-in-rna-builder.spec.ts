@@ -4,15 +4,17 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   takeRNABuilderScreenshot,
   takeMonomerLibraryScreenshot,
   moveMouseAway,
   takePageScreenshot,
-  selectRectangleArea,
   takePresetsScreenshot,
-  selectSnakeLayoutModeTool,
 } from '@utils';
+import {
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectRectangleArea,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   modifyInRnaBuilder,

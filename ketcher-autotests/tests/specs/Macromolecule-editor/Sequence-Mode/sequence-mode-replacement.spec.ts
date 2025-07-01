@@ -10,11 +10,13 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   pressCancelInConfirmYourActionDialog,

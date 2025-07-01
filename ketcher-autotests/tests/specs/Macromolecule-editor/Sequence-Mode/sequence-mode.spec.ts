@@ -4,11 +4,8 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   moveMouseAway,
   switchSequenceEnteringButtonType,
   SequenceType,
@@ -16,8 +13,13 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,

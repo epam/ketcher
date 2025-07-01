@@ -4,9 +4,9 @@ import {
   BondType,
   clickOnCanvas,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 

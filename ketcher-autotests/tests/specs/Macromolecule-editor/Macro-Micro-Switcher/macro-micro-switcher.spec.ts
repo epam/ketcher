@@ -40,12 +40,8 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  getAtomByIndex,
-  MacroFileType,
-  selectAllStructuresOnCanvas,
-  SequenceType,
-} from '@utils/canvas';
+import { getAtomByIndex, MacroFileType, SequenceType } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,

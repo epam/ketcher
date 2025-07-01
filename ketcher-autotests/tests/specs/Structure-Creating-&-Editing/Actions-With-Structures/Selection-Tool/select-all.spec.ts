@@ -1,15 +1,17 @@
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Select all', () => {

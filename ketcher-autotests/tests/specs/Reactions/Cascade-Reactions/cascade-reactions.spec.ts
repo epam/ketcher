@@ -11,15 +11,17 @@ import {
   resetZoomLevelToDefault,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  selectAllStructuresOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   moveOnAtom,
   dragMouseTo,
   clickOnCanvas,
   waitForRender,
   RdfFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,

@@ -6,18 +6,20 @@ import {
   clickOnAtom,
   clickOnBond,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   MolFileFormat,
   openFileAndAddToCanvas,
   pressButton,
   resetCurrentTool,
   screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
   selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { SGroupRepeatPattern } from '@utils/sgroup';
 import {

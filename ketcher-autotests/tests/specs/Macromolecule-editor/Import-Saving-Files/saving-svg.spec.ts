@@ -3,12 +3,14 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  switchSequenceEnteringButtonType,
   SequenceType,
 } from '@utils';
+import {
+  selectRectangleArea,
+  switchSequenceEnteringButtonType,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   markResetToDefaultState,
   processResetToDefaultState,

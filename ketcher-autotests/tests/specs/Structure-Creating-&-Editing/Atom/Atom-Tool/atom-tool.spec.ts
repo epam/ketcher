@@ -15,16 +15,18 @@ import {
   moveOnAtom,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  copyAndPaste,
-  cutAndPaste,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

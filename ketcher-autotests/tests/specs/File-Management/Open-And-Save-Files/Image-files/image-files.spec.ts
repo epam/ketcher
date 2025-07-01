@@ -14,9 +14,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   resetZoomLevelToDefault,
-  saveToTemplates,
   screenshotBetweenUndoRedo,
-  selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
@@ -25,6 +23,7 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
+import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {
   copyAndPaste,
   cutAndPaste,

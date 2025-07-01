@@ -17,7 +17,6 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -30,6 +29,7 @@ import {
   copyContentToClipboard,
   getCachedBodyCenter,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,

@@ -15,14 +15,16 @@ import {
   FILE_TEST_DATA,
   waitForPageInit,
   waitForRender,
-  copyAndPaste,
-  cutAndPaste,
   clickOnAtom,
   moveOnAtom,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   getCachedBodyCenter,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

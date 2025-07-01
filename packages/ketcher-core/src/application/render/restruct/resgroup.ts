@@ -111,6 +111,15 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
           break;
         }
+        case 'COP': {
+          const connectivity: string = sgroup.data.connectivity || 'eu';
+          SGroupdrawBracketsOptions.upperIndexText = connectivity.toUpperCase();
+          const subtype = sgroup.data.subtype;
+          if (sgroup.data.subtype) {
+            SGroupdrawBracketsOptions.lowerIndexText = subtype.toLowerCase();
+          }
+          break;
+        }
         case 'SUP': {
           SGroupdrawBracketsOptions.lowerIndexText =
             sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
@@ -136,6 +145,7 @@ class ReSGroup extends ReObject {
         'SRU',
         'SUP',
         'GEN',
+        'COP',
         'queryComponent',
       ];
       if (

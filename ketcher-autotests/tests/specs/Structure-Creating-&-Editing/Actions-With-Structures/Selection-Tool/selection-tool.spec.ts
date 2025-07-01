@@ -14,8 +14,8 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
   waitForRender,
-  getAtomByIndex,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

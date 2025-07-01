@@ -5,12 +5,11 @@ import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 import {
   resetSettingsValuesToDefault,

@@ -3,10 +3,10 @@ import { test, expect } from '@playwright/test';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
-  getAtomByIndex,
   getBottomAtomByAttributes,
   getRightAtomByAttributes,
 } from '@utils/canvas/atoms';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {

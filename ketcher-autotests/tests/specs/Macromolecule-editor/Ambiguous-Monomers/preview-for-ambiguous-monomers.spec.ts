@@ -12,7 +12,7 @@ import {
 import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools';
+} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,

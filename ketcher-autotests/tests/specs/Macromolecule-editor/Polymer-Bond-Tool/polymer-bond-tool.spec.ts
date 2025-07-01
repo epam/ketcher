@@ -13,16 +13,18 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   clickOnCanvas,
-  selectSequenceLayoutModeTool,
-  selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   waitForPageInit,
   MacroFileType,
   MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

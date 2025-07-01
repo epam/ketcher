@@ -6,17 +6,19 @@ import {
   waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   MonomerType,
-  selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeElementScreenshot,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   MolFileFormat,
   resetZoomLevelToDefault,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectFlexLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

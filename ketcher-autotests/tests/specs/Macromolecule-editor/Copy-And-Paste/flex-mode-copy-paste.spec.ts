@@ -5,11 +5,11 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
-  selectRectangleArea,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

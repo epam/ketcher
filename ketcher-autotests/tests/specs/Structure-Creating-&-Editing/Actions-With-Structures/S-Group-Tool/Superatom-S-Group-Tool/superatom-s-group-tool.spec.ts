@@ -6,16 +6,18 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   BondType,
-  copyAndPaste,
-  cutAndPaste,
   clickOnAtom,
   clickOnBond,
   screenshotBetweenUndoRedo,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,

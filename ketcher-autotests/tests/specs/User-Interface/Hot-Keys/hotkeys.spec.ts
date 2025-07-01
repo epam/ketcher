@@ -9,9 +9,7 @@ import {
   clickOnAtom,
   clickOnBond,
   BondType,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
-  copyStructureByCtrlMove,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   selectFunctionalGroups,
@@ -19,9 +17,13 @@ import {
   dragMouseTo,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
-  copyAndPaste,
   clickOnCanvas,
 } from '@utils';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { copyStructureByCtrlMove } from '@utils/canvas/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

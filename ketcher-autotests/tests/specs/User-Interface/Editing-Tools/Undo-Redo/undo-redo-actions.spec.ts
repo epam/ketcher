@@ -14,19 +14,21 @@ import {
   openFileAndAddToCanvas,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  copyAndPaste,
-  cutAndPaste,
   waitForPageInit,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
   selectRedoByKeyboard,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

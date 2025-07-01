@@ -19,10 +19,9 @@ import {
   MolFileFormat,
 } from '@utils';
 import {
-  selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
-  selectRectangleArea,
-} from '@utils/canvas/tools';
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

@@ -19,10 +19,6 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   SequenceType,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
@@ -31,6 +27,12 @@ import {
   typeRNADNAAlphabet,
   waitForPageInit,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

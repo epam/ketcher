@@ -43,7 +43,7 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools';
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

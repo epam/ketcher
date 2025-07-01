@@ -14,7 +14,7 @@ import {
   copyAndPaste,
   cutAndPaste,
   selectAllStructuresOnCanvas,
-} from '@utils/canvas';
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

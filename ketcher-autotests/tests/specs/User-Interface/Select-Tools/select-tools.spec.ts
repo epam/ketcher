@@ -6,8 +6,8 @@ import {
   takeEditorScreenshot,
   clickOnAtom,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

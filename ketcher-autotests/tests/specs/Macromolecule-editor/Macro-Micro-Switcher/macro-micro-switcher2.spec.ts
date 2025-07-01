@@ -20,20 +20,24 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
   resetCurrentTool,
-  selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   screenshotBetweenUndoRedoInMacro,
-  copyAndPaste,
   copyToClipboardByKeyboard,
   takePageScreenshot,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   MacroFileType,
   MolFileFormat,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,

@@ -19,12 +19,14 @@ import {
   waitForRender,
   resetZoomLevelToDefault,
   takeElementScreenshot,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   getCachedBodyCenter,
   ZoomOutByKeyboard,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

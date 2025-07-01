@@ -7,12 +7,15 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  cutAndPaste,
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils';
-import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

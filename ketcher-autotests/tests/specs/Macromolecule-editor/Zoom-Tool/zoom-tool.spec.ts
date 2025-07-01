@@ -2,7 +2,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
-  selectRectangleArea,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
@@ -10,13 +9,16 @@ import {
   moveMouseAway,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectRectangleArea,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,

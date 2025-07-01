@@ -12,8 +12,6 @@ import {
   hideMonomerPreview,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
   waitForPageInit,
@@ -27,6 +25,10 @@ import {
   getControlModifier,
   MacroFileType,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectRectangleArea,
+} from '@utils/canvas/tools/helpers';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,

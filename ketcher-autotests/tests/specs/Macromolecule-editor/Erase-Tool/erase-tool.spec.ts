@@ -6,14 +6,14 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   selectPartOfMolecules,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnTheCanvas,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   bondTwoMonomers,

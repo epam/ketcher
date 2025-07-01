@@ -8,10 +8,10 @@ import {
   clickOnAtom,
   clickOnCanvas,
   delay,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 test.describe('Lookup Abbreviations tests', () => {
   test.beforeEach(async ({ page }) => {

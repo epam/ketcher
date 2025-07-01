@@ -14,13 +14,15 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
   selectPartOfMolecules,
-  selectSequenceLayoutModeTool,
   takeElementScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -84,7 +86,7 @@ test.describe('Calculate Properties tests', () => {
     const iconButton = page.getByTestId(icon.testId);
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    await expect(icon.title).toBeTruthy();
     await takeTopToolbarScreenshot(page);
     await iconButton.click();
     await takeTopToolbarScreenshot(page);

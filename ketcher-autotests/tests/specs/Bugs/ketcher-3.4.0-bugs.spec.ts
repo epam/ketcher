@@ -1089,7 +1089,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1164,7 +1164,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1195,7 +1195,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');

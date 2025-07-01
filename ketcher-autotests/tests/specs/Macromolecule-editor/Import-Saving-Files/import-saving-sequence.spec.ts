@@ -14,7 +14,6 @@ import {
   SequenceFileFormat,
   resetZoomLevelToDefault,
   delay,
-  ZoomInByKeyboard,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import {

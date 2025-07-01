@@ -20,6 +20,7 @@ import {
 } from '@utils';
 import {
   selectFlexLayoutModeTool,
+  selectRectangleArea,
   selectSnakeLayoutModeTool,
 } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';

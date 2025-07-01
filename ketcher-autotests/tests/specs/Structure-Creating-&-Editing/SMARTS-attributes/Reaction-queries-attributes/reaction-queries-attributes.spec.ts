@@ -9,12 +9,12 @@ import {
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

@@ -39,14 +39,16 @@ export const LayoutModeButton = () => {
       }
       setActiveMode(mode);
       // event to change active mode state in editor
-      editor.events.selectMode.dispatch(mode);
+      editor?.events.selectMode.dispatch(mode);
       // event to change active mode state in useLayoutMode hook
-      editor.events.layoutModeChange.dispatch(mode);
+      editor?.events.layoutModeChange.dispatch(mode);
     },
   };
+
   useEffect(() => {
     setActiveMode(layoutMode);
   }, [layoutMode]);
+
   return (
     <MenuContext.Provider value={menuContext}>
       <Menu.Submenu

@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
   selectPartOfMolecules,
   takeElementScreenshot,
   takePageScreenshot,
@@ -23,6 +22,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
 } from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

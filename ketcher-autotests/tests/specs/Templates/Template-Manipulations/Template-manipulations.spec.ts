@@ -26,7 +26,6 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
   waitForElementInCanvas,
@@ -36,6 +35,7 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,

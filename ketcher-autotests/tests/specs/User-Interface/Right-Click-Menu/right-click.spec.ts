@@ -11,11 +11,11 @@ import {
   clickOnBond,
   clickOnAtom,
   clickOnCanvas,
-  selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   moveMouseAway,
   resetZoomLevelToDefault,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';

@@ -1,8 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
-  copyAndPaste,
-  cutAndPaste,
   saveStructureWithReaction,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -15,14 +13,18 @@ import {
   Point,
   waitForPageInit,
   waitForRender,
-  selectRectangleArea,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   resetZoomLevelToDefault,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

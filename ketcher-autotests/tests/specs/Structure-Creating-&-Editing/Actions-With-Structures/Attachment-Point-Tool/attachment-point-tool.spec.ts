@@ -5,17 +5,19 @@ import {
   openFileAndAddToCanvas,
   dragMouseTo,
   resetCurrentTool,
-  copyAndPaste,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
-import { cutAndPaste } from '@utils/canvas';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {

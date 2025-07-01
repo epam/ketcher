@@ -9,17 +9,19 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   BondType,
-  copyAndPaste,
-  cutAndPaste,
   clickOnBond,
   clickOnAtom,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,

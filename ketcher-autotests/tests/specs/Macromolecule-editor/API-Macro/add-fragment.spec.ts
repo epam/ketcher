@@ -6,12 +6,12 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   addFragment,
-  selectRectangleArea,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   clickInTheMiddleOfTheScreen,
   readFileContent,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';

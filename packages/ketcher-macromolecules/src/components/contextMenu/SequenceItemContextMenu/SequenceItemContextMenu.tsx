@@ -238,6 +238,10 @@ export const SequenceItemContextMenu = ({
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
+    if (!editor) {
+      return;
+    }
+
     switch (true) {
       case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();

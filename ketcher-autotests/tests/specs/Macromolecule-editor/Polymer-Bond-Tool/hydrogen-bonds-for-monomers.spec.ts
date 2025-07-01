@@ -7,16 +7,18 @@ import {
   dragMouseTo,
   waitForPageInit,
   resetZoomLevelToDefault,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
-  selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectSequenceLayoutModeTool,
   ZoomOutByKeyboard,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   bondTwoMonomersPointToPoint,

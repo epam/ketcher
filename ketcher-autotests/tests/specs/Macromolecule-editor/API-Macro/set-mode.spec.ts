@@ -5,11 +5,11 @@ import {
   openFileAndAddToCanvasMacro,
   setMode,
   takePageScreenshot,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   setZoom,
   moveMouseAway,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {

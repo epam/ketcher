@@ -4,18 +4,20 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
-  selectRectangleArea,
   moveMouseAway,
-  selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
+import {
+  selectRectangleArea,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import {

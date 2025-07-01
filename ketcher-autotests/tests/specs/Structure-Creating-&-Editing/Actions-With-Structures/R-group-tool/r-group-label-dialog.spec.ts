@@ -7,17 +7,19 @@ import {
   dragMouseTo,
   openFileAndAddToCanvas,
   clickOnAtom,
-  copyAndPaste,
-  cutAndPaste,
   waitForRender,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
   moveMouseAway,
   ZoomOutByKeyboard,
   RxnFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,

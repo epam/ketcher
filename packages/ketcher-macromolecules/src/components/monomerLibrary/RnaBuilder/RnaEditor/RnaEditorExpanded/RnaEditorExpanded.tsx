@@ -207,7 +207,7 @@ export const RnaEditorExpanded = ({
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
       scrollToSelectedPreset(newPreset?.name);
       if (newPreset) {
-        editor.events.selectPreset.dispatch(newPreset);
+        editor?.events.selectPreset.dispatch(newPreset);
       }
       return;
     }
@@ -231,7 +231,7 @@ export const RnaEditorExpanded = ({
     );
 
     if (selectedRNAPartMonomer && !isSequenceMode) {
-      editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
+      editor?.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
 
     if (newPreset[monomerGroupToPresetGroup[selectedGroup]]) {
@@ -292,7 +292,7 @@ export const RnaEditorExpanded = ({
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
-      editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
+      editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
   };
@@ -314,7 +314,7 @@ export const RnaEditorExpanded = ({
     dispatch(savePreset(newPreset));
     dispatch(setActivePreset(newPreset));
     if (!isSequenceMode) {
-      editor.events.selectPreset.dispatch(newPreset);
+      editor?.events.selectPreset.dispatch(newPreset);
     }
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
@@ -363,7 +363,7 @@ export const RnaEditorExpanded = ({
       } else if (event.key === 'Enter') {
         isSequenceEditInRNABuilderMode
           ? onUpdateSequence()
-          : editor.events.startNewSequence.dispatch({});
+          : editor?.events.startNewSequence.dispatch({});
         event.preventDefault();
         event.stopPropagation();
       }

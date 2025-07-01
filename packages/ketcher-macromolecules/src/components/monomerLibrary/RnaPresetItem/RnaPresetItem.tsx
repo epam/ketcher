@@ -17,12 +17,13 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import { memo, MouseEvent, useCallback } from 'react';
+import { memo, MouseEvent, useCallback, useRef } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
+import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const RnaPresetItem = ({
   preset,
@@ -34,6 +35,8 @@ const RnaPresetItem = ({
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const addFavorite = useCallback(
     (event: MouseEvent): void => {
       event.stopPropagation();
@@ -41,6 +44,8 @@ const RnaPresetItem = ({
     },
     [dispatch, preset],
   );
+
+  useLibraryItemDrag(preset, cardRef);
 
   return (
     <Card
@@ -52,6 +57,7 @@ const RnaPresetItem = ({
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
+      ref={cardRef}
     >
       <span>{preset.name}</span>
       <StyledIcon

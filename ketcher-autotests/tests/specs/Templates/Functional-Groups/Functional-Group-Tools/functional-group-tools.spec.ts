@@ -18,10 +18,10 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   getCachedBodyCenter,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

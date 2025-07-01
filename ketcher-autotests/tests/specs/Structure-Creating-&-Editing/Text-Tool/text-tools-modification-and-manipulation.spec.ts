@@ -7,11 +7,11 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

@@ -46,7 +46,7 @@ export class ZoomTool implements BaseTool {
   public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
-  private zoomTransform: ZoomTransform;
+  private _zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
@@ -81,7 +81,7 @@ export class ZoomTool implements BaseTool {
     this.canvas = select(drawnStructuresSelector);
 
     this.zoomLevel = 1;
-    this.zoomTransform = new ZoomTransform(1, 0, 0);
+    this._zoomTransform = new ZoomTransform(1, 0, 0);
     this.drawingEntitiesManager = drawingEntitiesManager;
 
     this.initActions();
@@ -122,13 +122,17 @@ export class ZoomTool implements BaseTool {
   }
 
   setZoomTransform(transform: ZoomTransform) {
-    this.zoomTransform = transform;
+    this._zoomTransform = transform;
+  }
+
+  public get zoomTransform() {
+    return this._zoomTransform;
   }
 
   zoomAction({ transform }) {
     this.canvas.attr('transform', transform);
     this.zoomLevel = transform.k;
-    this.zoomTransform = transform;
+    this._zoomTransform = transform;
     this.drawScrollBars();
     requestAnimationFrame(() => {
       this.dispatchZoomEventHandlers(transform);
@@ -353,7 +357,7 @@ export class ZoomTool implements BaseTool {
     newZoomLevel = Math.min(newZoomLevel, this.MAXZOOMSCALE);
     newZoomLevel = Math.max(newZoomLevel, this.MINZOOMSCALE);
 
-    const { x, y } = this.zoomTransform;
+    const { x, y } = this._zoomTransform;
     const scaleFactor = newZoomLevel / this.zoomLevel;
 
     // Calculate the new translation to zoom to the top-left corner
@@ -389,14 +393,14 @@ export class ZoomTool implements BaseTool {
   }
 
   scaleCoordinates(position: Vec2) {
-    const newX = this.zoomTransform.applyX(position.x);
-    const newY = this.zoomTransform.applyY(position.y);
+    const newX = this._zoomTransform.applyX(position.x);
+    const newY = this._zoomTransform.applyY(position.y);
     return new Vec2(newX, newY);
   }
 
   invertZoom(position: Vec2) {
-    const newX = this.zoomTransform.invertX(position.x);
-    const newY = this.zoomTransform.invertY(position.y);
+    const newX = this._zoomTransform.invertX(position.x);
+    const newY = this._zoomTransform.invertY(position.y);
     return new Vec2(newX, newY);
   }
 

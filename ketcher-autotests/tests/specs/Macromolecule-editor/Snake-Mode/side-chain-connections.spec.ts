@@ -1,21 +1,23 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   waitForPageInit,
   MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

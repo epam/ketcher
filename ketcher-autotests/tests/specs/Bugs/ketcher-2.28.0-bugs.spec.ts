@@ -26,10 +26,10 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
+  selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools';
+} from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,

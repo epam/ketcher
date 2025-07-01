@@ -10,9 +10,9 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   RxnFileFormat,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

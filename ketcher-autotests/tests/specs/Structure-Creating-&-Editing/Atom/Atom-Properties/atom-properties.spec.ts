@@ -6,19 +6,21 @@ import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   resetCurrentTool,
-  copyAndPaste,
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
   waitForPageInit,
   waitForRender,
   waitForAtomPropsModal,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   getAtomByIndex,
   MolFileFormat,
   RxnFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 
 import {
   selectAtomLabel,

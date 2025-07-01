@@ -17,10 +17,10 @@ export const resetRnaBuilder = (dispatch: Dispatch<AnyAction>) => {
 
 export const resetRnaBuilderAfterSequenceUpdate = (
   dispatch: Dispatch<AnyAction>,
-  editor: CoreEditor,
+  editor: CoreEditor | undefined,
 ) => {
   resetRnaBuilderCommon(dispatch);
   dispatch(setSequenceSelection([]));
-  editor.events.turnOffSequenceEditInRNABuilderMode.dispatch();
-  if (editor.mode instanceof SequenceMode) editor.mode.turnOffEditMode();
+  editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch();
+  if (editor?.mode instanceof SequenceMode) editor.mode.turnOffEditMode();
 };

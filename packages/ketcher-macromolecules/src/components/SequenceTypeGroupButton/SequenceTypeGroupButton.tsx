@@ -110,7 +110,7 @@ export const SequenceTypeGroupButton = () => {
   }, [layoutMode]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
-    editor.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
+    editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 
   return isSequenceMode ? (

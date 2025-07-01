@@ -1,5 +1,9 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { Editor, EditorType } from 'application/editor/editor.types';
+import {
+  Editor,
+  EditorType,
+  LibraryItemDragState,
+} from 'application/editor/editor.types';
 import {
   editorEvents,
   hotkeysConfiguration,
@@ -53,7 +57,11 @@ import {
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
@@ -75,7 +83,11 @@ import { TransientDrawingView } from 'application/render/renderers/TransientView
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
-import { getAminoAcidsToModify } from 'domain/helpers/monomers';
+import {
+  getAminoAcidsToModify,
+  isAmbiguousMonomerLibraryItem,
+  isLibraryItemRnaPreset,
+} from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
@@ -120,6 +132,9 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  private libraryItemDragState: LibraryItemDragState = null;
+  private libraryItemDragCancelled = false;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -328,6 +343,21 @@ export class CoreEditor {
       ) as IKetMonomerGroupTemplate[];
   }
 
+  public get isLibraryItemDragCancelled() {
+    return this.libraryItemDragCancelled;
+  }
+
+  public set isLibraryItemDragCancelled(value: boolean) {
+    this.libraryItemDragCancelled = value;
+  }
+
+  public cancelLibraryItemDrag() {
+    if (this.libraryItemDragState) {
+      this.libraryItemDragCancelled = true;
+      this.events.setLibraryItemDragState.dispatch(null);
+    }
+  }
+
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
@@ -371,6 +401,11 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       event.preventDefault();
+
+      if (this.libraryItemDragState) {
+        this.cancelLibraryItemDrag();
+        return;
+      }
 
       const eventData = event.target?.__data__;
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
@@ -541,6 +576,56 @@ export class CoreEditor {
           this.transientDrawingView.hideLineLengthHighlight();
         }
         this.transientDrawingView.update();
+      },
+    );
+
+    this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
+      this.libraryItemDragState = state;
+    });
+
+    this.events.placeLibraryItemOnCanvas.add(
+      (
+        item: IRnaPreset | MonomerOrAmbiguousType,
+        position: { x: number; y: number },
+      ) => {
+        const { x, y } = position;
+
+        let modelChanges: Command;
+
+        if (isLibraryItemRnaPreset(item)) {
+          const { sugar, phosphate, base } = item;
+          if (!sugar) {
+            return;
+          }
+
+          modelChanges = this.drawingEntitiesManager.addRnaPreset({
+            sugar,
+            sugarPosition: Coordinates.canvasToModel(new Vec2(x, y)),
+            phosphate,
+            phosphatePosition: phosphate
+              ? Coordinates.canvasToModel(new Vec2(x + SnakeLayoutCellWidth, y))
+              : undefined,
+            rnaBase: base,
+            rnaBasePosition: base
+              ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
+              : undefined,
+          }).command;
+        } else if (isAmbiguousMonomerLibraryItem(item)) {
+          modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
+        } else {
+          modelChanges = this.drawingEntitiesManager.addMonomer(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
+        }
+
+        const history = new EditorHistory(this);
+
+        history.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
       },
     );
   }

@@ -32,6 +32,12 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
+import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -356,6 +362,36 @@ export class RenderersManager {
   public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
     bond.renderer?.remove();
     this.redrawDrawingEntity(bond.atom);
+  }
+
+  public addRxnArrow(arrow: RxnArrow) {
+    const arrowRenderer = new RxnArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addMultitailArrow(arrow: MultitailArrow) {
+    const arrowRenderer = new MultitailArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteMultitailArrow(arrow: MultitailArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addRxnPlus(rxnPlus: RxnPlus) {
+    const rxnPlusRenderer = new RxnPlusRenderer(rxnPlus);
+
+    rxnPlusRenderer.show();
+  }
+
+  public deleteRxnPlus(rxnPlus: RxnPlus) {
+    rxnPlus.renderer?.remove();
   }
 
   public runPostRenderMethods() {

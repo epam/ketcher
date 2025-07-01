@@ -2,12 +2,12 @@
 import { test, expect } from '@playwright/test';
 import {
   waitForPageInit,
-  copyAndPaste,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   selectUndoByKeyboard,
 } from '@utils';
+import { copyAndPaste } from '@utils/canvas/selectSelection';
 import {
   GeneralSetting,
   MeasurementUnit,

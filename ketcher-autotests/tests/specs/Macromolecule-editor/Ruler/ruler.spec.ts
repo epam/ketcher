@@ -7,11 +7,13 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   keyboardTypeOnCanvas,
-  selectSnakeLayoutModeTool,
   keyboardPressOnCanvas,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

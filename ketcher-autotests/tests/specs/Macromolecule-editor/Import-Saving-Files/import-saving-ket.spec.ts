@@ -9,14 +9,14 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

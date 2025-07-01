@@ -367,6 +367,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await selectSequenceLayoutModeTool(page);
     await Library(page).selectMonomer(Peptides.O);
     await Library(page).selectMonomer(Peptides.K);
+    await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,

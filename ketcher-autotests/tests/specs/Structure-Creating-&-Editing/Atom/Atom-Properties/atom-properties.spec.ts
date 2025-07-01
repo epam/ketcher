@@ -13,10 +13,10 @@ import {
   waitForRender,
   waitForAtomPropsModal,
   clickOnCanvas,
-  getAtomByIndex,
   MolFileFormat,
   RxnFileFormat,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,

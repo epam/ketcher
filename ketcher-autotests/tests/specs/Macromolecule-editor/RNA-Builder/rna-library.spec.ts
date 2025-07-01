@@ -16,11 +16,13 @@ import {
   moveMouseAway,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   clickOnCanvas,
   MonomerType,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
   FileType,

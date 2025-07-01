@@ -26,22 +26,6 @@ export class MultitailArrow extends DrawingEntity {
     super();
   }
 
-  // public get startPosition() {
-  //   return this.startEndPosition[0];
-  // }
-  //
-  // private set startPosition(newStartPosition: Vec2) {
-  //   this.startEndPosition[0] = newStartPosition;
-  // }
-  //
-  // public get endPosition() {
-  //   return this.startEndPosition[1];
-  // }
-  //
-  // private set endPosition(newEndPosition: Vec2) {
-  //   this.startEndPosition[1] = newEndPosition;
-  // }
-  //
   public get center(): Vec2 {
     return Vec2.centre(
       new Vec2(

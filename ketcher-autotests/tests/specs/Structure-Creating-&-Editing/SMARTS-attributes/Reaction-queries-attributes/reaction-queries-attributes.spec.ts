@@ -3,7 +3,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,
-  getAtomByIndex,
   getCoordinatesOfTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
@@ -14,6 +13,7 @@ import {
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';

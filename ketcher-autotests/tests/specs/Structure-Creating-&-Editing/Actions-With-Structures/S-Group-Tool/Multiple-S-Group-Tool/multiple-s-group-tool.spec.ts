@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  resetCurrentTool,
   BondType,
   clickOnAtom,
   clickOnBond,
@@ -15,6 +14,7 @@ import {
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

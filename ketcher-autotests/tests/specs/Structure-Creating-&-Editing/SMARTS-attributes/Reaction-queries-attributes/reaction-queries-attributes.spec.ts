@@ -7,12 +7,12 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { checkSmartsValue } from '../utils';

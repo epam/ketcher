@@ -34,6 +34,7 @@ import {
   QueryAtomOption,
   RingBondCountOption,
 } from '@tests/pages/constants/contextMenu/Constants';
+import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -209,8 +210,8 @@ test.describe('Right-click menu', () => {
     await ContextMenu(page, point).click(
       MicroAtomOption.EnhancedStereochemistry,
     );
-    await page.getByLabel('Create new AND Group').check();
-    await pressButton(page, 'Apply');
+    await EnhancedStereochemistry(page).selectCreateNewAndGroup();
+    await EnhancedStereochemistry(page).pressApplyButton();
 
     await takeEditorScreenshot(page);
 

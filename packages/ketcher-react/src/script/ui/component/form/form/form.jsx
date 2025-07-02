@@ -206,7 +206,7 @@ function Field(props) {
       schema={desc}
       {...fieldOpts}
       {...rest}
-      data-testid={`${name}-input`}
+      data-testid={props['data-testid'] ?? `${name}-input`}
     />
   );
 

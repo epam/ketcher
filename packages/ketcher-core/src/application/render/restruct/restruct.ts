@@ -484,9 +484,13 @@ class ReStruct {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        if (this[map].get(id).visel) {
-          this.clearVisel(this[map].get(id).visel);
+        if (this[map].has(id)) {
+          const visel = this[map].get(id).visel;
+          if (visel) {
+            this.clearVisel(visel);
+          }
         }
+
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });

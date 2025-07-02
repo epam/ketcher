@@ -3,45 +3,33 @@ import { Page, expect, test } from '@playwright/test';
 import {
   delay,
   MacroFileType,
-  selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import {
-  selectBaseSlot,
-  selectPhosphateSlot,
-  selectSugarSlot,
-  toggleBasesAccordion,
-  toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
-  togglePresetsAccordion,
-  toggleRnaBuilder,
-  toggleSugarsAccordion,
-} from '@utils/macromolecules/rnaBuilder';
-import {
-  FavoriteStarSymbol,
-  goToCHEMTab,
-  goToPeptidesTab,
-  goToRNATab,
-} from '@utils/macromolecules/library';
 import { pasteFromClipboardAndAddToMacromoleculesCanvas } from '@utils/files/readFile';
 import {
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import {
+  FavoriteStarSymbol,
+  RNASection,
+} from '@tests/pages/constants/library/Constants';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
   await selectSequenceLayoutModeTool(page);
   await switchToRNAMode(page);
-  await goToRNATab(page);
-  await toggleNucleotidesAccordion(page);
-  await togglePresetsAccordion(page);
+  await Library(page).switchToRNATab();
+  await Library(page).openRNASection(RNASection.Nucleotides);
+  await Library(page).openRNASection(RNASection.Presets);
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -49,12 +37,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -84,8 +72,7 @@ test('2. Verify that Favorites tab title renamed to ★ and library cards modifi
    * 1. Open Ketcher and turn on Macromolecules editor
    * 2. Check that Favorites tab title renamed to ★
    */
-  const favoritesTab = page.getByTestId('FAVORITES-TAB');
-  await expect(favoritesTab).toHaveText(FavoriteStarSymbol);
+  await expect(Library(page).favoritesTab).toHaveText(FavoriteStarSymbol);
 });
 
 test('3. Check that tooltip preview for hovering over the ★ - "Favorites"', async () => {
@@ -96,9 +83,7 @@ test('3. Check that tooltip preview for hovering over the ★ - "Favorites"', as
    * 1. Open Ketcher and turn on Macromolecules editor
    * 2. Check that tooltip preview for hovering over the ★ - "Favorites"
    */
-  const tooltipText = await page
-    .getByTestId('FAVORITES-TAB')
-    .getAttribute('title');
+  const tooltipText = await Library(page).favoritesTab.getAttribute('title');
   expect(tooltipText).toBe('Favorites');
 });
 
@@ -113,12 +98,12 @@ test('4. Verify that Peptides and CHEM tabs only have the library cards modified
    * 4. Go to CHEM tab
    * 5. Take Library screenshot to check that CHEMs only have the library cards modified
    */
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await goToCHEMTab(page);
+  await Library(page).switchToCHEMTab();
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -144,30 +129,31 @@ test('5. Verify that RNA tab redesign include change in the appearance of librar
    * 12. Open Nucleotides accordion
    * 13. Take Library screenshot to check that Nucleotides only have the library cards modified
    */
-  await goToRNATab(page);
-  await toggleRnaBuilder(page, 'collapse');
-  await toggleNucleotidesAccordion(page);
-  await togglePresetsAccordion(page);
+  await Library(page).switchToRNATab();
+  await Library(page).rnaBuilder.collapse();
+  await Library(page).rnaBuilder.collapse();
+  await Library(page).openRNASection(RNASection.Nucleotides);
+  await Library(page).openRNASection(RNASection.Presets);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await toggleSugarsAccordion(page);
+  await Library(page).openRNASection(RNASection.Sugars);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await toggleBasesAccordion(page);
+  await Library(page).openRNASection(RNASection.Bases);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await togglePhosphatesAccordion(page);
+  await Library(page).openRNASection(RNASection.Phosphates);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await toggleNucleotidesAccordion(page);
+  await Library(page).openRNASection(RNASection.Nucleotides);
   await takeMonomerLibraryScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -188,8 +174,8 @@ test(
      * 3. Open RNA builder if closed
      * 4. Take Library screenshot to check RNA Builder redesign
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -224,30 +210,30 @@ test(
      * 15. Open Nucleotides accordion
      * 16. Take Library screenshot to check that Nucleotides only have the library cards modified
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await toggleNucleotidesAccordion(page);
-    await togglePresetsAccordion(page);
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await Library(page).openRNASection(RNASection.Presets);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await toggleSugarsAccordion(page);
+    await Library(page).openRNASection(RNASection.Sugars);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await toggleBasesAccordion(page);
+    await Library(page).openRNASection(RNASection.Bases);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await togglePhosphatesAccordion(page);
+    await Library(page).openRNASection(RNASection.Phosphates);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await toggleNucleotidesAccordion(page);
+    await Library(page).openRNASection(RNASection.Nucleotides);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -272,10 +258,10 @@ test(
      * 5. Hover over the Presets tab symbol
      * 6. Take Library screenshot to validate tooltip preview "Presets"
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await toggleNucleotidesAccordion(page);
-    await page.getByTestId('summary-Presets').hover();
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await Library(page).rnaTab.presetsSection.hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
   },
@@ -298,10 +284,10 @@ test(
      * 5. Hover over the Sugars tab symbol
      * 6. Take Library screenshot to validate tooltip preview "Sugars"
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await toggleNucleotidesAccordion(page);
-    await page.getByTestId('summary-Sugars').hover();
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await Library(page).rnaTab.sugarsSection.hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
   },
@@ -324,10 +310,10 @@ test(
      * 5. Hover over the Bases tab symbol
      * 6. Take Library screenshot to validate tooltip preview "Bases"
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await toggleNucleotidesAccordion(page);
-    await page.getByTestId('summary-Bases').hover();
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await Library(page).rnaTab.basesSection.hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
   },
@@ -350,10 +336,10 @@ test(
      * 5. Hover over the Phosphates tab symbol
      * 6. Take Library screenshot to validate tooltip preview "Phosphates"
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await toggleNucleotidesAccordion(page);
-    await page.getByTestId('summary-Phosphates').hover();
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await Library(page).rnaTab.phosphatesSection.hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
   },
@@ -376,10 +362,10 @@ test(
      * 5. Hover over the Nucleotides tab symbol
      * 6. Take Library screenshot to validate tooltip preview "Nucleotides"
      */
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'collapse');
-    await togglePresetsAccordion(page);
-    await page.getByTestId('summary-Nucleotides').hover();
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.collapse();
+    await Library(page).openRNASection(RNASection.Presets);
+    await Library(page).rnaTab.nucleotidesSection.hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
   },
@@ -407,8 +393,8 @@ test(
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -417,7 +403,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectBaseSlot(page);
+    await Library(page).rnaBuilder.selectBaseSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );
@@ -444,8 +430,8 @@ test(
      * 8. Take screenshot to validate that one section if all the bases belong to same section shown
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -454,7 +440,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectBaseSlot(page);
+    await Library(page).rnaBuilder.selectBaseSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );
@@ -481,8 +467,8 @@ test(
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -491,7 +477,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectSugarSlot(page);
+    await Library(page).rnaBuilder.selectSugarSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );
@@ -518,8 +504,8 @@ test(
      * 8. Take screenshot to validate that one section if all the sugars belong to same section shown
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -528,7 +514,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectSugarSlot(page);
+    await Library(page).rnaBuilder.selectSugarSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );
@@ -555,8 +541,8 @@ test(
      * 8. Take screenshot to validate that phopsphate card appear selected in Phopsphates subsection
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -565,7 +551,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectPhosphateSlot(page);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );
@@ -592,8 +578,8 @@ test(
      * 8. Take screenshot to validate that one section if all the phopsphates belong to same section shown
      */
     await selectSequenceLayoutModeTool(page);
-    await goToRNATab(page);
-    await toggleRnaBuilder(page, 'expand');
+    await Library(page).switchToRNATab();
+    await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -602,7 +588,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await modifyInRnaBuilder(page, symbolT);
-    await selectPhosphateSlot(page);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
     await takeMonomerLibraryScreenshot(page);
   },
 );

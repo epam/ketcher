@@ -1,47 +1,40 @@
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  RingButton,
-  selectNestedTool,
-  RgroupTool,
-  AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  receiveFileComparisonData,
-  saveToFile,
+  waitForPageInit,
+  clickOnCanvas,
+  MolFileFormat,
+} from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
   copyAndPaste,
   cutAndPaste,
-  waitForPageInit,
-  selectDropdownTool,
-  resetCurrentTool,
   selectAllStructuresOnCanvas,
-  clickOnCanvas,
-  selectLayoutTool,
-} from '@utils';
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getExtendedSmiles } from '@utils/formats';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function openRGroupModalForTopAtom(page: Page) {
-  await selectRingButton(RingButton.Benzene, page);
+  await selectRingButton(page, RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
-  await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+  await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
   const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
   await clickOnCanvas(page, x, y);
 
@@ -51,7 +44,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 const rGroupFromFile = 'R8';
 const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
-  await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+  await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
   await page.getByText(rGroupFromFile).click();
   for (const rgroup of rGroups) {
     await pressButton(page, rgroup);
@@ -129,16 +122,13 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await page.keyboard.press('Control+r');
-    await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await setAttachmentPoints(page, { x, y }, { primary: true });
     await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
@@ -148,13 +138,14 @@ test.describe('Open Ketcher', () => {
   test('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await clickOnAtom(page, 'C', atomIndex);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: atomIndex },
+      { primary: true },
+    );
     await resetCurrentTool(page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
@@ -166,8 +157,8 @@ test.describe('Open Ketcher', () => {
       Description: Remove R-Group member from R-Group. File used for test - R-fragment-structure.mol
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/R-fragment-structure.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R5']);
@@ -181,8 +172,8 @@ test.describe('Open Ketcher', () => {
       Description: Change R-Group definition for multiple R-Group members. File used for test - R-fragment-structure.mol
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/R-fragment-structure.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R7']);
@@ -193,7 +184,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1586
       Description: Create several R-Group members
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
 
     await selectRGroups(page, ['R7']);
 
@@ -213,16 +204,15 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1599
       Description: Define a structure with attachment points as R-Group member
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await page.getByTestId('OK').click();
-
+    await setAttachmentPoints(
+      page,
+      { x, y },
+      { primary: true, secondary: true },
+    );
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');
     await clickOnCanvas(page, x, y);
@@ -238,8 +228,8 @@ test.describe('Open Ketcher', () => {
       Description: R-Group definition is not deleted when root structure was deleted
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/R-fragment-structure.mol',
     );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
@@ -251,25 +241,27 @@ test.describe('Open Ketcher', () => {
   Description: Delete R-Group member
   */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/R-fragment-structure.mol',
       page,
+      'Molfiles-V2000/R-fragment-structure.mol',
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
     await selectAllStructuresOnCanvas(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -281,10 +273,10 @@ test.describe('Open Ketcher', () => {
       Description: The structure is layout correctly without R-group label loss.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r1-several-distorted.mol',
       page,
+      'Molfiles-V2000/r1-several-distorted.mol',
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -296,8 +288,8 @@ test.describe('Open Ketcher', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r1-several-structures.mol',
       page,
+      'Molfiles-V2000/r1-several-structures.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -312,8 +304,8 @@ test.describe('Open Ketcher', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r1-several-structures.mol',
       page,
+      'Molfiles-V2000/r1-several-structures.mol',
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -333,14 +325,14 @@ test.describe('R-Group Fragment Tool', () => {
     brackets are rendered correctly after saving as *.mol V2000 file.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/r1-several-structures.mol',
       page,
+      'Molfiles-V2000/r1-several-structures.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/r1-several-structures-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -351,14 +343,14 @@ test.describe('R-Group Fragment Tool', () => {
      * brackets are rendered correctly after saving as *.mol V3000 file.
      */
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/r1-several-structures-V3000.mol',
       page,
+      'Molfiles-V3000/r1-several-structures-V3000.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -370,22 +362,13 @@ test.describe('R-Group Fragment Tool', () => {
     test.fail();
     // function await getExtendedSmiles but get JSON instead cxsmi file
     await openFileAndAddToCanvas(
-      'Extended-SMILES/r1-several-structures.cxsmi',
       page,
+      'Extended-SMILES/r1-several-structures.cxsmi',
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      expectedFile,
+      FileType.ExtendedSMILES,
     );
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
   });
 });

@@ -5,6 +5,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 // shift of coordinates relative to the center, for the hover of the entire structure:
 const screenCenterShift = 50;
@@ -22,9 +23,9 @@ test.describe('Outline for hovered structures', () => {
   test('Should draw selection outline correctly for hovered structures', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
-    await page.keyboard.press('Control+KeyA');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Alt');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

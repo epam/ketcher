@@ -33,6 +33,7 @@ function createApi(
   const info = structService.info();
 
   return Object.assign(info, {
+    addKetcherId: structService.addKetcherId.bind(structService),
     info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),
@@ -49,6 +50,8 @@ function createApi(
     getInChIKey: structService.getInChIKey.bind(structService),
     toggleExplicitHydrogens:
       structService.toggleExplicitHydrogens.bind(structService),
+    calculateMacromoleculeProperties:
+      structService.calculateMacromoleculeProperties.bind(structService),
     destroy: structService.destroy?.bind(structService),
   });
 }

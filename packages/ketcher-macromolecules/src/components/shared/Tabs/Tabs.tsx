@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppDispatch, useAppSelector } from 'hooks';
-import {
-  selectCurrentTabIndex,
-  setSelectedTabIndex,
-} from 'state/library/librarySlice';
 import TabPanel from './TabPanel';
-import { StyledTab, StyledTabs, TabPanelContent } from './Tabs.styles';
-import { memo, useCallback } from 'react';
+import {
+  HiddenTab,
+  StyledTab,
+  StyledTabs,
+  TabPanelContent,
+} from './Tabs.styles';
+import { memo } from 'react';
 import { TabsData } from './Tabs.types';
 
 const a11yProps = (index: number) => {
@@ -33,36 +33,36 @@ const a11yProps = (index: number) => {
 
 type Props = {
   tabs: TabsData;
+  isLayoutToRight?: boolean;
+  selectedTabIndex: number;
+  onChange: (event: React.SyntheticEvent, newValue: number) => void;
 };
 
 const Tabs = (props: Props) => {
-  const dispatch = useAppDispatch();
-  const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
-
-  const { tabs } = props;
+  const { tabs, selectedTabIndex, isLayoutToRight, onChange } = props;
   const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component;
   const componentProps = tabPanel?.props;
 
-  const handleChange = useCallback(
-    (_event, newTabIndex) => {
-      dispatch(setSelectedTabIndex(newTabIndex));
-    },
-    [dispatch],
-  );
-
   return (
     <>
-      <StyledTabs value={selectedTabIndex} onChange={handleChange}>
+      <StyledTabs
+        value={selectedTabIndex}
+        onChange={onChange}
+        isLayoutToRight={isLayoutToRight}
+      >
         {tabs.map((tabPanel, index) => (
           <StyledTab
             label={tabPanel.caption}
             title={tabPanel.tooltip}
             key={index}
+            isLayoutToRight={isLayoutToRight}
             data-testid={tabPanel.testId}
+            data-tab={tabPanel.tooltip}
             {...a11yProps(index)}
           />
         ))}
+        <HiddenTab value={-1} />
       </StyledTabs>
       {tabPanel && (
         <TabPanel value={selectedTabIndex} index={selectedTabIndex}>

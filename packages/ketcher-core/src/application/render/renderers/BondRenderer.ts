@@ -10,7 +10,7 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import {
@@ -53,6 +53,10 @@ export class BondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  private get scaledCenter() {
+    return Scale.modelToCanvas(this.bond.center, this.editorSettings);
   }
 
   private getDoubleBondShiftForChain(
@@ -177,6 +181,10 @@ export class BondRenderer extends BaseRenderer {
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
 
+  private get cipElementId() {
+    return `cip-bond-${this.bond.id}`;
+  }
+
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
@@ -189,11 +197,19 @@ export class BondRenderer extends BaseRenderer {
         .attr('fill', '#57ff8f')
         .attr('class', 'dynamic-element');
     }
+
+    this.rootElement
+      ?.select(`#${this.cipElementId} rect`)
+      ?.attr('fill', '#57ff8f');
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+
+    this.rootElement
+      ?.select(`#${this.cipElementId} rect`)
+      ?.attr('fill', '#f5f5f5');
   }
 
   public appendHover() {
@@ -415,7 +431,7 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
-  private createBondHoverablePath(paths: BondSVGPath[]): void {
+  private createBondHoverablePath(paths: SVGPathAttributes[]): void {
     if (!this.rootElement) {
       return;
     }
@@ -513,7 +529,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let bondSVGPaths: BondSVGPath[] = [];
+    let bondSVGPaths: SVGPathAttributes[] = [];
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
@@ -579,6 +595,56 @@ export class BondRenderer extends BaseRenderer {
     }
 
     this.createBondHoverablePath(bondSVGPaths);
+
+    this.appendStereochemistry();
+  }
+
+  private appendStereochemistry() {
+    const cipValue = this.bond.cip;
+
+    if (!cipValue) {
+      return;
+    }
+
+    const cipGroup = this.rootElement
+      ?.append('g')
+      ?.attr('id', this.cipElementId);
+
+    const cipText = cipGroup
+      ?.append('text')
+      .text(`(${cipValue})`)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('pointer-events', 'none');
+
+    const textNode = cipText?.node();
+    if (textNode) {
+      const box = textNode.getBBox();
+      cipText?.attr('x', 0)?.attr('y', -box.y);
+
+      const rectWidth = box.width + 2;
+      const rectHeight = box.height + 2;
+      cipGroup
+        ?.insert('rect', 'text')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
+        .attr('rx', 3)
+        .attr('ry', 3)
+        .attr('fill', '#f5f5f5');
+
+      cipGroup?.attr(
+        'transform',
+        `
+        translate(${-this.scaledPosition.startPosition.x}, ${-this
+          .scaledPosition.startPosition.y})
+        translate(${this.scaledCenter.x - rectWidth / 2}, ${
+          this.scaledCenter.y - rectHeight / 2
+        })
+        `,
+      );
+    }
   }
 
   public remove() {

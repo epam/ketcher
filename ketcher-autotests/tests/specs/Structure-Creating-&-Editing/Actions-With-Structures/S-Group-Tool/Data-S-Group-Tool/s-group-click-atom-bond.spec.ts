@@ -1,15 +1,14 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  RingButton,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,14 +21,28 @@ test.describe('S-Group Properties', () => {
       Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
       Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
-    await selectRingButton(RingButton.Benzene, page);
+    const sGroupTypeInputSpan = page.getByTestId('s-group-type-input-span');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByTestId('s-group-type-input-span').click();
-    await takeEditorScreenshot(page);
+    await sGroupTypeInputSpan.click();
+
+    await expect(page.getByTestId('Data-option')).toContainText('Data');
+    await expect(page.getByTestId('Multiple group-option')).toContainText(
+      'Multiple group',
+    );
+    await expect(page.getByTestId('SRU polymer-option')).toContainText(
+      'SRU polymer',
+    );
+    await expect(page.getByTestId('Superatom-option')).toContainText(
+      'Superatom',
+    );
+    await expect(page.getByTestId('Query component-option')).toContainText(
+      'Query component',
+    );
   });
 
   test('A superatom named `Test` is created', async ({ page }) => {
@@ -37,18 +50,16 @@ test.describe('S-Group Properties', () => {
       Test case: EPMLSOPKET-1537
       Description: A superatom named `Test` is created. Atom enclosed in brackets.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Superatom' }).click();
     await page.getByLabel('Name').click();
     await page.getByLabel('Name').fill('Test');
-
-    await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
     await takeEditorScreenshot(page);
   });
@@ -62,10 +73,10 @@ test.describe('S-Group Properties', () => {
     */
     const testName = 'Test';
     const testValue = '8';
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByPlaceholder('Enter name').click();
@@ -79,10 +90,10 @@ test.describe('S-Group Properties', () => {
   });
 
   test('A query component  is created', async ({ page }) => {
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();

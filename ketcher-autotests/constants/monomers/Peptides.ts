@@ -3,6 +3,7 @@ import { createMonomerGroup } from './common';
 
 export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   A: { alias: 'A', testId: 'A___Alanine' },
+  Aad: { alias: 'Aad', testId: 'Aad___L-2-aminoadipic acid' },
   Ala_al: {
     alias: 'Ala-al',
     testId: 'Ala-al___(2S)-2-aminopropanal',
@@ -21,6 +22,7 @@ export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   },
   C: { alias: 'C', testId: 'C___Cysteine' },
   Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' },
+  Chg: { alias: 'Chg', testId: 'Chg___Alpha-cyclohexylglycine' },
   D: { alias: 'D', testId: 'D___Aspartic acid' },
   dA: { alias: 'dA', testId: 'dA___D-Alanine' },
   dC: { alias: 'dC', testId: 'dC___D-Cysteine' },
@@ -96,3 +98,5 @@ export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' },
   Z: { alias: 'Z', testId: '_E___Glutamic acid_Q___Glutamine' },
 });
+
+export type PeptidesType = typeof Peptides;

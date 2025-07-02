@@ -3,24 +3,17 @@ import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  saveToFile,
   openFile,
-  receiveFileComparisonData,
-  pressButton,
-  selectSnakeLayoutModeTool,
-  chooseFileFormat,
-  getFasta,
   moveMouseAway,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
+  MacroFileType,
 } from '@utils';
 import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,
@@ -32,7 +25,11 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -40,7 +37,7 @@ import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.describe('Import-Saving .fasta Files', () => {
@@ -53,9 +50,9 @@ test.describe('Import-Saving .fasta Files', () => {
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(
-        `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
         page,
-        fileType,
+        `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
+        [MacroFileType.FASTA, fileType],
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -65,48 +62,27 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Check import of .ket file and save in .fasta format', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-rna-a-expected.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-rna-a-expected.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
-
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
+    await verifyFileExport(
+      page,
+      'FASTA/fasta-rna-a-expected.fasta',
+      FileType.FASTA,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Check that empty file can be saved in .fasta format', async ({
     page,
   }) => {
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-empty.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-empty.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
+    await verifyFileExport(page, 'FASTA/fasta-empty.fasta', FileType.FASTA);
   });
 
   test('Check that system does not let importing empty .fasta file', async ({
     page,
   }) => {
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    await selectOpenFileTool(page);
-    await openFile('FASTA/fasta-empty.fasta', page);
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'FASTA/fasta-empty.fasta');
     await expect(addToCanvasButton).toBeDisabled();
   });
 
@@ -114,10 +90,10 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Check that system does not let uploading corrupted .fasta file', async ({
   //   page,
   // }) => {
-  //   await selectOpenFileTool(page);
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-corrupted.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
@@ -126,7 +102,11 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Validate correct displaying of snake viewed RNA chain loaded from .fasta file format', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('FASTA/fasta-snake-mode-rna.fasta', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'FASTA/fasta-snake-mode-rna.fasta',
+      [MacroFileType.FASTA, SequenceMonomerType.RNA],
+    );
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -134,42 +114,35 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Check that you can save snake viewed chain of peptides in a .fasta file', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('FASTA/fasta-snake-mode-rna.fasta', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'FASTA/fasta-snake-mode-rna.fasta',
+      [MacroFileType.FASTA, SequenceMonomerType.RNA],
+    );
     await selectSnakeLayoutModeTool(page);
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-snake-mode-rna-expected.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-snake-mode-rna-expected.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
+    await verifyFileExport(
+      page,
+      'FASTA/fasta-snake-mode-rna-expected.fasta',
+      FileType.FASTA,
+    );
   });
 
   test('Should open .ket file and modify to .fasta format in save modal textarea', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    await verifyFileExport(
-      page,
-      'FASTA/fasta-rna-a.fasta',
-      FileType.FASTA,
-      'v3000',
-    );
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
+    await verifyFileExport(page, 'FASTA/fasta-rna-a.fasta', FileType.FASTA);
   });
 
   // Should not convert to Fasta type in case of there are more than one monomer type
   test('Should not convert .ket file with RNA and Peptide to .fasta format in save modal', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -178,9 +151,11 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Should not convert .ket file with CHEMs to .fasta format in save modal', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -205,9 +180,9 @@ test.describe('Import-Saving .fasta Files', () => {
   //   test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
   //     page,
   //   }) => {
-  //     await selectOpenFileTool(page);
-  //     await openFile(data.filename, page);
-  //     await selectOptionInDropdown(data.filename, page);
+  //     await CommonTopLeftToolbar(page).openFile();
+  //     await openFile(page, data.filename);
+  //     await selectOptionInDropdown(data.filename);
   //
   //     if (data.monomers === 'Peptide') {
   //       await page.getByTestId('dropdown-select-type').click();
@@ -223,10 +198,10 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
   //   page,
   // }) => {
-  //   await selectOpenFileTool(page);
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-multiline-sequence.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();
@@ -237,10 +212,10 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
   //   page,
   // }) => {
-  //   await selectOpenFileTool(page);
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
@@ -249,10 +224,10 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
   //   page,
   // }) => {
-  //   await selectOpenFileTool(page);
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();
@@ -267,12 +242,14 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
 
-    await openFileAndAddToCanvasMacro(filename, page);
+    await openFileAndAddToCanvasMacro(page, filename, [
+      MacroFileType.FASTA,
+      SequenceMonomerType.RNA,
+    ]);
     await verifyFileExport(
       page,
       'FASTA/fasta-rna-musculus-rearranged-expected.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -280,10 +257,10 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify ignoring "-" symbol during import', async ({
   //   page,
   // }) => {
-  //   await selectOpenFileTool(page);
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-dash-symbol.fasta';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await page.getByTestId('dropdown-select-type').click();
   //   await page.getByText('Peptide', { exact: true }).click();
@@ -298,11 +275,10 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     const filename = 'FASTA/fasta-with-selenocystein.fasta';
-    await openFileAndAddToCanvasMacro(
-      filename,
-      page,
+    await openFileAndAddToCanvasMacro(page, filename, [
+      MacroFileType.FASTA,
       SequenceMonomerType.Peptide,
-    );
+    ]);
     await selectSequenceLayoutModeTool(page);
     await getSymbolLocator(page, {
       symbolAlias: 'U',
@@ -315,13 +291,12 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Export to FASTA: Verify correct export of DNA/RNA sequences with proper header', async ({
     page,
   }) => {
-    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
 
     await verifyFileExport(
       page,
       'FASTA/fasta-dna-rna-separate.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -329,15 +304,14 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
 
     await verifyFileExport(
       page,
       'FASTA/fasta-peptides-connected-with-bonds.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -348,9 +322,11 @@ test.describe('Import-Saving .fasta Files', () => {
       /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4626
     After fix screenshot should be updated.
     */
-      await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await openFileAndAddToCanvasMacro(page, 'KET/rna-sequence-and-chems.ket');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -363,10 +339,12 @@ test.describe('Import-Saving .fasta Files', () => {
     Warning message NOT occures.
     After fix screenshot should be updated.
     */
-      await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
+      await openFileAndAddToCanvasMacro(page, 'KET/peptides-chain-cycled.ket');
       await selectSequenceLayoutModeTool(page);
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -380,29 +358,17 @@ test.describe('Import-Saving .fasta Files', () => {
     */
 
     await openFileAndAddToCanvasMacro(
+      page,
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getFasta(page);
-    await saveToFile(
-      'FASTA//unsplit-nucleotides-connected-with-nucleotides.fasta',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
       'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+      FileType.FASTA,
+    );
+    await openFileAndAddToCanvasAsNewProject(
       page,
+      'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
     );
     await takeEditorScreenshot(page);
   });
@@ -414,14 +380,13 @@ test.describe('Import-Saving .fasta Files', () => {
     Test task: https://github.com/epam/ketcher/issues/5558
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
     );
     await verifyFileExport(
       page,
       'FASTA/fasta-Peptides (that have mapping to library, alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -438,16 +403,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -457,7 +424,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -475,16 +442,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
     await takeEditorScreenshot(page);
 
     test.fixme(
@@ -494,7 +463,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await closeErrorMessage(page);
 
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -512,16 +481,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -531,7 +502,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -543,15 +514,14 @@ test.describe('Import-Saving .fasta Files', () => {
     Test task: https://github.com/epam/ketcher/issues/5558
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
     );
 
     await verifyFileExport(
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous DNA Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -568,16 +538,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -100);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -587,7 +559,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
     },
   );
@@ -599,15 +571,14 @@ test.describe('Import-Saving .fasta Files', () => {
     Test task: https://github.com/epam/ketcher/issues/5558
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
     );
 
     await verifyFileExport(
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous RNA Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -624,16 +595,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -100);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -643,7 +616,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
     },
   );
@@ -655,15 +628,14 @@ test.describe('Import-Saving .fasta Files', () => {
     Test task: https://github.com/epam/ketcher/issues/5558
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
     );
 
     await verifyFileExport(
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -680,16 +652,18 @@ test.describe('Import-Saving .fasta Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
         page,
+        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
       );
 
       await zoomWithMouseWheel(page, -200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -699,7 +673,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -771,9 +745,9 @@ test.describe('Import correct FASTA file: ', () => {
       );
 
       await openFileAndAddToCanvasAsNewProjectMacro(
-        correctFASTAFile.FASTAFileName,
         page,
-        correctFASTAFile.FASTAType,
+        correctFASTAFile.FASTAFileName,
+        MacroFileType.FASTA,
       );
 
       await takeEditorScreenshot(page, {

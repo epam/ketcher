@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   setMolecule,
@@ -7,15 +8,11 @@ import {
   clickInTheMiddleOfTheScreen,
   readFileContent,
 } from '@utils';
-import {
-  selectZoomOutTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('mol with two monomers bonded', async ({ page }) => {
@@ -27,7 +24,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -41,7 +38,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

@@ -8,13 +8,13 @@ import {
   takeLeftToolbarScreenshot,
   clickOnAtom,
   clickOnBond,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -25,11 +25,11 @@ test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas(
-      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
 
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
   });
 
   test('Erase atom and bond', async ({ page }) => {
@@ -97,7 +97,7 @@ test.describe('Erase Tool', () => {
 
     expect(plusDeleted).toEqual(plusAfterDelete);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
     const plusOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -133,7 +133,7 @@ test.describe('Erase Tool', () => {
     });
     expect(arrowDeleted).toEqual(arrowAfterDelete);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
     const arrowOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;
@@ -154,8 +154,8 @@ test.describe('Erase Tool', () => {
     Description: The appropriate icon presents at the Toolbar for Erase tool.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
     await takeLeftToolbarScreenshot(page);
   });

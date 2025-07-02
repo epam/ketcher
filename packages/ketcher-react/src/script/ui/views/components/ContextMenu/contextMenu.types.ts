@@ -15,7 +15,7 @@ export enum CONTEXT_MENU_ID {
 export type ItemData = unknown;
 
 interface BaseContextMenuProps {
-  id: CONTEXT_MENU_ID;
+  id: string;
 }
 
 interface WithExtraItems {
@@ -25,21 +25,21 @@ interface WithExtraItems {
 export interface BondsContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_BONDS;
+  id: string;
   bondIds: Array<number>;
 }
 
 export interface AtomContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_ATOMS;
+  id: string;
   atomIds: Array<number>;
 }
 
 export interface RGroupAttachmentPointContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT;
+  id: string;
   rgroupAttachmentPoints: Array<number>;
   atomIds?: AtomContextMenuProps['atomIds'];
 }
@@ -50,21 +50,21 @@ export interface SelectionContextMenuProps
     Partial<
       Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
     > {
-  id: CONTEXT_MENU_ID.FOR_SELECTION;
+  id: string;
 }
 
 export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS;
+  id: string;
   functionalGroups: FunctionalGroup[];
 }
 
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_MACROMOLECULE;
+  id: string;
   functionalGroups: FunctionalGroup[];
 }
 
 export interface MultitailArrowContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW;
+  id: string;
   itemId: number;
   tailId: number | null;
 }

@@ -3,7 +3,9 @@ import {
   MenuItemsProps,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
-import useMonomerExpansionHandlers from '../hooks/useMonomerExpansionHandlers';
+import useMonomerExpansionHandlers, {
+  canExpandMonomer,
+} from '../hooks/useMonomerExpansionHandlers';
 
 const MacromoleculeMenuItems = (
   props: MenuItemsProps<MacromoleculeContextMenuProps>,
@@ -11,8 +13,14 @@ const MacromoleculeMenuItems = (
   const [action, hidden] = useMonomerExpansionHandlers();
 
   const multipleMonomersSelected =
-    props?.propsFromTrigger?.functionalGroups &&
+    props?.propsFromTrigger?.functionalGroups !== undefined &&
     props.propsFromTrigger.functionalGroups.length > 1;
+
+  const expandingDisabled =
+    props.propsFromTrigger?.functionalGroups !== undefined &&
+    props.propsFromTrigger.functionalGroups.every(
+      (fg) => !canExpandMonomer(fg),
+    );
 
   const expandText = multipleMonomersSelected
     ? 'Expand monomers'
@@ -25,13 +33,16 @@ const MacromoleculeMenuItems = (
     <>
       <Item
         {...props}
+        data-testid={`${expandText}-option`}
         hidden={(params) => hidden(params, true)}
         onClick={(params) => action(params, true)}
+        disabled={expandingDisabled}
       >
         {expandText}
       </Item>
       <Item
         {...props}
+        data-testid={`${collapseText}-option`}
         hidden={(params) => hidden(params, false)}
         onClick={(params) => action(params, false)}
       >

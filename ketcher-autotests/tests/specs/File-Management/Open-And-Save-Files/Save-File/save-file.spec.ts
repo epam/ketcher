@@ -1,44 +1,35 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
-  AtomButton,
   FILE_TEST_DATA,
-  RingButton,
   clickInTheMiddleOfTheScreen,
-  drawBenzeneRing,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
-  selectAtomInToolbar,
-  selectOptionByText,
-  selectRingButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import {
-  clickOnFileFormatDropdown,
-  getMolfile,
-  getSmiles,
-} from '@utils/formats';
+import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
 const ARROW_LENGTH = 100;
-
-async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: smileType }).click();
-}
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {
@@ -62,7 +53,7 @@ test.describe('Save files', () => {
       page,
       'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -77,7 +68,7 @@ test.describe('Save files', () => {
       page,
       'Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -106,15 +97,12 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-1851
     Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile('KET/two-benzene-connected-expected.smi', expectedFile);
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'KET/two-benzene-connected-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
+    await verifyFileExport(
+      page,
+      'KET/two-benzene-connected-expected.smi',
+      FileType.SMILES,
+    );
   });
 
   test('Save as a .rxn file if reaction consists of two or more reaction arrows', async ({
@@ -124,16 +112,16 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -147,23 +135,17 @@ test.describe('Save files', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
+      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      MolFileFormat.v3000,
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('The file formats in the Save Structure window match the mockup', async ({
@@ -173,10 +155,17 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-4739
     Description: File formats in the Save Structure window match the mockup
     */
-    await selectRingButton(RingButton.Benzene, page);
+    const fileFormatDropdonwList =
+      SaveStructureDialog(page).fileFormatDropdownList;
+
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
-    await page.getByText('MDL Molfile V2000').click();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
+    await fileFormatDropdonwList.click();
+    await takeEditorScreenshot(page);
   });
 
   test('An atom or structure copied to the clipboard is saved without coordinates', async ({
@@ -187,27 +176,17 @@ test.describe('Save files', () => {
       Description: In the save window that opens, in the preview section, 
       the atom or structure has no coordinates because they were not added to the canvas.
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await selectSaveTool(page);
+    const atomToolbar = RightToolbar(page);
 
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await atomToolbar.clickAtom(Atom.Hydrogen);
+    await CommonTopLeftToolbar(page).saveFile();
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      MolFileFormat.v2000,
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Support for exporting to "InChiKey" file format', async ({ page }) => {
@@ -217,14 +196,13 @@ test.describe('Save files', () => {
      */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
     await waitForIndigoToLoad(page);
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await selectOptionByText(page, 'InChIKey');
-    const inChistring = await page
-      .getByTestId('inChIKey-preview-area-text')
-      .inputValue();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChIKey,
+    );
+    const inChistring = await SaveStructureDialog(page).getTextAreaValue();
     expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
@@ -233,13 +211,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V2000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
   });
 
@@ -248,13 +226,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expectedV3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
   });
 });
@@ -325,10 +303,11 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2253
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -337,10 +316,11 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2254
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -351,10 +331,12 @@ test.describe('Open/Save/Paste files', () => {
     of atoms and bonds that are not supported in the SMILES. 
     Query properties will not be reflected in the file saved."
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-
-    await getPreviewForSmiles(page, 'Daylight SMILES');
-    await page.getByText('Warnings').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    await SaveStructureDialog(page).switchToWarningsTab();
     await takeEditorScreenshot(page);
   });
 
@@ -366,8 +348,8 @@ test.describe('Open/Save/Paste files', () => {
      * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
      */
     await openFileAndAddToCanvas(
-      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
       page,
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
     );
 
     await verifyFileExport(

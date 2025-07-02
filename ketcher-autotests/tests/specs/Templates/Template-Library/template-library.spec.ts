@@ -1,43 +1,29 @@
 import { Page, test, expect } from '@playwright/test';
 import {
+  BottomToolbar,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  openSettings,
-  pressButton,
-  selectAllStructuresOnCanvas,
   selectFunctionalGroups,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-
-async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await openSettings(page);
-  await page.getByText('Stereochemistry', { exact: true }).click();
-  await page.getByTestId('stereo-label-style-input-span').click();
-  // Using "On" label style, to always show the stereo labels, so we can see the difference
-  await page.getByRole('option', { name: 'On' }).click();
-  await pressButton(page, 'Apply');
-}
-
-async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await openSettings(page);
-  await page.getByText('Stereochemistry', { exact: true }).click();
-
-  const checkLocator = page.getByText('Ignore the chiral flag');
-  const isChecked = await checkLocator.isChecked();
-  if (isChecked !== newSetting) {
-    await checkLocator.click();
-  }
-  await pressButton(page, 'Apply');
-}
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  LabelDisplayAtStereogenicCentersOption,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 
 async function placePhenylalanineMustard(page: Page, x: number, y: number) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   const phenylalanineLocator = page.locator(
     `div[title*="Phenylalanine mustard"] > div`,
   );
@@ -48,26 +34,6 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
     await phenylalanineLocator.first().click();
     await clickOnCanvas(page, x, y);
   });
-}
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
-
-async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
-  await page.getByText('Functional Group').click();
-}
-
-async function editStructureTemplate(
-  page: Page,
-  templateCategory: string,
-  templateName: string,
-) {
-  const editStructureButton = page.getByTitle(templateName).getByRole('button');
-  await openStructureLibrary(page);
-  await page.getByText(templateCategory).click();
-  await editStructureButton.click();
 }
 
 async function editAndClearTemplateName(
@@ -94,12 +60,17 @@ test.describe('Templates - Template Library', () => {
     const offsetX = 300;
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-    await setDisplayStereoFlagsSettingToOn(page);
+    // Using "On" label style, to always show the stereo labels, so we can see the difference
+    await setSettingsOption(
+      page,
+      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+      LabelDisplayAtStereogenicCentersOption.On,
+    );
 
-    await setIgnoreChiralFlagSetting(page, true);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await placePhenylalanineMustard(page, x - offsetX, y);
 
-    await setIgnoreChiralFlagSetting(page, false);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await placePhenylalanineMustard(page, x + offsetX, y);
     await takeEditorScreenshot(page);
   });
@@ -114,8 +85,8 @@ test.describe('Templates - Template Library', () => {
   test('Open Structure Library tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Verify Structure LIbrary tooltip
-    const button = page.getByTestId('template-lib');
-    await expect(button).toHaveAttribute(
+    const { structureLibraryButton } = BottomToolbar(page);
+    await expect(structureLibraryButton).toHaveAttribute(
       'title',
       'Structure Library (Shift+T)',
     );

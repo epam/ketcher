@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -5,24 +6,22 @@ import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
-  selectImageTool,
   clickOnCanvas,
   MacroFileType,
+  delay,
+  StructureFormat,
 } from '@utils';
-import { waitForLoad } from '@utils/common';
+import { selectImageTool } from '@utils/canvas/tools/helpers';
 import { MolfileFormat } from 'ketcher-core';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import {
-  contentTypeSelection,
-  monomerTypeSelection,
-  pasteFromClipboardDialog,
-  peptideLetterTypeSelection,
-} from '@tests/pages/common/PasteFromClipboardDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -36,14 +35,12 @@ export async function readFileContent(filePath: string) {
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
-export async function openFile(filename: string, page: Page) {
-  const openFromFileButton = openStructureDialog(page).openFromFileButton;
-
+export async function openFile(page: Page, filename: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   // Start waiting for file chooser before clicking. Note no await.
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await openFromFileButton.click();
+  await OpenStructureDialog(page).openFromFile();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
 }
@@ -57,7 +54,7 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
   const extention = filename.split('.')[1] as keyof typeof options;
   const optionText = options[extention];
   const contentTypeSelector =
-    pasteFromClipboardDialog(page).contentTypeSelector;
+    PasteFromClipboardDialog(page).contentTypeSelector;
   const selectorExists = await contentTypeSelector.isVisible();
 
   if (
@@ -83,21 +80,16 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
  * Should be used to prevent extra delay() calls in test cases
  */
 export async function openFileAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
 ) {
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+  await CommonTopLeftToolbar(page).openFile();
+  await openFile(page, filename);
 
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
-  await waitForLoad(page, async () => {
-    await addToCanvasButton.click();
+  await waitForLoadAndRender(page, async () => {
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
   });
 
   // Needed for Micro mode
@@ -112,88 +104,58 @@ export async function openFileAndAddToCanvas(
 }
 
 export async function openFileAndAddToCanvasMacro(
-  filename: string,
   page: Page,
-  typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
+  filename: string,
+  structureFormat: StructureFormat = MacroFileType.Ket,
+  errorMessageExpected = false,
 ) {
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
-  if (typeDropdownOption) {
-    await monomerTypeSelection(page, typeDropdownOption);
-  }
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await addToCanvasButton.click();
-    });
-  } else {
-    await addToCanvasButton.click();
-  }
+  await CommonTopLeftToolbar(page).openFile();
+  await openFile(page, filename);
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).addToCanvas({
+    errorMessageExpected,
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProjectMacro(
-  filename: string,
   page: Page,
-  typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
+  filename: string,
+  structureFormat: StructureFormat = MacroFileType.Ket,
+  errorMessageExpected = false,
 ) {
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
-
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-
-  // to stabilize the test
-  await selectOptionInDropdown(filename, page);
-
-  if (typeDropdownOption) {
-    await monomerTypeSelection(page, typeDropdownOption);
-  }
-
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
-  } else {
-    await openAsNewButton.click();
-  }
+  await CommonTopLeftToolbar(page).openFile();
+  await openFile(page, filename);
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
-  filename: string,
   page: Page,
-  errorExpected = false,
+  filename: string,
+  errorMessageExpected = false,
 ) {
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
-
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-
-  await selectOptionInDropdown(filename, page);
-
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
-  } else {
-    await openAsNewButton.click();
-  }
+  await CommonTopLeftToolbar(page).openFile();
+  await openFile(page, filename);
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
 }
 
 export async function openImageAndAddToCanvas(
-  filename: string,
   page: Page,
+  filename: string,
   x?: number,
   y?: number,
 ) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
+  const debugDelay = 0.15;
 
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await delay(debugDelay);
+  await CommonLeftToolbar(page).selectHandTool();
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {
@@ -202,12 +164,8 @@ export async function openImageAndAddToCanvas(
     await clickInTheMiddleOfTheScreen(page);
   }
 
-  const inputFile = await page.$('input[type="file"]');
-  if (inputFile) {
-    await inputFile.setInputFiles(resolvedFilePath);
-  } else {
-    throw new Error('Input file element not found');
-  }
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(resolvedFilePath);
 }
 
 export async function filteredFile(
@@ -224,45 +182,69 @@ export async function filteredFile(
 export async function pasteFromClipboardAndAddToCanvas(
   page: Page,
   fillStructure: string,
-  needToWait = true,
+  errorMessageExpected = false,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
-  await openStructureTextarea.fill(fillStructure);
-  if (needToWait) {
-    await waitForLoad(page, async () => {
-      await addToCanvasButton.click();
-    });
-  } else {
-    await addToCanvasButton.click();
-  }
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
+  await PasteFromClipboardDialog(page).addToCanvas({
+    errorMessageExpected,
+  });
 }
+
 export async function pasteFromClipboardAndOpenAsNewProject(
   page: Page,
   fillStructure: string,
-  needToWait = true,
+  errorMessageExpected = false,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
+  await PasteFromClipboardDialog(page).openAsNew({
+    errorMessageExpected,
+  });
+}
 
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
-  await openStructureTextarea.fill(fillStructure);
-  if (needToWait) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
+async function setupStructureFormatComboboxes(
+  page: Page,
+  structureFormat: StructureFormat,
+) {
+  let structureType: MacroFileType = MacroFileType.Ket;
+  let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
+  let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
+
+  if (Array.isArray(structureFormat)) {
+    const [tmpFastaOrSequenceStructureType, tmpSequenceOrFastaType] =
+      structureFormat;
+    structureType = tmpFastaOrSequenceStructureType;
+    if (Array.isArray(tmpSequenceOrFastaType)) {
+      const [tmpSequenceMonomerType, tmpPetideType] = tmpSequenceOrFastaType;
+      sequenceOrFastaType = tmpSequenceMonomerType;
+      peptideType = tmpPetideType;
+    } else {
+      sequenceOrFastaType = tmpSequenceOrFastaType;
+    }
   } else {
-    await openAsNewButton.click();
+    structureType = structureFormat;
+  }
+  if (structureFormat !== MacroFileType.Ket) {
+    await PasteFromClipboardDialog(page).selectContentType(structureType);
+  }
+
+  if (
+    structureType === MacroFileType.Sequence ||
+    structureType === MacroFileType.FASTA
+  ) {
+    await PasteFromClipboardDialog(page).selectMonomerType(sequenceOrFastaType);
+
+    if (
+      sequenceOrFastaType === SequenceMonomerType.Peptide &&
+      peptideType === PeptideLetterCodeType.threeLetterCode
+    ) {
+      await PasteFromClipboardDialog(page).selectPeptideLetterType(
+        PeptideLetterCodeType.threeLetterCode,
+      );
+    }
   }
 }
 
@@ -302,82 +284,15 @@ export async function pasteFromClipboardAndOpenAsNewProject(
  */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
-  structureFormat:
-    | Exclude<MacroFileType, MacroFileType.Sequence | MacroFileType.FASTA>
-    | [MacroFileType.FASTA, SequenceMonomerType]
-    | [
-        MacroFileType.Sequence,
-        Exclude<SequenceMonomerType, SequenceMonomerType.Peptide>,
-      ]
-    | [
-        MacroFileType.Sequence,
-        [SequenceMonomerType.Peptide, PeptideLetterCodeType],
-      ],
+  structureFormat: StructureFormat,
   fillStructure: string,
-  errorExpected = false,
+  errorMessageExpected = false,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-  const monomerTypeSelector =
-    pasteFromClipboardDialog(page).monomerTypeSelector;
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-
-  let structureType: MacroFileType = MacroFileType.Ket;
-  let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
-  let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
-
-  if (Array.isArray(structureFormat)) {
-    const [tmpFastaOrSequenceStructureType, tmpSequenceOrFastaType] =
-      structureFormat;
-    structureType = tmpFastaOrSequenceStructureType;
-    if (Array.isArray(tmpSequenceOrFastaType)) {
-      const [tmpSequenceMonomerType, tmpPetideType] = tmpSequenceOrFastaType;
-      sequenceOrFastaType = tmpSequenceMonomerType;
-      peptideType = tmpPetideType;
-    } else {
-      sequenceOrFastaType = tmpSequenceOrFastaType;
-    }
-  } else {
-    structureType = structureFormat;
-  }
-
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
-
-  if (structureFormat !== MacroFileType.Ket) {
-    await contentTypeSelection(page, structureType);
-  }
-
-  if (
-    structureType === MacroFileType.Sequence ||
-    structureType === MacroFileType.FASTA
-  ) {
-    monomerTypeSelector.click();
-    const lowCaseSequenceFormat = sequenceOrFastaType.toLowerCase();
-    await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
-
-    if (
-      sequenceOrFastaType === SequenceMonomerType.Peptide &&
-      peptideType === PeptideLetterCodeType.threeLetterCode
-    ) {
-      await peptideLetterTypeSelection(
-        page,
-        PeptideLetterCodeType.threeLetterCode,
-      );
-    }
-  }
-
-  await openStructureTextarea.fill(fillStructure);
-
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await addToCanvasButton.click();
-    });
-  } else {
-    await addToCanvasButton.click();
-  }
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
+  await PasteFromClipboardDialog(page).addToCanvas({ errorMessageExpected });
 }
 
 export async function receiveMolFileComparisonData(
@@ -428,8 +343,10 @@ export async function receiveRxnFileComparisonData(
 // of canvas when opened. So when comparing files, the coordinates
 // always match and there is no difference between the results when comparing.
 export async function saveToFile(filename: string, data: string) {
+  const testDataDirectory = getTestDataDirectory();
+  const resolvedFilePath = path.resolve(testDataDirectory, filename);
   if (process.env.GENERATE_DATA === 'true') {
-    return await fs.promises.writeFile(filename, data, 'utf-8');
+    return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
 }
 
@@ -437,13 +354,11 @@ export async function openPasteFromClipboard(
   page: Page,
   fillStructure: string,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
   const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
+    PasteFromClipboardDialog(page).openStructureTextarea;
 
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
   await openStructureTextarea.fill(fillStructure);
   // The 'Add to Canvas' button step is removed.
   // If you need to use this function in another context and include the button press, you can do so separately.

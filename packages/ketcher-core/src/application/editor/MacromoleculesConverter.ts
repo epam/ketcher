@@ -4,13 +4,24 @@ import {
   Bond,
   FunctionalGroup,
   Pile,
+  RxnArrow as MicromoleculesRxnArrow,
+  MultitailArrow as MicromoleculesMultitailArrow,
+  RxnPlus as MicromoleculesRxnPlus,
   SGroup,
   SGroupAttachmentPoint,
   Struct,
   Vec2,
 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
+import {
+  ReAtom,
+  ReBond,
+  ReMultitailArrow,
+  ReRxnArrow,
+  ReRxnPlus,
+  ReSGroup,
+  ReStruct,
+} from 'application/render';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
@@ -44,7 +55,7 @@ export class MacromoleculesConverter {
     const sgroupId = struct.sgroups.add(monomerMicromolecule);
 
     monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = false;
+    monomerMicromolecule.data.expanded = monomer.monomerItem.expanded;
     monomerMicromolecule.id = sgroupId;
     monomerMicromolecule.pp = monomer.position;
 
@@ -299,6 +310,37 @@ export class MacromoleculesConverter {
       reStruct?.bonds.set(bondId, new ReBond(bond));
     });
 
+    drawingEntitiesManager.rxnArrows.forEach((rxnArrow) => {
+      const micromoleculeRxnArrow = new MicromoleculesRxnArrow({
+        mode: rxnArrow.type,
+        pos: [rxnArrow.startPosition, rxnArrow.endPosition],
+        height: rxnArrow.height,
+        initiallySelected: rxnArrow.initiallySelected,
+      });
+      const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
+      reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
+    });
+
+    drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
+      const micromoleculeMultitailArrow =
+        MicromoleculesMultitailArrow.fromKetNode(multitailArrow.toKetNode());
+      const arrowId = struct.multitailArrows.add(micromoleculeMultitailArrow);
+      reStruct?.multitailArrows.set(
+        arrowId,
+        new ReMultitailArrow(micromoleculeMultitailArrow),
+      );
+    });
+
+    drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
+      const micromoleculeRxnPlus = new MicromoleculesRxnPlus({
+        pp: rxnPlus.position,
+        initiallySelected: rxnPlus.initiallySelected,
+      });
+      const rxnPlusId = struct.rxnPluses.add(micromoleculeRxnPlus);
+
+      reStruct?.rxnPluses.set(rxnPlusId, new ReRxnPlus(micromoleculeRxnPlus));
+    });
+
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
     struct.setStereoLabelsToAtoms();
@@ -483,6 +525,7 @@ export class MacromoleculesConverter {
               isotope: atom.isotope,
               radical: atom.radical,
               alias: atom.alias,
+              cip: atom.cip,
             },
           );
 
@@ -509,6 +552,7 @@ export class MacromoleculesConverter {
               bond.type,
               bond.stereo,
               bondId,
+              bond.cip,
             ),
           );
         });
@@ -674,6 +718,34 @@ export class MacromoleculesConverter {
           ),
         );
       }
+    });
+
+    // Arrows and pluses
+    struct.rxnArrows.forEach((rxnArrow) => {
+      const arrowAddCommand = drawingEntitiesManager.addRxnArrow(
+        rxnArrow.mode,
+        rxnArrow.pos as [Vec2, Vec2],
+        rxnArrow.height,
+        rxnArrow.initiallySelected,
+      );
+      command.merge(arrowAddCommand);
+    });
+
+    struct.multitailArrows.forEach((multitailArrow) => {
+      const arrowAddCommand = drawingEntitiesManager.addMultitailArrow(
+        multitailArrow.toKetNode(),
+      );
+
+      command.merge(arrowAddCommand);
+    });
+
+    struct.rxnPluses.forEach((rxnPlus) => {
+      const rxnPlusAddCommand = drawingEntitiesManager.addRxnPlus(
+        rxnPlus.pp,
+        rxnPlus.initiallySelected,
+      );
+
+      command.merge(rxnPlusAddCommand);
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);

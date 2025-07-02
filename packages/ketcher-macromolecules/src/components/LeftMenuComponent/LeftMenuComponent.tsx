@@ -17,23 +17,16 @@
 import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
-import {
-  ModeTypes,
-  generateMenuShortcuts,
-  hotkeysConfiguration,
-} from 'ketcher-core';
-
-const shortcuts =
-  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {
-    editor.events.selectTool.dispatch([name, { toolName: name }]);
+    editor?.events.selectTool.dispatch([name, { toolName: name }]);
   };
 
   return (
@@ -45,17 +38,17 @@ export function LeftMenuComponent() {
       <Menu.Group divider={true}>
         <Menu.Item
           itemId="hand"
-          title={`Hand Tool (${shortcuts.hand})`}
+          title={`Hand Tool (${hotkeysShortcuts.hand})`}
           testId="hand"
         />
         <Menu.Item
           itemId="select-rectangle"
-          title={`Select Rectangle  (${shortcuts.exit})`}
+          title={`Select Rectangle  (${hotkeysShortcuts.exit})`}
           testId="select-rectangle"
         />
         <Menu.Item
           itemId="erase"
-          title={`Erase (${shortcuts.erase})`}
+          title={`Erase (${hotkeysShortcuts.erase})`}
           testId="erase"
           disabled={isSequenceMode}
         />

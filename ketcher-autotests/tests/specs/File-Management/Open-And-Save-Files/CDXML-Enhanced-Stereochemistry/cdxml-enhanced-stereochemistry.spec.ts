@@ -1,10 +1,9 @@
 import { Page, test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  LeftPanelButton,
   pressButton,
-  selectLeftPanelButton,
   clickOnAtom,
   waitForPageInit,
   waitForRender,
@@ -19,7 +18,7 @@ async function selectRadioButtonForNewGroup(
   selectRadioButton: string,
   cancelChanges = false,
 ) {
-  await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+  await LeftToolbar(page).stereochemistry();
   await page.getByLabel(selectRadioButton).check();
 
   await waitForRender(page, async () => {
@@ -38,7 +37,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is opened correctly
     New 'And Group' label added to structure.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
     await takeEditorScreenshot(page);
   });
@@ -49,7 +48,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is opened correctly
     New 'OR Group' label added to structure.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
     await takeEditorScreenshot(page);
   });
@@ -61,7 +60,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     'Mixed AND' label added to structure.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
     await takeEditorScreenshot(page);
@@ -74,7 +73,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     'Mixed OR' label added to structure.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
     await takeEditorScreenshot(page);
@@ -92,7 +91,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-    await openFileAndAddToCanvas('CDXML/stereo-and-structure.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/stereo-and-structure.cdxml');
 
     await verifyFileExport(
       page,
@@ -107,7 +106,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-    await openFileAndAddToCanvas('CDXML/stereo-or-structure.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/stereo-or-structure.cdxml');
 
     await verifyFileExport(
       page,
@@ -122,7 +121,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-    await openFileAndAddToCanvas('CDXML/mixed-and-stereo-marks.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/mixed-and-stereo-marks.cdxml');
 
     await verifyFileExport(
       page,
@@ -137,7 +136,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-    await openFileAndAddToCanvas('CDXML/mixed-or-stereo-marks.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/mixed-or-stereo-marks.cdxml');
 
     await verifyFileExport(
       page,
@@ -152,7 +151,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-    await openFileAndAddToCanvas('CDXML/mixed-stereo-marks.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/mixed-stereo-marks.cdxml');
 
     await verifyFileExport(
       page,

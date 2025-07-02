@@ -51,8 +51,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position, config);
 
     this.monomerItem = { ...monomerItem };
-    this.attachmentPointsToBonds = this.getAttachmentPointDict();
-    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    this.monomerItem.expanded = monomerItem.expanded;
+    this.recalculateAttachmentPoints();
     this.monomerItem.attachmentPoints =
       this.monomerItem.attachmentPoints ||
       this.getMonomerDefinitionAttachmentPoints();
@@ -592,7 +592,21 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isModification() {
-    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+    const naturalAnalogThreeLettersCode =
+      this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
+    const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
+    const namesToCompareNaturalAnalog = [
+      ...([this.label] || []),
+      ...([this.monomerItem.props.MonomerName] || []),
+    ];
+    const naturalAnaloguesToCompare = [
+      ...([naturalAnalogThreeLettersCode] || []),
+      ...([naturalAnalogCode] || []),
+    ];
+
+    return namesToCompareNaturalAnalog.every(
+      (nameToCompare) => !naturalAnaloguesToCompare.includes(nameToCompare),
+    );
   }
 
   public get sideConnections() {
@@ -607,5 +621,19 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get monomerCaps() {
     return this.monomerItem.props.MonomerCaps;
+  }
+
+  public recalculateAttachmentPoints() {
+    const oldAttachmentPointsToBonds = this.attachmentPointsToBonds;
+
+    this.attachmentPointsToBonds = this.getAttachmentPointDict();
+    for (const attachmentPointName in this.attachmentPointsToBonds) {
+      if (oldAttachmentPointsToBonds[attachmentPointName]) {
+        this.attachmentPointsToBonds[attachmentPointName] =
+          oldAttachmentPointsToBonds[attachmentPointName];
+      }
+    }
+
+    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
   }
 }

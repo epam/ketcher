@@ -1,8 +1,8 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectAtomInToolbar,
-  AtomButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -12,11 +12,11 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  resetCurrentTool,
   moveOnAtom,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
 test.describe('Click and drag Atom on canvas', () => {
@@ -29,10 +29,12 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10115
       Description: when click & drag with an atom on atom it should forms a bond between it
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -48,10 +50,12 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10116
       Description: when click & drag with an atom on functional group it should forms a bond between it
     */
+    const atomToolbar = RightToolbar(page);
+
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -68,10 +72,12 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on salts
       and solvents atom appears where the left mouse button was released without a connection
     */
+    const atomToolbar = RightToolbar(page);
+
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Phosphorus, page);
+    await atomToolbar.clickAtom(Atom.Phosphorus);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -85,16 +91,18 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10118
       Description: when click & drag with an atom on an atom connected with bond to another atom it should forms a bond
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x - MAX_BOND_LENGTH, y, page);
     await resetCurrentTool(page);
@@ -109,7 +117,9 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on a
       functional group connected with bond to another atom it should forms a bond
     */
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
@@ -118,7 +128,7 @@ test.describe('Click and drag Atom on canvas', () => {
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, coordinatesWithShift, y);
     await resetCurrentTool(page);
@@ -139,9 +149,9 @@ test.describe('Click and drag Atom on canvas', () => {
       { x: 0, y: MAX_BOND_LENGTH },
       { x: MAX_BOND_LENGTH, y: 0 },
     ];
+    const atomToolbar = RightToolbar(page);
 
-    await selectAtomInToolbar(AtomButton.Phosphorus, page);
-
+    await atomToolbar.clickAtom(Atom.Phosphorus);
     await clickInTheMiddleOfTheScreen(page);
 
     for (const [idx, direction] of directions.entries()) {

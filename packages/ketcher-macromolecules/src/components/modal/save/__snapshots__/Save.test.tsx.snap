@@ -33,6 +33,7 @@ Object {
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
+          testid="save-structure-dialog"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
@@ -107,8 +108,8 @@ Object {
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1h8rp84-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                    data-testid="dropdown-select"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-3xl4j3-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    data-testid="file-format-list"
                   >
                     <div
                       aria-controls=":r1:"
@@ -164,7 +165,7 @@ Object {
               >
                 <textarea
                   class="css-evzoup"
-                  data-testid="preview-area-text"
+                  data-testid="preview-area"
                   readonly=""
                 >
                   {

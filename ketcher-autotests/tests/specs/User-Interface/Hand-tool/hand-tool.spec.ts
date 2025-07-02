@@ -1,12 +1,11 @@
 import { Page, test, expect } from '@playwright/test';
 import {
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   openFileAndAddToCanvas,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 async function mouseMovement(page: Page, endPoint: { x: number; y: number }) {
   const startPoint = { x: 300, y: 300 };
@@ -26,7 +25,9 @@ test.describe('Hand tool', () => {
       testId: 'hand',
       title: 'Hand tool (Ctrl+Alt+H)',
     };
-    const iconButton = page.getByTestId(icon.testId);
+    const iconButton = page
+      .getByTestId(icon.testId)
+      .filter({ has: page.locator(':visible') });
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
     expect(icon.title).toBeTruthy();
@@ -35,9 +36,9 @@ test.describe('Hand tool', () => {
   test('Moving canvas', async ({ page }) => {
     // Test case: EPMLSOPKET-4241
     // Verify if canvas is captured and move with Hand Tool
-    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await CommonLeftToolbar(page).selectHandTool();
     await mouseMovement(page, { x: 700, y: 300 });
     await takeEditorScreenshot(page);
   });
@@ -45,7 +46,7 @@ test.describe('Hand tool', () => {
   test('Shortcut Ctrl+Alt+H/Cmd+H', async ({ page }) => {
     // Test case: EPMLSOPKET-4243
     // Verify if hot keys changed to Active Hand Tool cursor
-    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
     await page.keyboard.press('Control+Alt+h');
     await mouseMovement(page, { x: 700, y: 300 });
     await takeEditorScreenshot(page);
@@ -57,8 +58,8 @@ test.describe('Hand tool', () => {
     // test case: EPMLSOPKET-8937
     // Verify if hand is not following coursor outside the canvas
     const point = { x: 45, y: 148 };
-    await selectHandTool(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await CommonLeftToolbar(page).selectHandTool();
+    await BottomToolbar(page).StructureLibrary();
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
   });
@@ -66,8 +67,8 @@ test.describe('Hand tool', () => {
   test('Able to scroll canvas down and to the right', async ({ page }) => {
     // Test case: EPMLSOPKET-8937
     // Verify posibility to move cnvas down and to the right
-    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
-    await selectHandTool(page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
+    await CommonLeftToolbar(page).selectHandTool();
     await mouseMovement(page, { x: 300, y: 50 });
     await mouseMovement(page, { x: 60, y: 100 });
     await takeEditorScreenshot(page);

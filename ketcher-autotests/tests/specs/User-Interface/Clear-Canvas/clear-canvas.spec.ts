@@ -1,20 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectRing,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
+  clearCanvasByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,8 +19,8 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
-    await selectClearCanvasTool(page);
-    const button = topLeftToolbarLocators(page).clearCanvasButton;
+    await CommonTopLeftToolbar(page).clearCanvas();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
     await takeEditorScreenshot(page);
   });
@@ -34,20 +30,20 @@ test.describe('Clear canvas', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Undo/Redo', async ({ page }) => {
     // Test case: EPMLSOPKET-1704
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await clickInTheMiddleOfTheScreen(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -55,7 +51,7 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case:EPMLSOPKET-1705
-    await openFileAndAddToCanvas('KET/ketcher.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -65,8 +61,8 @@ test.describe('Clear canvas', () => {
   }) => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
-    await openFileAndAddToCanvas('KET/ketcher.ket', page);
-    await page.keyboard.press('Control+Delete');
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -78,13 +74,13 @@ test.describe('Clear canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
-    await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
+    await clearCanvasByKeyboard(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/ketcher.mol');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -92,15 +88,15 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1706
-    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/chain-with-r-group.smi');
     await clickInTheMiddleOfTheScreen(page);
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressRedoButton(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 });

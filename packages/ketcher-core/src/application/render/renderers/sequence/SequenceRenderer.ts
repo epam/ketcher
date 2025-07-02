@@ -38,9 +38,9 @@ import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
+import { SettingsManager } from 'utilities';
 
 export type SequencePointer = number;
-export type NumberOfSymbolsInRow = number;
 export type SequenceLastCaretPosition = number;
 
 type BaseNodeSelection = {
@@ -60,8 +60,6 @@ export type TwoStrandedNodeSelection = BaseNodeSelection & {
 
 export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
-
-const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
@@ -229,7 +227,14 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
-        this.showNewSequenceButton(chainIndex);
+        this.showNewSequenceButton(
+          chainIndex,
+          Math.max(
+            chain.lastRow.sequenceViewModelItems.length,
+            sequenceViewModel.chains[chainIndex + 1]?.firstRow
+              ?.sequenceViewModelItems.length || 0,
+          ),
+        );
       }
     });
 
@@ -244,11 +249,12 @@ export class SequenceRenderer {
     currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
     previousChainLength: number = SequenceRenderer.lastChainLength,
   ) {
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     return new Vec2(
       currentChainStartPosition.x,
       currentChainStartPosition.y +
         80 +
-        47 * Math.floor((previousChainLength - 1) / 30),
+        47 * Math.floor((previousChainLength - 1) / lineLength),
     );
   }
 
@@ -541,6 +547,7 @@ export class SequenceRenderer {
   }
 
   private static get nodesGroupedByRows() {
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     const finalArray: Array<Array<ITwoStrandedChainItem>> = [];
     let chainNodes: Array<ITwoStrandedChainItem> = [];
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
@@ -549,9 +556,9 @@ export class SequenceRenderer {
         return;
       }
 
-      if (chainNodes.length > NUMBER_OF_SYMBOLS_IN_ROW) {
+      if (chainNodes.length > lineLength) {
         while (chainNodes.length > 0) {
-          finalArray.push(chainNodes.splice(0, NUMBER_OF_SYMBOLS_IN_ROW));
+          finalArray.push(chainNodes.splice(0, lineLength));
         }
       } else {
         finalArray.push([...chainNodes]);
@@ -1179,9 +1186,10 @@ export class SequenceRenderer {
     return rendererToReturn;
   }
 
-  public static showNewSequenceButton(indexOfRowBefore: number) {
+  public static showNewSequenceButton(indexOfRowBefore: number, width = 0) {
     const newSequenceButton = new NewSequenceButton(indexOfRowBefore);
     newSequenceButton.show();
+    newSequenceButton.setWidth(width);
     this.newSequenceButtons.push(newSequenceButton);
   }
 

@@ -55,10 +55,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return true;
   }
 
+  static get selectionCircleRadius() {
+    return 21;
+  }
+
   protected constructor(
     public monomer: BaseMonomer,
     private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
+    public monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
@@ -440,7 +444,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     } else {
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
-        .attr('r', '21px')
+        .attr('r', `${BaseMonomerRenderer.selectionCircleRadius}px`)
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)

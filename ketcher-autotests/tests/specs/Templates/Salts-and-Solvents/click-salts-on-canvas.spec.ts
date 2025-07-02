@@ -1,21 +1,21 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectAtomInToolbar,
   takeEditorScreenshot,
-  AtomButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   FunctionalGroups,
-  resetCurrentTool,
   SaltsAndSolvents,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,7 +27,9 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents template on an atom it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.Glycerol, page);
@@ -72,10 +74,12 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Description: when clicking with a Salts and Solvents template on an atom connected with
       bond to another atom  it should place the Salts and Solvents near to the atom
     */
-    await selectAtomInToolbar(AtomButton.Chlorine, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -93,7 +97,9 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Description: when clicking with a Salt and Solvents template on an FG connected with bond
        to another atom  it should place Salts and Solvents near FG
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);

@@ -1,11 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { selectTool, takeEditorScreenshot } from '@utils/canvas';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { takeEditorScreenshot } from '@utils/canvas';
 import {
-  getAtomByIndex,
   getBottomAtomByAttributes,
   getRightAtomByAttributes,
 } from '@utils/canvas/atoms';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {
@@ -15,7 +16,8 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { LeftPanelButton, RingButton, selectRing } from '@utils/selectors';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -25,7 +27,7 @@ test.describe('Chain Tool drawing', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
 
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
@@ -49,10 +51,10 @@ test.describe('Chain Tool drawing', () => {
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
 
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     point = await getBottomAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
@@ -115,7 +117,7 @@ test.describe('Chain Tool drawing', () => {
   4. Check the number of carbons in the chain.
   5. Take a screenshot.
   */
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.mouse.down();
     await page.mouse.move(900, 350);

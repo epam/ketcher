@@ -16,6 +16,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
+import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -96,8 +97,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public get scaledMonomerPositionForSequence() {
-    const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
-    const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
+    const indexInRow = this.monomerIndexInChain % lineLength;
+    const rowIndex = Math.floor(this.monomerIndexInChain / lineLength);
 
     return new Vec2(
       this.firstNodeInChainPosition.x +
@@ -224,10 +226,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get nthSeparationInRow() {
     return 10;
-  }
-
-  private get symbolsInRow() {
-    return 30;
   }
 
   public get isAntisenseNode() {

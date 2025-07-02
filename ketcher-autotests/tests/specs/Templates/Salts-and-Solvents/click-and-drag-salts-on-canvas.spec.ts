@@ -1,8 +1,8 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectAtomInToolbar,
-  AtomButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -11,12 +11,12 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   takeEditorScreenshot,
   drawFGAndDrag,
   drawSaltAndDrag,
   waitForPageInit,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 const SHIFT = 50;
 
@@ -31,7 +31,9 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on atom
       Salts appears near atom where the left mouse button was released
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, SHIFT, page);
@@ -75,10 +77,12 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       on an atom connected with bond to another atom Salts appears
       near atom where the left mouse button was released
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;

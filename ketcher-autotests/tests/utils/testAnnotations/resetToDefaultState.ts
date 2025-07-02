@@ -1,23 +1,20 @@
 import { Page, test, TestInfo } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas';
-import { chooseTab, Tabs } from '@utils/macromolecules';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {
     await selectFlexLayoutModeTool(page);
   },
   tabSelection: async (page: Page) => {
-    await chooseTab(page, Tabs.Peptides);
+    await Library(page).switchToRNATab();
   },
   micromoleculesEditor: async (page: Page) => {
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   },
   macromoleculesEditor: async (page: Page) => {
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   },
 };
 
@@ -57,7 +54,7 @@ export const processResetToDefaultState = async (
   testInfo: TestInfo,
   page: Page,
 ) => {
-  if (testInfo.status != 'passed') {
+  if (testInfo.status !== 'passed') {
     return;
   }
 

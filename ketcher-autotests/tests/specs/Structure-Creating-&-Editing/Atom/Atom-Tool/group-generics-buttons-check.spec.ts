@@ -1,9 +1,8 @@
 import { Page, test } from '@playwright/test';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
@@ -14,7 +13,9 @@ async function selectExtendedAtom(
   extendedAtom: AtomExtendedType,
   atomToClick: AtomLabelType,
 ) {
-  await selectAtomInToolbar(AtomButton.Extended, page);
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+  await extendedTableButton.click();
   await page.getByRole('button', { name: extendedAtom, exact: true }).click();
   await page.getByTestId('OK').click();
   await clickOnAtom(page, atomToClick, 0);
@@ -24,8 +25,8 @@ test.describe('Generic nodes', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
   });
 

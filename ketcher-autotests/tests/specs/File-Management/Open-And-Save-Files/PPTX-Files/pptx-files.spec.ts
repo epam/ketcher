@@ -1,29 +1,51 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   waitForPageInit,
-  openFile,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  pressButton,
+  openFile,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 /* eslint-disable no-magic-numbers */
+
+async function openPPTXFileAndValidateStructurePreview(
+  page: Page,
+  filePath: string,
+  numberOf: {
+    Structure: number;
+  } = { Structure: 1 },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await openFile(page, filePath);
+  });
+  const openPPTXFileDialog = OpenPPTXFileDialog(page);
+  if (numberOf.Structure !== 1) {
+    await openPPTXFileDialog.selectStructure(numberOf);
+  }
+  await takeEditorScreenshot(page);
+  await openPPTXFileDialog.pressOpenAsNewProjectButton();
+}
+
 test.describe('PPTX files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
   test('open pptx file', async ({ page }) => {
-    await selectOpenFileTool(page);
-    await openFile('PPTX/pptx-with-chem-draw.pptx', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await waitForSpinnerFinishedWork(page, async () => {
+      await openFile(page, 'PPTX/pptx-with-chem-draw.pptx');
+    });
     await takeEditorScreenshot(page);
-    await page.getByText('Structure 2').click();
+    await OpenPPTXFileDialog(page).selectStructure({ Structure: 2 });
     await takeEditorScreenshot(page);
   });
 
   test('open empty pptx file', async ({ page }) => {
-    await selectOpenFileTool(page);
-    await openFile('PPTX/pptx-empty.pptx', page);
+    await CommonTopLeftToolbar(page).openFile();
+    await openFile(page, 'PPTX/pptx-empty.pptx');
     await takeEditorScreenshot(page);
   });
 
@@ -50,17 +72,10 @@ test.describe('PPTX files', () => {
       const longerTimeout = 30000;
       page.setDefaultTimeout(longerTimeout);
 
-      await selectOpenFileTool(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await openFile('PPTX/50 mols on 1 canvas.pptx', page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 1', { exact: true }).click();
-      });
-      await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
-      });
+      await openPPTXFileAndValidateStructurePreview(
+        page,
+        'PPTX/50 mols on 1 canvas.pptx',
+      );
       await takeEditorScreenshot(page);
 
       page.setDefaultTimeout(originalTimeout);
@@ -88,17 +103,13 @@ test.describe('PPTX files', () => {
       const maxTimeout = 150000;
       test.setTimeout(maxTimeout);
 
-      await selectOpenFileTool(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await openFile('PPTX/1000 moleculs.pptx', page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 1000', { exact: true }).click();
-      });
-      await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
-      });
+      await openPPTXFileAndValidateStructurePreview(
+        page,
+        'PPTX/1000 moleculs.pptx',
+        {
+          Structure: 1000,
+        },
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -122,22 +133,19 @@ test.describe('PPTX files', () => {
       const maxTimeout = 150000;
       test.setTimeout(maxTimeout);
 
-      await selectOpenFileTool(page);
+      await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile(
-          'PPTX/BigPPT (79 molecules and many objects).pptx',
           page,
+          'PPTX/BigPPT (79 molecules and many objects).pptx',
         );
       });
+
       for (let count = 10; count <= 20; count++) {
-        await waitForSpinnerFinishedWork(page, async () => {
-          await page.getByText(`Structure ${count}`, { exact: true }).click();
-        });
+        await OpenPPTXFileDialog(page).selectStructure({ Structure: count });
         await takeEditorScreenshot(page);
       }
-      await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 79').click();
-      });
+      await OpenPPTXFileDialog(page).selectStructure({ Structure: 79 });
       await takeEditorScreenshot(page);
     },
   );
@@ -168,17 +176,11 @@ test.describe('PPTX files', () => {
 
       const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
       for await (const count of structures) {
-        await selectOpenFileTool(page);
-        await waitForSpinnerFinishedWork(page, async () => {
-          await openFile('PPTX/ARROWS.pptx', page);
-        });
-        await waitForSpinnerFinishedWork(page, async () => {
-          await page.getByText(`Structure ${count}`, { exact: true }).click();
-        });
-        await takeEditorScreenshot(page);
-        await waitForSpinnerFinishedWork(page, async () => {
-          await pressButton(page, 'Open as New Project');
-        });
+        await openPPTXFileAndValidateStructurePreview(
+          page,
+          'PPTX/ARROWS.pptx',
+          { Structure: count },
+        );
         await takeEditorScreenshot(page);
       }
     },
@@ -196,21 +198,9 @@ test.describe('PPTX files', () => {
     3. In appeared dialog - Validate Preview area
     4. Press Open as New Project button
     5. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1680 issue.
-    Uncomment code after fix and update screenshots!
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Brackets.pptx', page);
-    });
-    //    await waitForSpinnerFinishedWork(page, async () => {
-    //      await page.getByText('Structure 1', {exact: true}).click();
-    //    });
+    await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Brackets.pptx');
     await takeEditorScreenshot(page);
-    //    await waitForSpinnerFinishedWork(page, async () => {
-    //      await pressButton(page, 'Open as New Project');
-    //    });
-    //    await takeEditorScreenshot(page);
   });
 
   test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Chromotography tools', async ({
@@ -226,17 +216,10 @@ test.describe('PPTX files', () => {
     4. Press Open as New Project button
     5. Validate canvas
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Chromotography tools.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Chromotography tools.pptx',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -255,17 +238,13 @@ test.describe('PPTX files', () => {
     Expected result: Most of figures we don't suppot and ignores
     */
     for (let count = 1; count <= 2; count++) {
-      await selectOpenFileTool(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await openFile('PPTX/Geometry figures.pptx', page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText(`Structure ${count}`, { exact: true }).click();
-      });
-      await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
-      });
+      await openPPTXFileAndValidateStructurePreview(
+        page,
+        'PPTX/Geometry figures.pptx',
+        {
+          Structure: count,
+        },
+      );
       await takeEditorScreenshot(page);
     }
   });
@@ -284,21 +263,11 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: No orbitals since are not support them - we simply ignore them
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Orbitals.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Orbitals.pptx');
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages @IncorrectResultBecauseOfBug', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages', async ({
     page,
   }) => {
     /*
@@ -310,21 +279,11 @@ test.describe('PPTX files', () => {
     3. In appeared dialog - Validate Preview area
     4. Press Open as New Project button
     5. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1679 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1683 issue.
-    Update screenshots after fix.
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Text messages.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Text messages.pptx',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -342,17 +301,10 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: Seems that ChemDraw's pluses and minises are simply atom modifiers - we don' support them in such way
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Pluses and minuses.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Pluses and minuses.pptx',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -370,17 +322,7 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: We don't support tables so they are ignored
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Tables.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Tables.pptx');
     await takeEditorScreenshot(page);
   });
 
@@ -399,17 +341,10 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1725 issue.
     Update screenshots after fix.
     */
-    await selectOpenFileTool(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/Attachment points.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openPPTXFileAndValidateStructurePreview(
+      page,
+      'PPTX/Attachment points.pptx',
+    );
     await takeEditorScreenshot(page);
   });
 });

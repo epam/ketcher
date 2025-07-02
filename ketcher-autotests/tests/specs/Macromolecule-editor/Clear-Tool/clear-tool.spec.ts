@@ -2,32 +2,26 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  clearCanvasByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import {} from '@utils/macromolecules';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-    await goToPeptidesTab(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Clear canvas with monomer bonded with another monomers', async ({
@@ -68,7 +62,7 @@ test.describe('Clear Canvas Tool', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -82,7 +76,7 @@ test.describe('Clear Canvas Tool', () => {
     await takeEditorScreenshot(page);
 
     // Click Clear Canvas Tool
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
 
     await takeEditorScreenshot(page);
   });
@@ -96,7 +90,9 @@ test.describe('Clear Canvas Tool', () => {
       testId: 'clear-canvas',
       title: 'Clear Canvas (Ctrl+Del)',
     };
-    const iconButton = page.getByTestId(icon.testId);
+    const iconButton = page
+      .getByTestId(icon.testId)
+      .filter({ has: page.locator(':visible') });
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
     expect(icon.title).toBeTruthy();
@@ -110,11 +106,11 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -126,11 +122,11 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `Molfiles-V3000/monomers-and-chem.mol`,
       page,
+      `Molfiles-V3000/monomers-and-chem.mol`,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -149,7 +145,7 @@ test.describe('Clear Canvas Tool', () => {
         );
       }
     });
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test('Check that after creating a monomer structure and click Clear Canvas button and then Undo structure back for same place', async ({
@@ -159,10 +155,10 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: After click Undo structure back for same place.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await selectClearCanvasTool(page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -173,12 +169,12 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Undo/Redo functionality works properly.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await selectClearCanvasTool(page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -190,12 +186,12 @@ test.describe('Clear Canvas Tool', () => {
     Description: All structure is deleted.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -207,14 +203,14 @@ test.describe('Clear Canvas Tool', () => {
     Description: When you switch back to Macromonecules structure is still deleted from canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
-    await selectClearCanvasTool(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 });

@@ -173,7 +173,6 @@ export class SequenceMode extends BaseMode {
     // only recalculate after changes in the sequence
     const modelChanges = needReArrangeChains
       ? editor.drawingEntitiesManager.applySnakeLayout(
-          editor.canvas.width.baseVal.value,
           true,
           false,
           true,
@@ -188,11 +187,12 @@ export class SequenceMode extends BaseMode {
 
     const chainsCollection =
       editor.drawingEntitiesManager.applyMonomersSequenceLayout();
+
     const firstMonomerPosition = (
       chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
     )?.scaledMonomerPositionForSequence;
 
-    if (firstMonomerPosition && (needScroll || needReArrangeChains)) {
+    if (firstMonomerPosition && needScroll) {
       zoom.scrollTo(firstMonomerPosition);
     }
 
@@ -416,6 +416,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public click(event: MouseEvent) {
+    if (this.isEditInRNABuilderMode) return;
     const eventData = event.target?.__data__;
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
@@ -447,6 +448,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
+    if (this.isEditInRNABuilderMode) return;
     const eventData: BaseRenderer | NewSequenceButton | undefined =
       event.target?.__data__;
     const isClickedOnEmptyPlace = !(
@@ -497,6 +499,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousemove(event: MouseEvent) {
+    if (this.isEditInRNABuilderMode) return;
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
     // this.mousemoveCounter > 1 used here to prevent selection of single monomer
@@ -517,6 +520,9 @@ export class SequenceMode extends BaseMode {
       if (this.selectionStartCaretPosition > SequenceRenderer.caretPosition) {
         startCaretPosition = SequenceRenderer.caretPosition;
         endCaretPosition = this.selectionStartCaretPosition;
+      } else {
+        SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition + 1);
+        endCaretPosition++;
       }
       const monomers = SequenceRenderer.getMonomersByCaretPositionRange(
         startCaretPosition,
@@ -541,6 +547,7 @@ export class SequenceMode extends BaseMode {
   }
 
   mouseup() {
+    if (this.isEditInRNABuilderMode) return;
     if (this.selectionStarted) {
       this.selectionStarted = false;
     }
@@ -1120,6 +1127,7 @@ export class SequenceMode extends BaseMode {
 
   get keyboardEventHandlers() {
     const deleteNode = (direction: Direction) => {
+      if (this.isEditInRNABuilderMode) return;
       const editor = CoreEditor.provideEditorInstance();
       const nodeToDelete =
         direction === Direction.Left
@@ -1228,21 +1236,29 @@ export class SequenceMode extends BaseMode {
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => deleteNode(Direction.Right),
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          deleteNode(Direction.Right);
+        },
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => deleteNode(Direction.Left),
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          deleteNode(Direction.Left);
+        },
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],
         handler: () => {
+          if (this.isEditInRNABuilderMode) return;
           this.turnOffEditMode();
         },
       },
       'start-new-sequence': {
         shortcut: ['Enter'],
         handler: () => {
+          if (this.isEditInRNABuilderMode) return;
           this.unselectAllEntities();
 
           if (
@@ -1263,9 +1279,8 @@ export class SequenceMode extends BaseMode {
       'break-editting-chain': {
         shortcut: ['Space'],
         handler: () => {
-          if (this.isSyncEditMode) {
-            return;
-          }
+          if (this.isEditInRNABuilderMode) return;
+          if (this.isSyncEditMode) return;
 
           const modelChanges = new Command();
           const editor = CoreEditor.provideEditorInstance();
@@ -1294,6 +1309,7 @@ export class SequenceMode extends BaseMode {
       'break-complimentary-chain': {
         shortcut: ['-', '—'],
         handler: () => {
+          if (this.isEditInRNABuilderMode) return;
           const modelChanges = new Command();
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
@@ -1343,6 +1359,7 @@ export class SequenceMode extends BaseMode {
       'move-caret-up': {
         shortcut: ['ArrowUp'],
         handler: () => {
+          if (this.isEditInRNABuilderMode) return;
           const currentEdittingNode = SequenceRenderer.currentEdittingNode;
 
           if (
@@ -1366,6 +1383,7 @@ export class SequenceMode extends BaseMode {
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
+          if (this.isEditInRNABuilderMode) return;
           const currentEdittingNode = SequenceRenderer.currentEdittingNode;
 
           if (
@@ -1385,9 +1403,8 @@ export class SequenceMode extends BaseMode {
       'move-caret-forward': {
         shortcut: ['ArrowRight'],
         handler: () => {
-          if (!this.isEditMode) {
-            return;
-          }
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
 
           SequenceRenderer.moveCaretForward();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -1397,9 +1414,8 @@ export class SequenceMode extends BaseMode {
       'move-caret-back': {
         shortcut: ['ArrowLeft'],
         handler: () => {
-          if (!this.isEditMode) {
-            return;
-          }
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
 
           SequenceRenderer.moveCaretBack();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -1415,6 +1431,7 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
+          if (this.isEditInRNABuilderMode) return;
           if (SequenceRenderer.isEmptyCanvas() && !this.isEditMode) {
             this.turnOnEditMode();
             SequenceRenderer.setCaretPosition(0);
@@ -1560,6 +1577,7 @@ export class SequenceMode extends BaseMode {
           'Shift+ArrowDown',
         ],
         handler: (event) => {
+          if (this.isEditInRNABuilderMode) return;
           const arrowKey = event.key;
           if (
             SequenceRenderer.caretPosition === 0 &&

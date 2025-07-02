@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
+  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -42,6 +47,10 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
+  setContextMenuActive,
+  setEditorLineLength,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -81,7 +90,7 @@ import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
-import { TriggerEvent, useContextMenu } from 'react-contexify';
+import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { Preview } from 'components/preview/Preview';
@@ -90,29 +99,38 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
-import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+import { DragGhost } from 'components/DragGhost/DragGhost';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: () => void;
+  onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -123,20 +141,23 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  useEffect(() => {
-    onInit?.();
-  }, [onInit]);
+  store.dispatch(initKetcherId(ketcherId));
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <RootSizeProvider rootRef={rootElRef}>
+        <RootSizeProvider
+          rootRef={rootElRef}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
+              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              onInit={onInit}
             />
           </EditorWrapper>
         </RootSizeProvider>
@@ -149,6 +170,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -159,12 +181,10 @@ function Editor({
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
-  });
-  const { show: showPolymerBondContextMenu } = useContextMenu({
-    id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
   const { show: showSelectedMonomersContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
@@ -172,7 +192,12 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+        onInit,
+      }),
     );
 
     return () => {
@@ -185,6 +210,9 @@ function Editor({
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
+      setContextMenuEvent(event);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
         props: {
@@ -194,10 +222,12 @@ function Editor({
     });
     editor?.events.rightClickPolymerBond.add(
       ([event, polymerBondRenderer]: [
-        TriggerEvent,
+        PointerEvent,
         DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
       ]): void => {
-        showPolymerBondContextMenu({
+        setContextMenuEvent(event);
+        setSelectedMonomers([]);
+        showSelectedMonomersContextMenu({
           event,
           props: {
             polymerBondRenderer,
@@ -205,9 +235,11 @@ function Editor({
         });
       },
     );
+
     editor?.events.rightClickSelectedMonomers.add(
-      ([event, selectedMonomers]: [TriggerEvent, BaseMonomer[]]) => {
+      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
+        setContextMenuEvent(event);
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
@@ -215,14 +247,30 @@ function Editor({
       },
     );
     editor?.events.rightClickCanvas.add(
-      ([event, selections]: [TriggerEvent, NodesSelection]) => {
-        setSelections(selections);
-        showSequenceContextMenu({
-          event,
-          props: {},
-        });
+      ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
+        setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
+
+        // TODO separate by two events
+        if (editor.mode instanceof SequenceMode) {
+          setSelections(selections as NodesSelection);
+          showSequenceContextMenu({
+            event,
+            props: {},
+          });
+        } else {
+          setSelectedMonomers(selections as BaseMonomer[]);
+          showSelectedMonomersContextMenu({
+            event,
+            props: { selectedMonomers: selections },
+          });
+        }
       },
     );
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    });
   }, [editor]);
 
   useEffect(() => {
@@ -231,6 +279,27 @@ function Editor({
       editor?.zoomTool.destroy();
     };
   }, [editor]);
+
+  useEffect(() => {
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
@@ -273,6 +342,7 @@ function Editor({
 
         <Layout.Main>
           <EditorEvents />
+          <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
@@ -314,6 +384,10 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (
             <MonomerLibraryToggle onClick={toggleLibraryVisibility} />
@@ -321,9 +395,15 @@ function Editor({
         </Layout.InsideRoot>
       </Layout>
       <Preview />
-      <SequenceItemContextMenu selections={selections} />
-      <PolymerBondContextMenu />
-      <SelectedMonomersContextMenu selectedMonomers={selectedMonomers} />
+      <DragGhost />
+      <SequenceItemContextMenu
+        selections={selections}
+        contextMenuEvent={contextMenuEvent}
+      />
+      <SelectedMonomersContextMenu
+        selectedMonomers={selectedMonomers}
+        contextMenuEvent={contextMenuEvent}
+      />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

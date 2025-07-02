@@ -1,11 +1,11 @@
 import { test } from '@playwright/test';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
@@ -16,17 +16,24 @@ test.describe('Special nodes', () => {
     await waitForPageInit(page);
   });
 
-  const atoms = ['H+', 'D', 'T', 'R', 'Pol'];
+  const atoms = [
+    ExtendedTableButton.H_PLUS,
+    ExtendedTableButton.D,
+    ExtendedTableButton.T,
+    ExtendedTableButton.R,
+    ExtendedTableButton.Pol,
+  ] as const;
   for (const atom of atoms) {
     test(`${atom} calculated values`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
       // Description: verify Calculated values for atoms
       // results of this test are not fully correct. when calculte values function is fixed - update scrshots
-      await selectAtomInToolbar(AtomButton.Extended, page);
-      await page.getByRole('button', { name: atom, exact: true }).click();
-      await page.getByTestId('OK').click();
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
+      await IndigoFunctionsToolbar(page).calculatedValues();
       await takeEditorScreenshot(page);
     });
   }
@@ -36,8 +43,10 @@ test.describe('Special nodes', () => {
       // Test case: EPMLSOPKET-1468
       // Checking UI and functionality of Special Nodes
       // buttons in Extended table dialog
-      await selectAtomInToolbar(AtomButton.Extended, page);
-      await page.getByRole('button', { name: atom, exact: true }).click();
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
+      await selectExtendedTableElement(page, atom);
       await takeEditorScreenshot(page);
     });
   }
@@ -45,9 +54,10 @@ test.describe('Special nodes', () => {
   for (const atom of atoms) {
     test(`${atom} is present on canvas`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
-      await selectAtomInToolbar(AtomButton.Extended, page);
-      await page.getByRole('button', { name: atom, exact: true }).click();
-      await page.getByTestId('OK').click();
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     });
@@ -56,13 +66,14 @@ test.describe('Special nodes', () => {
   for (const atom of atoms) {
     test(`${atom} adding to multiple atoms of structure`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/heteroatoms-structure.mol',
         page,
+        'Molfiles-V2000/heteroatoms-structure.mol',
       );
-      await selectAtomInToolbar(AtomButton.Extended, page);
-      await page.getByRole('button', { name: atom, exact: true }).click();
-      await page.getByTestId('OK').click();
+      await extendedTableButton.click();
+      await selectExtendedTableElement(page, atom, 'Add');
       await page.keyboard.down('Shift');
       await clickOnAtom(page, 'S', 0);
       await clickOnAtom(page, 'F', 0);
@@ -77,15 +88,22 @@ test.describe('Special node', () => {
     await waitForPageInit(page);
   });
 
-  const atoms = ['H+', 'D', 'T', 'R', 'Pol'];
+  const atoms = [
+    ExtendedTableButton.H_PLUS,
+    ExtendedTableButton.D,
+    ExtendedTableButton.T,
+    ExtendedTableButton.R,
+    ExtendedTableButton.Pol,
+  ] as const;
   for (const atom of atoms) {
     test(`${atom} recognition`, async ({ page }) => {
       // Test case: EPMLSOPKET-1470, 1472, 1480, 1482, 1484
-      await selectAtomInToolbar(AtomButton.Extended, page);
-      await page.getByRole('button', { name: atom, exact: true }).click();
-      await page.getByTestId('OK').click();
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.Check, page);
+      await IndigoFunctionsToolbar(page).checkStructure();
       await takeEditorScreenshot(page, {
         mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
       });

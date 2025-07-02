@@ -1,16 +1,15 @@
 import { Page, test } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  openDropdown,
 } from '@utils/clicks';
 
 async function selectLineWithSelectionTool(page: Page) {
@@ -48,15 +47,16 @@ async function separetingAndMovingLines(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Lasso,
+  );
   await selectLineWithSelectionTool(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await dragMouseTo(point5.x, point5.y, page);
 }
 
 const setupLine = async (page: Page) => {
-  await openDropdown(page, 'shape-ellipse');
-  await page.getByTestId('shape-line').click();
+  await LeftToolbar(page).selectShapeTool(ShapeType.Line);
   const moveTo = 250;
   await clickInTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -74,8 +74,7 @@ test.describe('draw and highlight line', () => {
 
   test('drawing and highlighting', async ({ page }) => {
     // test case: EPMLSOPKET-16750
-    await openDropdown(page, 'shape-ellipse');
-    await page.getByTestId('shape-line').click();
+    await LeftToolbar(page).selectShapeTool(ShapeType.Line);
 
     const moveTo = 250;
     await clickInTheMiddleOfTheScreen(page);
@@ -129,7 +128,9 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     await setupLine(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
     await moveLineToNewPosition(page);
@@ -140,7 +141,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1958
-    await openFileAndAddToCanvas('KET/lines-EPMLSOPKET-1958.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/lines-EPMLSOPKET-1958.ket');
     await separetingAndMovingLines(page);
     await takeEditorScreenshot(page);
   });

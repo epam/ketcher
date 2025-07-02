@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -7,19 +8,15 @@ import {
   setZoom,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import {
-  selectZoomInTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Should zoom drawn structures', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     const zoomValue = 2;
     await takeEditorScreenshot(page);
     await setZoom(page, zoomValue);
@@ -36,11 +33,11 @@ test.describe('setZoom', () => {
 
   for (const { level, description, adjustZoom } of zoomLevels) {
     test(`Verify ketcher.setZoom at ${description}`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
+      await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
       await takeEditorScreenshot(page);
 
       if (adjustZoom) {
-        await selectZoomInTool(page, 3);
+        await CommonTopRightToolbar(page).selectZoomInTool(3);
         await clickInTheMiddleOfTheScreen(page);
         await takeEditorScreenshot(page);
       }

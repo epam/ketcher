@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -7,20 +7,15 @@ import {
   waitForPageInit,
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
+  RxnFileFormat,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveAsMdlRxnV3000(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,14 +30,14 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await verifyFileExport(
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -54,14 +49,14 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await verifyFileExport(
       page,
       'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -71,18 +66,18 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await verifyFileExport(
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
-    await selectSaveTool(page);
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).save();
   });
 
   test('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
@@ -91,17 +86,21 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await verifyFileExport(
       page,
       'Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
-    await saveAsMdlRxnV3000(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.MDLRxnfileV3000,
+    );
+    await SaveStructureDialog(page).save();
   });
 });
 
@@ -117,8 +116,8 @@ test.describe('Reagents RXN format', () => {
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
       page,
+      'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
@@ -132,8 +131,8 @@ test.describe('Reagents RXN format', () => {
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
     await openFileAndAddToCanvas(
-      'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
       page,
+      'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
@@ -177,8 +176,8 @@ test.describe('Reagents RXN format', () => {
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
       await openFileAndAddToCanvas(
-        'Rxn-V3000/reagents-below-and-above.rxn',
         page,
+        'Rxn-V3000/reagents-below-and-above.rxn',
       );
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);

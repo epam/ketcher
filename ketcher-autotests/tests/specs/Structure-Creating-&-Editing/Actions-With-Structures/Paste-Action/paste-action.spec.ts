@@ -3,19 +3,20 @@ import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectAction,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
-  drawBenzeneRing,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectRing,
-  RingButton,
   clickOnCanvas,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-import { TopPanelButton } from '@utils/selectors';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,10 +25,10 @@ test.describe('Paste Tool', () => {
 
   test('InfoModal with hotkey display for Paste action', async ({ page }) => {
     const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
-    await openFileAndAddToCanvas(anyStructure, page);
+    await openFileAndAddToCanvas(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
-    await selectAction(TopPanelButton.Copy, page);
-    await selectAction(TopPanelButton.Paste, page);
+    await TopToolbar(page).copy();
+    await TopToolbar(page).paste();
     await page.getByTestId('infoModal-shortcut-for-paste').first().isVisible();
     await takeEditorScreenshot(page);
   });
@@ -42,20 +43,18 @@ test.describe('Paste Tool', () => {
     3. Open Paste from Canvas tool and paste by CTRL+V
     4. Check that the structure of file is MOL
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
     await drawBenzeneRing(page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 200);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 400, 400);
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });

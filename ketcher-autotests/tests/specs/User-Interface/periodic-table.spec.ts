@@ -1,8 +1,8 @@
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
-  AtomButton,
-  selectAtomInToolbar,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
 } from '@utils';
@@ -17,26 +17,30 @@ test.describe('Open Ketcher', () => {
       Test case: EPMLSOPKET-4234
       Description: Open periodic table
       */
-    await selectAtomInToolbar(AtomButton.Periodic, page);
+    await RightToolbar(page).periodicTable();
     await takeEditorScreenshot(page);
   });
 
   const atoms = [
-    AtomButton.Hydrogen,
-    AtomButton.Carbon,
-    AtomButton.Nitrogen,
-    AtomButton.Oxygen,
-    AtomButton.Sulfur,
-    AtomButton.Phosphorus,
-    AtomButton.Fluorine,
-    AtomButton.Chlorine,
-    AtomButton.Bromine,
-    AtomButton.Iodine,
+    Atom.Hydrogen,
+    Atom.Carbon,
+    Atom.Nitrogen,
+    Atom.Oxygen,
+    Atom.Sulfur,
+    Atom.Phosphorus,
+    Atom.Fluorine,
+    Atom.Chlorine,
+    Atom.Bromine,
+    Atom.Iodine,
   ];
 
   for (const atom of atoms) {
-    test(`Check atoms ${atom}`, async ({ page }) => {
-      await selectAtomInToolbar(atom, page);
+    test(`Check atoms ${
+      Object.entries(Atom).find(([, value]) => value === atom)?.[0]
+    }`, async ({ page }) => {
+      const atomToolbar = RightToolbar(page);
+
+      await atomToolbar.clickAtom(atom);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     });

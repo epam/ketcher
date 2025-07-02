@@ -19,6 +19,7 @@ import {
   AutomapCommandData,
   CalculateCipCommandData,
   CalculateCommandData,
+  CalculateMacromoleculePropertiesCommandData,
   CalculateProps,
   CheckCommandData,
   CleanCommandData,
@@ -66,6 +67,8 @@ import {
   StructService,
   StructServiceOptions,
   pickStandardServerOptions,
+  CalculateMacromoleculePropertiesData,
+  CalculateMacromoleculePropertiesResult,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -213,12 +216,15 @@ const messageTypeToEventMapping: {
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
   [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
+  [Command.CalculateMacromoleculeProperties]:
+    WorkerEvent.CalculateMacromoleculeProperties,
 };
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
   private worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
+  private ketcherId: string | null = null;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
@@ -240,12 +246,19 @@ class IndigoService implements StructService {
     };
   }
 
+  public addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
+  }
+
   private getStandardServerOptions(options?: StructServiceOptions) {
     if (!options) {
       return this.defaultOptions;
     }
+    if (!this.ketcherId) {
+      throw new Error('Cannot getting options because there are no ketcherId');
+    }
 
-    return pickStandardServerOptions(options);
+    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   private callIndigoNoRenderLoadedCallback() {
@@ -403,7 +416,9 @@ class IndigoService implements StructService {
         ...this.getStandardServerOptions(options),
         'output-content-type': 'application/json',
 
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-font-size': options?.['render-font-size'],
         'render-font-size-unit': options?.['render-font-size-unit'],
         'render-font-size-sub': options?.['render-font-size-sub'],
@@ -642,11 +657,11 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr;
               const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value;
+              acc[mappedPropertyName] = value as string;
 
               return acc;
             },
-            {},
+            {} as CheckResult,
           );
           resolve(result);
         } else {
@@ -747,7 +762,9 @@ class IndigoService implements StructService {
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(restOptions),
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-coloring': restOptions['render-coloring'],
         'render-font-size': restOptions['render-font-size'],
         'render-font-size-unit': restOptions['render-font-size-unit'],
@@ -824,6 +841,42 @@ class IndigoService implements StructService {
       this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
       this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
 
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    const { struct } = data;
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = data;
+
+        if (!msg.hasError) {
+          resolve(JSON.parse(msg.payload));
+        } else {
+          reject(msg.error);
+        }
+      };
+
+      const commandData: CalculateMacromoleculePropertiesCommandData = {
+        struct,
+        options: {
+          ...this.getStandardServerOptions(options),
+          upc: options?.upc,
+          nac: options?.nac,
+        },
+      };
+      const inputMessage: InputMessage<CalculateMacromoleculePropertiesData> = {
+        type: Command.CalculateMacromoleculeProperties,
+        data: commandData,
+      };
+
+      this.EE.removeAllListeners(WorkerEvent.CalculateMacromoleculeProperties);
+      this.EE.addListener(WorkerEvent.CalculateMacromoleculeProperties, action);
       this.worker.postMessage(inputMessage);
     });
   }

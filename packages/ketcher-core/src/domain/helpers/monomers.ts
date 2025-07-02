@@ -1,6 +1,7 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  HydrogenBond,
   MONOMER_CLASS_TO_CONSTRUCTOR,
   Peptide,
   Phosphate,
@@ -18,6 +19,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { IRnaPreset } from 'application/editor';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -270,6 +272,12 @@ export function isAmbiguousMonomerLibraryItem(
   return Boolean(monomer && monomer.isAmbiguous);
 }
 
+export const isLibraryItemRnaPreset = (
+  item: IRnaPreset | MonomerOrAmbiguousType,
+): item is IRnaPreset => {
+  return 'sugar' in item;
+};
+
 export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,
 ): monomer is Peptide | AmbiguousMonomer {
@@ -297,3 +305,89 @@ export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
       Boolean(getSugarFromRnaBase(monomer)))
   );
 }
+
+export function getAllConnectedMonomersRecursively(
+  monomer: BaseMonomer,
+): BaseMonomer[] {
+  const stack = [monomer];
+  const visited = new Set<BaseMonomer>();
+  const connectedMonomers: BaseMonomer[] = [];
+
+  while (stack.length > 0) {
+    const currentMonomer = stack.pop();
+
+    if (!currentMonomer || visited.has(currentMonomer)) {
+      continue;
+    }
+
+    visited.add(currentMonomer);
+    connectedMonomers.push(currentMonomer);
+
+    currentMonomer.forEachBond((bond) => {
+      if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
+        const anotherMonomer = bond.getAnotherMonomer(currentMonomer);
+        if (anotherMonomer && !visited.has(anotherMonomer)) {
+          stack.push(anotherMonomer);
+        }
+      }
+    });
+  }
+
+  return connectedMonomers;
+}
+
+export const canModifyAminoAcid = (
+  monomer: BaseMonomer,
+  modificationMonomerLibraryItem: MonomerItemType,
+) => {
+  return (
+    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+      modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
+    (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
+      modificationMonomerLibraryItem.props.MonomerCaps?.R2)
+  );
+};
+
+export const getAminoAcidsToModify = (
+  monomers: BaseMonomer[],
+  modificationType: string,
+  monomersLibrary: MonomerItemType[],
+) => {
+  const naturalAnalogueToModifiedMonomerItem = new Map<
+    string,
+    MonomerItemType
+  >();
+  const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
+
+  monomersLibrary.forEach((libraryItem) => {
+    if (libraryItem.props?.modificationType !== modificationType) {
+      return;
+    }
+    const monomerNaturalAnalogCode = libraryItem.props.MonomerNaturalAnalogCode;
+
+    if (monomerNaturalAnalogCode) {
+      naturalAnalogueToModifiedMonomerItem.set(
+        monomerNaturalAnalogCode,
+        libraryItem,
+      );
+    }
+  });
+
+  monomers.forEach((monomer) => {
+    const monomerNaturalAnalogCode =
+      monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
+      monomerNaturalAnalogCode,
+    );
+
+    if (
+      modifiedMonomerItem &&
+      monomer.label !== modifiedMonomerItem.label &&
+      canModifyAminoAcid(monomer, modifiedMonomerItem)
+    ) {
+      aminoAcidsToModify.set(monomer, modifiedMonomerItem);
+    }
+  });
+
+  return aminoAcidsToModify;
+};

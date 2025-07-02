@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { zoomWithMouseWheel, Tabs, chooseTab } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -9,19 +9,20 @@ import {
   MacroFileType,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -29,7 +30,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -37,7 +38,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
   // await resetZoomLevelToDefault(page)
 });
 
@@ -460,7 +461,7 @@ test.describe('Monomer APs checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,

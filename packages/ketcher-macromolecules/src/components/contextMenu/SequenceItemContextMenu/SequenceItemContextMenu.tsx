@@ -1,15 +1,17 @@
 import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  Icon,
+  IconName,
+} from 'ketcher-react';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import {
-  BaseSequenceItemRenderer,
-  ModeTypes,
   NodesSelection,
   BaseMonomer,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
@@ -17,6 +19,8 @@ import {
   EmptySequenceNode,
   BackBoneSequenceNode,
   Chain,
+  ITwoStrandedChainItem,
+  BaseSequenceItemRenderer,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -34,14 +38,18 @@ import {
 } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
+  AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
+  getModifyAminoAcidsMenuItems,
+  getMonomersForAminoAcidModification,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
-import { ITwoStrandedChainItem } from 'ketcher-core/dist/domain/entities/monomer-chains/ChainsCollection';
+import { PointerEvent } from 'react';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
+  contextMenuEvent?: PointerEvent;
 };
 
 export enum SequenceItemContextMenuNames {
@@ -49,6 +57,7 @@ export enum SequenceItemContextMenuNames {
   createRnaAntisenseStrand = 'create_antisense_rna_chain',
   createDnaAntisenseStrand = 'create_antisense_dna_chain',
   modifyInRnaBuilder = 'modify_in_rna_builder',
+  modifyAminoAcids = 'modify_amino_acids',
   establishHydrogenBond = 'establish_hydrogen_bond',
   deleteHydrogenBond = 'delete_hydrogen_bond',
   editSequence = 'edit_sequence',
@@ -60,6 +69,7 @@ export enum SequenceItemContextMenuNames {
 
 export const SequenceItemContextMenu = ({
   selections,
+  contextMenuEvent,
 }: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
@@ -68,10 +78,31 @@ export const SequenceItemContextMenu = ({
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
     }) || [];
+  const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
+    selectedMonomers,
+    contextMenuEvent,
+  );
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
+  const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
+    monomersForAminoAcidModification,
+  );
+  const hasHydrogenBonds =
+    selections?.some((selectionRange) => {
+      return selectionRange.some((selection) => {
+        return isNodeContainHydrogenBonds(selection.node);
+      });
+    }) ?? false;
+
+  const isAntisenseBlockVisible =
+    selectedMonomers?.length > 0 && isAntisenseOptionVisible(selectedMonomers);
+  const isHydrogenBondBlockVisible =
+    !isEstablishHydrogenBondDisabled(selections) || hasHydrogenBonds;
+  const isModifyBlockVisible =
+    !!modifyAminoAcidsMenuItems.length ||
+    (menuProps?.isSelectedOnlyNucleoelements && !menuProps.hasAntisense);
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -92,13 +123,31 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.copy,
       title: 'Copy',
+      icon: <Icon name={'copyMenu' as IconName} />,
       disabled: selectedMonomers?.length === 0,
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
+      icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: false,
       separator: true,
+    },
+    {
+      name: SequenceItemContextMenuNames.editSequence,
+      title: 'Edit sequence',
+      disabled: false,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => !props?.sequenceItemRenderer,
+    },
+    {
+      name: SequenceItemContextMenuNames.startNewSequence,
+      title: 'Start new sequence',
+      disabled: false,
+      separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
@@ -113,39 +162,6 @@ export const SequenceItemContextMenu = ({
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
         !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
-    },
-    {
-      name: SequenceItemContextMenuNames.modifyInRnaBuilder,
-      title: 'Modify in RNA Builder...',
-      disabled:
-        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return (
-          !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleoelement
-        );
-      },
-    },
-    {
-      name: SequenceItemContextMenuNames.editSequence,
-      title: 'Edit sequence',
-      disabled: false,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
-    },
-    {
-      name: SequenceItemContextMenuNames.startNewSequence,
-      title: 'Start new sequence',
-      disabled: false,
     },
     {
       name: SequenceItemContextMenuNames.establishHydrogenBond,
@@ -165,14 +181,12 @@ export const SequenceItemContextMenu = ({
         props,
       }: {
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer;
-      },
+      }) => !props?.sequenceItemRenderer,
     },
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
-      title: 'Delete Hydrogen Bonds',
-      separator: true,
+      title: 'Remove hydrogen bonds',
+      separator: isModifyBlockVisible,
       disabled: ({
         props,
       }: {
@@ -190,20 +204,46 @@ export const SequenceItemContextMenu = ({
         props,
       }: {
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => !props?.sequenceItemRenderer,
+    },
+    {
+      name: SequenceItemContextMenuNames.modifyInRnaBuilder,
+      title: 'Modify in RNA Builder...',
+      disabled:
+        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
       }) => {
-        return !props?.sequenceItemRenderer;
+        return (
+          !props?.sequenceItemRenderer ||
+          !menuProps?.isSelectedAtLeastOneNucleoelement
+        );
       },
+    },
+    {
+      name: SequenceItemContextMenuNames.modifyAminoAcids,
+      title: 'Modify amino acids',
+      disabled: false,
+      hidden: !modifyAminoAcidsMenuItems.length,
+      subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
       name: SequenceItemContextMenuNames.delete,
       title: 'Delete',
       disabled: selectedMonomers?.length === 0,
+      icon: <Icon name={'deleteMenu' as IconName} />,
     },
   ];
 
-  const handleMenuChange = ({ id, props }: ItemParams) => {
-    switch (id) {
-      case SequenceItemContextMenuNames.modifyInRnaBuilder:
+  const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
+    if (!editor) {
+      return;
+    }
+
+    switch (true) {
+      case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));
@@ -224,24 +264,24 @@ export const SequenceItemContextMenu = ({
           );
         }
         break;
-      case SequenceItemContextMenuNames.startNewSequence:
+      case menuItemId === SequenceItemContextMenuNames.startNewSequence:
         editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case SequenceItemContextMenuNames.editSequence:
+      case menuItemId === SequenceItemContextMenuNames.editSequence:
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case SequenceItemContextMenuNames.createRnaAntisenseStrand:
+      case menuItemId === SequenceItemContextMenuNames.createRnaAntisenseStrand:
         editor.events.createAntisenseChain.dispatch(false);
         break;
-      case SequenceItemContextMenuNames.createDnaAntisenseStrand:
+      case menuItemId === SequenceItemContextMenuNames.createDnaAntisenseStrand:
         editor.events.createAntisenseChain.dispatch(true);
         break;
-      case SequenceItemContextMenuNames.establishHydrogenBond:
+      case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond:
         editor.events.establishHydrogenBond.dispatch(
           props.sequenceItemRenderer,
         );
         break;
-      case SequenceItemContextMenuNames.deleteHydrogenBond: {
+      case menuItemId === SequenceItemContextMenuNames.deleteHydrogenBond: {
         const sequenceViewModel = SequenceRenderer.sequenceViewModel;
         const monomerToChain =
           sequenceViewModel.chainsCollection.monomerToChain;
@@ -347,13 +387,25 @@ export const SequenceItemContextMenu = ({
         }
         break;
       }
-      case 'copy':
+      case menuItemId?.startsWith(AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX): {
+        const modificationType = menuItemId?.replace(
+          AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
+          '',
+        );
+
+        editor.events.modifyAminoAcids.dispatch({
+          monomers: monomersForAminoAcidModification,
+          modificationType,
+        });
+        break;
+      }
+      case menuItemId === 'copy':
         editor.events.copySelectedStructure.dispatch();
         break;
-      case 'paste':
+      case menuItemId === 'paste':
         editor.events.pasteFromClipboard.dispatch();
         break;
-      case 'delete':
+      case menuItemId === 'delete':
         editor.events.deleteSelectedStructure.dispatch();
         break;
       default:

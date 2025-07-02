@@ -1,4 +1,4 @@
-import { ReStruct } from 'ketcher-core';
+import { ketcherProvider, ReStruct } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -8,11 +8,11 @@ import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondSGroupAttach = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
       const bondId = props!.bondIds![0];
       const bond = struct.bonds.get(bondId)!;
@@ -25,12 +25,12 @@ const useBondSGroupAttach = () => {
       editor.selection(selection);
       SGroupTool.sgroupDialog(editor, null);
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const hidden = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
       const bondIds = props!.bondIds!;
 
@@ -47,7 +47,7 @@ const useBondSGroupAttach = () => {
       }
       return attachedSGroups.size > 0;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return [handler, hidden] as const;

@@ -1,11 +1,8 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
@@ -14,30 +11,41 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  selectAtomsFromPeriodicTable,
-  resetCurrentTool,
   moveOnAtom,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  copyAndPaste,
-  cutAndPaste,
-  drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
+  RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
-import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  PeriodicTableDialog,
+  selectElementFromPeriodicTable,
+  selectElementsFromPeriodicTable,
+} from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const X_DELTA_ONE = 100;
 
@@ -57,9 +65,9 @@ test.describe('Atom Tool', () => {
     Description: The "Periodic table" modal dialog is opened.
     Periodic table' window is closed. No symbols appear on the canvas.
     */
-    await selectAtomInToolbar(AtomButton.Periodic, page);
+    await RightToolbar(page).periodicTable();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await PeriodicTableDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +82,9 @@ test.describe('Atom Tool', () => {
     - "Cancel" and "Add" buttons are at the right bottom corner of the window: "Cancel" is always active, "Add" becomes active when any symbol is selected;
     - "x" button is at the top right corner of the window.
     */
-    await page.getByTestId('extended-table').click();
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -84,10 +94,7 @@ test.describe('Atom Tool', () => {
     Description: Pop-up windows appear with Si element.
     After pressing 'Add' button Si element added to canvas.
     */
-    await selectAtomInToolbar(AtomButton.Periodic, page);
-    await page.getByRole('button', { name: 'Si 14' }).click();
-    await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -99,16 +106,16 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1450
     Description: The structure is illustrated as H3Si-SH.
     */
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectAtomInToolbar(AtomButton.Periodic, page);
-    await page.getByRole('button', { name: 'Si 14' }).click();
-    await page.getByTestId('OK').click();
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -119,7 +126,11 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -132,8 +143,12 @@ test.describe('Atom Tool', () => {
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+    ]);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -145,7 +160,11 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'Not List', ['Ti', 'V', 'Cs']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.Ti,
+      PeriodicTableElement.V,
+      PeriodicTableElement.Cs,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -160,8 +179,12 @@ test.describe('Atom Tool', () => {
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'Not List', ['V', 'Ti', 'Cs']);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.V,
+      PeriodicTableElement.Ti,
+      PeriodicTableElement.Cs,
+    ]);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -173,7 +196,9 @@ test.describe('Atom Tool', () => {
     Description: The selected button is highlighted. Several dialog buttons can`t be selected.
     The "Add" button becomes enabled when any generic group is selected.
     */
-    await page.getByTestId('extended-table').click();
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await page.getByRole('button', { name: 'AH', exact: true }).click();
     await takeEditorScreenshot(page);
   });
@@ -188,8 +213,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
@@ -203,10 +228,10 @@ test.describe('Atom Tool', () => {
     Description: AH Generic is deleted from structure.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('AH').click();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -220,11 +245,11 @@ test.describe('Atom Tool', () => {
     Description: Part of structure with List/Not List and Generic Group is deleted.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectPartOfMolecules(page);
-    await await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -239,12 +264,12 @@ test.describe('Atom Tool', () => {
     const numberOfPressZoomOut = 5;
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
 
@@ -266,8 +291,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -284,8 +309,8 @@ test.describe('Atom Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
@@ -299,15 +324,19 @@ test.describe('Atom Tool', () => {
       Test case: EPMLSOPKET-1581
       Description: when drag & drop an atom on an atom it should replace it
     */
+    const atomToolbar = RightToolbar(page);
+
     await drawBenzeneRing(page);
 
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     const bromineCoordinates = { x: x + X_DELTA_ONE, y };
 
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -319,14 +348,14 @@ test.describe('Atom Tool', () => {
     Description: Structure is represented with correctly colored atoms.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-colored-atoms.mol',
       page,
+      'Molfiles-V2000/chain-with-colored-atoms.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/chain-with-colored-atoms-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -337,14 +366,14 @@ test.describe('Atom Tool', () => {
     Description: Structure is represented with correctly colored atoms.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-colored-atoms.rxn',
       page,
+      'Rxn-V2000/reaction-with-colored-atoms.rxn',
     );
     await verifyFileExport(
       page,
       'Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -356,14 +385,14 @@ test.describe('Atom Tool', () => {
     Structure is represented with correct List and Not List atom symbols
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-list-notlist.mol',
       page,
+      'Molfiles-V2000/structure-list-notlist.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/structure-list-notlist-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -374,12 +403,12 @@ test.describe('Atom Tool', () => {
     Description: The saved *.rxn file is opened in Ketcher.
     The reaction is represented with correct List and Not List atom symbols.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-list-notlist.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-list-notlist.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/reaction-list-notlist-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -391,14 +420,14 @@ test.describe('Atom Tool', () => {
     The reaction is represented with correct Generic Groups.
     */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-with-group-generics.rxn',
       page,
+      'Rxn-V2000/reaction-with-group-generics.rxn',
     );
     await verifyFileExport(
       page,
       'Rxn-V2000/reaction-with-group-generics-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -410,14 +439,14 @@ test.describe('Atom Tool', () => {
     Structure is represented with correct Generic Groups
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-group-generics.mol',
       page,
+      'Molfiles-V2000/chain-with-group-generics.mol',
     );
     await verifyFileExport(
       page,
       'Molfiles-V2000/chain-with-group-generics-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -429,9 +458,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-12982
     Description: Atoms appears on selected part of structure.
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectPartOfMolecules(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await takeEditorScreenshot(page);
   });
 
@@ -443,17 +474,19 @@ test.describe('Atom Tool', () => {
     Description: Only one atom should be removed and the other should remain
     */
     const numberOfAtom = 0;
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -466,8 +499,8 @@ test.describe('Atom Tool', () => {
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
     const numberOfAtom = 0;
-    await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
-    await selectEraseTool(page);
+    await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -483,14 +516,19 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1435
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+    ];
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
-
     await takeRightToolbarScreenshot(page);
   });
 
@@ -500,12 +538,19 @@ test.describe('Atom Tool', () => {
     Description: The first additional atom symbol is replaced with the new one.
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+      PeriodicTableElement.Db,
+    ];
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
 
     await takeRightToolbarScreenshot(page);
@@ -519,17 +564,23 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+    ];
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
 
     const anyAtom = 0;
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Gold, page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await RightToolbar(page).clickAtom(Atom.Aurum);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -574,13 +625,28 @@ test.describe('Atom Tool', () => {
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
+  const atomsNames: Atom[] = [
+    Atom.Hydrogen,
+    Atom.Carbon,
+    Atom.Nitrogen,
+    Atom.Oxygen,
+    Atom.Sulfur,
+    Atom.Phosphorus,
+    Atom.Fluorine,
+    Atom.Chlorine,
+    Atom.Bromine,
+    Atom.Iodine,
+  ];
+
   for (const atomName of atomsNames) {
     const anyAtom = 0;
     test(`Add ${atomName} from right toolbar to Benzene ring`, async ({
       page,
     }) => {
+      const atomToolbar = RightToolbar(page);
+
       await drawBenzeneRing(page);
-      await selectAtomInToolbar(atomName, page);
+      await atomToolbar.clickAtom(atomName);
       await clickOnAtom(page, 'C', anyAtom);
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
@@ -604,21 +670,25 @@ test.describe('Atom Tool', () => {
   }
 
   for (const atomName of atomsNames) {
-    test(`Select ${atomName} and drag on Benzene ring`, async ({ page }) => {
+    test(`Select ${
+      Object.entries(Atom).find(([, value]) => value === atomName)?.[0]
+    } and drag on Benzene ring`, async ({ page }) => {
       /*
       Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
       Description: Atom added to Benzene ring.
       */
       const anyAtom = 2;
+      const atomToolbar = RightToolbar(page);
+
       await drawBenzeneRing(page);
-      await selectAtomInToolbar(atomName, page);
+      await atomToolbar.clickAtom(atomName);
       await moveOnAtom(page, 'C', anyAtom);
       const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
       const coordinatesWithShift = y - MAX_BOND_LENGTH;
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await CommonTopLeftToolbar(page).undo();
     });
   }
 });

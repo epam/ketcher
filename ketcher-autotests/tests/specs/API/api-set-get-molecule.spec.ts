@@ -1,19 +1,18 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  AtomButton,
-  selectAtomInToolbar,
   takeEditorScreenshot,
   FILE_TEST_DATA,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  drawBenzeneRing,
-  waitForLoad,
-  clickOnCanvas,
-  openSettings,
-  pressButton,
   readFileContent,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -25,22 +24,10 @@ import {
   addFragment,
   disableQueryElements,
   enableDearomatizeOnLoad,
+  MolFileFormat,
   setMolecule,
 } from '@utils/formats';
-import { scrollSettingBar } from '@utils/scrollSettingBar';
-
-async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
-  await page.getByText('Stereochemistry', { exact: true }).click();
-  await scrollSettingBar(page, 80);
-  await page
-    .locator('label')
-    .filter({ hasText: 'Ignore the chiral flag' })
-    .locator('div >> span, span')
-    .first()
-    .click();
-  await pressButton(page, 'Apply');
-}
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -206,7 +193,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/test-data-for-enatiomer.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await takeEditorScreenshot(page);
@@ -229,7 +216,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V2000/test-data-for-chiral-centersv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -251,7 +238,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -262,9 +249,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
     // Called to make sure the page has been fully loaded
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
+
     await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
-    await selectAtomInToolbar(AtomButton.Extended, page);
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -323,8 +312,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Some Name').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    const superAtom = page.getByText('Some Name');
+    await ContextMenu(page, superAtom).click(
+      SuperatomOption.ExpandAbbreviation,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -346,11 +337,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -373,8 +361,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Boc'));
     await takeEditorScreenshot(page);
   });
 
@@ -394,10 +381,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -456,8 +441,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Some Name').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Some Name'));
     await takeEditorScreenshot(page);
   });
 
@@ -479,11 +463,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -506,8 +487,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Boc'));
     await takeEditorScreenshot(page);
   });
 
@@ -527,10 +507,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -589,8 +567,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Some Name').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Some Name'));
     await takeEditorScreenshot(page);
   });
 
@@ -609,11 +586,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -633,8 +607,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Boc'));
     await takeEditorScreenshot(page);
   });
 
@@ -654,10 +627,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
     await takeEditorScreenshot(page);
   });
 
@@ -695,8 +666,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Boc'));
     await takeEditorScreenshot(page);
   });
 
@@ -737,8 +707,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Some Name').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await expandAbbreviation(page, page.getByText('Some Name'));
     await takeEditorScreenshot(page);
   });
   test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async ({
@@ -749,8 +718,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     const containsReaction = await page.evaluate(() => {
       return window.ketcher.containsReaction();
@@ -767,9 +736,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: #3531
      * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
      */
-    await waitForLoad(page, async () => {
-      await drawBenzeneRing(page);
-    });
+    await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
       return window.ketcher.containsReaction();
     });
@@ -792,7 +759,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const MolV2000File = await readFileContent(
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
-    await applyIgnoreChiralFlag(page);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await waitForSpinnerFinishedWork(
       page,
       async () => await setMolecule(page, MolV2000File),
@@ -820,7 +787,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, MolV2000File),
     );
     await takeEditorScreenshot(page);
-    await applyIgnoreChiralFlag(page);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await takeEditorScreenshot(page);
   });
 });

@@ -5,8 +5,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   takeEditorScreenshot,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -43,8 +43,8 @@ test.describe('1. User can restore previously saved selection for:', () => {
   for (const fileName of fileNames) {
     test(`${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
         page,
+        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -77,8 +77,8 @@ test.describe('2. User can restore previously saved selection for:', () => {
   for (const fileName of fileNames) {
     test(`${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
         page,
+        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -109,8 +109,8 @@ test.describe('3. User can restore previously saved selection for:', () => {
   for (const fileName of fileNames) {
     test(`${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
         page,
+        `KET/Entity-Selection-Flag-in-KET-format/${fileName}`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -301,8 +301,8 @@ test.describe('4. User can save and than restore selection for:', () => {
   for (const fileName of fileNames) {
     test(`${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/${fileName}`,
         page,
+        `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/${fileName}`,
       );
       await moveMouseAway(page);
       await selectAllStructuresOnCanvas(page);
@@ -313,8 +313,8 @@ test.describe('4. User can save and than restore selection for:', () => {
         FileType.KET,
       );
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
         page,
+        `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

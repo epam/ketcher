@@ -1,17 +1,17 @@
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveOnAtom,
   dragMouseTo,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   waitForPageInit,
   takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
-  selectLayoutTool,
 } from '@utils';
 
 test.describe('Indigo Tools - Layout', () => {
@@ -39,18 +39,18 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chain-with-double-bond-in-the-middle.mol',
       page,
+      'Molfiles-V2000/chain-with-double-bond-in-the-middle.mol',
     );
     await selectPartOfChain(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-rings.mol', page);
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-rings.mol');
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -61,9 +61,9 @@ test.describe('Indigo Tools - Layout', () => {
     const structureWithStereoFlags = 'KET/structure-with-stereo-flags.ket';
     const numberOfIterations = 3;
     const shift = 150;
-    await openFileAndAddToCanvas(structureWithStereoFlags, page, shift, shift);
+    await openFileAndAddToCanvas(page, structureWithStereoFlags, shift, shift);
     for (let i = 0; i < numberOfIterations; i++) {
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
     }
     await takeEditorScreenshot(page);
   });
@@ -73,10 +73,10 @@ test.describe('Indigo Tools - Layout', () => {
   }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/3208
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
       page,
+      'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -89,12 +89,14 @@ test.describe('Indigo Tools - Layout', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
-    await selectLayoutTool(page);
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
+    await IndigoFunctionsToolbar(page).layout();
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await selectLayoutTool(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await IndigoFunctionsToolbar(page).layout();
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -104,9 +106,9 @@ test.describe('Indigo Tools - Layout', () => {
     Test case: EPMLSOPKET-1812
     Description: The Layout action is implemented for the whole canvas.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/distorted-Sgroups.mol');
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -118,11 +120,11 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The Layout action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-r-group-labels.mol',
       page,
+      'Molfiles-V2000/distorted-r-group-labels.mol',
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -134,11 +136,11 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-structure-attachment-points.mol',
       page,
+      'Molfiles-V2000/distorted-structure-attachment-points.mol',
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -150,11 +152,11 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-r-group-logic.mol',
       page,
+      'Molfiles-V2000/structure-r-group-logic.mol',
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -167,11 +169,11 @@ test.describe('Indigo Tools - Layout', () => {
     Non-selected part is invariable.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereobonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereobonds.mol',
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -182,8 +184,8 @@ test.describe('Indigo Tools - Layout', () => {
     Position of the reaction does not change.
     We have a bug https://github.com/epam/Indigo/issues/2229
     */
-    await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/distorted-reaction.rxn');
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -194,8 +196,8 @@ test.describe('Indigo Tools - Layout', () => {
     Test case: EPMLSOPKET-17665, EPMLSOPKET-10084
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
-    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'KET/four-benzene-at-edges.ket');
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -206,8 +208,8 @@ test.describe('Indigo Tools - Layout', () => {
     Test case: EPMLSOPKET-17666
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
-    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'KET/four-benzene-at-edges.ket');
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -221,11 +223,11 @@ test.describe('Indigo Tools - Layout', () => {
     Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
     */
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/clean-different-properties.mol',
         page,
+        'Molfiles-V2000/clean-different-properties.mol',
       );
       await selectPartOfMolecules(page);
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
     },
   );

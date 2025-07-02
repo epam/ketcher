@@ -1,16 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
-  selectRing,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   takeTopToolbarScreenshot,
@@ -18,11 +15,11 @@ import {
 } from '@utils';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await waitForRender(page, async () => {
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-  });
+  await IndigoFunctionsToolbar(page).ThreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }
@@ -42,14 +39,14 @@ test.describe('3D Viewer', () => {
     The structure is spinned.
     Position of structure on the canvas is not changed. 
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -61,13 +58,13 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas isn't changed. 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -80,13 +77,13 @@ test.describe('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -100,15 +97,15 @@ test.describe('3D Viewer', () => {
     The structure isn't changed.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -146,7 +143,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene is drawn in it. 
     */
     // we need remove or block the variable number of frames per second in the lower right corner
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await expect(page).toHaveScreenshot({
@@ -164,7 +161,7 @@ test.describe('3D Viewer', () => {
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
@@ -172,7 +169,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -189,14 +186,14 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas is changed. 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 80, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -212,14 +209,14 @@ test.describe('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 75, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -236,8 +233,8 @@ test.describe('3D Viewer', () => {
     The structure is changed.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
@@ -245,7 +242,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 90, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes

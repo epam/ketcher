@@ -8,17 +8,21 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   waitForKetcherInit,
-  waitForIndigoToLoad,
   waitForRender,
-  selectFlexLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectRectangleArea,
   clickOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   Monomer,
+  takeElementScreenshot,
+  MacroFileType,
+  MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectRectangleArea,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -30,20 +34,16 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
-  bondSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { pageReload } from '@utils/common/helpers';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -67,14 +67,13 @@ test.describe('Common connection rules: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -93,7 +92,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -106,7 +105,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
@@ -123,7 +122,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -134,7 +133,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 
@@ -158,7 +157,7 @@ test.describe('Common connection rules: ', () => {
     await clickOnCanvas(page, 100, 100);
 
     await monomerLocator.click();
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
   }
 
   /*
@@ -171,8 +170,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(30000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     // Peptide
     await dragBondFromMonomerCenterAwayTo(page, Chem.SMPEG2, 500, 400);
@@ -221,8 +220,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(50000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     // Peptide
     await dragBondFromMonomerCenterTo(page, Chem.SMPEG2, Chem.sDBL);
@@ -271,8 +270,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
       page,
+      'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
     await selectSnakeLayoutModeTool(page);
 
@@ -317,8 +316,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
       page,
+      'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
     );
 
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
@@ -357,7 +356,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -390,8 +389,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(20000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
       page,
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
     );
 
     await bondTwoMonomersByCenterToCenterByNames(
@@ -421,9 +420,8 @@ test.describe('Common connection rules: ', () => {
   //    */
   //   test.setTimeout(20000);
   //
-  //   await openFileAndAddToCanvasMacro(
+  //   await openFileAndAddToCanvasMacro(page,
   //     'KET/Common-Bond-Tests/Micro and macro connected.ket',
-  //     page,
   //   );
   //
   //   const leftMonomerLocator = page
@@ -461,8 +459,9 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(20000);
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      MacroFileType.MOLv3000,
     );
 
     await hoverMouseOverMonomer(page, Peptides.C);
@@ -477,16 +476,27 @@ test.describe('Common connection rules: ', () => {
      *    Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode
      */
     test.setTimeout(20000);
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      MacroFileType.MOLv3000,
     );
-    await turnOnMicromoleculesEditor(page);
-    await page.getByText('C', { exact: true }).first().hover();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await page
+      .getByTestId(KETCHER_CANVAS)
+      .filter({ has: page.locator(':visible') })
+      .getByText('C', { exact: true })
+      .first()
+      .hover();
     await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+
+    await takeElementScreenshot(
+      page,
+      page.getByTestId('monomer-preview-micro'),
+    );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {
@@ -498,8 +508,8 @@ test.describe('Common connection rules: ', () => {
     test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
-      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
       page,
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
     );
     await bondTwoMonomersByCenterToCenterByNames(
       page,

@@ -1,15 +1,8 @@
 import { test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  waitForPageInit,
-  selectAtomInToolbar,
-  AtomButton,
-  clickOnCanvas,
-} from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
+import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,11 +15,11 @@ test.describe('Track Changes', () => {
     Description: Add Nitrogen atom to canvas 35 times and then press Undo 32 times
     */
     test.slow();
-
-    const atomType = AtomButton.Nitrogen;
+    const atomToolbar = RightToolbar(page);
+    const atomType = Atom.Nitrogen;
 
     const addAtom = async (x: number, y: number) => {
-      await selectAtomInToolbar(atomType, page);
+      await atomToolbar.clickAtom(atomType);
       await clickOnCanvas(page, x, y);
     };
 
@@ -47,13 +40,13 @@ test.describe('Track Changes', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await pressUndoButton(page);
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await pressRedoButton(page);
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });

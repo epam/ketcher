@@ -20,8 +20,8 @@
     "docker:test-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --grep @chromium-popup",
     "docker:trace": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --grep-invert @chromium-popup --trace on",
     "docker:trace-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --grep @chromium-popup --trace on",
-    "docker:update": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --grep-invert @chromium-popup --update-snapshots",
-    "docker:update-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --grep @chromium-popup --update-snapshots"
+    "docker:update": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium --grep-invert @chromium-popup --update-snapshots",
+    "docker:update-popup": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium-popup --grep @chromium-popup --update-snapshots"
   },
   "author": "Nitvex",
   "license": "ISC",

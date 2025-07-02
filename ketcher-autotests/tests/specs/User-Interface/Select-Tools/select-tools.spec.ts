@@ -1,19 +1,21 @@
 import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  RingButton,
-  selectRingButton,
   BondType,
   waitForPageInit,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,10 +25,12 @@ test.describe('Select tools tests', () => {
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
     page,
   }) => {
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.move(point.x, point.y);
 
@@ -44,7 +48,9 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
     await takeEditorScreenshot(page);
@@ -56,7 +62,7 @@ test.describe('Select tools tests', () => {
       Description: Attachment points are highlited with CTRL+A
       Note: At the moment the test is not working correctly until bug is fixed. Attachment points are not fully highlited.
     */
-    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });

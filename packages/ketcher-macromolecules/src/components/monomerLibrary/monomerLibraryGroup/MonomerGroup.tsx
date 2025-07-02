@@ -118,7 +118,7 @@ const MonomerGroup = ({
     dispatch(selectTool('monomer'));
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
-      editor.events.selectMonomer.dispatch(monomer);
+      editor?.events.selectMonomer.dispatch(monomer);
     }
 
     onItemClick(monomer);

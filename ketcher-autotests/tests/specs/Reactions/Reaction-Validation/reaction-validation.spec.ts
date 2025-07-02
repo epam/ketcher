@@ -1,10 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  AtomButton,
   clickOnAtom,
   openFileAndAddToCanvas,
-  selectAtomInToolbar,
+  RxnFileFormat,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -23,12 +24,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1486
     Description: Structures are on the canvas, pluses and arrows
     */
-    await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/plus-and-reaction-arrow.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/plus-and-reaction-arrow-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -39,12 +40,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1488
     Description: Structures are on the canvas, pluses and arrows
     */
-    await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/plus-and-reaction-arrow.ket');
     await verifyFileExport(
       page,
       'Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -55,12 +56,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1487
     Description: Benzene structure is on the canvas and arrow
     */
-    await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-and-one-arrow.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/benzene-and-one-arrow-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -71,12 +72,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1489
     Description: Benzene structure is on the canvas and arrow
     */
-    await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/benzene-and-one-arrow.ket');
     await verifyFileExport(
       page,
       'Rxn-V3000/benzene-and-one-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -85,12 +86,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1490
     Description: Structures are saved as .rxn
     */
-    await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/combination-of-reactants.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/combination-of-reactants-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -99,12 +100,12 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1491
     Description: Structures are saved as .rxn v3000
     */
-    await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/combination-of-reactants.ket');
     await verifyFileExport(
       page,
       'Rxn-V3000/combination-of-reactants-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -114,8 +115,10 @@ test.describe('Reaction validation', () => {
     Description: Reaction with combination of products can be edited after opening
     */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('KET/combination-of-products.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'KET/combination-of-products.ket');
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -126,8 +129,10 @@ test.describe('Reaction validation', () => {
     Description: Reaction with combination of reactants can be edited after opening
     */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'KET/combination-of-reactants.ket');
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

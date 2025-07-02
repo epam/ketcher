@@ -34,4 +34,5 @@ export * from './rxn';
 export * from './simpleObject';
 export * from './sgroup';
 export * from './Text';
-export * from './monomer/monomerFactory';
+export * from './monomer';
+export * from './modes';

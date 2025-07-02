@@ -1,17 +1,17 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  DELAY_IN_SECONDS,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
   delay,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 test.describe('Lookup Abbreviations tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,7 +45,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15525, EPMLSOPKET-15533
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('d');
-    await delay(DELAY_IN_SECONDS.FIVE);
+    await delay(5);
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);
@@ -181,7 +181,7 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16926
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await BottomToolbar(page).Benzene();
     await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
     await page.keyboard.type('mer');
@@ -195,13 +195,15 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await BottomToolbar(page).Benzene();
     await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
     await clickOnAtom(page, 'C', atomC);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });

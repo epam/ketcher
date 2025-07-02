@@ -1,66 +1,115 @@
-import { type Page } from '@playwright/test';
+/* eslint-disable no-inline-comments */
+import { Page, Locator } from '@playwright/test';
 import { MacroFileType } from '@utils/canvas/types';
 import {
   SequenceMonomerType,
   PeptideLetterCodeType,
 } from '../constants/monomers/Constants';
+import {
+  waitForLoad,
+  waitForLoadAndRender,
+} from '@utils/common/loaders/waitForLoad/waitForLoad';
 
-export const pasteFromClipboardDialog = (page: Page) => ({
-  addToCanvasButton: page.getByTestId('add-to-canvas-button'),
-  openAsNewButton: page.getByTestId('open-as-new-button'),
+type PasteFromClipboardDialogLocators = {
+  addToCanvasButton: Locator;
+  openAsNewButton: Locator;
+  contentTypeSelector: Locator;
+  monomerTypeSelector: Locator;
+  peptideLettersCodeSelector: Locator;
+  openStructureTextarea: Locator;
+  closeWindowButton: Locator;
+  cancelButton: Locator;
+};
 
-  // type selector exists only in Macromolecules mode
-  contentTypeSelector: page.getByTestId('dropdown-select'),
-  monomerTypeSelector: page.getByTestId('dropdown-select-type'),
-  peptideLettersCodeSelector: page.getByTestId(
-    'dropdown-select-peptide-letters-format',
-  ),
+export const PasteFromClipboardDialog = (page: Page) => {
+  const locators: PasteFromClipboardDialogLocators = {
+    addToCanvasButton: page.getByTestId('add-to-canvas-button'),
+    openAsNewButton: page.getByTestId('open-as-new-button'),
+    contentTypeSelector: page.getByTestId('dropdown-select'),
+    monomerTypeSelector: page.getByTestId('dropdown-select-type'),
+    peptideLettersCodeSelector: page.getByTestId(
+      'dropdown-select-peptide-letters-format',
+    ),
+    openStructureTextarea: page.getByTestId('open-structure-textarea'),
+    closeWindowButton: page.getByTestId('close-window-button'),
+    cancelButton: page.getByTestId('cancel-button'),
+  };
 
-  openStructureTextarea: page.getByTestId('open-structure-textarea'),
-  closeWindowButton: page.getByTestId('close-window-button'),
-  // Cancel exists only in Micromolecules mode
-  cancelButton: page.getByTestId('cancel-button'),
-});
+  return {
+    ...locators,
 
-export async function contentTypeSelection(
-  page: Page,
-  contentType: MacroFileType,
-) {
-  const contentTypeSelector =
-    pasteFromClipboardDialog(page).contentTypeSelector;
-  // waiting for type selection combobox to appear
-  await contentTypeSelector.waitFor({ state: 'visible' });
-  await contentTypeSelector.click();
-  // waiting for list of formats to appear
-  const listbox = page.getByRole('listbox');
-  await listbox.waitFor({ state: 'visible' });
-  await page.getByText(contentType).click();
-  // trying to retry click if the listbox is still visible after the click (e.g. click was not successful)
-  if (await listbox.isVisible()) {
-    await page.getByText(contentType).click();
-  }
-}
+    async selectContentType(contentType: MacroFileType) {
+      const contentTypeOption = page.getByText(contentType, { exact: true });
+      await locators.contentTypeSelector.waitFor({ state: 'visible' });
+      if (await contentTypeOption.isHidden()) {
+        await locators.contentTypeSelector.click();
+        const listbox = page.getByRole('listbox');
+        await listbox.waitFor({ state: 'visible' });
+        await contentTypeOption.click();
+        if (await listbox.isVisible()) {
+          await contentTypeOption.click(); /* retry */
+        }
+      }
+    },
 
-export async function monomerTypeSelection(
-  page: Page,
-  typeDropdownOption: SequenceMonomerType,
-) {
-  const monomerTypeSelector =
-    pasteFromClipboardDialog(page).monomerTypeSelector;
+    async selectMonomerType(typeDropdownOption: SequenceMonomerType) {
+      await locators.monomerTypeSelector.click();
+      const menuLocator = page.locator('#menu-');
+      await menuLocator.getByText(typeDropdownOption).click();
+    },
 
-  await monomerTypeSelector.click();
-  const menuLocator = page.locator('#menu-');
-  await menuLocator.getByText(typeDropdownOption).click();
-}
+    async selectPeptideLetterType(letterCode: PeptideLetterCodeType) {
+      await locators.peptideLettersCodeSelector.click();
+      const menuLocator = page.locator('#menu-');
+      await menuLocator.getByText(letterCode).click();
+    },
 
-export async function peptideLetterTypeSelection(
-  page: Page,
-  peptideLetterCodeType: PeptideLetterCodeType,
-) {
-  const peptideLettersCodeSelector =
-    pasteFromClipboardDialog(page).peptideLettersCodeSelector;
+    async fillTextArea(text: string) {
+      locators.openStructureTextarea.fill(text);
+    },
 
-  await peptideLettersCodeSelector.click();
-  const menuLocator = page.locator('#menu-');
-  await menuLocator.getByText(peptideLetterCodeType).click();
-}
+    async addToCanvas(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).addToCanvasButton.click();
+        });
+      }
+    },
+
+    async openAsNew(
+      option: { errorMessageExpected: boolean } = {
+        errorMessageExpected: false,
+      },
+    ) {
+      if (option.errorMessageExpected) {
+        await waitForLoad(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      } else {
+        await waitForLoadAndRender(page, async () => {
+          await PasteFromClipboardDialog(page).openAsNewButton.click();
+        });
+      }
+    },
+
+    async closeWindow() {
+      await PasteFromClipboardDialog(page).closeWindowButton.click();
+    },
+
+    async cancel() {
+      await PasteFromClipboardDialog(page).cancelButton.click();
+    },
+  };
+};
+
+export type PasteFromClipboardDialogType = ReturnType<
+  typeof PasteFromClipboardDialog
+>;

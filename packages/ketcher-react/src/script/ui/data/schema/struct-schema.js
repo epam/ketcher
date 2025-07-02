@@ -379,6 +379,21 @@ const sgroup = {
         type: { enum: ['queryComponent'] },
       },
     },
+    {
+      key: 'nucleotideComponent',
+      title: 'Nucleotide Component',
+      type: 'object',
+      properties: {
+        type: { enum: ['nucleotideComponent'] },
+        class: {
+          title: 'Component',
+          enum: ['SUGAR', 'BASE', 'PHOSPHATE'],
+          enumNames: ['Sugar', 'Base', 'Phosphate'],
+          default: 'Sugar',
+        },
+      },
+      required: ['class'],
+    },
   ],
 };
 export const sgroupMap = mapOf(sgroup, 'type');

@@ -1,18 +1,17 @@
 import { test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  selectRingButton,
-  RingButton,
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
-  resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,7 +24,7 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
@@ -39,7 +38,7 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
@@ -54,11 +53,11 @@ test.describe('Charge tool', () => {
     */
     const anyAtom = 0;
     const anotherAnyAtom = 2;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
+    await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'N', anyAtom);
     await clickOnAtom(page, 'O', anyAtom);
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'S', anyAtom);
     await clickOnAtom(page, 'O', anotherAnyAtom);
     await takeEditorScreenshot(page);
@@ -75,7 +74,7 @@ test.describe('Charge tool', () => {
     const anyAtom = 0;
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
     await page.mouse.move(x, y);
@@ -94,7 +93,7 @@ test.describe('Charge tool', () => {
     const anyAtom = 0;
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
     await page.mouse.move(x, y);

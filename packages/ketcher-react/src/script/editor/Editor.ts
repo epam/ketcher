@@ -34,6 +34,8 @@ import {
   KetcherLogger,
   fromPaste,
   Coordinates,
+  Atom,
+  Pool,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -97,25 +99,32 @@ const highlightTargets = [
 ];
 
 function selectStereoFlagsIfNecessary(
-  atoms: any,
-  expAtoms: number[],
+  atoms: Pool<Atom>,
+  explicitlySelectedAtoms: number[],
 ): number[] {
-  const atomsOfFragments = {};
+  const fragmentToAtoms: Map<number, number[]> = new Map();
   atoms.forEach((atom, atomId) => {
-    atomsOfFragments[atom.fragment]
-      ? atomsOfFragments[atom.fragment].push(atomId)
-      : (atomsOfFragments[atom.fragment] = [atomId]);
+    const atomFragment = atom.fragment;
+    if (atomFragment === -1) {
+      return;
+    }
+
+    const currentAtoms = fragmentToAtoms.get(atomFragment) ?? [];
+    const updatedAtoms = currentAtoms.concat(atomId);
+    fragmentToAtoms.set(atomFragment, updatedAtoms);
   });
 
-  const stereoFlags: number[] = [];
+  let stereoFlags: number[] = [];
+  fragmentToAtoms.forEach((fragmentAtoms, fragmentId) => {
+    const shouldSelectStereoFlag = fragmentAtoms.every((atomId) =>
+      explicitlySelectedAtoms.includes(atomId),
+    );
 
-  Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag = true;
-    atomsOfFragments[fragId].forEach((atomId) => {
-      if (!expAtoms.includes(atomId)) shouldSelSFlag = false;
-    });
-    shouldSelSFlag && stereoFlags.push(Number(fragId));
+    if (shouldSelectStereoFlag) {
+      stereoFlags = stereoFlags.concat(fragmentId);
+    }
   });
+
   return stereoFlags;
 }
 
@@ -131,6 +140,7 @@ export interface Selection {
 }
 
 class Editor implements KetcherEditor {
+  ketcherId: string;
   #origin?: any;
   render: Render;
   _selection: Selection | null;
@@ -173,7 +183,7 @@ class Editor implements KetcherEditor {
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
-  constructor(clientArea, options, serverSettings) {
+  constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -182,9 +192,11 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
+      prevEditor?.render,
       options.reuseRestructIfExist !== false,
     );
 
+    this.ketcherId = ketcherId;
     this._selection = null; // eslint-disable-line
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
@@ -292,12 +304,15 @@ class Editor implements KetcherEditor {
     y?: number,
   ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
+
     this.update(action);
+
     if (needToCenterStruct) {
       this.centerStruct();
     } else if (x != null && y != null) {
       this.positionStruct(x, y);
     }
+
     return this.render.ctab.molecule;
   }
 
@@ -398,7 +413,7 @@ class Editor implements KetcherEditor {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
       this.event.change.dispatch('force');
-      ketcherProvider.getKetcher().changeEvent.dispatch('force');
+      ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
     }
   }
 
@@ -598,15 +613,25 @@ class Editor implements KetcherEditor {
       delete tool.ci;
     }
 
-    if (ci && setHover(ci, true, this.render)) tool.ci = ci;
+    if (ci && setHover(ci, true, this.render)) {
+      tool.ci = ci;
+    }
 
-    if (!event) return;
+    if (!ci) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        isShow: false,
+      });
+      return;
+    }
 
-    setFunctionalGroupsTooltip({
-      editor: this,
-      event,
-      isShow: true,
-    });
+    if (event) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        event,
+        isShow: true,
+      });
+    }
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
@@ -625,7 +650,7 @@ class Editor implements KetcherEditor {
         }
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher().changeEvent.dispatch(action);
+        ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
       }
       this.render.update(false, null);
     }
@@ -645,7 +670,9 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -681,7 +708,9 @@ class Editor implements KetcherEditor {
       this.historyStack,
     );
 
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -714,6 +743,11 @@ class Editor implements KetcherEditor {
     KetcherLogger.log('Editor.redo(), end');
   }
 
+  public clearHistory() {
+    this.historyStack = [];
+    this.historyPtr = 0;
+  }
+
   subscribe(eventName: any, handler: any) {
     const subscriber = {
       handler,
@@ -724,7 +758,9 @@ class Editor implements KetcherEditor {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        ketcherProvider.getKetcher().changeEvent.add(subscribeFuncWrapper);
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .changeEvent.add(subscribeFuncWrapper);
         break;
       }
 
@@ -975,6 +1011,17 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         !isMouseMainButtonPressed(event)
       ) {
         return true;
+      }
+
+      if (eventName === 'mousemove') {
+        const itemUnderCursor = editor.findItem(event, [
+          'atoms',
+          'bonds',
+          'sgroups',
+        ]);
+        if (!itemUnderCursor) {
+          editor.hover(null);
+        }
       }
 
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {

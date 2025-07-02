@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}
@@ -10,7 +10,7 @@ export async function pageReload(page: Page) {
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 }
 
 export async function pageReloadMicro(page: Page) {
@@ -18,26 +18,6 @@ export async function pageReloadMicro(page: Page) {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-}
-
-export async function contextReload(page: Page): Promise<Page> {
-  /* In order to fix problem with label renderer (one pixel shift) 
-        we have to try to reload deeper than page - context!
-   */
-  const cntxt = page.context();
-  const brwsr = cntxt.browser();
-  await page.close();
-  await cntxt.close();
-  if (brwsr) {
-    const newContext = await brwsr.newContext();
-    page = await newContext.newPage();
-  }
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
-  await turnOnMacromoleculesEditor(page);
-  return page;
 }
 
 /**
@@ -64,12 +44,19 @@ export async function closeErrorMessage(page: Page) {
   await errorMessage.waitFor({ state: 'hidden' });
 }
 
+export async function waitForErrorMessage(page: Page) {
+  const errorMessageDialog = page.getByText('Error message', {
+    exact: true,
+  });
+
+  await errorMessageDialog.waitFor({ state: 'visible', timeout: 1000 });
+}
+
 export async function closeOpenStructure(page: Page) {
-  const closeButton = openStructureDialog(page).closeWindowButton;
   const openStructure = page.getByText('Open Structure', {
     exact: true,
   });
-  await closeButton.click();
+  await OpenStructureDialog(page).close();
   await openStructure.waitFor({ state: 'hidden' });
 }
 

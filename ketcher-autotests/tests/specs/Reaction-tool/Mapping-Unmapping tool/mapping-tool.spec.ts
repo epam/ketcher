@@ -3,23 +3,25 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectRingButton,
-  RingButton,
   getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   waitForPageInit,
   mapTwoAtoms,
   clickOnAtom,
-  selectDropdownTool,
   clickOnCanvas,
+  RxnFileFormat,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -30,8 +32,10 @@ test.describe('Mapping Tools', () => {
     /* Test case: EPMLSOPKET-1799, EPMLSOPKET-8909
     Description:  Click atoms to map atoms in a reaction
     */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     await mapTwoAtoms(
       page,
       { label: 'C', number: 0 },
@@ -42,18 +46,22 @@ test.describe('Mapping Tools', () => {
 
   test.describe('Mapping Tools', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/mapped-atoms.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-atoms.rxn');
     });
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
       const anyAtom = 0;
-      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionUnmapping,
+      );
       await clickOnAtom(page, 'Br', anyAtom);
     });
 
     test('Map ordering', async ({ page }) => {
-      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionMapping,
+      );
       await page.getByText('ALK').click();
       await page.getByText('ABH').click();
       await page.getByText('CHC').click();
@@ -63,16 +71,18 @@ test.describe('Mapping Tools', () => {
 
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
-    await openFileAndAddToCanvas('Rxn-V2000/mapped-rection-benz.rxn', page);
-    await selectEraseTool(page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Click atoms to map atoms of reactants or products', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
@@ -84,35 +94,41 @@ test.describe('Mapping Tools', () => {
   }) => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
   });
 
   test.describe('Mapping reactions', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
       await clickInTheMiddleOfTheScreen(page);
     });
 
     test('Remove the reaction components', async ({ page }) => {
       // EPMLSOPKET-1831
-      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionMapping,
+      );
       await page.getByText('CEL').click();
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
+      await CommonTopLeftToolbar(page).undo();
     });
 
     test('Unmap the mapped reaction', async ({ page }) => {
       // EPMLSOPKET-1830
-      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionUnmapping,
+      );
       await page.getByText('CEL').click();
     });
   });
@@ -128,12 +144,12 @@ test.describe('Mapping reactions', () => {
     Test case: EPMLSOPKET-1830
     Description: Structure with attachment points saved as .rxn file
     */
-    await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/mapped-reaction-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 });

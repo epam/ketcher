@@ -7,31 +7,25 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
-  selectAllStructuresOnCanvas,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   pasteFromClipboardByKeyboard,
   dragMouseTo,
-  selectSequenceLayoutModeTool,
-  selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   MonomerType,
+  MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectSequenceLayoutModeTool,
+  selectFlexLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -46,16 +40,21 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Sugars } from '@constants/monomers/Sugars';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Chem } from '@constants/monomers/Chem';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import {
+  MonomerOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 let page: Page;
 
@@ -64,25 +63,17 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSnakeLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorOptions: MonomerLocatorOptions,
-) {
-  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
-  await canvasLocator.click({ button: 'right', force: true });
-}
 
 interface IMonomer {
   monomerDescription: string;
@@ -116,7 +107,7 @@ async function loadMonomerOnCanvas(
     );
   }
   if (monomer.KETFile) {
-    await openFileAndAddToCanvasMacro(monomer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, monomer.KETFile);
   }
 }
 
@@ -1114,10 +1105,14 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, monomer.monomerLocatorOptions);
 
+    const monomerLocator = getMonomerLocator(
+      page,
+      monomer.monomerLocatorOptions,
+    );
+    await ContextMenu(page, monomerLocator).open();
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
       .first();
 
     // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -1155,10 +1150,14 @@ for (const monomer of monomers.filter(
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, monomer.monomerLocatorOptions);
+    const monomerLocator = getMonomerLocator(
+      page,
+      monomer.monomerLocatorOptions,
+    );
+    await ContextMenu(page, monomerLocator).open();
 
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
       .first();
     const createAntisenseStrandOptionPresent =
       (await createAntisenseStrandOption.count()) > 0;
@@ -2664,10 +2663,14 @@ for (const chain of chainWithExtraBondToBase) {
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+    const monomerLocator = getMonomerLocator(
+      page,
+      chain.monomerLocatorOptions,
+    ).first();
+    await ContextMenu(page, monomerLocator).open();
 
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
       .first();
     const createAntisenseStrandOptionPresent =
       (await createAntisenseStrandOption.count()) > 0;
@@ -2872,12 +2875,15 @@ for (const monomer1 of shortMonomerList) {
       await loadMonomerOnCanvas(page, monomer2);
 
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForMonomer(page, monomer1.monomerLocatorOptions);
+      const monomerLocator = getMonomerLocator(
+        page,
+        monomer1.monomerLocatorOptions,
+      ).first();
+      await ContextMenu(page, monomerLocator).open();
 
       const createAntisenseStrandOption = page
-        .getByTestId('create_antisense_rna_chain')
+        .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
         .first();
-
       if (
         (monomer1.eligibleForAntisense &&
           monomer1.baseWithR3R1ConnectionPresent &&
@@ -2950,10 +2956,14 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3000,10 +3010,14 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3090,10 +3104,14 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3137,10 +3155,14 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3187,10 +3209,14 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3222,10 +3248,14 @@ test(`10. Check that options "Delete" and "Copy" added to the r-click menu`, asy
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
-  const deleteOption = page.getByTestId('delete').first();
-  const copyOption = page.getByTestId('copy').first();
+  const deleteOption = page.getByTestId(MonomerOption.Delete).first();
+  const copyOption = page.getByTestId(MonomerOption.Copy).first();
   // Checking presence of Copy and Delete options are in the context menu and enabled
   await expect(deleteOption).toHaveCount(1);
   await expect(copyOption).toHaveCount(1);
@@ -3254,9 +3284,13 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
-  const deleteOption = page.getByTestId('delete').first();
+  const deleteOption = page.getByTestId(MonomerOption.Delete).first();
   // Checking presence of Delete options are in the context menu and enabled
   await expect(deleteOption).toHaveCount(1);
   await expect(deleteOption).toHaveAttribute('aria-disabled', 'false');
@@ -3264,7 +3298,7 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
   await deleteOption.click();
   await takeEditorScreenshot(page);
 
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
 });
 
@@ -3288,9 +3322,13 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
-  const copyOption = page.getByTestId('copy').first();
+  const copyOption = page.getByTestId(MonomerOption.Copy).first();
   // Checking presence of Delete options are in the context menu and enabled
   await expect(copyOption).toHaveCount(1);
   await expect(copyOption).toHaveAttribute('aria-disabled', 'false');
@@ -3323,10 +3361,14 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3341,32 +3383,36 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
 
   const sugarRs = getMonomerLocator(page, Sugars.R);
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(2).click();
-  await selectEraseTool(page);
+  await CommonLeftToolbar(page).selectEraseTool();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(1).click();
   await dragMouseTo(200, 200, page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3388,10 +3434,14 @@ test(`14. Validate that both sense and antisense strands can be exported correct
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3413,7 +3463,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
     page,
     'KET/Antisense-Chains/Antisense-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await verifyHELMExport(
@@ -3443,10 +3493,14 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3487,10 +3541,14 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3502,10 +3560,10 @@ test(`16. Ensure that switching between macro and micro modes does not break the
 
   await createAntisenseStrandOption.click();
 
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3530,10 +3588,14 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+  await ContextMenu(page, monomerLocator).open();
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(MonomerOption.CreateAntisenseRNAStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3669,8 +3731,8 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
   await selectSequenceLayoutModeTool(page);
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
     page,
+    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
   );
 
   await takeEditorScreenshot(page, {
@@ -3679,8 +3741,9 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
   });
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
     page,
+    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
+    MacroFileType.MOLv3000,
   );
 
   await takeEditorScreenshot(page, {
@@ -3714,7 +3777,7 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
 
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
@@ -3747,7 +3810,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
 
   await selectAllStructuresOnCanvas(page);
   await page.keyboard.press('Delete');
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -3847,22 +3910,21 @@ test(`25. Verify that the antisense strand creation options are disabled for an 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
   const createAntisenseRNAStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
     .first();
 
   const createAntisenseDNAStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
+    .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
     .first();
 
-  await anySymbolA.click({ button: 'right', force: true });
-
+  await ContextMenu(page, anySymbolA).open();
   await expect(createAntisenseRNAStrandOption).toBeDisabled();
   await expect(createAntisenseDNAStrandOption).toBeDisabled();
 });
 
 async function callContextMenuForAnySymbol(page: Page) {
   const anySymbol = getSymbolLocator(page, {}).first();
-  await anySymbol.click({ button: 'right', force: true });
+  await ContextMenu(page, anySymbol).open();
 }
 
 for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
@@ -3894,7 +3956,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
       .first();
     // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
     await expect(createAntisenseRNAStrandOption).toHaveCount(1);
@@ -3941,7 +4003,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
+      .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
       .first();
     // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
     await expect(createAntisenseDNAStrandOption).toHaveCount(1);
@@ -3990,7 +4052,7 @@ for (const monomer of monomers.filter(
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
       .first();
     const createAntisenseRNAStrandOptionPresent =
       (await createAntisenseRNAStrandOption.count()) > 0;
@@ -4036,7 +4098,7 @@ for (const monomer of monomers.filter(
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
+      .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
       .first();
     const createAntisenseDNAStrandOptionPresent =
       (await createAntisenseDNAStrandOption.count()) > 0;
@@ -4077,7 +4139,7 @@ for (const chain of chainWithExtraBondToBase) {
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
+      .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
       .first();
     const createAntisenseRNAStrandOptionPresent =
       (await createAntisenseRNAStrandOption.count()) > 0;
@@ -4118,7 +4180,7 @@ for (const chain of chainWithExtraBondToBase) {
     await callContextMenuForAnySymbol(page);
 
     const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
+      .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
       .first();
     const createAntisenseDNAStrandOptionPresent =
       (await createAntisenseDNAStrandOption.count()) > 0;
@@ -4166,7 +4228,7 @@ for (const monomer1 of shortMonomerList) {
       await callContextMenuForAnySymbol(page);
 
       const createAntisenseRNAStrandOption = page
-        .getByTestId('create_antisense_rna_chain')
+        .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
         .first();
 
       if (
@@ -4249,7 +4311,7 @@ for (const monomer1 of shortMonomerList) {
       await callContextMenuForAnySymbol(page);
 
       const createAntisenseDNAStrandOption = page
-        .getByTestId('create_antisense_dna_chain')
+        .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
         .first();
 
       if (
@@ -4319,7 +4381,7 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4358,7 +4420,7 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
+    .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4399,7 +4461,7 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4441,7 +4503,7 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
+    .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4483,7 +4545,7 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4523,7 +4585,7 @@ test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected t
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
+    .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4563,7 +4625,7 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId(SequenceSymbolOption.CreateRNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -4603,7 +4665,7 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
   await callContextMenuForAnySymbol(page);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
+    .getByTestId(SequenceSymbolOption.CreateDNAAntisenseStrand)
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled

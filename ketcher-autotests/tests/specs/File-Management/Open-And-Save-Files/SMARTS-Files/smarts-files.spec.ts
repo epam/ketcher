@@ -1,4 +1,7 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -7,7 +10,6 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  waitForRender,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import {
@@ -36,7 +38,7 @@ test.describe('Loading SMARTS files', () => {
     Description: c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1 should be loaded as benzene with aromatic atom list (carbon and nitrogen)
     */
     const smartsStringToPaste = 'c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1';
-    await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste, false);
+    await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -50,8 +52,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
 
     await verifyFileExport(
@@ -61,8 +63,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -76,8 +78,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
 
     await verifyFileExport(
@@ -87,8 +89,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -102,8 +104,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -113,8 +115,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -128,8 +130,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
 
     await verifyFileExport(
@@ -139,8 +141,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -154,8 +156,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
 
     await verifyFileExport(
@@ -165,8 +167,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -180,8 +182,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
 
     await verifyFileExport(
@@ -191,8 +193,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
       page,
+      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -206,8 +208,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -217,8 +219,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -233,8 +235,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       );
 
       await verifyFileExport(
@@ -244,8 +246,8 @@ test.describe('Loading SMARTS files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
         page,
+        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
       );
       await takeEditorScreenshot(page);
     },
@@ -260,8 +262,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -271,8 +273,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -286,8 +288,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await verifyFileExport(
@@ -297,8 +299,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
       page,
+      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -312,8 +314,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -323,8 +325,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
       page,
+      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -338,8 +340,8 @@ test.describe('Loading SMARTS files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
     await verifyFileExport(
@@ -349,8 +351,8 @@ test.describe('Loading SMARTS files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
       page,
+      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
     );
     await takeEditorScreenshot(page);
   });
@@ -443,7 +445,7 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       if (monomer.pageReloadNeeded) {
         await pageReloadMicro(page);
       }
-      await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -453,8 +455,8 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        monomer.SMARTSFile_Expected,
         page,
+        monomer.SMARTSFile_Expected,
       );
       await takeEditorScreenshot(page);
 
@@ -466,20 +468,6 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
     });
   }
 });
-
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
 
 test.describe('Saving expanded monomer to SMARTS: ', () => {
   test.beforeEach(async ({ page }) => {
@@ -504,8 +492,13 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       if (monomer.pageReloadNeeded) {
         await pageReloadMicro(page);
       }
-      await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
-      await expandMonomer(page, monomer.monomerLocatorText);
+      await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
+      const monomerOnMicro = page
+        .getByTestId(KETCHER_CANVAS)
+        .getByText(monomer.monomerLocatorText, { exact: true });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
+      );
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -515,8 +508,8 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        monomer.SMARTSFile_Expected,
         page,
+        monomer.SMARTSFile_Expected,
       );
       await takeEditorScreenshot(page);
 

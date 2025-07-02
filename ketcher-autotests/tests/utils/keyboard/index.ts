@@ -7,20 +7,30 @@ export function getControlModifier() {
 }
 
 export async function resetZoomLevelToDefault(page: Page) {
+  const modifier = getControlModifier();
   await waitForRender(page, async () => {
-    await page.keyboard.press('Control+0');
+    await page.keyboard.press(`${modifier}+0`);
   });
 }
 
 export async function ZoomOutByKeyboard(page: Page) {
+  const modifier = getControlModifier();
   await waitForRender(page, async () => {
-    await page.keyboard.press('Control+-');
+    await page.keyboard.press(`${modifier}+Minus`);
   });
 }
 
 export async function ZoomInByKeyboard(page: Page) {
+  const modifier = getControlModifier();
   await waitForRender(page, async () => {
-    await page.keyboard.press('Control+=');
+    await page.keyboard.press(`${modifier}+Equal`);
+  });
+}
+
+export async function clearCanvasByKeyboard(page: Page) {
+  const modifier = getControlModifier();
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+Delete`);
   });
 }
 

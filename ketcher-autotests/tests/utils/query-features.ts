@@ -1,6 +1,8 @@
 import { Page, expect } from '@playwright/test';
 import { BondTypeName } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 type queryNumberValues =
   | '0'
@@ -83,23 +85,23 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 // Custom query:
 
-export async function setCustomQuery(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
-}
+// export async function setCustomQuery(page: Page, customQuery: string) {
+//   await page.getByTestId('custom-query-checkbox').check();
+//   await page.getByTestId('atom-custom-query').fill(customQuery);
+// }
 
 // Custom query - atom properties:
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
 // Custom query - bond properties:
 
 export async function setCustomQueryForBond(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('bond-custom-query').fill(customQuery);
 }
 
 // Bond attributes:
@@ -166,20 +168,22 @@ export async function setReactionFlagExactChange(page: Page) {
 // Other
 
 export async function checkSmartsValue(page: Page, value: string) {
-  await selectSaveTool(page);
-  await page.getByTestId('file-format-list').first().click();
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  const smartsInput = page.getByTestId('smarts-preview-area-text');
-  await expect(smartsInput).toHaveValue(value);
+  const saveStructureTextarea = SaveStructureDialog(page).saveStructureTextarea;
+
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await expect(saveStructureTextarea).toHaveValue(value);
 }
 
 export async function checkSmartsWarnings(page: Page) {
   const value =
     'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
-  await page.getByTestId('warnings-tab').click();
-  const warningSmartsTextArea = page
-    .getByTestId('WarningTextArea')
-    .filter({ hasText: 'SMARTS' });
+  await SaveStructureDialog(page).switchToWarningsTab();
+  const warningSmartsTextArea = SaveStructureDialog(
+    page,
+  ).warningTextarea.filter({ hasText: 'SMARTS' });
   const warningText = await warningSmartsTextArea.evaluate(
     (node) => node.textContent,
   );

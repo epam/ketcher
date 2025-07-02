@@ -33,6 +33,10 @@ type Data = {
   oldSgroup?: SGroup;
 };
 
+const SGROUP_TYPE_MAPPING = {
+  nucleotideComponent: SGroup.TYPES.SUP,
+};
+
 class SGroupCreate extends BaseOperation {
   data: Data;
 
@@ -61,7 +65,7 @@ class SGroupCreate extends BaseOperation {
     const sgroup =
       oldSgroup instanceof MonomerMicromolecule
         ? new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer)
-        : new SGroup(this.data.type);
+        : new SGroup(SGROUP_TYPE_MAPPING[this.data.type] || this.data.type);
 
     sgroup.id = sgid;
     struct.sgroups.set(sgid, sgroup);
@@ -72,6 +76,9 @@ class SGroupCreate extends BaseOperation {
 
     if (expanded) {
       sgroup.data.expanded = expanded;
+      if (sgroup instanceof MonomerMicromolecule) {
+        sgroup.monomer.monomerItem.expanded = expanded;
+      }
     }
 
     if (name) {

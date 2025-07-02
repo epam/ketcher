@@ -62,6 +62,12 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  toggleMacromoleculesPropertiesVisibility: Subscription;
+  modifyAminoAcids: Subscription;
+  setEditorLineLength: Subscription;
+  toggleLineLengthHighlighting: Subscription;
+  setLibraryItemDragState: Subscription;
+  placeLibraryItemOnCanvas: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -124,6 +130,12 @@ export function resetEditorEvents() {
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
     selectEntities: new Subscription(),
+    toggleMacromoleculesPropertiesVisibility: new Subscription(),
+    modifyAminoAcids: new Subscription(),
+    setEditorLineLength: new Subscription(),
+    toggleLineLengthHighlighting: new Subscription(),
+    setLibraryItemDragState: new Subscription(),
+    placeLibraryItemOnCanvas: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -187,6 +199,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.cancelLibraryItemDrag();
     },
   },
   undo: {
@@ -265,6 +278,12 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.createAntisenseChain.dispatch(true);
+    },
+  },
+  toggleMacromoleculesPropertiesVisibility: {
+    shortcut: 'Alt+c',
+    handler: (editor: CoreEditor) => {
+      editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
     },
   },
 };

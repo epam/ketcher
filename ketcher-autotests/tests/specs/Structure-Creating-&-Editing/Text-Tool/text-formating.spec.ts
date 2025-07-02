@@ -4,32 +4,31 @@ import {
   waitForPageInit,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   openFileAndAddToCanvas,
-  copyAndPaste,
-  cutAndPaste,
   waitForRender,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContent(filename);
   await page.getByTestId('text').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByRole('dialog').getByRole('textbox').fill(fileText);
-  await waitForLoad(page, () => {
+  await waitForLoadAndRender(page, () => {
     pressButton(page, 'Apply');
   });
 }
@@ -143,7 +142,7 @@ test.describe('Text tools test cases', () => {
 
   test('Saving text object as a .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
-    await openFileAndAddToCanvas('KET/ketfile01.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ketfile01.ket');
 
     await verifyFileExport(page, 'KET/ketfile01-expected.ket', FileType.KET);
     await takeEditorScreenshot(page);
@@ -182,21 +181,21 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
-    await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await openFileAndAddToCanvas(page, 'KET/two-text-objects.ket');
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
   test(' Selection of different types of text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2274
     // Verify if its possible to select a text objects of any size by clicking on green frame
-    await openFileAndAddToCanvas('KET/text-object.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/text-object.ket');
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
     await selectAllStructuresOnCanvas(page);

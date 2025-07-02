@@ -5,17 +5,17 @@ import {
   waitForPageInit,
   takeEditorScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-    await goToPeptidesTab(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Move monomer bonded with another monomers and hover attachment points', async ({
@@ -38,7 +38,7 @@ test.describe('Check attachment point hover', () => {
       1,
     );
 
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

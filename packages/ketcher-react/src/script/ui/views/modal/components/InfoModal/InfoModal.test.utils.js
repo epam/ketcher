@@ -1,7 +1,7 @@
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { render as rtlRender } from '@testing-library/react';
-import modalReducer from 'src/script/ui/state/modal';
+import modalReducer from '../../../../state/modal';
 
 export function renderWithMockStore(
   component,

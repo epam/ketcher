@@ -1,8 +1,38 @@
 import { Page, expect } from '@playwright/test';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
-import { clickOnFileFormatDropdown } from './clicks';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
+
+export enum MolFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RxnFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SequenceFileFormat {
+  oneLetter = '1-letter',
+  threeLetter = '3-letter',
+}
+
+export declare type FileFormat =
+  | MolFileFormat
+  | RxnFileFormat
+  | SdfFileFormat
+  | RdfFileFormat
+  | SequenceFileFormat;
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
@@ -16,8 +46,14 @@ export async function getIdt(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getIdt());
 }
 
-export async function getSequence(page: Page): Promise<string> {
-  return await page.evaluate(() => window.ketcher.getSequence());
+export async function getSequence(
+  page: Page,
+  fileFormat?: SequenceFileFormat,
+): Promise<string> {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getSequence(fileFormat),
+    fileFormat,
+  );
 }
 
 export function setZoom(page: Page, value: number) {
@@ -191,7 +227,7 @@ export async function waitForViewOnlyModeState(
   isEnabled: boolean,
   timeout = 100000,
 ): Promise<void> {
-  const eraseButton = commonLeftToolbarLocators(page).eraseButton;
+  const eraseButton = CommonLeftToolbar(page).eraseButton;
 
   if (isEnabled) {
     await expect(eraseButton).toBeDisabled({ timeout });
@@ -209,35 +245,4 @@ export async function disableQueryElements(page: Page): Promise<void> {
       disableQueryElements: ['Pol', 'CYH', 'CXH'],
     });
   });
-}
-
-export enum FileFormatOption {
-  KET = 'Ket Format-option',
-  MOLV2000 = 'MDL Molfile V2000-option',
-  MOLV3000 = 'MDL Molfile V3000-option',
-  SDFV2000 = 'SDF V2000-option',
-  SDFV3000 = 'SDF V3000-option',
-  RDFV2000 = 'RDF V2000-option',
-  RDFV3000 = 'RDF V3000-option',
-  DaylightSMARTS = 'Daylight SMARTS-option',
-  DaylightSMILES = 'Daylight SMILES-option',
-  ExtendedSMILES = 'Extended SMILES-option',
-  CML = 'CML-option',
-  InChI = 'InChI-option',
-  InChIAuxInfo = 'InChI AuxInfo-option',
-  InChIKey = 'InChIKey-option',
-  SVG = 'SVG Document-option',
-  PNG = 'PNG Image-option',
-  CDXML = 'CDXML-option',
-  Base64CDX = 'Base64 CDX-option',
-  CDX = 'CDX-option',
-}
-
-export async function selectSaveFileFormat(
-  page: Page,
-  formatOption: FileFormatOption,
-) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByTestId(formatOption).click();
 }

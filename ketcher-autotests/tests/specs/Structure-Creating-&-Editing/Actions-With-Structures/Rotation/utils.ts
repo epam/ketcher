@@ -3,15 +3,12 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
   clickOnCanvas,
-  getControlModifier,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,
@@ -86,15 +83,14 @@ export async function addStructureAndSelect(
   page: Page,
   fileName: string = anyStructure,
 ) {
-  await openFileAndAddToCanvas(fileName, page);
-  const modifier = getControlModifier();
-  await page.keyboard.press(`${modifier}+KeyA`);
+  await openFileAndAddToCanvas(page, fileName);
+  await selectAllStructuresOnCanvas(page);
   await page.getByTestId('floating-tools').isVisible();
 }
 
 export async function checkUndoRedo(page: Page) {
-  await pressUndoButton(page);
-  await pressRedoButton(page);
+  await CommonTopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 }
 

@@ -4,8 +4,8 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -21,8 +21,8 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     // Test case: EPMLSOPKET-18024
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -32,8 +32,8 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     // Test case: EPMLSOPKET-18026
     await openFileAndAddToCanvas(
-      'KET/s-group-with-attachment-points.ket',
       page,
+      'KET/s-group-with-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -43,8 +43,8 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     // Test case: EPMLSOPKET-18025
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await verifyFileExport(
       page,
@@ -57,8 +57,8 @@ test.describe('Attachment Point Tool', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(
-      'KET/S-Group-structure-with-Attachment-point.ket',
       page,
+      'KET/S-Group-structure-with-Attachment-point.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await waitForRender(page, async () => {

@@ -1,14 +1,14 @@
 import { test } from '@playwright/test';
 import {
-  clickOnSaveFileAndOpenDropdown,
   openFileAndAddToCanvas,
-  openSettings,
-  pressButton,
-  selectFormatForSaving,
-  selectLayoutTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { setACSSettings } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Saving in .svg files', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,12 +23,14 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -40,12 +42,14 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -57,12 +61,14 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -74,12 +80,14 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -91,12 +99,14 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -108,11 +118,13 @@ test.describe('Saving in .svg files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to SVG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -123,15 +135,14 @@ test.describe('Saving in .svg files', () => {
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
-    await pressButton(page, 'Set ACS Settings');
-    await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
+    await setACSSettings(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 });

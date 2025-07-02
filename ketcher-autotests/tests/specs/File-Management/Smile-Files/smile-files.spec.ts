@@ -5,39 +5,31 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
-  saveToFile,
-  receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  clickOnFileFormatDropdown,
-  getExtendedSmiles,
-  getSmiles,
-} from '@utils/formats';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: smileType }).click();
-  const previewInput = page.getByTestId('smiles-preview-area-text');
-  await previewInput.waitFor({ state: 'visible' });
-  await expect(previewInput).toContainText(nonEmptyString);
+async function getPreviewForSmiles(
+  page: Page,
+  smileType: MoleculesFileFormatType,
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(smileType);
+  const previewInput = await SaveStructureDialog(page).getTextAreaValue();
+  expect(previewInput).not.toBe('');
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await pressButton(page, 'Cancel');
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
 
   await pasteFromClipboardAndAddToCanvas(page, smiles);
   await clickInTheMiddleOfTheScreen(page);
@@ -54,14 +46,14 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/all-type-bonds.ket');
     await verifyFileExport(
       page,
       'SMILES/smiles-all-bonds-expected.smi',
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -75,14 +67,14 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/all-atoms-properties.ket');
     await verifyFileExport(
       page,
       'SMILES/smiles-all-atoms-properties-expected.smi',
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -101,8 +93,8 @@ test.describe('SMILES files', () => {
     Description: <<In Daylight SMILES the structure will be saved without S-groups>>
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sec-butyl-abr.mol');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await page.getByText('Warnings').click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -113,13 +105,13 @@ test.describe('SMILES files', () => {
     Test case: EPMLSOPKET-1914
     Description: In Daylight SMILES the structure will be saved without S-groups
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sgroups-diff-symyx.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sgroups-diff-symyx.mol');
     await verifyFileExport(
       page,
       'SMILES/sgroups-diff-symyx-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -139,15 +131,15 @@ test.describe('SMILES files', () => {
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/heteroatoms-structure.mol',
       page,
+      'Molfiles-V2000/heteroatoms-structure.mol',
     );
     await verifyFileExport(
       page,
       'SMILES/smiles-heteroatoms-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -164,13 +156,13 @@ test.describe('SMILES files', () => {
     Description: Warning tab: Structure contains query properties of atoms
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
     await verifyFileExport(
       page,
       'SMILES/attached-data-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await page.getByText('Warnings').click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -191,13 +183,13 @@ test.describe('SMILES files', () => {
     structure is correctly generated from SmileString.
     All stereobonds are displayed as in a mol-file.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/V2000-abs.mol');
     await verifyFileExport(
       page,
       'SMILES/smiles-v2000-abs-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -220,13 +212,13 @@ test.describe('SMILES files', () => {
     Structure appears without attached data and brackets, query features,
     Rgroup labels are rendered as R# symbols.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/different-features.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/different-features.mol');
     await verifyFileExport(
       page,
       'SMILES/smiles-different-features-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -246,13 +238,13 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/cis-trans-cycle.mol');
     await verifyFileExport(
       page,
       'SMILES/smiles-cis-trans-cycle-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -271,13 +263,13 @@ test.describe('SMILES files', () => {
     Description: The structure generated from SMILE string is correct,
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
-    await openFileAndAddToCanvas('KET/alias-pseudoatom.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/alias-pseudoatom.ket');
     await verifyFileExport(
       page,
       'SMILES/smiles-alias-pseudoatom-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -294,13 +286,13 @@ test.describe('SMILES files', () => {
        * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
        * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
        */
-      await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
       await verifyFileExport(
         page,
         'SMILES/smiles-two-arrows-and-plus-expected.smi',
         FileType.SMILES,
       );
-      await getPreviewForSmiles(page, 'Daylight SMILES');
+      await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
@@ -320,15 +312,15 @@ test.describe('SMILES files', () => {
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await verifyFileExport(
       page,
       'SMILES/smiles-benzene-arrow-benzene-reagent-nh3-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -343,8 +335,8 @@ test.describe('SMILES files', () => {
     Description: SMILE file opens and have S-Group Properties
     */
     await openFileAndAddToCanvas(
-      'SMILES/structure-with-s-group-properties.smi',
       page,
+      'SMILES/structure-with-s-group-properties.smi',
     );
     await verifyFileExport(
       page,
@@ -390,8 +382,8 @@ test.describe('SMILES files', () => {
     Description: Stereo information for bond and atom is kept
     */
     await openFileAndAddToCanvas(
-      'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
       page,
+      'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -405,25 +397,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-chems.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-chems.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-chems.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -437,26 +421,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -470,25 +445,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-bases.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-bases.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -502,26 +469,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -535,26 +493,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -568,26 +517,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       page,
+      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -604,28 +544,17 @@ test.describe('SMILES files', () => {
     // after fixing need to update the screenshot
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-chems.ket',
-      page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       page,
+      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -642,28 +571,17 @@ test.describe('SMILES files', () => {
     // after fixing need to update the screenshot
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
-      page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-      expectedFile,
+      FileType.ExtendedSMILES,
     );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
       page,
+      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -680,28 +598,17 @@ test.describe('SMILES files', () => {
     // after fixing need to update the screenshot
 
     await openFileAndAddToCanvas(
+      page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',
-      page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-      expectedFile,
+      FileType.ExtendedSMILES,
     );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -715,25 +622,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
       page,
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -748,26 +647,17 @@ test.describe('SMILES files', () => {
     */
 
       await openFileAndAddToCanvas(
+        page,
         'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      );
+      await verifyFileExport(
         page,
-      );
-      const expectedFile = await getSmiles(page);
-      await saveToFile(
         'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        expectedFile,
+        FileType.SMILES,
       );
-      const { fileExpected: smilesFileExpected, file: smilesFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        });
-
-      expect(smilesFile).toEqual(smilesFileExpected);
-
       await openFileAndAddToCanvasAsNewProject(
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
         page,
+        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
       );
       await takeEditorScreenshot(page);
     },
@@ -782,26 +672,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
       page,
+      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -815,25 +696,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/schema-with-two-retrosynthetic-arrows.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/schema-with-two-retrosynthetic-arrows.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/schema-with-two-retrosynthetic-arrows.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
       page,
+      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -847,26 +720,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
       page,
+      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
     );
     await takeEditorScreenshot(page);
   });
@@ -880,26 +744,17 @@ test.describe('SMILES files', () => {
     */
 
     await openFileAndAddToCanvas(
+      page,
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+    );
+    await verifyFileExport(
       page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
       'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
       page,
+      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
     );
     await takeEditorScreenshot(page);
   });

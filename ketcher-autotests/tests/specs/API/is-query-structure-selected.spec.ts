@@ -2,23 +2,24 @@ import { Page, expect, test } from '@playwright/test';
 import {
   BondType,
   BondTypeName,
-  LeftPanelButton,
   clickOnAtom,
   doubleClickOnAtom,
   doubleClickOnBond,
-  drawBenzeneRing,
   pressButton,
-  selectAllStructuresOnCanvas,
-  selectTool,
   setAromaticity,
   setBondType,
-  setCustomQuery,
+  setCustomQueryForAtom,
+  setCustomQueryForBond,
   setSubstitutionCount,
   setUnsaturated,
   waitForAtomPropsModal,
   waitForBondPropsModal,
   waitForPageInit,
 } from '@utils';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -48,7 +49,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
 
   test('returns true, when atom has custom query', async ({ page }) => {
     const customQuery = '#6;x9';
-    await setCustomQuery(page, customQuery);
+    await setCustomQueryForAtom(page, customQuery);
     await checkIsQueryStructureSelected(page, true);
   });
 
@@ -68,8 +69,10 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when structure has "Any" atom', async ({ page }) => {
+    const anyAtomButton = RightToolbar(page).anyAtomButton;
+
     await pressButton(page, 'Cancel');
-    await page.getByTestId('any-atom').click();
+    await anyAtomButton.click();
     await clickOnAtom(page, 'C', 0);
     await selectAllStructuresOnCanvas(page);
     expect(await isQueryStructureSelected(page)).toBe(true);
@@ -104,7 +107,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
 
   test(`returns true for customQuery bond`, async ({ page }) => {
     const customQuery = 'x2&D3,D2';
-    await setCustomQuery(page, customQuery);
+    await setCustomQueryForBond(page, customQuery);
     await checkIsQueryStructureSelected(page, true);
   });
 });
@@ -114,7 +117,7 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await selectTool(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Query component' }).click();
     await checkIsQueryStructureSelected(page, true);

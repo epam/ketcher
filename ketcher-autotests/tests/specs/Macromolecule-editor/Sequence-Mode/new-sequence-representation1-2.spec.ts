@@ -11,18 +11,18 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -45,6 +45,10 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -53,12 +57,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSequenceLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await selectFlexLayoutModeTool(page);
 });
@@ -1496,7 +1500,7 @@ async function callContextMenuForSelectedAllSymbol(
   let attempts = 0;
   const maxAttempts = 5;
   while (attempts < maxAttempts) {
-    await symbol.click({ button: 'right', force: true });
+    await ContextMenu(page, symbol).open();
     if (await page.getByTestId('sequence_menu_title').isVisible()) {
       return;
     }
@@ -1822,10 +1826,10 @@ async function setupSenseAndAntiSenseSequences(
     );
   }
   if (senseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(senseSequence.SenseForm, page);
+    await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
   if (antisenseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(antisenseSequence.AntiSenseForm, page);
+    await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
   const senseBase = getMonomerLocator(page, Bases.c7io7n).first();
@@ -1894,14 +1898,14 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       }).first();
 
       const establishHydrogenBondsOption = page
-        .getByTestId('establish_hydrogen_bond')
+        .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
         .first();
       const deleteHydrogenBondsOption = page
-        .getByTestId('delete_hydrogen_bond')
+        .getByTestId(SequenceSymbolOption.DeleteHydrogenBonds)
         .first();
 
       // 1. Check that right clicking on a symbol that has no hydrogen bonds with a symbol bellow/above it, give the option to "Establish Hydrogen Bonds"
-      await senseSymbol.click({ button: 'right', force: true });
+      await ContextMenu(page, senseSymbol).open();
       await expect(establishHydrogenBondsOption).toBeEnabled();
       // 2. Check If there are no H-bonds, the option "Delete Hydrogen Bonds" is disabled ( Requirement: 1.2 )
       await expect(deleteHydrogenBondsOption).toBeDisabled();
@@ -1921,7 +1925,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       await senseSymbol.dblclick({ force: true });
       await clickInTheMiddleOfTheScreen(page);
       await clickInTheMiddleOfTheScreen(page);
-      await senseSymbol.click({ button: 'right', force: true });
+      await ContextMenu(page, senseSymbol).open();
 
       await expect(establishHydrogenBondsOption).toBeDisabled();
 
@@ -1956,7 +1960,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       }
 
       // 6. Check that right clicking on a symbol that has any H-bonds give the option to "Delete Hydrogen Bonds" ( Requirement: 1.2 )
-      await senseSymbol.click({ button: 'right', force: true });
+      await ContextMenu(page, senseSymbol).open();
       await expect(deleteHydrogenBondsOption).toBeEnabled();
 
       // 7. Check that clicking on "Delete Hydrogen Bonds" will remove hydrogen bond
@@ -2025,30 +2029,30 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         .first()
         .getAttribute('data-symbol-id');
 
-      const senseSymbol = await getSymbolLocator(page, {
+      const senseSymbol = getSymbolLocator(page, {
         symbolId: senseSymbolId || '',
       }).first();
-      const antisenseSymbol = await getSymbolLocator(page, {
+      const antisenseSymbol = getSymbolLocator(page, {
         symbolId: antisenseSymbolId || '',
       }).first();
-      const senseSymbolWithHBond = await getSymbolLocator(page, {
+      const senseSymbolWithHBond = getSymbolLocator(page, {
         symbolId: senseSymbolWithHBondId || '',
       }).first();
-      const antisenseSymbolWithHBond = await getSymbolLocator(page, {
+      const antisenseSymbolWithHBond = getSymbolLocator(page, {
         symbolId: antisenseSymbolWithHBondId || '',
       }).first();
 
       const establishHydrogenBondsOption = page
-        .getByTestId('establish_hydrogen_bond')
+        .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
         .first();
       const deleteHydrogenBondsOption = page
-        .getByTestId('delete_hydrogen_bond')
+        .getByTestId(SequenceSymbolOption.DeleteHydrogenBonds)
         .first();
 
       // 1. Check if multiple monomers/symbols are selected and at least one of them does not have hydrogen bonds established
       //    with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" available from the r-click menu ( Requirement: 1.3 )
       await selectAllStructuresOnCanvas(page);
-      await senseSymbolWithHBond.click({ button: 'right', force: true });
+      await ContextMenu(page, senseSymbolWithHBond).open();
       await expect(establishHydrogenBondsOption).toBeEnabled();
 
       // 3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds"
@@ -2071,12 +2075,14 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
       await closeContextMenu(page);
       await selectAllStructuresOnCanvas(page);
-      await antisenseSymbol.click({ button: 'right', force: true });
-      await deleteHydrogenBondsOption.click({ force: true });
+      await ContextMenu(page, antisenseSymbol).click(
+        SequenceSymbolOption.DeleteHydrogenBonds,
+      );
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
       await pressYesInConfirmYourActionDialog(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, antisenseSymbolWithHBond);
+      await antisenseSymbolWithHBond.hover();
+      await ContextMenu(page, antisenseSymbolWithHBond).open();
       await expect(deleteHydrogenBondsOption).toBeDisabled();
       await closeContextMenu(page);
     });
@@ -2106,16 +2112,16 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .first()
       .getAttribute('data-symbol-id');
 
-    const senseSymbol = await getSymbolLocator(page, {
+    const senseSymbol = getSymbolLocator(page, {
       symbolId: senseSymbolId || '',
     }).first();
 
     const establishHydrogenBondsOption = page
-      .getByTestId('establish_hydrogen_bond')
+      .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
       .first();
 
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await senseSymbol.click({ button: 'right', force: true });
+    await ContextMenu(page, senseSymbol).open();
     await expect(establishHydrogenBondsOption).toBeDisabled();
   });
 }
@@ -2147,16 +2153,16 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .first()
       .getAttribute('data-symbol-id');
 
-    const senseSymbol = await getSymbolLocator(page, {
+    const senseSymbol = getSymbolLocator(page, {
       symbolId: senseSymbolId || '',
     }).first();
 
     const establishHydrogenBondsOption = page
-      .getByTestId('establish_hydrogen_bond')
+      .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
       .first();
 
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await senseSymbol.click({ button: 'right', force: true });
+    await ContextMenu(page, senseSymbol).open();
     await expect(establishHydrogenBondsOption).toBeDisabled();
   });
 }
@@ -2183,12 +2189,9 @@ test(`Case 15. Verify warning message on deleting all hydrogen bonds between two
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
-  await anySymbolA.click({ button: 'right', force: true });
-  const deleteHydrogenBondsOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondsOption.click({ force: true });
+  await ContextMenu(page, anySymbolA).click(
+    SequenceSymbolOption.DeleteHydrogenBonds,
+  );
   await pressYesInConfirmYourActionDialog(page);
 
   await takeEditorScreenshot(page, {
@@ -2219,12 +2222,9 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
-  await anySymbolA.click({ button: 'right', force: true });
-  const deleteHydrogenBondsOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondsOption.click({ force: true });
+  await ContextMenu(page, anySymbolA).click(
+    SequenceSymbolOption.DeleteHydrogenBonds,
+  );
   await pressYesInConfirmYourActionDialog(page);
 
   await takeEditorScreenshot(page, {
@@ -2279,6 +2279,7 @@ for (const monomer of monomersToAdd) {
       }
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, {
         position: 1,

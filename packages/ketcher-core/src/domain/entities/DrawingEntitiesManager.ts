@@ -12,16 +12,19 @@ import assert from 'assert';
 import {
   BaseMonomer,
   Chem,
+  KetFileMultitailArrowNode,
   LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
   Pool,
   RNABase,
+  RxnArrowMode,
   SGroupForest,
   Struct,
   SubChainNode,
   Sugar,
 } from 'domain/entities';
+import { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -87,7 +90,11 @@ import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
-import { AtomLabel, HalfMonomerSize } from 'domain/constants';
+import {
+  AtomLabel,
+  SnakeLayoutCellWidth,
+  HalfMonomerSize,
+} from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
@@ -106,16 +113,33 @@ import {
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+import {
+  RxnArrowAddOperation,
+  RxnArrowDeleteOperation,
+} from 'application/editor/operations/coreRxn/rxnArrow';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import {
+  MultitailArrowAddOperation,
+  MultitailArrowDeleteOperation,
+} from 'application/editor/operations/coreRxn/multitailArrow';
+import { KetFileNode } from 'domain/serializers';
+import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import {
+  RxnPlusAddOperation,
+  RxnPlusDeleteOperation,
+} from 'application/editor/operations/coreRxn/rxnPlus';
+import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
-export const CELL_WIDTH = 60;
-const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
+const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
-export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS = CELL_WIDTH * 2 + 30;
-export const MONOMER_START_X_POSITION = 20 + CELL_WIDTH / 2;
-export const MONOMER_START_Y_POSITION = 20 + CELL_WIDTH / 2;
+export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
+  SnakeLayoutCellWidth * 2 + 30;
+export const MONOMER_START_X_POSITION = 20 + SnakeLayoutCellWidth / 2;
+export const MONOMER_START_Y_POSITION = 20 + SnakeLayoutCellWidth / 2;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -134,6 +158,9 @@ export class DrawingEntitiesManager {
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
+  public rxnArrows: Map<number, RxnArrow> = new Map();
+  public multitailArrows: Map<number, MultitailArrow> = new Map();
+  public rxnPluses: Map<number, RxnPlus> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -178,6 +205,9 @@ export class DrawingEntitiesManager {
       ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
       ...(this.atoms as Map<number, DrawingEntity>),
       ...(this.bonds as Map<number, DrawingEntity>),
+      ...(this.rxnArrows as Map<number, DrawingEntity>),
+      ...(this.multitailArrows as Map<number, DrawingEntity>),
+      ...(this.rxnPluses as Map<number, DrawingEntity>),
     ];
   }
 
@@ -259,6 +289,7 @@ export class DrawingEntitiesManager {
     const initialMonomer = this.monomers.get(monomer.id);
     if (!initialMonomer) return monomer;
     initialMonomer.monomerItem = monomerItemNew;
+    initialMonomer.recalculateAttachmentPoints();
     this.monomers.set(monomer.id, initialMonomer);
     return initialMonomer;
   }
@@ -307,6 +338,12 @@ export class DrawingEntitiesManager {
       return this.deleteBond(drawingEntity);
     } else if (drawingEntity instanceof Atom) {
       return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
+    } else if (drawingEntity instanceof RxnArrow) {
+      return this.deleteRxnArrow(drawingEntity);
+    } else if (drawingEntity instanceof MultitailArrow) {
+      return this.deleteMultitailArrow(drawingEntity);
+    } else if (drawingEntity instanceof RxnPlus) {
+      return this.deleteRxnPlus(drawingEntity);
     } else {
       return new Command();
     }
@@ -443,27 +480,31 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    [...this.atoms.values(), ...this.monomers.values()].forEach(
-      (drawingEntity) => {
-        if (
-          drawingEntity instanceof BaseMonomer &&
-          drawingEntity.monomerItem.props.isMicromoleculeFragment &&
-          !isMonomerSgroupWithAttachmentPoints(drawingEntity)
-        ) {
-          return;
-        }
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
 
-        if (drawingEntity.selected) {
-          command.merge(
-            this.createDrawingEntityMovingCommand(
-              drawingEntity,
-              partOfMovementOffset,
-              fullMovementOffset,
-            ),
-          );
-        }
-      },
-    );
+      if (drawingEntity.selected) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
+      }
+    });
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -1463,7 +1504,7 @@ export class DrawingEntitiesManager {
         snakeLayoutNode.base?.position,
         new Vec2(
           newSugarPosition.x,
-          newSugarPosition.y + (isAntisense ? -1 : 1) * CELL_WIDTH,
+          newSugarPosition.y + (isAntisense ? -1 : 1) * SnakeLayoutCellWidth,
         ),
         snakeLayoutNode.base,
       );
@@ -1476,7 +1517,6 @@ export class DrawingEntitiesManager {
   }
 
   public applySnakeLayout(
-    canvasWidth: number,
     isSnakeMode: boolean,
     needRedrawBonds = true,
     needRepositionMonomers = true,
@@ -1494,9 +1534,23 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const numberOfCellsInRow = Math.floor(
-        (canvasWidth - CELL_WIDTH) / CELL_WIDTH,
+      const editor = CoreEditor.provideEditorInstance();
+      const canvasWidth = editor.canvas.width.baseVal.value;
+
+      const lineLengthFromSettings =
+        SettingsManager.editorLineLength['snake-layout-mode'];
+      const lineLengthFromCanvasWidth = Math.floor(
+        (canvasWidth - SnakeLayoutCellWidth) / SnakeLayoutCellWidth,
       );
+      const numberOfCellsInRow =
+        lineLengthFromSettings || lineLengthFromCanvasWidth;
+
+      if (lineLengthFromSettings === 0) {
+        SettingsManager.editorLineLength = {
+          'snake-layout-mode': lineLengthFromCanvasWidth,
+        };
+      }
+
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
         x: MONOMER_START_X_POSITION,
@@ -1547,7 +1601,8 @@ export class DrawingEntitiesManager {
                     : 0),
               )
             : new Vec2(
-                lastPosition.x + (isFirstNodeOverall ? 0 : CELL_WIDTH),
+                lastPosition.x +
+                  (isFirstNodeOverall ? 0 : SnakeLayoutCellWidth),
                 lastPosition.y,
               );
 
@@ -1619,7 +1674,7 @@ export class DrawingEntitiesManager {
                   antisenseNode,
                   new Vec2(
                     newSenseNodePosition.x,
-                    newSenseNodePosition.y + CELL_WIDTH * 3,
+                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                   ),
                   rearrangedMonomersSet,
                   needRepositionMonomers,
@@ -1633,7 +1688,7 @@ export class DrawingEntitiesManager {
                   antisenseNode,
                   new Vec2(
                     newSenseNodePosition.x,
-                    newSenseNodePosition.y + CELL_WIDTH * 3,
+                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                   ),
                   rearrangedMonomersSet,
                   needRepositionMonomers,
@@ -1654,7 +1709,6 @@ export class DrawingEntitiesManager {
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
-
       this.snakeLayoutMatrix = snakeLayoutMatrix;
 
       command.merge(
@@ -1720,11 +1774,11 @@ export class DrawingEntitiesManager {
     lastPosition: Vec2,
     height: number,
     canvasWidth: number,
-    width = CELL_WIDTH,
+    width = SnakeLayoutCellWidth,
     restOfRowsWithAntisense: number,
   ) {
     const monomerOccupiedWidth =
-      lastPosition.x + width + DISTANCE_FROM_RIGHT + CELL_WIDTH / 2;
+      lastPosition.x + width + DISTANCE_FROM_RIGHT + SnakeLayoutCellWidth / 2;
     const isMonomerFitCanvas = monomerOccupiedWidth < canvasWidth;
 
     if (!isMonomerFitCanvas) {
@@ -1774,6 +1828,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.functionalGroups = new Pool();
     this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
     this.micromoleculesHiddenEntities.frags = new Pool();
+    this.micromoleculesHiddenEntities.rxnArrows = new Pool();
+    this.micromoleculesHiddenEntities.rxnPluses = new Pool();
+    this.micromoleculesHiddenEntities.multitailArrows = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {
@@ -1871,6 +1928,7 @@ export class DrawingEntitiesManager {
         bond.type,
         bond.stereo,
         bond.bondIdInMicroMode,
+        bond.cip,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -1896,11 +1954,137 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
     });
 
+    this.rxnArrows.forEach((rxnArrow) => {
+      const rxnArrowAddCommand = targetDrawingEntitiesManager.addRxnArrow(
+        rxnArrow.type,
+        rxnArrow.startEndPosition,
+        rxnArrow.height,
+      );
+
+      const addedRxnArrow = rxnArrowAddCommand.operations[0]
+        .rxnArrow as RxnArrow;
+
+      command.merge(rxnArrowAddCommand);
+      mergedDrawingEntities.rxnArrows.set(addedRxnArrow.id, addedRxnArrow);
+    });
+
+    this.multitailArrows.forEach((multitailArrow) => {
+      const arrowAddCommand = targetDrawingEntitiesManager.addMultitailArrow(
+        multitailArrow.toKetNode(),
+      );
+
+      const addedArrow = arrowAddCommand.operations[0]
+        .multitailArrow as MultitailArrow;
+
+      command.merge(arrowAddCommand);
+      mergedDrawingEntities.multitailArrows.set(addedArrow.id, addedArrow);
+    });
+
+    this.rxnPluses.forEach((rxnPlus) => {
+      const plusAddCommand = targetDrawingEntitiesManager.addRxnPlus(
+        rxnPlus.position,
+      );
+
+      const addedPlus = plusAddCommand.operations[0].rxnPlus as RxnPlus;
+
+      command.merge(plusAddCommand);
+      mergedDrawingEntities.rxnPluses.set(addedPlus.id, addedPlus);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
 
     return { command, mergedDrawingEntities };
+  }
+
+  public filterSelection() {
+    const filteredDrawingEntitiesManager = new DrawingEntitiesManager();
+
+    this.selectedEntities.forEach(([, entity]) => {
+      if (entity instanceof BaseMonomer) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomerItem,
+          entity.position,
+          entity,
+        );
+      } else if (entity instanceof Atom) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomer.monomerItem,
+          entity.monomer.position,
+          entity.monomer,
+        );
+      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
+        const firstAttachmentPoint =
+          entity.firstMonomer.getAttachmentPointByBond(entity);
+        const secondAttachmentPoint =
+          entity.secondMonomer?.getAttachmentPointByBond(entity);
+        if (
+          firstAttachmentPoint &&
+          secondAttachmentPoint &&
+          entity.firstMonomer.selected &&
+          entity.secondMonomer?.selected
+        ) {
+          filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+            entity.firstMonomer,
+            entity.secondMonomer,
+            firstAttachmentPoint,
+            secondAttachmentPoint,
+            undefined,
+            entity,
+          );
+        }
+      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
+        filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+          entity.firstMonomer,
+          entity.secondMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          entity,
+        );
+      } else if (entity instanceof MonomerToAtomBond) {
+        filteredDrawingEntitiesManager.addMonomerToAtomBondChangeModel(
+          entity.monomer,
+          entity.atom,
+          entity.monomer.getAttachmentPointByBond(
+            entity,
+          ) as AttachmentPointName,
+          entity,
+        );
+      } else if (entity instanceof Bond) {
+        filteredDrawingEntitiesManager.addBondChangeModel(
+          entity.firstAtom,
+          entity.secondAtom,
+          entity.type,
+          entity.stereo,
+          entity.bondIdInMicroMode,
+          entity,
+          entity.cip,
+        );
+      } else if (entity instanceof RxnArrow) {
+        filteredDrawingEntitiesManager.addRxnArrowModelChange(
+          entity.type,
+          entity.startEndPosition,
+          entity.height,
+          entity.initiallySelected,
+          entity,
+        );
+      } else if (entity instanceof MultitailArrow) {
+        filteredDrawingEntitiesManager.addMultitailArrowArrowModelChange(
+          entity.toKetNode(),
+          entity,
+        );
+      } else if (entity instanceof RxnPlus) {
+        filteredDrawingEntitiesManager.addRxnPlusModelChange(
+          entity.position,
+          entity.initiallySelected,
+          entity,
+        );
+      }
+    });
+
+    return filteredDrawingEntitiesManager;
   }
 
   public centerMacroStructure() {
@@ -1945,12 +2129,42 @@ export class DrawingEntitiesManager {
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
 
+  public rerenderMolecules() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.atoms.forEach((atom) => {
+      editor.renderersContainer.deleteAtom(atom);
+      editor.renderersContainer.addAtom(atom);
+    });
+
+    this.bonds.forEach((bond) => {
+      editor.renderersContainer.deleteBond(bond);
+      editor.renderersContainer.addBond(bond);
+    });
+
+    this.rxnArrows.forEach((rxnArrow) => {
+      editor.renderersContainer.deleteRxnArrow(rxnArrow);
+      editor.renderersContainer.addRxnArrow(rxnArrow);
+    });
+
+    this.multitailArrows.forEach((multitailArrow) => {
+      editor.renderersContainer.deleteMultitailArrow(multitailArrow);
+      editor.renderersContainer.addMultitailArrow(multitailArrow);
+    });
+
+    this.rxnPluses.forEach((rxnPlus) => {
+      editor.renderersContainer.deleteRxnPlus(rxnPlus);
+      editor.renderersContainer.addRxnPlus(rxnPlus);
+    });
+  }
+
   public applyMonomersSequenceLayout() {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
-    chainsCollection.rearrange();
 
+    chainsCollection.rearrange();
+    this.rerenderMolecules();
     SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
@@ -1958,6 +2172,8 @@ export class DrawingEntitiesManager {
 
   public clearCanvas() {
     const editor = CoreEditor.provideEditorInstance();
+
+    // TODO rewrite to work with base class (drawingEntity)
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -1969,6 +2185,26 @@ export class DrawingEntitiesManager {
 
     this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
+    });
+
+    this.atoms.forEach((atom) => {
+      editor.renderersContainer.deleteAtom(atom);
+    });
+
+    this.bonds.forEach((bond) => {
+      editor.renderersContainer.deleteBond(bond);
+    });
+
+    this.rxnArrows.forEach((bond) => {
+      editor.renderersContainer.deleteRxnArrow(bond);
+    });
+
+    this.multitailArrows.forEach((bond) => {
+      editor.renderersContainer.deleteMultitailArrow(bond);
+    });
+
+    this.rxnPluses.forEach((rxnPlus) => {
+      editor.renderersContainer.deleteRxnPlus(rxnPlus);
     });
 
     SequenceRenderer.clear();
@@ -1993,6 +2229,8 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
+
+    this.rerenderMolecules();
 
     this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
@@ -2036,6 +2274,7 @@ export class DrawingEntitiesManager {
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
+    editor.events.selectEntities.dispatch(drawingEntities);
     drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (
@@ -2359,6 +2598,7 @@ export class DrawingEntitiesManager {
     stereo: number,
     bondIdInMicroMode: number,
     _bond?: Bond,
+    cip?: BondCIP | null,
   ) {
     if (_bond) {
       this.bonds.set(_bond.id, _bond);
@@ -2372,6 +2612,7 @@ export class DrawingEntitiesManager {
       bondIdInMicroMode,
       type,
       stereo,
+      cip,
     );
 
     this.bonds.set(bond.id, bond);
@@ -2387,6 +2628,7 @@ export class DrawingEntitiesManager {
     type: number,
     stereo: number,
     bondIdInMicroMode: number,
+    cip?: BondCIP | null,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
@@ -2398,6 +2640,7 @@ export class DrawingEntitiesManager {
           stereo,
           bondIdInMicroMode,
           bond,
+          cip,
         ),
       (bond: Bond) => this.deleteBondChangeModel(bond),
     );
@@ -3004,9 +3247,7 @@ export class DrawingEntitiesManager {
       lastAddedMonomer = undefined;
     });
 
-    command.merge(
-      this.applySnakeLayout(editor.canvas.width.baseVal.value, true, true),
-    );
+    command.merge(this.applySnakeLayout(true, true));
 
     if (editor.mode instanceof SequenceMode) {
       command.addOperation(new ReinitializeModeOperation());
@@ -3098,6 +3339,174 @@ export class DrawingEntitiesManager {
       polymerBond.isOverlappedByMonomer =
         this.checkBondForOverlapsByMonomers(polymerBond);
     });
+  }
+
+  private deleteRxnArrowModelChange(rxnArrow: RxnArrow) {
+    this.rxnArrows.delete(rxnArrow.id);
+  }
+
+  private addRxnArrowModelChange(
+    type: RxnArrowMode,
+    position: [Vec2, Vec2],
+    height?: number,
+    initiallySelected?: initiallySelectedType,
+    _arrow?: RxnArrow,
+  ) {
+    if (_arrow) {
+      this.rxnArrows.set(_arrow.id, _arrow);
+
+      return _arrow;
+    }
+
+    const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
+
+    this.rxnArrows.set(rxnArrow.id, rxnArrow);
+
+    return rxnArrow;
+  }
+
+  public addRxnArrow(
+    type: RxnArrowMode,
+    position: [Vec2, Vec2],
+    height?: number,
+    initiallySelected?: initiallySelectedType,
+  ) {
+    const command = new Command();
+    const operation = new RxnArrowAddOperation(
+      this.addRxnArrowModelChange.bind(
+        this,
+        type,
+        position,
+        height,
+        initiallySelected,
+      ),
+      this.deleteRxnArrowModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteRxnArrow(rxnArrow: RxnArrow) {
+    const command = new Command();
+    const operation = new RxnArrowDeleteOperation(
+      rxnArrow,
+      this.deleteRxnArrowModelChange.bind(this),
+      this.addRxnArrowModelChange.bind(
+        this,
+        rxnArrow.type,
+        rxnArrow.startEndPosition,
+        rxnArrow.height,
+        rxnArrow.initiallySelected,
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  private deleteMultitailArrowModelChange(multitailArrow: MultitailArrow) {
+    this.multitailArrows.delete(multitailArrow.id);
+  }
+
+  private addMultitailArrowArrowModelChange(
+    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    _arrow?: MultitailArrow,
+  ) {
+    if (_arrow) {
+      this.multitailArrows.set(_arrow.id, _arrow);
+
+      return _arrow;
+    }
+
+    const multitailArrow = MultitailArrow.fromKet(multitailArrowKetNode);
+
+    this.multitailArrows.set(multitailArrow.id, multitailArrow);
+
+    return multitailArrow;
+  }
+
+  public addMultitailArrow(
+    multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+  ) {
+    const command = new Command();
+    const operation = new MultitailArrowAddOperation(
+      this.addMultitailArrowArrowModelChange.bind(this, multitailArrowKetNode),
+      this.deleteMultitailArrowModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteMultitailArrow(multitailArrow: MultitailArrow) {
+    const command = new Command();
+    const operation = new MultitailArrowDeleteOperation(
+      multitailArrow,
+      this.deleteMultitailArrowModelChange.bind(this),
+      this.addMultitailArrowArrowModelChange.bind(
+        this,
+        multitailArrow.toKetNode(),
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  private deleteRxnPlusModelChange(rxnPlus: RxnPlus) {
+    this.rxnPluses.delete(rxnPlus.id);
+  }
+
+  private addRxnPlusModelChange(
+    position: Vec2,
+    initiallySelected?: initiallySelectedType,
+    _rxnPlus?: RxnPlus,
+  ) {
+    if (_rxnPlus) {
+      this.rxnPluses.set(_rxnPlus.id, _rxnPlus);
+
+      return _rxnPlus;
+    }
+
+    const rxnPlus = new RxnPlus(position, initiallySelected);
+
+    this.rxnPluses.set(rxnPlus.id, rxnPlus);
+
+    return rxnPlus;
+  }
+
+  public addRxnPlus(position: Vec2, initiallySelected?: initiallySelectedType) {
+    const command = new Command();
+    const operation = new RxnPlusAddOperation(
+      this.addRxnPlusModelChange.bind(this, position, initiallySelected),
+      this.deleteRxnPlusModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteRxnPlus(rxnPlus: RxnPlus) {
+    const command = new Command();
+    const operation = new RxnPlusDeleteOperation(
+      rxnPlus,
+      this.deleteRxnPlusModelChange.bind(this),
+      this.addRxnPlusModelChange.bind(
+        this,
+        rxnPlus.position,
+        rxnPlus.initiallySelected,
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
   }
 }
 

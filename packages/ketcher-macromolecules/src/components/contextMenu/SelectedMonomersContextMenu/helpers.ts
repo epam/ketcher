@@ -1,13 +1,18 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  BaseSequenceItemRenderer,
+  CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
   KetAmbiguousMonomerTemplateSubType,
+  Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
+  getAminoAcidsToModify,
+  canModifyAminoAcid,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -123,4 +128,134 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
       (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
     );
   });
+};
+
+export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =
+  'aminoAcidModification-';
+
+const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
+
+export const getModifyAminoAcidsMenuItems = (
+  selectedMonomers: BaseMonomer[],
+) => {
+  const modificationsForSelection = new Set<string>();
+  const modificationTypesDisabledByAttachmentPoints = new Set<string>();
+  const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
+  const editor = CoreEditor.provideEditorInstance();
+
+  selectedMonomers.forEach((selectedMonomer) => {
+    const monomerNaturalAnalogCode =
+      selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
+
+    if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
+      return;
+    }
+
+    if (!naturalAnalogueToSelectedMonomers.has(monomerNaturalAnalogCode)) {
+      naturalAnalogueToSelectedMonomers.set(monomerNaturalAnalogCode, []);
+    }
+
+    naturalAnalogueToSelectedMonomers
+      .get(monomerNaturalAnalogCode)
+      ?.push(selectedMonomer);
+  });
+
+  editor?.monomersLibrary.forEach((monomerLibraryItem) => {
+    const monomersWithSameNaturalAnalogCode =
+      naturalAnalogueToSelectedMonomers.get(
+        monomerLibraryItem.props?.MonomerNaturalAnalogCode,
+      );
+
+    if (!monomerLibraryItem.props || !monomersWithSameNaturalAnalogCode) {
+      return;
+    }
+
+    const modificationType = monomerLibraryItem.props.modificationType;
+
+    if (!modificationType) {
+      return;
+    }
+
+    // If modification does not have R1 or R2 attachment points to persist connection
+    if (
+      monomersWithSameNaturalAnalogCode.some(
+        (monomer: BaseMonomer) =>
+          monomer.label !== monomerLibraryItem.label &&
+          !canModifyAminoAcid(monomer, monomerLibraryItem),
+      )
+    ) {
+      modificationTypesDisabledByAttachmentPoints.add(modificationType);
+
+      return;
+    }
+
+    if (
+      monomersWithSameNaturalAnalogCode.every(
+        (monomer) => monomer.label === monomerLibraryItem.label,
+      )
+    ) {
+      return;
+    }
+
+    modificationsForSelection.add(modificationType);
+  });
+
+  const menuItems = [...modificationsForSelection.values()]
+    .filter(
+      (modificationType) =>
+        !modificationTypesDisabledByAttachmentPoints.has(modificationType),
+    )
+    .map((modificationType) => {
+      const aminoAcidsToModify = getAminoAcidsToModify(
+        selectedMonomers,
+        modificationType,
+        editor.monomersLibrary,
+      );
+
+      return {
+        name: `${AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX}${modificationType}`,
+        title: modificationType,
+        onMouseOver: () => {
+          editor.transientDrawingView.showModifyAminoAcidsView({
+            monomersToModify: [...aminoAcidsToModify.keys()],
+          });
+          editor.transientDrawingView.update();
+        },
+        onMouseOut: () => {
+          editor.transientDrawingView.hideModifyAminoAcidsView();
+          editor.transientDrawingView.update();
+        },
+      };
+    });
+
+  menuItems.sort((a, b) => {
+    const aTitle = a.title.toLowerCase();
+    const bTitle = b.title.toLowerCase();
+    const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
+
+    if (aTitle === naturalType) return -1;
+    if (bTitle === naturalType) return 1;
+
+    return aTitle.localeCompare(bTitle);
+  });
+
+  return menuItems;
+};
+
+export const getMonomersForAminoAcidModification = (
+  selectedMonomers: BaseMonomer[],
+  contextMenuEvent?,
+) => {
+  const clickedSequenceItemRenderer: BaseSequenceItemRenderer | undefined =
+    contextMenuEvent?.target?.__data__;
+  const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
+  const monomersForAminoAcidModification = (
+    selectedMonomers.length
+      ? selectedMonomers
+      : clickedMonomer
+      ? [clickedMonomer]
+      : []
+  ).filter((monomer) => monomer instanceof Peptide);
+
+  return monomersForAminoAcidModification;
 };

@@ -3,37 +3,30 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  selectRing,
-  RingButton,
-  addMonomersToFavorites,
   takeMonomerLibraryScreenshot,
   delay,
-  openLayoutModeMenu,
-  clickOnBond,
   BondType,
-  selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectSequenceLayoutModeTool,
-  MonomerType,
   takeElementScreenshot,
   waitForMonomerPreview,
   copyContentToClipboard,
 } from '@utils';
-import { waitForPageInit } from '@utils/common';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  goToFavoritesTab,
-  goToPeptidesTab,
-} from '@utils/macromolecules/library';
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  openLayoutModeMenu,
+} from '@utils/canvas/tools/helpers';
+import { getAtomByIndex } from '@utils/canvas/atoms';
+import { waitForPageInit } from '@utils/common';
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -43,50 +36,42 @@ import {
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
-  pressSaveButton,
-  selectBaseSlot,
-} from '@utils/macromolecules/rnaBuilder';
-import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils/keyboard/index';
 import { Bases } from '@constants/monomers/Bases';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { Sugars } from '@constants/monomers/Sugars';
+import { getBondByIndex } from '@utils/canvas/bonds';
 
 let page: Page;
-
-async function setRotationStep(page: Page, value: string) {
-  await page.getByTestId('settings-button').click();
-  await page.getByTestId('rotationStep-input').click();
-  await page.getByTestId('rotationStep-input').fill(value);
-  await page.getByTestId('OK').click();
-}
 
 test.describe('Ketcher bugs in 3.1.0', () => {
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -128,8 +113,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
       page,
+      'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -194,14 +179,15 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Switch to Macro mode
      * 5. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
       page,
+      'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
     );
-    await clickOnAtom(page, 'C', 4, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 4);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -229,12 +215,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.[dR](A+C+G+U)P.R(A)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await getMonomerLocator(page, {
-      monomerAlias: 'R',
-      monomerType: MonomerType.Sugar,
-    })
-      .first()
-      .click({ button: 'right', force: true });
+    const sugarR = getMonomerLocator(page, Sugars.R).first();
+
+    await ContextMenu(page, sugarR).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -252,9 +235,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Favorites tab
      * 4. Take a screenshot
      */
-    await goToPeptidesTab(page);
-    await addMonomersToFavorites(page, [Peptides.A, Peptides.C]);
-    await goToFavoritesTab(page);
+    await Library(page).switchToPeptidesTab();
+    await Library(page).addMonomersToFavorites([Peptides.A, Peptides.C]);
+    await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -267,18 +250,17 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 1. Toggle to Molecules mode
      * 2. Put three Benzene rings on the canvas
      * 3. Change any parameter at Settings (Rotation Step in my case)
-     * 4. Press Apply button
-     * 5. Press Undo button
-     * 6. Take a screenshot
+     * 4. Press Undo button
+     * 5. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
-    await selectRing(RingButton.Benzene, page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);
-    await setRotationStep(page, '20');
+    await setSettingsOption(page, GeneralSetting.RotationStep, '20');
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -341,12 +323,13 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Right click on the bond
      * 3. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
       page,
+      'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
-    await clickOnBond(page, BondType.SINGLE, 2, 'right');
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -361,14 +344,17 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
-    await goToPeptidesTab(page);
-    await page.getByTestId(Peptides.D_OAla.testId).hover();
+    await Library(page).switchToPeptidesTab();
+    await Library(page).hoverMonomer(Peptides.D_OAla);
     await waitForMonomerPreview(page);
-    await takeElementScreenshot(page, 'polymer-library-preview');
+    await takeElementScreenshot(
+      page,
+      page.getByTestId('polymer-library-preview'),
+    );
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {
@@ -388,11 +374,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 6. Take a screenshot
      */
     await selectFlexLayoutModeTool(page);
-    await goToPeptidesTab(page);
-    await page.getByTestId(Peptides.O.testId).hover();
+    await Library(page).switchToPeptidesTab();
+    await Library(page).hoverMonomer(Peptides.O);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
-    await page.getByTestId(Peptides.U.testId).hover();
+    await Library(page).hoverMonomer(Peptides.U);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -418,6 +404,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       await keyboardPressOnCanvas(page, 'ArrowUp');
     }
     await page.keyboard.up('Shift');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -445,8 +432,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/peptides-with-long-bond.ket',
       page,
+      'KET/Bugs/peptides-with-long-bond.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -518,7 +505,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     for (let i = 0; i < 2; i++) {
       await keyboardPressOnCanvas(page, 'ArrowLeft');
     }
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
     await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -646,9 +633,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const symbolN = getSymbolLocator(page, { symbolAlias: 'N' }).first();
     await symbolN.click();
     await modifyInRnaBuilder(page, symbolN);
-    await selectBaseSlot(page);
-    await page.getByTestId(Bases._4ime6A.testId).click();
-    await pressSaveButton(page);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Bases._4ime6A);
+    await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -679,7 +666,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -705,8 +692,8 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const firstMonomer = getMonomerLocator(page, Peptides.F).first();
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Bugs/structure-in-snake-mode.ket',
       page,
+      'KET/Bugs/structure-in-snake-mode.ket',
     );
     await moveMonomer(page, firstMonomer, 200, 400);
     await takeEditorScreenshot(page, {

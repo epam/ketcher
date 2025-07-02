@@ -1,11 +1,6 @@
 import { Page } from '@playwright/test';
-import {
-  selectAtomInToolbar,
-  pressButton,
-  AtomButton,
-  clickOnAtom,
-  resetCurrentTool,
-} from '@utils';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { pressButton } from '@utils';
 
 export async function selectAtomLabel(
   page: Page,
@@ -138,167 +133,14 @@ export async function selectExactChange(
   }
 }
 
-export async function selectThreeAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  atom1: string,
-  atom2: string,
-  atom3: string,
-  button: string,
-) {
-  await selectAtomInToolbar(AtomButton.Periodic, page);
-  await page.getByText(selectlisting, { exact: true }).click();
-  await pressButton(page, atom1);
-  await pressButton(page, atom2);
-  await pressButton(page, atom3);
-  await page.getByRole('button', { name: button, exact: true }).click();
-}
-
 export async function selectElementFromExtendedTable(
   page: Page,
   element: string,
   button: string,
 ) {
-  await selectAtomInToolbar(AtomButton.Extended, page);
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+  await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
   await page.getByRole('button', { name: button, exact: true }).click();
-}
-
-export async function selectRingBondCountOption(
-  page: Page,
-  atomIndex: number,
-  optionTestId: string,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring bond count').click();
-  await page
-    .getByRole('menuitem', { name: 'Ring bond count', exact: true })
-    .getByTestId(optionTestId)
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectHCountOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('H count', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(2) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectSubstitutionCountOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Substitution count', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(3) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectUnsaturatedOption(
-  page: Page,
-  atomIndex: number,
-  selectedOption: string,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Unsaturated$/ })
-    .click();
-
-  await page.getByTestId(`${selectedOption}-option`).click();
-  await resetCurrentTool(page);
-}
-
-export async function selectImplicitHCountOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Implicit H count', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(5) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectAromaticityOption(
-  page: Page,
-  atomIndex: number,
-  optionName: string,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Aromaticity', { exact: true }).click();
-  await page.getByText(optionName, { exact: true }).click();
-  await resetCurrentTool(page);
-}
-
-export async function selectRingMembershipOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring membership', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(7) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectRingSizeOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Ring size', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(8) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
-}
-
-export async function selectConnectivityOption(
-  page: Page,
-  atomIndex: number,
-  optionIndex: number,
-) {
-  await clickOnAtom(page, 'C', atomIndex, 'right');
-  await page.getByText('Query properties').click();
-  await page.getByText('Connectivity', { exact: true }).click();
-  await page
-    .locator(
-      `div:nth-child(9) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(${optionIndex})`,
-    )
-    .click();
-  await resetCurrentTool(page);
 }

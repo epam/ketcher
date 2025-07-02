@@ -1,28 +1,12 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  LeftPanelButton,
-  Monomer,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  pressButton,
-  selectLeftPanelButton,
 } from '@utils';
-import {
-  MonomerLocationTabs,
-  goToMonomerLocationTab,
-} from '@utils/macromolecules/library';
-import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -106,140 +90,8 @@ export enum TemplateLibrary {
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
   Arabinofuranose = 'Arabinofuranose',
-}
-
-export enum RnaPartDropDown {
-  Sugars = 'summary-Sugars',
-  Bases = 'summary-Bases',
-  Phosphates = 'summary-Phosphates',
-}
-
-const monomerTabMapping: Partial<Record<MonomerLocationTabs, Monomer[]>> = {
-  [MonomerLocationTabs.BASES]: Object.values(Bases),
-  [MonomerLocationTabs.CHEM]: Object.values(Chem),
-  [MonomerLocationTabs.NUCLEOTIDES]: Object.values(Nucleotides),
-  [MonomerLocationTabs.PHOSPHATES]: Object.values(Phosphates),
-  [MonomerLocationTabs.PEPTIDES]: Object.values(Peptides),
-  [MonomerLocationTabs.PRESETS]: Object.values(Presets),
-  [MonomerLocationTabs.SUGARS]: Object.values(Sugars),
-};
-
-const getMonomerLocationTabNameBymonomer = (
-  monomer: Monomer,
-): MonomerLocationTabs => {
-  for (const [tabName, tabmonomers] of Object.entries(monomerTabMapping)) {
-    if (tabmonomers.includes(monomer)) {
-      return tabName as MonomerLocationTabs;
-    }
-  }
-
-  throw new Error(
-    `MonomerLocationTab is not defined for monomer ${monomer.testId}`,
-  );
-};
-
-/**
- * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
- * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
- */
-export async function selectMonomer(
-  page: Page,
-  monomer: Monomer,
-  selectOnFavoritesTab = false,
-) {
-  const tab = selectOnFavoritesTab
-    ? MonomerLocationTabs.Favorites
-    : getMonomerLocationTabNameBymonomer(monomer);
-
-  await goToMonomerLocationTab(page, tab);
-  await page.getByTestId(monomer.testId).click();
-}
-
-/**
- * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
- */
-export async function selectCustomPreset(page: Page, presetTestId: string) {
-  await goToMonomerLocationTab(page, MonomerLocationTabs.PRESETS);
-  await page.getByTestId(presetTestId).click();
-}
-
-/**
- * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
- * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
- */
-export async function addMonomerToFavorites(page: Page, monomer: Monomer) {
-  const tab = getMonomerLocationTabNameBymonomer(monomer);
-  await goToMonomerLocationTab(page, tab);
-
-  const favoritesStar = page.getByTestId(monomer.testId).getByText('★');
-  const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
-    'visible',
-  );
-
-  if (!isFavorite) {
-    await favoritesStar.click();
-  }
-}
-
-/**
- * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
- */
-export async function removeMonomerFromFavorites(
-  page: Page,
-  monomer: Monomer,
-  removeFromFavoritesTab = true,
-) {
-  const tab = removeFromFavoritesTab
-    ? MonomerLocationTabs.Favorites
-    : getMonomerLocationTabNameBymonomer(monomer);
-
-  await goToMonomerLocationTab(page, tab);
-
-  const favoritesStar = page.getByTestId(monomer.testId).getByText('★');
-  const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
-    'visible',
-  );
-
-  if (isFavorite) {
-    await favoritesStar.click();
-  }
-}
-
-/**
- * Selects multiple monomers by iterating through the provided list of monomers.
- * For each monomer, it navigates to the corresponding tab and clicks on the monomer.
- * If a monomer belongs to an RNA-specific accordion group, it expands the accordion item.
- */
-export async function selectMonomers(page: Page, monomers: Array<Monomer>) {
-  for (const monomer of monomers) {
-    await selectMonomer(page, monomer);
-  }
-}
-
-/**
- * Adds multiple monomers to favorites by iterating through the provided list of monomers.
- * For each monomer, it navigates to the corresponding tab, expands the accordion (if needed),
- * and clicks on the monomer's favorite icon.
- */
-export async function addMonomersToFavorites(
-  page: Page,
-  monomers: Array<Monomer>,
-) {
-  for (const monomer of monomers) {
-    await addMonomerToFavorites(page, monomer);
-  }
-}
-
-/**
- * Removes multiple monomers from favorites by iterating through the provided list of monomers.
- */
-export async function removeMonomersFromFavorites(
-  page: Page,
-  monomers: Array<Monomer>,
-) {
-  for (const monomer of monomers) {
-    await removeMonomerFromFavorites(page, monomer);
-  }
+  PHEDPhenylalanine = 'PHE-D-Phenylalanine',
+  PHELPhenylalanine = 'PHE-L-Phenylalanine',
 }
 
 export async function selectSaltsAndSolvents(
@@ -247,7 +99,7 @@ export async function selectSaltsAndSolvents(
   page: Page,
 ) {
   // const amountOfSaltsAndSolvents = 124;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   const saltsButton = page
     .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
@@ -273,7 +125,7 @@ export async function selectFunctionalGroups(
   page: Page,
 ) {
   const amountOfFunctionalGroups = 62;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
@@ -291,7 +143,7 @@ export async function selectFunctionalGroup(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(functionalGroupName, page);
 }
@@ -343,22 +195,11 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   itemToChoose: TemplateLibrary,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);
   await clickInTheMiddleOfTheScreen(page);
-}
-/*
-  Function for selecting tool from left panel, click right mouse in the middle of canvas and take
-  screenshot
-  */
-export async function selectLeftPanelToolClick(
-  leftbutton: LeftPanelButton,
-  page: Page,
-) {
-  await selectLeftPanelButton(leftbutton, page);
-  await clickInTheMiddleOfTheScreen(page, 'right');
 }
 
 const COORDS_CLICK = {
@@ -404,19 +245,4 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
-}
-
-export async function selectAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  elements: ElementLabel[],
-) {
-  await page.getByTestId('period-table').click();
-  await page.getByText(selectlisting, { exact: true }).click();
-
-  for (const element of elements) {
-    await page.getByTestId(`${element}-button`).click();
-  }
-
-  await page.getByTestId('OK').click();
 }

@@ -1,12 +1,12 @@
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   BondWidth,
   BondSpace,
 } from 'application/render/renderers/BondPathRenderer/constants';
 
 class TripleBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     const topLineStartPosition = startPosition.addScaled(
@@ -26,7 +26,7 @@ class TripleBondPathRenderer {
       -BondSpace,
     );
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: `
           M${topLineStartPosition.x},${topLineStartPosition.y}
           L${topLineEndPosition.x},${topLineEndPosition.y}

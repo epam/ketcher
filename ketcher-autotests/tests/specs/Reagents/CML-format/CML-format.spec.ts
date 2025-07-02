@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -8,18 +8,13 @@ import {
   pasteFromClipboardAndAddToCanvas,
   moveMouseAway,
 } from '@utils';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-
-async function saveFileAsCmlFormat(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'CML' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents CML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,8 +29,8 @@ test.describe('Reagents CML format', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -53,8 +48,8 @@ test.describe('Reagents CML format', () => {
     results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
     */
     await openFileAndAddToCanvas(
-      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       page,
+      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -67,10 +62,13 @@ test.describe('Reagents CML format', () => {
     results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
     */
     await openFileAndAddToCanvas(
-      'CML/reagents-below-and-above-arrow.cml',
       page,
+      'CML/reagents-below-and-above-arrow.cml',
     );
-    await saveFileAsCmlFormat(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CML,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });

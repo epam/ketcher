@@ -7,23 +7,23 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
-  selectFlexLayoutModeTool,
   MonomerType,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
-  selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
@@ -31,6 +31,10 @@ import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { Chem } from '@constants/monomers/Chem';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -39,12 +43,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSnakeLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -90,7 +94,7 @@ async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
     );
   }
   if (polymer.KETFile) {
-    await openFileAndAddToCanvasMacro(polymer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, polymer.KETFile);
   }
 }
 
@@ -636,14 +640,6 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
   await resetZoomLevelToDefault(page);
 });
 
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorOptions: MonomerLocatorOptions,
-) {
-  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
-  await canvasLocator.click({ button: 'right', force: true });
-}
-
 const longChain: IMonomer = {
   id: 1,
   monomerDescription: '',
@@ -682,11 +678,10 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   }
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-  await createAntisenseStrandOption.click();
+  const monomer = getMonomerLocator(page, chain.monomerLocatorOptions).first();
+  await ContextMenu(page, monomer).click(
+    MonomerOption.CreateAntisenseRNAStrand,
+  );
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

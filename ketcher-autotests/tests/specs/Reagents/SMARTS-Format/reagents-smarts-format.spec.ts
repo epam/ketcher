@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -7,25 +7,13 @@ import {
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function previewSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,8 +30,8 @@ test.describe('Reagents SMARTS format', () => {
     format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -52,7 +40,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -69,8 +60,8 @@ test.describe('Reagents SMARTS format', () => {
     )
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
 
     await verifyFileExport(
@@ -79,7 +70,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -102,7 +96,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
     */
-    await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/expected-smarts-below.smarts');
     await takeEditorScreenshot(page);
   });
 
@@ -113,7 +107,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4706
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
-    await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/not-list-atoms-smarts.smarts');
     await takeEditorScreenshot(page);
   });
 });
@@ -129,8 +123,8 @@ test.describe('Reagents SMARTS format', () => {
     Description: File saved in format (e.g. "ketcher.smarts")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -139,6 +133,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await saveSmarts(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
+    await SaveStructureDialog(page).save();
   });
 });

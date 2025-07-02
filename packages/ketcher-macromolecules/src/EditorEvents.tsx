@@ -18,6 +18,7 @@ import {
   hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
+  selectIsContextMenuActive,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -56,6 +57,7 @@ const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 export const EditorEvents = () => {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
+  const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
@@ -118,8 +120,13 @@ export const EditorEvents = () => {
     };
   }, [editor]);
 
+  /*
+   * Redux freezes payload object which lead to the issues on changing MonomerItem properties after showing preview
+   * TODO: Ideally perform a deep clone but now it leads to the error when cloning Struct class
+   */
   const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
+    (payload) =>
+      dispatch(showPreview({ ...payload, monomer: { ...payload.monomer } })),
     [dispatch],
   );
 
@@ -181,6 +188,16 @@ export const EditorEvents = () => {
   const handleOpenPreview = useCallback(
     (e) => {
       if (e.buttons === 1) {
+        return;
+      }
+
+      if (e.buttons === 2) {
+        return;
+      }
+
+      if (isContextMenuActive) {
+        e.preventDefault();
+        e.stopPropagation();
         return;
       }
 
@@ -294,7 +311,7 @@ export const EditorEvents = () => {
 
       debouncedShowPreview(monomerPreviewData);
     },
-    [handleOpenBondPreview, debouncedShowPreview, presets],
+    [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
 
   const handleClosePreview = useCallback(() => {

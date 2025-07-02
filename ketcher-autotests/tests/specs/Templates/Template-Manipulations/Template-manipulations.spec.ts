@@ -2,23 +2,13 @@
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
-  selectRing,
-  RingButton,
   dragMouseTo,
   pressButton,
-  drawBenzeneRing,
   clickOnAtom,
   moveOnAtom,
   waitForPageInit,
-  resetCurrentTool,
   openFileAndAddToCanvas,
-  drawCyclopentadieneRing,
-  drawCyclohexaneRing,
-  selectLeftPanelButton,
-  LeftPanelButton,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
   openEditDialogForTemplate,
@@ -29,43 +19,50 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
   clickOnTheCanvas,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   selectUserTemplate,
   FunctionalGroups,
   selectFunctionalGroups,
-  selectAtom,
-  openDropdown,
-  selectDropdownTool,
-  getCoordinatesOfTheMiddleOfTheScreen,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  selectRingButton,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
   waitForElementInCanvas,
   pasteFromClipboardAndAddToCanvas,
+  getCachedBodyCenter,
+  RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  selectZoomOutTool,
-  topRightToolbarLocators,
-} from '@tests/pages/common/TopRightToolbar';
+  BottomToolbar,
+  drawBenzeneRing,
+  drawCyclohexaneRing,
+  drawCyclopentadieneRing,
+  openStructureLibrary,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -95,8 +92,10 @@ test.describe('Template Manupulations', () => {
     Choose any element from the left panel or Periodic Table and click on any atom of the created structure.
     */
     const anyAtom = 0;
+    const atomToolbar = RightToolbar(page);
+
     await drawBenzeneRing(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -113,7 +112,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -127,8 +125,8 @@ test.describe('Template Manupulations', () => {
     */
     const anyAtom = 0;
     await drawBenzeneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -145,7 +143,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -157,7 +154,7 @@ test.describe('Template Manupulations', () => {
     With the template select any bond of the created structure, hold and drag "left-right".
     */
     const shift = 10;
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -173,7 +170,7 @@ test.describe('Template Manupulations', () => {
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    await selectRing(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -193,9 +190,13 @@ test.describe('Template Manupulations', () => {
     Select any part of the structure (or whole structure) and click the 'Delete' keyboard button.
     with Ctrl+A hot key select all ojects on canvas and click the 'Delete' keyboard button.
     */
-      await selectAtomInToolbar(AtomButton.Fluorine, page);
+      const atomToolbar = RightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheScreen(page);
-      await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Fragment,
+      );
       await page.getByTestId('canvas').getByText('F').first().click();
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
@@ -218,21 +219,24 @@ test.describe('Template Manupulations', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
+    const atomToolbar = RightToolbar(page);
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
-    await selectAtomInToolbar(AtomButton.Iodine, page);
+    await LeftToolbar(page).chain();
+    await atomToolbar.clickAtom(Atom.Iodine);
     await clickOnAtom(page, 'C', anyAtom);
 
     await pasteFromClipboardAndAddToCanvas(
       page,
       'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
     );
-    await clickInTheMiddleOfTheScreen(page);
-    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
+    await selectRingButton(page, RingButton.Benzene);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -245,18 +249,22 @@ test.describe('Template Manupulations', () => {
     With the 'Erase' tool press, hold and drag around (or click) any atom/bond/part of structure/whole structure.
     Select the 'Fragment Selection' tool, click the structure, and then select 'Erase' tool and click the template structure.
     */
-    await selectAtom(AtomButton.Sulfur, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('S').first().click();
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
-    await selectAtom(AtomButton.Sulfur, page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('S').first().click();
-    await selectClearCanvasTool(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await takeEditorScreenshot(page);
   });
@@ -267,19 +275,24 @@ test.describe('Template Manupulations', () => {
     Description:
     With Selection Tool (Rectangle) click any atom of the template structure and type any correct atom symbol.
     */
-    await selectAtom(AtomButton.Sulfur, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await page.getByText('S').first().click();
-    await page.getByLabel('Primary attachment point').check();
+    const point = await getAtomByIndex(page, { label: 'S' }, 0);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+    await clickOnCanvas(page, point.x, point.y);
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
-    await page.getByText('S').first().click({
-      button: 'right',
-    });
-    await takeEditorScreenshot(page);
-    await page.getByText('Edit...').click();
+    await AttachmentPointsDialog(page).apply();
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+
+    await ContextMenu(page, point).click(MicroBondOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
     await page.getByTestId('OK').click();
@@ -295,18 +308,20 @@ test.describe('Template Manupulations', () => {
     */
     const anyAtom = 0;
     const anyAnotherAtom = 4;
+    const atomToolbar = RightToolbar(page);
+
     await drawBenzeneRing(page);
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await clickOnAtom(page, 'C', anyAnotherAtom);
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
-      await pressUndoButton(page);
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     const numberOfPressingRedo = 2;
     for (let i = 0; i < numberOfPressingRedo; i++) {
-      await pressRedoButton(page);
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -319,8 +334,10 @@ test.describe('Template Manupulations', () => {
     Select the structure and flip it vertically with the 'Vertical Flip' tool.
     */
     const anyAtom = 0;
+    const atomToolbar = RightToolbar(page);
+
     await drawBenzeneRing(page);
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
@@ -342,17 +359,17 @@ test.describe('Template Manupulations', () => {
     Click the Zoom In button several times.
     Click the Zoom Out button several times.
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    await selectZoomOutTool(page);
+    const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
+    await CommonTopRightToolbar(page).selectZoomOutTool();
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
     await clickOnTheCanvas(page, 1, 1);
-    await selectRing(RingButton.Cyclooctane, page);
+    await selectRingButton(page, RingButton.Cyclooctane);
     // eslint-disable-next-line no-magic-numbers
     await clickOnTheCanvas(page, 1, -4);
     await takePageScreenshot(page);
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).selectArrowTool();
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await zoomSelector.click();
@@ -365,12 +382,12 @@ test.describe('Template Manupulations', () => {
     Description: Click the 'Save As' button, and click the 'Save' button.
     Open the saved *.mol file and edit it in any way.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/three-templates.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-templates.mol');
     await verifyFileExport(
       page,
       'Molfiles-V2000/three-templates-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -381,12 +398,12 @@ test.describe('Template Manupulations', () => {
     Description: Click the 'Save As' button and click the 'Save' button.
     Open the saved *.rxn file and edit it in any way.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/templates-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/templates-reaction.rxn');
     await verifyFileExport(
       page,
       'Rxn-V2000/templates-reaction-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -401,7 +418,7 @@ test.describe('Template Manupulations', () => {
     */
     await drawCyclopentadieneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRing(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -415,7 +432,7 @@ test.describe('Template Manupulations', () => {
     */
     await drawBenzeneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRing(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -427,12 +444,14 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add double bond on it and atom
     Add cyclopentadiene ring to a single bond with two atoms, but one atom is connected with a single bond and another with a double bond
     */
+    const atomToolbar = RightToolbar(page);
+
     await drawCyclohexaneRing(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRing(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -444,10 +463,12 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add on it an atom
     Add cyclopentadiene ring to a single bond
     */
+    const atomToolbar = RightToolbar(page);
+
     await drawCyclohexaneRing(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
-    await selectRing(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -498,11 +519,11 @@ test.describe('Template Manupulations', () => {
     const X_DELTA_ONE = 100;
     await selectFunctionalGroups(FunctionalGroups.CONH2, page);
     await clickInTheMiddleOfTheScreen(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
+    const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
     await takeEditorScreenshot(page);
   });
@@ -525,16 +546,15 @@ test.describe('Open Ketcher', () => {
      -click with template any atom of the created benzene; 
     Clear All.
     */
-    await page.getByTestId('template-0').hover();
     await drawBenzeneRing(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await moveOnAtom(page, 'C', 1);
     await moveOnAtom(page, 'C', 0);
     await takePageScreenshot(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test('The different templates are attached to the atoms of existing benzene-2', async ({
@@ -549,15 +569,15 @@ test.describe('Open Ketcher', () => {
     */
     await drawBenzeneRing(page);
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
     await moveOnBond(page, BondType.DOUBLE, 1);
     await moveOnBond(page, BondType.DOUBLE, 0);
     await waitForElementInCanvas(page, 'A=Test');
 
     await takePageScreenshot(page);
-    await selectClearCanvasTool(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test('The different templates are attached to the atoms of existing benzene-3', async ({
@@ -584,12 +604,11 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await page.getByTestId('template-0').hover();
-    await page.getByTestId('template-0').click();
+    await BottomToolbar(page).Benzene();
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takePageScreenshot(page);
-    await page.getByTestId('template-1').click();
+    await BottomToolbar(page).Cyclopentadiene();
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takePageScreenshot(page);
@@ -606,8 +625,7 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await page.getByTestId('template-lib').hover();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await openStructureLibrary(page);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics' }).click();
     await selectUserTemplate(TemplateLibrary.Azulene, page);
@@ -631,18 +649,20 @@ test.describe('Open Ketcher', () => {
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
       const xOffsetFromCenter = 40;
-      await selectRingButton(RingButton.Benzene, page);
+      await selectRingButton(page, RingButton.Benzene);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       await takePageScreenshot(page);
 
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await selectRingButton(RingButton.Benzene, page);
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
-      await selectRingButton(RingButton.Benzene, page);
+      await selectRingButton(page, RingButton.Benzene);
       await takePageScreenshot(page);
     },
   );
@@ -656,17 +676,20 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of merging the pasted Template with another Template is displayed under the mouse cursor, and click
     */
     const xOffsetFromCenter = 40;
-    await page.getByTestId('template-lib').hover();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await openStructureLibrary(page);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics' }).click();
     await selectUserTemplate(TemplateLibrary.Naphtalene, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takePageScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takePageScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -682,11 +705,10 @@ test.describe('Open Ketcher', () => {
     Description:
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
-    await page.getByTestId('template-0').hover();
-    await page.getByTestId('template-0').click();
+    await BottomToolbar(page).Benzene();
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics' }).click();
     await selectUserTemplate(TemplateLibrary.Azulene, page);

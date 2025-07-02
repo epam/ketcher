@@ -5,22 +5,24 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -29,14 +31,14 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSequenceLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await CommonTopLeftToolbar(page).clearCanvas();
+  await selectSequenceLayoutModeTool(page);
   await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -364,6 +366,7 @@ for (const sequence of sequencesForAddingDash) {
       sequence.HELM || '',
     );
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: 4,
@@ -412,6 +415,7 @@ for (const sequence of sequencesForAddingDash) {
       sequence.HELM || '',
     );
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: 4,
@@ -464,6 +468,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
+  await resetZoomLevelToDefault(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,
@@ -524,6 +529,8 @@ test(`Case 45. Verify that when editing only one side of the sense/antisense dup
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
+  await resetZoomLevelToDefault(page);
+
   await turnSyncEditModeOff(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {

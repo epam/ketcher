@@ -8,11 +8,15 @@ import {
   waitForRender,
 } from '@utils';
 import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+  MacroBondType,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MonomerOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -20,7 +24,9 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await monomer.click();
   await dragMouseTo(x, y, page);
 }
@@ -31,8 +37,10 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await selectHandTool(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await waitForRender(page, async () => {
     await monomer.click();
   });
@@ -42,8 +50,9 @@ export async function moveMonomerOnMicro(
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
+  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await bondSelectionTool(page, MacroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];
@@ -240,13 +249,11 @@ export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseRNAStrand,
+    );
+  });
 }
 
 export async function createAntisenseStrandByButton(
@@ -267,28 +274,27 @@ export async function createAntisenseStrandByButton(
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
-  await symbolLocator.click({ button: 'right' });
-  await page.getByTestId('modify_in_rna_builder').click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbolLocator).click(
+      SequenceSymbolOption.ModifyInRNABuilder,
+    );
+  });
 }
 
 export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseDNAStrand,
+    );
+  });
 }
 
-export async function deleteHydrogenBond(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const deleteHydrogenBondOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondOption.click();
+export async function deleteHydrogenBond(page: Page, symbol: Locator) {
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbol).click(
+      SequenceSymbolOption.DeleteHydrogenBonds,
+    );
+  });
 }
 
 export async function turnSyncEditModeOn(page: Page) {

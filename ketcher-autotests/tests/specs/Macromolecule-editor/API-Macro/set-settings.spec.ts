@@ -1,15 +1,15 @@
 import { test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   takeEditorScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Set bond Thickness to 22', async ({ page }) => {
@@ -17,7 +17,7 @@ test.describe('getKet', () => {
      * Test case: #3531
      * Description: 'setSettings' method does nothing, as there are no settings for macro mode yet
      */
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await page.waitForFunction(() => window.ketcher);
 
     await page.evaluate(() => {

@@ -8,17 +8,19 @@ import {
   moveOnBond,
   BondType,
   dragMouseTo,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
-  saveToFile,
-  selectCleanTool,
-  selectLayoutTool,
+  MolFileFormat,
 } from '@utils';
-import { getMolfile } from '@utils/formats/formats';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,16 +47,16 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: The length of the bonds becomes the same
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/different-bond-length.mol',
       page,
+      'Molfiles-V2000/different-bond-length.mol',
     );
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -64,15 +66,15 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: The angles should be 60, 90 or 120°
     (all angles in each structure are equal after the clean action)
    */
-    await openFileAndAddToCanvas('Molfiles-V3000/different-angle-fr.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/different-angle-fr.mol');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -84,14 +86,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     During the Layout action structure is rotated 90° counterclockwise.
     After the Clean Up action the structure does not change.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/four-bonds.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/four-bonds.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -102,9 +104,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     left corner of the canvas.
     The structure group of structures appears undistorted.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/layout-distorted.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -114,9 +116,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After the 'Clean Up' action the structures don't change its position on the canvas.
     The group of structures is cleaned up and appear undistorted.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/layout-distorted.mol');
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -125,14 +127,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1786
     Description: After the Layout and Clean Up actions the structure features appear undistorted.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/clean-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/clean-structure.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -143,9 +145,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1787
     Description: Clean action is correct for the all selected structures.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/clean-appoints.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/clean-appoints.mol');
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -155,19 +157,19 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: Multiple Undo/Redo actions are correct after the Clean Up action.
    */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-structures.mol',
       page,
+      'Molfiles-V2000/distorted-structures.mol',
     );
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -177,14 +179,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After the Clean Up and Layout actions the structure
     with stereochemistry is appear undistorted.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/clean-stereo.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/clean-stereo.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -196,14 +198,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     R-group definition is correct.
     R-group member's properties aren't changed.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/clean-rgroups.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/clean-rgroups.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -214,14 +216,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Clean Up and Layout actions.
     S-group properties are correct after the Clean Up and Layout actions.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/clean-sgroups.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/clean-sgroups.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -232,12 +234,12 @@ test.describe('Indigo Tools - Clean Tools', () => {
     The Clean Up action is applied correctly and simultaneously
     to the whole structure with stereolabels.
    */
-    await openFileAndAddToCanvas('KET/stereolabels.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/stereolabels.ket');
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -246,14 +248,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1797
     Description: The reaction mapping is kept after the Layout and Clean Up action.
    */
-    await openFileAndAddToCanvas('Rxn-V2000/mapping-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/mapping-reaction.rxn');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await CommonTopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -262,9 +264,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1803
     Description: The Layout action is implemented for the whole canvas.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/cyclic-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/cyclic-structures.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -273,9 +275,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1805
     Description: The Layout action is implemented for the whole canvas.
    */
-    await openFileAndAddToCanvas('Molfiles-V2000/several-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/several-structures.mol');
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -285,11 +287,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: 'Clean Up' action works for the selected part.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/ditorted-chain-with-double-bond.mol',
       page,
+      'Molfiles-V2000/ditorted-chain-with-double-bond.mol',
     );
     await selectPartOfChain(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -299,11 +301,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: Clean action is correct for the selected part.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-cyclic-structure.mol',
       page,
+      'Molfiles-V2000/distorted-cyclic-structure.mol',
     );
     await selectPartOfChain(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -316,11 +318,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Non-selected part is invariable.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-r-group-structure.mol',
       page,
+      'Molfiles-V2000/distorted-r-group-structure.mol',
     );
     await selectPartOfMolecules(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -333,12 +335,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
-    await selectCleanTool(page);
+    const atomToolbar = RightToolbar(page);
+
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
+    await IndigoFunctionsToolbar(page).cleanUp();
     await moveOnBond(page, BondType.SINGLE, 0);
     await dragMouseTo(x, y, page);
-    await selectCleanTool(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
@@ -352,11 +356,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Non-selected part is invariable.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/structure-with-stereobonds.mol',
       page,
+      'Molfiles-V2000/structure-with-stereobonds.mol',
     );
     await selectPartOfMolecules(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -370,10 +374,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Clean action is correct for the whole part.
     Undo/Redo actions are correct. 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
-    await selectCleanTool(page);
-    await pressUndoButton(page);
-    await selectLayoutTool(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/big-rings.mol');
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await CommonTopLeftToolbar(page).undo();
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -387,11 +391,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     const anyRGroupLabel = 'R18';
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/distorted-r-group-structure.mol',
       page,
+      'Molfiles-V2000/distorted-r-group-structure.mol',
     );
     await page.getByText(anyRGroupLabel).click();
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -401,8 +405,8 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After Clean Up action structures are undistorted. 
     Position of the reaction does not change.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
-    await selectCleanTool(page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/distorted-reaction.rxn');
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -413,11 +417,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Non-selected part is invariable.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/several-distorted-structures.mol',
       page,
+      'Molfiles-V2000/several-distorted-structures.mol',
     );
     await selectPartOfMolecules(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -431,17 +435,15 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Distort the structures.
     Click the Layout button.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
-    await takeEditorScreenshot(page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile('Molfiles-V2000/ring-with-attachment.mol', expectedFile);
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ring-with-attachment.mol',
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
+
+    await verifyFileExport(
       page,
+      'Molfiles-V2000/ring-with-attachment.mol',
+      FileType.MOL,
+      MolFileFormat.v2000,
+      [1],
     );
-    await selectPartOfMolecules(page);
-    await selectCleanTool(page);
-    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with S-Group', async ({
@@ -451,9 +453,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-2880
     Description: The Clean Up action is implemented for the part of selected structures.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/distorted-Sgroups.mol');
     await selectPartOfMolecules(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -468,11 +470,11 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
     */
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/clean-different-properties.mol',
         page,
+        'Molfiles-V2000/clean-different-properties.mol',
       );
       await selectPartOfMolecules(page);
-      await selectCleanTool(page);
+      await IndigoFunctionsToolbar(page).cleanUp();
       await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
     },
   );

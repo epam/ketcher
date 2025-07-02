@@ -1,16 +1,18 @@
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils';
-import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Select all', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,10 +26,11 @@ test.describe('Select all', () => {
  */
 
     const offset = 100;
+    const commonLeftToolbar = CommonLeftToolbar(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await selectHandTool(page);
+    await commonLeftToolbar.selectHandTool();
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x + offset, y + offset, page);
@@ -41,7 +44,7 @@ test.describe('Select all', () => {
     */
     const offset = 100;
 
-    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, offset, offset);
@@ -55,7 +58,7 @@ test.describe('Select all', () => {
         */
     const offset = 100;
 
-    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, offset, offset);
@@ -67,10 +70,11 @@ test.describe('Select all', () => {
           Test case: EPMLSOPKET-1337(4)
           Description: All objects on the canvas are selected
         */
+    const commonLeftToolbar = CommonLeftToolbar(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await selectHandTool(page);
+    await commonLeftToolbar.selectHandTool();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });

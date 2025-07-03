@@ -42,11 +42,11 @@ import { openInfoModalWithCustomMessage } from '../shared';
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+  const state = getState();
 
   const resetToSelect =
     (force = false) =>
     async (dispatch) => {
-      const state = getState();
       const activeTool = state.actionState?.activeTool.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;

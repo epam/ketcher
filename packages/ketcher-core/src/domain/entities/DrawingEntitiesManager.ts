@@ -2530,6 +2530,12 @@ export class DrawingEntitiesManager {
   private deleteBondChangeModel(bond: Bond) {
     this.bonds.delete(bond.id);
 
+    const firstAtom = bond.firstAtom;
+    const secondAtom = bond.secondAtom;
+    [firstAtom, secondAtom].forEach((atom) => {
+      atom.deleteBond(bond.id);
+    });
+
     return bond;
   }
 

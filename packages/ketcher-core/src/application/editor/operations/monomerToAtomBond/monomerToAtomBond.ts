@@ -67,7 +67,7 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
   public invert() {
     this.addMonomerToAtomBondChangeModel(this.monomerToAtomBond);
   }
-  
+
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }

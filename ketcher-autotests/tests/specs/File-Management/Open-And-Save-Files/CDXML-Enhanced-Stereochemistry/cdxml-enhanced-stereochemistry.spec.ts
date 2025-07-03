@@ -1,6 +1,6 @@
-import { Page, test } from '@playwright/test';
-import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { test } from '@playwright/test';
+import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
+import { applyEnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -11,47 +11,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-
-const enum EnhancedStereochemistryRadio {
-  ABS,
-  CreateNewAndGroup,
-  AddToAndGroup,
-  CreateNewOrGroup,
-  AddToOrGroup,
-}
-
-interface ActionParams {
-  selectRadioButton: EnhancedStereochemistryRadio;
-  dropdownValue?: number;
-  cancelChanges?: boolean;
-}
-
-async function selectRadioButtonForNewGroup(
-  page: Page,
-  { selectRadioButton, dropdownValue = 1, cancelChanges = false }: ActionParams,
-) {
-  await LeftToolbar(page).stereochemistry();
-  switch (selectRadioButton) {
-    case EnhancedStereochemistryRadio.ABS:
-      await EnhancedStereochemistry(page).selectAbsRadio();
-      break;
-    case EnhancedStereochemistryRadio.CreateNewAndGroup:
-      await EnhancedStereochemistry(page).selectCreateNewAndGroup();
-      break;
-    case EnhancedStereochemistryRadio.AddToAndGroup:
-      await EnhancedStereochemistry(page).selectAddToAndGroup(dropdownValue);
-      break;
-    case EnhancedStereochemistryRadio.CreateNewOrGroup:
-      await EnhancedStereochemistry(page).selectCreateNewOrGroup();
-      break;
-    case EnhancedStereochemistryRadio.AddToOrGroup:
-      await EnhancedStereochemistry(page).selectAddToOrGroup(dropdownValue);
-      break;
-  }
-  await (cancelChanges
-    ? EnhancedStereochemistry(page).pressCancelButton()
-    : EnhancedStereochemistry(page).pressApplyButton());
-}
 
 test.describe('CDXML Enhanced Stereochemistry', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,7 +24,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     New 'And Group' label added to structure.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
-    await selectRadioButtonForNewGroup(page, {
+    await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
     await takeEditorScreenshot(page);
@@ -78,7 +37,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     New 'OR Group' label added to structure.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
-    await selectRadioButtonForNewGroup(page, {
+    await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
     await takeEditorScreenshot(page);
@@ -93,7 +52,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRadioButtonForNewGroup(page, {
+    await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
     await takeEditorScreenshot(page);
@@ -108,7 +67,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRadioButtonForNewGroup(page, {
+    await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
     await takeEditorScreenshot(page);

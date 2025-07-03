@@ -2,6 +2,8 @@
 import { Page, Locator } from '@playwright/test';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
+import { LeftToolbar } from '../LeftToolbar';
+import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 
 type EnhancedStereochemistryLocators = {
   absRadio: Locator;
@@ -75,3 +77,27 @@ export const EnhancedStereochemistry = (page: Page) => {
 export type EnhancedStereochemistryType = ReturnType<
   typeof EnhancedStereochemistry
 >;
+
+interface RadioSelectionParams {
+  selectRadioButton: EnhancedStereochemistryRadio;
+  dropdownValue?: number;
+}
+
+export async function applyEnhancedStereochemistry(
+  page: Page,
+  { selectRadioButton, dropdownValue = 1 }: RadioSelectionParams,
+) {
+  await LeftToolbar(page).stereochemistry();
+  await EnhancedStereochemistry(page)[selectRadioButton].check();
+
+  switch (selectRadioButton) {
+    case EnhancedStereochemistryRadio.AddToAndGroup:
+      await EnhancedStereochemistry(page).selectAddToAndGroup(dropdownValue);
+      break;
+    case EnhancedStereochemistryRadio.AddToOrGroup:
+      await EnhancedStereochemistry(page).selectAddToOrGroup(dropdownValue);
+      break;
+  }
+
+  await EnhancedStereochemistry(page).pressApplyButton();
+}

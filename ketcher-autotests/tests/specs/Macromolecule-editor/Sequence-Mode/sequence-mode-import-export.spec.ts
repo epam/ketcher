@@ -2,15 +2,17 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   moveMouseAway,
   MacroFileType,
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {

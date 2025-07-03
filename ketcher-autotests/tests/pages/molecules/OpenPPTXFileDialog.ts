@@ -64,7 +64,7 @@ export async function openPPTXFile(
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
-    await openFile(filePath, page);
+    await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
   if (numberOf.Structure !== 1) {

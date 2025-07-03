@@ -74,7 +74,7 @@ export const RnaElements = ({
       dispatch(setActiveMonomerKey(getMonomerUniqueKey(monomer)));
 
       if (!isSequenceEditInRNABuilderMode && !isEditMode) {
-        editor.events.selectMonomer.dispatch(monomer);
+        editor?.events.selectMonomer.dispatch(monomer);
       }
 
       if (!isEditMode) {

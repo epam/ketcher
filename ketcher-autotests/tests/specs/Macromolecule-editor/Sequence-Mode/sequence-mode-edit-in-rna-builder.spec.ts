@@ -4,16 +4,17 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   takeRNABuilderScreenshot,
   takeMonomerLibraryScreenshot,
   moveMouseAway,
   takePageScreenshot,
-  selectRectangleArea,
-  startNewSequence,
   takePresetsScreenshot,
-  selectSnakeLayoutModeTool,
 } from '@utils';
+import {
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectRectangleArea,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   modifyInRnaBuilder,
@@ -29,13 +30,14 @@ import {
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await openFileAndAddToCanvasMacro('KET/nine-connected-rnas.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/nine-connected-rnas.ket');
     await selectSequenceLayoutModeTool(page);
   });
 
@@ -120,6 +122,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
     await Library(page).selectMonomer(Sugars._25R);
+    await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.cancel();
@@ -155,19 +158,17 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   test('Select entire chain and see enabled modify_in_rna_builder button', async ({
     page,
   }) => {
-    await page.keyboard.down('Control');
-    await getSymbolLocator(page, {
+    const symbolT = getSymbolLocator(page, {
       symbolAlias: 'T',
       nodeIndexOverall: 1,
-    }).click();
+    }).first();
+    await page.keyboard.down('Control');
+    await symbolT.click();
     await page.keyboard.up('Control');
     // should see the whole chain selected
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getSymbolLocator(page, {
-      symbolAlias: 'T',
-      nodeIndexOverall: 1,
-    }).click({ button: 'right' });
+    await ContextMenu(page, symbolT).open();
     // should see correct context menu title and enabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
   });
@@ -188,7 +189,6 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #3824
     Description: RNA Builder switched to edit mode.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
@@ -204,7 +204,6 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #3824
     Description: Sugars that have no R2 or R3 are disabled.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
@@ -221,7 +220,6 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #3824
     Description: Number of selected nucleotides is indicated within RNA Builder interface when several monomers are selected.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
@@ -240,7 +238,6 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #3824
     Description: Name of nucleotide consist of names selected Sugar, Base, Phosphates in RNA Builder.
     */
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
@@ -259,7 +256,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: Nucleoside edited in RNA builder.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     await page.keyboard.down('Shift');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
@@ -283,7 +280,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: "Phosphate" field is empty when single nucleoside is selected.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -297,7 +294,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Test case: #4388
     Description: Nucleoside converted to Nucleotide after added Phosphate in RNA Builder.
     */
-    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/acgp-nucleoside.ket');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -316,7 +313,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Instead of field 'name your structure', 'N nucleotides selected' displayed (N- the number of nucleotides and nucleosides).
     In the 'phosphate' field - [multiple] displayed.
     */
-    await openFileAndAddToCanvasMacro('KET/agtcu.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/agtcu.ket');
     await page.keyboard.down('Shift');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
@@ -343,21 +340,20 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: If among selected elements on canvas there is a single 
     phosphate (selected without an adjacent nucleoside to left),then in this case,editing in RNA builder prohibited.
     */
-    await openFileAndAddToCanvasMacro('KET/modified-agtcup.ket', page);
-    await page.keyboard.down('Shift');
-    await getSymbolLocator(page, {
+    await openFileAndAddToCanvasMacro(page, 'KET/modified-agtcup.ket');
+    const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 1,
-    }).click();
-    await getSymbolLocator(page, {
+    });
+    const symbolP = getSymbolLocator(page, {
       symbolAlias: 'p',
       nodeIndexOverall: 5,
-    }).click();
+    });
+    await page.keyboard.down('Shift');
+    await symbolG.click();
+    await symbolP.click();
     await page.keyboard.up('Shift');
-    await getSymbolLocator(page, {
-      symbolAlias: 'G',
-      nodeIndexOverall: 1,
-    }).click({ button: 'right' });
+    await ContextMenu(page, symbolP).open();
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -369,8 +365,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: RNA builder highlighted in Edit mode. Canvas disabled.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/all-types-of-possible-modifications.ket',
       page,
+      'KET/all-types-of-possible-modifications.ket',
     );
     await page.keyboard.down('Shift');
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();

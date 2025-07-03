@@ -7,6 +7,7 @@ import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
+import { Vec2 } from 'domain/entities';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -30,10 +31,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
     | D3SvgElementSelection<SVGPathElement, void>;
 
   // An extra invisible area around `bodyElement` to make it easier for a user to hover over it.
-  protected hoverAreaElement?: D3SvgElementSelection<
-    SVGGElement | SVGLineElement,
-    void
-  >;
+  protected hoverAreaElement?:
+    | D3SvgElementSelection<SVGGElement, void>
+    | D3SvgElementSelection<SVGPathElement, void>
+    | D3SvgElementSelection<SVGRectElement, void>
+    | D3SvgElementSelection<SVGLineElement, void>;
 
   protected hoverCircleAreaElement?: D3SvgElementSelection<
     SVGGElement | SVGCircleElement,
@@ -81,6 +83,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get y() {
     return this.rootBBox?.y || 0;
+  }
+
+  public get selectionPoints(): Vec2[] | undefined {
+    return undefined;
   }
 
   public abstract show(theme, force?: boolean): void;

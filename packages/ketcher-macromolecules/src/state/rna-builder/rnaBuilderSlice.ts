@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import {
-  MonomerItemType,
-  MONOMER_CONST,
   LabeledNodesWithPositionInSequence,
+  MONOMER_CONST,
+  MonomerItemType,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
@@ -30,9 +30,8 @@ import {
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
-import { selectEditorPosition } from 'state/common';
-import { PresetPosition } from 'ketcher-react';
 import { getValidations } from 'helpers/rnaValidations';
+import { selectSearchFilter } from 'state/library';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -319,6 +318,9 @@ export const rnaBuilderSlice = createSlice({
   },
 });
 
+export const selectRnaBuilderSlice = (state: RootState): IRnaBuilderState =>
+  state.rnaBuilder;
+
 export const selectActiveRnaBuilderItem = (state: RootState): RnaBuilderItem =>
   state.rnaBuilder.activeRnaBuilderItem;
 
@@ -413,104 +415,87 @@ export const selectActiveMonomerKey = (state: RootState) =>
   state.rnaBuilder.activeMonomerKey;
 
 // Return custom and default presets
-export const selectAllPresets = (
-  state,
-): Array<IRnaPreset & { favorite: boolean }> => {
-  const { presetsDefault = [], presetsCustom = [] } = state.rnaBuilder;
-  return [...presetsDefault, ...presetsCustom];
-};
+export const selectAllPresets = createSelector(
+  selectRnaBuilderSlice,
+  (rnaBuilderSlice): Array<IRnaPreset & { favorite?: boolean }> => {
+    const { presetsDefault = [], presetsCustom = [] } = rnaBuilderSlice;
+    return [...presetsDefault, ...presetsCustom];
+  },
+);
 
-export const selectFilteredPresets = (
-  state,
-): Array<IRnaPreset & { favorite: boolean }> => {
-  const { searchFilter } = state.library;
-  const presetsAll = selectAllPresets(state);
-  const position = selectEditorPosition(state) ?? PresetPosition.Library;
-  const searchText = searchFilter.toLowerCase();
+export const selectFilteredPresets = createSelector(
+  selectAllPresets,
+  selectSearchFilter,
+  (presetsAll, searchFilter): Array<IRnaPreset & { favorite?: boolean }> => {
+    const searchText = searchFilter.toLowerCase();
 
-  return presetsAll.filter((item: IRnaPreset) => {
-    const name = item.name?.toLowerCase();
-    const sugarName = item.sugar?.label?.toLowerCase();
-    const phosphateName = item.phosphate?.label?.toLowerCase();
-    const baseName = item.base?.label?.toLowerCase();
-    const idtName = item.idtAliases?.base?.toLowerCase();
-    const modifications = item.idtAliases?.modifications;
-    let transformedIdtText = idtName;
+    return presetsAll.filter((item: IRnaPreset) => {
+      const name = item.name?.toLowerCase();
+      const sugarName = item.sugar?.label?.toLowerCase();
+      const phosphateName = item.phosphate?.label?.toLowerCase();
+      const baseName = item.base?.label?.toLowerCase();
+      const idtName = item.idtAliases?.base?.toLowerCase();
+      const modifications = item.idtAliases?.modifications;
+      let transformedIdtText = idtName;
 
-    if (item.name?.includes('MOE') && idtName) {
-      const base = idtName;
-      const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-      const internal = modifications?.internal ?? `i${base}`;
-      const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
-
-      switch (position) {
-        case PresetPosition.Library:
-          transformedIdtText = `${endpoint5}, ${internal}`;
-          break;
-        case PresetPosition.ChainStart:
-          transformedIdtText = endpoint5;
-          break;
-        case PresetPosition.ChainMiddle:
-          transformedIdtText = internal;
-          break;
-        case PresetPosition.ChainEnd:
-          transformedIdtText = endpoint3;
-          break;
+      if (idtName && item.name?.includes('MOE')) {
+        const base = idtName;
+        const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
+        const internal = modifications?.internal ?? `i${base}`;
+        transformedIdtText = `${endpoint5}, ${internal}`;
       }
-    }
+      const slashCount = (searchText.match(/\//g) || []).length;
+      const parts = searchText.split('/');
 
-    const slashCount = (searchText.match(/\//g) || []).length;
-    const parts = searchText.split('/');
+      if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {
+        return false;
+      }
 
-    if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {
-      return false;
-    }
+      if (searchText.startsWith('/') && searchText.length > 1) {
+        const aliasRest = searchText.slice(1);
+        return (
+          transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
+          idtName?.startsWith(aliasRest) ||
+          (modifications &&
+            Object.values(modifications).some((mod) =>
+              mod?.toLowerCase().startsWith(aliasRest),
+            ))
+        );
+      }
 
-    if (searchText.startsWith('/') && searchText.length > 1) {
-      const aliasRest = searchText.slice(1);
+      if (searchText.endsWith('/') && searchText.length > 1) {
+        const aliasRest = searchText.slice(0, -1);
+        const aliasLastSymbol = searchText[searchText.length - 2];
+
+        return (
+          (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
+            transformedIdtText[transformedIdtText.length - 1] ===
+              aliasLastSymbol) ||
+          (idtName?.endsWith(aliasRest) &&
+            idtName[idtName.length - 1] === aliasLastSymbol) ||
+          (modifications &&
+            Object.values(modifications).some(
+              (mod) =>
+                mod?.toLowerCase().endsWith(aliasRest) &&
+                mod[mod.length - 1] === aliasLastSymbol,
+            ))
+        );
+      }
+
+      if (searchText === '/') {
+        return !!item.idtAliases;
+      }
+
       return (
-        transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
-        idtName?.startsWith(aliasRest) ||
-        (modifications &&
-          Object.values(modifications).some((mod) =>
-            mod?.toLowerCase().startsWith(aliasRest),
-          ))
+        name?.includes(searchText) ||
+        sugarName?.includes(searchText) ||
+        phosphateName?.includes(searchText) ||
+        baseName?.includes(searchText) ||
+        transformedIdtText?.toLowerCase().includes(searchText)
       );
-    }
-
-    if (searchText.endsWith('/') && searchText.length > 1) {
-      const aliasRest = searchText.slice(0, -1);
-      const aliasLastSymbol = searchText[searchText.length - 2];
-
-      return (
-        (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-          transformedIdtText[transformedIdtText.length - 1] ===
-            aliasLastSymbol) ||
-        (idtName?.endsWith(aliasRest) &&
-          idtName[idtName.length - 1] === aliasLastSymbol) ||
-        (modifications &&
-          Object.values(modifications).some(
-            (mod) =>
-              mod?.toLowerCase().endsWith(aliasRest) &&
-              mod[mod.length - 1] === aliasLastSymbol,
-          ))
-      );
-    }
-
-    if (searchText === '/') {
-      return !!item.idtAliases;
-    }
-
-    const cond =
-      name?.includes(searchText) ||
-      sugarName?.includes(searchText) ||
-      phosphateName?.includes(searchText) ||
-      baseName?.includes(searchText) ||
-      transformedIdtText?.toLowerCase().includes(searchText);
-
-    return cond;
-  });
-};
+    });
+  },
+);
 
 export const {
   setActivePreset,

@@ -1,9 +1,7 @@
 import { Page, test } from '@playwright/test';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -114,7 +112,7 @@ test.describe('Draw Ellipse', () => {
   test('Simple Objects - Draw a lot of ellipses', async ({ page }) => {
     // Test case: EPMLSOPKET-1966
     // Separeting and moving few objects on canvas
-    await openFileAndAddToCanvas('KET/ellipse-test-EPMLSOPKET-1966.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ellipse-test-EPMLSOPKET-1966.ket');
     await separetingAndMovingEllipse(page);
     await takeEditorScreenshot(page);
   });

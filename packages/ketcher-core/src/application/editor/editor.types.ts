@@ -19,6 +19,7 @@ import { Render } from 'application/render';
 import { Struct } from 'domain/entities';
 import { selectionKeys } from './shared/constants';
 import { PipelineSubscription, Subscription } from 'subscription';
+import { IRnaPreset } from 'application/editor/tools';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
@@ -97,3 +98,11 @@ export interface Editor {
   focusCliparea: () => void;
   ketcherId: string;
 }
+
+export type LibraryItemDragState = {
+  item: IRnaPreset;
+  position: {
+    x: number;
+    y: number;
+  };
+} | null;

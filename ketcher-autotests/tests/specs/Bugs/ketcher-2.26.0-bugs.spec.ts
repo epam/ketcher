@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect, Locator } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -12,21 +12,14 @@ import {
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
-  clickOnBond,
   BondType,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  clickOnAtom,
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  resetCurrentTool,
   waitForMonomerPreview,
   dragMouseTo,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -37,7 +30,20 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   copyToClipboardByIcon,
   moveMouseAway,
+  getCachedBodyCenter,
+  RxnFileFormat,
+  SdfFileFormat,
+  RdfFileFormat,
+  MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -84,35 +90,25 @@ import {
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  HighlightOption,
+  MacroBondOption,
+  MicroAtomOption,
+  MicroBondOption,
+  MultiTailedArrowOption,
+  QueryAtomOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { expandMonomer } from '@utils/canvas/monomer/helpers';
+import { getBondByIndex } from '@utils/canvas/bonds';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
-  if (index !== undefined) {
-    await tailElement.nth(index).click({ force: true, button: 'right' });
-  } else {
-    await tailElement.first().click({ force: true, button: 'right' });
-  }
+  const n = index !== undefined ? index : 0;
   await waitForRender(page, async () => {
-    await page.getByText('Remove tail').click();
-  });
-}
-
-async function openEditConnectionPointsMenu(page: Page, bondLine: Locator) {
-  await bondLine.click({ button: 'right', force: true });
-  await page.getByText('Edit Connection Points...').click();
-}
-
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
+    await ContextMenu(page, tailElement.nth(n)).click(
+      MultiTailedArrowOption.RemoveTail,
+    );
   });
 }
 
@@ -226,8 +222,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Set the "Arrow" style to "ACS"
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/equilibrium-arrows.ket',
       page,
+      'KET/equilibrium-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
@@ -248,12 +244,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/chain-with-wedge-bond.ket',
       page,
+      'KET/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    await clickOnBond(page, BondType.SINGLE, 2, 'right');
-    await page.getByText('Change direction').click();
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
 
@@ -268,8 +264,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. See that line width of the single bond has been updated accordingly while line width of the attachment point remain the same.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/structure-with-attachments-points.ket',
       page,
+      'KET/structure-with-attachments-points.ket',
     );
     await takeEditorScreenshot(page);
     await setSettingsOptions(page, [
@@ -293,8 +289,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Select Calculate CIP
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/micro-structure-with-isomerism.ket',
       page,
+      'KET/micro-structure-with-isomerism.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculateCIP();
@@ -313,7 +309,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await page.mouse.wheel(0, 400);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      mask: [SettingsDialog(page).resetButton],
+    });
   });
 
   test('Case 9: The reaction can be saved to MOL V3000', async () => {
@@ -335,11 +333,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/reaction-saved-to-MOL-V3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/reaction-saved-to-MOL-V3000-expected.mol',
       page,
+      'Molfiles-V3000/reaction-saved-to-MOL-V3000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -357,19 +355,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
       page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
       page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -386,19 +384,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
       page,
+      'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -414,19 +412,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to MDL RXN V3000
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reaction-cant-save-to-MDL-RXN-V3000.ket',
       page,
+      'KET/reaction-cant-save-to-MDL-RXN-V3000.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
       page,
+      'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -512,11 +510,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Query properties').click();
-    await page.getByText('H count', { exact: true }).hover();
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).hover([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.HCount,
+    ]);
     await takeEditorScreenshot(page);
-    await page.getByText('Substitution count').hover();
+    await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
     await takeEditorScreenshot(page);
   });
 
@@ -557,13 +557,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/chain-with-singleup-bond.ket',
       page,
+      'KET/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    await clickOnBond(page, BondType.SINGLE, 2, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-1pz88a0').click(); // Green color
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Green,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -579,13 +581,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/chain-with-double-bond.ket',
       page,
+      'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    await clickOnBond(page, BondType.DOUBLE, 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-cyxjjb').click(); // Red color
+    const point = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Red,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -601,13 +605,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/chain-with-double-bond.ket',
       page,
+      'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-cyxjjb').click(); // Red color
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Red,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -666,7 +672,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await expect(setACSSettings).toBeVisible();
     await expect(setACSSettings).toHaveText('Set ACS Settings');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      mask: [SettingsDialog(page).resetButton],
+    });
   });
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
@@ -684,8 +692,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bond tooltip preview placed wrong in on edge cases.ket',
       page,
+      'KET/Bond tooltip preview placed wrong in on edge cases.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await resetCurrentTool(page);
@@ -716,10 +724,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, middleOfTheScreen).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
     });
-    await page.getByText('Add new tail').click();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -751,15 +761,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await openFileAndAddToCanvasMacro('KET/two-nucleotides.ket', page);
-    await openEditConnectionPointsMenu(page, bondLine);
+    await openFileAndAddToCanvasMacro(page, 'KET/two-nucleotides.ket');
+    await ContextMenu(page, bondLine).click(
+      MacroBondOption.EditConnectionPoints,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.getByRole('button', { name: 'R2' }).first().click();
     await page.getByRole('button', { name: 'R1' }).nth(1).click();
     await pressButton(page, 'Reconnect');
-    await openEditConnectionPointsMenu(page, bondLine);
+    await ContextMenu(page, bondLine).click(
+      MacroBondOption.EditConnectionPoints,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -780,12 +794,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bond properties are not implemented.ket',
       page,
+      'KET/Bond properties are not implemented.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).clearCanvas();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 
@@ -803,6 +818,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
     await page.keyboard.press('Escape');
+    await resetZoomLevelToDefault(page);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 7,
@@ -829,8 +845,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bonds between micro and macro structures can be selected and deleted.ket',
       page,
+      'KET/Bonds between micro and macro structures can be selected and deleted.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -854,8 +870,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
       page,
+      'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -878,8 +894,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bond properties are not implemented.ket',
       page,
+      'KET/Bond properties are not implemented.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -907,14 +923,16 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/benzene-ring-with-atoms.ket',
       page,
+      'KET/benzene-ring-with-atoms.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'N', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-1pz88a0').click(); // Green color
+    const point = await getAtomByIndex(page, { label: 'N' }, 0);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Green,
+    ]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });
@@ -932,11 +950,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/monomers-cycled.ket',
       page,
+      'KET/monomers-cycled.ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, '1Nal');
+    await expandMonomer(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeLeftToolbarScreenshot(page);
@@ -956,8 +974,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Bond properties are not implemented.ket',
       page,
+      'KET/Bond properties are not implemented.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -976,8 +994,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Click on layout
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/error with cat and arr.ket',
       page,
+      'KET/error with cat and arr.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
@@ -1000,8 +1018,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/monomers-connected-to-microstructures.ket',
       page,
+      'KET/monomers-connected-to-microstructures.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
@@ -1011,11 +1029,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
       page,
+      'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1036,8 +1054,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/monomers-connected-to-microstructures.ket',
       page,
+      'KET/monomers-connected-to-microstructures.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1059,8 +1077,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/R-Group fragment labels font size defined by Sub Font size property at Settings.ket',
       page,
+      'KET/R-Group fragment labels font size defined by Sub Font size property at Settings.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
@@ -1104,8 +1122,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/S-Group (Data type) Field value label font size.ket',
       page,
+      'KET/S-Group (Data type) Field value label font size.ket',
     );
     await takeEditorScreenshot(page);
     await setSettingsOptions(page, [
@@ -1135,8 +1153,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Importing functional groups (e.g. Boc, Bn, CF3) ignores drawing settings (e.g. ACS style) and is bolded.ket',
       page,
+      'KET/Importing functional groups (e.g. Boc, Bn, CF3) ignores drawing settings (e.g. ACS style) and is bolded.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
@@ -1170,14 +1188,14 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Right click on any bond or atom
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/5. Unsplit nucleotide 5hMedC (from library).ket',
       page,
+      'KET/5. Unsplit nucleotide 5hMedC (from library).ket',
     );
     await takeEditorScreenshot(page);
-    await page.getByText('5hMedC').click({ button: 'right' });
-    await page.getByText('Expand monomer').click();
+    await expandMonomer(page, page.getByText('5hMedC'));
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'N', 0, 'right');
+    const point = await getAtomByIndex(page, { label: 'N' }, 0);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1194,7 +1212,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Press Undo
      * 6. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/monomers-cycled.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/monomers-cycled.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
@@ -1217,8 +1235,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/not-cycled-sequence.ket',
       page,
+      'KET/not-cycled-sequence.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -1246,8 +1264,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Click on layout
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
       page,
+      'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
@@ -1267,8 +1285,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Click on layout
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Open Angel Arrows changed to Multi-tail arrow after layout.ket',
       page,
+      'KET/Open Angel Arrows changed to Multi-tail arrow after layout.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -1290,8 +1308,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 7. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-with-colored-atoms.ket',
       page,
+      'KET/benzene-ring-with-colored-atoms.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
@@ -1316,7 +1334,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('RDF-V2000/issue-load.rdf', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'RDF-V2000/issue-load.rdf');
     await takeEditorScreenshot(page);
   });
 
@@ -1336,8 +1354,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       enableFlexMode: true,
     });
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous DNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous DNA Bases (alternatives).ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -1366,8 +1384,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/error with aromatize v2.ket',
       page,
+      'KET/error with aromatize v2.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -1394,7 +1412,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Add explicit hydrogens
      * 7. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProjectMacro('KET/arr vert.ket', page);
+    await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/arr vert.ket');
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1402,8 +1420,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/arr vert-expected.cdxml',
       page,
+      'CDXML/arr vert-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1420,12 +1438,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Load exported file
      * 5. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/4 mol.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
     await takeEditorScreenshot(page);
     await verifyFileExport(page, 'CDXML/4 mol-expected.cdxml', FileType.CDXML);
     await openFileAndAddToCanvasAsNewProject(
-      'CDXML/4 mol-expected.cdxml',
       page,
+      'CDXML/4 mol-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1443,19 +1461,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/elements-too-close-to-single-arrow.ket',
       page,
+      'KET/elements-too-close-to-single-arrow.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
       page,
+      'Rxn-V3000/elements-too-close-to-single-arrow-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1471,8 +1489,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/The error is displayed to another side after importing from rxn file.rxn',
       page,
+      'Rxn-V2000/The error is displayed to another side after importing from rxn file.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1488,8 +1506,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/The arrow is displayed incorrect when import from rxn file.rxn',
       page,
+      'Rxn-V2000/The arrow is displayed incorrect when import from rxn file.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1506,7 +1524,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Load exported file
      * 5. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/4 mol.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
     await takeEditorScreenshot(page);
     await verifyFileExport(page, 'CDX/4 mol-expected.cdx', FileType.CDX);
     const fileContent = await readFileContent('CDX/4 mol-expected.cdx');
@@ -1529,8 +1547,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * Total length of the single arrow is 7
      */
     await openFileAndAddToCanvasAsNewProject(
-      'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
       page,
+      'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1553,19 +1571,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-tails-5-with-pluses (1).ket',
       page,
+      'KET/ket-cascade-reaction-tails-5-with-pluses (1).ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
       page,
+      'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses (1)-expected.rdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -1580,7 +1598,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from RXN file
      * 3. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('Rxn-V2000/rxn-1x1.rxn', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'Rxn-V2000/rxn-1x1.rxn');
     await takeEditorScreenshot(page);
   });
 
@@ -1597,8 +1615,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
       page,
+      'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
@@ -1621,8 +1639,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/elements were too close to arrow on save.ket',
       page,
+      'KET/elements were too close to arrow on save.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).saveFile();
@@ -1651,17 +1669,17 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Take screenshot
      * Only one reaction should be saved to RXN (the set of separate reactions should be saved to RDF)
      */
-    await openFileAndAddToCanvasAsNewProject('KET/ket-issue-2.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/ket-issue-2.ket');
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'Rxn-V2000/ket-issue-2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/ket-issue-2-expected.rxn',
       page,
+      'Rxn-V2000/ket-issue-2-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -1678,17 +1696,17 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Load exported file
      * 5. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/ket-issue-2.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/ket-issue-2.ket');
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'RDF-V3000/ket-issue-2-expected.rdf',
       FileType.RDF,
-      'v3000',
+      RdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'RDF-V3000/ket-issue-2-expected.rdf',
       page,
+      'RDF-V3000/ket-issue-2-expected.rdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -1704,7 +1722,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Press Layout button
      * 4. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/2-reactions.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/2-reactions.ket');
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -1724,7 +1742,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Save to PNG
      * 7. Take screenshot
      */
-    await openFileAndAddToCanvasAsNewProject('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/simple-chain.ket');
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
     await SettingsDialog(page).apply();

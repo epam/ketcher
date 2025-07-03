@@ -54,9 +54,7 @@ class Tabs extends Component {
                   [classes.active]: this.state.tabIndex === index,
                 })}
                 onClick={(ev) => this.changeTab(ev, index)}
-                data-testid={
-                  this.state.tabIndex === index ? 'preview-tab' : 'warnings-tab'
-                }
+                data-testid={tabPanel.caption + '-tab'}
               >
                 {tabPanel.caption}
               </a>

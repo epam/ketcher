@@ -3,9 +3,9 @@ import { Page, expect, test } from '@playwright/test';
 import {
   delay,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';

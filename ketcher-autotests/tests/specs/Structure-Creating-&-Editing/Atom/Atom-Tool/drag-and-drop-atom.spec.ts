@@ -10,10 +10,10 @@ import {
   SaltsAndSolvents,
   getCoordinatesOfTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  resetCurrentTool,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';

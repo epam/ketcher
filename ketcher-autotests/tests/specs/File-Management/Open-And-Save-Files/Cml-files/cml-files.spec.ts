@@ -21,7 +21,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
-  await openFileAndAddToCanvas(fileName, page);
+  await openFileAndAddToCanvas(page, fileName);
   await takeEditorScreenshot(page);
 }
 
@@ -112,8 +112,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
 
     await verifyFileExport(
@@ -123,8 +123,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-peptides.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-peptides.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -138,8 +138,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
 
     await verifyFileExport(
@@ -149,8 +149,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -164,8 +164,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
 
     await verifyFileExport(
@@ -175,8 +175,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-chems.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-chems.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -190,8 +190,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -201,8 +201,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-bases.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-bases.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -216,8 +216,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
 
     await verifyFileExport(
@@ -227,8 +227,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-sugars.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-sugars.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -242,8 +242,8 @@ test.describe('CML files', () => {
     */
     test.slow();
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
 
     await verifyFileExport(
@@ -253,8 +253,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
       page,
+      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -271,8 +271,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/simple-schema-with-retrosynthetic-arrow.ket',
         page,
+        'KET/simple-schema-with-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -282,8 +282,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/simple-schema-with-retrosynthetic-arrow.cml',
         page,
+        'CML/simple-schema-with-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -300,8 +300,8 @@ test.describe('CML files', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -311,8 +311,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
       page,
+      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -329,8 +329,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-two-retrosynthetic-arrows.ket',
         page,
+        'KET/schema-with-two-retrosynthetic-arrows.ket',
       );
 
       await verifyFileExport(
@@ -340,8 +340,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-two-retrosynthetic-arrows.cml',
         page,
+        'CML/schema-with-two-retrosynthetic-arrows.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -359,8 +359,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       );
 
       await verifyFileExport(
@@ -370,8 +370,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
         page,
+        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -389,8 +389,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -400,8 +400,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
         page,
+        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -419,8 +419,8 @@ test.describe('CML files', () => {
     */
 
       await openFileAndAddToCanvas(
-        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       );
 
       await verifyFileExport(
@@ -430,8 +430,8 @@ test.describe('CML files', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
         page,
+        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -446,7 +446,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.BondLengthUnits,
@@ -464,8 +464,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-catalyst-px-bond-lengh.cml',
       page,
+      'CML/layout-with-catalyst-px-bond-lengh.cml',
     );
 
     await takeEditorScreenshot(page);
@@ -479,7 +479,7 @@ test.describe('CML files', () => {
     Description: Add new settings for ACS style for convert and layout functions
     The Hash spacing setting is applied, click on layout and it should be save to CML specification
     */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setSettingsOptions(page, [
       {
         option: BondsSetting.HashSpacingUnits,
@@ -495,8 +495,8 @@ test.describe('CML files', () => {
       FileType.CML,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
       page,
+      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -510,7 +510,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
     */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setSettingsOptions(page, [
       {
         option: GeneralSetting.ReactionComponentMarginSizeUnits,
@@ -528,8 +528,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-dif-elements-cm-margin-size.cml',
       page,
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
     );
 
     await takeEditorScreenshot(page);
@@ -543,7 +543,7 @@ test.describe('CML files', () => {
   Description: add new option AVS style and check saving to different format
   After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
   */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-dif-elements.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -554,8 +554,8 @@ test.describe('CML files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'CML/layout-with-dif-elements-acs-style.cml',
       page,
+      'CML/layout-with-dif-elements-acs-style.cml',
     );
     await takeEditorScreenshot(page);
   });

@@ -69,8 +69,8 @@ test.describe('Special nodes', () => {
       const extendedTableButton = RightToolbar(page).extendedTableButton;
 
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/heteroatoms-structure.mol',
         page,
+        'Molfiles-V2000/heteroatoms-structure.mol',
       );
       await extendedTableButton.click();
       await selectExtendedTableElement(page, atom, 'Add');

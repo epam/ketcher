@@ -180,7 +180,7 @@ export async function checkSmartsValue(page: Page, value: string) {
 export async function checkSmartsWarnings(page: Page) {
   const value =
     'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
-  await page.getByTestId('warnings-tab').click();
+  await SaveStructureDialog(page).switchToWarningsTab();
   const warningSmartsTextArea = SaveStructureDialog(
     page,
   ).warningTextarea.filter({ hasText: 'SMARTS' });

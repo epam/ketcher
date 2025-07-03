@@ -1,7 +1,7 @@
 import {
   BondDashArrayMap,
   BondSpace,
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   BondWidth,
   LinesOffset,
@@ -14,7 +14,7 @@ class DoubleBondPathRenderer {
     bondVectors: BondVectors,
     shift: number,
     type?: BondType,
-  ): BondSVGPath[] {
+  ): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge, secondHalfEdge } =
       bondVectors;
 
@@ -87,7 +87,7 @@ class DoubleBondPathRenderer {
     const strokeDasharray =
       type !== undefined ? BondDashArrayMap[type] : 'none';
     if (type === BondType.Double || type === BondType.DoubleAromatic) {
-      const svgPath: BondSVGPath = {
+      const svgPath: SVGPathAttributes = {
         d: `
           M${firstLineStartPosition.x},${firstLineStartPosition.y}
           L${firstLineEndPosition.x},${firstLineEndPosition.y}
@@ -103,7 +103,7 @@ class DoubleBondPathRenderer {
 
       return [svgPath];
     } else {
-      const firstSvgPath: BondSVGPath = {
+      const firstSvgPath: SVGPathAttributes = {
         d: `
           M${firstLineStartPosition.x},${firstLineStartPosition.y}
           L${firstLineEndPosition.x},${firstLineEndPosition.y}
@@ -114,7 +114,7 @@ class DoubleBondPathRenderer {
         },
       };
 
-      const secondSvgPath: BondSVGPath = {
+      const secondSvgPath: SVGPathAttributes = {
         d: `
           M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}

@@ -5,11 +5,13 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
+} from '@utils';
+import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils';
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -236,8 +238,8 @@ test(
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
+      'KET/Snake-mode/SnakeModeBypassCheck.ket',
     );
     await selectSnakeLayoutModeTool(page);
     await selectFlexLayoutModeTool(page);
@@ -268,8 +270,8 @@ test(
     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
+      'KET/Snake-mode/SnakeModeBypassCheck.ket',
     );
     await selectSnakeLayoutModeTool(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -297,8 +299,8 @@ test('5. Switching from Micro mode to Snake and back to Micromolecules mode does
   await selectSnakeLayoutModeTool(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -322,8 +324,8 @@ test('6. Switching from Flex to Sequence and back to Flex mode does not change l
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await selectSequenceLayoutModeTool(page);
   await selectFlexLayoutModeTool(page);
@@ -348,8 +350,8 @@ test('7. Switching from Flex mode to Sequence and to Micromolecules mode does no
     */
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await selectSequenceLayoutModeTool(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -377,8 +379,8 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
   await selectSequenceLayoutModeTool(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -401,8 +403,8 @@ test('9. Switching from Flex to Snake, Sequence and back to Flex does not change
     */
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await selectSnakeLayoutModeTool(page);
   await selectSequenceLayoutModeTool(page);
@@ -426,8 +428,8 @@ test('10. Switching from Flex to Sequence, Snake and back to Flex does not chang
     */
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await selectSequenceLayoutModeTool(page);
   await selectSnakeLayoutModeTool(page);
@@ -453,8 +455,8 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
   await selectSnakeLayoutModeTool(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   // Here we are at the Snake mode
@@ -486,8 +488,8 @@ test(
     await selectSequenceLayoutModeTool(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
+      'KET/Snake-mode/SnakeModeBypassCheck.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // Here we are at the Sequence mode
@@ -513,8 +515,8 @@ test('13. Switching from Flex to Snake, Sequence and to Micro does not change la
     */
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await selectSnakeLayoutModeTool(page);
   await selectSequenceLayoutModeTool(page);
@@ -544,8 +546,8 @@ test(
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
+      'KET/Snake-mode/SnakeModeBypassCheck.ket',
     );
     await selectSequenceLayoutModeTool(page);
     await selectSnakeLayoutModeTool(page);
@@ -572,8 +574,8 @@ test('15. Switching from Micro to Snake, Sequence and to Micro does not change l
   await selectSnakeLayoutModeTool(page);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassCheck.ket',
   );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   // Here we are at the Snake mode
@@ -606,8 +608,8 @@ test(
     await selectSequenceLayoutModeTool(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
+      'KET/Snake-mode/SnakeModeBypassCheck.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // Here we are at the Sequence mode
@@ -633,8 +635,8 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
     */
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Snake-mode/SnakeModeBypassExport.ket',
     page,
+    'KET/Snake-mode/SnakeModeBypassExport.ket',
   );
   await selectSnakeLayoutModeTool(page);
 

@@ -28,7 +28,7 @@ test.describe('Reagents CDX format', () => {
 
     // The reason of test failing will be investigated after release 2.21.0-rc.1
     test.fail();
-    await openFileAndAddToCanvas('KET/two-reagents-above-and-below.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-reagents-above-and-below.ket');
 
     await verifyFileExport(
       page,
@@ -42,7 +42,7 @@ test.describe('Reagents CDX format', () => {
     Test case: EPMLSOPKET-4711
     Description: File open in CDX format.
     */
-    await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/two-reagents.cdx');
     await takeEditorScreenshot(page);
   });
 
@@ -66,7 +66,7 @@ test.describe('Reagents CDX format', () => {
     Test case: EPMLSOPKET-4707, EPMLSOPKET-4708
     Description: 'Can not display binary content' in Preview window.
     */
-    await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/two-reagents.cdx');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDX,

@@ -12,11 +12,11 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  resetCurrentTool,
   moveOnAtom,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
 test.describe('Click and drag Atom on canvas', () => {

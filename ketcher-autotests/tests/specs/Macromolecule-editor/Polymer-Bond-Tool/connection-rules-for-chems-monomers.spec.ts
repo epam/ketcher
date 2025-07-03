@@ -16,6 +16,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
@@ -293,11 +294,11 @@ test.describe('Connection rules for chems: ', () => {
     freeCHEMConnectionPoint: string,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
-      tmpChemMonomers['Test-6-Ch-Main'].fileName,
       page,
+      tmpChemMonomers['Test-6-Ch-Main'].fileName,
     );
 
-    await openFileAndAddToCanvasMacro(CHEM.fileName, page);
+    await openFileAndAddToCanvasMacro(page, CHEM.fileName);
     const CHEMLocator = getMonomerLocator(page, {
       monomerAlias: CHEM.alias,
     }).first();
@@ -344,11 +345,11 @@ test.describe('Connection rules for chems: ', () => {
     CHEM: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
-      tmpChemMonomers['Test-6-Ch-Main'].fileName,
       page,
+      tmpChemMonomers['Test-6-Ch-Main'].fileName,
     );
 
-    await openFileAndAddToCanvasMacro(CHEM.fileName, page);
+    await openFileAndAddToCanvasMacro(page, CHEM.fileName);
     const CHEMLocator = getMonomerLocator(page, {
       monomerAlias: CHEM.alias,
     }).first();
@@ -393,7 +394,7 @@ test.describe('Connection rules for chems: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
       monomerType: leftMonomer.monomerType,
@@ -404,7 +405,7 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
     const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,
@@ -1187,7 +1188,7 @@ test.describe('Connection rules for chems: ', () => {
   };
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
     await getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
     })
@@ -1199,7 +1200,7 @@ test.describe('Connection rules for chems: ', () => {
   }
 
   async function loadMolecule(page: Page, molecule: IMolecule) {
-    await openFileAndAddToCanvasMacro(molecule.fileName, page);
+    await openFileAndAddToCanvasMacro(page, molecule.fileName);
     await moveMouseAway(page);
   }
 
@@ -1215,7 +1216,7 @@ test.describe('Connection rules for chems: ', () => {
     }).first();
 
     const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .locator(rightMolecule.atomLocatorSelectors[atomIndex])
       .first();
 

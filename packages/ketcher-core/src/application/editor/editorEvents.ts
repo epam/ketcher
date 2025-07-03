@@ -66,6 +66,8 @@ export interface IEditorEvents {
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
   toggleLineLengthHighlighting: Subscription;
+  setLibraryItemDragState: Subscription;
+  placeLibraryItemOnCanvas: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -132,6 +134,8 @@ export function resetEditorEvents() {
     modifyAminoAcids: new Subscription(),
     setEditorLineLength: new Subscription(),
     toggleLineLengthHighlighting: new Subscription(),
+    setLibraryItemDragState: new Subscription(),
+    placeLibraryItemOnCanvas: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -195,6 +199,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.cancelLibraryItemDrag();
     },
   },
   undo: {

@@ -41,7 +41,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C7H16');
     await expect(molecularWeight).toHaveValue('100.202');
@@ -112,8 +112,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/calculated-values-rings.mol',
       page,
+      'Molfiles-V2000/calculated-values-rings.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
 
@@ -163,7 +163,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('Rxn-V2000/calcvalues-reaction.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/calcvalues-reaction.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await expect(chemicalFormulaWrapper).toContainText(
@@ -195,7 +195,7 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-structure.mol');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.keyboard.down('Shift');
@@ -282,7 +282,7 @@ test.describe('Calculated Values Tools', () => {
 
     const xDelta = 300;
     const yDelta = 600;
-    await openFileAndAddToCanvas('Molfiles-V2000/ritalin.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/ritalin.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -312,7 +312,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-bromination.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('[C6H6] > [C6H5Br]');
     await expect(molecularWeight).toHaveValue('[78.112] > [157.008]');
@@ -376,7 +376,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C5H10R#');
     await expect(molecularWeight).toHaveValue(
@@ -412,7 +412,7 @@ test.describe('Calculated Values Tools', () => {
 
     const xDelta = 200;
     const yDelta = 200;
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -440,7 +440,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for RGroups',
@@ -459,7 +459,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 100;
     const yDelta = 100;
-    await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -479,8 +479,8 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/attachment-points-structure.mol',
       page,
+      'Molfiles-V2000/attachment-points-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
@@ -501,8 +501,8 @@ test.describe('Calculated Values Tools', () => {
     const xDelta = 100;
     const yDelta = 100;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/attachment-points-structure.mol',
       page,
+      'Molfiles-V2000/attachment-points-structure.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
@@ -540,8 +540,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/sru-polymer-structure.mol',
       page,
+      'Molfiles-V2000/sru-polymer-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C9H20(C6H12)n');
@@ -585,8 +585,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/multiple-group-structure.mol',
       page,
+      'Molfiles-V2000/multiple-group-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C13H28');
@@ -623,8 +623,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/superatom-structure.mol',
       page,
+      'Molfiles-V2000/superatom-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C12H26');
@@ -661,8 +661,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/data-s-group-structure.mol',
       page,
+      'Molfiles-V2000/data-s-group-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C17H36');
@@ -681,7 +681,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -699,8 +699,8 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/a-query-unsaturated.mol',
       page,
+      'Molfiles-V3000/a-query-unsaturated.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
@@ -718,7 +718,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -735,7 +735,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -753,7 +753,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -771,7 +771,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -789,7 +789,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -810,8 +810,8 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/a-query-unsaturated.mol',
       page,
+      'Molfiles-V3000/a-query-unsaturated.mol',
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
@@ -832,7 +832,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -852,7 +852,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -872,7 +872,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -892,7 +892,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -928,7 +928,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('Molfiles-V2000/hetero-adduct.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/hetero-adduct.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C18H12O3');
     await expect(molecularWeight).toHaveValue('276.286');
@@ -962,7 +962,7 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Elemental Analysis-wrapper')
       .locator('textarea');
 
-    await openFileAndAddToCanvas('Molfiles-V2000/c14napthylbromide.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/c14napthylbromide.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C1014CH9Br');
     await expect(molecularWeight).toHaveValue('223.086');
@@ -981,7 +981,7 @@ test.describe('Calculated Values Tools', () => {
 
     const errorMessage = page.getByTestId('info-modal-body');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/dgln-atomlist.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/dgln-atomlist.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -1013,8 +1013,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Rxn-V2000/reaction-plus-and-arrows.rxn',
       page,
+      'Rxn-V2000/reaction-plus-and-arrows.rxn',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText(
@@ -1059,7 +1059,7 @@ test.describe('Calculated Values Tools', () => {
 
     const xDelta = 500;
     const yDelta = 800;
-    await openFileAndAddToCanvas('KET/reaction-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reaction-arrow.ket');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -1098,8 +1098,8 @@ test.describe('Calculated Values Tools', () => {
       .locator('textarea');
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
       page,
+      'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C2H7');

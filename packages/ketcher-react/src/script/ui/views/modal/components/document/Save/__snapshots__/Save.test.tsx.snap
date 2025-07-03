@@ -123,7 +123,7 @@ Object {
                 >
                   <a
                     class="active"
-                    data-testid="preview-tab"
+                    data-testid="Preview-tab"
                   >
                     Preview
                   </a>
@@ -530,7 +530,7 @@ Object {
               >
                 <a
                   class="active"
-                  data-testid="preview-tab"
+                  data-testid="Preview-tab"
                 >
                   Preview
                 </a>

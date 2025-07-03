@@ -8,6 +8,7 @@ import {
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
+  clearCanvasByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 
@@ -35,7 +36,7 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - Undo/Redo', async ({ page }) => {
     // Test case: EPMLSOPKET-1704
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -50,7 +51,7 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case:EPMLSOPKET-1705
-    await openFileAndAddToCanvas('KET/ketcher.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -60,8 +61,8 @@ test.describe('Clear canvas', () => {
   }) => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
-    await openFileAndAddToCanvas('KET/ketcher.ket', page);
-    await page.keyboard.press('Control+Delete');
+    await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -76,10 +77,10 @@ test.describe('Clear canvas', () => {
     await selectRingButton(page, RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
-    await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
+    await clearCanvasByKeyboard(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/ketcher.mol');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -87,7 +88,7 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1706
-    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/chain-with-r-group.smi');
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopLeftToolbar(page).undo();

@@ -43,6 +43,7 @@ import ChiralFlagIcon from '../../../assets/icons/files/chiral-flag.svg';
 import CipIcon from '../../../assets/icons/files/cip.svg';
 import CleanIcon from '../../../assets/icons/files/clean.svg';
 import CopyIcon from '../../../assets/icons/files/copy.svg';
+import CopyNavBar from '../../../assets/icons/files/copy-for-nav-bar.svg';
 import CopyImageIcon from '../../../assets/icons/files/copy-image.svg';
 import CopyKetIcon from '../../../assets/icons/files/copy-ket.svg';
 import CopyMolIcon from '../../../assets/icons/files/copy-mol.svg';
@@ -232,6 +233,9 @@ import CrossIcon from '../../../assets/icons/files/cross.svg';
 import PlusIcon from '../../../assets/icons/files/plus.svg';
 import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
 import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.svg';
+import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg';
+import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
+import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
 
 export const iconNameToIcon = {
   α,
@@ -315,9 +319,11 @@ export const iconNameToIcon = {
   'copy-image': CopyImageIcon,
   'copy-mol': CopyMolIcon,
   'copy-ket': CopyKetIcon,
+  copyMenu: CopyNavBar,
   cut: CutIcon,
   dearom: DearomIcon,
   delete: DeleteIcon,
+  deleteMenu: DeleteContextMenu,
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   edit: EditIcon,
@@ -341,6 +347,8 @@ export const iconNameToIcon = {
   clear: ClearIcon,
   open: OpenIcon,
   paste: PasteIcon,
+  editMenu: EditContextMenu,
+  pasteNavBar: PasteContextMenu,
   'period-table': PeriodTableIcon,
   arrows: ReactionArrowOpenAngleIcon,
   'reaction-arrow-elliptical-arc-arrow-filled-bow':

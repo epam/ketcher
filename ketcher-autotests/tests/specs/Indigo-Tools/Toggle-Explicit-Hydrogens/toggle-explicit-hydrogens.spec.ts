@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -65,8 +66,8 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
+      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
     );
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
@@ -119,8 +120,8 @@ test.describe('1. Molecules connected ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/${fileName}`,
       );
       await clickOnCanvas(page, 200, 200);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -157,8 +158,8 @@ test.describe('2. Molecules connected ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/${fileName}`,
       );
       await clickOnCanvas(page, 200, 200);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -216,8 +217,8 @@ test.describe('3. Molecules connected ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/All types of bond with Query feature atom on the canvas/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/All types of bond with Query feature atom on the canvas/${fileName}`,
       );
       await clickOnCanvas(page, 200, 200);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -274,8 +275,8 @@ test.describe('4. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -319,8 +320,8 @@ test.describe('5. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -358,8 +359,8 @@ test.describe('6. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -412,8 +413,8 @@ test.describe('7. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -449,8 +450,8 @@ test.describe('8. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -483,25 +484,21 @@ test.describe('9. Fold/unfold hydrogens for', () => {
     await waitForPageInit(page);
   });
 
-  const fileNames = [
-    'Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
-      await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
-        page,
-      );
-      await clickOnCanvas(page, 20, 20);
-      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-      await takeEditorScreenshot(page);
-      /*
+  test(`by Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`, async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`,
+    );
+    await clickOnCanvas(page, 20, 20);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await takeEditorScreenshot(page);
+    /*
       await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
-    });
-  }
+  });
 });
 
 test.describe('10. Fold/unfold hydrogens for', () => {
@@ -551,8 +548,8 @@ test.describe('10. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -597,8 +594,8 @@ test.describe('11. Fold/unfold hydrogens for', () => {
       async ({ page }) => {
         test.slow();
         await openFileAndAddToCanvasAsNewProject(
-          `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
           page,
+          `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         );
         await clickOnCanvas(page, 20, 20);
         await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -640,8 +637,8 @@ test.describe('12. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -723,8 +720,8 @@ test.describe('13. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -766,8 +763,8 @@ test.describe('14. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -810,8 +807,8 @@ test.describe('15. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -877,8 +874,8 @@ test.describe('16. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -924,8 +921,8 @@ test.describe('17. Fold/unfold hydrogens for', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
         page,
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
       );
       await clickOnCanvas(page, 20, 20);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();

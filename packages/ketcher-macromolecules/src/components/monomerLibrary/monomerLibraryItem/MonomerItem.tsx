@@ -15,13 +15,14 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
-import { useCallback, MouseEvent } from 'react';
+import { useCallback, MouseEvent, useRef } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const MonomerItem = ({
   item,
@@ -33,6 +34,9 @@ const MonomerItem = ({
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
+
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
   const colorCode = isAmbiguousMonomerLibraryItem(item)
@@ -54,6 +58,8 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
+  useLibraryItemDrag(item, cardRef);
+
   return (
     <Card
       selected={isSelected}
@@ -66,6 +72,7 @@ const MonomerItem = ({
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       {...(!isDisabled ? { onClick } : {})}
+      ref={cardRef}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (

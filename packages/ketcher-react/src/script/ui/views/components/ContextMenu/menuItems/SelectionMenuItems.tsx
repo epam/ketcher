@@ -46,16 +46,27 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
 
   return (
     <>
-      <Item {...props} disabled={bondEditDisabled} onClick={handleBondEdit}>
+      <Item
+        {...props}
+        data-testid="Edit selected bonds...-option"
+        disabled={bondEditDisabled}
+        onClick={handleBondEdit}
+      >
         Edit selected bonds...
       </Item>
 
-      <Item {...props} disabled={atomEditDisabled} onClick={handleAtomEdit}>
+      <Item
+        {...props}
+        data-testid="Edit selected atoms...-option"
+        disabled={atomEditDisabled}
+        onClick={handleAtomEdit}
+      >
         Edit selected atoms...
       </Item>
 
       <Submenu
         {...props}
+        data-testid="Bond type-option"
         label="Bond type"
         disabled={bondTypeChangeDisabled}
         className={styles.subMenu}
@@ -71,11 +82,16 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         })}
       </Submenu>
 
-      <Item {...props} disabled={atomStereoDisabled} onClick={handleAtomStereo}>
+      <Item
+        {...props}
+        data-testid="Enhanced stereochemistry...-option"
+        disabled={atomStereoDisabled}
+        onClick={handleAtomStereo}
+      >
         Enhanced stereochemistry...
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
-      <Item {...props} onClick={handleDelete}>
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         Delete
       </Item>
     </>

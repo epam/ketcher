@@ -18,7 +18,7 @@ async function openPPTXFileAndValidateStructurePreview(
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
-    await openFile(filePath, page);
+    await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
   if (numberOf.Structure !== 1) {
@@ -36,7 +36,7 @@ test.describe('PPTX files', () => {
   test('open pptx file', async ({ page }) => {
     await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/pptx-with-chem-draw.pptx', page);
+      await openFile(page, 'PPTX/pptx-with-chem-draw.pptx');
     });
     await takeEditorScreenshot(page);
     await OpenPPTXFileDialog(page).selectStructure({ Structure: 2 });
@@ -45,7 +45,7 @@ test.describe('PPTX files', () => {
 
   test('open empty pptx file', async ({ page }) => {
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('PPTX/pptx-empty.pptx', page);
+    await openFile(page, 'PPTX/pptx-empty.pptx');
     await takeEditorScreenshot(page);
   });
 
@@ -136,8 +136,8 @@ test.describe('PPTX files', () => {
       await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile(
-          'PPTX/BigPPT (79 molecules and many objects).pptx',
           page,
+          'PPTX/BigPPT (79 molecules and many objects).pptx',
         );
       });
 

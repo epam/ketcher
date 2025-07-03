@@ -7,6 +7,7 @@ import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 export enum BondType {
   None = 0,
@@ -550,7 +551,7 @@ export async function selectRightConnectionPointAtSelectConnectionPointDialog(
 
 export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
   const bondLocator = page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .locator(`g:nth-child(${bondIndex.toString()}) > path`)
     .first();
 

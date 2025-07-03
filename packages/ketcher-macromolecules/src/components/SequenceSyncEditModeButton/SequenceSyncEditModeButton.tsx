@@ -57,7 +57,7 @@ export const SequenceSyncEditModeButton = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
 
     setIsSequenceSyncEditMode(isSequenceSyncEditModeNewState);
-    editor.events.toggleIsSequenceSyncEditMode.dispatch(
+    editor?.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
     );
     blurActiveElement();
@@ -65,7 +65,7 @@ export const SequenceSyncEditModeButton = () => {
 
   useEffect(() => {
     if (isSequenceMode && hasAtLeastOneAntisense) {
-      editor.events.toggleIsSequenceSyncEditMode.dispatch(
+      editor?.events.toggleIsSequenceSyncEditMode.dispatch(
         isSequenceSyncEditMode,
       );
     }

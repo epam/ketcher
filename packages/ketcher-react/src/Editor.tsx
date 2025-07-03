@@ -93,12 +93,14 @@ export const Editor = (props: Props) => {
             </div>
           }
         >
-          <MacromoleculesEditorComponent
-            togglerComponent={togglerComponent}
-            ketcherId={ketcherId}
-            isMacromoleculesEditorTurnedOn={showPolymerEditor}
-            onInit={onInitMacromoleculesEditor}
-          />
+          {ketcherId && (
+            <MacromoleculesEditorComponent
+              togglerComponent={togglerComponent}
+              ketcherId={ketcherId}
+              isMacromoleculesEditorTurnedOn={showPolymerEditor}
+              onInit={onInitMacromoleculesEditor}
+            />
+          )}
         </Suspense>
       </div>
       <div

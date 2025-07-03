@@ -12,10 +12,10 @@ import {
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   FunctionalGroups,
-  resetCurrentTool,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 test.describe('Click Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {

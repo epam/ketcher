@@ -5,6 +5,9 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
+  SdfFileFormat,
+  MolFileFormat,
+  RxnFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -31,8 +34,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Aromaticity.ket',
       page,
+      'KET/Query-Features/Aromaticity.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -44,8 +47,8 @@ test.describe('Open Ketcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Aromaticity-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Aromaticity-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -66,8 +69,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Aromaticity.ket',
       page,
+      'KET/Query-Features/Aromaticity.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -76,12 +79,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Aromaticity-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Aromaticity-expected.sdf',
       page,
+      'SDF/Query-Feature/Aromaticity-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -102,8 +105,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Aromaticity2.ket',
       page,
+      'KET/Query-Features/Aromaticity2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -112,12 +115,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -138,8 +141,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Chirality.ket',
       page,
+      'KET/Query-Features/Chirality.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -148,12 +151,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -175,8 +178,8 @@ test.describe('Open Ketcher', () => {
         Expected result: No Chirality since SDF doesn't support it - https://github.com/epam/Indigo/issues/1507
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Chirality.ket',
       page,
+      'KET/Query-Features/Chirality.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -185,12 +188,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Chirality-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Chirality-expected.sdf',
       page,
+      'SDF/Query-Feature/Chirality-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -212,8 +215,8 @@ test.describe('Open Ketcher', () => {
         Expected result: No Chirality since RXN doesn't support it - https://github.com/epam/Indigo/issues/1508
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Chirality2.ket',
       page,
+      'KET/Query-Features/Chirality2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -222,12 +225,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -251,8 +254,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/Query-Features/Connectivity.ket',
         page,
+        'KET/Query-Features/Connectivity.ket',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -264,8 +267,8 @@ test.describe('Open Ketcher', () => {
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
         page,
+        'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -290,8 +293,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/Query-Features/Connectivity.ket',
         page,
+        'KET/Query-Features/Connectivity.ket',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -300,12 +303,12 @@ test.describe('Open Ketcher', () => {
         page,
         'SDF/Query-Feature/Connectivity-expected.sdf',
         FileType.SDF,
-        'v2000',
+        SdfFileFormat.v2000,
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'SDF/Query-Feature/Connectivity-expected.sdf',
         page,
+        'SDF/Query-Feature/Connectivity-expected.sdf',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -330,8 +333,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
       await openFileAndAddToCanvasAsNewProject(
-        'KET/Query-Features/Connectivity2.ket',
         page,
+        'KET/Query-Features/Connectivity2.ket',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -340,12 +343,12 @@ test.describe('Open Ketcher', () => {
         page,
         'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
         FileType.RXN,
-        'v2000',
+        RxnFileFormat.v2000,
       );
 
       await openFileAndAddToCanvasAsNewProject(
-        'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
         page,
+        'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -367,8 +370,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/H count.ket',
       page,
+      'KET/Query-Features/H count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -377,12 +380,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/H count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/H count-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/H count-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -403,8 +406,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/H count.ket',
       page,
+      'KET/Query-Features/H count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -413,12 +416,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/H count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/H count-expected.sdf',
       page,
+      'SDF/Query-Feature/H count-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -439,8 +442,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/H count2.ket',
       page,
+      'KET/Query-Features/H count2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -449,12 +452,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/H count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/H count2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/H count2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -478,8 +481,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Implicit H count.ket',
       page,
+      'KET/Query-Features/Implicit H count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -491,8 +494,8 @@ test.describe('Open Ketcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Implicit H count-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Implicit H count-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -516,8 +519,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Implicit H count.ket',
       page,
+      'KET/Query-Features/Implicit H count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -526,12 +529,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Implicit H count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Implicit H count-expected.sdf',
       page,
+      'SDF/Query-Feature/Implicit H count-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -555,8 +558,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Implicit H count2.ket',
       page,
+      'KET/Query-Features/Implicit H count2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -565,12 +568,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -593,8 +596,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring bond count.ket',
       page,
+      'KET/Query-Features/Ring bond count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -603,12 +606,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -629,8 +632,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring bond count.ket',
       page,
+      'KET/Query-Features/Ring bond count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -639,12 +642,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring bond count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Ring bond count-expected.sdf',
       page,
+      'SDF/Query-Feature/Ring bond count-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -665,8 +668,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring bond count2.ket',
       page,
+      'KET/Query-Features/Ring bond count2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -675,12 +678,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -703,8 +706,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring membership.ket',
       page,
+      'KET/Query-Features/Ring membership.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -716,8 +719,8 @@ test.describe('Open Ketcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Ring membership-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Ring membership-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -740,8 +743,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring membership.ket',
       page,
+      'KET/Query-Features/Ring membership.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -750,12 +753,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring membership-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Ring membership-expected.sdf',
       page,
+      'SDF/Query-Feature/Ring membership-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -778,8 +781,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring membership2.ket',
       page,
+      'KET/Query-Features/Ring membership2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -788,12 +791,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -816,8 +819,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring size.ket',
       page,
+      'KET/Query-Features/Ring size.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -829,8 +832,8 @@ test.describe('Open Ketcher', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Ring size-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Ring size-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -853,8 +856,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring size.ket',
       page,
+      'KET/Query-Features/Ring size.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -863,12 +866,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Ring size-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Ring size-expected.sdf',
       page,
+      'SDF/Query-Feature/Ring size-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -891,8 +894,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Ring size2.ket',
       page,
+      'KET/Query-Features/Ring size2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -901,12 +904,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -929,8 +932,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Substitution count.ket',
       page,
+      'KET/Query-Features/Substitution count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -939,12 +942,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -967,8 +970,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Substitution count.ket',
       page,
+      'KET/Query-Features/Substitution count.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -977,12 +980,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Substitution count-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Substitution count-expected.sdf',
       page,
+      'SDF/Query-Feature/Substitution count-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1005,8 +1008,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Substitution count2.ket',
       page,
+      'KET/Query-Features/Substitution count2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1015,12 +1018,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1041,8 +1044,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Unsaturated.ket',
       page,
+      'KET/Query-Features/Unsaturated.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1051,12 +1054,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1077,8 +1080,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Unsaturated.ket',
       page,
+      'KET/Query-Features/Unsaturated.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1087,12 +1090,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Unsaturated-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Unsaturated-expected.sdf',
       page,
+      'SDF/Query-Feature/Unsaturated-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1113,8 +1116,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Unsaturated2.ket',
       page,
+      'KET/Query-Features/Unsaturated2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1123,12 +1126,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1152,8 +1155,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Custom.ket',
       page,
+      'KET/Query-Features/Custom.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1162,10 +1165,10 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Custom-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
-        await openFileAndAddToCanvasAsNewProject('Molfiles-V2000/Query-Feature/Custom-expected.mol', page);
+        await openFileAndAddToCanvasAsNewProject(page, 'Molfiles-V2000/Query-Feature/Custom-expected.mol', page);
         await moveMouseAway(page);
         await takeEditorScreenshot(page);
         */
@@ -1189,8 +1192,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Custom.ket',
       page,
+      'KET/Query-Features/Custom.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1199,10 +1202,10 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/Custom-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
-        await openFileAndAddToCanvasAsNewProject('SDF/Query-Feature/Custom-expected.sdf', page);
+        await openFileAndAddToCanvasAsNewProject(page, 'SDF/Query-Feature/Custom-expected.sdf', page);
         await moveMouseAway(page);
         await takeEditorScreenshot(page);
         */
@@ -1226,8 +1229,8 @@ test.describe('Open Ketcher', () => {
         Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Custom2.ket',
       page,
+      'KET/Query-Features/Custom2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1236,10 +1239,10 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/Custom2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
-        await openFileAndAddToCanvasAsNewProject('Rxn-V2000/Query-Feature/Custom2-expected.rxn', page);
+        await openFileAndAddToCanvasAsNewProject(page, 'Rxn-V2000/Query-Feature/Custom2-expected.rxn', page);
         await moveMouseAway(page);
         await takeEditorScreenshot(page);
         */
@@ -1260,8 +1263,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/All Atom Query features together.ket',
       page,
+      'KET/Query-Features/All Atom Query features together.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1270,12 +1273,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
       page,
+      'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1296,8 +1299,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/All Atom Query features together.ket',
       page,
+      'KET/Query-Features/All Atom Query features together.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1306,12 +1309,12 @@ test.describe('Open Ketcher', () => {
       page,
       'SDF/Query-Feature/All Atom Query features together-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/All Atom Query features together-expected.sdf',
       page,
+      'SDF/Query-Feature/All Atom Query features together-expected.sdf',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1332,8 +1335,8 @@ test.describe('Open Ketcher', () => {
         7. Validate canvas
         */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/All Atom Query features together2.ket',
       page,
+      'KET/Query-Features/All Atom Query features together2.ket',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1342,12 +1345,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',
       page,
+      'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

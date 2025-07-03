@@ -7,10 +7,12 @@ export default function ButtonGroup<T>({
   buttons,
   onClick,
   defaultValue,
+  title,
 }: {
   buttons: { label: string; value: T }[];
   onClick: (value: T) => void;
   defaultValue: T;
+  title?: string;
 }) {
   const [value, setValue] = useState(defaultValue);
 
@@ -30,7 +32,7 @@ export default function ButtonGroup<T>({
     >
       {buttons.map(({ label, value: buttonValue }) => (
         <ToggleButton
-          data-testid={label + '-option'}
+          data-testid={title + '-' + label + '-option'}
           key={label}
           value={Number(buttonValue) || ''}
           onClick={(event) => handleChange(event, buttonValue)}

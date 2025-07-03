@@ -4,10 +4,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -143,7 +141,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1958
-    await openFileAndAddToCanvas('KET/lines-EPMLSOPKET-1958.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/lines-EPMLSOPKET-1958.ket');
     await separetingAndMovingLines(page);
     await takeEditorScreenshot(page);
   });

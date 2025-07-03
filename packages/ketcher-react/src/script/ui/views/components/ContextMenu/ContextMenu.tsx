@@ -69,9 +69,9 @@ const ContextMenu: React.FC = () => {
 
   const resetMenuPosition = (menuElement: HTMLElement) => {
     const contextMenuElement = menuElement;
-    const ketcherRootElement = document.querySelector(
+    const ketcherRootElement = document.querySelectorAll(
       KETCHER_ROOT_NODE_CSS_SELECTOR,
-    );
+    )[ketcherProvider.getIndexById(ketcherId)];
 
     if (!contextMenuElement || !ketcherRootElement) {
       return;

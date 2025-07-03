@@ -3,12 +3,14 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  switchSequenceEnteringButtonType,
   SequenceType,
 } from '@utils';
+import {
+  selectRectangleArea,
+  switchSequenceEnteringButtonType,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -38,7 +40,7 @@ test.afterAll(async ({ browser }) => {
 
 test.describe('Saving in .svg files', () => {
   test('Should convert .ket file to .svg format in save modal', async () => {
-    await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     // Coordinates for rectangle selection
     const startX = 100;
     const startY = 100;
@@ -160,7 +162,7 @@ test.describe('Saving in .svg files', () => {
             2. Take screenshot to make sure export works correct
       */
 
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
 
       await takeEditorScreenshot(page);
 
@@ -207,7 +209,7 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData1) {
     test(`Export to SVG: Verify it is possible to export Snake mode canvas with ${description} to SVG`, async () => {
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
       await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
@@ -248,7 +250,7 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData2) {
     test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async () => {
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
@@ -295,7 +297,7 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData3) {
     test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
@@ -341,7 +343,7 @@ test.describe('Saving in .svg files', () => {
     test(`Export to SVG: Verify it is possible to export Sequence-Peptide mode canvas with ${description} to SVG`, async () => {
       markResetToDefaultState('defaultLayout');
 
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
@@ -384,7 +386,7 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData5) {
     test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async () => {
-      await openFileAndAddToCanvasMacro(filename, page);
+      await openFileAndAddToCanvasMacro(page, filename);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(

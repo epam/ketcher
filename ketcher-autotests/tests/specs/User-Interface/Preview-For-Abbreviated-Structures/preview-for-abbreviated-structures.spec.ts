@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -68,7 +69,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 

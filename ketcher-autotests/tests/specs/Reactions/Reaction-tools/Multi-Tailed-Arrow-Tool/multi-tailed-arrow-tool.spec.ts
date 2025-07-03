@@ -3,9 +3,7 @@ import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
   copyToClipboardByKeyboard,
-  cutAndPaste,
   cutToClipboardByKeyboard,
   dragMouseTo,
   moveMouseAway,
@@ -16,9 +14,7 @@ import {
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  resetCurrentTool,
   screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -29,7 +25,13 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
+  getCachedBodyCenter,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
@@ -50,6 +52,8 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -92,21 +96,18 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
 }
 
 async function addTail(page: Page, x: number, y: number) {
-  await clickOnCanvas(page, x, y, { button: 'right' });
   await waitForRender(page, async () => {
-    await page.getByText('Add new tail').click();
+    await ContextMenu(page, { x, y }).click(MultiTailedArrowOption.AddNewTail);
   });
 }
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
-  if (index !== undefined) {
-    await tailElement.nth(index).click({ force: true, button: 'right' });
-  } else {
-    await tailElement.first().click({ force: true, button: 'right' });
-  }
+  const n = index !== undefined ? index : 0;
   await waitForRender(page, async () => {
-    await page.getByText('Remove tail').click();
+    await ContextMenu(page, tailElement.nth(n)).click(
+      MultiTailedArrowOption.RemoveTail,
+    );
   });
 }
 
@@ -134,10 +135,12 @@ async function hoverOverArrowSpine(
 
 async function addTails(page: Page, count: number) {
   for (let i = 0; i < count; i++) {
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
+    const middleOfTheSceen = await getCachedBodyCenter(page);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, middleOfTheSceen).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
     });
-    await page.getByText('Add new tail').click();
   }
 }
 
@@ -145,7 +148,7 @@ async function addTailToArrow(page: Page, arrowIndex: number) {
   await clickOnCanvas(page, 200, 200);
   await selectPartOfMolecules(page);
   await hoverOverArrowSpine(page, arrowIndex, 'right');
-  await page.getByText('Add new tail').click();
+  await page.getByTestId(MultiTailedArrowOption.AddNewTail).click();
 }
 
 test.describe('Multi-Tailed Arrow Tool', () => {
@@ -180,8 +183,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * and after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
 
     await verifyFileExport(
@@ -200,8 +203,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * tails and heads, after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
 
     await verifyFileExport(
@@ -220,13 +223,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * and they are on the correct positions to each other and they saved together to .ket file with correct parameters.
      */
     await openFileAndAddToCanvas(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
       200 - x,
       300 - y,
     );
@@ -247,8 +250,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that loaded from .ket file and added to selected place on Canvas with correct position and layer level.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.ket',
       page,
+      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.ket',
     );
 
     await verifyFileExport(
@@ -268,8 +271,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * distance between head and top/bottom tail - 0.01) and head, spine and tails can be changed to bigger size.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-minimal.ket',
       page,
+      'KET/multi-tailed-arrow-minimal.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -392,7 +395,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Description: ${detailedDescription}
        */
       await CommonTopLeftToolbar(page).openFile();
-      await openFile(file, page);
+      await openFile(page, file);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
       await takeEditorScreenshot(page);
@@ -456,7 +459,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
      */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('KET/multi-tailed-arrow-to-compare.ket', page);
+    await openFile(page, 'KET/multi-tailed-arrow-to-compare.ket');
     await takeEditorScreenshot(page);
   });
 
@@ -484,18 +487,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas from .ket file
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -507,8 +507,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Action of adding to Canvas of Multi-Tailed Arrows from .ket file and Undo/Redo.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
@@ -543,8 +543,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     test.slow();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
@@ -580,8 +580,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -619,8 +619,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * deleted using "Erase" (or Delete, Backspace buttons)
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
       page,
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -673,8 +673,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * loaded from KET when other elements are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-multi-tail-arrows-and-rings.ket',
       page,
+      'KET/three-multi-tail-arrows-and-rings.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -693,8 +693,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * loaded from KET when other elements are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-multi-tail-arrows-and-rings.ket',
       page,
+      'KET/three-multi-tail-arrows-and-rings.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -712,8 +712,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rings-with-multi-tailed-arrows.ket',
       page,
+      'KET/rings-with-multi-tailed-arrows.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -731,8 +731,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rings-with-multi-tailed-arrows.ket',
       page,
+      'KET/rings-with-multi-tailed-arrows.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -750,8 +750,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rings-with-multi-tailed-arrows.ket',
       page,
+      'KET/rings-with-multi-tailed-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -767,8 +767,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/rings-with-multi-tailed-arrows.ket',
       page,
+      'KET/rings-with-multi-tailed-arrows.ket',
     );
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
@@ -823,8 +823,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * one by one using "Multi-Tailed Arrow Tool" button and they saved together to .ket file with the correct coordinates of spines, tails and heads.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-benzene-rings.ket',
       page,
+      'KET/three-benzene-rings.ket',
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
@@ -846,8 +846,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Copy/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-multi-tail-arrows-and-rings.ket',
       page,
+      'KET/three-multi-tail-arrows-and-rings.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -867,8 +867,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Cut/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-multi-tail-arrows-and-rings.ket',
       page,
+      'KET/three-multi-tail-arrows-and-rings.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -947,8 +947,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Multi-Tailed Arrows with elements saved to template and added to Canvas with correct position and layer level.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplates(page);
@@ -1036,8 +1036,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     another place on Canvas with correct size and position of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
       page,
+      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
     );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 640, 350);
@@ -1120,8 +1120,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     moved together with elements and separately to other places on Canvas with correct sizes and positions.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -1138,8 +1138,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Movement actions Undo/Redo for loaded from KET Multi-Tailed Arrows on Canvas with other elements.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -1190,11 +1190,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     in menu, "Add new tail" option is disabled when right-clicking on tail/head/spine.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-spine-0.69.ket',
       page,
+      'KET/multi-tailed-arrow-spine-0.69.ket',
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
   });
 
@@ -1208,14 +1211,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-spine-0.7.ket',
       page,
+      'KET/multi-tailed-arrow-spine-0.7.ket',
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Add new tail').click();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1234,14 +1241,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-spine-1.39.ket',
       page,
+      'KET/multi-tailed-arrow-spine-1.39.ket',
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Add new tail').click();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1260,20 +1271,21 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-spine-1.4.ket',
       page,
+      'KET/multi-tailed-arrow-spine-1.4.ket',
     );
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'right', {
-        waitForMergeInitialization: true,
-      });
-      await page.getByText('Add new tail').click();
+      const middleOfTheScreen = await getCachedBodyCenter(page);
+      await ContextMenu(page, middleOfTheScreen).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1292,21 +1304,24 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
     await addTailToArrow(page, 2);
     await addTailToArrow(page, 2);
     await hoverOverArrowSpine(page, 2, 'right');
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1325,21 +1340,24 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).open();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
     await addTailToArrow(page, 2);
     await addTailToArrow(page, 2);
     await hoverOverArrowSpine(page, 2, 'right');
-    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await expect(
+      page.getByTestId(MultiTailedArrowOption.AddNewTail),
+    ).toBeDisabled();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1359,8 +1377,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     in menu and changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-3-tails-spine-0.7.ket',
       page,
+      'KET/multi-tailed-arrow-3-tails-spine-0.7.ket',
     );
     await clickInTheMiddleOfTheScreen(page);
     await page
@@ -1393,8 +1411,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     const tailIds = ['tails-0-move', 'tails-1-move', 'tails-2-move'];
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
       page,
+      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
     );
     await clickInTheMiddleOfTheScreen(page);
     await page
@@ -1431,8 +1449,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1459,8 +1477,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1487,8 +1505,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-5-tails-spine-2.1.ket',
       page,
+      'KET/multi-tailed-arrow-5-tails-spine-2.1.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page, 'left', {
@@ -1502,7 +1520,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
-      await page.getByText('Add new tail').click();
+      await page.getByTestId(MultiTailedArrowOption.AddNewTail).click();
     }
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1522,8 +1540,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-2-tails-1.ket',
       page,
+      'KET/multi-tailed-arrow-2-tails-1.ket',
     );
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
@@ -1531,7 +1549,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
-      await page.getByText('Add new tail').click();
+      await page.getByTestId(MultiTailedArrowOption.AddNewTail).click();
     }
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page, 'left', {
@@ -1554,8 +1572,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1584,8 +1602,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1609,8 +1627,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1876,23 +1894,21 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Loaded from KET Multi-Tailed Arrow after adding/removing of tails selected and moved with correct size and position of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-2-tails-1.ket',
       page,
+      'KET/multi-tailed-arrow-2-tails-1.ket',
     );
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await page.getByText('Add new tail').click();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await page.getByText('Remove tail').click();
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.RemoveTail,
+    );
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page);
@@ -1910,15 +1926,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
-
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
-    await page.getByText('Add new tail').click();
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+    await ContextMenu(page, middleOfTheScreen).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page);
@@ -1940,8 +1954,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1964,8 +1978,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1988,8 +2002,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2012,8 +2026,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2125,8 +2139,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2204,8 +2218,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Verify that Undo/Redo actions performed for added from KET default Multi-Tailed Arrow after moving/changing size of head .
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2234,8 +2248,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     test.slow();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2275,8 +2289,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2309,8 +2323,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2341,8 +2355,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Loaded from KET Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2542,8 +2556,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2569,8 +2583,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2596,8 +2610,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-2-tails-1.ket',
       page,
+      'KET/multi-tailed-arrow-2-tails-1.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2620,8 +2634,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2722,8 +2736,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     changed for each of them, after that changed Multi-Tailed Arrows and elements saved to KET with the correct coordinates of spines, tails and heads.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2801,8 +2815,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added from KET default Multi-Tailed Arrow after moving/changing size of top and bottom tails .
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
 
@@ -2838,8 +2852,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     test.slow();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2879,8 +2893,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2913,8 +2927,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Cut-Paste (Ctrl+C, Ctrl+V) actions performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-3.ket',
       page,
+      'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2947,8 +2961,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Loaded from KET Multi-Tailed Arrow after moving/changing size of top and bottom tails selected and moved with correct size and position of spine, tails and head.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-default.ket',
       page,
+      'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
 
@@ -3172,8 +3186,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-3-tails-default.ket',
       page,
+      'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -3196,8 +3210,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-3-tails-default.ket',
       page,
+      'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -3220,8 +3234,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-3-tails-default.ket',
       page,
+      'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -3346,9 +3360,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
     await addTails(page, 1);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
-      waitForMergeInitialization: true,
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await ContextMenu(page, middleOfTheScreen).open();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3365,8 +3378,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-to-compare.ket',
       page,
+      'KET/multi-tailed-arrow-to-compare.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).saveFile();
@@ -3413,8 +3426,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-with-elements.ket',
       page,
+      'KET/multi-tailed-arrows-with-elements.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).saveFile();
@@ -3431,14 +3444,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-with-elements.svg',
       page,
+      'Images/multi-tailed-arrows-with-elements.svg',
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-with-elements.png',
       page,
+      'Images/multi-tailed-arrows-with-elements.png',
     );
     await takeEditorScreenshot(page);
   });
@@ -3451,19 +3464,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened together from SVG/PNG file with the correct size of file.
      */
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
       page,
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
-      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
       page,
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -3482,8 +3493,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize.ket',
       page,
+      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -3496,8 +3507,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
       page,
+      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3575,12 +3586,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
           3. Verify the saved KET file matches the expected KET file.
           4. Load the expected KET file and verify its appearance using screenshots.
        */
-      await openFileAndAddToCanvasAsNewProject(file, page);
+      await openFileAndAddToCanvasAsNewProject(page, file);
       await takeEditorScreenshot(page);
       await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
-      await openFileAndAddToCanvasAsNewProject(expectedFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, expectedFile);
       await takeEditorScreenshot(page);
     });
   }
@@ -3602,8 +3613,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
           4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
     );
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'P', 0);
@@ -3620,8 +3631,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3642,8 +3653,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
           4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
     );
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'P', 0);
@@ -3660,8 +3671,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3682,8 +3693,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     test.slow();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-cip.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-cip.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculateCIP();
@@ -3694,8 +3705,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-cip-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-cip-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3715,8 +3726,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).checkStructure();
@@ -3731,8 +3742,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-check-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-check-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3752,8 +3763,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -3766,8 +3777,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-calculated-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-calculated-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -3787,8 +3798,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -3801,8 +3812,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
     );
     await takeEditorScreenshot(page);
   });

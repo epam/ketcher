@@ -1,12 +1,12 @@
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   BondWidth,
   StereoBondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 
 class SingleUpDownBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     // TODO: Ensure proper naming for variables below
@@ -32,7 +32,7 @@ class SingleUpDownBondPathRenderer {
       path += `L${sectionStartPosition.x},${sectionStartPosition.y}`;
     }
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: path,
       attrs: {
         fill: 'none',

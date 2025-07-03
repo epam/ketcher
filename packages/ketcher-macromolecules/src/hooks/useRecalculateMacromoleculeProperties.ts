@@ -5,6 +5,7 @@ import {
   getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
+  notifyRequestCompleted,
   Struct,
   StructService,
 } from 'ketcher-core';
@@ -91,6 +92,7 @@ export const useRecalculateMacromoleculeProperties = () => {
         calculateMacromoleculePropertiesResponse.properties &&
         JSON.parse(calculateMacromoleculePropertiesResponse.properties);
 
+      notifyRequestCompleted();
       dispatch(setMacromoleculesProperties(macromoleculeProperties));
     } catch (e) {
       KetcherLogger.error('Error during parsing macromolecule properties: ', e);

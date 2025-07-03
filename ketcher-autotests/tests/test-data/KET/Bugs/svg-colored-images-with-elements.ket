@@ -1,0 +1,1010 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": 4.775284099578857,
+                            "y": -16.975,
+                            "z": 0
+                        },
+                        {
+                            "x": 9.003906806796891,
+                            "y": -16.975,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "simpleObject",
+                "data": {
+                    "mode": "ellipse",
+                    "pos": [
+                        {
+                            "x": 1.1252840995788576,
+                            "y": -12.075000000000001,
+                            "z": 0
+                        },
+                        {
+                            "x": 3.2502840995788578,
+                            "y": -11.325000000000001,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "simpleObject",
+                "data": {
+                    "mode": "rectangle",
+                    "pos": [
+                        {
+                            "x": 19.45028409957886,
+                            "y": -4.95,
+                            "z": 0
+                        },
+                        {
+                            "x": 22.400284099578858,
+                            "y": -3.4250000000000003,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "image",
+                "format": "image/svg+xml",
+                "boundingBox": {
+                    "x": 0.7752840995788608,
+                    "y": -0.9000000000000017,
+                    "z": 0,
+                    "width": 7.3249999999999975,
+                    "height": 6.549999999999998
+                },
+                "data": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIA0KCSB2aWV3Qm94PSIwIDAgNjAgNjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggc3R5bGU9ImZpbGw6I0U2NEMzQzsiIGQ9Ik00LjY0NSw0NS41NzdjLTAuMDE3LTAuMzgzLTAuMDI5LTAuNzY3LTAuMDI5LTEuMTU0YzAtMTMuOTk3LDExLjM4Ny0yNS4zODUsMjUuMzg1LTI1LjM4NQ0KCXMyNS4zODUsMTEuMzg3LDI1LjM4NSwyNS4zODVjMCwwLjM4Ny0wLjAxMiwwLjc3MS0wLjAyOSwxLjE1NGg0LjYxNkM1OS45ODUsNDUuMTkzLDYwLDQ0LjgxLDYwLDQ0LjQyM2MwLTE2LjU2OS0xMy40MzEtMzAtMzAtMzANCglzLTMwLDEzLjQzMS0zMCwzMGMwLDAuMzg3LDAuMDE1LDAuNzcsMC4wMjksMS4xNTRINC42NDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojRjBDNDE5OyIgZD0iTTkuMjg5LDQ1LjU3N2MtMC4wMjEtMC4zODQtMC4wNTgtMC43NjQtMC4wNTgtMS4xNTRjMC0xMS40NTIsOS4zMTctMjAuNzY5LDIwLjc2OS0yMC43NjkNCglzMjAuNzY5LDkuMzE4LDIwLjc2OSwyMC43NjljMCwwLjM4OS0wLjAzNywwLjc3LTAuMDU4LDEuMTU0aDQuNjQ1YzAuMDE3LTAuMzgzLDAuMDI5LTAuNzY3LDAuMDI5LTEuMTU0DQoJYzAtMTMuOTk3LTExLjM4Ny0yNS4zODUtMjUuMzg1LTI1LjM4NVM0LjYxNSwzMC40MjYsNC42MTUsNDQuNDIzYzAsMC4zODcsMC4wMTIsMC43NzEsMC4wMjksMS4xNTRIOS4yODl6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojNzFDMjg1OyIgZD0iTTEzLjkwNSw0NS41NzdjLTAuMDI3LTAuMzgzLTAuMDU4LTAuNzY0LTAuMDU4LTEuMTU0YzAtOC45MDcsNy4yNDYtMTYuMTU0LDE2LjE1NC0xNi4xNTQNCglzMTYuMTU0LDcuMjQ2LDE2LjE1NCwxNi4xNTRjMCwwLjM4OS0wLjAzMSwwLjc3MS0wLjA1OCwxLjE1NGg0LjYxNWMwLjAyMS0wLjM4NCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTExLjQ1Mi05LjMxNy0yMC43NjktMjAuNzY5LTIwLjc2OVM5LjIzMSwzMi45NzEsOS4yMzEsNDQuNDIzYzAsMC4zODksMC4wMzcsMC43NywwLjA1OCwxLjE1NEgxMy45MDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojMDA5NkU2OyIgZD0iTTE4LjUyLDQ1LjU3N2MtMC4wMzgtMC4zOC0wLjA1OC0wLjc2NC0wLjA1OC0xLjE1NGMwLTYuMzYyLDUuMTc2LTExLjUzOCwxMS41MzgtMTEuNTM4DQoJczExLjUzOCw1LjE3NywxMS41MzgsMTEuNTM4YzAsMC4zODktMC4wMjEsMC43NzQtMC4wNTgsMS4xNTRoNC42MTVjMC4wMjctMC4zODMsMC4wNTgtMC43NjQsMC4wNTgtMS4xNTQNCgljMC04LjkwNy03LjI0Ni0xNi4xNTQtMTYuMTU0LTE2LjE1NHMtMTYuMTU0LDcuMjQ2LTE2LjE1NCwxNi4xNTRjMCwwLjM4OSwwLjAzMSwwLjc3MSwwLjA1OCwxLjE1NEgxOC41MnoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiM1NDZBNzk7IiBkPSJNMjMuMTgxLDQ1LjU3N2MtMC4wNjQtMC4zNzYtMC4xMDQtMC43Ni0wLjEwNC0xLjE1NGMwLTMuODE4LDMuMTA1LTYuOTIzLDYuOTIzLTYuOTIzDQoJczYuOTIzLDMuMTA1LDYuOTIzLDYuOTIzYzAsMC4zOTQtMC4wNDEsMC43NzgtMC4xMDQsMS4xNTRoNC42NjFjMC4wMzgtMC4zOCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTYuMzYyLTUuMTc2LTExLjUzOC0xMS41MzgtMTEuNTM4cy0xMS41MzgsNS4xNzctMTEuNTM4LDExLjUzOGMwLDAuMzg5LDAuMDIxLDAuNzc0LDAuMDU4LDEuMTU0SDIzLjE4MXoiLz4NCjwvc3ZnPg=="
+            },
+            {
+                "type": "image",
+                "format": "image/svg+xml",
+                "boundingBox": {
+                    "x": 6.51278409957886,
+                    "y": -4.350000000000001,
+                    "z": 0,
+                    "width": 7.3249999999999975,
+                    "height": 6.549999999999998
+                },
+                "data": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIA0KCSB2aWV3Qm94PSIwIDAgNjAgNjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggc3R5bGU9ImZpbGw6I0U2NEMzQzsiIGQ9Ik00LjY0NSw0NS41NzdjLTAuMDE3LTAuMzgzLTAuMDI5LTAuNzY3LTAuMDI5LTEuMTU0YzAtMTMuOTk3LDExLjM4Ny0yNS4zODUsMjUuMzg1LTI1LjM4NQ0KCXMyNS4zODUsMTEuMzg3LDI1LjM4NSwyNS4zODVjMCwwLjM4Ny0wLjAxMiwwLjc3MS0wLjAyOSwxLjE1NGg0LjYxNkM1OS45ODUsNDUuMTkzLDYwLDQ0LjgxLDYwLDQ0LjQyM2MwLTE2LjU2OS0xMy40MzEtMzAtMzAtMzANCglzLTMwLDEzLjQzMS0zMCwzMGMwLDAuMzg3LDAuMDE1LDAuNzcsMC4wMjksMS4xNTRINC42NDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojRjBDNDE5OyIgZD0iTTkuMjg5LDQ1LjU3N2MtMC4wMjEtMC4zODQtMC4wNTgtMC43NjQtMC4wNTgtMS4xNTRjMC0xMS40NTIsOS4zMTctMjAuNzY5LDIwLjc2OS0yMC43NjkNCglzMjAuNzY5LDkuMzE4LDIwLjc2OSwyMC43NjljMCwwLjM4OS0wLjAzNywwLjc3LTAuMDU4LDEuMTU0aDQuNjQ1YzAuMDE3LTAuMzgzLDAuMDI5LTAuNzY3LDAuMDI5LTEuMTU0DQoJYzAtMTMuOTk3LTExLjM4Ny0yNS4zODUtMjUuMzg1LTI1LjM4NVM0LjYxNSwzMC40MjYsNC42MTUsNDQuNDIzYzAsMC4zODcsMC4wMTIsMC43NzEsMC4wMjksMS4xNTRIOS4yODl6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojNzFDMjg1OyIgZD0iTTEzLjkwNSw0NS41NzdjLTAuMDI3LTAuMzgzLTAuMDU4LTAuNzY0LTAuMDU4LTEuMTU0YzAtOC45MDcsNy4yNDYtMTYuMTU0LDE2LjE1NC0xNi4xNTQNCglzMTYuMTU0LDcuMjQ2LDE2LjE1NCwxNi4xNTRjMCwwLjM4OS0wLjAzMSwwLjc3MS0wLjA1OCwxLjE1NGg0LjYxNWMwLjAyMS0wLjM4NCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTExLjQ1Mi05LjMxNy0yMC43NjktMjAuNzY5LTIwLjc2OVM5LjIzMSwzMi45NzEsOS4yMzEsNDQuNDIzYzAsMC4zODksMC4wMzcsMC43NywwLjA1OCwxLjE1NEgxMy45MDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojMDA5NkU2OyIgZD0iTTE4LjUyLDQ1LjU3N2MtMC4wMzgtMC4zOC0wLjA1OC0wLjc2NC0wLjA1OC0xLjE1NGMwLTYuMzYyLDUuMTc2LTExLjUzOCwxMS41MzgtMTEuNTM4DQoJczExLjUzOCw1LjE3NywxMS41MzgsMTEuNTM4YzAsMC4zODktMC4wMjEsMC43NzQtMC4wNTgsMS4xNTRoNC42MTVjMC4wMjctMC4zODMsMC4wNTgtMC43NjQsMC4wNTgtMS4xNTQNCgljMC04LjkwNy03LjI0Ni0xNi4xNTQtMTYuMTU0LTE2LjE1NHMtMTYuMTU0LDcuMjQ2LTE2LjE1NCwxNi4xNTRjMCwwLjM4OSwwLjAzMSwwLjc3MSwwLjA1OCwxLjE1NEgxOC41MnoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiM1NDZBNzk7IiBkPSJNMjMuMTgxLDQ1LjU3N2MtMC4wNjQtMC4zNzYtMC4xMDQtMC43Ni0wLjEwNC0xLjE1NGMwLTMuODE4LDMuMTA1LTYuOTIzLDYuOTIzLTYuOTIzDQoJczYuOTIzLDMuMTA1LDYuOTIzLDYuOTIzYzAsMC4zOTQtMC4wNDEsMC43NzgtMC4xMDQsMS4xNTRoNC42NjFjMC4wMzgtMC4zOCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTYuMzYyLTUuMTc2LTExLjUzOC0xMS41MzgtMTEuNTM4cy0xMS41MzgsNS4xNzctMTEuNTM4LDExLjUzOGMwLDAuMzg5LDAuMDIxLDAuNzc0LDAuMDU4LDEuMTU0SDIzLjE4MXoiLz4NCjwvc3ZnPg=="
+            },
+            {
+                "type": "image",
+                "format": "image/svg+xml",
+                "boundingBox": {
+                    "x": 13.212784099578862,
+                    "y": -8.800000000000002,
+                    "z": 0,
+                    "width": 7.3249999999999975,
+                    "height": 6.549999999999998
+                },
+                "data": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIA0KCSB2aWV3Qm94PSIwIDAgNjAgNjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggc3R5bGU9ImZpbGw6I0U2NEMzQzsiIGQ9Ik00LjY0NSw0NS41NzdjLTAuMDE3LTAuMzgzLTAuMDI5LTAuNzY3LTAuMDI5LTEuMTU0YzAtMTMuOTk3LDExLjM4Ny0yNS4zODUsMjUuMzg1LTI1LjM4NQ0KCXMyNS4zODUsMTEuMzg3LDI1LjM4NSwyNS4zODVjMCwwLjM4Ny0wLjAxMiwwLjc3MS0wLjAyOSwxLjE1NGg0LjYxNkM1OS45ODUsNDUuMTkzLDYwLDQ0LjgxLDYwLDQ0LjQyM2MwLTE2LjU2OS0xMy40MzEtMzAtMzAtMzANCglzLTMwLDEzLjQzMS0zMCwzMGMwLDAuMzg3LDAuMDE1LDAuNzcsMC4wMjksMS4xNTRINC42NDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojRjBDNDE5OyIgZD0iTTkuMjg5LDQ1LjU3N2MtMC4wMjEtMC4zODQtMC4wNTgtMC43NjQtMC4wNTgtMS4xNTRjMC0xMS40NTIsOS4zMTctMjAuNzY5LDIwLjc2OS0yMC43NjkNCglzMjAuNzY5LDkuMzE4LDIwLjc2OSwyMC43NjljMCwwLjM4OS0wLjAzNywwLjc3LTAuMDU4LDEuMTU0aDQuNjQ1YzAuMDE3LTAuMzgzLDAuMDI5LTAuNzY3LDAuMDI5LTEuMTU0DQoJYzAtMTMuOTk3LTExLjM4Ny0yNS4zODUtMjUuMzg1LTI1LjM4NVM0LjYxNSwzMC40MjYsNC42MTUsNDQuNDIzYzAsMC4zODcsMC4wMTIsMC43NzEsMC4wMjksMS4xNTRIOS4yODl6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojNzFDMjg1OyIgZD0iTTEzLjkwNSw0NS41NzdjLTAuMDI3LTAuMzgzLTAuMDU4LTAuNzY0LTAuMDU4LTEuMTU0YzAtOC45MDcsNy4yNDYtMTYuMTU0LDE2LjE1NC0xNi4xNTQNCglzMTYuMTU0LDcuMjQ2LDE2LjE1NCwxNi4xNTRjMCwwLjM4OS0wLjAzMSwwLjc3MS0wLjA1OCwxLjE1NGg0LjYxNWMwLjAyMS0wLjM4NCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTExLjQ1Mi05LjMxNy0yMC43NjktMjAuNzY5LTIwLjc2OVM5LjIzMSwzMi45NzEsOS4yMzEsNDQuNDIzYzAsMC4zODksMC4wMzcsMC43NywwLjA1OCwxLjE1NEgxMy45MDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojMDA5NkU2OyIgZD0iTTE4LjUyLDQ1LjU3N2MtMC4wMzgtMC4zOC0wLjA1OC0wLjc2NC0wLjA1OC0xLjE1NGMwLTYuMzYyLDUuMTc2LTExLjUzOCwxMS41MzgtMTEuNTM4DQoJczExLjUzOCw1LjE3NywxMS41MzgsMTEuNTM4YzAsMC4zODktMC4wMjEsMC43NzQtMC4wNTgsMS4xNTRoNC42MTVjMC4wMjctMC4zODMsMC4wNTgtMC43NjQsMC4wNTgtMS4xNTQNCgljMC04LjkwNy03LjI0Ni0xNi4xNTQtMTYuMTU0LTE2LjE1NHMtMTYuMTU0LDcuMjQ2LTE2LjE1NCwxNi4xNTRjMCwwLjM4OSwwLjAzMSwwLjc3MSwwLjA1OCwxLjE1NEgxOC41MnoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiM1NDZBNzk7IiBkPSJNMjMuMTgxLDQ1LjU3N2MtMC4wNjQtMC4zNzYtMC4xMDQtMC43Ni0wLjEwNC0xLjE1NGMwLTMuODE4LDMuMTA1LTYuOTIzLDYuOTIzLTYuOTIzDQoJczYuOTIzLDMuMTA1LDYuOTIzLDYuOTIzYzAsMC4zOTQtMC4wNDEsMC43NzgtMC4xMDQsMS4xNTRoNC42NjFjMC4wMzgtMC4zOCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTYuMzYyLTUuMTc2LTExLjUzOC0xMS41MzgtMTEuNTM4cy0xMS41MzgsNS4xNzctMTEuNTM4LDExLjUzOGMwLDAuMzg5LDAuMDIxLDAuNzc0LDAuMDU4LDEuMTU0SDIzLjE4MXoiLz4NCjwvc3ZnPg=="
+            },
+            {
+                "type": "image",
+                "format": "image/svg+xml",
+                "boundingBox": {
+                    "x": 20.21278409957886,
+                    "y": -5.100000000000001,
+                    "z": 0,
+                    "width": 7.3249999999999975,
+                    "height": 6.549999999999998
+                },
+                "data": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIA0KCSB2aWV3Qm94PSIwIDAgNjAgNjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHBhdGggc3R5bGU9ImZpbGw6I0U2NEMzQzsiIGQ9Ik00LjY0NSw0NS41NzdjLTAuMDE3LTAuMzgzLTAuMDI5LTAuNzY3LTAuMDI5LTEuMTU0YzAtMTMuOTk3LDExLjM4Ny0yNS4zODUsMjUuMzg1LTI1LjM4NQ0KCXMyNS4zODUsMTEuMzg3LDI1LjM4NSwyNS4zODVjMCwwLjM4Ny0wLjAxMiwwLjc3MS0wLjAyOSwxLjE1NGg0LjYxNkM1OS45ODUsNDUuMTkzLDYwLDQ0LjgxLDYwLDQ0LjQyM2MwLTE2LjU2OS0xMy40MzEtMzAtMzAtMzANCglzLTMwLDEzLjQzMS0zMCwzMGMwLDAuMzg3LDAuMDE1LDAuNzcsMC4wMjksMS4xNTRINC42NDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojRjBDNDE5OyIgZD0iTTkuMjg5LDQ1LjU3N2MtMC4wMjEtMC4zODQtMC4wNTgtMC43NjQtMC4wNTgtMS4xNTRjMC0xMS40NTIsOS4zMTctMjAuNzY5LDIwLjc2OS0yMC43NjkNCglzMjAuNzY5LDkuMzE4LDIwLjc2OSwyMC43NjljMCwwLjM4OS0wLjAzNywwLjc3LTAuMDU4LDEuMTU0aDQuNjQ1YzAuMDE3LTAuMzgzLDAuMDI5LTAuNzY3LDAuMDI5LTEuMTU0DQoJYzAtMTMuOTk3LTExLjM4Ny0yNS4zODUtMjUuMzg1LTI1LjM4NVM0LjYxNSwzMC40MjYsNC42MTUsNDQuNDIzYzAsMC4zODcsMC4wMTIsMC43NzEsMC4wMjksMS4xNTRIOS4yODl6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojNzFDMjg1OyIgZD0iTTEzLjkwNSw0NS41NzdjLTAuMDI3LTAuMzgzLTAuMDU4LTAuNzY0LTAuMDU4LTEuMTU0YzAtOC45MDcsNy4yNDYtMTYuMTU0LDE2LjE1NC0xNi4xNTQNCglzMTYuMTU0LDcuMjQ2LDE2LjE1NCwxNi4xNTRjMCwwLjM4OS0wLjAzMSwwLjc3MS0wLjA1OCwxLjE1NGg0LjYxNWMwLjAyMS0wLjM4NCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTExLjQ1Mi05LjMxNy0yMC43NjktMjAuNzY5LTIwLjc2OVM5LjIzMSwzMi45NzEsOS4yMzEsNDQuNDIzYzAsMC4zODksMC4wMzcsMC43NywwLjA1OCwxLjE1NEgxMy45MDV6Ii8+DQo8cGF0aCBzdHlsZT0iZmlsbDojMDA5NkU2OyIgZD0iTTE4LjUyLDQ1LjU3N2MtMC4wMzgtMC4zOC0wLjA1OC0wLjc2NC0wLjA1OC0xLjE1NGMwLTYuMzYyLDUuMTc2LTExLjUzOCwxMS41MzgtMTEuNTM4DQoJczExLjUzOCw1LjE3NywxMS41MzgsMTEuNTM4YzAsMC4zODktMC4wMjEsMC43NzQtMC4wNTgsMS4xNTRoNC42MTVjMC4wMjctMC4zODMsMC4wNTgtMC43NjQsMC4wNTgtMS4xNTQNCgljMC04LjkwNy03LjI0Ni0xNi4xNTQtMTYuMTU0LTE2LjE1NHMtMTYuMTU0LDcuMjQ2LTE2LjE1NCwxNi4xNTRjMCwwLjM4OSwwLjAzMSwwLjc3MSwwLjA1OCwxLjE1NEgxOC41MnoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiM1NDZBNzk7IiBkPSJNMjMuMTgxLDQ1LjU3N2MtMC4wNjQtMC4zNzYtMC4xMDQtMC43Ni0wLjEwNC0xLjE1NGMwLTMuODE4LDMuMTA1LTYuOTIzLDYuOTIzLTYuOTIzDQoJczYuOTIzLDMuMTA1LDYuOTIzLDYuOTIzYzAsMC4zOTQtMC4wNDEsMC43NzgtMC4xMDQsMS4xNTRoNC42NjFjMC4wMzgtMC4zOCwwLjA1OC0wLjc2NCwwLjA1OC0xLjE1NA0KCWMwLTYuMzYyLTUuMTc2LTExLjUzOC0xMS41MzgtMTEuNTM4cy0xMS41MzgsNS4xNzctMTEuNTM4LDExLjUzOGMwLDAuMzg5LDAuMDIxLDAuNzc0LDAuMDU4LDEuMTU0SDIzLjE4MXoiLz4NCjwvc3ZnPg=="
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 13.32528,
+                            "y": -2.625,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 12.52528,
+                                "y": -1.375,
+                                "z": 0
+                            },
+                            {
+                                "x": 12.52528,
+                                "y": -3.875,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 12.12528,
+                                "y": -1.375,
+                                "z": 0
+                            },
+                            {
+                                "x": 12.12528,
+                                "y": -3.875,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 17.57528,
+                            "y": -4.075,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 16.77528,
+                                "y": -2.825,
+                                "z": 0
+                            },
+                            {
+                                "x": 16.77528,
+                                "y": -5.325,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 16.37528,
+                                "y": -2.825,
+                                "z": 0
+                            },
+                            {
+                                "x": 16.37528,
+                                "y": -5.325,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 4.95028,
+                            "y": -9.1,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 4.15028,
+                                "y": -7.85,
+                                "z": 0
+                            },
+                            {
+                                "x": 4.15028,
+                                "y": -10.35,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 3.75028,
+                                "y": -7.85,
+                                "z": 0
+                            },
+                            {
+                                "x": 3.75028,
+                                "y": -10.35,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 8.32528,
+                            "y": -12.575,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 7.52528,
+                                "y": -11.325,
+                                "z": 0
+                            },
+                            {
+                                "x": 7.52528,
+                                "y": -13.825,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 7.12528,
+                                "y": -11.325,
+                                "z": 0
+                            },
+                            {
+                                "x": 7.12528,
+                                "y": -13.825,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 11.97528,
+                            "y": -13.575,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 11.17528,
+                                "y": -12.325,
+                                "z": 0
+                            },
+                            {
+                                "x": 11.17528,
+                                "y": -14.825,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 10.77528,
+                                "y": -12.325,
+                                "z": 0
+                            },
+                            {
+                                "x": 10.77528,
+                                "y": -14.825,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            },
+            {
+                "type": "multi-tailed-arrow",
+                "data": {
+                    "head": {
+                        "position": {
+                            "x": 25.22528,
+                            "y": -12.3,
+                            "z": 0
+                        }
+                    },
+                    "spine": {
+                        "pos": [
+                            {
+                                "x": 24.42528,
+                                "y": -11.05,
+                                "z": 0
+                            },
+                            {
+                                "x": 24.42528,
+                                "y": -13.55,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "tails": {
+                        "pos": [
+                            {
+                                "x": 24.02528,
+                                "y": -11.05,
+                                "z": 0
+                            },
+                            {
+                                "x": 24.02528,
+                                "y": -13.55,
+                                "z": 0
+                            }
+                        ]
+                    },
+                    "zOrder": 0
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    1.8351332517074237,
+                    -13.975074417174609,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.5654349474502913,
+                    -13.974589229177205,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.7019216090700966,
+                    -13.474966888850188,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.5654349474502913,
+                    -14.975532067822149,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.8351332517074237,
+                    -14.98002005679814,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.7041049550584155,
+                    -15.475033111149813,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.385133251707424,
+                    -16.625074417174606,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.115434947450291,
+                    -16.624589229177204,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.251921609070097,
+                    -16.12496688885019,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.115434947450291,
+                    -17.62553206782215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.385133251707424,
+                    -17.630020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.254104955058416,
+                    -18.12503311114981,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    16.200358516753464,
+                    -8.715150847871435,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.199873328756063,
+                    -6.984849152128566,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.700250988429046,
+                    -7.8483624905087614,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.20081616740101,
+                    -6.984849152128566,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.205304156376997,
+                    -8.715150847871435,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.70031721072867,
+                    -7.846179144520442,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.800284099578858,
+                    -17.075,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    16.30028776631275,
+                    -16.2089936492169,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    16.30028776631275,
+                    -17.9410063507831,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.30029509978053,
+                    -16.2089936492169,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.300302433248312,
+                    -16.2089936492169,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.30029509978053,
+                    -15.20898631574912,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.30029509978053,
+                    -17.20900098268468,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    6
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ],
+                "name": "Boc",
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 0,
+                        "attachmentId": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.07528409957886,
+                    -17,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.575287766312748,
+                    -16.1339936492169,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.575287766312748,
+                    -17.8660063507831,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.57529509978053,
+                    -16.1339936492169,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.57530243324831,
+                    -16.1339936492169,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.57529509978053,
+                    -15.133986315749121,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.57529509978053,
+                    -17.134000982684682,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    6
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ],
+                "name": "Boc",
+                "expanded": true,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 0,
+                        "attachmentId": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    25.57528409957886,
+                    -3.875,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    25.57528409957886,
+                    -2.875,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    25.57528409957886,
+                    -4.875,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    26.57528409957886,
+                    -3.875,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    24.57528409957886,
+                    -3.875,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "name": "methane sulphonic acid",
+                "expanded": true,
+                "id": 0
+            }
+        ]
+    }
+}

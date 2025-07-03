@@ -24,7 +24,7 @@ test.describe('CDX files', () => {
     Test case: EPMLSOPKET-12514
     Description: Open CDX files
     */
-    await openFileAndAddToCanvas('CDX/cdx-expanded-contracted.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/cdx-expanded-contracted.cdx');
     await takeEditorScreenshot(page);
   });
 
@@ -33,7 +33,7 @@ test.describe('CDX files', () => {
     Test case: EPMLSOPKET-6973
     Description: Open CDX files with R-group
     */
-    await openFileAndAddToCanvas('CDX/r-group.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/r-group.cdx');
 
     await verifyFileExport(page, 'CDX/r-group-expected.cdx', FileType.CDX);
     await takeEditorScreenshot(page);
@@ -61,8 +61,8 @@ test.describe('CDX files', () => {
     Description: Abbreviation appears contracted.
     */
     await openFileAndAddToCanvas(
-      'CDX/functional-group-exp-and-contr.cdx',
       page,
+      'CDX/functional-group-exp-and-contr.cdx',
     );
 
     await verifyFileExport(
@@ -80,7 +80,7 @@ test.describe('CDX files', () => {
     Test case: EPMLSOPKET-6971
     Description: Abbreviation appears contracted.
     */
-    await openFileAndAddToCanvas('CDX/salts-exp-and-contr.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/salts-exp-and-contr.cdx');
 
     await verifyFileExport(
       page,
@@ -105,8 +105,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
 
     await verifyFileExport(
@@ -125,8 +125,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
 
     await verifyFileExport(
@@ -145,8 +145,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
 
     await verifyFileExport(
@@ -165,8 +165,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
 
     await verifyFileExport(
@@ -185,8 +185,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
     await verifyFileExport(
       page,
@@ -204,8 +204,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
 
     await verifyFileExport(
@@ -224,8 +224,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -245,8 +245,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await verifyFileExport(
@@ -265,8 +265,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await verifyFileExport(
@@ -285,8 +285,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
     await verifyFileExport(
@@ -305,8 +305,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -325,8 +325,8 @@ test.describe('CDX files without screenshots', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await verifyFileExport(
@@ -344,8 +344,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/reactant-single-reaction.ket',
       page,
+      'KET/reactant-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -368,8 +368,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/products-single-reaction.ket',
       page,
+      'KET/products-single-reaction.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -392,8 +392,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
       page,
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -416,8 +416,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/multiple-individual-reactions.ket',
       page,
+      'KET/multiple-individual-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -440,8 +440,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/several-cascade-reactions.ket',
       page,
+      'KET/several-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -464,8 +464,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/combination-of-single-and-cascade-reactions.ket',
       page,
+      'KET/combination-of-single-and-cascade-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -488,8 +488,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/cascade-of-multiple-reactions.ket',
       page,
+      'KET/cascade-of-multiple-reactions.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -512,8 +512,8 @@ test.describe('CDX files without screenshots', () => {
      * Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
       page,
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(

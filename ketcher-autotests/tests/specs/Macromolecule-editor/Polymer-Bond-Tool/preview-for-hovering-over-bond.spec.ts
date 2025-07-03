@@ -48,7 +48,7 @@ const fileNames: string[] = [
 //    );
 
 //   for (const fileWithPairs of fileNames) {
-//     await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
+//     await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs, page);
 
 //     // count number of bonds on the page
 //     const elements = await page.$$('g[pointer-events="stroke"]');
@@ -89,7 +89,7 @@ test(
     );
 
     for (const fileWithPairs of fileNames) {
-      await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
+      await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs);
 
       // count number of bonds on the page
       const elements = await page.$$('g[pointer-events="stroke"]');
@@ -133,8 +133,8 @@ test(
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',
       page,
+      'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',
     );
 
     // count number of bonds on the page

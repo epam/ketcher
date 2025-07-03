@@ -126,7 +126,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor?.mode.modeName;
-      state.editor?.switchToMicromolecules();
+      state.editor?.destroy();
       state.editor = undefined;
     },
     showPreview: (
@@ -205,6 +205,7 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
+  setLibraryItemDrag,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
@@ -223,7 +224,7 @@ export const selectKetcherId = (state: RootState): string => {
   return state.editor.ketcherId;
 };
 
-export const selectEditor = (state: RootState): CoreEditor =>
+export const selectEditor = (state: RootState): CoreEditor | undefined =>
   state.editor.editor;
 
 export const selectIsSequenceEditInRNABuilderMode = (

@@ -1,7 +1,4 @@
 import { Page, expect, test } from '@playwright/test';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   BondType,
   BondTypeName,
@@ -9,7 +6,6 @@ import {
   doubleClickOnAtom,
   doubleClickOnBond,
   pressButton,
-  selectAllStructuresOnCanvas,
   setAromaticity,
   setBondType,
   setCustomQueryForAtom,
@@ -20,6 +16,10 @@ import {
   waitForBondPropsModal,
   waitForPageInit,
 } from '@utils';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());

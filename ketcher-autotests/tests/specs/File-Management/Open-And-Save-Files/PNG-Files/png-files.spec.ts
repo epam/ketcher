@@ -45,7 +45,7 @@ test.describe('Saving in .png files', () => {
     test(`Export to PNG: Verify it is possible to export ${description} to PNG`, async ({
       page,
     }) => {
-      await openFileAndAddToCanvas(filename, page);
+      await openFileAndAddToCanvas(page, filename);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -63,8 +63,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -82,8 +82,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -101,8 +101,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -119,8 +119,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -138,8 +138,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -157,8 +157,8 @@ test.describe('Saving in .png files', () => {
     Description: Validate that schema with retrosynthetic arrow could be saved to PNG
     */
     await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -178,7 +178,7 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2458
   https://github.com/epam/Indigo/issues/2457
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

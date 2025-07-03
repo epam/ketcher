@@ -167,7 +167,19 @@ export const librarySlice: Slice = createSlice({
   },
 });
 
-export const getSearchTermValue = (state): string => {
+export const {
+  loadMonomerLibrary,
+  setFavoriteMonomersFromLocalStorage,
+  clearFavorites,
+  toggleMonomerFavorites,
+  setSearchFilter,
+  setSelectedTabIndex,
+} = librarySlice.actions;
+
+export const selectLibrarySlice = (state: RootState): LibraryState =>
+  state.library;
+
+export const selectSearchFilter = (state: RootState): string => {
   return state.library.searchFilter;
 };
 
@@ -555,14 +567,5 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 };
 
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
-
-export const {
-  loadMonomerLibrary,
-  setFavoriteMonomersFromLocalStorage,
-  clearFavorites,
-  toggleMonomerFavorites,
-  setSearchFilter,
-  setSelectedTabIndex,
-} = librarySlice.actions;
 
 export const libraryReducer = librarySlice.reducer;

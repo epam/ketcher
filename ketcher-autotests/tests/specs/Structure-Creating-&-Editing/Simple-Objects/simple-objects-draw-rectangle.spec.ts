@@ -4,10 +4,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -130,8 +128,8 @@ test.describe('Draw Rectangle', () => {
   }) => {
     // Test case: EPMLSOPKET-1958
     await openFileAndAddToCanvas(
-      'KET/rectangle-test-EPMLSOPKET-1977.ket',
       page,
+      'KET/rectangle-test-EPMLSOPKET-1977.ket',
     );
     await separetingAndMovingRecatngles(page);
     await takeEditorScreenshot(page);

@@ -1,19 +1,16 @@
 import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  BondType,
-  resetCurrentTool,
-  selectButtonById,
-  takeEditorScreenshot,
-  waitForRender,
-} from '..';
+import { BondType, takeEditorScreenshot, waitForRender } from '..';
+import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
+import { selectButtonById } from '../canvas/tools/helpers';
 import { AtomLabelType } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 type BoundingBox = {
   width: number;
@@ -119,7 +116,7 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   const canvas = (await page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
     .filter({ has: page.locator(':visible') })
     .boundingBox()) as BoundingBox;
   return {
@@ -247,15 +244,6 @@ export async function doubleClickOnBond(
   await waitForRender(page, async () => {
     await page.mouse.dblclick(point.x, point.y);
   });
-}
-
-export async function rightClickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
 }
 
 export async function moveOnAtom(

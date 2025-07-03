@@ -9,12 +9,12 @@ import {
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  selectAllStructuresOnCanvas,
   selectFunctionalGroups,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {

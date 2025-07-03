@@ -328,6 +328,7 @@ interface BasicPropertyProps {
   options?: string[];
   selectedOption?: string;
   disabled?: boolean;
+  testId?: string;
   onChangeOption?: (option: string) => void;
   onChangeValue?: (value: number) => void;
 }
@@ -362,6 +363,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
         return (
           <StyledMonomersCountPanelItem
             monomerShortName={monomerShortName}
+            data-testid={monomerShortName + '-option'}
             isPeptide={props.isPeptide}
             disabled={count === 0}
             key={monomerShortName}
@@ -379,7 +381,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 
 const BasicProperty = (props: BasicPropertyProps) => {
   return (
-    <StyledBasicProperty disabled={props.disabled}>
+    <StyledBasicProperty data-testid={props.testId} disabled={props.disabled}>
       <BasicPropertyName>
         {props.name}
         {props.value !== undefined && ':'}
@@ -388,18 +390,21 @@ const BasicProperty = (props: BasicPropertyProps) => {
         <BasicPropertyInput
           value={props.value ?? ''}
           id={`macromolecule-property-${props.name}`}
+          data-testid={`${props.testId}-input`}
           type="number"
           min={0}
           inputClassName={inputClassName}
           onChange={(value) => props?.onChangeValue?.(Number(value))}
         />
       ) : (
-        <BasicPropertyValue>{props.value}</BasicPropertyValue>
+        <BasicPropertyValue data-testid={props.testId + '-value'}>
+          {props.value}
+        </BasicPropertyValue>
       )}
       {props.hint && (
         <StyledTooltip title={props.hint}>
           <PropertyHintIconWrapper>
-            <PropertyHintIcon name="about" />
+            <PropertyHintIcon name="about" dataTestId={props.name + '-info'} />
           </PropertyHintIconWrapper>
         </StyledTooltip>
       )}
@@ -409,6 +414,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             id: option,
             label: option,
           }))}
+          testId={props.testId + '-selector'}
           currentSelection={props.selectedOption}
           selectionHandler={props.onChangeOption}
         />
@@ -693,7 +699,10 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   }, [svgRef, containerWidth]);
 
   return (
-    <StyledHydrophobicityChartSvg ref={svgRef}></StyledHydrophobicityChartSvg>
+    <StyledHydrophobicityChartSvg
+      data-testid="Hydrophobicity-Chart"
+      ref={svgRef}
+    ></StyledHydrophobicityChartSvg>
   );
 };
 
@@ -711,6 +720,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
         <BasicPropertiesWrapper>
           <BasicProperty
             name="Isoelectric Point"
+            testId="Isoelectric Point"
             value={
               isNumber(props.macromoleculesProperties.pKa)
                 ? _round(props.macromoleculesProperties.pKa, 2)
@@ -720,6 +730,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
           />
           <BasicProperty
             name="Extinction Coef.(1/Mcm)"
+            testId="Extinction Coefficient"
             value={
               isNumber(props.macromoleculesProperties.extinctionCoefficient)
                 ? _round(props.macromoleculesProperties.extinctionCoefficient)
@@ -737,6 +748,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
         </BasicPropertiesWrapper>
         <BasicProperty
           name="Hydrophobicity"
+          testId="Hydrophobicity"
           hint={
             <div>
               <HydrophobicityHintHeader>
@@ -817,6 +829,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
           <BasicProperty
             name="Melting Temp. (°C)"
             value={_round(props.macromoleculesProperties.Tm, 1)}
+            testId="Melting-Temperature"
             hint={
               <div>
                 The melting temperature is calculated using the method from{' '}
@@ -833,6 +846,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             name="[Unipositive Ions]"
             value={unipositiveIonsValue}
             options={['nM', 'μM', 'mM']}
+            testId="Unipositive Ions"
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
@@ -845,6 +859,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             name="[Oligonucleotides]"
             value={oligonucleotidesValue}
             options={['nM', 'μM', 'mM']}
+            testId="Oligonucleotides"
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
@@ -1012,7 +1027,7 @@ export const MacromoleculePropertiesWindow = () => {
     }
 
     return (
-      <GrossFormula>
+      <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
           .map((atomNameWithAmount, i) => {
@@ -1034,7 +1049,7 @@ export const MacromoleculePropertiesWindow = () => {
 
     return (
       <>
-        <MolecularMassAmount>
+        <MolecularMassAmount data-testid="Molecular-Mass-Value">
           {_round(
             firstMacromoleculesProperties?.mass /
               massMeasurementUnitToNumber[massMeasurementUnit],
@@ -1078,6 +1093,7 @@ export const MacromoleculePropertiesWindow = () => {
           <MolecularMass>
             {molecularMassValue}
             <BasicPropertyDropdown
+              testId="Molecular Mass Unit"
               options={[
                 MassMeasurementUnit.Da,
                 MassMeasurementUnit.kDa,

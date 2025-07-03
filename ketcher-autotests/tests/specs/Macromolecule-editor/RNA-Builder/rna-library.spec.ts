@@ -16,11 +16,13 @@ import {
   moveMouseAway,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   clickOnCanvas,
   MonomerType,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -46,6 +48,8 @@ import {
   RNASection,
   RNASectionArea,
 } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -507,10 +511,8 @@ test.describe('RNA Library', () => {
       Phosphates.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').locator('div').click();
+    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Bases.baA);
     await moveMouseAway(page);
@@ -541,18 +543,18 @@ test.describe('RNA Library', () => {
       Phosphates.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('duplicateandedit').locator('div').click();
+    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    await ContextMenu(page, customPreset).click(
+      LibraryPresetOption.DuplicateAndEdit,
+    );
     await Library(page).rnaBuilder.save();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await Library(page).rnaBuilder.collapse();
-    await page.getByTestId('25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').click();
+    const customPresetCopy = page.getByTestId(
+      '25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph',
+    );
+    await ContextMenu(page, customPresetCopy).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphates.P);
     await Library(page).rnaBuilder.save();
@@ -571,10 +573,8 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await Library(page).rnaBuilder.expand();
-    await page.getByTestId(Presets.A.testId).click({
-      button: 'right',
-    });
-    await page.getByTestId('duplicateandedit').locator('div').click();
+    const resetA = page.getByTestId(Presets.A.testId);
+    await ContextMenu(page, resetA).click(LibraryPresetOption.DuplicateAndEdit);
     await Library(page).rnaBuilder.cancel();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
@@ -602,10 +602,10 @@ test.describe('RNA Library', () => {
         Phosphates.Test_6_Ph,
       ]);
       await Library(page).rnaBuilder.addToPresets();
-      await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-        button: 'right',
-      });
-      await page.getByTestId('deletepreset').click();
+      const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+      await ContextMenu(page, customPreset).click(
+        LibraryPresetOption.DeletePreset,
+      );
       await page.getByRole('button', { name: 'Delete' }).click();
       await takePresetsScreenshot(page);
 
@@ -622,10 +622,8 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugars._25R, Bases.baA, Phosphates.bP]);
     await Library(page).rnaBuilder.addToPresets();
-    await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
-      button: 'right',
-    });
-    await page.getByTestId('edit').locator('div').click();
+    const customPreset = page.getByTestId('25R(baA)bP_baA_25R_bP');
+    await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('TestMonomers');
     await Library(page).rnaBuilder.save();
@@ -828,8 +826,8 @@ test.describe('RNA Library', () => {
   for (const monomer of monomersToDelete) {
     test(`Open file from .ket and Delete ${monomer.monomer.alias} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
-        'KET/monomers-connected-with-bonds.ket',
         page,
+        'KET/monomers-connected-with-bonds.ket',
       );
       await CommonLeftToolbar(page).selectEraseTool();
       await getMonomerLocator(page, monomer.monomer).click();
@@ -982,8 +980,8 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
@@ -999,8 +997,8 @@ test.describe('RNA Library', () => {
     await configureInitialState(page);
 
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await verifyFileExport(
       page,
@@ -1016,8 +1014,8 @@ test.describe('RNA Library', () => {
     Sugar does not have R3 attachment point so bond between sugar and base is not created
     */
     await openFileAndAddToCanvasMacro(
-      'KET/monomers-connected-with-bonds.ket',
       page,
+      'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takePageScreenshot(page);
@@ -1090,8 +1088,8 @@ test.describe('RNA Library', () => {
     Description: Chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -1113,8 +1111,8 @@ test.describe('RNA Library', () => {
     Description: Unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1128,8 +1126,8 @@ test.describe('RNA Library', () => {
     Description: unsplit nucleotides can be deleted from sequence
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chain-with-unsplit-nucleotides.ket',
       page,
+      'KET/chain-with-unsplit-nucleotides.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Nucleotides.AmMC6T).click();
@@ -1309,9 +1307,9 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.collapse();
 
     const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await customPreset.hover();
-    await customPreset.click({ button: 'right' });
-    await page.getByText('Delete Preset').click();
+    await ContextMenu(page, customPreset).click(
+      LibraryPresetOption.DeletePreset,
+    );
     await page.getByRole('button', { name: 'Delete' }).click();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -1426,7 +1424,7 @@ test.describe('RNA Library', () => {
 
     // Case 23
     await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await takeElementScreenshot(page, Chem.Test_6_Ch.testId, {
+    await takeElementScreenshot(page, page.getByTestId(Chem.Test_6_Ch.testId), {
       maxDiffPixelRatio: 0.03,
       hideMonomerPreview: true,
     });

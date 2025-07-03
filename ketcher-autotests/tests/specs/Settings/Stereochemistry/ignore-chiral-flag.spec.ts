@@ -5,12 +5,11 @@ import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 import {
   resetSettingsValuesToDefault,
@@ -75,8 +74,8 @@ test.describe('Ignore Chiral Flag', () => {
     // Test case: https://github.com/epam/ketcher/issues/6161
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -86,8 +85,8 @@ test.describe('Ignore Chiral Flag', () => {
   }) => {
     // Test case: https://github.com/epam/ketcher/issues/6161
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/non-proprietary-structure.mol',
       page,
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await takeEditorScreenshot(page);
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);

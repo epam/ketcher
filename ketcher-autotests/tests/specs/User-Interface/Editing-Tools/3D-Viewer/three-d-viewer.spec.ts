@@ -58,7 +58,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas isn't changed. 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -77,7 +77,7 @@ test.describe('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -97,8 +97,8 @@ test.describe('3D Viewer', () => {
     The structure isn't changed.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -186,7 +186,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas is changed. 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -209,7 +209,7 @@ test.describe('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -233,8 +233,8 @@ test.describe('3D Viewer', () => {
     The structure is changed.
     */
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
       page,
+      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     const initialStructureData = await getKet(page);
     await open3DViewer(page);

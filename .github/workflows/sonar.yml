@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Sonar
-    runs-on: self-hosted-a
+    runs-on: test-sonar
     steps:
       # Step to install unzip
       - name: Install Unzip

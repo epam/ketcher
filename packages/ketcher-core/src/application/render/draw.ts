@@ -1411,12 +1411,16 @@ function bondDative(
   const a = halfBond1.p;
   const b = halfBond2.p;
 
-  // bond is too short for an arrowhead, draw a simple line
-  if (Vec2.dist(a, b) < 4) {
-    return paper
-      .path(makeStroke(a, b))
-      .attr(options.lineattr)
-      .attr(isSnapping ? options.bondSnappingStyle : {});
+  if (isNaN(a.x) || isNaN(a.y) || isNaN(b.x) || isNaN(b.y)) {
+    return paper.path('');
+  }
+
+  const directionVec = Vec2.diff(b, a);
+  // if bond is too short, draw a symbol instead
+  if (directionVec.length() < 5) {
+    const angleDegrees =
+      Math.atan2(directionVec.y, directionVec.x) * (180 / Math.PI);
+    return drawArrowSymbol(paper, b, options, angleDegrees);
   }
 
   // For normal-length bonds, draw with an arrow
@@ -1425,6 +1429,30 @@ function bondDative(
     .attr(options.lineattr)
     .attr({ 'arrow-end': 'block-midium-long' })
     .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
+function drawArrowSymbol(
+  paper: RaphaelPaper,
+  point: Vec2,
+  options: RenderOptions,
+  angleDegrees: number,
+) {
+  const baseSize = options.microModeScale * 0.1;
+  const arrowHalfWidth = baseSize / 1.32;
+  const arrowHeight = baseSize * 2.5;
+
+  const arrowBasePath = `M0,0 L${-arrowHeight},${-arrowHalfWidth} L${-arrowHeight},${arrowHalfWidth} Z`;
+
+  const finalPath = svgPath(arrowBasePath)
+    .rotate(angleDegrees, 0, 0)
+    .translate(point.x, point.y)
+    .toString();
+
+  return paper.path(finalPath).attr({
+    ...options.lineattr,
+    'stroke-width': 0,
+    fill: options.lineattr.stroke,
+  });
 }
 
 function reactingCenter(

@@ -54,9 +54,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await applyEnhancedStereochemistry(page, {
-      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
-    });
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewOrGroup();
     await EnhancedStereochemistry(page).pressCancelButton();
 
     await applyEnhancedStereochemistry(page, {
@@ -223,9 +222,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await applyEnhancedStereochemistry(page, {
-      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
-    });
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewAndGroup();
     await EnhancedStereochemistry(page).pressCancelButton();
 
     await applyEnhancedStereochemistry(page, {

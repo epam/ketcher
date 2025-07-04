@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -8,7 +8,6 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  pressButton,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickInTheMiddleOfTheScreen,
@@ -33,17 +32,11 @@ import {
   SettingsSection,
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
-
-async function selectRadioButtonForNewGroup(
-  page: Page,
-  selectRadioButton: string,
-  cancelChanges = false,
-) {
-  await LeftToolbar(page).stereochemistry();
-  await page.getByLabel(selectRadioButton).check();
-
-  await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
-}
+import {
+  EnhancedStereochemistry,
+  applyEnhancedStereochemistry,
+} from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
+import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 
 test.describe('Enhanced Stereochemistry Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -61,9 +54,13 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group', true);
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewOrGroup();
+    await EnhancedStereochemistry(page).pressCancelButton();
 
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -77,10 +74,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
     await clickOnAtom(page, 'C', 3);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -94,10 +95,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Add to OR1Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.AddToOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -111,10 +116,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -144,7 +153,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/two-stereostructures.mol',
     );
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +175,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -209,9 +222,13 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group', true);
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewAndGroup();
+    await EnhancedStereochemistry(page).pressCancelButton();
 
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -225,10 +242,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
     await clickOnAtom(page, 'C', 3);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -242,10 +263,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Add to AND1Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.AddToAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -265,10 +290,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
 
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -288,10 +317,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
 
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -311,10 +344,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
 
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -336,10 +373,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
 
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -361,10 +402,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
 
     await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
     await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 

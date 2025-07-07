@@ -78,6 +78,7 @@ import {
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -938,16 +939,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Press Calculated Values button (or press Alt+c)
      */
-    const chemicalFormulaWrapper = page.getByTestId('Chemical Formula-wrapper');
-    const molecularWeight = page
-      .getByTestId('Molecular Weight-wrapper')
-      .locator('input[type="text"]');
-    const exactMass = page
-      .getByTestId('Exact Mass-wrapper')
-      .locator('input[type="text"]');
-    const elementalAnalysis = page
-      .getByTestId('Elemental Analysis-wrapper')
-      .locator('textarea');
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
@@ -956,12 +947,18 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(chemicalFormulaWrapper).toContainText('[C7H14] > [C4H8]');
-    await expect(molecularWeight).toHaveValue('[98.186] > [56.106]');
-    await expect(exactMass).toHaveValue('[98.110] > [56.063]');
-    await expect(elementalAnalysis).toHaveValue(
-      '[C 85.6 H 14.4] > [C 85.6 H 14.4]',
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('[C7H14] > [C4H8]');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '[98.186] > [56.106]',
     );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '[98.110] > [56.063]',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('[C 85.6 H 14.4] > [C 85.6 H 14.4]');
   });
 
   test('Case 36: Copy to clipboard work if Multi-Tailed Arrow present on the canvas', async () => {
@@ -1212,16 +1209,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Press Calculated Values button
      */
-    const chemicalFormulaWrapper = page.getByTestId('Chemical Formula-wrapper');
-    const molecularWeight = page
-      .getByTestId('Molecular Weight-wrapper')
-      .locator('input[type="text"]');
-    const exactMass = page
-      .getByTestId('Exact Mass-wrapper')
-      .locator('input[type="text"]');
-    const elementalAnalysis = page
-      .getByTestId('Elemental Analysis-wrapper')
-      .locator('textarea');
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
@@ -1229,14 +1216,18 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/Calculated Values work if reaction arrow overlaps reactant bounding box.ket',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(chemicalFormulaWrapper).toContainText(
-      '[C8H10BrN3O]+[C18H15P] > [C8H10BrN3O]',
-    );
-    await expect(molecularWeight).toHaveValue(
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('[C8H10BrN3O]+[C18H15P] > [C8H10BrN3O]');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
       '[244.089]+[262.285] > [244.089]',
     );
-    await expect(exactMass).toHaveValue('[243.001]+[262.091] > [243.001]');
-    await expect(elementalAnalysis).toHaveValue(
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '[243.001]+[262.091] > [243.001]',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue(
       '[C 39.4 H 4.1 Br 32.7 N 17.2 O 6.5]+[C 82.4 H 5.8 P 11.8] > [C 39.4 H 4.1 Br 32.7 N 17.2 O 6.5]',
     );
   });

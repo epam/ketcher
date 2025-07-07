@@ -58,15 +58,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Install dependencies
         run: npm ci
+
       - name: Create folder for dist
         run: mkdir -p example/dist
+
       - name: Download compiled ketcher
         uses: actions/download-artifact@v4
         with:
           name: ketcher-dist-micro
           path: example/dist/
+
       - name: Create env file
         run: |
           cat > ketcher-autotests/.env << EOF
@@ -77,18 +81,90 @@ jobs:
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
           EOF
+
       - name: Run tests
         run: |
           cd example/ && nohup npm run serve:standalone &
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --project=chromium --grep-invert @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v4
-        # run even if previous steps fails
+          npx playwright test \
+            --project=chromium \
+            --grep-invert @chromium-popup \
+            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+            --reporter='blob,outputDir=./blob-report'
+
+      - name: Check blob-report directory
         if: always()
+        run: |
+          pwd
+          ls -la ketcher-autotests/blob-report
+
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: pw-report-${{ matrix.shardIndex }}
-          path: ketcher-autotests/playwright-report/
-          retention-days: 5
-  
+          name: blob-report-${{ matrix.shardIndex }}
+          path: ketcher-autotests/blob-report
+          retention-days: 1
+
+  merge-reports:
+    if: always()
+    needs: [part]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob-report-1
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-1
+          path: all-blob-reports/blob-report-1
+
+      - name: Download blob-report-2
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-2
+          path: all-blob-reports/blob-report-2
+
+      - name: Download blob-report-3
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-3
+          path: all-blob-reports/blob-report-3
+
+      - name: Download blob-report-4
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-4
+          path: all-blob-reports/blob-report-4
+
+      - name: Download blob-report-5
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-5
+          path: all-blob-reports/blob-report-5
+
+      - name: Download blob-report-6
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-6
+          path: all-blob-reports/blob-report-6
+
+      - name: Verify downloaded reports
+        run: ls -laR all-blob-reports
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 7

@@ -8,7 +8,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  resetCurrentTool,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
   waitForPageInit,
@@ -21,6 +20,7 @@ import {
   clickOnCanvas,
   getCachedBodyCenter,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';

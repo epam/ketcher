@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  resetCurrentTool,
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
@@ -13,10 +12,11 @@ import {
   waitForRender,
   waitForAtomPropsModal,
   clickOnCanvas,
-  getAtomByIndex,
   MolFileFormat,
   RxnFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
@@ -478,8 +478,8 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await page.getByTestId('charge-input').fill('9999');
-    await page.getByTestId('charge-input').hover();
+    await page.getByTestId('charge-input-span').fill('9999');
+    await page.getByTestId('charge-input-span').hover();
     await takeEditorScreenshot(page);
   });
 
@@ -596,8 +596,8 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
-    await page.getByTestId('isotope-input').fill('-88');
-    await page.getByTestId('isotope-input').hover();
+    await page.getByTestId('isotope-input-span').fill('-88');
+    await page.getByTestId('isotope-input-span').hover();
     await takeEditorScreenshot(page);
   });
 

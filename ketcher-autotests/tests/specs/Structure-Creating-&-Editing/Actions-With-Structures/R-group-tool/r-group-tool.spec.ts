@@ -1,8 +1,6 @@
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   MolFileFormat,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
@@ -10,6 +8,7 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
+import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

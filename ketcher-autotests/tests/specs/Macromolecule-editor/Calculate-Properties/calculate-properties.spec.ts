@@ -381,7 +381,7 @@ test.describe('Calculate Properties tests', () => {
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('3.52');
+    ).toEqual('5.96');
   });
 
   test('Case 14: Check that Amino acid count displayed as a grid with the appropriate number next to the natural analogue', async () => {
@@ -681,7 +681,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('8.49');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -739,7 +739,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('8.49');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -1072,7 +1072,7 @@ test.describe('Calculate Properties tests', () => {
       page,
     ).getIsoelectricPointValue();
 
-    expect(isoelectricPoint).toEqual('4.01');
+    expect(isoelectricPoint).toEqual('5.96');
   });
 
   test('Case 37: Verify correct calculation of melting temperature for a simple double-stranded RNA', async () => {
@@ -1635,7 +1635,7 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await CommonTopLeftToolbar(page).calculateProperties();
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

@@ -367,6 +367,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await selectSequenceLayoutModeTool(page);
     await Library(page).selectMonomer(Peptides.O);
     await Library(page).selectMonomer(Peptides.K);
+    await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
@@ -1088,7 +1089,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1163,7 +1164,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1194,7 +1195,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('4.01');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');

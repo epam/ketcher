@@ -9,12 +9,12 @@ import {
   MolFileFormat,
   openFileAndAddToCanvas,
   pressButton,
-  resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

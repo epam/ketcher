@@ -8,7 +8,6 @@ import {
   clickOnAtom,
   moveOnAtom,
   waitForPageInit,
-  resetCurrentTool,
   openFileAndAddToCanvas,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
@@ -31,10 +30,11 @@ import {
   waitForElementInCanvas,
   pasteFromClipboardAndAddToCanvas,
   getCachedBodyCenter,
-  getAtomByIndex,
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {

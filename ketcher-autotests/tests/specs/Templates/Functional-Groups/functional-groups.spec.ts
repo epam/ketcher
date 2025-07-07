@@ -3,7 +3,6 @@ import {
   selectFunctionalGroups,
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
-  resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -20,6 +19,7 @@ import {
   clickOnCanvas,
   getCachedBodyCenter,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
@@ -16,7 +15,10 @@ import {
   clearCanvasByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { selectSequenceLayoutModeTool } from '@utils/canvas/tools/helpers';
+import {
+  typeAllEnglishAlphabet,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

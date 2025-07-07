@@ -8,7 +8,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   waitForRender,
-  selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
   moveMouseToTheMiddleOfTheScreen,
@@ -23,6 +22,7 @@ import {
   ZoomInByKeyboard,
   MacroFileType,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,

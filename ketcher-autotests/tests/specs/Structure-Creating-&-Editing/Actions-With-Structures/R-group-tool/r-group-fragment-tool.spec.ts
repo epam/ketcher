@@ -7,10 +7,10 @@ import {
   pressButton,
   clickOnAtom,
   waitForPageInit,
-  resetCurrentTool,
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

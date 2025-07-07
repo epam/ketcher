@@ -11,20 +11,6 @@ import {
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
-  takeLeftToolbarMacromoleculeScreenshot,
-  takeTopToolbarScreenshot,
-  SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
-  clickOnAtom,
-  waitForMonomerPreview,
-  MolFileFormat,
-  clickOnCanvas,
-  openFile,
-  pressButton,
-  clickOnTheCanvas,
-  selectUserTemplate,
-  TemplateLibrary,
   MonomerType,
   selectPartOfMolecules,
 } from '@utils';
@@ -32,79 +18,28 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
 } from '@utils/canvas/tools/helpers';
-import {
-  copyAndPaste,
-  selectAllStructuresOnCanvas,
-} from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { waitForPageInit } from '@utils/common';
 import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import {
-  keyboardPressOnCanvas,
-  keyboardTypeOnCanvas,
-} from '@utils/keyboard/index';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import {
-  FileType,
-  verifyFileExport,
-} from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { Presets } from '@constants/monomers/Presets';
-import {
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import {
-  COORDINATES_TO_PERFORM_ROTATION,
-  rotateToCoordinates,
-} from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
-import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
-import {
-  BondsSetting,
-  MeasurementUnit,
-} from '@tests/pages/constants/settingsDialog/Constants';
-import {
-  setSettingsOptions,
-  SettingsDialog,
-} from '@tests/pages/molecules/canvas/SettingsDialog';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   ModifyAminoAcidsOption,
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
-
-async function openPPTXFileAndValidateStructurePreview(
-  page: Page,
-  filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
-) {
-  await CommonTopLeftToolbar(page).openFile();
-  await waitForSpinnerFinishedWork(page, async () => {
-    await openFile(page, filePath);
-  });
-  const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
-  }
-  await takeEditorScreenshot(page);
-  await openPPTXFileDialog.pressOpenAsNewProjectButton();
-}
 
 let page: Page;
 

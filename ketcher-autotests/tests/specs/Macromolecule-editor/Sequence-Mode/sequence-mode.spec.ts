@@ -4,30 +4,36 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-  startNewSequence,
   moveMouseAway,
-  switchSequenceEnteringButtonType,
   SequenceType,
   selectUndoByKeyboard,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  switchSequenceEnteringButtonType,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
+import {
+  createAntisenseStrandByButton,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page
@@ -272,7 +278,9 @@ test.describe('Sequence Mode', () => {
       'KET/modified-nucleotide-chain.ket',
     );
     await takeEditorScreenshot(page);
-    await startNewSequence(page);
+    await ContextMenu(page, { x: 200, y: 200 }).click(
+      SequenceSymbolOption.StartNewSequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -466,7 +474,6 @@ test.describe('Sequence Mode', () => {
     Description: After switch to flex mode phosphate is absent.
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acg');
     await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
@@ -481,7 +488,6 @@ test.describe('Sequence Mode', () => {
     Description: Monomers added without errors.
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(3);
     await keyboardTypeOnCanvas(page, 'ac');
     await takeEditorScreenshot(page);
@@ -499,7 +505,6 @@ test.describe('Sequence Mode', () => {
     Description: Position of first monomer remains same.
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cgatu');
     await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
@@ -515,7 +520,6 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await moveMouseAway(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Enter');
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
@@ -537,7 +541,6 @@ test.describe('Sequence Mode', () => {
     Description: Phosphate P added automatically between last two nucleosides.
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cactt');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -551,15 +554,12 @@ test.describe('Sequence Mode', () => {
     Description: RNA fragment deleted.
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cagtt');
     await keyboardPressOnCanvas(page, 'Escape');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Delete');
     await keyboardPressOnCanvas(page, 'Backspace');
@@ -576,12 +576,10 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
     await selectFlexLayoutModeTool(page);
@@ -596,7 +594,6 @@ test.describe('Sequence Mode', () => {
     Description: Selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA).
     */
     await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await keyboardTypeOnCanvas(page, 'acgtu');
@@ -1008,7 +1005,6 @@ test.describe('Sequence Mode', () => {
       } else if (testCase.name === 'Preview for Peptide') {
         await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       }
-      await startNewSequence(page);
       await keyboardTypeOnCanvas(page, testCase.sequence);
       await keyboardPressOnCanvas(page, 'Escape');
       await page

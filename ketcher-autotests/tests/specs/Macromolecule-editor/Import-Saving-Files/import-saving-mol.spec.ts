@@ -7,16 +7,19 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   moveMouseAway,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   readFileContent,
   MonomerType,
-  selectSequenceLayoutModeTool,
+  MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -96,13 +99,16 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Export monomers and chem', async () => {
+    await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
+    await selectFlexLayoutModeTool(page);
   });
 
   test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {
@@ -125,6 +131,7 @@ test.describe('Import-Saving .mol Files', () => {
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -141,6 +148,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: After importing a file with modified monomers, it is clear which monomer is modified,
     and when hovering, preview display changes made during modification
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
@@ -187,7 +195,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/fifty-monomers-v3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -202,7 +210,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -240,7 +248,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V2000/empty-canvas-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -279,6 +287,8 @@ test.describe('Import-Saving .mol Files', () => {
     */
     const filename = 'Molfiles-V3000/corrupted-file.mol';
     await selectSequenceLayoutModeTool(page);
+    await resetZoomLevelToDefault(page);
+
     await openFileAndAddToCanvasMacro(
       page,
       filename,
@@ -315,11 +325,12 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/snake-mode-peptides.mol',
       MacroFileType.MOLv3000,
     );
+    await resetZoomLevelToDefault(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/snake-mode-peptides-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -393,7 +404,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -408,11 +419,13 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
+    await resetZoomLevelToDefault(page);
+
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -427,11 +440,13 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
+    await resetZoomLevelToDefault(page);
+
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -446,12 +461,13 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
+    await resetZoomLevelToDefault(page);
 
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -466,12 +482,13 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
+    await resetZoomLevelToDefault(page);
 
     await verifyFileExport(
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -490,7 +507,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 });
@@ -595,7 +612,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         page,
         `Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -650,7 +667,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         page,
         `Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -700,7 +717,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         page,
         `Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -751,7 +768,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         page,
         `Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });
@@ -801,7 +818,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         page,
         `Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
         FileType.MOL,
-        'v3000',
+        MolFileFormat.v3000,
         [1],
       );
     });

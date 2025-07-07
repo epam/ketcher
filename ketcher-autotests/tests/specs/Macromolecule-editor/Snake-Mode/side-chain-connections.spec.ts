@@ -1,19 +1,23 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   waitForPageInit,
+  MolFileFormat,
 } from '@utils';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -106,10 +110,12 @@ test.describe('Side chain connections', () => {
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
+    await page.waitForTimeout(200);
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/1.1.ket`,
     );
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1139,7 +1145,7 @@ test.describe('Side chain connections', () => {
       page,
       'KET/Side-Chain-Connections/20-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });

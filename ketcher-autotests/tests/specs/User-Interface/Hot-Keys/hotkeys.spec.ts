@@ -9,9 +9,7 @@ import {
   clickOnAtom,
   clickOnBond,
   BondType,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
-  copyStructureByCtrlMove,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   selectFunctionalGroups,
@@ -19,9 +17,13 @@ import {
   dragMouseTo,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
-  copyAndPaste,
   clickOnCanvas,
 } from '@utils';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { copyStructureByCtrlMove } from '@utils/canvas/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -32,6 +34,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -269,10 +272,7 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('Cbz').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('Cbz'));
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
@@ -321,10 +321,7 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('formic acid').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('formic acid'));
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);

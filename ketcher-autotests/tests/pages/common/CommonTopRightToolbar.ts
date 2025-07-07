@@ -1,7 +1,8 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
+import { Mode } from '../constants/commonTopRightToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -104,11 +105,12 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
 
       const switcher = locators.ketcherModeSwitcherCombobox;
-      await expect(switcher).toBeVisible();
+      await switcher.waitFor({ state: 'visible' });
       await switcher.click();
-      await expect(page.getByTestId('macromolecules_mode')).toBeVisible();
-      await page.getByTestId('macromolecules_mode').click();
-      await expect(page.getByTestId('layout-mode')).toBeVisible();
+      const macroOption = page.getByTestId(Mode.Macromolecules);
+      await macroOption.waitFor({ state: 'visible' });
+      await macroOption.click();
+      await page.getByTestId('layout-mode').waitFor({ state: 'visible' });
 
       if (options.enableFlexMode) {
         await selectFlexLayoutModeTool(page);
@@ -135,7 +137,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await switcher.waitFor({ state: 'visible' });
       await switcher.click();
 
-      const microOption = page.getByTestId('molecules_mode');
+      const microOption = page.getByTestId(Mode.Molecules);
       await microOption.waitFor({ state: 'visible' });
       await microOption.click();
     },

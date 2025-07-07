@@ -6,11 +6,13 @@ import {
   doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  MolFileFormat,
   openFileAndAddToCanvas,
   pressButton,
-  selectAllStructuresOnCanvas,
+  RxnFileFormat,
   takeEditorScreenshot,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -190,7 +192,7 @@ test.describe('Bond Properties', () => {
       page,
       'Molfiles-V2000/mol_1459_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -271,7 +273,7 @@ test.describe('Bond Properties', () => {
       page,
       'Molfiles-V2000/mol_1461_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -395,7 +397,7 @@ test.describe('Bond Properties', () => {
       page,
       'Rxn-V2000/rxn-1463-to-open-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -494,7 +496,7 @@ test.describe('Bond Properties', () => {
       page,
       'Molfiles-V2000/mol_1465_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -534,7 +536,7 @@ test.describe('Bond Properties', () => {
       page,
       'Rxn-V2000/rxn-1465-to-open-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

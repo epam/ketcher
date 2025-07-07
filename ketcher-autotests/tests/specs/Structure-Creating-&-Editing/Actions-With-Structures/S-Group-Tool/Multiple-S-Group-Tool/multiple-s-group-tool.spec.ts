@@ -5,20 +5,21 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  resetCurrentTool,
   BondType,
-  copyAndPaste,
-  cutAndPaste,
   clickOnAtom,
   clickOnBond,
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
-  AttachmentPoint,
-  setAttachmentPoints,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -28,6 +29,10 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getBondByIndex } from '@utils/canvas/bonds';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -102,10 +107,11 @@ test.describe('Multiple S-Group tool', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+    );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -119,8 +125,8 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3, 'right');
-    await page.getByText('Edit S-Group...').click();
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);
@@ -226,7 +232,7 @@ test.describe('Multiple S-Group tool', () => {
       page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -310,12 +316,10 @@ test.describe('Multiple S-Group tool', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });

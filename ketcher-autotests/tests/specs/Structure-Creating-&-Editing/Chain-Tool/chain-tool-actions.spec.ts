@@ -12,6 +12,7 @@ import {
   clickOnAtom,
   clickOnBond,
   BondType,
+  MolFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -56,7 +57,7 @@ test.describe('Chain Tool verification', () => {
       page,
       'Molfiles-V2000/chains-expected-file.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });

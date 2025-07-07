@@ -7,11 +7,13 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   keyboardTypeOnCanvas,
-  selectSnakeLayoutModeTool,
   keyboardPressOnCanvas,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -44,7 +46,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 1: Verify that ruler available only in Sequence and Snake mode, and placed below the main toolbar', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Ruler available only in Sequence and Snake mode, and placed below the main toolbar.
      * Scenario:
@@ -70,7 +72,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 2: Verify that a rectangular input field positioned to the right of the slider, allowing users to manually enter a specific numeric value', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Rectangular input field positioned to the right of the slider, allowing users to manually enter a specific numeric value.
      * If the input field is standalone (not positioned next to the slider), hovering the mouse over it display a tooltip with the text: "Number of monomers in a line".
@@ -101,7 +103,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 3: Check that while hovering the mouse cursor below the main toolbar, the ruler become visible and the current layout area visually differentiated from the rest of the canvas', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Check that while hovering the mouse cursor below the main toolbar, the ruler become visible and the current layout area visually
      * differentiated from the rest of the canvas. If the slider is set on a value N, the shaded area starts after N. The shaded area will also be present
@@ -130,7 +132,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 4: Check that the default position of the slider in the Sequence mode is 30, while in Snake mode it depends of the viewport size (refer to the current behavior)', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: The default position of the slider in the Sequence mode is 30, while in Snake mode it depends of the viewport size (refer to the current behavior).
      * Scenario:
@@ -153,7 +155,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 5: Check that in Sequence mode the allowed values on the ruler will be multiples of 10', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: In Sequence mode the allowed values on the ruler will be multiples of 10.
      * Scenario:
@@ -180,7 +182,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 6: Check that in Snake mode the allowed values on the ruler can be any whole number', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: In Snake mode the allowed values on the ruler can be any whole number.
      * Scenario:
@@ -208,7 +210,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 7: Change layout by dragging ruler slider in Sequence and Snake mode', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
      * Scenario:
@@ -260,7 +262,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: In Snake mode, the slider maintain a consistent appearance regardless of the zoom level, whereas the ruler is adapt:
      * When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units (e.g., 5, 10, 15, etc.).
@@ -284,7 +286,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 9: Check that in Sequence mode, the ruler and slider control remain the same regardless of the zoom level. The ruler is represented by vertical lines instead of numbers', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: In Sequence mode, the ruler and slider control remain the same regardless of the zoom level.
      * The ruler is represented by vertical lines instead of numbers.
@@ -308,7 +310,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 10: Verify that the visual element for adding new sequences include a tail that adjusts its length as monomers are added', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Verify that the visual element for adding new sequences include a tail that adjusts its length as monomers are added.
      * The tail must stay aligned on the same level as the monomer chain. Its length scale proportionally to the number of monomers,
@@ -337,7 +339,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 11: Check if the slider moves out of the viewport, the input field is repositioned to the corresponding corner of the canvas', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: When the slider is outside the viewport, the input field dynamically adjust its position based on the slider’s location.
      * If the slider moves out of the viewport, the input field is repositioned to the corresponding corner of the canvas: the right corner if the slider
@@ -359,7 +361,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 12: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 Peptides', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
      * Scenario:
@@ -408,7 +410,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 13: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 Peptides', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
      * Scenario:
@@ -462,7 +464,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 14: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
      * Scenario:
@@ -512,7 +514,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 15: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
      * Scenario:
@@ -566,7 +568,7 @@ test.describe('Tests for Ruler', () => {
 
   test('Case 16: Change layout by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window', async () => {
     /*
-     * Version: 3.5
+     * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
      * Description: Layout changed by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window.
      * Scenario:

@@ -6,8 +6,8 @@ import {
   layout,
   recognize,
   clickInTheMiddleOfTheScreen,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

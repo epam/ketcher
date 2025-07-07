@@ -8,7 +8,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  resetCurrentTool,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
   waitForPageInit,
@@ -18,9 +17,11 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
+  getCachedBodyCenter,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -40,6 +41,13 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+  removeAbbreviation,
+} from '@utils/sgroup/helpers';
 
 const X_DELTA = 300;
 
@@ -279,10 +287,8 @@ test.describe('Templates - Functional Group Tools', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('CO2Et').first().click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Remove Abbreviation').click();
-    });
+
+    await removeAbbreviation(page, page.getByText('CO2Et').first());
 
     await CommonTopLeftToolbar(page).undo();
     await resetCurrentTool(page);
@@ -457,24 +463,18 @@ test.describe('Templates - Functional Group Tools2', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Remove Abbreviation').click();
-    });
+    await removeAbbreviation(page, middleOfTheScreen);
+
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -493,17 +493,13 @@ test.describe('Templates - Functional Group Tools2', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
+
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
@@ -553,10 +549,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-bond-fg.mol');
-    await page.getByText('Boc').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('Boc'));
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -570,10 +563,13 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
       'Molfiles-V2000/expanded-fg-benzene.mol',
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
+      await ContextMenu(page, middleOfTheScreen).click(
+        SuperatomOption.ContractAbbreviation,
+      );
     });
+
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -749,29 +745,38 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: 1) All selected FG's are expanded.
     2) All selected FG's are contracted. 3) All selected FG's abbreviations are removed.
    */
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/contracted-fg-abbreviation.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('Boc').click({ button: 'right' });
+
+    const bocSuperatom = page.getByText('Boc');
     await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
+      await ContextMenu(page, bocSuperatom).click(
+        SuperatomOption.ExpandAbbreviation,
+      );
     });
+
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+
     await waitForRender(page, async () => {
-      await page.getByText('Contract Abbreviation').click();
+      await ContextMenu(page, middleOfTheScreen).click(
+        SuperatomOption.ContractAbbreviation,
+      );
     });
+
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+
     await waitForRender(page, async () => {
-      await page.getByText('Remove Abbreviation').click();
+      await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
     });
     await takeEditorScreenshot(page);
   });
@@ -810,10 +815,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('Bn').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('Bn'));
 
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -849,10 +851,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('CCl3').click({ button: 'right' });
-    await waitForRender(page, async () => {
-      await page.getByText('Expand Abbreviation').click();
-    });
+    await expandAbbreviation(page, page.getByText('CCl3'));
 
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

@@ -8,7 +8,6 @@ import {
   clickOnAtom,
   moveOnAtom,
   waitForPageInit,
-  resetCurrentTool,
   openFileAndAddToCanvas,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
@@ -23,16 +22,20 @@ import {
   selectUserTemplate,
   FunctionalGroups,
   selectFunctionalGroups,
-  getCoordinatesOfTheMiddleOfTheScreen,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
   waitForElementInCanvas,
   pasteFromClipboardAndAddToCanvas,
+  getCachedBodyCenter,
+  RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
@@ -56,6 +59,10 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -105,7 +112,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -119,8 +125,8 @@ test.describe('Template Manupulations', () => {
     */
     const anyAtom = 0;
     await drawBenzeneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -137,7 +143,6 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -274,30 +279,20 @@ test.describe('Template Manupulations', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+    const point = await getAtomByIndex(page, { label: 'S' }, 0);
 
-    await page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('S')
-      .first()
-      .click();
-    await page.getByLabel('Primary attachment point').check();
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+    await clickOnCanvas(page, point.x, point.y);
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
+    await AttachmentPointsDialog(page).apply();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('S')
-      .first()
-      .click({
-        button: 'right',
-      });
-    await takeEditorScreenshot(page);
-    await page.getByText('Edit...').click();
+
+    await ContextMenu(page, point).click(MicroBondOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
     await page.getByTestId('OK').click();
@@ -392,7 +387,7 @@ test.describe('Template Manupulations', () => {
       page,
       'Molfiles-V2000/three-templates-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -408,7 +403,7 @@ test.describe('Template Manupulations', () => {
       page,
       'Rxn-V2000/templates-reaction-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -524,9 +519,9 @@ test.describe('Template Manupulations', () => {
     const X_DELTA_ONE = 100;
     await selectFunctionalGroups(FunctionalGroups.CONH2, page);
     await clickInTheMiddleOfTheScreen(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await expandAbbreviation(page, middleOfTheScreen);
+    const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);

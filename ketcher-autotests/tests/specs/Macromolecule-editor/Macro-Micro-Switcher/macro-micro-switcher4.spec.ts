@@ -6,16 +6,19 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   dragMouseTo,
   moveMouseAway,
+  MolFileFormat,
 } from '@utils';
-import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,
@@ -253,7 +256,7 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await openFileAndAddToCanvasAsNewProject(
@@ -378,7 +381,7 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

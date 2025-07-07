@@ -387,7 +387,8 @@ const sgroup = {
         type: { enum: ['nucleotideComponent'] },
         class: {
           title: 'Component',
-          enum: ['Sugar', 'Base', 'Phosphate'],
+          enum: ['SUGAR', 'BASE', 'PHOSPHATE'],
+          enumNames: ['Sugar', 'Base', 'Phosphate'],
           default: 'Sugar',
         },
       },

@@ -5,6 +5,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickOnAtom,
   openFileAndAddToCanvas,
+  RxnFileFormat,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -28,7 +29,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V2000/plus-and-reaction-arrow-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -44,7 +45,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -60,7 +61,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V2000/benzene-and-one-arrow-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -76,7 +77,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V3000/benzene-and-one-arrow-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -90,7 +91,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V2000/combination-of-reactants-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -104,7 +105,7 @@ test.describe('Reaction validation', () => {
       page,
       'Rxn-V3000/combination-of-reactants-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 

@@ -6,15 +6,19 @@ import {
   waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   MonomerType,
-  selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeElementScreenshot,
+  openFileAndAddToCanvasAsNewProject,
+  MolFileFormat,
+  resetZoomLevelToDefault,
+} from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
-  openFileAndAddToCanvasAsNewProject,
-} from '@utils';
+} from '@utils/canvas/tools/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -39,7 +43,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
@@ -1156,7 +1160,7 @@ test('9. Check that Right-clicking on a selection that includes an amino-acid (i
     page,
     'KET/Modifying-Amino-Acids/All types of monomers on the canvas and all amino acid modifications.ket',
   );
-
+  await resetZoomLevelToDefault(page);
   await selectAllStructuresOnCanvas(page);
 
   const randomPeptide = getMonomerLocator(page, {
@@ -1474,7 +1478,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
     MacroFileType.HELM,
     'PEPTIDE1{R.R.R}|PEPTIDE2{A}|PEPTIDE3{C}|PEPTIDE4{D}$PEPTIDE1,PEPTIDE2,1:R3-1:R1|PEPTIDE1,PEPTIDE3,2:R3-1:R2|PEPTIDE1,PEPTIDE4,3:R3-1:R3$$$V2.0',
   );
-
+  await resetZoomLevelToDefault(page);
   await selectAllStructuresOnCanvas(page);
 
   const peptide = getMonomerLocator(page, {
@@ -1522,7 +1526,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       MacroFileType.HELM,
       aminoAcidForPhosphorylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1581,7 +1585,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       MacroFileType.HELM,
       aminoAcidForSideChainAcetylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1640,7 +1644,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       MacroFileType.HELM,
       aminoAcidForCitrullination.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1699,7 +1703,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       MacroFileType.HELM,
       aminoAcidForHydroxylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1758,7 +1762,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       MacroFileType.HELM,
       aminoAcidForNMethylation.HELMString || '',
     );
-
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
 
     const randomPeptide = getMonomerLocator(page, {
@@ -1951,7 +1955,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2010,7 +2014,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2070,7 +2074,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2130,7 +2134,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2190,7 +2194,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2250,7 +2254,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2310,7 +2314,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
@@ -2369,10 +2373,10 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2421,10 +2425,10 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2473,10 +2477,10 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2525,10 +2529,10 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2577,10 +2581,10 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2629,10 +2633,10 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -2681,10 +2685,10 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       MoleculesFileFormatType.SVGDocument,
     );
 
-    const previewAreaTestId = await SaveStructureDialog(
+    await takeElementScreenshot(
       page,
-    ).saveStructureTextarea.getAttribute('data-testid');
-    await takeElementScreenshot(page, previewAreaTestId || '');
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
     await SaveStructureDialog(page).cancel();
 
     // Test should be skipped if related bug exists
@@ -4676,7 +4680,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForPhosphorylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4740,7 +4744,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForSideChainAcetylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4805,7 +4809,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForCitrullination.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4868,7 +4872,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForHydroxylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4931,7 +4935,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNMethylation.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -4996,7 +5000,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForInversion.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -5061,7 +5065,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       page,
       `Molfiles-V3000/Modifying-Amino-Acids/${aminoAcidForNaturalAminoAcid.Description}-Micro.mol`,
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(

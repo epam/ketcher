@@ -7,11 +7,15 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  cutAndPaste,
   clickOnCanvas,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
-import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -73,7 +77,7 @@ test.describe('Action on simples objects', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);
@@ -150,7 +154,7 @@ test.describe('Action on simples objects', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await copyAndPaste(page);

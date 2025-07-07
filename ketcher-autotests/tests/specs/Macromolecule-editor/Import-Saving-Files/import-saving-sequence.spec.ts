@@ -6,13 +6,16 @@ import {
   waitForPageInit,
   openFile,
   selectOptionInDropdown,
-  selectSnakeLayoutModeTool,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   readFileContent,
+  SequenceFileFormat,
+  resetZoomLevelToDefault,
+  delay,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -81,6 +84,7 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
+    await delay(0.2);
     await takeEditorScreenshot(page);
   });
 
@@ -721,7 +725,7 @@ for (const correctSequence of correctSequences) {
       [MacroFileType.Sequence, correctSequence.sequenceType],
       correctSequence.sequenceString,
     );
-    await zoomWithMouseWheel(page, -200);
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -889,14 +893,15 @@ for (const sequenceToExport of sequencesToExport) {
   test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
     page,
   }) => {
-    /* 
-  Test case: https://github.com/epam/ketcher/issues/5215
-  Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
-  Case:
-      1. Load correct sequence via paste from clipboard way
-      2. Export canvas to 3-letter sequence
-      2. Compare export result with source sequence string
-  */
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5215
+     * Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
+     * Case:
+     *  1. Load correct sequence via paste from clipboard way
+     *  2. Export canvas to 3-letter sequence
+     *  3. Compare export result with source sequence string
+     *  4. Validate export to .seq file format
+     */
     test.setTimeout(35000);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -922,6 +927,13 @@ for (const sequenceToExport of sequencesToExport) {
     }
 
     await SaveStructureDialog(page).cancel();
+
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/${sequenceToExport.sequenceDescription}.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
+    );
   });
 }
 
@@ -1339,7 +1351,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
   {
     testCaseDescription:
       '12. Verify specific export format for "Any amino acid"',
-    sequenceDescription: '(X) as "Xaa',
+    sequenceDescription: '(X) as Xaa',
     HELMString:
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     sequenceString: 'Xaa',
@@ -1386,7 +1398,10 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
      * Case:
      *     1. Load correct sequence via paste from clipboard way
      *     2. Export canvas to 3-letter sequence
-     *     2. Compare export result with source sequence string
+     *     3. Compare export result with source sequence string
+     *     4. Validate export to .seq file format
+     *
+     *  Version 3.5
      */
     test.setTimeout(35000);
 
@@ -1413,5 +1428,12 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
     }
 
     await SaveStructureDialog(page).cancel();
+
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/${sequenceToExport.sequenceDescription}.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
+    );
   });
 }

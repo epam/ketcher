@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
-  copyAndPaste,
-  cutAndPaste,
-  saveStructureWithReaction,
-  screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
@@ -12,19 +8,25 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  INPUT_DELAY,
   getControlModifier,
   Point,
   waitForPageInit,
   waitForRender,
-  selectRectangleArea,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils';
-import { pageReloadMicro } from '@utils/common/helpers';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import {
+  saveStructureWithReaction,
+  selectRectangleArea,
+} from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -33,6 +35,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { INPUT_DELAY } from '@utils/globals';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -148,7 +151,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -375,6 +382,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
+      await resetZoomLevelToDefault(page);
       await LeftToolbar(page).selectArrowTool(
         ArrowType.ArrowEquilibriumFilledHalfBow,
       );
@@ -429,16 +437,17 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await pageReloadMicro(page);
-      await configureInitialState(page);
-
       await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
 
       await copyToClipboardByKeyboard(page);
-      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
+      await pasteFromClipboardByKeyboard(page);
 
       await clickOnTheCanvas(page, 0, -100);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
     });
 
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
@@ -454,7 +463,11 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + 300, point.y - 100, page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
     });
   });
 
@@ -817,7 +830,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
   });
 
   test('Cut/paste retrosynthetic arrow', async ({ page }) => {
@@ -829,6 +846,10 @@ test.describe('Plus and Arrows tools ', () => {
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
   });
 });

@@ -666,7 +666,10 @@ function fromContextType(id, editor, newSg, currSelection) {
   const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
   const context = newSg.attrs.context;
 
-  if (newSg.type === SGroup.TYPES.SUP) {
+  if (
+    newSg.type === SGroup.TYPES.SUP ||
+    newSg.type === SGroup.TYPES.nucleotideComponent
+  ) {
     newSg.attrs.expanded = true;
   }
 

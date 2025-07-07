@@ -5,27 +5,31 @@ import {
   takeEditorScreenshot,
   BondType,
   clickInTheMiddleOfTheScreen,
-  resetCurrentTool,
-  copyAndPaste,
-  cutAndPaste,
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
   waitForRender,
   clickOnBond,
   openFileAndAddToCanvasAsNewProject,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   clickOnAtom,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   pressButton,
   addMonomerToCenterOfCanvas,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile } from '@utils/formats';
+import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -48,6 +52,8 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Peptides } from '@constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -501,7 +507,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         page,
         'Molfiles-V2000/structure-with-stereo-bonds.mol',
       );
-      const expectedFile = await getMolfile(page, 'v2000');
+      const expectedFile = await getMolfile(page, MolFileFormat.v2000);
       await saveToFile(
         'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
         expectedFile,
@@ -514,7 +520,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
           metaDataIndexes: METADATA_STRING_INDEX,
           expectedFileName:
             'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
-          fileFormat: 'v2000',
+          fileFormat: MolFileFormat.v2000,
         });
 
       expect(molFile).toEqual(molFileExpected);
@@ -536,7 +542,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       'Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -653,11 +659,65 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/ring-and-chains-with-stereo-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in SVG ( rings, chains)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7233
+     * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
+     * Stereo-labels are positioned correctly.
+     * Version 3.5
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Press Calculate CIP
+     * 4. Save to SVG
+     * 5. Open saved file
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/ring-and-chains-with-stereo.ket',
+    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in PNG ( rings, chains)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7233
+     * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
+     * Stereo-labels are positioned correctly.
+     * Version 3.5
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Press Calculate CIP
+     * 4. Save to PNG
+     * 5. Open saved file
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/ring-and-chains-with-stereo.ket',
+    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
     );
     await takeEditorScreenshot(page);
   });

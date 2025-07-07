@@ -14,19 +14,21 @@ import {
   openFileAndAddToCanvas,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  AttachmentPoint,
-  copyAndPaste,
-  cutAndPaste,
   waitForPageInit,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
   selectRedoByKeyboard,
   ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -44,6 +46,7 @@ import {
   GeneralSetting,
   ResetToSelectToolOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -555,11 +558,11 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Attachment Point tool is restored;
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -570,19 +573,21 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
-
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
-
-    await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+    );
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+    );
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+    );
 
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -601,11 +606,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -618,11 +623,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -635,11 +640,11 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);
     }
@@ -656,13 +661,13 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+    );
     for (let i = 0; i < 5; i++) {
-      await page.keyboard.press('Control+_');
+      await ZoomOutByKeyboard(page);
     }
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);

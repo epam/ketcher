@@ -19,11 +19,14 @@ import {
   waitForRender,
   resetZoomLevelToDefault,
   takeElementScreenshot,
-  selectAllStructuresOnCanvas,
-  clickInTheMiddleOfTheScreen,
+  getCachedBodyCenter,
+  ZoomOutByKeyboard,
+} from '@utils';
+import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-} from '@utils';
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -35,6 +38,9 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -48,22 +54,20 @@ async function selectExpandedMonomer(
   await clickOnBond(page, bondType, bondNumber);
 }
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
 async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
+  const canvasLocator = page
+    .getByTestId(KETCHER_CANVAS)
+    .getByText(locatorText, { exact: true });
+
   await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
+    await ContextMenu(page, canvasLocator).click(
+      MonomerOnMicroOption.ExpandMonomer,
+    );
   });
 }
 
 async function selectMonomerOnMicro(page: Page, monomerName: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
   await waitForRender(page, async () => {
     await canvasLocator.getByText(monomerName, { exact: true }).click();
   });
@@ -285,7 +289,7 @@ interface IMonomer {
 //       await openFileAndAddToCanvasAsNewProject(page,
 //         movableCollapsedMonomer.KETFile,
 //       );
-//       const canvasLocator = page.getByTestId('ketcher-canvas');
+//       const canvasLocator = page.getByTestId(KETCHER_CANVAS);
 //       const monomerLocator = canvasLocator.getByText(
 //         movableCollapsedMonomer.monomerLocatorText,
 //         { exact: true },
@@ -1012,9 +1016,7 @@ test.describe('Check that in preview expanded monomers exported both to PNG in t
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1054,9 +1056,8 @@ test.describe('Check that in preview expanded monomers exported both to SVG in t
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1102,9 +1103,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1150,9 +1149,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1200,9 +1197,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1250,9 +1245,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
       await SaveStructureDialog(page).cancel();
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1287,9 +1280,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in PNG
         MoleculesFileFormatType.PNGImage,
       );
 
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1325,9 +1316,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in SVG
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1409,9 +1398,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
         MoleculesFileFormatType.PNGImage,
       );
 
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1453,9 +1440,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
-      const previewAreaTestId =
-        (await saveStructureArea.getAttribute('data-testid')) || '';
-      await takeElementScreenshot(page, previewAreaTestId);
+      await takeElementScreenshot(page, saveStructureArea);
 
       await SaveStructureDialog(page).cancel();
 
@@ -1550,9 +1535,11 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
-      await clickInTheMiddleOfTheScreen(page, 'right');
+      const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
-        await page.getByText('Collapse monomer').click();
+        await ContextMenu(page, middleOfTheScreen).click(
+          MonomerOnMicroOption.CollapseMonomers,
+        );
       });
 
       await verifyFileExport(page, exportResultFileName, FileType.KET);
@@ -1596,6 +1583,8 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
         page,
         monomerComposition.KETFile,
       );
+      await resetZoomLevelToDefault(page);
+      await ZoomOutByKeyboard(page);
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);

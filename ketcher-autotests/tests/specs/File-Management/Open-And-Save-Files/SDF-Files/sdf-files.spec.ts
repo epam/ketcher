@@ -14,6 +14,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  SdfFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -32,7 +33,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/sdf-v2000-to-open-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -43,7 +44,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/sdf-v3000-to-open-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -78,7 +79,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -103,7 +104,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -128,7 +129,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -153,7 +154,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -178,7 +179,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -203,7 +204,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -230,7 +231,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -257,7 +258,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -284,7 +285,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -311,7 +312,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -338,7 +339,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -365,7 +366,7 @@ test.describe('CDF files', () => {
       page,
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -397,7 +398,7 @@ test('The Bond length setting with px option is applied and it should be save to
     page,
     'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -428,7 +429,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
     page,
     'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -459,7 +460,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
     page,
     'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
-    'v3000',
+    SdfFileFormat.v3000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -490,7 +491,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     page,
     'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -521,7 +522,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     page,
     'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
-    'v3000',
+    SdfFileFormat.v3000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -552,7 +553,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
     page,
     'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -584,7 +585,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
     page,
     'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
-    'v3000',
+    SdfFileFormat.v3000,
   );
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -615,7 +616,7 @@ test('The Bond length setting with pt option is applied and it should be save to
     page,
     'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
 
   await openFileAndAddToCanvasAsNewProject(
@@ -644,7 +645,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
     page,
     'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
     FileType.SDF,
-    'v3000',
+    SdfFileFormat.v3000,
   );
 
   await openFileAndAddToCanvasAsNewProject(
@@ -672,7 +673,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
     page,
     'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
     FileType.SDF,
-    'v2000',
+    SdfFileFormat.v2000,
   );
 
   await openFileAndAddToCanvasAsNewProject(

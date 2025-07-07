@@ -16,6 +16,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -1074,7 +1075,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     }).first();
 
     const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .locator(rightMolecule.atomLocatorSelectors[atomIndex])
       .first();
 

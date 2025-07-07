@@ -2,6 +2,38 @@ import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
 
+export enum MolFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RxnFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum RdfFileFormat {
+  v2000 = 'v2000',
+  v3000 = 'v3000',
+}
+
+export enum SequenceFileFormat {
+  oneLetter = '1-letter',
+  threeLetter = '3-letter',
+}
+
+export declare type FileFormat =
+  | MolFileFormat
+  | RxnFileFormat
+  | SdfFileFormat
+  | RdfFileFormat
+  | SequenceFileFormat;
+
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
 }
@@ -14,8 +46,14 @@ export async function getIdt(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getIdt());
 }
 
-export async function getSequence(page: Page): Promise<string> {
-  return await page.evaluate(() => window.ketcher.getSequence());
+export async function getSequence(
+  page: Page,
+  fileFormat?: SequenceFileFormat,
+): Promise<string> {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getSequence(fileFormat),
+    fileFormat,
+  );
 }
 
 export function setZoom(page: Page, value: number) {

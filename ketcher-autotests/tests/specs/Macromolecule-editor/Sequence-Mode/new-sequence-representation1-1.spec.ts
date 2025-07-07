@@ -5,13 +5,15 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectFlexLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,
@@ -39,8 +41,8 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
+  await selectSequenceLayoutModeTool(page);
   await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -1556,6 +1558,7 @@ for (const monomer of monomersToAdd) {
       }
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
@@ -1624,6 +1627,7 @@ for (const monomer of monomersToAddWithEnter) {
       );
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
@@ -1691,6 +1695,7 @@ for (const monomer of monomersToAddWithEnter) {
       );
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
@@ -1757,6 +1762,7 @@ for (const monomer of monomersToAdd) {
 
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 9 });
 
@@ -1804,6 +1810,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
@@ -1850,6 +1857,7 @@ for (const sequence of sequences) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
@@ -1911,6 +1919,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: !sequence.Rotation ? 3 : 7,
@@ -1958,6 +1967,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
@@ -2002,6 +2012,7 @@ for (const sequence of sequences) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
@@ -2046,6 +2057,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     );
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
+    await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: !sequence.Rotation ? 4 : 8,

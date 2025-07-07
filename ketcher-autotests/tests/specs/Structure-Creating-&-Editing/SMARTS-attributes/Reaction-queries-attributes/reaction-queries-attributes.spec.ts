@@ -3,18 +3,18 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,
-  getAtomByIndex,
   getCoordinatesOfTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

@@ -3,11 +3,12 @@ import {
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
+  ZoomOutByKeyboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
@@ -355,7 +356,7 @@ test.describe('Rotation', () => {
     const fiftyPercentZoom = 5;
     await page.setViewportSize({ width: 1200, height: 1080 });
     for (let i = 0; i < fiftyPercentZoom; i++) {
-      await page.keyboard.press('Control+_');
+      await ZoomOutByKeyboard(page);
     }
     await addStructureAndSelect(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);

@@ -5,8 +5,6 @@ import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   dragMouseTo,
   moveOnAtom,
   openFile,
@@ -16,10 +14,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   resetZoomLevelToDefault,
-  saveToTemplates,
   screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
-  selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
@@ -28,6 +23,12 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
+import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clearLocalStorage,

@@ -7,6 +7,7 @@ import {
   waitForPageInit,
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
+  RxnFileFormat,
 } from '@utils';
 import {
   FileType,
@@ -36,7 +37,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -55,7 +56,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 
@@ -72,7 +73,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -92,7 +93,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
 
     await CommonTopLeftToolbar(page).saveFile();

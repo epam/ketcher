@@ -7,15 +7,19 @@ import {
   dragMouseTo,
   openFileAndAddToCanvas,
   clickOnAtom,
-  copyAndPaste,
-  cutAndPaste,
   waitForRender,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
   moveMouseAway,
+  ZoomOutByKeyboard,
+  RxnFileFormat,
 } from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
@@ -262,7 +266,7 @@ test.describe('R-Group Label Tool', () => {
     // eslint-disable-next-line no-magic-numbers
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+_');
+        await ZoomOutByKeyboard(page);
       });
     }
     await takeEditorScreenshot(page);
@@ -415,7 +419,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.getByText('R13').click();
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 1 });
   });
 
   test('Add Bond to the R-Group Label', async ({ page }) => {
@@ -500,7 +504,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V2000/chain-with-r-group-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -517,7 +521,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
   });
 

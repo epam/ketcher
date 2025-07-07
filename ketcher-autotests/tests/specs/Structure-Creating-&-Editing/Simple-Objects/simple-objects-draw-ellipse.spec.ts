@@ -1,9 +1,7 @@
 import { Page, test } from '@playwright/test';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,

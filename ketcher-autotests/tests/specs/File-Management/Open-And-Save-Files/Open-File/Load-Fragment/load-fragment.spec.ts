@@ -13,11 +13,11 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   moveOnAtom,
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import {
   FileType,
   verifyFileExport,

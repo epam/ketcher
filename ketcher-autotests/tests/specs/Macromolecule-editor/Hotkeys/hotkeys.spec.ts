@@ -1,13 +1,10 @@
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
-  typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
@@ -15,7 +12,13 @@ import {
   selectRedoByKeyboard,
   waitForRender,
   getControlModifier,
+  clearCanvasByKeyboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  typeAllEnglishAlphabet,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -32,7 +35,7 @@ test.describe('Hotkeys', () => {
     Description: Canvas is cleared.
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -42,7 +45,7 @@ test.describe('Hotkeys', () => {
     Description: Canvas is cleared.
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
-    await page.keyboard.press('Control+Backspace');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -54,7 +57,7 @@ test.describe('Hotkeys', () => {
     Description: Clear canvas action Undo and then Redo.
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
-    await page.keyboard.press('Control+Backspace');
+    await clearCanvasByKeyboard(page);
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
     await selectRedoByKeyboard(page);
@@ -67,7 +70,7 @@ test.describe('Hotkeys', () => {
     Description: Clear canvas action Undo and then Redo.
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
-    await page.keyboard.press('Control+Backspace');
+    await clearCanvasByKeyboard(page);
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
 

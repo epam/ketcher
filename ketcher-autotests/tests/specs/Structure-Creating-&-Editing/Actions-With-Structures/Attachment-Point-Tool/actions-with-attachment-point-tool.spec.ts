@@ -4,8 +4,8 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,

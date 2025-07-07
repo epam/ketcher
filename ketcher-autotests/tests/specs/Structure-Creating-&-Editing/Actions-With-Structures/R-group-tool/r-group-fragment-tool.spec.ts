@@ -3,17 +3,19 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
+  waitForPageInit,
+  clickOnCanvas,
+  MolFileFormat,
+} from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
   copyAndPaste,
   cutAndPaste,
-  waitForPageInit,
-  resetCurrentTool,
   selectAllStructuresOnCanvas,
-  clickOnCanvas,
-} from '@utils';
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -26,6 +28,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(page, RingButton.Benzene);
@@ -119,10 +122,7 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await page.keyboard.press('Control+r');
-    await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await setAttachmentPoints(page, { x, y }, { primary: true });
     await takeEditorScreenshot(page);
   });
 
@@ -139,10 +139,11 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', atomIndex);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByTestId('OK').click();
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: atomIndex },
+      { primary: true },
+    );
     await resetCurrentTool(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
@@ -206,13 +207,12 @@ test.describe('Open Ketcher', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await page.getByTestId('OK').click();
-
+    await setAttachmentPoints(
+      page,
+      { x, y },
+      { primary: true, secondary: true },
+    );
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');
     await clickOnCanvas(page, x, y);
@@ -332,7 +332,7 @@ test.describe('R-Group Fragment Tool', () => {
       page,
       'Molfiles-V2000/r1-several-structures-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -350,7 +350,7 @@ test.describe('R-Group Fragment Tool', () => {
       page,
       'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 

@@ -7,26 +7,25 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
   clickOnCanvas,
   setMolecule,
+  MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  waitForPageInit,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils/common';
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   FileType,
   verifyFileExport,
@@ -52,22 +51,11 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
-
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
 
 test.describe('Ketcher bugs in 3.2.0', () => {
   test.beforeAll(async ({ browser }) => {
@@ -186,6 +174,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ACGTUNBDHKWYMRSV',
     );
+    await resetZoomLevelToDefault(page);
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -799,7 +788,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
       'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -908,7 +897,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await keyboardTypeOnCanvas(page, 'AA');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomer(page, 'P');
+    const symbolP = page
+      .getByTestId(KETCHER_CANVAS)
+      .getByText('P', { exact: true });
+    await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page, {

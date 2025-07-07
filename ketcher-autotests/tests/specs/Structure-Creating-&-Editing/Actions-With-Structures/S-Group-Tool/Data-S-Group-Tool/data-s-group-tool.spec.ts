@@ -7,18 +7,21 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   BondType,
-  copyAndPaste,
-  cutAndPaste,
   clickOnBond,
   clickOnAtom,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
@@ -174,7 +177,7 @@ test.describe('Data S-Group tool', () => {
       page,
       'Molfiles-V2000/chain-with-name-and-value-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });

@@ -4,14 +4,16 @@ import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   openFile,
-  selectSnakeLayoutModeTool,
   moveMouseAway,
-  selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
   MacroFileType,
 } from '@utils';
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,
@@ -129,12 +131,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
-    await verifyFileExport(
-      page,
-      'FASTA/fasta-rna-a.fasta',
-      FileType.FASTA,
-      'v3000',
-    );
+    await verifyFileExport(page, 'FASTA/fasta-rna-a.fasta', FileType.FASTA);
   });
 
   // Should not convert to Fasta type in case of there are more than one monomer type
@@ -253,7 +250,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/fasta-rna-musculus-rearranged-expected.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -301,7 +297,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/fasta-dna-rna-separate.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -317,7 +312,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/fasta-peptides-connected-with-bonds.fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -393,7 +387,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/fasta-Peptides (that have mapping to library, alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -529,7 +522,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous DNA Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -587,7 +579,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous RNA Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 
@@ -645,7 +636,6 @@ test.describe('Import-Saving .fasta Files', () => {
       page,
       'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases (alternatives).fasta',
       FileType.FASTA,
-      'v3000',
     );
   });
 

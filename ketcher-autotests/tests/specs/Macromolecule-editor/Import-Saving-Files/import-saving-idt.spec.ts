@@ -18,14 +18,15 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-
+import {
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   closeErrorMessage,
   closeOpenStructure,
@@ -65,6 +66,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -381,11 +384,11 @@ test.describe('Import-Saving .idt Files', () => {
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
-    await getSymbolLocator(page, {
+    const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 2,
-    }).click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardTypeOnCanvas(page, 'ttt');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);

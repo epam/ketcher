@@ -24,6 +24,7 @@ import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';
 import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { Icon } from 'components';
 
 const {
   ringBondCount,
@@ -203,8 +204,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
-        <Item {...props} onClick={handleDelete}>
-          Delete
+        <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+          <Icon name="deleteMenu" className={styles.icon} />
+          <span className={styles.contextMenuText}>Delete</span>
         </Item>
       </>
     );
@@ -212,17 +214,34 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   return (
     <>
-      <Item {...props} onClick={handleEdit}>
-        {props.propsFromTrigger?.extraItemsSelected
-          ? 'Edit selected atoms...'
-          : 'Edit...'}
+      <Item
+        {...props}
+        data-testid={
+          props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected atoms...-option'
+            : 'Edit...-option'
+        }
+        onClick={handleEdit}
+      >
+        <Icon name="editMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>
+          {props.propsFromTrigger?.extraItemsSelected
+            ? 'Edit selected atoms...'
+            : 'Edit...'}
+        </span>
       </Item>
-      <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>
+      <Item
+        {...props}
+        data-testid="Enhanced stereochemistry...-option"
+        disabled={stereoDisabled}
+        onClick={handleStereo}
+      >
         Enhanced stereochemistry...
       </Item>
       <Submenu
         {...props}
         label="Query properties"
+        data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
@@ -230,12 +249,14 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             <Submenu
               {...props}
               label={title}
+              data-testid={`${title}-option`}
               key={key}
               className={styles.sameGroup}
             >
               <ButtonGroup<AtomAllAttributeValue>
                 buttons={buttons}
                 defaultValue={getPropertyValue(key)}
+                title={title}
                 onClick={(value: AtomAllAttributeValue) =>
                   updateAtomProperty(key, value)
                 }
@@ -250,6 +271,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         !isAtomSuperatomLeavingGroup && (
           <Item
             {...props}
+            data-testid="Add attachment point-option"
             onClick={handleAddAttachmentPoint}
             disabled={isAddAttachmentPointDisabled}
           >
@@ -259,12 +281,17 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <HighlightMenu onHighlight={highlightAtomWithColor} />
       {isAtomSuperatomAttachmentPoint &&
         atomFreeAttachmentPoints.length > 0 && (
-          <Item {...props} onClick={handleRemoveAttachmentPoint}>
+          <Item
+            {...props}
+            data-testid="Remove attachment point-option"
+            onClick={handleRemoveAttachmentPoint}
+          >
             Remove attachment point
           </Item>
         )}
-      <Item {...props} onClick={handleDelete}>
-        Delete
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+        <Icon name="deleteMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>
   );

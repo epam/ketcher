@@ -14,30 +14,59 @@ import {
 type Props = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
+  lineLengthValue: number;
 };
 
-const RulerScale = ({ transform, layoutMode }: Props) => {
+const RulerScale = ({
+  transform,
+  layoutMode,
+  lineLengthValue: _lineLengthValue,
+}: Props) => {
   const ref = useRef<SVGSVGElement>(null);
-
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
-  const positions = useMemo(() => {
+  const getDynamicPositions = (
+    visibleStart: number,
+    visibleEnd: number,
+    step: number,
+    offset: number,
+  ): number[] => {
+    const startIndex = Math.max(0, Math.floor((visibleStart - offset) / step));
+    const endIndex = Math.ceil((visibleEnd - offset) / step) + 10;
+
     return Array.from(
-      { length: layoutMode === 'snake-layout-mode' ? 101 : 20 },
-      (_, i) => {
-        if (layoutMode === 'sequence-layout-mode') {
-          return (
-            SequenceModeStartOffset +
-            i * 10 * SequenceModeItemWidth +
-            (i - 1) * SequenceModeIndentWidth
-          );
-        } else if (layoutMode === 'snake-layout-mode') {
-          return SnakeModeStartOffset + i * SnakeModeItemWidth;
-        }
-        return 0;
-      },
+      { length: endIndex - startIndex },
+      (_, i) => offset + (startIndex + i) * step,
     );
-  }, [layoutMode]);
+  };
+
+  const positions = useMemo(() => {
+    const canvasWidth =
+      ref.current?.ownerSVGElement?.width.baseVal.value || 1000;
+    const visibleStart = transform.invertX(0);
+    const visibleEnd = transform.invertX(canvasWidth);
+
+    if (layoutMode === 'sequence-layout-mode') {
+      const step = 10 * SequenceModeItemWidth + SequenceModeIndentWidth;
+      return getDynamicPositions(
+        visibleStart,
+        visibleEnd,
+        step,
+        SequenceModeStartOffset,
+      );
+    }
+
+    if (layoutMode === 'snake-layout-mode') {
+      return getDynamicPositions(
+        visibleStart,
+        visibleEnd,
+        SnakeModeItemWidth,
+        SnakeModeStartOffset,
+      );
+    }
+
+    return [];
+  }, [layoutMode, transform]);
 
   const svgChildren = useMemo(() => {
     const children: ReactElement[] = [];

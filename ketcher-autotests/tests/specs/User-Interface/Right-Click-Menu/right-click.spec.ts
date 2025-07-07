@@ -11,10 +11,11 @@ import {
   clickOnBond,
   clickOnAtom,
   clickOnCanvas,
-  selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   moveMouseAway,
+  resetZoomLevelToDefault,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -24,6 +25,16 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  AromaticityOption,
+  HighlightOption,
+  MicroAtomOption,
+  MicroBondOption,
+  QueryAtomOption,
+  RingBondCountOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +48,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -48,8 +59,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Query bonds').click();
+    await ContextMenu(page, point).hover(MicroBondOption.QueryBonds);
     await takeEditorScreenshot(page);
   });
 
@@ -60,8 +70,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit...').click();
+    await ContextMenu(page, point).click(MicroBondOption.Edit);
     await page.getByTestId('type-input-span').click();
     await page.getByRole('option', { name: 'Double', exact: true }).click();
     await pressButton(page, 'Apply');
@@ -75,8 +84,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Double', { exact: true }).click();
+    await ContextMenu(page, point).click(MicroBondOption.Double);
     await takeEditorScreenshot(page);
   });
 
@@ -87,8 +95,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Delete', { exact: true }).click();
+    await ContextMenu(page, point).click(MicroBondOption.Delete);
     await takeEditorScreenshot(page);
   });
 
@@ -104,10 +111,8 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
-      await clickOnBond(page, BondType.SINGLE, 0, 'right');
-    });
-    await waitForRender(page, async () => {
-      await page.getByText('Double', { exact: true }).click();
+      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+      await ContextMenu(page, point).click(MicroBondOption.Double);
     });
 
     await waitForRender(page, async () => {
@@ -127,22 +132,23 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Query properties').click();
-    await page.getByText('Ring bond count').click();
+    await ContextMenu(page, point).hover([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.RingBondCount,
+    ]);
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'As drawn' }).first().click();
-    await page.getByText('Aromaticity').click();
+    await page.getByTestId(RingBondCountOption.AsDrawn).first().click();
+    await page.getByTestId(QueryAtomOption.Aromaticity).click();
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'aliphatic' }).click();
-    await page.getByText('Unsaturated').first().click();
+    await page.getByTestId(AromaticityOption.Aliphatic).click();
+    await page.getByTestId(QueryAtomOption.Unsaturated).first().click();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await takeEditorScreenshot(page);
@@ -155,8 +161,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit...').click();
+    await ContextMenu(page, point).click(MicroAtomOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
     await pressButton(page, 'Apply');
@@ -175,7 +180,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -188,7 +193,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -202,10 +207,11 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Enhanced stereochemistry...').click();
-    await page.getByLabel('Create new AND Group').check();
-    await pressButton(page, 'Apply');
+    await ContextMenu(page, point).click(
+      MicroAtomOption.EnhancedStereochemistry,
+    );
+    await EnhancedStereochemistry(page).selectCreateNewAndGroup();
+    await EnhancedStereochemistry(page).pressApplyButton();
 
     await takeEditorScreenshot(page);
 
@@ -229,9 +235,11 @@ test.describe('Right-click menu', () => {
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
+    await resetZoomLevelToDefault(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Enhanced stereochemistry...').click();
+    await ContextMenu(page, point).click(
+      MicroAtomOption.EnhancedStereochemistry,
+    );
     await page.getByLabel('Create new OR Group').check();
     await pressButton(page, 'Apply');
 
@@ -256,8 +264,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Delete').click();
+    await ContextMenu(page, point).click(MicroAtomOption.Delete);
     await takeEditorScreenshot(page);
   });
 
@@ -277,8 +284,7 @@ test.describe('Right-click menu', () => {
     await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
     point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Delete').click();
+    await ContextMenu(page, point).click(MicroAtomOption.Delete);
     await takeEditorScreenshot(page);
   });
 
@@ -294,7 +300,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await clickOnCanvas(page, canvasClickX, canvasClickY);
     await takeEditorScreenshot(page);
   });
@@ -309,7 +315,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await LeftToolbar(page).sGroup();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -323,7 +329,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -336,8 +342,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Attach S-Group...', { exact: true }).click();
+    await ContextMenu(page, point).click(MicroBondOption.AttachSGroup);
     await page.getByPlaceholder('Enter name').click();
     await page.getByPlaceholder('Enter name').fill('A!@#$$$test');
     await page.getByPlaceholder('Enter value').click();
@@ -363,8 +368,7 @@ test.describe('Right-click menu', () => {
     await page.keyboard.up('Shift');
 
     point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit...').click();
+    await ContextMenu(page, point).click(MicroAtomOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
     await pressButton(page, 'Apply');
@@ -388,8 +392,7 @@ test.describe('Right-click menu', () => {
     await page.keyboard.up('Shift');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Double', { exact: true }).click();
+    await ContextMenu(page, point).click(MicroBondOption.Double);
     await takeEditorScreenshot(page);
   });
 
@@ -405,7 +408,8 @@ test.describe('Right-click menu', () => {
       3. Observes the "Highlight" option
     */
     await drawBenzeneRing(page);
-    await clickOnAtom(page, 'C', 0, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -421,7 +425,8 @@ test.describe('Right-click menu', () => {
       3. Observes the "Highlight" option
     */
     await drawBenzeneRing(page);
-    await clickOnBond(page, BondType.SINGLE, 1, 'right');
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -445,7 +450,8 @@ test.describe('Right-click menu', () => {
     await clickOnBond(page, BondType.DOUBLE, 1);
     await clickOnAtom(page, 'C', 2);
     await page.keyboard.up('Shift');
-    await clickOnAtom(page, 'C', 2, 'right');
+    const point = await getAtomByIndex(page, { label: 'C' }, 2);
+    await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
 
@@ -461,8 +467,8 @@ test.describe('Right-click menu', () => {
       3. Click on the "Highlight" option
     */
     await drawBenzeneRing(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).hover(MicroAtomOption.Highlight);
     await takeEditorScreenshot(page);
   });
 
@@ -483,20 +489,19 @@ test.describe('Right-click menu', () => {
       SelectionToolType.Rectangle,
     );
     const colors = [
-      '.css-cyxjjb', // Red
-      '.css-55t14h', // Orange
-      '.css-q0qzfh', // Yellow
-      '.css-1pz88a0', // Green
-      '.css-d1acvy', // Blue
-      '.css-1jrzwzn', // Pink
-      '.css-1kxl817', // Burgundy
-      '.css-1j267jk', // Purple
+      HighlightOption.Red,
+      HighlightOption.Orange,
+      HighlightOption.Yellow,
+      HighlightOption.Green,
+      HighlightOption.Blue,
+      HighlightOption.Pink,
+      HighlightOption.Magenta,
+      HighlightOption.Purple,
     ];
 
     for (const color of colors) {
-      await clickOnAtom(page, 'C', 0, 'right');
-      await page.getByText('Highlight', { exact: true }).click();
-      await page.locator(color).click();
+      const point = await getAtomByIndex(page, { label: 'C' }, 0);
+      await ContextMenu(page, point).click([MicroBondOption.Highlight, color]);
       await takeEditorScreenshot(page);
     }
   });
@@ -518,20 +523,19 @@ test.describe('Right-click menu', () => {
       SelectionToolType.Rectangle,
     );
     const colors = [
-      '.css-cyxjjb', // Red
-      '.css-55t14h', // Orange
-      '.css-q0qzfh', // Yellow
-      '.css-1pz88a0', // Green
-      '.css-d1acvy', // Blue
-      '.css-1jrzwzn', // Pink
-      '.css-1kxl817', // Burgundy
-      '.css-1j267jk', // Purple
+      HighlightOption.Red,
+      HighlightOption.Orange,
+      HighlightOption.Yellow,
+      HighlightOption.Green,
+      HighlightOption.Blue,
+      HighlightOption.Pink,
+      HighlightOption.Magenta,
+      HighlightOption.Purple,
     ];
 
     for (const color of colors) {
-      await clickOnBond(page, BondType.SINGLE, 1, 'right');
-      await page.getByText('Highlight', { exact: true }).click();
-      await page.locator(color).click();
+      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+      await ContextMenu(page, point).click([MicroBondOption.Highlight, color]);
       await takeEditorScreenshot(page);
     }
   });
@@ -553,15 +557,19 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-d1acvy').click(); // Blue
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Blue,
+    ]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.getByText('No highlight').click();
+    const point1 = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point1).click([
+      MicroAtomOption.Highlight,
+      HighlightOption.NoHighlight,
+    ]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });
@@ -581,9 +589,11 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnAtom(page, 'C', 0, 'right');
-    await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-d1acvy').click(); // Blue
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await ContextMenu(page, point).click([
+      MicroBondOption.Highlight,
+      HighlightOption.Blue,
+    ]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
@@ -602,50 +612,55 @@ test.describe('Right-click menu', () => {
       3. Verify that the highlights do not interfere with each other
     */
     const highlights = [
-      { type: 'atom', index: 0, colorClass: '.css-cyxjjb' }, // Red
+      { type: 'atom', index: 0, colorClass: HighlightOption.Red },
       {
         type: 'bond',
         index: 0,
         bondType: BondType.SINGLE,
-        colorClass: '.css-d1acvy', // Blue
+        colorClass: HighlightOption.Blue,
       },
-      { type: 'atom', index: 1, colorClass: '.css-1pz88a0' }, // Green
+      { type: 'atom', index: 1, colorClass: HighlightOption.Green },
       {
         type: 'bond',
         index: 1,
         bondType: BondType.SINGLE,
-        colorClass: '.css-q0qzfh', // Yellow
+        colorClass: HighlightOption.Yellow,
       },
-      { type: 'atom', index: 2, colorClass: '.css-1pz88a0' }, // Green
+      { type: 'atom', index: 2, colorClass: HighlightOption.Green },
       {
         type: 'bond',
         index: 2,
         bondType: BondType.SINGLE,
-        colorClass: '.css-1j267jk', // Purple
+        colorClass: HighlightOption.Purple,
       },
-      { type: 'atom', index: 3, colorClass: '.css-55t14h' }, // Orange
+      { type: 'atom', index: 3, colorClass: HighlightOption.Orange },
       {
         type: 'bond',
         index: 0,
         bondType: BondType.DOUBLE,
-        colorClass: '.css-1jrzwzn', // Pink
+        colorClass: HighlightOption.Pink,
       },
     ];
 
     await drawBenzeneRing(page);
-
+    let point: { x: number; y: number } = { x: 0, y: 0 };
     for (const highlight of highlights) {
       if (highlight.type === 'atom') {
-        await clickOnAtom(page, 'C', highlight.index, 'right');
+        point = await getAtomByIndex(page, { label: 'C' }, highlight.index);
       } else if (
         highlight.type === 'bond' &&
         highlight.bondType !== undefined
       ) {
-        await clickOnBond(page, highlight.bondType, highlight.index, 'right');
+        point = await getBondByIndex(
+          page,
+          { type: highlight.bondType },
+          highlight.index,
+        );
       }
-      await page.getByText('Highlight', { exact: true }).click();
-      await page.locator(highlight.colorClass).click();
-      await clickOnCanvas(page, 100, 100);
+      await ContextMenu(page, point).click([
+        MicroBondOption.Highlight,
+        highlight.colorClass,
+      ]);
     }
     await takeEditorScreenshot(page);
   });

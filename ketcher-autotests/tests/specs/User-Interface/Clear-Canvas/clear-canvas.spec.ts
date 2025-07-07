@@ -8,6 +8,7 @@ import {
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
+  clearCanvasByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 
@@ -61,7 +62,7 @@ test.describe('Clear canvas', () => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
     await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -76,10 +77,10 @@ test.describe('Clear canvas', () => {
     await selectRingButton(page, RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/ketcher.mol');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

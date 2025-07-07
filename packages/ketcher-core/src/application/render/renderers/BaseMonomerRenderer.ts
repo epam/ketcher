@@ -62,7 +62,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   protected constructor(
     public monomer: BaseMonomer,
     private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
+    public monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);

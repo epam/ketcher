@@ -19,20 +19,25 @@ import {
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
-  resetCurrentTool,
-  selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   screenshotBetweenUndoRedoInMacro,
-  copyAndPaste,
   copyToClipboardByKeyboard,
   takePageScreenshot,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   MacroFileType,
+  MolFileFormat,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools/helpers';
+import {
+  copyAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
@@ -214,7 +219,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
   });
 
@@ -233,7 +238,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -276,7 +281,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'Molfiles-V3000/micro-macro-structure-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -500,7 +505,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'Molfiles-V3000/single-atom-properties-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -706,7 +711,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(

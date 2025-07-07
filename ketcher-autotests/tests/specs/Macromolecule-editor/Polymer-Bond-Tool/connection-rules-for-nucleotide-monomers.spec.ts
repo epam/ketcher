@@ -16,6 +16,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -1747,7 +1748,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
     await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
     const leftMonomerLocator = canvasLocator
       .locator(`text=${leftMonomer.alias}`)
       .first();
@@ -1774,7 +1775,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     }).first();
 
     const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
+      .getByTestId(KETCHER_CANVAS)
       .locator(rightMolecule.atomLocatorSelectors[atomIndex])
       .first();
 

@@ -23,9 +23,9 @@ export const SaveStructureDialog = (page: Page) => {
     saveStructureDialog: page.getByTestId('save-structure-dialog'),
     fileNameEditbox: page.getByTestId('filename-input'),
     fileFormatDropdownList: page.getByTestId('file-format-list').first(),
-    previewTab: page.getByTestId('preview-tab'),
+    previewTab: page.getByTestId('Preview-tab'),
     saveStructureTextarea: page.getByTestId('preview-area'),
-    warningsTab: page.getByTestId('warnings-tab'),
+    warningsTab: page.getByTestId('Warnings-tab'),
     warningTextarea: page.getByTestId('WarningTextArea'),
     copyToClipboardButton: page.getByTestId('copy-to-clipboard'),
     saveToTemplatesButton: page.getByTestId('save-to-templates-button'),
@@ -66,6 +66,16 @@ export const SaveStructureDialog = (page: Page) => {
       }
       await locators.warningTextarea.waitFor({ state: 'visible' });
       return locators.warningTextarea.inputValue();
+    },
+
+    async switchToWarningsTab() {
+      await locators.warningsTab.click();
+      await locators.warningTextarea.first().waitFor({ state: 'visible' });
+    },
+
+    async switchToPreviewTab() {
+      await locators.previewTab.click();
+      await locators.saveStructureTextarea.waitFor({ state: 'visible' });
     },
 
     async save() {

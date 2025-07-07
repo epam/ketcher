@@ -4,11 +4,11 @@ import {
   takeEditorScreenshot,
   clickOnTheCanvas,
   applyAutoMapMode,
-  mapTwoAtoms,
   waitForPageInit,
   clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { mapTwoAtoms } from '@utils/canvas/autoMapTools';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

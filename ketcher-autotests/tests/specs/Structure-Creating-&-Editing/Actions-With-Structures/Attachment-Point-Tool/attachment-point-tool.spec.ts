@@ -4,18 +4,20 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   dragMouseTo,
-  resetCurrentTool,
-  copyAndPaste,
   clickOnAtom,
   screenshotBetweenUndoRedo,
-  setAttachmentPoints,
-  AttachmentPoint,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  RxnFileFormat,
+  MolFileFormat,
 } from '@utils';
-import { cutAndPaste } from '@utils/canvas';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -38,6 +40,10 @@ import {
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  AttachmentPointsDialog,
+  setAttachmentPoints,
+} from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -74,8 +80,12 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await AttachmentPointsDialog(
+      page,
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(
+      page,
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
   });
 
@@ -85,26 +95,22 @@ test.describe('Attachment Point Tool', () => {
     Description: All four Attachment points added to atoms of chain.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
       { primary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { secondary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 4 },
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -116,26 +122,22 @@ test.describe('Attachment Point Tool', () => {
     Undo removes two attachment points and Redo puts them back.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
       { primary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { secondary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 4 },
       { primary: true, secondary: true },
-      'Apply',
     );
 
     for (let i = 0; i < 2; i++) {
@@ -156,21 +158,19 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await setAttachmentPoints(
+    await clickOnAtom(page, 'C', 3);
+    await AttachmentPointsDialog(
       page,
-      { label: 'C', index: 2 },
-      { primary: true },
-      'Cancel',
-    );
+    ).primaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(page).cancel();
 
     await takeEditorScreenshot(page);
 
-    await setAttachmentPoints(
+    await clickOnAtom(page, 'C', 3);
+    await AttachmentPointsDialog(
       page,
-      { label: 'C', index: 3 },
-      { secondary: true },
-      'Cancel',
-    );
+    ).secondaryAttachmentPointCheckbox.setChecked(true);
+    await AttachmentPointsDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -199,12 +199,10 @@ test.describe('Attachment Point Tool', () => {
     Previously modified attachment point is changed with primary attachment point.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
 
@@ -212,7 +210,6 @@ test.describe('Attachment Point Tool', () => {
       page,
       { label: 'C', index: 3 },
       { primary: false, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
 
@@ -220,7 +217,6 @@ test.describe('Attachment Point Tool', () => {
       page,
       { label: 'C', index: 3 },
       { primary: true, secondary: false },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -231,26 +227,22 @@ test.describe('Attachment Point Tool', () => {
     Description: User is able to remove the attachment points.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
       { primary: false },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { secondary: false },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 5 },
       { primary: false, secondary: false },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -307,26 +299,22 @@ test.describe('Attachment Point Tool', () => {
     and plus sign(s) are present on the canvas.
     */
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
       { primary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { secondary: true },
-      'Apply',
     );
 
     await setAttachmentPoints(
       page,
       { label: 'C', index: 5 },
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -404,7 +392,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -421,7 +409,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -436,7 +424,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -451,7 +439,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -471,7 +459,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -491,7 +479,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
       FileType.RXN,
-      'v3000',
+      RxnFileFormat.v3000,
     );
     await takeEditorScreenshot(page);
   });
@@ -770,19 +758,16 @@ test.describe('Attachment Point Tool', () => {
     the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: false, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -796,19 +781,16 @@ test.describe('Attachment Point Tool', () => {
     removing the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true, secondary: false },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -822,19 +804,16 @@ test.describe('Attachment Point Tool', () => {
     attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
       { primary: false, secondary: false },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });

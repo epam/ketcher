@@ -123,11 +123,11 @@ export async function setLabel(page: Page, value: string) {
 }
 
 export async function setCharge(page: Page, value: string) {
-  await page.getByTestId('charge-input').fill(value);
+  await page.getByTestId('charge-input-span').fill(value);
 }
 
 export async function setAtomicMass(page: Page, value: string) {
-  await page.getByTestId('isotope-input').fill(value);
+  await page.getByTestId('isotope-input-span').fill(value);
 }
 
 export async function setValence(page: Page, valenceOption: string) {

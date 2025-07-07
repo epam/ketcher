@@ -42,11 +42,11 @@ import { openInfoModalWithCustomMessage } from '../shared';
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const state = getState();
 
   const resetToSelect =
     (force = false) =>
     async (dispatch) => {
+      const state = getState();
       const activeTool = state.actionState?.activeTool.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
@@ -64,9 +64,10 @@ export default function initEditor(dispatch, getState) {
     onChange: (action) => {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
       // Editor switched to view only mode
-      if (action === 'force') dispatch(resetToSelect(true));
+      if (action === 'force')
+        sleep(0).then(() => dispatch(resetToSelect(true)));
       // new tool in reducer
-      else dispatch(resetToSelect());
+      else sleep(0).then(() => dispatch(resetToSelect()));
     },
     onSelectionChange: () => {
       updateAction();

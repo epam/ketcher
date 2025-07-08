@@ -1041,6 +1041,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that all 19 reaction arrow types are available in macromolecules mode
       Case: 
@@ -1061,6 +1062,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that reaction arrows and pluses can be selected on canvas in macromolecules mode
       Case: 
@@ -1082,6 +1084,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Rotate arrows in Micro mode and switch to Macro mode
       Case: 
@@ -1107,6 +1110,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Vertical flip arrows in Micro mode and switch to Macro mode
       Case: 
@@ -1132,6 +1136,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Horizontal flip arrows in Micro mode and switch to Macro mode
       Case: 
@@ -1157,6 +1162,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Delete arrows in Micro mode by Erase button (when select all arrows) and switch to Macro mode
       Case: 
@@ -1182,6 +1188,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Open file with changed sizes and orientation of arrows in Micro mode and switch to Macro
       Case: 
@@ -1202,6 +1209,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that arrows and pluses can be moved on the canvas in macromolecules mode
       Case: 
@@ -1236,6 +1244,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that arrows and pluses can be copied and pasted using right-click menu or shortcuts
       Case: 
@@ -1264,6 +1273,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that arrows and pluses can be exported to KET from macromolecules mode
       Case: 
@@ -1293,6 +1303,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that arrows and pluses can be exported to SVG from macromolecules mode
       Case: 
@@ -1317,6 +1328,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that resized and rotated arrows and pluses can be exported to SVG from macromolecules mode without distortion
       Case: 
@@ -1341,6 +1353,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     page,
   }) => {
     /* 
+    * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
       Description: Verify that arrows and pluses saved in Macro mode can be imported from KET into micromolecules mode
       Case: 

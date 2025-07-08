@@ -346,10 +346,6 @@ class ReAtom extends ReObject {
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
 
-    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
-      return;
-    }
-
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
@@ -391,6 +387,10 @@ class ReAtom extends ReObject {
           true,
         );
       }
+      return;
+    }
+
+    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
       return;
     }
 

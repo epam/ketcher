@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  pressButton,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   takeEditorScreenshot,
@@ -55,6 +54,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -3733,9 +3733,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await pressButton(page, 'Cancel');
+    await StructureCheckDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

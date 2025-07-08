@@ -53,6 +53,7 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -1390,9 +1391,9 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await pressButton(page, 'Cancel');
+    await StructureCheckDialog(page).pressCancelButton();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',

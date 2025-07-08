@@ -7,6 +7,7 @@ import {
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -384,13 +385,13 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
    *      4. Right-click on the center of the canvas to open context menu and click Paste
    *      5. Take menu screenshot to validate new chain appearence on the canvas
    *      6. Press Undo button
-   *      7. Take menu screenshot to validate new chain appearence on the canvas
+   *      7. Take menu screenshot to validate copied chain got removed
+   *      8. Press Redo button
+   *      9. Take menu screenshot to validate new chain appearence on the canvas
    *
    * Version 3.6
    */
-  const peptideA = getSymbolLocator(page, {
-    symbolAlias: 'A',
-  }).first();
+  const peptideA = getMonomerLocator(page, Peptides.A);
   const canvas = page.getByTestId(KETCHER_CANVAS).first();
 
   await selectSnakeLayoutModeTool(page);
@@ -401,7 +402,51 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
   );
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).click(MonomerOption.Copy);
+  await clickInTheMiddleOfTheScreen(page);
   await ContextMenu(page, canvas).click(MonomerOption.Paste);
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+    hideMonomerPreview: true,
+  });
+  await CommonTopLeftToolbar(page).undo();
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+    hideMonomerPreview: true,
+  });
+  await CommonTopLeftToolbar(page).redo();
+  await takeEditorScreenshot(page, {
+    hideMacromoleculeEditorScrollBars: true,
+    hideMonomerPreview: true,
+  });
+});
+
+test(`8. Verify Undo/Redo after using Delete from right-click menu`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7391
+   * Test case: Verify Undo/Redo after using Delete from right-click menu
+   * Case:
+   *      0. Go to Snake mode
+   *      1. Load chain of some monomers
+   *      2. Select all structures (using Ctrl+A)
+   *      3. Right-click on any monomer to open context menu and click Delete option
+   *      5. Take menu screenshot to validate empty canvas
+   *      6. Press Undo button
+   *      7. Take menu screenshot to validate chain appearence on the canvas
+   *      8. Press Redo button
+   *      9. Take menu screenshot to validate empty canvas
+   *
+   * Version 3.6
+   */
+  const peptideA = getMonomerLocator(page, Peptides.A);
+
+  await selectSnakeLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, peptideA).click(MonomerOption.Delete);
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
     hideMonomerPreview: true,

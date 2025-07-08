@@ -61,7 +61,7 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 
 test.describe('Template Manupulations', () => {
@@ -292,7 +292,7 @@ test.describe('Template Manupulations', () => {
       SelectionToolType.Rectangle,
     );
 
-    await ContextMenu(page, point).click(MicroBondOption.Edit);
+    await ContextMenu(page, point).click(MicroAtomOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
     await page.getByTestId('OK').click();

@@ -28,6 +28,7 @@ import { isNumber } from 'lodash';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
 /**
  * Return unions of Pick.
@@ -804,6 +805,17 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {
+    if (
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
+        struct.atoms.get(atomId)!,
+        struct.sgroups,
+        struct.functionalGroups,
+        false,
+      )
+    ) {
+      return false;
+    }
+
     const attachmentAtomExternalConnections =
       Atom.getAttachmentAtomExternalConnections(struct, undefined, atomId);
     const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(

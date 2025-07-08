@@ -64,9 +64,10 @@ export default function initEditor(dispatch, getState) {
     onChange: (action) => {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
       // Editor switched to view only mode
-      if (action === 'force') dispatch(resetToSelect(true));
+      if (action === 'force')
+        sleep(0).then(() => dispatch(resetToSelect(true)));
       // new tool in reducer
-      else dispatch(resetToSelect());
+      else sleep(0).then(() => dispatch(resetToSelect()));
     },
     onSelectionChange: () => {
       updateAction();

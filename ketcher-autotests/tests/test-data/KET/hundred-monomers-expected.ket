@@ -1488,8 +1488,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 4.938878537380601,
-            "y": 0.18122580141906175
+            "x": 23.66387853738059,
+            "y": -13.181274198580935
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -1629,8 +1629,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 6.723832362837195,
-            "y": 0.08122580141906033
+            "x": 25.44883236283718,
+            "y": -13.281274198580936
         },
         "alias": "meC",
         "templateId": "meC___N-Methyl-Cysteine"
@@ -1826,8 +1826,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 8.35347185696357,
-            "y": -0.00866942147087002
+            "x": 27.078471856963557,
+            "y": -13.371169421470867
         },
         "alias": "D-2Nal",
         "templateId": "D-2Nal___D-3-naphthylalanine"
@@ -2131,8 +2131,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 9.88311135108995,
-            "y": -0.08419330702121863
+            "x": 28.60811135108994,
+            "y": -13.446693307021215
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -2343,8 +2343,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.608484284986822,
-            "y": -0.054926746791703174
+            "x": 30.33348428498681,
+            "y": -13.4174267467917
         },
         "alias": "Ggu",
         "templateId": "Ggu___gamma-glutamic acid"
@@ -2553,8 +2553,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 13.34875244177362,
-            "y": -0.16982196968163343
+            "x": 32.07375244177361,
+            "y": -13.532321969681629
         },
         "alias": "dF",
         "templateId": "dF___D-Phenylalanine"
@@ -2793,8 +2793,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 6.811746587730248,
-            "y": -1.592880040062524
+            "x": 25.536746587730235,
+            "y": -14.95538004006252
         },
         "alias": "Phe-ol",
         "templateId": "Phe-ol___(2S)-2-amino-3-phenylpropan-1-ol"
@@ -3009,8 +3009,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 15.187972827459712,
-            "y": -0.18471719257156405
+            "x": 33.9129728274597,
+            "y": -13.54721719257156
         },
         "alias": "Phg-ol",
         "templateId": "Phg-ol___(2S)-2-amino-2-phenylethan-1-ol"
@@ -3210,8 +3210,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 16.82323121715207,
-            "y": -0.18659341345837088
+            "x": 35.54823121715206,
+            "y": -13.549093413458367
         },
         "alias": "DHis1B",
         "templateId": "DHis1B___(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid"
@@ -3545,8 +3545,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 18.87166666666667,
-            "y": -0.16750000000002174
+            "x": 37.59666666666666,
+            "y": -13.530000000000019
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -3735,8 +3735,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 3.1683333333333303,
-            "y": 0.19083333333331298
+            "x": 21.893333333333317,
+            "y": -13.171666666666683
         },
         "alias": "aIle",
         "templateId": "aIle___L-allo-Isoleucine"
@@ -3925,8 +3925,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 11.570000000000007,
-            "y": -1.602500000000016
+            "x": 30.294999999999995,
+            "y": -14.965000000000012
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -4255,8 +4255,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 6.703333333333329,
-            "y": -3.3558333333333508
+            "x": 25.428333333333317,
+            "y": -16.718333333333348
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -4265,8 +4265,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 6.704999999999989,
-            "y": -4.745833333333342
+            "x": 25.42999999999998,
+            "y": -18.108333333333338
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -4275,8 +4275,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 10.043333333333333,
-            "y": -5.029166666666685
+            "x": 28.76833333333332,
+            "y": -18.39166666666668
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -4285,8 +4285,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 14.826666666666672,
-            "y": -3.2475000000000183
+            "x": 33.55166666666666,
+            "y": -16.610000000000014
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -4295,8 +4295,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 14.948333333333338,
-            "y": -4.565833333333353
+            "x": 33.673333333333325,
+            "y": -17.92833333333335
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -4459,8 +4459,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 9.896666666666663,
-            "y": -1.6058333333333445
+            "x": 28.62166666666665,
+            "y": -14.96833333333334
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -4469,8 +4469,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 4.903333333333323,
-            "y": -3.4175000000000137
+            "x": 23.62833333333331,
+            "y": -16.78000000000001
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -4479,8 +4479,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 18.99333333333333,
-            "y": -2.907500000000014
+            "x": 37.71833333333332,
+            "y": -16.27000000000001
         },
         "alias": "Asp-al",
         "templateId": "Asp-al___(3S)-3-amino-4-oxobutanoic acid"
@@ -4643,8 +4643,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 13.131666666666673,
-            "y": -4.849166666666681
+            "x": 31.856666666666662,
+            "y": -18.211666666666677
         },
         "alias": "Pro-ol",
         "templateId": "Pro-ol___[(2S)-pyrrolidin-2-yl]methanol"
@@ -4799,8 +4799,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 5.013333333333333,
-            "y": -4.832500000000012
+            "x": 23.73833333333332,
+            "y": -18.195000000000007
         },
         "alias": "Pro-ol",
         "templateId": "Pro-ol___[(2S)-pyrrolidin-2-yl]methanol"
@@ -4809,8 +4809,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 3.2483333333333326,
-            "y": -4.739166666666677
+            "x": 21.97333333333332,
+            "y": -18.101666666666674
         },
         "alias": "dQ",
         "templateId": "dQ___D-Glutamine"
@@ -5036,8 +5036,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 3.188333333333336,
-            "y": -1.5858333333333388
+            "x": 21.913333333333323,
+            "y": -14.948333333333334
         },
         "alias": "dQ",
         "templateId": "dQ___D-Glutamine"
@@ -5046,8 +5046,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 13.155000000000003,
-            "y": -1.6175000000000157
+            "x": 31.87999999999999,
+            "y": -14.980000000000011
         },
         "alias": "dQ",
         "templateId": "dQ___D-Glutamine"
@@ -5056,8 +5056,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 16.701666666666675,
-            "y": -1.5775000000000166
+            "x": 35.42666666666666,
+            "y": -14.940000000000012
         },
         "alias": "Arg-al",
         "templateId": "Arg-al___N''-[(4S)-4-amino-5-oxopentyl]guanidine"
@@ -5265,8 +5265,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 18.92166666666666,
-            "y": -1.3725000000000218
+            "x": 37.64666666666665,
+            "y": -14.735000000000017
         },
         "alias": "meS",
         "templateId": "meS___N-Methyl-Serine"
@@ -5438,8 +5438,8 @@
         "type": "monomer",
         "id": "27",
         "position": {
-            "x": 4.931666666666661,
-            "y": -1.62750000000002
+            "x": 23.65666666666665,
+            "y": -14.990000000000016
         },
         "alias": "DSerBn",
         "templateId": "DSerBn___O-Benzyl-D-serine"
@@ -5706,8 +5706,8 @@
         "type": "monomer",
         "id": "28",
         "position": {
-            "x": 9.74666666666666,
-            "y": -3.440833333333348
+            "x": 28.47166666666665,
+            "y": -16.803333333333345
         },
         "alias": "DSerBn",
         "templateId": "DSerBn___O-Benzyl-D-serine"
@@ -5716,8 +5716,8 @@
         "type": "monomer",
         "id": "29",
         "position": {
-            "x": 16.801666666666677,
-            "y": -3.0841666666666816
+            "x": 35.526666666666664,
+            "y": -16.44666666666668
         },
         "alias": "DSerBn",
         "templateId": "DSerBn___O-Benzyl-D-serine"
@@ -5726,8 +5726,8 @@
         "type": "monomer",
         "id": "30",
         "position": {
-            "x": 13.000000000000004,
-            "y": -3.370833333333347
+            "x": 31.72499999999999,
+            "y": -16.73333333333334
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -5899,8 +5899,8 @@
         "type": "monomer",
         "id": "31",
         "position": {
-            "x": 8.338333333333324,
-            "y": -3.329166666666681
+            "x": 27.06333333333331,
+            "y": -16.691666666666677
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -5909,8 +5909,8 @@
         "type": "monomer",
         "id": "32",
         "position": {
-            "x": 8.496666666666657,
-            "y": -1.6775000000000162
+            "x": 27.221666666666643,
+            "y": -15.040000000000013
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -5919,8 +5919,8 @@
         "type": "monomer",
         "id": "33",
         "position": {
-            "x": 11.328333333333337,
-            "y": -3.437500000000016
+            "x": 30.053333333333324,
+            "y": -16.80000000000001
         },
         "alias": "Val3OH",
         "templateId": "Val3OH___(2S)-2-amino-3-hydroxy-3-methylbutanoic acid"
@@ -6107,8 +6107,8 @@
         "type": "monomer",
         "id": "34",
         "position": {
-            "x": 11.320000000000004,
-            "y": -4.9625000000000155
+            "x": 30.04499999999999,
+            "y": -18.32500000000001
         },
         "alias": "Val3OH",
         "templateId": "Val3OH___(2S)-2-amino-3-hydroxy-3-methylbutanoic acid"
@@ -6117,8 +6117,8 @@
         "type": "monomer",
         "id": "35",
         "position": {
-            "x": 8.473333333333322,
-            "y": -4.902500000000019
+            "x": 27.19833333333331,
+            "y": -18.265000000000015
         },
         "alias": "Val3OH",
         "templateId": "Val3OH___(2S)-2-amino-3-hydroxy-3-methylbutanoic acid"
@@ -6127,8 +6127,8 @@
         "type": "monomer",
         "id": "36",
         "position": {
-            "x": 16.998333333333335,
-            "y": -4.395833333333342
+            "x": 35.72333333333332,
+            "y": -17.75833333333334
         },
         "alias": "Trp5OH",
         "templateId": "Trp5OH___(2S)-2-amino-3-(5-hydroxy-1H-indol-3-yl)propanoic acid"
@@ -6434,8 +6434,8 @@
         "type": "monomer",
         "id": "37",
         "position": {
-            "x": 14.958333333333334,
-            "y": -1.695833333333348
+            "x": 33.68333333333332,
+            "y": -15.058333333333344
         },
         "alias": "Trp5OH",
         "templateId": "Trp5OH___(2S)-2-amino-3-(5-hydroxy-1H-indol-3-yl)propanoic acid"
@@ -6444,8 +6444,8 @@
         "type": "monomer",
         "id": "38",
         "position": {
-            "x": 3.248333333333332,
-            "y": -3.2441666666666746
+            "x": 21.97333333333332,
+            "y": -16.60666666666667
         },
         "alias": "Trp5OH",
         "templateId": "Trp5OH___(2S)-2-amino-3-(5-hydroxy-1H-indol-3-yl)propanoic acid"
@@ -6454,8 +6454,8 @@
         "type": "monomer",
         "id": "39",
         "position": {
-            "x": 18.985000000000014,
-            "y": -4.395833333333348
+            "x": 37.71,
+            "y": -17.758333333333344
         },
         "alias": "Aib",
         "templateId": "Aib___alpha-aminoisobutyric acid (2-aminoalanine)"
@@ -6610,8 +6610,8 @@
         "type": "monomer",
         "id": "40",
         "position": {
-            "x": 13.241666666666674,
-            "y": -6.0558333333333545
+            "x": 31.96666666666666,
+            "y": -19.41833333333335
         },
         "alias": "Tyr3NO",
         "templateId": "Tyr3NO___(2S)-2-amino-3-(4-hydroxy-3-nitrophenyl)propanoic acid"
@@ -6912,8 +6912,8 @@
         "type": "monomer",
         "id": "41",
         "position": {
-            "x": 17.12166666666666,
-            "y": -5.927500000000019
+            "x": 35.84666666666665,
+            "y": -19.290000000000013
         },
         "alias": "SertBu",
         "templateId": "SertBu___O-tert-Butyl-L-serine"
@@ -7130,8 +7130,8 @@
         "type": "monomer",
         "id": "42",
         "position": {
-            "x": 18.94666666666663,
-            "y": -5.714166666666682
+            "x": 37.67166666666662,
+            "y": -19.07666666666668
         },
         "alias": "meR",
         "templateId": "meR___N-Methyl-Arginine"
@@ -7378,8 +7378,8 @@
         "type": "monomer",
         "id": "43",
         "position": {
-            "x": 11.443333333333339,
-            "y": -6.105833333333355
+            "x": 30.168333333333326,
+            "y": -19.46833333333335
         },
         "alias": "D-Hyp",
         "templateId": "D-Hyp___D-4-Hydroxyproline"
@@ -7575,8 +7575,8 @@
         "type": "monomer",
         "id": "44",
         "position": {
-            "x": 15.013333333333339,
-            "y": -5.992500000000018
+            "x": 33.73833333333333,
+            "y": -19.355000000000015
         },
         "alias": "Met_O",
         "templateId": "Met_O___(2S)-2-amino-4-methanesulfinylbutanoic acid"
@@ -7778,8 +7778,8 @@
         "type": "monomer",
         "id": "45",
         "position": {
-            "x": 9.966666666666665,
-            "y": -6.105833333333355
+            "x": 28.691666666666652,
+            "y": -19.46833333333335
         },
         "alias": "meL",
         "templateId": "meL___N-Methyl-Leucine"
@@ -7981,8 +7981,8 @@
         "type": "monomer",
         "id": "46",
         "position": {
-            "x": 8.408333333333324,
-            "y": -6.1858333333333535
+            "x": 27.13333333333331,
+            "y": -19.54833333333335
         },
         "alias": "Hyl5xi",
         "templateId": "Hyl5xi___(2S)-2,6-diamino-5-hydroxyhexanoic acid"
@@ -8199,8 +8199,8 @@
         "type": "monomer",
         "id": "47",
         "position": {
-            "x": 4.901666666666663,
-            "y": -6.215833333333353
+            "x": 23.62666666666665,
+            "y": -19.578333333333347
         },
         "alias": "dI",
         "templateId": "dI___D-Isoleucine"
@@ -8209,8 +8209,8 @@
         "type": "monomer",
         "id": "48",
         "position": {
-            "x": 3.193333333333331,
-            "y": -6.145833333333354
+            "x": 21.91833333333332,
+            "y": -19.50833333333335
         },
         "alias": "meH",
         "templateId": "meH___N-Methyl-Histidine"
@@ -8449,8 +8449,8 @@
         "type": "monomer",
         "id": "49",
         "position": {
-            "x": 6.726666666666657,
-            "y": -6.175833333333354
+            "x": 25.451666666666643,
+            "y": -19.538333333333348
         },
         "alias": "meH",
         "templateId": "meH___N-Methyl-Histidine"
@@ -8459,8 +8459,8 @@
         "type": "monomer",
         "id": "50",
         "position": {
-            "x": 3.188333333333331,
-            "y": -7.692500000000025
+            "x": 21.91333333333332,
+            "y": -21.05500000000002
         },
         "alias": "Cha",
         "templateId": "Cha___3-cyclohexylalanine"
@@ -8699,8 +8699,8 @@
         "type": "monomer",
         "id": "51",
         "position": {
-            "x": 11.014999999999999,
-            "y": -7.470833333333361
+            "x": 29.739999999999988,
+            "y": -20.833333333333357
         },
         "alias": "Cha",
         "templateId": "Cha___3-cyclohexylalanine"
@@ -8709,8 +8709,8 @@
         "type": "monomer",
         "id": "52",
         "position": {
-            "x": 6.651666666666658,
-            "y": -7.574166666666694
+            "x": 25.376666666666644,
+            "y": -20.93666666666669
         },
         "alias": "Cha",
         "templateId": "Cha___3-cyclohexylalanine"
@@ -8719,8 +8719,8 @@
         "type": "monomer",
         "id": "53",
         "position": {
-            "x": 17.07166666666667,
-            "y": -7.227500000000027
+            "x": 35.79666666666665,
+            "y": -20.590000000000025
         },
         "alias": "Cha",
         "templateId": "Cha___3-cyclohexylalanine"
@@ -8729,8 +8729,8 @@
         "type": "monomer",
         "id": "54",
         "position": {
-            "x": 9.79333333333333,
-            "y": -7.370833333333363
+            "x": 28.518333333333317,
+            "y": -20.73333333333336
         },
         "alias": "Cys_Bn",
         "templateId": "Cys_Bn___(2R)-2-amino-3-(benzylsulfanyl)propanoic acid"
@@ -8997,8 +8997,8 @@
         "type": "monomer",
         "id": "55",
         "position": {
-            "x": 5.053333333333332,
-            "y": -7.690833333333361
+            "x": 23.778333333333318,
+            "y": -21.053333333333356
         },
         "alias": "Cys_Bn",
         "templateId": "Cys_Bn___(2R)-2-amino-3-(benzylsulfanyl)propanoic acid"
@@ -9007,8 +9007,8 @@
         "type": "monomer",
         "id": "56",
         "position": {
-            "x": 12.946666666666665,
-            "y": -7.280833333333356
+            "x": 31.671666666666653,
+            "y": -20.643333333333352
         },
         "alias": "Cys_Bn",
         "templateId": "Cys_Bn___(2R)-2-amino-3-(benzylsulfanyl)propanoic acid"
@@ -9017,8 +9017,8 @@
         "type": "monomer",
         "id": "57",
         "position": {
-            "x": 18.94333333333332,
-            "y": -7.129166666666694
+            "x": 37.66833333333331,
+            "y": -20.49166666666669
         },
         "alias": "Cys_Bn",
         "templateId": "Cys_Bn___(2R)-2-amino-3-(benzylsulfanyl)propanoic acid"
@@ -9027,8 +9027,8 @@
         "type": "monomer",
         "id": "58",
         "position": {
-            "x": 14.876666666666683,
-            "y": -7.217500000000029
+            "x": 33.601666666666674,
+            "y": -20.580000000000027
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9230,8 +9230,8 @@
         "type": "monomer",
         "id": "59",
         "position": {
-            "x": 8.244999999999989,
-            "y": -7.495833333333365
+            "x": 26.969999999999978,
+            "y": -20.858333333333363
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9240,8 +9240,8 @@
         "type": "monomer",
         "id": "60",
         "position": {
-            "x": 3.1666666666666674,
-            "y": -9.3041666666667
+            "x": 21.891666666666655,
+            "y": -22.666666666666696
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9250,8 +9250,8 @@
         "type": "monomer",
         "id": "61",
         "position": {
-            "x": 8.294999999999991,
-            "y": -9.192500000000031
+            "x": 27.01999999999998,
+            "y": -22.555000000000028
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9260,8 +9260,8 @@
         "type": "monomer",
         "id": "62",
         "position": {
-            "x": 13.153333333333341,
-            "y": -8.750833333333354
+            "x": 31.87833333333333,
+            "y": -22.11333333333335
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9270,8 +9270,8 @@
         "type": "monomer",
         "id": "63",
         "position": {
-            "x": 17.096666666666657,
-            "y": -8.547500000000031
+            "x": 35.821666666666644,
+            "y": -21.91000000000003
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9280,8 +9280,8 @@
         "type": "monomer",
         "id": "64",
         "position": {
-            "x": 18.959999999999994,
-            "y": -8.524166666666694
+            "x": 37.68499999999998,
+            "y": -21.88666666666669
         },
         "alias": "AspOMe",
         "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid"
@@ -9290,8 +9290,8 @@
         "type": "monomer",
         "id": "65",
         "position": {
-            "x": 14.90166666666667,
-            "y": -8.559166666666702
+            "x": 33.62666666666666,
+            "y": -21.921666666666695
         },
         "alias": "dE",
         "templateId": "dE___D-Glutamic acid"
@@ -9517,8 +9517,8 @@
         "type": "monomer",
         "id": "66",
         "position": {
-            "x": 11.475000000000007,
-            "y": -9.020833333333357
+            "x": 30.199999999999996,
+            "y": -22.383333333333354
         },
         "alias": "dE",
         "templateId": "dE___D-Glutamic acid"
@@ -9527,8 +9527,8 @@
         "type": "monomer",
         "id": "67",
         "position": {
-            "x": 10,
-            "y": -9.02083333333336
+            "x": 28.724999999999987,
+            "y": -22.383333333333358
         },
         "alias": "dE",
         "templateId": "dE___D-Glutamic acid"
@@ -9537,8 +9537,8 @@
         "type": "monomer",
         "id": "68",
         "position": {
-            "x": 6.654999999999995,
-            "y": -9.30250000000003
+            "x": 25.37999999999998,
+            "y": -22.665000000000028
         },
         "alias": "dE",
         "templateId": "dE___D-Glutamic acid"
@@ -9547,8 +9547,8 @@
         "type": "monomer",
         "id": "69",
         "position": {
-            "x": 4.97666666666666,
-            "y": -9.265833333333358
+            "x": 23.701666666666647,
+            "y": -22.62833333333335
         },
         "alias": "dE",
         "templateId": "dE___D-Glutamic acid"
@@ -9557,8 +9557,8 @@
         "type": "monomer",
         "id": "70",
         "position": {
-            "x": 18.999999999999986,
-            "y": -10.174166666666704
+            "x": 37.72499999999997,
+            "y": -23.536666666666697
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -9812,8 +9812,8 @@
         "type": "monomer",
         "id": "71",
         "position": {
-            "x": 12.991666666666672,
-            "y": -10.41250000000002
+            "x": 31.71666666666666,
+            "y": -23.775000000000013
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -9822,8 +9822,8 @@
         "type": "monomer",
         "id": "72",
         "position": {
-            "x": 9.799999999999997,
-            "y": -10.597500000000025
+            "x": 28.524999999999984,
+            "y": -23.960000000000022
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -9832,8 +9832,8 @@
         "type": "monomer",
         "id": "73",
         "position": {
-            "x": 4.916666666666661,
-            "y": -10.802500000000023
+            "x": 23.641666666666648,
+            "y": -24.16500000000002
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -9842,8 +9842,8 @@
         "type": "monomer",
         "id": "74",
         "position": {
-            "x": 3.033333333333332,
-            "y": -10.82583333333336
+            "x": 21.75833333333332,
+            "y": -24.188333333333354
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -9852,8 +9852,8 @@
         "type": "monomer",
         "id": "75",
         "position": {
-            "x": 16.998333333333328,
-            "y": -10.155833333333366
+            "x": 35.723333333333315,
+            "y": -23.51833333333336
         },
         "alias": "Phg",
         "templateId": "Phg___2-phenylglycine"
@@ -10077,8 +10077,8 @@
         "type": "monomer",
         "id": "76",
         "position": {
-            "x": 11.378333333333336,
-            "y": -10.579166666666687
+            "x": 30.103333333333325,
+            "y": -23.941666666666684
         },
         "alias": "Phg",
         "templateId": "Phg___2-phenylglycine"
@@ -10087,8 +10087,8 @@
         "type": "monomer",
         "id": "77",
         "position": {
-            "x": 6.553333333333327,
-            "y": -10.63916666666669
+            "x": 25.278333333333315,
+            "y": -24.001666666666686
         },
         "alias": "Phg",
         "templateId": "Phg___2-phenylglycine"
@@ -10097,8 +10097,8 @@
         "type": "monomer",
         "id": "78",
         "position": {
-            "x": 15.513333333333344,
-            "y": -10.000833333333357
+            "x": 34.23833333333333,
+            "y": -23.36333333333335
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -10302,8 +10302,8 @@
         "type": "monomer",
         "id": "79",
         "position": {
-            "x": 8.208333333333325,
-            "y": -10.699166666666699
+            "x": 26.933333333333312,
+            "y": -24.061666666666696
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -10312,8 +10312,8 @@
         "type": "monomer",
         "id": "80",
         "position": {
-            "x": 15.740000000000009,
-            "y": -11.800833333333365
+            "x": 34.464999999999996,
+            "y": -25.163333333333362
         },
         "alias": "Lys_Ac",
         "templateId": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid"
@@ -10560,8 +10560,8 @@
         "type": "monomer",
         "id": "81",
         "position": {
-            "x": 12.860000000000015,
-            "y": -11.805833333333364
+            "x": 31.585,
+            "y": -25.168333333333358
         },
         "alias": "Lys_Ac",
         "templateId": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid"
@@ -10570,8 +10570,8 @@
         "type": "monomer",
         "id": "82",
         "position": {
-            "x": 9.609999999999994,
-            "y": -12.032500000000024
+            "x": 28.33499999999998,
+            "y": -25.395000000000017
         },
         "alias": "Lys_Ac",
         "templateId": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid"
@@ -10580,8 +10580,8 @@
         "type": "monomer",
         "id": "83",
         "position": {
-            "x": 6.4933333333333305,
-            "y": -12.092500000000026
+            "x": 25.21833333333332,
+            "y": -25.45500000000002
         },
         "alias": "Lys_Ac",
         "templateId": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid"
@@ -10590,8 +10590,8 @@
         "type": "monomer",
         "id": "84",
         "position": {
-            "x": 3.071666666666665,
-            "y": -12.15083333333336
+            "x": 21.796666666666653,
+            "y": -25.513333333333357
         },
         "alias": "Lys_Ac",
         "templateId": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid"
@@ -10600,8 +10600,8 @@
         "type": "monomer",
         "id": "85",
         "position": {
-            "x": 14.345000000000013,
-            "y": -11.840833333333357
+            "x": 33.07,
+            "y": -25.203333333333354
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -10610,8 +10610,8 @@
         "type": "monomer",
         "id": "86",
         "position": {
-            "x": 11.161666666666669,
-            "y": -12.02250000000003
+            "x": 29.886666666666656,
+            "y": -25.385000000000026
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -10620,8 +10620,8 @@
         "type": "monomer",
         "id": "87",
         "position": {
-            "x": 8.094999999999995,
-            "y": -12.12250000000002
+            "x": 26.819999999999983,
+            "y": -25.485000000000014
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -10630,8 +10630,8 @@
         "type": "monomer",
         "id": "88",
         "position": {
-            "x": 4.766666666666664,
-            "y": -12.184166666666698
+            "x": 23.49166666666665,
+            "y": -25.546666666666695
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -10640,8 +10640,8 @@
         "type": "monomer",
         "id": "89",
         "position": {
-            "x": 18.97499999999999,
-            "y": -11.707500000000032
+            "x": 37.699999999999974,
+            "y": -25.07000000000003
         },
         "alias": "Leu-ol",
         "templateId": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol"
@@ -10650,8 +10650,8 @@
         "type": "monomer",
         "id": "90",
         "position": {
-            "x": 18.996666666666645,
-            "y": -13.357500000000012
+            "x": 37.721666666666636,
+            "y": -26.72000000000001
         },
         "alias": "D-aHyp",
         "templateId": "D-aHyp___D-allo-4-hydroxyproline"
@@ -10847,8 +10847,8 @@
         "type": "monomer",
         "id": "91",
         "position": {
-            "x": 15.659999999999998,
-            "y": -13.362500000000022
+            "x": 34.384999999999984,
+            "y": -26.72500000000002
         },
         "alias": "D-aHyp",
         "templateId": "D-aHyp___D-allo-4-hydroxyproline"
@@ -10857,8 +10857,8 @@
         "type": "monomer",
         "id": "92",
         "position": {
-            "x": 6.449999999999995,
-            "y": -13.472500000000029
+            "x": 25.174999999999983,
+            "y": -26.835000000000026
         },
         "alias": "D-aHyp",
         "templateId": "D-aHyp___D-allo-4-hydroxyproline"
@@ -10867,8 +10867,8 @@
         "type": "monomer",
         "id": "93",
         "position": {
-            "x": 3.0716666666666663,
-            "y": -13.590833333333354
+            "x": 21.796666666666653,
+            "y": -26.95333333333335
         },
         "alias": "D-aHyp",
         "templateId": "D-aHyp___D-allo-4-hydroxyproline"
@@ -10877,8 +10877,8 @@
         "type": "monomer",
         "id": "94",
         "position": {
-            "x": 14.150000000000004,
-            "y": -13.284166666666689
+            "x": 32.87499999999999,
+            "y": -26.646666666666686
         },
         "alias": "R",
         "templateId": "R___Arginine"
@@ -11134,8 +11134,8 @@
         "type": "monomer",
         "id": "95",
         "position": {
-            "x": 11.106666666666666,
-            "y": -13.387500000000017
+            "x": 29.831666666666653,
+            "y": -26.750000000000014
         },
         "alias": "R",
         "templateId": "R___Arginine"
@@ -11144,8 +11144,8 @@
         "type": "monomer",
         "id": "96",
         "position": {
-            "x": 4.858333333333325,
-            "y": -13.505833333333339
+            "x": 23.583333333333314,
+            "y": -26.868333333333336
         },
         "alias": "R",
         "templateId": "R___Arginine"
@@ -11154,8 +11154,8 @@
         "type": "monomer",
         "id": "97",
         "position": {
-            "x": 12.730000000000011,
-            "y": -13.244166666666686
+            "x": 31.455,
+            "y": -26.606666666666683
         },
         "alias": "S",
         "templateId": "S___Serine"
@@ -11336,8 +11336,8 @@
         "type": "monomer",
         "id": "98",
         "position": {
-            "x": 9.57166666666666,
-            "y": -13.35583333333334
+            "x": 28.296666666666646,
+            "y": -26.718333333333337
         },
         "alias": "S",
         "templateId": "S___Serine"
@@ -11346,8 +11346,8 @@
         "type": "monomer",
         "id": "99",
         "position": {
-            "x": 8.061666666666657,
-            "y": -13.392500000000013
+            "x": 26.786666666666644,
+            "y": -26.75500000000001
         },
         "alias": "S",
         "templateId": "S___Serine"
@@ -11356,8 +11356,8 @@
         "type": "monomer",
         "id": "100",
         "position": {
-            "x": 17.40999999999997,
-            "y": -15.090833333333311
+            "x": 36.13499999999996,
+            "y": -28.45333333333331
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -11366,8 +11366,8 @@
         "type": "monomer",
         "id": "101",
         "position": {
-            "x": 8.216666666666665,
-            "y": -15.089166666666664
+            "x": 26.941666666666652,
+            "y": -28.45166666666666
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -11376,8 +11376,8 @@
         "type": "monomer",
         "id": "102",
         "position": {
-            "x": 3.096666666666664,
-            "y": -14.960833333333355
+            "x": 21.82166666666665,
+            "y": -28.323333333333352
         },
         "alias": "Nva",
         "templateId": "Nva___norvaline"
@@ -11386,8 +11386,8 @@
         "type": "monomer",
         "id": "103",
         "position": {
-            "x": 15.681666666666663,
-            "y": -14.992500000000032
+            "x": 34.40666666666665,
+            "y": -28.35500000000003
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -11702,8 +11702,8 @@
         "type": "monomer",
         "id": "104",
         "position": {
-            "x": 4.9249999999999945,
-            "y": -15.089166666666664
+            "x": 23.64999999999998,
+            "y": -28.45166666666666
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -11712,8 +11712,8 @@
         "type": "monomer",
         "id": "105",
         "position": {
-            "x": 12.645000000000001,
-            "y": -14.940833333333337
+            "x": 31.36999999999999,
+            "y": -28.303333333333335
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -11722,8 +11722,8 @@
         "type": "monomer",
         "id": "106",
         "position": {
-            "x": 19.01666666666667,
-            "y": -14.915833333333335
+            "x": 37.74166666666666,
+            "y": -28.278333333333332
         },
         "alias": "MsO",
         "templateId": "MsO___Mesylate"
@@ -11824,8 +11824,8 @@
         "type": "monomer",
         "id": "107",
         "position": {
-            "x": 14.203333333333338,
-            "y": -15.029166666666658
+            "x": 32.92833333333333,
+            "y": -28.391666666666655
         },
         "alias": "MsO",
         "templateId": "MsO___Mesylate"
@@ -11834,8 +11834,8 @@
         "type": "monomer",
         "id": "108",
         "position": {
-            "x": 11.261666666666674,
-            "y": -14.980833333333333
+            "x": 29.98666666666666,
+            "y": -28.34333333333333
         },
         "alias": "MsO",
         "templateId": "MsO___Mesylate"
@@ -11844,8 +11844,8 @@
         "type": "monomer",
         "id": "109",
         "position": {
-            "x": 9.698333333333325,
-            "y": -15.005833333333328
+            "x": 28.42333333333331,
+            "y": -28.368333333333325
         },
         "alias": "MsO",
         "templateId": "MsO___Mesylate"
@@ -11854,8 +11854,8 @@
         "type": "monomer",
         "id": "110",
         "position": {
-            "x": 6.621666666666661,
-            "y": -15.064166666666683
+            "x": 25.34666666666665,
+            "y": -28.42666666666668
         },
         "alias": "MsO",
         "templateId": "MsO___Mesylate"

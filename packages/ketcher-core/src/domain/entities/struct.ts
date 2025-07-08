@@ -1225,10 +1225,7 @@ export class Struct {
   }
 
   getGroupIdFromAtomId(atomId: number): number | null {
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
-      if (sgroup.atoms.includes(atomId)) return groupId;
-    }
-    return null;
+    return [...(this.atoms.get(atomId)?.sgs.values() || [])][0] || null;
   }
 
   getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {

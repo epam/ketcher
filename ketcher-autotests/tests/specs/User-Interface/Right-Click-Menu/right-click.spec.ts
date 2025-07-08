@@ -14,6 +14,8 @@ import {
   screenshotBetweenUndoRedo,
   moveMouseAway,
   resetZoomLevelToDefault,
+  takeElementScreenshot,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
@@ -43,13 +45,22 @@ test.describe('Right-click menu', () => {
 
   test('Check right-click menu for bonds', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-5872
-    Description: The menu has appeared and contains the list of Bonds.
-    */
+     * Test case: EPMLSOPKET-5872
+     * Description: The menu has appeared and contains the list of Bonds.
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7391
+     * Test case: Verify that Delete option in small molecules mode has an icon in right-click menu for bonds
+     * Case:
+     *      1. Load molecule with bond
+     *      2. Right-click on any bond to open context menu
+     *      3. Take menu screenshot to validate Delete option icon
+     *
+     * Version 3.6
+     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await ContextMenu(page, point).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, ContextMenu(page, point).contextMenuBody);
   });
 
   test('Check right-click submenu for Query bonds', async ({ page }) => {
@@ -124,16 +135,48 @@ test.describe('Right-click menu', () => {
 
   test('Check right-click menu for atoms', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-5879
-    Description: The menu has appeared and contains the following items:
-    - Edit
-    - Enhanced stereochemistry (Should be grayed out if enhanced stereochemistry can not be added.)
-    - Delete
-    */
+     * Test case: EPMLSOPKET-5879
+     * Description: The menu has appeared and contains the following items:
+     * - Edit
+     * - Enhanced stereochemistry (Should be grayed out if enhanced stereochemistry can not be added.)
+     * - Delete
+     *
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7391
+     * Test case: Verify that Delete option in small molecules mode has an icon in right-click menu for atomss
+     * Case:
+     *      1. Load molecule with atom
+     *      2. Right-click on any atom to open context menu
+     *      3. Take menu screenshot to validate Delete option icon
+     *
+     * Version 3.6
+     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await ContextMenu(page, point).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, ContextMenu(page, point).contextMenuBody);
+  });
+
+  test('Check right-click menu for S-Groups selection', async ({ page }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7391
+     * Test case: Verify that Delete option in small molecules mode has an icon in right-click menu for S-Groups selection
+     * Case:
+     *      1. Load molecule with S-Group
+     *      2. Select it all (using Ctrl+A)
+     *      3. Right-click on any atom to open context menu
+     *      4. Take menu screenshot to validate Delete option icon
+     *
+     * Version 3.6
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'CCCCCCCCC |SgD:8,7,6,5,4,3,2,1,0:xxx:vvv::: :|',
+    );
+    await selectAllStructuresOnCanvas(page);
+    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await ContextMenu(page, point).open();
+    await takeElementScreenshot(page, ContextMenu(page, point).contextMenuBody);
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {

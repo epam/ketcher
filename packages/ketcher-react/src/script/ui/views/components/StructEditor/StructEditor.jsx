@@ -279,6 +279,8 @@ class StructEditor extends Component {
       /* eslint-disable @typescript-eslint/no-unused-vars */
       ketcherId,
       /* eslint-disable @typescript-eslint/no-unused-vars */
+      prevKetcherId,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
       indigoVerification,
       tool,

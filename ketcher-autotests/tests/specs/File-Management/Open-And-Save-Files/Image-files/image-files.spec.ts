@@ -52,6 +52,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -1417,7 +1418,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Close');
+    await CalculatedValuesDialog(page).closeByX();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',

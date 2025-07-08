@@ -109,9 +109,11 @@ class AnalyseDialog extends Component {
                         ? roundOff(values[item.key], round[item.round])
                         : 0
                     }
+                    data-testid={item.name + '-input'}
                   />
                 ) : (
                   <FrozenInput
+                    data-testid={item.name + '-input'}
                     value={
                       values && !loading
                         ? roundOff(values[item.key], round[item.round])

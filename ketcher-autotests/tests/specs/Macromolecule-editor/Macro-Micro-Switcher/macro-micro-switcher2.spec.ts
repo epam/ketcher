@@ -27,6 +27,8 @@ import {
   selectSequenceTypeMode,
   MacroFileType,
   MolFileFormat,
+  pressButton,
+  dragMouseTo,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -70,6 +72,10 @@ import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import {
+  COORDINATES_TO_PERFORM_ROTATION,
+  rotateToCoordinates,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -1029,5 +1035,321 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takePageScreenshot(page);
+  });
+
+  test('Case 40: Verify that all 19 reaction arrow types are available in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that all 19 reaction arrow types are available in macromolecules mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Verify that all 19 reaction arrow types are available
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 41: Verify that reaction arrows and pluses can be selected on canvas in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that reaction arrows and pluses can be selected on canvas in macromolecules mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Verify that reaction arrows and pluses can be selected on canvas
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectAllStructuresOnCanvas(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 42: Rotate arrows in Micro mode and switch to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Rotate arrows in Micro mode and switch to Macro mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Rotate arrows
+      3. Switch to macromolecules mode
+      4. Verify that reaction arrows are rotated correctly
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await selectAllStructuresOnCanvas(page);
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 43: Vertical flip arrows in Micro mode and switch to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Vertical flip arrows in Micro mode and switch to Macro mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Vertical flip arrows
+      3. Switch to macromolecules mode
+      4. Verify that reaction arrows are Vertical flip correctly
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await selectAllStructuresOnCanvas(page);
+    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 44: Horizontal flip arrows in Micro mode and switch to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Horizontal flip arrows in Micro mode and switch to Macro mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Horizontal flip arrows
+      3. Switch to macromolecules mode
+      4. Verify that reaction arrows are Horizontal flip correctly
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await selectAllStructuresOnCanvas(page);
+    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 45: Delete arrows in Micro mode by Erase button (when select all arrows) and switch to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Delete arrows in Micro mode by Erase button (when select all arrows) and switch to Macro mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Select all arrows
+      3. Delete arrows by Erase button
+      4. Switch to macromolecules mode
+      5. Verify that all arrows are deleted
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 46: Open file with changed sizes and orientation of arrows in Micro mode and switch to Macro', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Open file with changed sizes and orientation of arrows in Micro mode and switch to Macro
+      Case: 
+      1. Open file with changed sizes and orientation of arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Verify that all arrows are displayed correctly
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 47: Verify that arrows and pluses can be moved on the canvas in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be moved on the canvas in macromolecules mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Verify that arrows and pluses can be moved on the canvas
+      4. Move arrows and pluses on the canvas
+      5. Verify that arrows and pluses are moved correctly
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await page.getByTestId('rxn-arrow').first().hover();
+    await dragMouseTo(200, 200, page);
+    await page.getByTestId('rxn-arrow').nth(1).hover();
+    await dragMouseTo(200, 300, page);
+    await page.getByTestId('rxn-arrow').nth(4).hover();
+    await dragMouseTo(200, 350, page);
+    await page.getByTestId('rxn-arrow').nth(8).hover();
+    await dragMouseTo(200, 400, page);
+    await page.getByTestId('rxn-arrow').nth(11).hover();
+    await dragMouseTo(200, 450, page);
+    await page.getByTestId('rxn-arrow').nth(13).hover();
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 48: Verify that arrows and pluses can be copied and pasted using right-click menu or shortcuts', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be copied and pasted using right-click menu or shortcuts
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Select all arrows and pluses
+      4. Copy and paste arrows and pluses using right-click menu or shortcuts
+      We have a bug with copying and pasting arrows in macromolecules mode, so we will use keyboard shortcuts
+      https://github.com/epam/ketcher/issues/7385
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await clickOnCanvas(page, 200, 200);
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 49: Verify that arrows and pluses can be exported to KET from macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be exported to KET from macromolecules mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Save file in KET format
+      4. Open saved file in macromolecules mode
+      5. Verify that all arrows and pluses are displayed correctly
+      We have a bug in Macro mode https://github.com/epam/ketcher/issues/7375
+      After fixing this bug, we should update the screenshot in this test case
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(page, 'KET/all-arrows-expected.ket', FileType.KET);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/all-arrows-expected.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 50: Verify that arrows and pluses can be exported to SVG from macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be exported to SVG from macromolecules mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Save file in SVG format
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 51: Verify that resized and rotated arrows and pluses can be exported to SVG from macromolecules mode without distortion', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that resized and rotated arrows and pluses can be exported to SVG from macromolecules mode without distortion
+      Case: 
+      1. Open file with resized and rotated reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Save file in SVG format
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 52: Verify that arrows and pluses saved in Macro mode can be imported from KET into micromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses saved in Macro mode can be imported from KET into micromolecules mode
+      Case: 
+      1. Open file saved in Macro mode with reaction arrows in micromolecules mode
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/all-arrows-expected.ket',
+    );
+    await takeEditorScreenshot(page);
   });
 });

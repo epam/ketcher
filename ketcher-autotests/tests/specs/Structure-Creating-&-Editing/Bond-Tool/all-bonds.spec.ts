@@ -9,13 +9,11 @@ import {
   takeEditorScreenshot,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
-  selectOption,
   waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -47,6 +45,8 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { BondTopologyOptions } from '@tests/pages/constants/bondProperties/Constants';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -561,9 +561,10 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
     const point1 = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
     await ContextMenu(page, point1).click(MicroBondOption.EditSelectedBonds);
-    await page.getByTestId('topology-input-span').click();
-    await selectOption(page, 'Ring');
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).selectBondTopology(
+      BondTopologyOptions.Ring,
+    );
+    await BondPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 

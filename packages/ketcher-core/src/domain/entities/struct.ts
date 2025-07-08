@@ -1225,7 +1225,9 @@ export class Struct {
   }
 
   getGroupIdFromAtomId(atomId: number): number | null {
-    return [...(this.atoms.get(atomId)?.sgs.values() || [])][0] || null;
+    const firstSgroupId = [...(this.atoms.get(atomId)?.sgs.values() || [])][0];
+
+    return isNumber(firstSgroupId) ? firstSgroupId : null;
   }
 
   getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {

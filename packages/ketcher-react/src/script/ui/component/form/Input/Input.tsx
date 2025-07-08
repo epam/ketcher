@@ -202,6 +202,11 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               className={classes.input}
               {...rest}
+              data-testId={
+                rest['data-testid']
+                  ? rest['data-testid'] + '-' + val
+                  : undefined
+              }
             />
             {type === 'checkbox' && <span className={classes.checkbox} />}
             {type === 'radio' && <span className={classes.radioButton} />}

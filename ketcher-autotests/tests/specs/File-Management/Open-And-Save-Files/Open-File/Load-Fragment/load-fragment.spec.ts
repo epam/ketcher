@@ -57,7 +57,7 @@ async function moveElement(
   const pointXToMoveElement = x - xShiftForElement;
   const pointYToMoveElement = y - yShiftForElement;
 
-  await CommonLeftToolbar(page).handToolButton.click();
+  await CommonLeftToolbar(page).selectHandTool();
   await moveOnAtom(page, atomLabel, atomNumber);
   await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
 }

@@ -8,6 +8,9 @@ import {
   takeElementScreenshot,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
+  ZoomInByKeyboard,
+  ZoomOutByKeyboard,
+  dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -27,6 +30,7 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 test.setTimeout(20000);
@@ -461,4 +465,83 @@ test(`8. Verify Undo/Redo after using Delete from right-click menu`, async () =>
     hideMacromoleculeEditorScrollBars: true,
     hideMonomerPreview: true,
   });
+});
+
+test(`9. Verify that context menu works correctly on canvas after zooming`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7391
+   * Test case: Verify that context menu works correctly on canvas after zooming
+   * Case:
+   *      0. Go to Snake mode
+   *      1. Load chain of some monomers
+   *      2. Zoom In few times
+   *      2. Select all structures (using Ctrl+A)
+   *      3. Right-click on any monomer to open context menu
+   *      5. Take menu screenshot to validate menu appearence
+   *      6. Reset Zoom to 100%
+   *      7. Zoom Out few times
+   *      8. Right-click on any monomer to open context menu
+   *      9. Take menu screenshot to validate menu appearence
+   *
+   * Version 3.6
+   */
+  const peptideA = getMonomerLocator(page, Peptides.A);
+
+  await selectSnakeLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
+  );
+  await ZoomInByKeyboard(page);
+  await ZoomInByKeyboard(page);
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, peptideA).open();
+  await takeElementScreenshot(
+    page,
+    ContextMenu(page, peptideA).contextMenuBody,
+  );
+  await resetZoomLevelToDefault(page);
+  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page);
+  await ContextMenu(page, peptideA).open();
+  await takeElementScreenshot(
+    page,
+    ContextMenu(page, peptideA).contextMenuBody,
+  );
+});
+
+test(`10. Verify that context menu works correctly on canvas after panning`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7391
+   * Test case: Verify that context menu works correctly on canvas after panning
+   * Case:
+   *      0. Go to Flex mode
+   *      1. Load chain of some monomers
+   *      2. Drag canvas and move it so some point
+   *      2. Select all structures (using Ctrl+A)
+   *      3. Right-click on any monomer to open context menu
+   *      5. Take menu screenshot to validate menu appearence
+   *
+   * Version 3.6
+   */
+  const peptideA = getMonomerLocator(page, Peptides.A);
+
+  await selectFlexLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
+  );
+  await CommonLeftToolbar(page).selectHandTool();
+  await selectAllStructuresOnCanvas(page);
+
+  await page.mouse.move(100, 100);
+  await dragMouseTo(200, 200, page);
+
+  await ContextMenu(page, peptideA).open();
+  await takeElementScreenshot(
+    page,
+    ContextMenu(page, peptideA).contextMenuBody,
+  );
 });

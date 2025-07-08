@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -16,6 +17,7 @@ import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -70,10 +72,8 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByTestId('Molecular Weight-select').click();
-    await page.getByRole('option', { name: '0' }).click();
-    await page.getByTestId('Exact Mass-select').click();
-    await page.getByRole('option', { name: '0' }).click();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(0);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(0);
     await takeEditorScreenshot(page);
   });
 
@@ -84,10 +84,8 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByTestId('Molecular Weight-select').click();
-    await page.getByRole('option', { name: '7' }).click();
-    await page.getByTestId('Exact Mass-select').click();
-    await page.getByRole('option', { name: '7' }).click();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(7);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(7);
     await takeEditorScreenshot(page);
   });
 
@@ -128,11 +126,9 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByText('Decimal places3').first().click();
-    await page.getByRole('option', { name: '4' }).click();
-    await page.getByText('Decimal places3').click();
-    await page.getByRole('option', { name: '1' }).click();
-    await page.keyboard.press('Escape');
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(4);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(1);
+    await CalculatedValuesDialog(page).closeByX();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });

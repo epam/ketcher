@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-function FrozenInput({ value }) {
+function FrozenInput({ value, 'data-testid': dataTestId }) {
   return (
     <input
+      data-testid={dataTestId}
       type="text"
       spellCheck={false}
       value={value}

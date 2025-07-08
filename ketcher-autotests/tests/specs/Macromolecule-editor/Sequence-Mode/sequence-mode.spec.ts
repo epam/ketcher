@@ -7,7 +7,6 @@ import {
   zoomWithMouseWheel,
   scrollDown,
   moveMouseAway,
-  switchSequenceEnteringButtonType,
   SequenceType,
   selectUndoByKeyboard,
   MacroFileType,
@@ -18,6 +17,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
+  switchSequenceEnteringButtonType,
 } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';

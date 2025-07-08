@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
   BondType,
   clickOnBond,
   clickOnAtom,
@@ -17,6 +16,7 @@ import {
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,

@@ -19,7 +19,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
-  resetCurrentTool,
   screenshotBetweenUndoRedo,
   screenshotBetweenUndoRedoInMacro,
   copyToClipboardByKeyboard,
@@ -29,6 +28,7 @@ import {
   MacroFileType,
   MolFileFormat,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,

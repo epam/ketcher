@@ -16,7 +16,6 @@ import {
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
-  getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,

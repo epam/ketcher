@@ -1393,7 +1393,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await StructureCheckDialog(page).pressCancelButton();
+    await StructureCheckDialog(page).cancel();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',

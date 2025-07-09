@@ -3735,7 +3735,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await StructureCheckDialog(page).pressCancelButton();
+    await StructureCheckDialog(page).cancel();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

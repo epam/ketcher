@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
+import { StructureCheckSetting } from '@tests/pages/constants/structureCheck/Constants';
+import { delay, waitForRender, waitForSpinnerFinishedWork } from '@utils/index';
 
 type StructureCheckDialogLocators = {
   closeWindowButton: Locator;
@@ -51,8 +53,45 @@ export const StructureCheckDialog = (page: Page) => {
       await locators.closeWindowButton.click();
     },
 
-    async pressCancelButton() {
+    async cancel() {
       await locators.cancelButton.click();
+    },
+
+    async apply() {
+      await delay(0.2);
+      await waitForRender(page, async () => {
+        await locators.applyButton.click();
+      });
+    },
+
+    async check() {
+      await waitForSpinnerFinishedWork(page, async () => {
+        await locators.checkButton.click();
+      });
+    },
+
+    async checkCheckboxes(
+      checkboxes: StructureCheckSetting | StructureCheckSetting[],
+    ) {
+      if (Array.isArray(checkboxes)) {
+        for (const checkbox of checkboxes) {
+          await page.getByTestId(checkbox).setChecked(true);
+        }
+      } else {
+        await page.getByTestId(checkboxes[0]).setChecked(true);
+      }
+    },
+
+    async uncheckCheckboxes(
+      checkboxes: StructureCheckSetting | StructureCheckSetting[],
+    ) {
+      if (Array.isArray(checkboxes)) {
+        for (const checkbox of checkboxes) {
+          await page.getByTestId(checkbox).setChecked(false);
+        }
+      } else {
+        await page.getByTestId(checkboxes[0]).setChecked(false);
+      }
     },
   };
 };

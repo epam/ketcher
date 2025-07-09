@@ -221,8 +221,6 @@ test.describe('Tests for Ruler', () => {
      * 5. Drag ruler slider to the right and verify that the layout is changed
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
-     * We have a bug:https://github.com/epam/ketcher/issues/7288
-     * After fixing need to update screenshots
      */
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(

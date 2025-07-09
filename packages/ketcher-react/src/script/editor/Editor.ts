@@ -698,6 +698,7 @@ class Editor implements KetcherEditor {
       ketcherChangeEvent.dispatch(action);
     }
 
+    this.render.ctab.needRecalculateVisibleAtomsAndBonds = true;
     this.render.update();
 
     KetcherLogger.log('Editor.undo(), end');
@@ -740,6 +741,7 @@ class Editor implements KetcherEditor {
       ketcherChangeEvent.dispatch(action);
     }
 
+    this.render.ctab.needRecalculateVisibleAtomsAndBonds = true;
     this.render.update();
 
     KetcherLogger.log('Editor.redo(), end');

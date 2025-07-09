@@ -10,7 +10,6 @@ import {
   BondType,
   clickOnBond,
   clickOnAtom,
-  fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
@@ -34,6 +33,11 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  ContextOption,
+  PropertyLabelType,
+} from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -52,24 +56,6 @@ async function editSGroupProperties(
   await pressButton(page, 'Apply');
 }
 
-async function selectSGroupProperties(
-  page: Page,
-  optionName: string,
-  fieldName: string,
-  fieldValue: string,
-  radioButton: string,
-) {
-  await selectAllStructuresOnCanvas(page);
-  await LeftToolbar(page).sGroup();
-  await page.getByTestId('context-input-span').click();
-  // await pressButton(page, contextName);
-  await page.getByRole('option', { name: optionName }).click();
-  await page.getByPlaceholder('Enter name').fill(fieldName);
-  await page.getByPlaceholder('Enter value').fill(fieldValue);
-  await page.getByText(radioButton).click();
-  await pressButton(page, 'Apply');
-}
-
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -83,9 +69,9 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await fillFieldByPlaceholder(page, 'Enter name', 'Test');
-    await fillFieldByPlaceholder(page, 'Enter value', '33');
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
+    await SGroupPropertiesDialog(page).setFieldValueValue('33');
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -188,7 +174,15 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all atoms of Chain
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(ContextOption.Atom);
+    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Absolute,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -198,7 +192,15 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all bonds of Chain
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(ContextOption.Bond);
+    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Absolute,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -208,13 +210,15 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all structure of Chain
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await selectSGroupProperties(
-      page,
-      'Group',
-      'T@#qwer123',
-      'Qw@!23#$%',
-      'Absolute',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(ContextOption.Group);
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Absolute,
     );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -224,13 +228,17 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all structure of Chain
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await selectSGroupProperties(
-      page,
-      'Multifragment',
-      'T@#qwer123',
-      'Qw@!23#$%',
-      'Relative',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(
+      ContextOption.Multifragment,
     );
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Relative,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -240,13 +248,17 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to only structures. Not to plus sign and arrow.
     */
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
-    await selectSGroupProperties(
-      page,
-      'Multifragment',
-      'T@#qwer123',
-      'Qw@!23#$%',
-      'Absolute',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(
+      ContextOption.Multifragment,
     );
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Absolute,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -259,13 +271,17 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group attached to only on atoms of structures. Not to plus sign and arrow.
     */
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
-    await selectSGroupProperties(
-      page,
-      'Multifragment',
-      'T@#qwer123',
-      '8',
-      'Attached',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(
+      ContextOption.Multifragment,
     );
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Attached,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -276,13 +292,17 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to edit the Data S-group Field name and Field Value.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await selectSGroupProperties(
-      page,
-      'Multifragment',
-      'T@#qwer123',
-      '8',
-      'Attached',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(
+      ContextOption.Multifragment,
     );
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Attached,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -442,13 +462,17 @@ test.describe('Data S-Group tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
-    await selectSGroupProperties(
-      page,
-      'Multifragment',
-      'T@#qwer123',
-      '8',
-      'Absolute',
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectContext(
+      ContextOption.Multifragment,
     );
+    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
+    await SGroupPropertiesDialog(page).selectPropertyLabelType(
+      PropertyLabelType.Absolute,
+    );
+    await SGroupPropertiesDialog(page).apply();
 
     await verifyFileExport(
       page,

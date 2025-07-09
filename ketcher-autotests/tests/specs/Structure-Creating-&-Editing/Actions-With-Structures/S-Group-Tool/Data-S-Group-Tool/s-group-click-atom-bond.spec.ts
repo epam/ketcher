@@ -9,6 +9,8 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,26 +23,25 @@ test.describe('S-Group Properties', () => {
       Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
       Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
-    const sGroupTypeInputSpan = page.getByTestId('s-group-type-input-span');
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await sGroupTypeInputSpan.click();
+    await SGroupPropertiesDialog(page).typeDropdown.click();
 
-    await expect(page.getByTestId('Data-option')).toContainText('Data');
-    await expect(page.getByTestId('Multiple group-option')).toContainText(
+    await expect(page.getByTestId(TypeOption.Data)).toContainText('Data');
+    await expect(page.getByTestId(TypeOption.MultipleGroup)).toContainText(
       'Multiple group',
     );
-    await expect(page.getByTestId('SRU polymer-option')).toContainText(
+    await expect(page.getByTestId(TypeOption.SRUPolymer)).toContainText(
       'SRU polymer',
     );
-    await expect(page.getByTestId('Superatom-option')).toContainText(
+    await expect(page.getByTestId(TypeOption.Superatom)).toContainText(
       'Superatom',
     );
-    await expect(page.getByTestId('Query component-option')).toContainText(
+    await expect(page.getByTestId(TypeOption.QueryComponent)).toContainText(
       'Query component',
     );
   });
@@ -56,11 +57,9 @@ test.describe('S-Group Properties', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByTestId('s-group-type-input-span').click();
-    await page.getByRole('option', { name: 'Superatom' }).click();
-    await page.getByLabel('Name').click();
-    await page.getByLabel('Name').fill('Test');
-    await page.getByRole('button', { name: 'Apply' }).click();
+    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
+    await SGroupPropertiesDialog(page).setNameValue('Test');
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -79,13 +78,10 @@ test.describe('S-Group Properties', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByPlaceholder('Enter name').click();
-    await page.getByPlaceholder('Enter name').fill(testName);
-    await page.getByPlaceholder('Enter value').click();
-    await page.getByPlaceholder('Enter value').fill(testValue);
-
+    await SGroupPropertiesDialog(page).setFieldNameValue(testName);
+    await SGroupPropertiesDialog(page).setFieldValueValue(testValue);
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'Apply' }).click();
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -96,11 +92,10 @@ test.describe('S-Group Properties', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByTestId('s-group-type-input-span').click();
-    await page.getByRole('option', { name: 'Query component' }).click();
+    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
 
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'Apply' }).click();
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 });

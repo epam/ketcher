@@ -25,6 +25,8 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -52,12 +54,6 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await clickOnCanvas(page, x + shiftForOxygen, y, {
     button: 'left',
   });
-}
-
-async function creatingComponentGroup(page: Page) {
-  await page.getByTestId('s-group-type').first().click();
-  await page.getByRole('option', { name: 'Query component' }).click();
-  await page.getByRole('button', { name: 'Apply' }).click();
 }
 
 test.describe('Checking reaction queries attributes in SMARTS format', () => {
@@ -98,10 +94,8 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByTestId('s-group-type').first().click();
-    await page.getByRole('option', { name: 'Query component' }).click();
-    await page.getByRole('button', { name: 'Apply' }).click();
-
+    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
   });
@@ -122,7 +116,8 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await creatingComponentGroup(page);
+    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
   });
@@ -161,7 +156,8 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await page.mouse.move(fluorinePoint.x + delta, fluorinePoint.y - delta);
     await page.mouse.up();
 
-    await creatingComponentGroup(page);
+    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
+    await SGroupPropertiesDialog(page).apply();
 
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6:1].[#9:2])');

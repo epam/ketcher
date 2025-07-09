@@ -34,6 +34,8 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -157,11 +159,9 @@ test.describe('R-Group Label Tool', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
 
-    await page.getByTestId('s-group-type-input-span').click();
-    await page.getByRole('option', { name: 'Multiple group' }).click();
-    await page.getByLabel('Repeat count').click();
-    await page.getByLabel('Repeat count').fill('1');
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('1');
+    await SGroupPropertiesDialog(page).apply();
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     let point: { x: number; y: number };

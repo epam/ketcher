@@ -16,13 +16,9 @@
 
 import {
   Fragment,
-  FunctionalGroup,
   Vec2,
   Scale,
-  SGroup,
   ReStruct,
-  Atom,
-  Bond,
   IMAGE_KEY,
   ImageReferencePositionInfo,
   MULTITAIL_ARROW_KEY,
@@ -143,24 +139,11 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   let closestAtom: null | number = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip && skip.map === 'atoms' ? skip.id : null;
-  const sGroups = restruct.sgroups;
-  const functionalGroups = restruct.molecule.functionalGroups;
 
   minDist = minDist || maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
-  restruct.atoms.forEach((atom, aid) => {
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom.a,
-        sGroups,
-        functionalGroups,
-        true,
-      ) ||
-      Atom.isHiddenLeavingGroupAtom(restruct.molecule, aid)
-    ) {
-      return;
-    }
+  restruct.visibleAtoms.forEach((atom, aid) => {
     const isSkippedAtom = aid === skipId || atom.a.isPreview;
     if (isSkippedAtom) {
       return;
@@ -196,15 +179,13 @@ function findClosestBond(
   let closestBondCenter: number | null = null;
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip && skip.map === 'bonds' ? skip.id : null;
-  const sGroups = restruct.sgroups;
-  const functionalGroups = restruct.molecule.functionalGroups;
 
   minDist = minDist || maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   let minCDist = minDist;
 
-  restruct.bonds.forEach((bond, bid) => {
+  restruct.visibleBonds.forEach((bond, bid) => {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
     if (isSkippedBond) {
       return;
@@ -214,18 +195,6 @@ function findClosestBond(
     const p1 = restruct.atoms.get(bond.b.begin)!.a.pp;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const p2 = restruct.atoms.get(bond.b.end)!.a.pp;
-
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-      ) ||
-      SGroup.isBondInContractedSGroup(bond.b, sGroups) ||
-      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond.b)
-    ) {
-      return;
-    }
 
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5);
     const cdist = Vec2.dist(pos, mid);

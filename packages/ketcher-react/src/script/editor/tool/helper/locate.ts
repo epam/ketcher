@@ -27,7 +27,6 @@ import assert from 'assert';
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
-  const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
@@ -48,17 +47,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     bottomLeftPosition,
   ];
 
-  restruct.bonds.forEach((bond, bid) => {
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-      )
-    ) {
-      return;
-    }
-
+  restruct.visibleBonds.forEach((bond, bid) => {
     let center: Vec2;
     if (bond.b.isExternalBondBetweenMonomers(struct)) {
       const firstMonomer = struct.getGroupFromAtomId(bond.b.begin);
@@ -80,7 +69,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
-  restruct.atoms.forEach((atom, aid) => {
+  restruct.visibleAtoms.forEach((atom, aid) => {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
       aid,
@@ -103,14 +92,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
         atom.a.pp.x > x0 &&
         atom.a.pp.x < x1 &&
         atom.a.pp.y > y0 &&
-        atom.a.pp.y < y1 &&
-        (!FunctionalGroup.isAtomInContractedFunctionalGroup(
-          atom.a,
-          sGroups,
-          functionalGroups,
-          true,
-        ) ||
-          aid === sGroup?.atoms[0])
+        atom.a.pp.y < y1
       ) {
         atomList.push(aid);
       }
@@ -296,7 +278,6 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
           atom.a,
           sGroups,
           functionalGroups,
-          true,
         ) ||
           aid === sGroup?.atoms[0])
       ) {

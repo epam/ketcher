@@ -109,7 +109,6 @@ export function fromBondAddition(
         endAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId);
@@ -142,7 +141,6 @@ export function fromBondAddition(
         beginAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId);

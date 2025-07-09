@@ -78,25 +78,22 @@ export const BondPropertiesDialog = (page: Page) => {
 
     async selectBondType(type: BondTypeOption) {
       await locators.bondTypeDropdown.click();
-
-      // Find and scroll to the option in the dropdown
-      const option = page.getByText(type, { exact: true });
+      const option = page.getByTestId(type);
+      await option.waitFor({ state: 'visible' });
       await option.click();
     },
 
     async selectBondTopology(topology: BondTopologyOption) {
       await locators.bondTopologyDropdown.click();
-
-      // Find and scroll to the option in the dropdown
-      const option = page.getByText(topology, { exact: true });
+      const option = page.getByTestId(topology);
+      await option.waitFor({ state: 'visible' });
       await option.click();
     },
 
     async selectBondReactingCenter(reactingCenter: BondReactingCenterOption) {
       await locators.bondReactingCenterDropdown.click();
-
-      // Find and scroll to the option in the dropdown
-      const option = page.getByText(reactingCenter, { exact: true });
+      const option = page.getByTestId(reactingCenter);
+      await option.waitFor({ state: 'visible' });
       await option.click();
     },
   };

@@ -45,10 +45,7 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
-import {
-  BondTopologyOption,
-  BondTopologyOptions,
-} from '@tests/pages/constants/bondProperties/Constants';
+import { BondTopologyOption } from '@tests/pages/constants/bondProperties/Constants';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {

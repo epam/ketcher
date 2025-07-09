@@ -1,8 +1,8 @@
 import { Page, Locator } from '@playwright/test';
 import {
-  BondReactingCenterOptions,
-  BondTopologyOptions,
-  BondTypeOptions,
+  BondReactingCenterOption,
+  BondTopologyOption,
+  BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
 import { waitForRender } from '@utils/common';
 
@@ -76,7 +76,7 @@ export const BondPropertiesDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
 
-    async selectBondType(type: BondTypeOptions) {
+    async selectBondType(type: BondTypeOption) {
       await locators.bondTypeDropdown.click();
 
       // Find and scroll to the option in the dropdown
@@ -84,7 +84,7 @@ export const BondPropertiesDialog = (page: Page) => {
       await option.click();
     },
 
-    async selectBondTopology(topology: BondTopologyOptions) {
+    async selectBondTopology(topology: BondTopologyOption) {
       await locators.bondTopologyDropdown.click();
 
       // Find and scroll to the option in the dropdown
@@ -92,7 +92,7 @@ export const BondPropertiesDialog = (page: Page) => {
       await option.click();
     },
 
-    async selectBondReactingCenter(reactingCenter: BondReactingCenterOptions) {
+    async selectBondReactingCenter(reactingCenter: BondReactingCenterOption) {
       await locators.bondReactingCenterDropdown.click();
 
       // Find and scroll to the option in the dropdown

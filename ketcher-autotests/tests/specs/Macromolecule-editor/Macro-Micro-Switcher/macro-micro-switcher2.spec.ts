@@ -1365,4 +1365,207 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Case 53: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode', async ({
+    page,
+  }) => {
+    /* 
+    * Version 3.6
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode
+      Case: 
+      1. Open file with reaction arrows in micromolecules mode
+      2. Switch to macromolecules mode
+      3. Move arrows and pluses on the canvas
+      4. Verify that arrows and pluses are moved correctly
+      5. Undo and redo actions
+      Expected: Undo and redo actions correctly preserve changes to arrows and pluses positions.
+    */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await page.getByTestId('rxn-arrow').first().hover();
+    await dragMouseTo(200, 200, page);
+    await page.getByTestId('rxn-arrow').nth(1).hover();
+    await dragMouseTo(200, 300, page);
+    await page.getByTestId('rxn-arrow').nth(4).hover();
+    await dragMouseTo(200, 350, page);
+    await page.getByTestId('rxn-arrow').nth(8).hover();
+    await dragMouseTo(200, 400, page);
+    await page.getByTestId('rxn-arrow').nth(11).hover();
+    await dragMouseTo(200, 450, page);
+    await page.getByTestId('rxn-arrow').nth(13).hover();
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    for (let i = 0; i < 6; i++) {
+      await CommonTopLeftToolbar(page).undo();
+    }
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    for (let i = 0; i < 6; i++) {
+      await CommonTopLeftToolbar(page).redo();
+    }
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 54: Verify that switching between macromolecules and micromolecules mode preserves arrows/pluses', async ({
+    page,
+  }) => {
+    /* 
+    * Version 3.6
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that switching between macromolecules and micromolecules mode preserves arrows/pluses
+      Case: 
+      1. Open file in Macro mode with reaction arrows
+      2. Switch to micromolecules mode
+      3. Verify that arrows and pluses are preserved
+      4. Switch back to macromolecules mode
+      5. Verify that arrows and pluses are preserved
+      Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
+      After fixing this bug, we should update the screenshot in this test case
+    */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/all-arrows-expected.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 55: Verify that arrows and pluses can be erased in macro mode and then restored by Undo/Redo', async ({
+    page,
+  }) => {
+    /* 
+    * Version 3.6
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be erased in macro mode and then restored by Undo/Redo
+      Case: 
+      1. Open file with reaction arrows in macromolecules mode
+      2. Select all arrows and pluses
+      3. Erase arrows and pluses using Erase tool
+      4. Verify that arrows and pluses are erased
+      5. Undo and redo actions
+      Expected: Undo and redo actions correctly restore arrows and pluses.
+      Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
+      After fixing this bug, we should update the screenshot in this test case
+    */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 56: Verify that arrows and pluses can be cleared in macro mode from canvas by Clear Canvas button and then restored by Undo/Redo', async ({
+    page,
+  }) => {
+    /* 
+    * Version 3.6
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify that arrows and pluses can be cleared in macro mode from canvas by Clear Canvas button and then restored by Undo/Redo
+      Case: 
+      1. Open file with reaction arrows in macromolecules mode
+      2. Select all arrows and pluses
+      3. Erase arrows and pluses using Clear Canvas button
+      4. Verify that arrows and pluses are cleared
+      5. Undo and redo actions
+      Expected: Undo and redo actions correctly restore arrows and pluses.
+      Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
+      After fixing this bug, we should update the screenshot in this test case
+    */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 57: Verify various zoom levels for added on canvas arrows and pluses', async ({
+    page,
+  }) => {
+    /* 
+    * Version 3.6
+      Test case: https://github.com/epam/ketcher/issues/7125
+      Description: Verify various zoom levels for added on canvas arrows and pluses
+      Case: 
+      1. Open file with reaction arrows in macromolecules mode
+      2. Set zoom level to 20%
+      3. Verify that arrows and pluses are displayed correctly
+      4. Set zoom level to 50%
+      5. Verify that arrows and pluses are displayed correctly
+      6. Set zoom level to 150%
+      7. Verify that arrows and pluses are displayed correctly
+      8. Set zoom level to 200%
+      9. Verify that arrows and pluses are displayed correctly
+      10. Set zoom level to 100%
+      Expected: Undo and redo actions correctly restore arrows and pluses.
+      Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
+      After fixing this bug, we should update the screenshot in this test case
+    */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    for (const zoom of ['20', '50', '150', '200', '100']) {
+      await CommonTopRightToolbar(page).setZoomInputValue(zoom);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    }
+  });
 });

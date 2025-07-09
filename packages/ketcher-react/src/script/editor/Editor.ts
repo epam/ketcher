@@ -639,7 +639,9 @@ class Editor implements KetcherEditor {
       editor: this,
       isShow: false,
     });
-
+    if (!ignoreHistory) {
+      this.render.ctab.needRecalculateVisibleAtomsAndBonds = true;
+    }
     if (action === true) {
       this.render.update(true, null); // force
     } else {

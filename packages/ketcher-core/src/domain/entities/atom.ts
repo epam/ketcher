@@ -810,7 +810,6 @@ export class Atom extends BaseMicromoleculeEntity {
         struct.atoms.get(atomId)!,
         struct.sgroups,
         struct.functionalGroups,
-        false,
       )
     ) {
       return false;

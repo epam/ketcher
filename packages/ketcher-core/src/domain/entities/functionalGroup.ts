@@ -181,25 +181,15 @@ export class FunctionalGroup {
     atom: Atom,
     sgroups,
     functionalGroups,
-    sgroupsFromReStruct: boolean,
   ): boolean {
-    const contractedFunctionalGroups: number[] = [];
-    if (sgroupsFromReStruct) {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(sg.item, functionalGroups)
-        ) {
-          contractedFunctionalGroups.push(sg.item.id);
-        }
-      });
-    } else {
-      sgroups.forEach((sg) => {
-        if (FunctionalGroup.isContractedFunctionalGroup(sg, functionalGroups)) {
-          contractedFunctionalGroups.push(sg.id);
-        }
-      });
-    }
-    return contractedFunctionalGroups.some((sg) => atom.sgs.has(sg));
+    return [...atom.sgs.values()].some((sgid) => {
+      const sgroup = sgroups.get(sgid);
+
+      return FunctionalGroup.isContractedFunctionalGroup(
+        sgroup instanceof ReSGroup ? sgroup.item : sgroup,
+        functionalGroups,
+      );
+    });
   }
 
   static isBondInContractedFunctionalGroup(

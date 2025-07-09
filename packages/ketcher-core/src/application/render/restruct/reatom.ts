@@ -228,7 +228,6 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        true,
       ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
     );
   };
@@ -351,7 +350,6 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        false,
       )
     ) {
       const isPositionAtom =

@@ -1303,7 +1303,6 @@ export class Struct {
             atom,
             this.sgroups,
             this.functionalGroups,
-            false,
           );
         if (isAtomNotInContractedGroup) {
           return true;

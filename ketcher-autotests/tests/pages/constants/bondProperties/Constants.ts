@@ -1,4 +1,4 @@
-export enum BondTypeOptions {
+export enum BondTypeOption {
   Single = 'Single-option',
   SingleUp = 'Single Up-option',
   SingleDown = 'Single Down-option',
@@ -15,13 +15,13 @@ export enum BondTypeOptions {
   Dative = 'Dative-option',
 }
 
-export enum BondTopologyOptions {
+export enum BondTopologyOption {
   Either = 'Either-option',
   Ring = 'Ring-option',
   Chain = 'Chain-option',
 }
 
-export enum BondReactingCenterOptions {
+export enum BondReactingCenterOption {
   Unmarked = 'Unmarked-option',
   NotCenter = 'Not center-option',
   Center = 'Center-option',

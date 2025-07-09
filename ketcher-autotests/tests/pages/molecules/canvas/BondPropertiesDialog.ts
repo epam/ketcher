@@ -38,14 +38,14 @@ export const BondPropertiesDialog = (page: Page) => {
       await locators.closeWindowButton.click();
     },
 
-    async clickCustomQueryCheckbox() {
+    async checkCustomQueryCheckbox() {
       const isChecked = await locators.bondCustomQueryCheckbox.isChecked();
       if (!isChecked) {
         await locators.bondCustomQueryCheckbox.click();
       }
     },
 
-    async unselectCustomQueryCheckbox() {
+    async uncheckCustomQueryCheckbox() {
       const isChecked = await locators.bondCustomQueryCheckbox.isChecked();
       if (isChecked) {
         await locators.bondCustomQueryCheckbox.click();
@@ -56,7 +56,7 @@ export const BondPropertiesDialog = (page: Page) => {
       return await locators.bondCustomQueryText.isEnabled();
     },
 
-    async enterCustomQueryText(text: string) {
+    async fillCustomQueryText(text: string) {
       const isEnabled = await this.isCustomQueryTextEnabled();
       if (!isEnabled) {
         throw new Error(
@@ -81,7 +81,6 @@ export const BondPropertiesDialog = (page: Page) => {
 
       // Find and scroll to the option in the dropdown
       const option = page.getByText(type, { exact: true });
-      await option.scrollIntoViewIfNeeded();
       await option.click();
     },
 
@@ -90,7 +89,6 @@ export const BondPropertiesDialog = (page: Page) => {
 
       // Find and scroll to the option in the dropdown
       const option = page.getByText(topology, { exact: true });
-      await option.scrollIntoViewIfNeeded();
       await option.click();
     },
 
@@ -99,7 +97,6 @@ export const BondPropertiesDialog = (page: Page) => {
 
       // Find and scroll to the option in the dropdown
       const option = page.getByText(reactingCenter, { exact: true });
-      await option.scrollIntoViewIfNeeded();
       await option.click();
     },
   };

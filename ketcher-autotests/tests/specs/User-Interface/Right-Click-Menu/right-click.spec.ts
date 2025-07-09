@@ -36,7 +36,10 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
-import { BondTypeOptions } from '@tests/pages/constants/bondProperties/Constants';
+import {
+  BondTypeOption,
+  BondTypeOptions,
+} from '@tests/pages/constants/bondProperties/Constants';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,7 +76,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await ContextMenu(page, point).click(MicroBondOption.Edit);
-    await BondPropertiesDialog(page).selectBondType(BondTypeOptions.Double);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Double);
     await BondPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });

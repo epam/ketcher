@@ -3,8 +3,10 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
   clickOnCanvas,
+  moveMouseAway,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  waitForRender,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -95,13 +97,17 @@ export async function checkUndoRedo(page: Page) {
 }
 
 export async function performHorizontalFlip(page: Page) {
-  await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-  await page.keyboard.press('Alt+h');
+  await moveMouseAway(page);
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Alt+h');
+  });
 }
 
 export async function performVerticalFlip(page: Page) {
-  await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-  await page.keyboard.press('Alt+v');
+  await moveMouseAway(page);
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Alt+v');
+  });
 }
 
 export async function selectChain(page: Page, withBond = false) {

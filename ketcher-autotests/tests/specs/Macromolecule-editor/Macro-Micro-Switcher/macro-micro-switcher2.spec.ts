@@ -27,7 +27,6 @@ import {
   selectSequenceTypeMode,
   MacroFileType,
   MolFileFormat,
-  pressButton,
   dragMouseTo,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
@@ -74,6 +73,8 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
+  performHorizontalFlip,
+  performVerticalFlip,
   rotateToCoordinates,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
@@ -1123,7 +1124,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await performVerticalFlip(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1149,7 +1150,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await performHorizontalFlip(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {

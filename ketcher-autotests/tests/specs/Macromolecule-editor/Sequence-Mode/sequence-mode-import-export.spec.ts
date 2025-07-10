@@ -174,7 +174,6 @@ test.describe('Import/export sequence:', () => {
       'ATCGUatcgu',
     );
 
-    await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

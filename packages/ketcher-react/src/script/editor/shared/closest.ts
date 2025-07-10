@@ -22,6 +22,7 @@ import {
   IMAGE_KEY,
   ImageReferencePositionInfo,
   MULTITAIL_ARROW_KEY,
+  FunctionalGroup,
 } from 'ketcher-core';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -139,11 +140,23 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   let closestAtom: null | number = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip && skip.map === 'atoms' ? skip.id : null;
+  const sGroups = restruct.sgroups;
+  const functionalGroups = restruct.molecule.functionalGroups;
 
   minDist = minDist || maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   restruct.visibleAtoms.forEach((atom, aid) => {
+    if (
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom.a,
+        sGroups,
+        functionalGroups,
+      )
+    ) {
+      return;
+    }
+
     const isSkippedAtom = aid === skipId || atom.a.isPreview;
     if (isSkippedAtom) {
       return;

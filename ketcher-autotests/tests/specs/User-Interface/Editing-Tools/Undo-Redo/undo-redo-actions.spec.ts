@@ -48,6 +48,8 @@ import {
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import {
+  ContextOption,
+  PropertyLabelType,
   RepeatPatternOption,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -419,9 +421,13 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
-    await SGroupPropertiesDialog(page).setFieldValueValue('33');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Fragment,
+      FieldName: 'Test',
+      FieldValue: '33',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -436,9 +442,10 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('88');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -453,12 +460,11 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.SRUPolymer);
-    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
-    await SGroupPropertiesDialog(page).selectRepeatPattern(
-      RepeatPatternOption.HeadToTail,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -473,9 +479,10 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -662,9 +669,13 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
-    await SGroupPropertiesDialog(page).setFieldValueValue('33');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Fragment,
+      FieldName: 'Test',
+      FieldValue: '33',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await LeftToolbar(page).chain();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y);

@@ -94,8 +94,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
   });
@@ -116,8 +117,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
   });
@@ -156,8 +158,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await page.mouse.move(fluorinePoint.x + delta, fluorinePoint.y - delta);
     await page.mouse.up();
 
-    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
 
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6:1].[#9:2])');

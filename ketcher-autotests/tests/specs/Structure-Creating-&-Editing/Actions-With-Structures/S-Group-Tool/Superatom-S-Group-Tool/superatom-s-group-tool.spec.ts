@@ -49,9 +49,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -63,9 +64,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -77,9 +79,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -274,9 +277,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-superatom-expected.ket',
@@ -296,8 +300,9 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
 
     await verifyFileExport(
       page,

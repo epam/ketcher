@@ -57,9 +57,10 @@ test.describe('S-Group Properties', () => {
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.Superatom);
-    await SGroupPropertiesDialog(page).setNameValue('Test');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test',
+    });
     await takeEditorScreenshot(page);
   });
 

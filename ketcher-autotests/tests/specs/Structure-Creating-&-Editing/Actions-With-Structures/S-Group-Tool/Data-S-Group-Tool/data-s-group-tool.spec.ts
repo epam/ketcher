@@ -36,6 +36,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   ContextOption,
   PropertyLabelType,
+  TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
@@ -69,9 +70,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
-    await SGroupPropertiesDialog(page).setFieldValueValue('33');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Fragment,
+      FieldName: 'Test',
+      FieldValue: '33',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -176,13 +181,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(ContextOption.Atom);
-    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
-    await SGroupPropertiesDialog(page).setFieldValueValue('8');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Absolute,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Atom,
+      FieldName: 'Test',
+      FieldValue: '8',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -194,13 +199,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(ContextOption.Bond);
-    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
-    await SGroupPropertiesDialog(page).setFieldValueValue('8');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Absolute,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Bond,
+      FieldName: 'Test',
+      FieldValue: '8',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -212,13 +217,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(ContextOption.Group);
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Absolute,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Group,
+      FieldName: 'T@#qwer123',
+      FieldValue: 'Qw@!23#$%',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -230,15 +235,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(
-      ContextOption.Multifragment,
-    );
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Relative,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'T@#qwer123',
+      FieldValue: 'Qw@!23#$%',
+      PropertyLabelType: PropertyLabelType.Relative,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -250,15 +253,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(
-      ContextOption.Multifragment,
-    );
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('Qw@!23#$%');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Absolute,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'T@#qwer123',
+      FieldValue: 'Qw@!23#$%',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -273,15 +274,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(
-      ContextOption.Multifragment,
-    );
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('8');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Attached,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'T@#qwer123',
+      FieldValue: '8',
+      PropertyLabelType: PropertyLabelType.Attached,
+    });
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -294,15 +293,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(
-      ContextOption.Multifragment,
-    );
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('8');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Attached,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'T@#qwer123',
+      FieldValue: '8',
+      PropertyLabelType: PropertyLabelType.Attached,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -464,16 +461,13 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectContext(
-      ContextOption.Multifragment,
-    );
-    await SGroupPropertiesDialog(page).setFieldNameValue('T@#qwer123');
-    await SGroupPropertiesDialog(page).setFieldValueValue('8');
-    await SGroupPropertiesDialog(page).selectPropertyLabelType(
-      PropertyLabelType.Absolute,
-    );
-    await SGroupPropertiesDialog(page).apply();
-
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Multifragment,
+      FieldName: 'T@#qwer123',
+      FieldValue: '8',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-expected.ket',

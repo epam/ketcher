@@ -12,7 +12,7 @@ export enum ContextOption {
   Bond = 'Bond-option',
   Fragment = 'Fragment-option',
   Group = 'Group-option',
-  Multifragment = 'Multifragment-optionn',
+  Multifragment = 'Multifragment-option',
 }
 
 export enum PropertyLabelType {
@@ -32,3 +32,32 @@ export enum ComponentOption {
   Base = 'Base-option',
   Phosphate = 'Phosphate-option',
 }
+
+export type SGroupPropertiesSettings =
+  | {
+      Type: TypeOption.Data;
+      Context: ContextOption;
+      FieldName: string;
+      FieldValue: string;
+      PropertyLabelType: PropertyLabelType;
+    }
+  | {
+      Type: TypeOption.MultipleGroup;
+      RepeatCount: string;
+    }
+  | {
+      Type: TypeOption.SRUPolymer;
+      PolymerLabel: string;
+      RepeatPattern: RepeatPatternOption;
+    }
+  | {
+      Type: TypeOption.Superatom;
+      Name: string;
+    }
+  | {
+      Type: TypeOption.QueryComponent;
+    }
+  | {
+      Type: TypeOption.NucleotideComponent;
+      Component: ComponentOption;
+    };

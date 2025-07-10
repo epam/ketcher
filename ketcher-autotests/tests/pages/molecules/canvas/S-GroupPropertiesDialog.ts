@@ -4,6 +4,7 @@ import {
   ContextOption,
   PropertyLabelType,
   RepeatPatternOption,
+  SGroupPropertiesSettings,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { waitForRender } from '@utils/common';
@@ -129,6 +130,26 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.componentDropdown.click();
       await contextToSelect.waitFor({ state: 'visible' });
       await contextToSelect.click({ force: true });
+    },
+
+    async setOptions(options: SGroupPropertiesSettings) {
+      await this.selectType(options.Type);
+      if (options.Type === TypeOption.Data) {
+        await this.selectContext(options.Context);
+        await this.setFieldNameValue(options.FieldName);
+        await this.setFieldValueValue(options.FieldValue);
+        await this.selectPropertyLabelType(options.PropertyLabelType);
+      } else if (options.Type === TypeOption.MultipleGroup) {
+        await this.setRepeatCountValue(options.RepeatCount);
+      } else if (options.Type === TypeOption.SRUPolymer) {
+        await this.setPolymerLabelValue(options.PolymerLabel);
+        await this.selectRepeatPattern(options.RepeatPattern);
+      } else if (options.Type === TypeOption.Superatom) {
+        await this.setNameValue(options.Name);
+      } else if (options.Type === TypeOption.NucleotideComponent) {
+        await this.selectComponent(options.Component);
+      }
+      await this.apply();
     },
   };
 };

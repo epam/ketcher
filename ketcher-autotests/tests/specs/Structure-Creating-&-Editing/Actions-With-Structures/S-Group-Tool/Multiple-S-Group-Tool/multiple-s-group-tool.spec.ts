@@ -51,9 +51,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('88');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -65,9 +66,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('88');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -79,9 +81,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('88');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -96,9 +99,10 @@ test.describe('Multiple S-Group tool', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('88');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -230,9 +234,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('1');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -245,9 +250,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('200');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -262,9 +268,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('0');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '0',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -279,9 +286,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '201',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -295,9 +303,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('-1');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '-1',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -309,9 +318,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('200');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
@@ -326,10 +336,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('1');
-    await SGroupPropertiesDialog(page).apply();
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -339,9 +349,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('200');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -351,9 +362,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '201',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -363,9 +375,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('50');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '50',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -378,9 +391,10 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('8');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '8',
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-multiple-expected.ket',

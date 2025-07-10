@@ -120,8 +120,9 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
     await selectAllStructuresOnCanvas(page);
     expect(await isQueryStructureSelected(page)).toBe(true);
   });

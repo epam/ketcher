@@ -159,9 +159,10 @@ test.describe('R-Group Label Tool', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
 
-    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
-    await SGroupPropertiesDialog(page).setRepeatCountValue('1');
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     let point: { x: number; y: number };

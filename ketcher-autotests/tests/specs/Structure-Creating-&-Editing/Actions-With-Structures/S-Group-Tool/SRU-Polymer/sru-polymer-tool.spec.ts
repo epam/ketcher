@@ -56,12 +56,11 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.SRUPolymer);
-    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
-    await SGroupPropertiesDialog(page).selectRepeatPattern(
-      RepeatPatternOption.HeadToTail,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -73,12 +72,11 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
-    await SGroupPropertiesDialog(page).selectType(TypeOption.SRUPolymer);
-    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
-    await SGroupPropertiesDialog(page).selectRepeatPattern(
-      RepeatPatternOption.HeadToTail,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -90,12 +88,11 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.SRUPolymer);
-    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
-    await SGroupPropertiesDialog(page).selectRepeatPattern(
-      RepeatPatternOption.HeadToTail,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -291,12 +288,11 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).selectType(TypeOption.SRUPolymer);
-    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
-    await SGroupPropertiesDialog(page).selectRepeatPattern(
-      RepeatPatternOption.HeadToTail,
-    );
-    await SGroupPropertiesDialog(page).apply();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-sru-expected.ket',

@@ -528,8 +528,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": -6.975,
-            "y": -6.7
+            "x": -6.1,
+            "y": -7.575000000000001
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose",
@@ -829,8 +829,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": -6.975,
-            "y": -8.2
+            "x": -6.1,
+            "y": -9.075000000000001
         },
         "alias": "A",
         "templateId": "A___Adenine",
@@ -1036,8 +1036,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": -5.475,
-            "y": -6.7
+            "x": -4.6,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -1148,8 +1148,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": -3.9749999999999996,
-            "y": -6.7
+            "x": -3.0999999999999996,
+            "y": -7.575000000000001
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose",
@@ -1159,8 +1159,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": -3.9749999999999996,
-            "y": -8.2
+            "x": -3.0999999999999996,
+            "y": -9.075000000000001
         },
         "alias": "5meC",
         "templateId": "5meC___5-methylcytosine",
@@ -1344,8 +1344,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": -2.4749999999999996,
-            "y": -6.7
+            "x": -1.5999999999999996,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -1355,8 +1355,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": -0.9749999999999996,
-            "y": -6.7
+            "x": -0.09999999999999964,
+            "y": -7.575000000000001
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose",
@@ -1366,8 +1366,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": -0.9749999999999996,
-            "y": -8.2
+            "x": -0.09999999999999964,
+            "y": -9.075000000000001
         },
         "alias": "G",
         "templateId": "G___Guanine",
@@ -1588,8 +1588,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 0.5250000000000004,
-            "y": -6.7
+            "x": 1.4000000000000004,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -1599,8 +1599,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 2.0250000000000004,
-            "y": -6.7
+            "x": 2.9000000000000004,
+            "y": -7.575000000000001
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose",
@@ -1610,8 +1610,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 2.0250000000000004,
-            "y": -8.2
+            "x": 2.9000000000000004,
+            "y": -9.075000000000001
         },
         "alias": "5meC",
         "templateId": "5meC___5-methylcytosine",
@@ -1621,8 +1621,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 3.5250000000000004,
-            "y": -6.7
+            "x": 4.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -1632,8 +1632,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 5.025,
-            "y": -6.7
+            "x": 5.9,
+            "y": -7.575000000000001
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose",
@@ -1643,8 +1643,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 5.025,
-            "y": -8.2
+            "x": 5.9,
+            "y": -9.075000000000001
         },
         "alias": "G",
         "templateId": "G___Guanine",
@@ -1654,8 +1654,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 6.525,
-            "y": -6.7
+            "x": 7.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -1665,8 +1665,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 8.025,
-            "y": -6.7
+            "x": 8.9,
+            "y": -7.575000000000001
         },
         "alias": "iMe-dC",
         "templateId": "unknown_monomer_with_idt_alias_iMe-dC",
@@ -1778,8 +1778,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 9.525,
-            "y": -6.7
+            "x": 10.4,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2002,8 +2002,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 9.525,
-            "y": -8.2
+            "x": 10.4,
+            "y": -9.075000000000001
         },
         "alias": "G",
         "templateId": "G___Guanine",
@@ -2013,8 +2013,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 11.025,
-            "y": -6.7
+            "x": 11.9,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2024,8 +2024,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 12.525,
-            "y": -6.7
+            "x": 13.4,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2035,8 +2035,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 12.525,
-            "y": -8.2
+            "x": 13.4,
+            "y": -9.075000000000001
         },
         "alias": "A",
         "templateId": "A___Adenine",
@@ -2046,8 +2046,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 14.025,
-            "y": -6.7
+            "x": 14.9,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2057,8 +2057,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 15.525,
-            "y": -6.7
+            "x": 16.4,
+            "y": -7.575000000000001
         },
         "alias": "iMe-dC",
         "templateId": "unknown_monomer_with_idt_alias_iMe-dC",
@@ -2068,8 +2068,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 17.025,
-            "y": -6.7
+            "x": 17.9,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2079,8 +2079,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 17.025,
-            "y": -8.2
+            "x": 17.9,
+            "y": -9.075000000000001
         },
         "alias": "T",
         "templateId": "T___Thymine",
@@ -2264,8 +2264,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 18.525,
-            "y": -6.7
+            "x": 19.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2275,8 +2275,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 20.025,
-            "y": -6.7
+            "x": 20.9,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2286,8 +2286,8 @@
         "type": "monomer",
         "id": "27",
         "position": {
-            "x": 20.025,
-            "y": -8.2
+            "x": 20.9,
+            "y": -9.075000000000001
         },
         "alias": "A",
         "templateId": "A___Adenine",
@@ -2297,8 +2297,8 @@
         "type": "monomer",
         "id": "28",
         "position": {
-            "x": 21.525,
-            "y": -6.7
+            "x": 22.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2308,8 +2308,8 @@
         "type": "monomer",
         "id": "29",
         "position": {
-            "x": 23.025,
-            "y": -6.7
+            "x": 23.9,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2319,8 +2319,8 @@
         "type": "monomer",
         "id": "30",
         "position": {
-            "x": 23.025,
-            "y": -8.2
+            "x": 23.9,
+            "y": -9.075000000000001
         },
         "alias": "T",
         "templateId": "T___Thymine",
@@ -2330,8 +2330,8 @@
         "type": "monomer",
         "id": "31",
         "position": {
-            "x": 24.525,
-            "y": -6.7
+            "x": 25.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2341,8 +2341,8 @@
         "type": "monomer",
         "id": "32",
         "position": {
-            "x": 26.025,
-            "y": -6.7
+            "x": 26.9,
+            "y": -7.575000000000001
         },
         "alias": "dR",
         "templateId": "dR___Deoxy-Ribose",
@@ -2352,8 +2352,8 @@
         "type": "monomer",
         "id": "33",
         "position": {
-            "x": 26.025,
-            "y": -8.2
+            "x": 26.9,
+            "y": -9.075000000000001
         },
         "alias": "A",
         "templateId": "A___Adenine",
@@ -2363,8 +2363,8 @@
         "type": "monomer",
         "id": "34",
         "position": {
-            "x": 27.525,
-            "y": -6.7
+            "x": 28.4,
+            "y": -7.575000000000001
         },
         "alias": "sP",
         "templateId": "sP___Phosporothioate",
@@ -2374,8 +2374,8 @@
         "type": "monomer",
         "id": "35",
         "position": {
-            "x": 29.025,
-            "y": -6.7
+            "x": 29.9,
+            "y": -7.575000000000001
         },
         "alias": "iMe-dC",
         "templateId": "unknown_monomer_with_idt_alias_iMe-dC",

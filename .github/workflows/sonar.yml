@@ -19,6 +19,9 @@ jobs:
       - name: Install Unzip
         run: sudo apt-get install -y unzip
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: check connection
         run: curl -v https://sonar.epam.com/api/server/version
 

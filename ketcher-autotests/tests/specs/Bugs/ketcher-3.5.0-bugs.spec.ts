@@ -87,7 +87,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     );
     await selectAllStructuresOnCanvas(page);
     const symbolC = getSymbolLocator(page, { symbolAlias: 'C' }).first();
-    await symbolC.click();
     await modifyInRnaBuilder(page, symbolC);
     await Library(page).rnaBuilder.selectBaseSlot();
     await takeMonomerLibraryScreenshot(page);

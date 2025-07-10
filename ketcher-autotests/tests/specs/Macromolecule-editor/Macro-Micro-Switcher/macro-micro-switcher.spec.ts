@@ -104,6 +104,7 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1849,7 +1850,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
   });
 

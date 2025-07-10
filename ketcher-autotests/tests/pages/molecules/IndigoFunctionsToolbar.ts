@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
 
 type IndigoFunctionsToolbarLocators = {
@@ -29,10 +29,16 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     ThreeDViewerButton: page.getByTestId('3D Viewer button'),
   };
 
+  async function waitForIndigoToLoad() {
+    await expect(locators.aromatizeButton).toBeVisible({ timeout: 10000 });
+    await expect(locators.aromatizeButton).toBeEnabled({ timeout: 10000 });
+  }
+
   return {
     ...locators,
 
     async aromatize() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.aromatizeButton.click(),
@@ -40,6 +46,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async dearomatize() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.dearomatizeButton.click(),
@@ -47,6 +54,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async layout() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.layoutButton.click(),
@@ -54,6 +62,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async cleanUp() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.cleanUpButton.click(),
@@ -61,6 +70,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async calculateCIP() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.calculateCIPButton.click(),
@@ -68,6 +78,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async checkStructure() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.checkStructureButton.click(),
@@ -75,6 +86,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async calculatedValues() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.calculatedValuesButton.click(),
@@ -82,6 +94,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async addRemoveExplicitHydrogens() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.addRemoveExplicitHydrogensButton.click(),
@@ -89,6 +102,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async ThreeDViewer() {
+      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.ThreeDViewerButton.click(),

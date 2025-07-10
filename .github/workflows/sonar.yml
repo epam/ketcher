@@ -3,15 +3,18 @@ name: Sonar
 on:
   push:
     branches:
-      - main
+      - master
+      - 'release/**'
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - master
+      - 'release/**'
   workflow_dispatch:
 
 jobs:
   build:
     name: Sonar
-    runs-on: test-sonar
+    runs-on: self-hosted-sonar
     steps:
       - name: check connection
         run: curl -v https://sonar.epam.com/api/server/version

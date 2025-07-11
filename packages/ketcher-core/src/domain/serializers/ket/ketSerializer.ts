@@ -1039,7 +1039,11 @@ export class KetSerializer implements Serializer<Struct> {
       attachmentPoints.forEach((attachmentPoint) => {
         if (
           isNumber(attachmentPoint.leaveAtomId) &&
-          Atom.isHiddenLeavingGroupAtom(struct, attachmentPoint.leaveAtomId)
+          Atom.isHiddenLeavingGroupAtom(
+            struct,
+            attachmentPoint.leaveAtomId,
+            true,
+          )
         ) {
           const attachmentPointClone = new SGroupAttachmentPoint(
             attachmentPoint.atomId,

@@ -34,6 +34,11 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+  removeAbbreviation,
+} from '@utils/sgroup/helpers';
 let point: { x: number; y: number };
 
 test.describe('Superatom S-Group tool', () => {
@@ -237,13 +242,11 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
 
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
+    await removeAbbreviation(page, point);
 
     await takeEditorScreenshot(page);
   });
@@ -258,13 +261,12 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/superatom-one-atom-on-chain.ket');
 
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
     await takeEditorScreenshot(page);
-    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
+
+    await removeAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 

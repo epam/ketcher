@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
@@ -9,8 +10,9 @@ import {
   clickOnCanvas,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectFlexLayoutModeTool,
 } from '@utils';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import {
@@ -22,6 +24,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { removeAbbreviation } from '@utils/sgroup/helpers';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -222,9 +227,135 @@ test.describe('S-Group Properties', () => {
     );
     await verifyFileExport(
       page,
-      'KET/S-Groups/LayoutCheck-expacted.ket',
+      'KET/S-Groups/LayoutCheck-expected.ket',
       FileType.KET,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking Sugar, Base and Phosphate type S-Group Undo/Redo removal', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify that undo and redo work after applying or removing nucleotide component S-group
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups
+     *       2. Remove all three abbreviation
+     *       3. Take screenshot to validate no s-groups on the canvas
+     *       4. Press Undo tree times
+     *       5. Take screenshot to validate all s-groups returned back
+     *       6. Press Redo tree times
+     *       7. Take screenshot to validate all s-groups got removed
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/LayoutCheck.ket',
+    );
+    let point = await getAtomByIndex(page, { label: 'C' }, 0);
+    await removeAbbreviation(page, point);
+    point = await getAtomByIndex(page, { label: 'C' }, 7);
+    await removeAbbreviation(page, point);
+    point = await getAtomByIndex(page, { label: 'C' }, 15);
+    await removeAbbreviation(page, point);
+
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Delete removes the entire S-group and then it can be restored by Undo/Redo', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify that Delete removes the entire S-group and then it can be restored by Undo/Redo
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups
+     *       2. Select all structures on the canvas
+     *       3. Press Erase button to delete
+     *       4. Press Undo
+     *       5. Take screenshot to validate all structures returned back
+     *       6. Press Redo
+     *       7. Take screenshot to validate all structures got removed
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/LayoutCheck.ket',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check switching to Macro mode and back to Micro for structure with added Nucleotides components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: 1. Check switching to Macro mode and back to Micro for structure with added Nucleotides components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups
+     *       2. Switch to Macromolecules canvas
+     *       3. Switch back to to Micromolecules canvas
+     *       3. Take screenshot to validate looks correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
+    );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectFlexLayoutModeTool(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+  });
+
+  test('
+
+Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
+', async ({ page }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify that after selecting Sugar Nucleotide conponent and clicking Save, the S-group is applied to the selected structure
+     *
+     * Case: 1. Put Benzene Ring on the canvas
+     *       2. Select it
+     *       3. Press S-Group button to open S-Group Properties window
+     *       4. Set Nucleotide conponent --> Sugar options --> press Ok
+     *       5. Take screenshot to validate Sugar type S-Group creation
+     *
+     *  Version 3.6
+     */
+    await selectRingButton(page, RingButton.Benzene);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.NucleotideComponent,
+      Component: ComponentOption.Sugar,
+    });
     await takeEditorScreenshot(page);
   });
 

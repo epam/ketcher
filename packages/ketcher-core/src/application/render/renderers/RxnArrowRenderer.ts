@@ -240,7 +240,6 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
-      .attr('data-testid', 'rxn-arrow')
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
@@ -252,8 +251,7 @@ export class RxnArrowRenderer extends BaseRenderer {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
-        .attr('data-testid', 'rxn-arrow-path')
-        .attr('data-arrow-type', this.arrow.type)
+        .attr('data-testid', this.arrow.type + '-arrow')
         .attr('fill', 'none')
         .attr('stroke', '#000')
         .attr('stroke-width', ARROW_STROKE_WIDTH)

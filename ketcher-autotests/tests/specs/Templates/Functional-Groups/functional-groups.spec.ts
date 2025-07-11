@@ -40,9 +40,11 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
-import { expandAbbreviation, removeAbbreviation } from '@utils/sgroup/helpers';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+  removeAbbreviation,
+} from '@utils/sgroup/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 let point: { x: number; y: number };
 
@@ -81,9 +83,7 @@ test.describe('Functional Groups', () => {
     );
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).click(
-      SuperatomOption.ContractAbbreviation,
-    );
+    await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
 
     await removeAbbreviation(page, page.getByText('Bz'));
@@ -103,15 +103,11 @@ test.describe('Functional Groups', () => {
     );
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, middleOfTheScreen);
 
     await takeEditorScreenshot(page);
 
-    await ContextMenu(page, middleOfTheScreen).click(
-      SuperatomOption.RemoveAbbreviation,
-    );
+    await removeAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 
@@ -702,18 +698,10 @@ test.describe('Functional Groups', () => {
     const middleOfTheScreen = await getCachedBodyCenter(page);
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/unknown-superatom.mol');
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ExpandAbbreviation,
-      );
-    });
+    await expandAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ContractAbbreviation,
-      );
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 
@@ -748,11 +736,7 @@ test.describe('Functional Groups', () => {
     );
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ContractAbbreviation,
-      );
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
   });
 

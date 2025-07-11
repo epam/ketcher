@@ -41,8 +41,6 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   contractAbbreviation,
   expandAbbreviation,
@@ -564,11 +562,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expanded-fg-benzene.mol',
     );
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ContractAbbreviation,
-      );
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -754,30 +748,19 @@ test.describe('Templates - Functional Group Tools3', () => {
     await selectAllStructuresOnCanvas(page);
 
     const bocSuperatom = page.getByText('Boc');
-    await waitForRender(page, async () => {
-      await ContextMenu(page, bocSuperatom).click(
-        SuperatomOption.ExpandAbbreviation,
-      );
-    });
-
+    await expandAbbreviation(page, bocSuperatom);
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
 
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        SuperatomOption.ContractAbbreviation,
-      );
-    });
+    await contractAbbreviation(page, middleOfTheScreen);
 
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
 
-    await waitForRender(page, async () => {
-      await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
-    });
+    await removeAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 

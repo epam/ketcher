@@ -30,8 +30,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import {

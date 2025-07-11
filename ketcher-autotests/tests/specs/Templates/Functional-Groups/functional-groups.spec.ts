@@ -40,8 +40,6 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   contractAbbreviation,
   expandAbbreviation,

@@ -1,7 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';

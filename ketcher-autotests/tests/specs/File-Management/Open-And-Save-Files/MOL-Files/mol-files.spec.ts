@@ -956,4 +956,126 @@ test.describe('Open and Save file', () => {
       hideMonomerPreview: true,
     });
   });
+
+  test('Case 69: Import corrupted or invalid MOL file (e.g. broken atom block)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import corrupted or invalid MOL file (e.g. broken atom block).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/corrupted-atom-block.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 70: Export mapped monomer to MOL', async ({ page }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export mapped monomer to MOL.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/different-class-peptide.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/different-class-peptide-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/different-class-peptide-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 71: Export custom (unmapped) monomer to MOL', async ({ page }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export custom (unmapped) monomer to MOL.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/Different Structure Peptide.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Different Structure Peptide-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Different Structure Peptide-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 72: Export structure containing both mapped and custom monomers', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export structure containing both mapped and custom monomers.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
 });

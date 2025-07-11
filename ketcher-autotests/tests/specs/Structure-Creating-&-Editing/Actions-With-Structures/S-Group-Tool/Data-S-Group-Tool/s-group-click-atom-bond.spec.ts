@@ -27,8 +27,6 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import {
   ComponentOption,
-  ContextOption,
-  PropertyLabelType,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

@@ -121,7 +121,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   minDist = minDist || maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
-  restruct.atoms.forEach((atom, aid) => {
+  restruct.visibleAtoms.forEach((atom, aid) => {
     if (aid === skipId) return;
 
     const dist = Vec2.dist(pos, atom.a.pp);
@@ -154,7 +154,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
   let minCDist = minDist;
 
-  restruct.bonds.forEach((bond, bid) => {
+  restruct.visibleBonds.forEach((bond, bid) => {
     if (bid === skipId) return;
 
     const p1 = restruct.atoms.get(bond.b.begin).a.pp;
@@ -169,7 +169,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
     }
   });
 
-  restruct.bonds.forEach((bond, bid) => {
+  restruct.visibleBonds.forEach((bond, bid) => {
     if (bid === skipId) return;
 
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1);

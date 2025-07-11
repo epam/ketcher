@@ -338,7 +338,11 @@ export class Bond extends BaseMicromoleculeEntity {
     return sGroup1 !== sGroup2;
   }
 
-  public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
+  public static isBondToHiddenLeavingGroup(
+    struct: Struct,
+    bond: Bond,
+    includeAtomsInCollapsedSgroups = false,
+  ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
     const endSuperatomAttachmentPoint =
@@ -346,10 +350,20 @@ export class Bond extends BaseMicromoleculeEntity {
 
     return (
       (beginSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(struct, bond.begin) &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.begin,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(struct, bond.end) &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.end,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
   }

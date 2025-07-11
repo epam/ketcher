@@ -228,7 +228,6 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        true,
       ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
     );
   };
@@ -346,16 +345,11 @@ class ReAtom extends ReObject {
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
 
-    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
-      return;
-    }
-
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
-        false,
       )
     ) {
       const isPositionAtom =
@@ -391,6 +385,10 @@ class ReAtom extends ReObject {
           true,
         );
       }
+      return;
+    }
+
+    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
       return;
     }
 

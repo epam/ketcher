@@ -1524,34 +1524,19 @@ function bracket(
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
-  isBracketContainAttachment = false,
 ) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
   const halfBracketHeight = 0.5;
-  let bracketPoint0, bracketPoint1;
-  if (isBracketContainAttachment) {
-    const longHalfBracketHeight = -0.8;
-    const shortHalfBracketHeight = 0.2;
-    bracketPoint0 = bondCenter.addScaled(
-      bracketDirection,
-      shortHalfBracketHeight * bracketHeight,
-    );
-    bracketPoint1 = bondCenter.addScaled(
-      bracketDirection,
-      longHalfBracketHeight * bracketHeight,
-    );
-  } else {
-    bracketPoint0 = bondCenter.addScaled(
-      bracketDirection,
-      -halfBracketHeight * bracketHeight,
-    );
-    bracketPoint1 = bondCenter.addScaled(
-      bracketDirection,
-      halfBracketHeight * bracketHeight,
-    );
-  }
+  const bracketPoint0 = bondCenter.addScaled(
+    bracketDirection,
+    -halfBracketHeight * bracketHeight,
+  );
+  const bracketPoint1 = bondCenter.addScaled(
+    bracketDirection,
+    halfBracketHeight * bracketHeight,
+  );
   const bracketArc0 = bracketPoint0.addScaled(
     bracketAngleDirection,
     -bracketWidth,

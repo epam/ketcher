@@ -3,7 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Pool } from 'domain/entities/pool';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
-import { FixedPrecisionCoordinates } from 'domain/entities';
+import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export type Line = [Vec2, Vec2];
 

@@ -175,7 +175,7 @@ export class Struct {
       bidMap,
     );
     cloneStruct.findConnectedComponents();
-    cloneStruct.setImplicitHydrogen();
+    cloneStruct.setImplicitHydrogen(undefined, true);
     cloneStruct.setStereoLabelsToAtoms();
     cloneStruct.markFragments();
     return cloneStruct;
@@ -405,13 +405,19 @@ export class Struct {
     this.atoms.get(aid)!.sgs.add(sgid);
   }
 
-  calcConn(atom) {
+  calcConn(atom, includeAtomsInCollapsedSgroups = false) {
     let conn = 0;
     for (let i = 0; i < atom.neighbors.length; ++i) {
       const hb = this.halfBonds.get(atom.neighbors[i])!;
       const bond = this.bonds.get(hb.bid)!;
 
-      if (Bond.isBondToHiddenLeavingGroup(this, bond)) {
+      if (
+        Bond.isBondToHiddenLeavingGroup(
+          this,
+          bond,
+          includeAtomsInCollapsedSgroups,
+        )
+      ) {
         continue;
       }
 
@@ -1040,14 +1046,13 @@ export class Struct {
     };
   }
 
-  calcImplicitHydrogen(aid: number) {
-    if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
-      return;
-    }
-
+  calcImplicitHydrogen(aid: number, includeAtomsInCollapsedSgroups = false) {
     const atom = this.atoms.get(aid)!;
     const charge = atom.charge || 0;
-    const [conn, isAromatic] = this.calcConn(atom);
+    const [conn, isAromatic] = this.calcConn(
+      atom,
+      includeAtomsInCollapsedSgroups,
+    );
     let correctConn = conn;
     atom.badConn = false;
 
@@ -1094,7 +1099,10 @@ export class Struct {
     }
   }
 
-  setImplicitHydrogen(list?: Array<number>) {
+  setImplicitHydrogen(
+    list?: Array<number>,
+    includeAtomsInCollapsedSgroups = false,
+  ) {
     this.sgroups.forEach((item) => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H') {
         this.atoms.get(item.atoms[0])!.hasImplicitH = true;
@@ -1103,12 +1111,12 @@ export class Struct {
 
     if (!list) {
       this.atoms.forEach((_atom, aid) => {
-        this.calcImplicitHydrogen(aid);
+        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
       });
     } else {
       list.forEach((aid) => {
         if (this.atoms.get(aid)) {
-          this.calcImplicitHydrogen(aid);
+          this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
         }
       });
     }

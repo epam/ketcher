@@ -824,11 +824,13 @@ export class Atom extends BaseMicromoleculeEntity {
     struct: Struct,
     atomId: number,
     searchBySgroups = false,
+    includeAtomsInCollapsedSgroups = false,
   ) {
     const atom = struct.atoms.get(atomId);
 
     if (
       atom &&
+      !includeAtomsInCollapsedSgroups &&
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         struct.sgroups,

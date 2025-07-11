@@ -720,8 +720,9 @@ export class Atom extends BaseMicromoleculeEntity {
   public static getSuperAtomAttachmentPointByAttachmentAtom(
     struct: Struct,
     atomId: number,
+    searchBySgroups = false,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId);
+    const sgroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.atomId === atomId);
@@ -730,11 +731,12 @@ export class Atom extends BaseMicromoleculeEntity {
   public static getSuperAtomAttachmentPointByLeavingGroup(
     structOrSgroup: Struct | SGroup,
     atomId: number,
+    searchBySgroups = false,
   ) {
     const sgroup =
       structOrSgroup instanceof SGroup
         ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId);
+        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
 
     return sgroup
       ?.getAttachmentPoints()
@@ -744,13 +746,18 @@ export class Atom extends BaseMicromoleculeEntity {
   public static isSuperatomLeavingGroupAtom(
     structOrSgroup: Struct | SGroup,
     atomId?: number,
+    searchBySgroups = false,
   ) {
     if (atomId === undefined) {
       return false;
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(structOrSgroup, atomId),
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(
+        structOrSgroup,
+        atomId,
+        searchBySgroups,
+      ),
     );
   }
 
@@ -768,6 +775,7 @@ export class Atom extends BaseMicromoleculeEntity {
     struct: Struct,
     attachmentAtomId?: number,
     leavingGroupAtomid?: number,
+    searchBySgroups = false,
   ) {
     const bonds = struct.bonds;
     const atomId = isNumber(attachmentAtomId)
@@ -775,8 +783,16 @@ export class Atom extends BaseMicromoleculeEntity {
       : (leavingGroupAtomid as number);
     const atom = struct.atoms.get(atomId);
     const attachmentPoint = isNumber(attachmentAtomId)
-      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId)
-      : Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId);
+      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(
+          struct,
+          atomId,
+          searchBySgroups,
+        )
+      : Atom.getSuperAtomAttachmentPointByLeavingGroup(
+          struct,
+          atomId,
+          searchBySgroups,
+        );
     const attachmentPointAtomBonds =
       attachmentPoint &&
       bonds.filter(
@@ -804,10 +820,17 @@ export class Atom extends BaseMicromoleculeEntity {
     return attachmentAtomExternalConnection;
   }
 
-  public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {
+  public static isHiddenLeavingGroupAtom(
+    struct: Struct,
+    atomId: number,
+    searchBySgroups = false,
+  ) {
+    const atom = struct.atoms.get(atomId);
+
     if (
+      atom &&
       FunctionalGroup.isAtomInContractedFunctionalGroup(
-        struct.atoms.get(atomId)!,
+        atom,
         struct.sgroups,
         struct.functionalGroups,
       )
@@ -816,12 +839,17 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     const attachmentAtomExternalConnections =
-      Atom.getAttachmentAtomExternalConnections(struct, undefined, atomId);
+      Atom.getAttachmentAtomExternalConnections(
+        struct,
+        undefined,
+        atomId,
+        searchBySgroups,
+      );
     const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
       struct,
       atomId,
     );
-    const sGroup = struct.getGroupFromAtomId(atomId);
+    const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
     const isMonomer = sGroup instanceof MonomerMicromolecule;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
@@ -829,7 +857,7 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     return (
-      Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
+      Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
       attachmentAtomExternalConnections &&
       attachmentAtomExternalConnections.find((_, bond) =>
         bond.begin === attachmentPoint?.atomId

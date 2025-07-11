@@ -1224,14 +1224,32 @@ export class Struct {
     });
   }
 
-  getGroupIdFromAtomId(atomId: number): number | null {
-    const firstSgroupId = [...(this.atoms.get(atomId)?.sgs.values() || [])][0];
+  getGroupIdFromAtomId(atomId: number, searchBySgroups = false): number | null {
+    if (searchBySgroups) {
+      // Search by sgroups is more expensive, but allows to find
+      // functional groups for atoms which are not exist in struct already.
+      // F.e. if atom already deleted and it needs to find its functional group
+      for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+        if (sgroup.atoms.includes(atomId)) return groupId;
+      }
+      return null;
+    } else {
+      const firstSgroupId = [
+        ...(this.atoms.get(atomId)?.sgs.values() || []),
+      ][0];
 
-    return isNumber(firstSgroupId) ? firstSgroupId : null;
+      return isNumber(firstSgroupId) ? firstSgroupId : null;
+    }
   }
 
-  getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromAtomId(atomId as number);
+  getGroupFromAtomId(
+    atomId: number | undefined,
+    searchBySgroups = false,
+  ): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromAtomId(
+      atomId as number,
+      searchBySgroups,
+    );
     return this.sgroups?.get(sgroupId as number);
   }
 

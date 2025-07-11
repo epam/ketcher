@@ -28,6 +28,8 @@ import {
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
+  Arrows,
+  Pluses,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -77,6 +79,10 @@ import {
   performVerticalFlip,
   rotateToCoordinates,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import {
+  getArrowLocator,
+  getPlusLocator,
+} from '@utils/canvas/arrow-signes/getArrow';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -1223,17 +1229,17 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await page.getByTestId('rxn-arrow').first().hover();
+    await getArrowLocator(page, Arrows.OpenAngle).hover();
     await dragMouseTo(200, 200, page);
-    await page.getByTestId('rxn-arrow').nth(1).hover();
+    await getArrowLocator(page, Arrows.FilledBow).hover();
     await dragMouseTo(200, 300, page);
-    await page.getByTestId('rxn-arrow').nth(4).hover();
+    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
     await dragMouseTo(200, 350, page);
-    await page.getByTestId('rxn-arrow').nth(8).hover();
+    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
     await dragMouseTo(200, 400, page);
-    await page.getByTestId('rxn-arrow').nth(11).hover();
+    await getArrowLocator(page, Arrows.EllipticalArcFilledTriangle).hover();
     await dragMouseTo(200, 450, page);
-    await page.getByTestId('rxn-arrow').nth(13).hover();
+    await getPlusLocator(page, Pluses.Plus).hover();
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1385,17 +1391,17 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await page.getByTestId('rxn-arrow').first().hover();
+    await getArrowLocator(page, Arrows.OpenAngle).hover();
     await dragMouseTo(200, 200, page);
-    await page.getByTestId('rxn-arrow').nth(1).hover();
+    await getArrowLocator(page, Arrows.FilledBow).hover();
     await dragMouseTo(200, 300, page);
-    await page.getByTestId('rxn-arrow').nth(4).hover();
+    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
     await dragMouseTo(200, 350, page);
-    await page.getByTestId('rxn-arrow').nth(8).hover();
+    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
     await dragMouseTo(200, 400, page);
-    await page.getByTestId('rxn-arrow').nth(11).hover();
+    await getArrowLocator(page, Arrows.EllipticalArcFilledBow).hover();
     await dragMouseTo(200, 450, page);
-    await page.getByTestId('rxn-arrow').nth(13).hover();
+    await getPlusLocator(page, Pluses.Plus).hover();
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

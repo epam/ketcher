@@ -10,8 +10,15 @@ import {
   clickOnCanvas,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  ZoomInByKeyboard,
+  ZoomOutByKeyboard,
+  BondType,
 } from '@utils';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
@@ -27,6 +34,7 @@ import {
 import { removeAbbreviation } from '@utils/sgroup/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -187,6 +195,8 @@ test.describe('S-Group Properties', () => {
      * Description: 1. Check that in macromolecules mode, these structures appear as any other superatom
      *                 S-group (no brackets, no label, just a chemical structure).
      *              2. Check that the labels Phosphate, Sugar, and Base have the first letter capital
+     *              3. Check switching to Macro mode, then switch between Sequence, Flex, Snake and back
+     *                 to Micro for structure with added Nucleotides components
      *
      * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups
      *       2. Switch to Macromolecules canvas
@@ -201,6 +211,14 @@ test.describe('S-Group Properties', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -332,30 +350,108 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('
-
-Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
-', async ({ page }) => {
+  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed in mode', async ({
+    page,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
-     * Description: Verify that after selecting Sugar Nucleotide conponent and clicking Save, the S-group is applied to the selected structure
+     * Description: Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
      *
-     * Case: 1. Put Benzene Ring on the canvas
-     *       2. Select it
-     *       3. Press S-Group button to open S-Group Properties window
+     * Case: 1. Load three structures on the canvas
+     *       2. Zoom In three times
+     *       3. Select all structures on the canvas
      *       4. Set Nucleotide conponent --> Sugar options --> press Ok
      *       5. Take screenshot to validate Sugar type S-Group creation
      *
      *  Version 3.6
      */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/No Nucleotide Componets.ket',
+    );
+    await ZoomInByKeyboard(page);
+    await ZoomInByKeyboard(page);
+    await ZoomInByKeyboard(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.NucleotideComponent,
       Component: ComponentOption.Sugar,
     });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed out mode', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
+     *
+     * Case: 1. Load three structures on the canvas
+     *       2. Zoom Out three times
+     *       3. Select all structures on the canvas
+     *       4. Set Nucleotide conponent --> Sugar options --> press Ok
+     *       5. Take screenshot to validate Sugar type S-Group creation
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/No Nucleotide Componets.ket',
+    );
+    await ZoomOutByKeyboard(page);
+    await ZoomOutByKeyboard(page);
+    await ZoomOutByKeyboard(page);
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.NucleotideComponent,
+      Component: ComponentOption.Sugar,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that multiple components can be marked in one structure', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify that multiple components can be marked in one structure (e.g. base + sugar + phosphate)
+     *              ( all three can coexist; no overwriting or UI collision )
+     *
+     * Case: 1. Put Benzene ring on the canvas
+     *       2. Create Nucleotide conponent of every type for each single bons
+     *       3. Take screenshot to validate creations
+     *
+     *  Version 3.6
+     */
+    await selectRingButton(page, RingButton.Benzene);
+    await clickInTheMiddleOfTheScreen(page);
+
+    const bond1 = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const bond2 = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+    const bond3 = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+
+    await LeftToolbar(page).sGroup();
+    await page.mouse.click(bond1.x, bond1.y);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.NucleotideComponent,
+      Component: ComponentOption.Sugar,
+    });
+
+    await page.mouse.click(bond2.x, bond2.y);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.NucleotideComponent,
+      Component: ComponentOption.Base,
+    });
+
+    await page.mouse.click(bond3.x, bond3.y);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.NucleotideComponent,
+      Component: ComponentOption.Phosphate,
+    });
+
     await takeEditorScreenshot(page);
   });
 

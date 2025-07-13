@@ -1047,6 +1047,10 @@ export class Struct {
   }
 
   calcImplicitHydrogen(aid: number, includeAtomsInCollapsedSgroups = false) {
+    if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
+      return;
+    }
+
     const atom = this.atoms.get(aid)!;
     const charge = atom.charge || 0;
     const [conn, isAromatic] = this.calcConn(

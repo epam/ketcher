@@ -68,11 +68,16 @@ export const DragGhost = () => {
     }
 
     animateRef.current = requestAnimationFrame(() => {
-      element.style.transform = `translate(${
-        libraryItemDragData.position.x
-      }px, ${libraryItemDragData.position.y}px) scale(${
-        dragOverCanvas ? transform.k : 1
-      })`;
+      const { x, y } = libraryItemDragData.position;
+
+      if (dragOverCanvas && canvasBBoxRef.current) {
+        const scale = transform.k;
+
+        element.style.transformOrigin = '0 0';
+        element.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      } else {
+        element.style.transform = `translate(${x}px, ${y}px)`;
+      }
     });
 
     return () => {
@@ -90,10 +95,7 @@ export const DragGhost = () => {
   return (
     <div className={styles.dragGhost} ref={ghostWrapperRef}>
       {isLibraryItemRnaPreset(libraryItemDragData.item) ? (
-        <GhostRnaPreset
-          preset={libraryItemDragData.item}
-          zoomFactor={transform.k}
-        />
+        <GhostRnaPreset preset={libraryItemDragData.item} />
       ) : (
         <GhostMonomer monomerItem={libraryItemDragData.item} />
       )}

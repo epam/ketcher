@@ -179,11 +179,15 @@ export class FunctionalGroup {
 
   static isAtomInContractedFunctionalGroup(
     atom: Atom,
-    sgroups,
+    sgroups: Map<number, ReSGroup> | Pool<SGroup>,
     functionalGroups,
   ): boolean {
     return [...atom.sgs.values()].some((sgid) => {
       const sgroup = sgroups.get(sgid);
+
+      if (!sgroup) {
+        return false;
+      }
 
       return FunctionalGroup.isContractedFunctionalGroup(
         'item' in sgroup ? sgroup.item : sgroup,

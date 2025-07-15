@@ -152,7 +152,11 @@ const Open: FC<Props> = (props) => {
   };
 
   const openHandler = () => {
-    onOk({ structStr, fragment: false });
+    setIsLoading(true);
+    setTimeout(() => {
+      onOk({ structStr, fragment: false });
+      setIsLoading(false);
+    }, 0);
   };
 
   const withFooterContent =

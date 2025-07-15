@@ -25,7 +25,6 @@ import {
 } from 'domain/entities';
 import {
   AtomAdd,
-  AtomAttr,
   BondAdd,
   BondAttr,
   BondDelete,
@@ -172,14 +171,6 @@ export function fromBondAddition(
         }
       });
     }
-  }
-
-  if (atomGetAttr(reStruct, beginAtomId, 'label') === '*') {
-    action.addOp(new AtomAttr(beginAtomId, 'label', 'C').perform(reStruct));
-  }
-
-  if (atomGetAttr(reStruct, endAtomId, 'label') === '*') {
-    action.addOp(new AtomAttr(endAtomId, 'label', 'C').perform(reStruct));
   }
 
   const newBondId = (

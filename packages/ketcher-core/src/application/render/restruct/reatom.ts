@@ -1040,6 +1040,12 @@ function buildLabel(
 
   const { previewOpacity } = options;
 
+  // not properly centered otherwise
+  if (label.text === '*') {
+    ps.x = ps.x - 1;
+    ps.y = ps.y + 3;
+  }
+
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font,
     'font-size': fontszInPx,

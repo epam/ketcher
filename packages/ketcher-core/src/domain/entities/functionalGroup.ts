@@ -182,11 +182,6 @@ export class FunctionalGroup {
     sgroups,
     functionalGroups,
   ): boolean {
-    // TODO: Hack to fix failing unit test @ editor/actions/bond.test.ts, find a way to remove it
-    if (typeof atom.sgs.values !== 'function') {
-      return false;
-    }
-
     return [...atom.sgs.values()].some((sgid) => {
       const sgroup = sgroups.get(sgid);
 

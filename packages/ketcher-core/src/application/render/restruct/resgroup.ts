@@ -35,6 +35,7 @@ import { tfx } from 'utilities';
 import BracketParams from '../bracket-params';
 import { RaphaelPaper } from 'raphael';
 import { RenderOptions } from '../render.types';
+
 interface SGroupdrawBracketsOptions {
   set: any;
   render: Render;

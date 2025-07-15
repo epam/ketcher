@@ -445,7 +445,6 @@ class SelectTool implements Tool {
           atomFromStruct,
           sgroups,
           functionalGroups,
-          true,
         )
       )
         atomResult.push(atomId);

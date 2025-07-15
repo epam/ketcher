@@ -83,7 +83,13 @@ function ketcherCheck(struct, checkParams) {
 export function check(optsTypes) {
   return (dispatch, getState) => {
     const { editor, server } = getState();
-    const ketcherErrors = ketcherCheck(editor.struct(), optsTypes);
+    const struct = editor.struct();
+
+    // recalculate implicit hydrogens before validation
+    // because for atoms in collapsed sgroups it can be not calculated
+    struct.setImplicitHydrogen(undefined, true);
+
+    const ketcherErrors = ketcherCheck(struct, optsTypes);
 
     const options = getState().options.getServerSettings();
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };

@@ -15,11 +15,14 @@
  ***************************************************************************/
 
 import {
+  Atom,
+  Bond,
   Box2Abs,
   FunctionalGroup,
   Pile,
   Pool,
   RGroupAttachmentPoint,
+  SGroup,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -67,6 +70,8 @@ class ReStruct {
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
+  public visibleAtoms: Map<number, ReAtom> = new Map();
+  public visibleBonds: Map<number, ReBond> = new Map();
   public bonds: Map<number, ReBond> = new Map();
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
@@ -88,6 +93,7 @@ class ReStruct {
   public connectedComponents: Pool = new Pool();
   private ccFragmentType: Pool = new Pool();
   private structChanged = false;
+  public needRecalculateVisibleAtomsAndBonds = false;
 
   // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
   private atomsChanged: Map<number, 1> = new Map();
@@ -185,7 +191,6 @@ class ReStruct {
         atom,
         sgroups,
         functionalGroups,
-        false,
       );
     });
   }
@@ -447,9 +452,49 @@ class ReStruct {
     this.eachItem((item) => this.clearVisel(item.visel));
   }
 
+  recalculateVisibleAtomsAndBonds() {
+    this.visibleAtoms = new Map();
+    this.visibleBonds = new Map();
+
+    this.atoms.forEach((atom, aid) => {
+      if (
+        (!FunctionalGroup.isAtomInContractedFunctionalGroup(
+          atom.a,
+          this.molecule.sgroups,
+          this.molecule.functionalGroups,
+        ) ||
+          this.molecule
+            .getGroupFromAtomId(aid)
+            ?.getContractedPosition(this.molecule).atomId === aid) &&
+        !Atom.isHiddenLeavingGroupAtom(this.molecule, aid)
+      ) {
+        this.visibleAtoms.set(aid, atom);
+      }
+    });
+
+    this.bonds.forEach((bond, bid) => {
+      if (
+        !FunctionalGroup.isBondInContractedFunctionalGroup(
+          bond.b,
+          this.molecule.sgroups,
+          this.molecule.functionalGroups,
+        ) &&
+        !SGroup.isBondInContractedSGroup(bond.b, this.molecule.sgroups) &&
+        !Bond.isBondToHiddenLeavingGroup(this.molecule, bond.b)
+      ) {
+        this.visibleBonds.set(bid, bond);
+      }
+    });
+  }
+
   update(force: boolean): boolean {
     // eslint-disable-line max-statements
     force = force || !this.initialized;
+
+    if (force || this.needRecalculateVisibleAtomsAndBonds) {
+      this.recalculateVisibleAtomsAndBonds();
+      this.needRecalculateVisibleAtomsAndBonds = false;
+    }
 
     // check items to update
     Object.keys(ReStruct.maps).forEach((map) => {

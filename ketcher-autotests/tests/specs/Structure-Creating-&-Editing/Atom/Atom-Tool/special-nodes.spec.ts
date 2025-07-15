@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -105,7 +106,7 @@ test.describe('Special node', () => {
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).checkStructure();
       await takeEditorScreenshot(page, {
-        mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+        mask: [StructureCheckDialog(page).lastCheckInfo],
       });
     });
   }

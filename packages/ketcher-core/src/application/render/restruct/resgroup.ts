@@ -17,7 +17,6 @@
 import {
   Box2Abs,
   FunctionalGroup,
-  Pile,
   SGroup,
   Vec2,
   MonomerMicromolecule,
@@ -36,12 +35,11 @@ import { tfx } from 'utilities';
 import BracketParams from '../bracket-params';
 import { RaphaelPaper } from 'raphael';
 import { RenderOptions } from '../render.types';
+
 interface SGroupdrawBracketsOptions {
   set: any;
   render: Render;
   sgroup: SGroup;
-  crossBonds: { [key: number]: Array<number> };
-  atomSet: Pile;
   bracketBox: Box2Abs;
   direction: Vec2;
   lowerIndexText?: string | null;
@@ -79,8 +77,6 @@ class ReSGroup extends ReObject {
   draw(remol: ReStruct, sgroup: SGroup): any {
     this.render = remol.render;
     let set = this.render.paper.set();
-    const atomSet = new Pile(sgroup.atoms);
-    const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet);
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
     const bracketBox = sgroup.bracketBox;
     const direction = sgroup.bracketDirection;
@@ -90,8 +86,6 @@ class ReSGroup extends ReObject {
         set,
         render: this.render,
         sgroup,
-        crossBonds,
-        atomSet,
         bracketBox,
         direction,
       };
@@ -311,8 +305,6 @@ class ReSGroup extends ReObject {
 function SGroupdrawBrackets({
   set,
   render,
-  crossBonds,
-  atomSet,
   bracketBox,
   direction,
   lowerIndexText,
@@ -320,19 +312,9 @@ function SGroupdrawBrackets({
   indexAttribute,
   superatomClass,
 }: SGroupdrawBracketsOptions): void {
-  const attachmentPoints = [...atomSet].reduce((arr, atomId) => {
-    const rgroupAttachmentPointIds =
-      render.ctab.molecule.getRGroupAttachmentPointsByAtomId(atomId);
-    return [...arr, ...rgroupAttachmentPointIds];
-  }, []);
-  const crossBondsPerAtom = Object.values(crossBonds);
-  const crossBondsValues = crossBondsPerAtom.flat();
   const brackets = getBracketParameters(bracketBox, direction);
   let rightBracketIndex = -1;
-  const isBracketContainAttachment =
-    crossBondsValues.length === 2 &&
-    crossBondsPerAtom.length === 1 &&
-    !!attachmentPoints.length;
+
   for (let i = 0; i < brackets.length; ++i) {
     const bracket = brackets[i];
     const path = draw.bracket(
@@ -343,7 +325,6 @@ function SGroupdrawBrackets({
       bracket.width,
       bracket.height,
       render.options,
-      isBracketContainAttachment,
     );
     set.push(path);
     if (

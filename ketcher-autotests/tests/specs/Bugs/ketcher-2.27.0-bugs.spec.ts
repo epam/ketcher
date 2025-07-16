@@ -12,7 +12,6 @@ import {
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
-  pressButton,
   takeMonomerLibraryScreenshot,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -50,6 +49,7 @@ import {
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -418,7 +418,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
     );
     await LeftToolbar(page).stereochemistry();
-    await pressButton(page, 'Apply');
+    await EnhancedStereochemistry(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });
 

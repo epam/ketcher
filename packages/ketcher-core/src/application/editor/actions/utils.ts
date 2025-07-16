@@ -19,12 +19,12 @@ import {
   AtomAttributes,
   AtomQueryProperties,
   Bond,
+  SGroup,
   Struct,
   Vec2,
 } from 'domain/entities';
 
 import closest from '../shared/closest';
-import { difference } from 'lodash';
 import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
@@ -227,12 +227,18 @@ export function getRelSGroupsBySelection(
   struct: Struct,
   selectedAtoms: number[],
 ) {
-  return struct.sgroups.filter(
-    (_sgid, sg) =>
-      !sg.data.attached &&
-      !sg.data.absolute &&
-      difference(sg.atoms, selectedAtoms).length === 0,
-  );
+  const sgroups = new Set<SGroup>();
+
+  selectedAtoms.forEach((atom) => {
+    struct.atoms.get(atom)?.sgs.forEach((sgid) => {
+      const sgroup = struct.sgroups.get(sgid);
+      if (sgroup && !sgroup.data.attached && !sgroup.data.absolute) {
+        sgroups.add(sgroup);
+      }
+    });
+  });
+
+  return sgroups;
 }
 
 export function isAttachmentBond(

@@ -33,7 +33,7 @@ function ErrorsCheck(props) {
           </div>
         ) : (
           moleculeErrorsTypes.map((type, key) => (
-            <div key={key}>
+            <div key={key} data-testid={`${key}-warning`}>
               <dt>{getOptionName(type)} warning:</dt>
               <dd>{moleculeErrors[type]}</dd>
             </div>

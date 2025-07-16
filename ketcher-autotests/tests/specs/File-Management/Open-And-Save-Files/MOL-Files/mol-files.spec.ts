@@ -804,6 +804,17 @@ test.describe('Open and Save file', () => {
     await setACSSettings(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Case 62: Import monomer that fully matches library (class, symbol, InChI)', async ({

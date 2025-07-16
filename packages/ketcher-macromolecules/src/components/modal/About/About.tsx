@@ -62,7 +62,7 @@ export function About({
           </div>
           <div className="body">
             <dl>
-              <dt data-testid="build-version">
+              <dt>
                 <a
                   href={overviewLink}
                   target="_blank"
@@ -71,7 +71,7 @@ export function About({
                   Version {version}
                 </a>
               </dt>
-              <dd data-testid="build-time">
+              <dd>
                 Build at <time>{formattedDate}</time>
               </dd>
               <div className="infoLinks">
@@ -103,7 +103,7 @@ export function About({
                   Indigo Toolkit
                 </a>
               </div>
-              <div data-testid="build-indigo-version">
+              <div>
                 {indigoVersion ? (
                   <dd>Version {indigoVersion}</dd>
                 ) : (
@@ -113,11 +113,7 @@ export function About({
             </dl>
           </div>
           <div className="aboutFooter">
-            <button
-              onClick={handleClose}
-              data-testid="ok-button"
-              className="okButton"
-            >
+            <button onClick={handleClose} className="okButton">
               Ok
             </button>
           </div>

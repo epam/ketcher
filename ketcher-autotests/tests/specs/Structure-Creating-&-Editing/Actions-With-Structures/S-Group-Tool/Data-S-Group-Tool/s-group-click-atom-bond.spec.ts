@@ -40,6 +40,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -426,7 +428,7 @@ test.describe('S-Group Properties', () => {
      *       3. Take screenshot to validate export work correct
      *
      *  Version 3.6
-     * Works wrong becaus if bug:
+     * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7410
      */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -458,7 +460,7 @@ test.describe('S-Group Properties', () => {
      *       3. Take screenshot to validate export work correct
      *
      *  Version 3.6
-     * Works wrong becaus if bug:
+     * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7411
      */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -561,7 +563,7 @@ test.describe('S-Group Properties', () => {
      * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups
      *       2. Switch to Macromolecules canvas
      *       3. Switch back to to Micromolecules canvas
-     *       3. Take screenshot to validate looks correct
+     *       4. Take screenshot to validate looks correct
      *
      *  Version 3.6
      */
@@ -677,6 +679,153 @@ test.describe('S-Group Properties', () => {
       Component: ComponentOption.Phosphate,
     });
 
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify aromatize/dearomatize indigo functions for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify aromatize/dearomatize indigo functions for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Aromatize button
+     *       3. Take screenshot to validate aromatize works correct
+     *       4. Press Dearomatize button
+     *       5. Take screenshot to validate dearomatize works correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for Indigo tests.ket',
+    );
+    await IndigoFunctionsToolbar(page).aromatize();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Layout indigo function for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify Layout indigo function for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Layout button
+     *       3. Take screenshot to validate Layout works correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for layout test.ket',
+    );
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Clean Up indigo function for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify Clean Up indigo function for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Clean Up button
+     *       3. Take screenshot to validate Clean Up works correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for Clean Up test.ket',
+    );
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Calculate CIP indigo function for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify Calculate CIP indigo function for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Calculate CIP button
+     *       3. Take screenshot to validate Calculate CIP works correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for CIP test.ket',
+    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Calculate Values indigo function for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify Calculate Values indigo function for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Calculate Values button to open Calculate Values dialog
+     *       3. Validate values of all fields
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for Calculate Values.ket',
+    );
+    await IndigoFunctionsToolbar(page).calculatedValues();
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('[C6H6]+[C18H14] > [C18H14]');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '[78.112]+[230.304] > [230.304]',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '[78.047]+[230.110] > [230.110]',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('[C 92.3 H 7.7]+[C 93.9 H 6.1] > [C 93.9 H 6.1]');
+
+    await CalculatedValuesDialog(page).close();
+  });
+
+  test('Verify Add/Remove explicit hydrogens indigo function for nucleotide components', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Description: Verify Add/Remove explicit hydrogens function for nucleotide components
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typed S-Groups (and superatoms for comparison)
+     *       2. Press Add/Remove explicit hydrogens button to expand hydrogens
+     *       3. Take screenshot to validate Add/Remove explicit hydrogens works correct
+     *       4. Press Add/Remove explicit hydrogens button to collapse hydrogens
+     *       5. Take screenshot to validate Add/Remove explicit hydrogens works correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotide components and superatoms for Indigo tests.ket',
+    );
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 

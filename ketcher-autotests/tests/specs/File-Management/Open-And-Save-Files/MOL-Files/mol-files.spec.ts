@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   BondsSetting,
   MeasurementUnit,
@@ -815,5 +816,292 @@ test.describe('Open and Save file', () => {
       'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 62: Import monomer that fully matches library (class, symbol, InChI)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer that fully matches library (class, symbol, InChI).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(page, 'Molfiles-V3000/Original Peptide.mol');
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 63: Import monomer with same class and symbol, but modified structure (InChI mismatch)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with same class and symbol, but modified structure (InChI mismatch).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/Different Structure Peptide.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 64: Import monomer with same class and symbol, but modified name', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with same class and symbol, but modified name.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/Different Name Peptide.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 65: Import monomer with same symbol but different class', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with same symbol but different class.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/different-class-peptide.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 66: Import monomer with same class but different symbol', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with same class but different symbol.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/same-class-different-symbol.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 67: Import monomer with same class and symbol but different casing (e.g. aa instead of AA)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with same class and symbol but different casing (e.g. aa instead of AA).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/different-case-for-class-field-aa.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 68: Import monomer with special characters in symbol or class (AA*)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import monomer with special characters in symbol or class (AA*).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/special-characters-in-class.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 69: Import corrupted or invalid MOL file (e.g. broken atom block)', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Import corrupted or invalid MOL file (e.g. broken atom block).
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/corrupted-atom-block.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 70: Export mapped monomer to MOL', async ({ page }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export mapped monomer to MOL.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/different-class-peptide.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/different-class-peptide-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/different-class-peptide-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 71: Export custom (unmapped) monomer to MOL', async ({ page }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export custom (unmapped) monomer to MOL.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/Different Structure Peptide.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Different Structure Peptide-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Different Structure Peptide-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 72: Export structure containing both mapped and custom monomers', async ({
+    page,
+  }) => {
+    /*
+     * Version 3.6
+     * Test case: https://github.com/epam/ketcher/issues/7403
+     * Description: Export structure containing both mapped and custom monomers.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Open prepared monomer file
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/structure-containing-both-mapped-and-custom-monomers-expected.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
   });
 });

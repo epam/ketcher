@@ -205,6 +205,7 @@ class ReRxnArrow extends ReObject {
 
   show(restruct: ReStruct, _id, options) {
     const path = this.generatePath(restruct.render, options, 'arrow');
+    path.node?.setAttribute('data-testid', this.item.mode + '-arrow');
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);

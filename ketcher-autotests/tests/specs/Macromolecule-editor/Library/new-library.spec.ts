@@ -1,12 +1,18 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
 import { Page, expect, test } from '@playwright/test';
 import {
   delay,
   MacroFileType,
+  takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
+import {
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
 import { pasteFromClipboardAndAddToMacromoleculesCanvas } from '@utils/files/readFile';
@@ -21,6 +27,15 @@ import {
   FavoriteStarSymbol,
   RNASection,
 } from '@tests/pages/constants/library/Constants';
+import { Nucleoside, Peptide, Phosphate, Sugar } from 'ketcher-core';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Chem } from '@constants/monomers/Chem';
+import { hideMonomerPreview } from '@utils/macromolecules';
+import { resetZoomLevelToDefault } from '@utils/keyboard';
 
 let page: Page;
 
@@ -592,3 +607,210 @@ test(
     await takeMonomerLibraryScreenshot(page);
   },
 );
+
+const monomerToDrag = [
+  Peptides.Cys_Bn,
+  Presets.MOE_A_P,
+  Sugars.FMOE,
+  Phosphates.bP,
+  Nucleotides.AmMC6T,
+  Chem.DOTA,
+];
+
+for (const monomer of monomerToDrag) {
+  test(`19.1 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that user can click an element (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *              from the library and drop it onto the canvas (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to Favorites
+     * 4. Drag monomer from Library and drop it on the canvas
+     * 5. Drag same monomer from Favoriters and drop it on the canvas
+     * 6. Take screenshot to validate it appeared on the canvas
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`19.2 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that user can click an element (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *              from the library and drop it onto the canvas (Snake mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to Favorites
+     * 4. Drag monomer from Library and drop it on the canvas
+     * 5. Drag same monomer from Favoriters and drop it on the canvas
+     * 6. Take screenshot to validate it appeared on the canvas
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`20.1 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: 1. Verify that the cursor aligns to the top-left corner of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *                 during dragging (Flex mode)
+     *              2. Verify that the ghost image (Favoutites, RNA/DNA, Peptides, CHEM, Presets) appears in greyscale and includes
+     *                 labels while dragging also the ghost image is shown at 100% scale when canvas zoom is 100% (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer From library and move over canvas
+     * 4. Take screenshot to validate it appeared on the canvas
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).hoverMonomer(monomer);
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`20.2 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: 1. Verify that the cursor aligns to the top-left corner of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *                 during dragging (Snake mode)
+     *              2. Verify that the ghost image (Favoutites, RNA/DNA, Peptides, CHEM, Presets) appears in greyscale and includes
+     *                 labels while dragging also the ghost image is shown at 100% scale when canvas zoom is 100% (Snake)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer From library and move over canvas
+     * 4. Take screenshot to validate it appeared on the canvas
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).hoverMonomer(monomer);
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`21.1 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check if the canvas is zoomed to a level other than 100%, the "ghost image" of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *              selected from the library should first appear at its original size (100%) when clicked. However, once the "ghost image" is dragged onto
+     *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Set Canvas Scale to 400%
+     * 4. Grab target monomer from library (but hold it still)
+     * 5. Take library screenshot to validate grabbed canvas has 100% scale
+     * 6. Hover it over canvas
+     * 7. Take canvas screenshot to validate grabbed canvas adjusted it's scale to 400%
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await Library(page).hoverMonomer(monomer);
+
+    const box = await page.getByTestId(monomer.testId).boundingBox();
+    if (!box) throw new Error('Monomer element not found');
+
+    await page.mouse.down();
+    await page.mouse.move(
+      box.x + box.width / 2 - 2,
+      box.y + box.height / 2 - 2,
+    );
+    await takeMonomerLibraryScreenshot(page);
+    await page.mouse.move(200, 200);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`21.2 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check if the canvas is zoomed to a level other than 100%, the "ghost image" of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *              selected from the library should first appear at its original size (100%) when clicked. However, once the "ghost image" is dragged onto
+     *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Set Canvas Scale to 400%
+     * 4. Grab target monomer from library (but hold it still)
+     * 5. Take library screenshot to validate grabbed canvas has 100% scale
+     * 6. Hover it over canvas
+     * 7. Take canvas screenshot to validate grabbed canvas adjusted it's scale to 400%
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await Library(page).hoverMonomer(monomer);
+
+    const box = await page.getByTestId(monomer.testId).boundingBox();
+    if (!box) throw new Error('Monomer element not found');
+
+    await page.mouse.down();
+    await page.mouse.move(
+      box.x + box.width / 2 - 2,
+      box.y + box.height / 2 - 2,
+    );
+    await takeMonomerLibraryScreenshot(page);
+    await page.mouse.move(200, 200);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+    await resetZoomLevelToDefault(page);
+  });
+}

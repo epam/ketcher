@@ -73,7 +73,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.typeDropdown.click();
       await typeToSelect.waitFor({ state: 'visible' });
       await typeToSelect.click({ force: true });
-      await locators.typeDropdown.waitFor({ state: 'hidden' });
+      await typeToSelect.waitFor({ state: 'hidden' });
     },
 
     async selectContext(context: ContextOption) {
@@ -83,7 +83,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.contextDropdown.click();
       await contextToSelect.waitFor({ state: 'visible' });
       await contextToSelect.click({ force: true });
-      await locators.contextDropdown.waitFor({ state: 'hidden' });
+      await contextToSelect.waitFor({ state: 'hidden' });
     },
 
     async setFieldNameValue(value: string) {
@@ -119,7 +119,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.repeatPatternDropdown.click();
       await contextToSelect.waitFor({ state: 'visible' });
       await contextToSelect.click({ force: true });
-      await locators.repeatPatternDropdown.waitFor({ state: 'hidden' });
+      await contextToSelect.waitFor({ state: 'hidden' });
     },
 
     async setNameValue(value: string) {
@@ -134,7 +134,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.componentDropdown.click();
       await contextToSelect.waitFor({ state: 'visible' });
       await contextToSelect.click({ force: true });
-      await locators.componentDropdown.waitFor({ state: 'hidden' });
+      await contextToSelect.waitFor({ state: 'hidden' });
     },
 
     async setOptions(options: SGroupPropertiesSettings) {

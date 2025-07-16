@@ -792,6 +792,20 @@ test.describe('Open and Save file', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('The ACS setting is applied, click on layout and it should be save to MOL v3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option Set ACS Settings and check saving to different format
+  */
+
+    await openFileAndAddToCanvas(page, 'KET/adenosine-triphosphate.ket');
+    await setACSSettings(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
+
   test('Case 62: Import monomer that fully matches library (class, symbol, InChI)', async ({
     page,
   }) => {

@@ -40,6 +40,13 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
+interface AppMeta {
+  buildDate: string;
+  indigoVersion: string;
+  indigoMachine: string;
+  version: string;
+}
+
 interface EditorState {
   ketcherId: string;
   isReady: boolean | null;
@@ -56,6 +63,7 @@ interface EditorState {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
   unipositiveIonsValue: number;
   oligonucleotidesValue: number;
+  app: AppMeta;
 }
 
 const initialState: EditorState = {
@@ -78,6 +86,12 @@ const initialState: EditorState = {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
+  app: {
+    buildDate: process.env.BUILD_DATE || '',
+    indigoVersion: process.env.INDIGO_VERSION || '',
+    indigoMachine: process.env.INDIGO_MACHINE || '',
+    version: process.env.VERSION || '',
+  },
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -183,6 +197,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
+    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
+      state.app = action.payload;
+    },
   },
 });
 
@@ -205,7 +222,7 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
-  setLibraryItemDrag,
+  setAppMeta,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

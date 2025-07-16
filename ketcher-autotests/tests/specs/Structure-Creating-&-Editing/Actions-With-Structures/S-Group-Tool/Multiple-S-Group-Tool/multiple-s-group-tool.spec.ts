@@ -268,10 +268,8 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setOptions({
-      Type: TypeOption.MultipleGroup,
-      RepeatCount: '0',
-    });
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('0');
     await takeEditorScreenshot(page);
   });
 
@@ -286,10 +284,8 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setOptions({
-      Type: TypeOption.MultipleGroup,
-      RepeatCount: '201',
-    });
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
     await takeEditorScreenshot(page);
   });
 
@@ -303,10 +299,8 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setOptions({
-      Type: TypeOption.MultipleGroup,
-      RepeatCount: '-1',
-    });
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('-1');
     await takeEditorScreenshot(page);
   });
 
@@ -362,10 +356,8 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setOptions({
-      Type: TypeOption.MultipleGroup,
-      RepeatCount: '201',
-    });
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
     await takeEditorScreenshot(page);
   });
 

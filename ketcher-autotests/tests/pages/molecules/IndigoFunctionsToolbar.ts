@@ -86,7 +86,6 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async calculatedValues() {
-      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.calculatedValuesButton.click(),
@@ -102,7 +101,6 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async ThreeDViewer() {
-      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.ThreeDViewerButton.click(),

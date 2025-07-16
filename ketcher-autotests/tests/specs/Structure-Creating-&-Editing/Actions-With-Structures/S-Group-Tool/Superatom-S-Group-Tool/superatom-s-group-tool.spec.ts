@@ -242,10 +242,9 @@ test.describe('Superatom S-Group tool', () => {
     point = await getAtomByIndex(page, { label: 'C' }, 3);
     await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await expandAbbreviation(page, point);
+    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
     await takeEditorScreenshot(page);
     await removeAbbreviation(page, point);
-
     await takeEditorScreenshot(page);
   });
 

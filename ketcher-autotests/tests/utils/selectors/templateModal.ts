@@ -228,21 +228,3 @@ export async function attachOnTopOfBenzeneBonds(page: Page) {
   await clickOnCanvas(page, COORDS_CLICK.x5, COORDS_CLICK.y5);
   await clickOnCanvas(page, COORDS_CLICK.x6, COORDS_CLICK.y6);
 }
-
-export async function fillFieldByLabel(
-  page: Page,
-  fieldLabel: string,
-  testValue: string,
-) {
-  await page.getByLabel(fieldLabel).click();
-  await page.getByLabel(fieldLabel).fill(testValue);
-}
-
-export async function fillFieldByPlaceholder(
-  page: Page,
-  fieldLabel: string,
-  testValue: string,
-) {
-  await page.getByPlaceholder(fieldLabel).click();
-  await page.getByPlaceholder(fieldLabel).fill(testValue);
-}

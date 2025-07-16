@@ -9,6 +9,7 @@ type CalculatedValuesDialogLocators = {
   exactMassInput: Locator;
   exactMassSelect: Locator;
   elementalAnalysisInput: Locator;
+  closeButton: Locator;
   //
   // Exact Mass-select
 };
@@ -27,6 +28,7 @@ export const CalculatedValuesDialog = (page: Page) => {
     exactMassInput: page.getByTestId('Exact Mass-input'),
     exactMassSelect: page.getByTestId('Exact Mass-select'),
     elementalAnalysisInput: page.getByTestId('Elemental Analysis-input'),
+    closeButton: page.getByTestId('OK'),
   };
 
   return {
@@ -48,6 +50,10 @@ export const CalculatedValuesDialog = (page: Page) => {
         locators.exactMassSelect,
         decimalPlacesValue.toString(),
       );
+    },
+
+    async close() {
+      await locators.closeButton.click();
     },
   };
 };

@@ -78,7 +78,6 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     },
 
     async checkStructure() {
-      await waitForIndigoToLoad();
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.checkStructureButton.click(),

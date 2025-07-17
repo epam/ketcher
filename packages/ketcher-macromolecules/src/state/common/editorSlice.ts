@@ -26,9 +26,7 @@ import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
-import { PresetPosition, IndigoProvider } from 'ketcher-react';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { PresetPosition } from 'ketcher-react';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -295,29 +293,3 @@ export const selectEditorLineLength = (state: RootState): EditorLineLength =>
   state.editor.editorLineLength;
 
 export const editorReducer = editorSlice.reducer;
-
-export function useIndigoVersionToRedux() {
-  const dispatch = useDispatch();
-  const app = useSelector((state: RootState) => state.editor?.app || {});
-
-  useEffect(() => {
-    async function fetchIndigoInfo() {
-      const indigo = IndigoProvider.getIndigo();
-      if (indigo && indigo.info) {
-        try {
-          const info = await indigo.info();
-          dispatch(
-            setAppMeta({
-              ...app,
-              indigoVersion: info.indigoVersion || '',
-            }),
-          );
-        } catch (e) {
-          // ignore
-        }
-      }
-    }
-    fetchIndigoInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
-}

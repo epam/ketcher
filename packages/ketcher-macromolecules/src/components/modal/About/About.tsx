@@ -19,7 +19,7 @@ import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from 'state';
-import { useIndigoVersionToRedux } from 'state/common/editorSlice';
+import { useIndigoVersionToRedux } from 'src/hooks/useIndigoVersionToRedux';
 
 const FEEDBACK_URL = 'http://lifescience.opensource.epam.com/ketcher/#feedback';
 const OVERVIEW_URL =

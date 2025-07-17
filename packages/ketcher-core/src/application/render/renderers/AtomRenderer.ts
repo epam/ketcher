@@ -97,7 +97,7 @@ export class AtomRenderer extends BaseRenderer {
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
   }
-  
+
   /**
    * Updates the width and height of the SelectionContour
    */
@@ -121,7 +121,7 @@ export class AtomRenderer extends BaseRenderer {
         .attr('height', labelHeight + HOVER_PADDING * 2);
     }
   }
-  
+
   protected appendHover() {
     const selectionContourElement = this.appendSelectionContour();
 

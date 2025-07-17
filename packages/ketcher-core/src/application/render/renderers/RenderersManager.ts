@@ -348,17 +348,17 @@ export class RenderersManager {
       if (bondAtom.bonds.indexOf(bond) !== -1) return;
 
       bondAtom.addBond(bond);
-      this.atoms.forEach((atom)=> {
+      this.atoms.forEach((atom) => {
         if (bondAtom.renderer?.atom.id !== atom.atom.id) return;
 
         atom.redrawLabel();
-      })
-    })
+      });
+    });
 
     bondRenderer.show();
 
-    // covers the case when atom label is redrawn and start/end positions 
-    // of PolymerBond and MonomerToAtomBond must be redrawn 
+    // covers the case when atom label is redrawn and start/end positions
+    // of PolymerBond and MonomerToAtomBond must be redrawn
     this.bonds.forEach((redrawBondRenderer) => {
       const { firstAtom, secondAtom } = redrawBondRenderer.bond;
 
@@ -366,9 +366,12 @@ export class RenderersManager {
         ...firstAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
         ...secondAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
       ];
-      monomerToAtomBonds.forEach(monomerToAtomBond => monomerToAtomBond.renderer?.move())
+      monomerToAtomBonds.forEach((monomerToAtomBond) =>
+        monomerToAtomBond.renderer?.move(),
+      );
 
-      if (firstAtom !== bond.secondAtom && secondAtom !== bond.firstAtom) return;
+      if (firstAtom !== bond.secondAtom && secondAtom !== bond.firstAtom)
+        return;
       redrawBondRenderer.move();
     });
   }

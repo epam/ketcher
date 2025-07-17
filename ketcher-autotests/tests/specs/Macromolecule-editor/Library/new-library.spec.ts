@@ -961,3 +961,69 @@ for (const monomer of monomerToDrag) {
     });
   });
 }
+
+for (const monomer of monomerToDrag) {
+  test(`24.1 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that ghost image (Favoutites, RNA/DNA, Peptides, CHEM, Presets) is rendered above the
+     *              library element after click but before drag (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer from library and drop to certain place on the canvas
+     * 4. Grab same monomer and hover it over dropped one
+     * 5. Take canvas screenshot to validate it rendered above
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(110, 110);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await page.mouse.up();
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`24.2 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag  (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that ghost image (Favoutites, RNA/DNA, Peptides, CHEM, Presets) is rendered above the
+     *              library element after click but before drag (Snake mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer from library and drop to certain place on the canvas
+     * 4. Grab same monomer and hover it over dropped one
+     * 5. Take canvas screenshot to validate it rendered above
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(110, 110);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await page.mouse.up();
+  });
+}

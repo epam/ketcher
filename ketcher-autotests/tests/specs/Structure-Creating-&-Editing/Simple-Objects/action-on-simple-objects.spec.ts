@@ -72,18 +72,10 @@ test.describe('Action on simples objects', () => {
 
   test('Simple Objects - Zoom In, Zoom Out', async ({ page }) => {
     // Test case: EPMLSOPKET-1978
-    const numberOfPressZoomOut = 5;
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -147,16 +139,11 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1984
-    const numberOfPressZoomOut = 5;
     const numberOfPress = 1;
     const anyPointX = 200;
     const anyPointY = 200;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await copyAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);

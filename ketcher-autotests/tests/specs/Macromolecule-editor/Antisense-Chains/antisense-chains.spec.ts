@@ -3028,7 +3028,7 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   );
 
   await createAntisenseStrandOption.click();
-  for (let i = 0; i < 4; i++) await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 4 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3122,7 +3122,7 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   );
 
   await createAntisenseStrandOption.click();
-  for (let i = 0; i < 5; i++) await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3173,7 +3173,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   );
 
   await createAntisenseStrandOption.click();
-  for (let i = 0; i < 2; i++) await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });

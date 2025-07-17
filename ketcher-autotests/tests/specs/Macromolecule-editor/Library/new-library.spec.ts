@@ -27,15 +27,17 @@ import {
   FavoriteStarSymbol,
   RNASection,
 } from '@tests/pages/constants/library/Constants';
-import { Nucleoside, Peptide, Phosphate, Sugar } from 'ketcher-core';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { Chem } from '@constants/monomers/Chem';
-import { hideMonomerPreview } from '@utils/macromolecules';
-import { resetZoomLevelToDefault } from '@utils/keyboard';
+import {
+  resetZoomLevelToDefault,
+  ZoomInByKeyboard,
+  ZoomOutByKeyboard,
+} from '@utils/keyboard';
 
 let page: Page;
 
@@ -780,7 +782,7 @@ for (const monomer of monomerToDrag) {
      * Test task: https://github.com/epam/ketcher/issues/7419
      * Description: Check if the canvas is zoomed to a level other than 100%, the "ghost image" of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
      *              selected from the library should first appear at its original size (100%) when clicked. However, once the "ghost image" is dragged onto
-     *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Flex mode)
+     *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Snake mode)
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
@@ -810,6 +812,92 @@ for (const monomer of monomerToDrag) {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await page.mouse.up();
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`22.1 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that using Ctrl + -/= zooms in and out and ghost image (Favoutites, RNA/DNA, Peptides,
+     *              CHEM, Presets) scales in real time (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer from library to library (but don't release)
+     * 4. Zoom in by keyboard shortcut 20 times
+     * 5. Take canvas screenshot to validate ghost image got bigger
+     * 6. Reset zoom to default
+     * 7. Zoom out by keyboard shortcut 20 times
+     * 8. Take canvas screenshot to validate ghost image got smaller
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await ZoomInByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await resetZoomLevelToDefault(page);
+    await ZoomOutByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await page.mouse.up();
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`22.2 Verify that using Ctrl + mouse wheel zooms in and out and ghost image of ${monomer.alias} scales in real time (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that using Ctrl + mouse wheel zooms in and out and ghost image (Favoutites, RNA/DNA, Peptides,
+     *              CHEM, Presets) scales in real time (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer from library to library (but don't release)
+     * 4. Zoom in by keyboard shortcut 20 times
+     * 5. Take canvas screenshot to validate ghost image got bigger
+     * 6. Reset zoom to default
+     * 7. Zoom out by keyboard shortcut 20 times
+     * 8. Take canvas screenshot to validate ghost image got smaller
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await ZoomInByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await resetZoomLevelToDefault(page);
+    await ZoomOutByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
     await page.mouse.up();
     await resetZoomLevelToDefault(page);
   });

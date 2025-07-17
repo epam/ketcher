@@ -102,14 +102,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers are Zoomed In on canvas
     */
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -118,14 +115,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers are Zoomed Out on canvas
     */
-    const numberOfPressZoomOut = 5;
     await openFileAndAddToCanvasMacro(
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await ZoomOutByKeyboard(page);
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -134,14 +128,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers Zoome In are reset
     */
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);

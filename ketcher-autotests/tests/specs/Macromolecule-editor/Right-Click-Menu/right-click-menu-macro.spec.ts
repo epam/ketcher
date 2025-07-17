@@ -493,8 +493,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     MacroFileType.HELM,
     'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
   );
-  await ZoomInByKeyboard(page);
-  await ZoomInByKeyboard(page);
+  await ZoomInByKeyboard(page, { repeat: 2 });
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
@@ -502,8 +501,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     ContextMenu(page, peptideA).contextMenuBody,
   );
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
     page,

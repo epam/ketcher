@@ -353,11 +353,8 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-    const fiftyPercentZoom = 5;
     await page.setViewportSize({ width: 1200, height: 1080 });
-    for (let i = 0; i < fiftyPercentZoom; i++) {
-      await ZoomOutByKeyboard(page);
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await addStructureAndSelect(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);

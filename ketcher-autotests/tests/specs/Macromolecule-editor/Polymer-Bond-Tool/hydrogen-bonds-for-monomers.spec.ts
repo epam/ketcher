@@ -828,8 +828,7 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await takeEditorScreenshot(page);
 
   await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
@@ -893,8 +892,7 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await takeEditorScreenshot(page);
 
   await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 

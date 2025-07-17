@@ -456,16 +456,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await ZoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 });
 
@@ -493,16 +488,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await ZoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);
 });
@@ -531,16 +521,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await ZoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);
 });

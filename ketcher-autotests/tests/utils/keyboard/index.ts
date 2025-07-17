@@ -13,18 +13,36 @@ export async function resetZoomLevelToDefault(page: Page) {
   });
 }
 
-export async function ZoomOutByKeyboard(page: Page) {
+export async function ZoomOutByKeyboard(
+  page: Page,
+  options: { repeat: number; timeout?: number } = { repeat: 1 },
+) {
   const modifier = getControlModifier();
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Minus`);
-  });
+  for (let i = 0; i < options.repeat; i++) {
+    await waitForRender(
+      page,
+      async () => {
+        await page.keyboard.press(`${modifier}+Minus`);
+      },
+      options.timeout,
+    );
+  }
 }
 
-export async function ZoomInByKeyboard(page: Page) {
+export async function ZoomInByKeyboard(
+  page: Page,
+  options: { repeat: number; timeout?: number } = { repeat: 1 },
+) {
   const modifier = getControlModifier();
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Equal`);
-  });
+  for (let i = 0; i < options.repeat; i++) {
+    await waitForRender(
+      page,
+      async () => {
+        await page.keyboard.press(`${modifier}+Equal`);
+      },
+      options.timeout,
+    );
+  }
 }
 
 export async function clearCanvasByKeyboard(page: Page) {

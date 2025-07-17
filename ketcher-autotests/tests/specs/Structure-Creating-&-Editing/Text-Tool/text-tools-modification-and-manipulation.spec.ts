@@ -257,8 +257,6 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Verify if possible is perform different manipulations with text objects using different tools (zoom)
-    const numberOfPressZoomOut = 2;
-    const numberOfPressZoomIn = 2;
     const text4 = 'ABC123';
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
@@ -268,17 +266,11 @@ test.describe('Text tools test cases', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 2 });
 
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
   });
 

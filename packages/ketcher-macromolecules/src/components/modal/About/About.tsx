@@ -17,9 +17,9 @@
 import Logo from './logo.svg';
 import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from 'state';
 import { useIndigoVersionToRedux } from 'src/hooks/useIndigoVersionToRedux';
+import { selectAppMeta } from 'state/common/editorSlice';
+import { useAppDispatch, useAppSelector } from 'src/hooks/stateHooks';
 
 const FEEDBACK_URL = 'http://lifescience.opensource.epam.com/ketcher/#feedback';
 const OVERVIEW_URL =
@@ -40,15 +40,9 @@ export function About({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useIndigoVersionToRedux();
-
-  const {
-    buildDate = '',
-    indigoVersion = '',
-    version = '',
-  } = useSelector((state: RootState) => state.editor?.app || {});
-
+  const { buildDate, indigoVersion, version } = useAppSelector(selectAppMeta);
   const formattedDate = formatDate(buildDate);
 
   const handleClose = () => {

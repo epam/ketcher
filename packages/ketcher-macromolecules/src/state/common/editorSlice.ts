@@ -292,4 +292,6 @@ export const selectMonomers = (state: RootState) =>
 export const selectEditorLineLength = (state: RootState): EditorLineLength =>
   state.editor.editorLineLength;
 
+export const selectAppMeta = (state: RootState): AppMeta => state.editor.app;
+
 export const editorReducer = editorSlice.reducer;

@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { IndigoProvider } from 'ketcher-react';
-import { useDispatch } from 'react-redux';
-import { useAppSelector } from './stateHooks';
-import { setAppMeta } from 'state/common/editorSlice';
+import { useAppDispatch, useAppSelector } from './stateHooks';
+import { setAppMeta, selectAppMeta } from 'state/common/editorSlice';
 
 export function useIndigoVersionToRedux() {
-  const dispatch = useDispatch();
-  const app = useAppSelector((state) => state.editor?.app || {});
+  const dispatch = useAppDispatch();
+  const app = useAppSelector(selectAppMeta);
 
   useEffect(() => {
     async function fetchIndigoInfo() {

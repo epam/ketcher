@@ -2684,10 +2684,7 @@ export class DrawingEntitiesManager {
     const firstAtom = bond.firstAtom;
     const secondAtom = bond.secondAtom;
     [firstAtom, secondAtom].forEach((atom) => {
-      // Clean-up the bond from the atoms
-      atom.bonds = atom.bonds.filter(
-        (atomBond) => !(atomBond instanceof Bond && atomBond.id === bond.id),
-      );
+      atom.deleteBond(bond.id);
 
       if (
         !needToDeleteDisconnectedAtoms ||

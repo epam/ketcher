@@ -828,7 +828,7 @@ for (const monomer of monomerToDrag) {
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
-     * 3. Grab target monomer from library to library (but don't release)
+     * 3. Grab target monomer from library to canvas (but don't release)
      * 4. Zoom in by keyboard shortcut 20 times
      * 5. Take canvas screenshot to validate ghost image got bigger
      * 6. Reset zoom to default
@@ -867,11 +867,11 @@ for (const monomer of monomerToDrag) {
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
      * Description: Verify that using Ctrl + -/= zooms in and out and ghost image (Favoutites, RNA/DNA, Peptides,
-     *              CHEM, Presets) scales in real time (Flex mode)
+     *              CHEM, Presets) scales in real time (Snake mode)
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
-     * 3. Grab target monomer from library to сфтмфы (but don't release)
+     * 3. Grab target monomer from library to canvas (but don't release)
      * 4. Zoom in by keyboard shortcut 20 times
      * 5. Take canvas screenshot to validate ghost image got bigger
      * 6. Reset zoom to default
@@ -914,21 +914,17 @@ for (const monomer of monomerToDrag) {
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
-     * 3. Grab target monomer from library to library (but don't release)
-     * 4. Zoom in by keyboard shortcut 20 times
-     * 5. Take canvas screenshot to validate ghost image got bigger
-     * 6. Reset zoom to default
-     * 7. Zoom out by keyboard shortcut 20 times
-     * 8. Take canvas screenshot to validate ghost image got smaller
+     * 3. Grab target monomer from library and drop to certain place on the canvas (x4 times)
+     * 4. Take canvas screenshot to validate canvas
      *
      * Version 3.6
      */
     await selectFlexLayoutModeTool(page);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 100 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 200 });
-    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 250 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 250 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -943,39 +939,25 @@ for (const monomer of monomerToDrag) {
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
      * Description: Verify that dropped element (Favoutites, RNA/DNA, Peptides, CHEM, Presets) appears exactly
-     *              at the cursor location on the canvas (Flex mode)
+     *              at the cursor location on the canvas (Snake mode)
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
-     * 3. Grab target monomer from library to library (but don't release)
-     * 4. Zoom in by keyboard shortcut 20 times
-     * 5. Take canvas screenshot to validate ghost image got bigger
-     * 6. Reset zoom to default
-     * 7. Zoom out by keyboard shortcut 20 times
-     * 8. Take canvas screenshot to validate ghost image got smaller
+     * 3. Grab target monomer from library and drop to certain place on the canvas (x4 times)
+     * 4. Take canvas screenshot to validate canvas
      *
      * Version 3.6
      */
     await selectSnakeLayoutModeTool(page);
-    await Library(page).hoverMonomer(monomer);
-
-    await page.mouse.down();
-    await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
-
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 250 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 250 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-
-    await page.mouse.up();
-    await resetZoomLevelToDefault(page);
   });
 }

@@ -17,6 +17,7 @@ import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
 import { pasteFromClipboardAndAddToMacromoleculesCanvas } from '@utils/files/readFile';
 import {
+  getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
@@ -641,10 +642,16 @@ for (const monomer of monomerToDrag) {
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+
+    const monomerOnCanvas = getMonomerLocator(page, monomer);
+    if (monomer !== Presets.MOE_A_P) {
+      await expect(monomerOnCanvas).toHaveCount(2);
+    } else {
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    }
   });
 }
 
@@ -669,15 +676,21 @@ for (const monomer of monomerToDrag) {
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+
+    const monomerOnCanvas = getMonomerLocator(page, monomer);
+    if (monomer !== Presets.MOE_A_P) {
+      await expect(monomerOnCanvas).toHaveCount(2);
+    } else {
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    }
   });
 }
 
 for (const monomer of monomerToDrag) {
-  test(`20.1 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Flex mode)`, async () => {
+  test(`20.1 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Flex mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -706,7 +719,7 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`20.2 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Snake mode)`, async () => {
+  test(`20.2 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Snake mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1025,5 +1038,67 @@ for (const monomer of monomerToDrag) {
     });
 
     await page.mouse.up();
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`25.1 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled using Escape key (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer from library and hover it over canvas
+     * 4. Press Escape button
+     * 5. Release mouse button
+     * 6. Validate canvas has no monomers
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await page.keyboard.press('Escape');
+    await page.mouse.up();
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`25.2 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled using Escape key (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer from library and hover it over canvas
+     * 4. Press Escape button
+     * 5. Release mouse button
+     * 6. Validate canvas has no monomers
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await page.keyboard.press('Escape');
+    await page.mouse.up();
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(0);
   });
 }

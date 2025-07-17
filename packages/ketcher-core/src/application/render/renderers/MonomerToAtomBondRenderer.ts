@@ -125,7 +125,12 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
     const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
     if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
-      setTimeout(() => this.show(), 10);
+      setTimeout(() => {
+        // Check if this renderer is still the active renderer for this bond
+        if (this.monomerToAtomBond.renderer === this) {
+          this.show();
+        }
+      }, 10);
       return;
     }
 

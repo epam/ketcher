@@ -38,6 +38,7 @@ import {
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils/keyboard';
+import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 
 let page: Page;
 
@@ -861,12 +862,88 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`22.2 Verify that using Ctrl + mouse wheel zooms in and out and ghost image of ${monomer.alias} scales in real time (Snake mode)`, async () => {
+  test(`22.2 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Snake mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
-     * Description: Verify that using Ctrl + mouse wheel zooms in and out and ghost image (Favoutites, RNA/DNA, Peptides,
+     * Description: Verify that using Ctrl + -/= zooms in and out and ghost image (Favoutites, RNA/DNA, Peptides,
      *              CHEM, Presets) scales in real time (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer from library to сфтмфы (but don't release)
+     * 4. Zoom in by keyboard shortcut 20 times
+     * 5. Take canvas screenshot to validate ghost image got bigger
+     * 6. Reset zoom to default
+     * 7. Zoom out by keyboard shortcut 20 times
+     * 8. Take canvas screenshot to validate ghost image got smaller
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await ZoomInByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await resetZoomLevelToDefault(page);
+    await ZoomOutByKeyboard(page, { repeat: 20 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await page.mouse.up();
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`23.1 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that dropped element (Favoutites, RNA/DNA, Peptides, CHEM, Presets) appears exactly
+     *              at the cursor location on the canvas (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer from library to library (but don't release)
+     * 4. Zoom in by keyboard shortcut 20 times
+     * 5. Take canvas screenshot to validate ghost image got bigger
+     * 6. Reset zoom to default
+     * 7. Zoom out by keyboard shortcut 20 times
+     * 8. Take canvas screenshot to validate ghost image got smaller
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 200 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`23.2 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that dropped element (Favoutites, RNA/DNA, Peptides, CHEM, Presets) appears exactly
+     *              at the cursor location on the canvas (Flex mode)
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode

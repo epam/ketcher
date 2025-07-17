@@ -2,8 +2,12 @@ import { Page } from '@playwright/test';
 import { isMacOS } from '../os';
 import { waitForRender } from '@tests/utils';
 
+let cachedControlModifier: string | null = null;
+
 export function getControlModifier() {
-  return isMacOS() ? 'Meta' : 'Control';
+  if (cachedControlModifier) return cachedControlModifier;
+  cachedControlModifier = isMacOS() ? 'Meta' : 'Control';
+  return cachedControlModifier;
 }
 
 export async function resetZoomLevelToDefault(page: Page) {

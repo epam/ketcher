@@ -342,7 +342,35 @@ export class RenderersManager {
     const bondRenderer = new BondRenderer(bond);
 
     this.bonds.set(bond.id, bondRenderer);
+
+    // redraw connected atoms labels as their connections numbers can be updated after bond is added
+    [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
+      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+
+      bondAtom.addBond(bond);
+      this.atoms.forEach((atom)=> {
+        if (bondAtom.renderer?.atom.id !== atom.atom.id) return;
+
+        atom.redrawLabel();
+      })
+    })
+
     bondRenderer.show();
+
+    // covers the case when atom label is redrawn and start/end positions 
+    // of PolymerBond and MonomerToAtomBond must be redrawn 
+    this.bonds.forEach((redrawBondRenderer) => {
+      const { firstAtom, secondAtom } = redrawBondRenderer.bond;
+
+      const monomerToAtomBonds = [
+        ...firstAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
+        ...secondAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
+      ];
+      monomerToAtomBonds.forEach(monomerToAtomBond => monomerToAtomBond.renderer?.move())
+
+      if (firstAtom !== bond.secondAtom && secondAtom !== bond.firstAtom) return;
+      redrawBondRenderer.move();
+    });
   }
 
   public deleteBond(bond: Bond) {

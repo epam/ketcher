@@ -97,7 +97,31 @@ export class AtomRenderer extends BaseRenderer {
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
   }
+  
+  /**
+   * Updates the width and height of the SelectionContour
+   */
+  private updateSelectionContour() {
+    if (!this.rootElement || !this.textElement) return;
 
+    const labelBbox = this.textElement.node()?.getBBox();
+    if (!labelBbox) return;
+
+    const labelX = labelBbox.x || 0;
+    const labelWidth = labelBbox.width || 8;
+    const labelHeight = labelBbox.height || 8;
+    const HOVER_PADDING = 4;
+
+    const rect = this.rootElement.select('rect');
+    if (rect && rect.node()) {
+      rect
+        .attr('x', labelX - HOVER_PADDING)
+        .attr('y', -(labelHeight / 2 + HOVER_PADDING))
+        .attr('width', labelWidth + HOVER_PADDING * 2)
+        .attr('height', labelHeight + HOVER_PADDING * 2);
+    }
+  }
+  
   protected appendHover() {
     const selectionContourElement = this.appendSelectionContour();
 
@@ -309,6 +333,22 @@ export class AtomRenderer extends BaseRenderer {
       .attr('x', shouldHydrogenBeOnLeft ? 5 : hydrogenAmount > 0 ? -5 : 0);
 
     return textElement;
+  }
+
+  private removeLabel() {
+    if (!this.textElement) return;
+
+    this.textElement.remove();
+    this.textElement = undefined;
+  }
+
+  public redrawLabel() {
+    this.removeLabel();
+    this.textElement = this.appendLabel();
+    this.hoverElement = undefined;
+    this.cipLabelElement?.remove();
+    this.cipLabelElement = undefined;
+    this.updateSelectionContour();
   }
 
   public appendSelection() {

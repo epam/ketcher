@@ -40,6 +40,14 @@ import {
   ZoomOutByKeyboard,
 } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
+import { waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { deleteAllEntitiesOnCanvas } from 'ketcher-core';
 
 let page: Page;
 
@@ -644,7 +652,7 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, monomer);
-    if (monomer !== Presets.MOE_A_P) {
+    if (!Object.values(Presets).includes(monomer)) {
       await expect(monomerOnCanvas).toHaveCount(2);
     } else {
       await takeEditorScreenshot(page, {
@@ -678,7 +686,7 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, monomer);
-    if (monomer !== Presets.MOE_A_P) {
+    if (!Object.values(Presets).includes(monomer)) {
       await expect(monomerOnCanvas).toHaveCount(2);
     } else {
       await takeEditorScreenshot(page, {
@@ -1121,7 +1129,6 @@ for (const monomer of monomerToDrag) {
      * Version 3.6
      */
     await selectFlexLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -1152,7 +1159,6 @@ for (const monomer of monomerToDrag) {
      * Version 3.6
      */
     await selectSnakeLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -1170,29 +1176,35 @@ for (const monomer of monomerToDrag) {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
-     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Flex mode)
+     * Description: Verify that monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets) dropped on canvas has
+     *              correct structure, alias, and attachment points (Flex mode)
      *
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
-     * 3. Grab target monomer from library and hover it over canvas
-     * 4. Do right-click
-     * 5. Release mouse button
-     * 6. Validate canvas has no monomers
+     * 3. Grab target monomer from library and drop it on canvas
+     * 4. Select Bond tool
+     * 5. Hover mouse over to get preview tooltip and attachment points
+     * 6. Take screenshot to validate alias, and attachment points
+     * 7. Validate export to KET to check internal structure
      *
      * Version 3.6
      */
     await selectFlexLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
-    await Library(page).hoverMonomer(monomer);
-
-    await page.mouse.down();
-    await page.mouse.move(100, 100);
-    await page.mouse.click(100, 100, { button: 'right' });
-    await page.mouse.up();
-
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
-    await expect(monomerOnCanvas).toHaveCount(0);
+    if (!Object.values(Presets).includes(monomer)) {
+      await monomerOnCanvas.hover();
+      await waitForMonomerPreview(page);
+    }
+    await takeEditorScreenshot(page);
+
+    await verifyFileExport(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas.ket`,
+      FileType.KET,
+    );
   });
 }
 
@@ -1201,28 +1213,34 @@ for (const monomer of monomerToDrag) {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
-     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Snake mode)
+     * Description: Verify that monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets) dropped on canvas has
+     *              correct structure, alias, and attachment points (Snake mode)
      *
      * Case:
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
-     * 3. Grab target monomer from library and hover it over canvas
-     * 4. Do right-click
-     * 5. Release mouse button
-     * 6. Validate canvas has no monomers
+     * 3. Grab target monomer from library and drop it on canvas
+     * 4. Select Bond tool
+     * 5. Hover mouse over to get preview tooltip and attachment points
+     * 6. Take screenshot to validate alias, and attachment points
+     * 7. Validate export to KET to check internal structure
      *
      * Version 3.6
      */
     await selectSnakeLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
-    await Library(page).hoverMonomer(monomer);
-
-    await page.mouse.down();
-    await page.mouse.move(100, 100);
-    await page.mouse.click(100, 100, { button: 'right' });
-    await page.mouse.up();
-
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
-    await expect(monomerOnCanvas).toHaveCount(0);
+    if (!Object.values(Presets).includes(monomer)) {
+      await monomerOnCanvas.hover();
+      await waitForMonomerPreview(page);
+    }
+    await takeEditorScreenshot(page);
+
+    await verifyFileExport(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas.ket`,
+      FileType.KET,
+    );
   });
 }

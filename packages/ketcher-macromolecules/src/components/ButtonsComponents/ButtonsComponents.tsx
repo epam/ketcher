@@ -25,7 +25,7 @@ export function ButtonsComponents() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
           iconName="help"
           title="Help"

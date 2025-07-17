@@ -19,7 +19,19 @@ import { Modal } from '../../shared/modal/Modal';
 import { About as AboutStyled } from './About.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from 'state';
-import { useIndigoVersionToRedux } from './useIndigoVersionToRedux';
+import { useIndigoVersionToRedux } from 'state/common/editorSlice';
+
+const FEEDBACK_URL = 'http://lifescience.opensource.epam.com/ketcher/#feedback';
+const OVERVIEW_URL =
+  'https://lifescience.opensource.epam.com/ketcher/index.html';
+const LIFE_SCIENCES_URL = 'http://lifescience.opensource.epam.com/';
+const INDIGO_URL = 'http://lifescience.opensource.epam.com/indigo/';
+
+function formatDate(isoDate = ''): string {
+  if (!isoDate.includes('T')) return isoDate;
+  const [date, time] = isoDate.split('T');
+  return `${date}; ${time}`;
+}
 
 export function About({
   isOpen,
@@ -30,24 +42,18 @@ export function About({
 }) {
   const dispatch = useDispatch();
   useIndigoVersionToRedux();
-  const app = useSelector((state: RootState) => state.editor?.app || {});
 
-  const { buildDate: date = '', indigoVersion = '', version = '' } = app;
-  let formattedDate = date;
-  if (date && date.includes('T')) {
-    const [d, t] = date.split('T');
-    formattedDate = `${d}; ${t}`;
-  }
+  const {
+    buildDate = '',
+    indigoVersion = '',
+    version = '',
+  } = useSelector((state: RootState) => state.editor?.app || {});
 
-  const feedbackLink =
-    'http://lifescience.opensource.epam.com/ketcher/#feedback';
-  const overviewLink =
-    'https://lifescience.opensource.epam.com/ketcher/index.html';
-  const lifeScienciesLink = 'http://lifescience.opensource.epam.com/';
+  const formattedDate = formatDate(buildDate);
 
   const handleClose = () => {
     dispatch({ type: 'MODAL_CLOSE' });
-    if (onClose) onClose();
+    onClose();
   };
 
   return (
@@ -55,7 +61,7 @@ export function About({
       <Modal.Content>
         <AboutStyled>
           <div className="headerContent">
-            <a href={overviewLink} target="_blank" rel="noopener noreferrer">
+            <a href={OVERVIEW_URL} target="_blank" rel="noopener noreferrer">
               <Logo />
               <span className="title">Ketcher</span>
             </a>
@@ -64,7 +70,7 @@ export function About({
             <dl>
               <dt>
                 <a
-                  href={overviewLink}
+                  href={OVERVIEW_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -77,7 +83,7 @@ export function About({
               <div className="infoLinks">
                 <dt>
                   <a
-                    href={feedbackLink}
+                    href={FEEDBACK_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -86,7 +92,7 @@ export function About({
                 </dt>
                 <dt>
                   <a
-                    href={lifeScienciesLink}
+                    href={LIFE_SCIENCES_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -95,11 +101,7 @@ export function About({
                 </dt>
               </div>
               <div className="indigoVersion">
-                <a
-                  href="http://lifescience.opensource.epam.com/indigo/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={INDIGO_URL} target="_blank" rel="noopener noreferrer">
                   Indigo Toolkit
                 </a>
               </div>

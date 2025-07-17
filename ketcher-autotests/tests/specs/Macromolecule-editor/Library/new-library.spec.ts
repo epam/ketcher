@@ -1164,3 +1164,65 @@ for (const monomer of monomerToDrag) {
     await expect(monomerOnCanvas).toHaveCount(0);
   });
 }
+
+for (const monomer of monomerToDrag) {
+  test(`27.1 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Grab target monomer from library and hover it over canvas
+     * 4. Do right-click
+     * 5. Release mouse button
+     * 6. Validate canvas has no monomers
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await page.mouse.click(100, 100, { button: 'right' });
+    await page.mouse.up();
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`27.2 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be canceled with right-click (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Grab target monomer from library and hover it over canvas
+     * 4. Do right-click
+     * 5. Release mouse button
+     * 6. Validate canvas has no monomers
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).hoverMonomer(monomer);
+
+    await page.mouse.down();
+    await page.mouse.move(100, 100);
+    await page.mouse.click(100, 100, { button: 'right' });
+    await page.mouse.up();
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}

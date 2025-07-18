@@ -34,6 +34,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MonomerAttachmentPoint } from '@utils/macromolecules/monomer';
 
 let page: Page;
 test.setTimeout(40000);
@@ -497,7 +498,11 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Single,
       );
 
-      await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
+      await chooseConnectionPointsInConnectionDialog(
+        page,
+        MonomerAttachmentPoint.R1,
+        MonomerAttachmentPoint.R1,
+      );
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group

@@ -25,7 +25,10 @@ import {
 } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
   pressCancelAtSelectConnectionPointDialog,
@@ -433,8 +436,8 @@ test.describe('Common connection rules: ', () => {
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
-  //     'R1',
-  //     'R1',
+  //     MonomerAttachmentPoint.R1,
+  //     MonomerAttachmentPoint.R1,
   //   );
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
@@ -517,7 +520,14 @@ test.describe('Common connection rules: ', () => {
       Phosphates.Test_6_Ph,
     );
 
-    const connectionPoints = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
+    const connectionPoints = [
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R3,
+      MonomerAttachmentPoint.R4,
+      MonomerAttachmentPoint.R5,
+      'R6',
+    ];
 
     for (const connectionPoint of connectionPoints) {
       await selectLeftConnectionPointAtSelectConnectionPointDialog(

@@ -8,6 +8,7 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MonomerAttachmentPoint } from './monomer';
 
 export enum BondType {
   None = 0,
@@ -155,37 +156,45 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
 
   if (!firstMonomerConnectionPoint && !secondMonomerConnectionPoint) {
     if (
-      firstMonomerAvailableConnectionPoints.includes('R2') &&
-      secondMonomerAvailableConnectionPoints.includes('R1')
+      firstMonomerAvailableConnectionPoints.includes(
+        MonomerAttachmentPoint.R2,
+      ) &&
+      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
     ) {
-      firstMonomerConnectionPoint = 'R2';
-      secondMonomerConnectionPoint = 'R1';
+      firstMonomerConnectionPoint = MonomerAttachmentPoint.R2;
+      secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
     } else if (
-      firstMonomerAvailableConnectionPoints.includes('R1') &&
-      secondMonomerAvailableConnectionPoints.includes('R2')
+      firstMonomerAvailableConnectionPoints.includes(
+        MonomerAttachmentPoint.R1,
+      ) &&
+      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2)
     ) {
-      firstMonomerConnectionPoint = 'R1';
-      secondMonomerConnectionPoint = 'R2';
+      firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+      secondMonomerConnectionPoint = MonomerAttachmentPoint.R2;
     }
 
     if (
       firstMonomerType === MonomerType.Sugar &&
       secondMonomerType === MonomerType.Base &&
-      firstMonomerAvailableConnectionPoints.includes('R3') &&
-      secondMonomerAvailableConnectionPoints.includes('R1')
+      firstMonomerAvailableConnectionPoints.includes(
+        MonomerAttachmentPoint.R3,
+      ) &&
+      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
     ) {
-      firstMonomerConnectionPoint = 'R3';
-      secondMonomerConnectionPoint = 'R1';
+      firstMonomerConnectionPoint = MonomerAttachmentPoint.R3;
+      secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
     }
 
     if (
       firstMonomerType === MonomerType.Base &&
       secondMonomerType === MonomerType.Sugar &&
-      firstMonomerAvailableConnectionPoints.includes('R1') &&
-      secondMonomerAvailableConnectionPoints.includes('R3')
+      firstMonomerAvailableConnectionPoints.includes(
+        MonomerAttachmentPoint.R1,
+      ) &&
+      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3)
     ) {
-      firstMonomerConnectionPoint = 'R1';
-      secondMonomerConnectionPoint = 'R3';
+      firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+      secondMonomerConnectionPoint = MonomerAttachmentPoint.R3;
     }
 
     return {
@@ -195,75 +204,75 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
   }
 
   if (
-    firstMonomerConnectionPoint === 'R1' &&
+    firstMonomerConnectionPoint === MonomerAttachmentPoint.R1 &&
     !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes('R2')
+    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2)
   ) {
-    secondMonomerConnectionPoint = 'R2';
+    secondMonomerConnectionPoint = MonomerAttachmentPoint.R2;
   }
 
   if (
-    firstMonomerConnectionPoint === 'R2' &&
+    firstMonomerConnectionPoint === MonomerAttachmentPoint.R2 &&
     !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes('R1')
+    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
   ) {
-    secondMonomerConnectionPoint = 'R1';
+    secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
   }
 
   if (
     !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes('R2') &&
-    secondMonomerConnectionPoint === 'R1'
+    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2) &&
+    secondMonomerConnectionPoint === MonomerAttachmentPoint.R1
   ) {
-    firstMonomerConnectionPoint = 'R2';
+    firstMonomerConnectionPoint = MonomerAttachmentPoint.R2;
   }
 
   if (
     !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes('R1') &&
-    secondMonomerConnectionPoint === 'R2'
+    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1) &&
+    secondMonomerConnectionPoint === MonomerAttachmentPoint.R2
   ) {
-    firstMonomerConnectionPoint = 'R1';
+    firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Base &&
     secondMonomerType === MonomerType.Sugar &&
-    firstMonomerConnectionPoint === 'R1' &&
+    firstMonomerConnectionPoint === MonomerAttachmentPoint.R1 &&
     !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes('R3')
+    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3)
   ) {
-    secondMonomerConnectionPoint = 'R3';
+    secondMonomerConnectionPoint = MonomerAttachmentPoint.R3;
   }
 
   if (
     firstMonomerType === MonomerType.Base &&
     secondMonomerType === MonomerType.Sugar &&
     !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes('R1') &&
-    secondMonomerConnectionPoint === 'R3'
+    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1) &&
+    secondMonomerConnectionPoint === MonomerAttachmentPoint.R3
   ) {
-    firstMonomerConnectionPoint = 'R1';
+    firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Sugar &&
     secondMonomerType === MonomerType.Base &&
-    firstMonomerConnectionPoint === 'R3' &&
+    firstMonomerConnectionPoint === MonomerAttachmentPoint.R3 &&
     !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes('R1')
+    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
   ) {
-    secondMonomerConnectionPoint = 'R1';
+    secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Sugar &&
     secondMonomerType === MonomerType.Base &&
     !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes('R3') &&
-    secondMonomerConnectionPoint === 'R1'
+    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3) &&
+    secondMonomerConnectionPoint === MonomerAttachmentPoint.R1
   ) {
-    firstMonomerConnectionPoint = 'R3';
+    firstMonomerConnectionPoint = MonomerAttachmentPoint.R3;
   }
 
   if (firstMonomerAvailableConnectionPoints.length === 1) {
@@ -478,7 +487,7 @@ export async function bondNucleotidePointToMoleculeAtom(
     if (connectionPointBoundingBox) {
       let multiplier = 2;
       switch (monomerConnectionPoint) {
-        case 'R2':
+        case MonomerAttachmentPoint.R2:
           multiplier = 3 / 4;
           break;
         // if we click on the center of R5 connection point - it replace R5 connection point with R1

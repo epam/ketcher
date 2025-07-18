@@ -27,7 +27,10 @@ import {
 } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -368,7 +371,13 @@ test.describe('Snake Bond Tool', () => {
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
-    await bondTwoMonomers(page, phosphate2, peptide1, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      peptide1,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
 
     await takeEditorScreenshot(page);
 
@@ -527,14 +536,32 @@ test.describe('Snake Bond Tool', () => {
 
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
-    await bondTwoMonomers(page, baseOfNucleoside, peptide, 'R2', 'R1');
+    await bondTwoMonomers(
+      page,
+      baseOfNucleoside,
+      peptide,
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R1,
+    );
 
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
-    await bondTwoMonomers(page, phosphate2, hcyPeptide, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      hcyPeptide,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
     await bondTwoMonomers(page, hcyPeptide1, balPeptide);
-    await bondTwoMonomers(page, hcyPeptide1, balPeptide1, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      hcyPeptide1,
+      balPeptide1,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

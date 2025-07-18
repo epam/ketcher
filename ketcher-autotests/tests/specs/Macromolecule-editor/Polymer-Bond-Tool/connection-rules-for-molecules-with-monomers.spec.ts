@@ -20,7 +20,10 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for molecules with monomers: ', () => {
@@ -69,15 +72,27 @@ test.describe('Connection rules for molecules with monomers: ', () => {
 
     const molecule = getMonomerLocator(page, Chem.F1);
 
-    await bondTwoMonomersPointToPoint(page, molecule, firstAlanine, 'R2', 'R1');
+    await bondTwoMonomersPointToPoint(
+      page,
+      molecule,
+      firstAlanine,
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R1,
+    );
     await bondTwoMonomersPointToPoint(
       page,
       molecule,
       secondAlanine,
-      'R3',
-      'R1',
+      MonomerAttachmentPoint.R3,
+      MonomerAttachmentPoint.R1,
     );
-    await bondTwoMonomersPointToPoint(page, molecule, thirdAlanine, 'R4', 'R2');
+    await bondTwoMonomersPointToPoint(
+      page,
+      molecule,
+      thirdAlanine,
+      MonomerAttachmentPoint.R4,
+      MonomerAttachmentPoint.R2,
+    );
 
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

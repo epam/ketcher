@@ -835,8 +835,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R3',
-      'R4',
+      MonomerAttachmentPoint.R3,
+      MonomerAttachmentPoint.R4,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).hover();
@@ -862,8 +862,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R2',
-      'R1',
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R1,
     );
 
     const bondExists = await bondLine.isVisible();
@@ -902,8 +902,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R3',
-      'R4',
+      MonomerAttachmentPoint.R3,
+      MonomerAttachmentPoint.R4,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await bondLine.click();

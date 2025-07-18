@@ -7,6 +7,7 @@ import {
   takeEditorScreenshot,
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
+  takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -1641,5 +1642,61 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).redo();
 
     await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`32. Verify that dropped ${monomer.alias} monomer visible in Sequence mode and in Micromode`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: 1. Verify that dropped elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) visible in Sequence mode
+     *              2. Verify that dropped elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) visible in Micro mode
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to Favorites
+     * 4. Switch to Sequence mode
+     * 5. Take screenshot to validate it visible in Sequence mode
+     * 4. Switch to Molecule mode
+     * 5. Take screenshot to validate it visible in Molecule mode
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`33. Verify that dropped ${monomer.alias} can be calculated by using Calculate Properties button`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that dropped elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can be calculated by using Calculate Properties button
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to Favorites
+     * 4. Press Calculate Properties button
+     * 5. Take screenshot to validate it is visible
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await CommonTopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await CommonTopLeftToolbar(page).calculateProperties();
   });
 }

@@ -18,7 +18,6 @@ import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
-  openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils/files/readFile';
 import {
@@ -45,7 +44,6 @@ import {
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils/keyboard';
-import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   FileType,
@@ -53,7 +51,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { deleteAllEntitiesOnCanvas } from 'ketcher-core';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerType } from '@utils/types';
 import { MolFileFormat } from '@utils/formats';
@@ -663,14 +660,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, monomer);
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(2);
-    } else {
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
   });
 }
 
@@ -697,14 +689,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
     const monomerOnCanvas = getMonomerLocator(page, monomer);
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(2);
-    } else {
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
   });
 }
 
@@ -1381,21 +1368,16 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(1);
-    } else {
-      await expect(monomerOnCanvas).toHaveCount(3);
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(monomerOnCanvas).toHaveCount(0);
 
-    await CommonTopLeftToolbar(page).redo();
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(1);
-    } else {
-      await expect(monomerOnCanvas).toHaveCount(3);
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
   });
 }
 
@@ -1420,21 +1402,17 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(1);
-    } else {
-      await expect(monomerOnCanvas).toHaveCount(3);
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await expect(monomerOnCanvas).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).redo();
-    if (!Object.values(Presets).includes(monomer)) {
-      await expect(monomerOnCanvas).toHaveCount(1);
-    } else {
-      await expect(monomerOnCanvas).toHaveCount(3);
-    }
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
   });
 }
 
@@ -1569,5 +1547,99 @@ for (const monomer of monomerToDrag) {
     );
 
     await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`31.1 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check that we can erase and restore by Undo/Redo elements on canvas after drag and
+     *              drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to canvas
+     * 4. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 5. Delete all monomers
+     * 6. Validate number of monomers on the canvas (should be 0)
+     * 7. Undo all changes
+     * 8. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 9. Redo all changes
+     * 10. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`31.2 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check that we can erase and restore by Undo/Redo elements on canvas after drag and
+     *              drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to canvas
+     * 4. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 5. Delete all monomers
+     * 6. Validate number of monomers on the canvas (should be 0)
+     * 7. Undo all changes
+     * 8. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 9. Redo all changes
+     * 10. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await expect(monomerOnCanvas).toHaveCount(0);
   });
 }

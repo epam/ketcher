@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.64375,
-            "y": -1.5437500000000002
+            "x": 0.75,
+            "y": -0.65
         },
         "alias": "bP",
         "templateId": "bP___Boranophosphate"

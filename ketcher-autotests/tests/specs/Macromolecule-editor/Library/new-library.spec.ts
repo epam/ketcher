@@ -1351,3 +1351,81 @@ for (const monomer of monomerToDrag) {
     });
   });
 }
+
+for (const monomer of monomerToDrag) {
+  test(`29.1 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify undo/redo works after drag and drop for elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to canvas (x2 times)
+     * 4. Bond them using R2-R1 attchment points
+     * 5. Take screenshot to validate appeared bond
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    if (!Object.values(Presets).includes(monomer)) {
+      await expect(monomerOnCanvas).toHaveCount(1);
+    } else {
+      await expect(monomerOnCanvas).toHaveCount(3);
+    }
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).redo();
+    if (!Object.values(Presets).includes(monomer)) {
+      await expect(monomerOnCanvas).toHaveCount(1);
+    } else {
+      await expect(monomerOnCanvas).toHaveCount(3);
+    }
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`29.2 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify undo/redo works after drag and drop for elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to canvas (x2 times)
+     * 4. Bond them using R2-R1 attchment points
+     * 5. Take screenshot to validate appeared bond
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    if (!Object.values(Presets).includes(monomer)) {
+      await expect(monomerOnCanvas).toHaveCount(1);
+    } else {
+      await expect(monomerOnCanvas).toHaveCount(3);
+    }
+
+    await CommonTopLeftToolbar(page).undo();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).redo();
+    if (!Object.values(Presets).includes(monomer)) {
+      await expect(monomerOnCanvas).toHaveCount(1);
+    } else {
+      await expect(monomerOnCanvas).toHaveCount(3);
+    }
+  });
+}

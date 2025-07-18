@@ -1359,13 +1359,14 @@ for (const monomer of monomerToDrag) {
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
      * 3. Add target monomer to canvas (x2 times)
-     * 4. Bond them using R2-R1 attchment points
-     * 5. Take screenshot to validate appeared bond
+     * 4. Press Undo (x2 times) to remove monomer
+     * 5. Validate empty canvas
+     * 6. Press Redo (x2 times) to remove monomer
+     * 7. Validate presence monomer on the canvas
      *
      * Version 3.6
      */
     await selectFlexLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1376,6 +1377,7 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).undo();
     await expect(monomerOnCanvas).toHaveCount(0);
 
+    await CommonTopLeftToolbar(page).redo();
     await expect(monomerOnCanvas).toHaveCount(
       Object.values(Presets).includes(monomer) ? 3 : 1,
     );
@@ -1393,13 +1395,14 @@ for (const monomer of monomerToDrag) {
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Snake mode
      * 3. Add target monomer to canvas (x2 times)
-     * 4. Bond them using R2-R1 attchment points
-     * 5. Take screenshot to validate appeared bond
+     * 4. Press Undo (x2 times) to remove monomer
+     * 5. Validate empty canvas
+     * 6. Press Redo (x2 times) to remove monomer
+     * 7. Validate presence monomer on the canvas
      *
      * Version 3.6
      */
     await selectSnakeLayoutModeTool(page);
-    await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});

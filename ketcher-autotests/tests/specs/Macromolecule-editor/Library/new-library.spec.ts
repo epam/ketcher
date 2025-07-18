@@ -20,6 +20,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
+  MonomerAttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -48,6 +49,8 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { deleteAllEntitiesOnCanvas } from 'ketcher-core';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { MonomerType } from '@utils/types';
 
 let page: Page;
 
@@ -1242,5 +1245,109 @@ for (const monomer of monomerToDrag) {
       `KET/Library/${monomer.alias}-on-canvas.ket`,
       FileType.KET,
     );
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`28.1 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that dropped elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can
+     *              be connected using bond tool (Flex mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to canvas (x2 tyimes)
+     * 4. Bond them using R2-R1 attchment points
+     * 5. Take screenshot to validate appeared bond
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+
+    if (!Object.values(Presets).includes(monomer)) {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+    } else {
+      const phopsphateOnCanvas = getMonomerLocator(page, {
+        monomerType: MonomerType.Phosphate,
+      }).first();
+      const sugarOnCanvas = getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).nth(1);
+      await bondTwoMonomers(
+        page,
+        phopsphateOnCanvas,
+        sugarOnCanvas,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+    }
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`28.2 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify that dropped elements (Favoutites, RNA/DNA, Peptides, CHEM, Presets) can
+     *              be connected using bond tool (Snake mode)
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to canvas (x2 tyimes)
+     * 4. Bond them using R2-R1 attchment points
+     * 5. Take screenshot to validate appeared bond
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
+
+    if (!Object.values(Presets).includes(monomer)) {
+      const monomersOnCanvas = getMonomerLocator(page, monomer);
+      await bondTwoMonomers(
+        page,
+        monomersOnCanvas.nth(0),
+        monomersOnCanvas.nth(1),
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+    } else {
+      const phopsphateOnCanvas = getMonomerLocator(page, {
+        monomerType: MonomerType.Phosphate,
+      }).first();
+      const sugarOnCanvas = getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).nth(1);
+      await bondTwoMonomers(
+        page,
+        phopsphateOnCanvas,
+        sugarOnCanvas,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+    }
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 }

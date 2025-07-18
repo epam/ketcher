@@ -114,6 +114,17 @@ export type MonomerLocatorOptions = {
   | Monomer
 );
 
+export enum MonomerAttachmentPoint {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
+
 /**
  * This function returns locator for monomer in the macromolecule editor.
  * It can be used to find monomers by their alias, type, or ID. It also allows for additional options such as number of attachment points, R values, and hydrogen connection number.

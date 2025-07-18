@@ -43,6 +43,7 @@ import {
 import {
   getMonomerLocator,
   getSymbolLocator,
+  MonomerAttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
@@ -803,8 +804,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R2',
-      'R1',
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R1,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).hover();

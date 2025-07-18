@@ -20,10 +20,6 @@ export class FlexMode extends BaseMode {
 
     editor.renderersContainer.update(modelChanges);
 
-    if (this.previousMode === 'sequence-layout-mode') {
-      editor.scrollToTopLeftCorner();
-    }
-
     return command;
   }
 

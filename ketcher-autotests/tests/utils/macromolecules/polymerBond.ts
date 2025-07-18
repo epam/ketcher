@@ -35,8 +35,8 @@ export async function bondTwoMonomers(
   page: Page,
   firstMonomerElement: Locator,
   secondMonomerElement: Locator,
-  connectTitle1?: string,
-  connectTitle2?: string,
+  connectTitle1?: MonomerAttachmentPoint,
+  connectTitle2?: MonomerAttachmentPoint,
   bondType: MacroBondType = MacroBondType.Single,
   needSelectAttachmentPoint = true,
   needConnect = true,
@@ -63,7 +63,7 @@ export async function bondTwoMonomers(
 
 async function getMinFreeConnectionPoint(
   monomer: Locator,
-): Promise<string | undefined> {
+): Promise<MonomerAttachmentPoint | undefined> {
   // Find the attribute with the minimum index that has a value of "false"
   const minIndexWithFalse = await monomer.evaluate((el) => {
     // Get all attributes of a monomer
@@ -85,26 +85,34 @@ async function getMinFreeConnectionPoint(
   });
 
   if (minIndexWithFalse) {
-    return `R${minIndexWithFalse.toString()}`;
+    return MonomerAttachmentPoint[
+      `R${minIndexWithFalse.toString()}` as keyof typeof MonomerAttachmentPoint
+    ];
   }
   return undefined;
 }
 
+function isMonomerAttachmentPoint(
+  value: string,
+): value is MonomerAttachmentPoint {
+  return Object.values(MonomerAttachmentPoint).includes(
+    value as MonomerAttachmentPoint,
+  );
+}
+
 async function getAvailableConnectionPoints(
   monomer: Locator,
-): Promise<string[]> {
-  // Get all attributes of an element
-  const attributes = await monomer.evaluate((element) => {
-    // Get all attributes of the data-Rn type
-    return Array.from(element.attributes)
+): Promise<MonomerAttachmentPoint[]> {
+  const attributes = await monomer.evaluate((element) =>
+    Array.from(element.attributes)
       .filter((attr) => attr.name.startsWith('data-R'))
-      .map((attr) => ({ name: attr.name, value: attr.value }));
-  });
+      .map((attr) => ({ name: attr.name, value: attr.value })),
+  );
 
-  // Filter attributes with the value "false" and remove the prefix "data-"
   const falseAttributes = attributes
     .filter((attr) => attr.value === 'false')
-    .map((attr) => attr.name.replace('data-', ''));
+    .map((attr) => attr.name.replace('data-', ''))
+    .filter(isMonomerAttachmentPoint);
 
   return falseAttributes;
 }
@@ -113,11 +121,11 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
   page: Page,
   firstMonomer: Locator,
   secondMonomer: Locator,
-  firstMonomerConnectionPoint?: string,
-  secondMonomerConnectionPoint?: string,
+  firstMonomerConnectionPoint?: MonomerAttachmentPoint,
+  secondMonomerConnectionPoint?: MonomerAttachmentPoint,
 ): Promise<{
-  leftMonomerConnectionPoint: string | undefined;
-  rightMonomerConnectionPoint: string | undefined;
+  leftMonomerConnectionPoint: MonomerAttachmentPoint | undefined;
+  rightMonomerConnectionPoint: MonomerAttachmentPoint | undefined;
 }> {
   if (await page.getByRole('dialog').isVisible()) {
     if (!firstMonomerConnectionPoint) {
@@ -292,8 +300,8 @@ export async function bondTwoMonomersPointToPoint(
   page: Page,
   firstMonomer: Locator,
   secondMonomer: Locator,
-  firstMonomerConnectionPoint?: string,
-  secondMonomerConnectionPoint?: string,
+  firstMonomerConnectionPoint?: MonomerAttachmentPoint,
+  secondMonomerConnectionPoint?: MonomerAttachmentPoint,
   bondType?: MacroBondType,
   // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseConnectionPointsInDialogIfAppeared = false,

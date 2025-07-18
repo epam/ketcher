@@ -47,7 +47,7 @@ test.describe('Connection rules for chems: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: string };
+    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
   }
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
@@ -433,8 +433,8 @@ test.describe('Connection rules for chems: ', () => {
     page: Page,
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: string,
-    rightMonomersConnectionPoint?: string,
+    leftMonomersConnectionPoint?: MonomerAttachmentPoint,
+    rightMonomersConnectionPoint?: MonomerAttachmentPoint,
   ) {
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,

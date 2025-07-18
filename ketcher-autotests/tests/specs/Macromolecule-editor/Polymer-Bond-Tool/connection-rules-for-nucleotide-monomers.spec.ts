@@ -48,7 +48,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: string };
+    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
   }
 
   const nucleotideMonomers: { [monomerName: string]: IMonomer } = {

@@ -48,7 +48,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: string };
+    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
   }
 
   const baseMonomers: { [monomerName: string]: IMonomer } = {

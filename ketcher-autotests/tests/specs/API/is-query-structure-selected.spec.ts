@@ -20,6 +20,8 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -118,9 +120,11 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await page.getByTestId('s-group-type-input-span').click();
-    await page.getByRole('option', { name: 'Query component' }).click();
-    await checkIsQueryStructureSelected(page, true);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
+    await selectAllStructuresOnCanvas(page);
+    expect(await isQueryStructureSelected(page)).toBe(true);
   });
 });
 

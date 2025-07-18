@@ -93,18 +93,24 @@ const FooterContent = ({
           }
           onClick={handleCheck}
           disabled={!isStuctureChecking}
+          data-testid="Check"
         >
           Check
         </button>
       </div>
       <div className={style.buttonsRight}>
-        <button className={style.buttonSecondary} onClick={onCancel}>
+        <button
+          className={style.buttonSecondary}
+          onClick={onCancel}
+          data-testid="Cancel"
+        >
           Cancel
         </button>
         <button
           className={style.buttonPrimary}
           onClick={handleApply}
           disabled={!isStuctureChecking}
+          data-testid="Apply"
         >
           Apply
         </button>
@@ -179,7 +185,7 @@ function CheckDialog(props) {
             </div>
           </div>
           <div className={style.checkInfo}>
-            <span>
+            <span data-testid={'checkInfo-lastCheck'}>
               Last check:{' '}
               {lastCheckDate && getFormattedDateString(lastCheckDate)}
             </span>
@@ -189,6 +195,7 @@ function CheckDialog(props) {
                   ? style.centeredContainer
                   : style.warnings
               }
+              data-testid={'checkInfo-messages'}
             >
               {isStuctureChecking ? (
                 <div

@@ -1,7 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
@@ -27,7 +25,10 @@ import {
   MolFileFormat,
   setMolecule,
 } from '@utils/formats';
-import { expandAbbreviation } from '@utils/sgroup/helpers';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+} from '@utils/sgroup/helpers';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -313,9 +314,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     const superAtom = page.getByText('Some Name');
-    await ContextMenu(page, superAtom).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, superAtom);
     await takeEditorScreenshot(page);
   });
 
@@ -338,7 +337,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -382,7 +381,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -464,7 +463,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -508,7 +507,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -587,7 +586,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -628,7 +627,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 

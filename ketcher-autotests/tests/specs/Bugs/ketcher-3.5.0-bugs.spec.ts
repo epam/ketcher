@@ -604,7 +604,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
+      'RNA1{R(C)P.R.P.R.P.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

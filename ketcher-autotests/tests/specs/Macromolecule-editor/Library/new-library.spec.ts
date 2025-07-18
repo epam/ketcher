@@ -5,6 +5,7 @@ import {
   delay,
   MacroFileType,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -15,7 +16,11 @@ import {
 } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
-import { pasteFromClipboardAndAddToMacromoleculesCanvas } from '@utils/files/readFile';
+import {
+  openFileAndAddToCanvasAsNewProjectMacro,
+  openFileAndAddToCanvasMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+} from '@utils/files/readFile';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -51,6 +56,9 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { deleteAllEntitiesOnCanvas } from 'ketcher-core';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerType } from '@utils/types';
+import { MolFileFormat } from '@utils/formats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
 
@@ -1427,5 +1435,139 @@ for (const monomer of monomerToDrag) {
     } else {
       await expect(monomerOnCanvas).toHaveCount(3);
     }
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop
+     *              monomers (Favoutites, RNA/DNA, Peptides, CHEM, Presets (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to canvas
+     * 4. Verify export to KET
+     * 5. Verify export to MOL v3000
+     * 4. Open save to SVG Document dialog and take screenshot to validate preview area
+     * 5. Load KET export result as new project
+     * 6. Take screenshot to validate canvas
+     * 7. Load MOL v3000 export result as new project
+     * 8. Take screenshot to validate canvas
+     *
+     * Version 3.6
+     */
+    await selectFlexLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    await verifyFileExport(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
+      FileType.KET,
+    );
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Library/${monomer.alias}-on-canvas-validation.mol`,
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeElementScreenshot(
+      page,
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
+    await SaveStructureDialog(page).cancel();
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
+      MacroFileType.Ket,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Library/${monomer.alias}-on-canvas-validation.mol`,
+      MacroFileType.MOLv3000,
+    );
+
+    await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop
+     *              monomers (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to canvas
+     * 4. Verify export to KET
+     * 5. Verify export to MOL v3000
+     * 4. Open save to SVG Document dialog and take screenshot to validate preview area
+     * 5. Load KET export result as new project
+     * 6. Take screenshot to validate canvas
+     * 7. Load MOL v3000 export result as new project
+     * 8. Take screenshot to validate canvas
+     *
+     * Version 3.6
+     */
+    await selectSnakeLayoutModeTool(page);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    await verifyFileExport(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
+      FileType.KET,
+    );
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Library/${monomer.alias}-on-canvas-validation.mol`,
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeElementScreenshot(
+      page,
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
+    await SaveStructureDialog(page).cancel();
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
+      MacroFileType.Ket,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Library/${monomer.alias}-on-canvas-validation.mol`,
+      MacroFileType.MOLv3000,
+    );
+
+    await takeEditorScreenshot(page);
   });
 }

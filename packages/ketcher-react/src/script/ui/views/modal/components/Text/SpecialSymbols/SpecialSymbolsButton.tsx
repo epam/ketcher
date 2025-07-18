@@ -59,6 +59,7 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
     <div onBlur={closeSymbolsList}>
       <button
         title="symbols"
+        data-testid="special-symbols-button"
         onMouseDown={(e) => {
           e.preventDefault();
           setShowSpecialSymbols(!showSpecialSymbols);

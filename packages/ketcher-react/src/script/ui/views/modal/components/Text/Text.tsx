@@ -156,6 +156,7 @@ const Text = (props: TextProps) => {
   const refEditor = useRef() as MutableRefObject<Editor>;
   const setFocusInEditor = useCallback(() => {
     refEditor.current.focus();
+    refEditor.current.editor?.setAttribute('data-testid', 'text-editor');
   }, [refEditor]);
 
   // set focut on component mount

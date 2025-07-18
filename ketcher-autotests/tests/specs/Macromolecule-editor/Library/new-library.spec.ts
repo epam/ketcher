@@ -651,7 +651,7 @@ for (const monomer of monomerToDrag) {
      * 3. Add target monomer to Favorites
      * 4. Drag monomer from Library and drop it on the canvas
      * 5. Drag same monomer from Favoriters and drop it on the canvas
-     * 6. Take screenshot to validate it appeared on the canvas
+     * 6. Validate number of monomers on the canvas
      *
      * Version 3.6
      */
@@ -660,7 +660,7 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
-    const monomerOnCanvas = getMonomerLocator(page, monomer);
+    const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
       Object.values(Presets).includes(monomer) ? 6 : 2,
     );
@@ -680,7 +680,7 @@ for (const monomer of monomerToDrag) {
      * 3. Add target monomer to Favorites
      * 4. Drag monomer from Library and drop it on the canvas
      * 5. Drag same monomer from Favoriters and drop it on the canvas
-     * 6. Take screenshot to validate it appeared on the canvas
+     * 6. Validate number of monomers on the canvas
      *
      * Version 3.6
      */
@@ -689,7 +689,7 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
 
-    const monomerOnCanvas = getMonomerLocator(page, monomer);
+    const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
       Object.values(Presets).includes(monomer) ? 6 : 2,
     );

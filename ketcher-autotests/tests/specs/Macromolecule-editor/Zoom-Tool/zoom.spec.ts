@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  waitForRender,
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
   moveMouseToTheMiddleOfTheScreen,

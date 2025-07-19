@@ -25,6 +25,7 @@ interface ModalProps {
   expanded?: boolean;
   setExpanded?: (boolean) => void;
   testId?: string;
+  hideHeaderBorder?: boolean;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -32,17 +33,19 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const Header = styled(DialogTitle)(({ theme }) => ({
-  padding: '2px 4px 2px 12px;',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  fontFamily: `${theme.ketcher.font.family.inter}`,
-  fontSize: `${theme.ketcher.font.size.medium}`,
-  fontWeight: 500,
-  textTransform: 'capitalize',
-  borderBottom: '1px solid rgba(202, 211, 221, 1)',
-}));
+const Header = styled(DialogTitle)<{ hideBorder?: boolean }>(
+  ({ theme, hideBorder }) => ({
+    padding: '2px 4px 2px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontFamily: `${theme.ketcher.font.family.inter}`,
+    fontSize: `${theme.ketcher.font.size.medium}`,
+    fontWeight: 500,
+    textTransform: 'capitalize',
+    borderBottom: hideBorder ? 'none' : '1px solid rgba(202, 211, 221, 1)',
+  }),
+);
 
 const Title = styled.div({
   marginRight: '10px',
@@ -95,6 +98,7 @@ export const Modal = ({
   expanded = false,
   setExpanded = EmptyFunction,
   testId,
+  hideHeaderBorder,
 }: ModalProps) => {
   const theme = useTheme();
 
@@ -158,7 +162,7 @@ export const Modal = ({
       sx={{ padding: '24px' }}
     >
       {title || showCloseButton || showExpandButton ? (
-        <Header>
+        <Header hideBorder={hideHeaderBorder}>
           <Title>{title}</Title>
           <span>
             {showExpandButton && (

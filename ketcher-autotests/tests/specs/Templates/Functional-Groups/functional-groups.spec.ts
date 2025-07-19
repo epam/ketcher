@@ -13,7 +13,6 @@ import {
   pressTab,
   FILE_TEST_DATA,
   waitForPageInit,
-  waitForRender,
   clickOnAtom,
   moveOnAtom,
   clickOnCanvas,

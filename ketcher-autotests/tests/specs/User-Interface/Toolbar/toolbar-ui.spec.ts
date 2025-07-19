@@ -9,7 +9,6 @@ import {
   waitForPageInit,
   takeRightToolbarScreenshot,
   clickOnAtom,
-  waitForRender,
   waitForIndigoToLoad,
   keyboardPressOnCanvas,
 } from '@utils';

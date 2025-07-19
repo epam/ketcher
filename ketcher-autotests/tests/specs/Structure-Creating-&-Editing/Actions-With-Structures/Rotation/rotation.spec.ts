@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';

@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,

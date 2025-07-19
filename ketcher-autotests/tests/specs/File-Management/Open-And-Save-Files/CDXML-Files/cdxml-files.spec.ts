@@ -5,6 +5,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {

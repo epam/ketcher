@@ -3,6 +3,7 @@ import { test, Page, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   moveMouseAway,
   takeEditorScreenshot,

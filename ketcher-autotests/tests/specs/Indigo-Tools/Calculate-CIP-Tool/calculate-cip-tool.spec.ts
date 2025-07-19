@@ -15,6 +15,7 @@ import {
   clickOnAtom,
   pressButton,
   addMonomerToCenterOfCanvas,
+  deleteByKeyboard,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,

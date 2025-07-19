@@ -6,6 +6,7 @@ import {
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
+  deleteByKeyboard,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,

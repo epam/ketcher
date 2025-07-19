@@ -4,6 +4,7 @@ import {
   clickOnAtom,
   clickOnBond,
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,

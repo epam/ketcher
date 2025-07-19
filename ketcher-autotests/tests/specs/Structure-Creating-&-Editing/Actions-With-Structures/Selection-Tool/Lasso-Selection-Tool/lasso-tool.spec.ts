@@ -10,6 +10,7 @@ import {
   waitForPageInit,
   waitForRender,
   clickOnCanvas,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';

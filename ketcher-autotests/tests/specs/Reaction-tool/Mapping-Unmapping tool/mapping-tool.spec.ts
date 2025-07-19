@@ -10,6 +10,7 @@ import {
   clickOnAtom,
   clickOnCanvas,
   RxnFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {

@@ -11,6 +11,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   RxnFileFormat,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {

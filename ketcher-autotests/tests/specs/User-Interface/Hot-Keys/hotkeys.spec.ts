@@ -18,6 +18,7 @@ import {
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   clickOnCanvas,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,

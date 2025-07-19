@@ -13,6 +13,7 @@ import {
   waitForRender,
   getControlModifier,
   clearCanvasByKeyboard,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {

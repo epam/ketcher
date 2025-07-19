@@ -10,6 +10,7 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';

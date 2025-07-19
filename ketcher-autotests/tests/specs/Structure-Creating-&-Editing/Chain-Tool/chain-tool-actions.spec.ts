@@ -13,6 +13,7 @@ import {
   clickOnBond,
   BondType,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import {
   FileType,

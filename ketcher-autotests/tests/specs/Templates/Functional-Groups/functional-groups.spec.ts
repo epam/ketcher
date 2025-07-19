@@ -18,6 +18,7 @@ import {
   moveOnAtom,
   clickOnCanvas,
   getCachedBodyCenter,
+  deleteByKeyboard,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {

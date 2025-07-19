@@ -14,6 +14,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {

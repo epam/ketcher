@@ -2,6 +2,7 @@ import { Page, test } from '@playwright/test';
 import {
   clickOnAtom,
   clickOnCanvas,
+  deleteByKeyboard,
   doubleClickOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,

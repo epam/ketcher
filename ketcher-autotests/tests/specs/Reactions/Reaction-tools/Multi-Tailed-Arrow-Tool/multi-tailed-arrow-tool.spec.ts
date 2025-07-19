@@ -25,6 +25,7 @@ import {
   readFileContent,
   copyContentToClipboard,
   getCachedBodyCenter,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,

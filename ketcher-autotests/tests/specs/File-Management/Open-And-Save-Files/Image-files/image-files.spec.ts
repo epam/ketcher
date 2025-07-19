@@ -22,6 +22,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
+  deleteByKeyboard,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {

@@ -10,6 +10,7 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,

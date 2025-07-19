@@ -18,6 +18,7 @@ import {
   moveMouseAway,
   MonomerType,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {

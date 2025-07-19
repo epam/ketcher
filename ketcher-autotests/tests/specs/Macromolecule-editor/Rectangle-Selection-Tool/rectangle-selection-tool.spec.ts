@@ -13,10 +13,7 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  selectSnakeLayoutModeTool,
-  selectRectangleArea,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@constants/monomers/Peptides';
@@ -27,6 +24,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -422,7 +421,7 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 850;
     const y = 500;
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptides.Hhs).hover();
     await dragMouseTo(x, y, page);

@@ -15,7 +15,6 @@ import {
   resetZoomLevelToDefault,
   delay,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -31,6 +30,8 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -140,7 +141,7 @@ test.describe('Import-Saving .seq Files', () => {
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -152,7 +153,7 @@ test.describe('Import-Saving .seq Files', () => {
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await verifyFileExport(
       page,
       'Sequence/sequence-snake-mode-rna-expected.seq',

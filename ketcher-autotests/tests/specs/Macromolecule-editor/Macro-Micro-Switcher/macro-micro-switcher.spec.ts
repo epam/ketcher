@@ -36,11 +36,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  switchSequenceEnteringButtonType,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { switchSequenceEnteringButtonType } from '@utils/canvas/tools/helpers';
 import { MacroFileType, SequenceType } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -60,6 +56,7 @@ import {
   getMonomerLocator,
   moveMonomerOnMicro,
   getSymbolLocator,
+  MonomerAttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -105,6 +102,8 @@ import {
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -1161,17 +1160,26 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
       monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
       monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1229,8 +1237,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
@@ -1244,17 +1252,26 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
       monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
       monomer: Phosphates.moen,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1273,7 +1290,9 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
@@ -1303,15 +1322,15 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R3,
     );
     const bondLine = page.locator('g path').first();
     await bondLine.hover();
@@ -1322,17 +1341,26 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
       monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
       monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1391,8 +1419,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R3,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     const bondLine = getBondLocator(page, {
@@ -1408,17 +1436,26 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
       monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
       monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      bondEndpoints: {
+        first: MonomerAttachmentPoint.R1,
+        second: MonomerAttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1476,8 +1513,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectEraseTool();
@@ -1511,8 +1548,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
@@ -1904,7 +1941,9 @@ test.describe('Macro-Micro-Switcher', () => {
           'KET/two-attachment-points-added-in-micro-mode.ket',
         );
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
 
         if (data.sequenceType) {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
@@ -1920,7 +1959,9 @@ test.describe('Macro-Micro-Switcher', () => {
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await keyboardPressOnCanvas(page, 'Escape');
-        await selectSnakeLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Snake,
+        );
         await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
         await getMonomerLocator(page, {
           monomerAlias: 'F1',
@@ -1949,7 +1990,9 @@ test.describe('Macro-Micro-Switcher', () => {
       */
         await drawBenzeneRing(page);
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
 
         if (data.sequenceType) {
           await switchSequenceEnteringButtonType(page, data.sequenceType);

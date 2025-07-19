@@ -15,11 +15,6 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
@@ -35,6 +30,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -44,7 +41,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
 test.afterEach(async () => {
@@ -346,8 +343,12 @@ for (const leftMonomer of shortMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectFlexLayoutModeTool(page);
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
     });
   }
@@ -538,8 +539,12 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectFlexLayoutModeTool(page);
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
     });
   }
@@ -582,8 +587,8 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     MacroBondType.Hydrogen,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -631,8 +636,8 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     MacroBondType.Hydrogen,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -833,9 +838,13 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
     });
   }
 }
@@ -901,9 +910,13 @@ for (const leftMonomer of shortMonomerList) {
           MacroBondType.Hydrogen,
         );
 
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
         await takeEditorScreenshot(page, { hideMonomerPreview: true });
-        await selectSnakeLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Snake,
+        );
       },
     );
   }

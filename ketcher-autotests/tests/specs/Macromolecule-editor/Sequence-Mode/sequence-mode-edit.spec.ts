@@ -26,12 +26,7 @@ import {
   typeRNADNAAlphabet,
   waitForPageInit,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  switchSequenceEnteringButtonType,
-} from '@utils/canvas/tools/helpers';
+import { switchSequenceEnteringButtonType } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
@@ -61,6 +56,8 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -71,7 +68,9 @@ test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   test('Text-editing mode activates when users start a new sequence or edit an existing one', async ({
@@ -121,7 +120,7 @@ test.describe('Sequence edit mode', () => {
     await keyboardPressOnCanvas(page, 'Enter');
     await typePeptideAlphabet(page);
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -217,7 +216,7 @@ test.describe('Sequence edit mode', () => {
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -237,7 +236,7 @@ test.describe('Sequence edit mode', () => {
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -276,7 +275,7 @@ test.describe('Sequence edit mode', () => {
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -347,7 +346,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getMonomerLocator(page, Peptides.A).hover();
     await waitForMonomerPreview(page);
@@ -364,7 +363,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
@@ -460,7 +459,9 @@ test.describe('Sequence edit mode', () => {
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
     await switchToRNAMode(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['A', 'C', '@'];
@@ -734,7 +735,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -758,7 +759,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -782,7 +783,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -809,7 +810,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -836,7 +837,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1026,7 +1027,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.R, 11);
     await takeEditorScreenshot(page, {
@@ -1058,7 +1059,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.dR, 11);
     await takeEditorScreenshot(page, {
@@ -1116,7 +1117,7 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1149,7 +1150,7 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1175,7 +1176,7 @@ test.describe('Sequence edit mode', () => {
     await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
@@ -1213,7 +1214,7 @@ test.describe('Sequence edit mode', () => {
     await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
@@ -1423,12 +1424,16 @@ test.describe('Sequence edit mode', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

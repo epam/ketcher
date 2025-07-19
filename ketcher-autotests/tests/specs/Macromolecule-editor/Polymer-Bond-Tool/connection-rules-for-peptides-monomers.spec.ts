@@ -9,7 +9,10 @@ import {
   resetZoomLevelToDefault,
   MonomerType,
 } from '@utils';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
@@ -76,7 +79,7 @@ test.describe('Connection rules for peptides: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: string };
+    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
   }
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
@@ -85,7 +88,7 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
-        R1: 'R1',
+        R1: MonomerAttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -93,7 +96,7 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
-        R2: 'R2',
+        R2: MonomerAttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
@@ -101,7 +104,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
-    //     R3: 'R3',
+    //     R3: MonomerAttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
@@ -109,8 +112,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
@@ -118,8 +121,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
+        R1: MonomerAttachmentPoint.R1,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
@@ -127,8 +130,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
@@ -136,8 +139,8 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -145,9 +148,9 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
@@ -155,9 +158,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -165,9 +168,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -175,9 +178,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
@@ -185,10 +188,10 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
@@ -196,10 +199,10 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -207,10 +210,10 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
@@ -218,11 +221,11 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     J: {
@@ -231,8 +234,8 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
       },
     },
     // '%': {
@@ -240,8 +243,8 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R2: MonomerAttachmentPoint.R2,
     //   },
     // },
   };
@@ -252,11 +255,11 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Peptide-Templates/Test-6-P-x.ket',
       alias: 'Test-6-P-x',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
       },
     },
     'Test-6-P-Main': {
@@ -265,12 +268,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-x',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
     'Test-6-P-1': {
@@ -279,12 +282,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-1',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
     'Test-6-P-2': {
@@ -293,12 +296,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-2',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
     'Test-6-P-3': {
@@ -307,12 +310,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-3',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
     'Test-6-P-4': {
@@ -321,12 +324,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-4',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
     'Test-6-P-5': {
@@ -335,12 +338,12 @@ test.describe('Connection rules for peptides: ', () => {
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-5',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
-        R6: 'R6',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
+        R6: MonomerAttachmentPoint.R6,
       },
     },
   };
@@ -488,8 +491,8 @@ test.describe('Connection rules for peptides: ', () => {
     page: Page,
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: string,
-    rightMonomersConnectionPoint?: string,
+    leftMonomersConnectionPoint?: MonomerAttachmentPoint,
+    rightMonomersConnectionPoint?: MonomerAttachmentPoint,
   ) {
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
@@ -515,8 +518,12 @@ test.describe('Connection rules for peptides: ', () => {
        *  Description: A default bond between 2 monomers is created using R2 of first monomer and R1 of the second monomer.
        */
       if (
-        Object.values(leftPeptide.connectionPoints).includes('R2') &&
-        Object.values(rightPeptide.connectionPoints).includes('R1')
+        Object.values(leftPeptide.connectionPoints).includes(
+          MonomerAttachmentPoint.R2,
+        ) &&
+        Object.values(rightPeptide.connectionPoints).includes(
+          MonomerAttachmentPoint.R1,
+        )
       ) {
         test(`Case 1: Connect Center to Center of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
           test.setTimeout(30000);
@@ -708,8 +715,8 @@ test.describe('Connection rules for peptides: ', () => {
   //        */
   //       if (
   //         !(
-  //           rightPeptideConnectionPoint === 'R1' ||
-  //           rightPeptideConnectionPoint === 'R2'
+  //           rightPeptideConnectionPoint === MonomerAttachmentPoint.R1 ||
+  //           rightPeptideConnectionPoint === MonomerAttachmentPoint.R2
   //         )
   //       ) {
   //         test(`Case 4.2: Connect Center to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
@@ -890,7 +897,7 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
+        R1: MonomerAttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -898,7 +905,7 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
-        R2: 'R2',
+        R2: MonomerAttachmentPoint.R2,
       },
     },
     '(R3) - Side only': {
@@ -906,7 +913,7 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
-        R3: 'R3',
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     '(R1,R2) - R3 gap': {
@@ -914,8 +921,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
@@ -923,8 +930,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
+        R1: MonomerAttachmentPoint.R1,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
@@ -932,8 +939,8 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
@@ -941,8 +948,8 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -950,9 +957,9 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
@@ -960,9 +967,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -970,9 +977,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -980,9 +987,9 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
@@ -990,10 +997,10 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
@@ -1001,10 +1008,10 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R1: 'R1',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R1: MonomerAttachmentPoint.R1,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -1012,10 +1019,10 @@ test.describe('Connection rules for peptides: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
+    //     R2: MonomerAttachmentPoint.R2,
+    //     R3: MonomerAttachmentPoint.R3,
+    //     R4: MonomerAttachmentPoint.R4,
+    //     R5: MonomerAttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
@@ -1023,11 +1030,11 @@ test.describe('Connection rules for peptides: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-        R4: 'R4',
-        R5: 'R5',
+        R1: MonomerAttachmentPoint.R1,
+        R2: MonomerAttachmentPoint.R2,
+        R3: MonomerAttachmentPoint.R3,
+        R4: MonomerAttachmentPoint.R4,
+        R5: MonomerAttachmentPoint.R5,
       },
     },
   };

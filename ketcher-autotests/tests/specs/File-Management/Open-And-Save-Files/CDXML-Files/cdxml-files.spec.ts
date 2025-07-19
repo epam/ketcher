@@ -5,6 +5,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -92,7 +93,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4714.cdxml');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -103,7 +104,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4715.cdxml');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

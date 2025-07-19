@@ -643,9 +643,7 @@ test.describe('Undo/Redo Actions', () => {
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
     );
-    for (let i = 0; i < 5; i++) {
-      await ZoomOutByKeyboard(page);
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
       await selectUndoByKeyboard(page);
     }
@@ -654,9 +652,7 @@ test.describe('Undo/Redo Actions', () => {
       await selectRedoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    for (let i = 0; i < 5; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 

@@ -1,5 +1,7 @@
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -9,7 +11,6 @@ import {
   setZoom,
   moveMouseAway,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {
@@ -30,7 +31,7 @@ test.describe('setMode', () => {
      * Description: ketcher.setMode switch canvas to Flex Mode
      */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await setMode(page, 'flex');

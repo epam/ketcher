@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
@@ -37,6 +36,8 @@ import { closeErrorMessage } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -243,7 +244,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

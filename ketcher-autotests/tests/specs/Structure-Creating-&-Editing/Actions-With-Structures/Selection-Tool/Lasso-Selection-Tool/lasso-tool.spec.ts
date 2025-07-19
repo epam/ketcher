@@ -10,6 +10,7 @@ import {
   waitForPageInit,
   waitForRender,
   clickOnCanvas,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -214,11 +215,11 @@ test.describe('Lasso Selection tool', () => {
       SelectionToolType.Lasso,
     );
     await selectObjects(page, yAxis, yAxis);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

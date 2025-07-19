@@ -9,10 +9,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   waitForRender,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,
@@ -21,6 +17,8 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -502,7 +500,9 @@ test.describe('Preview tooltips checks: ', () => {
       test.slow();
       await pageReload(page);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -541,7 +541,9 @@ test.describe('Preview tooltips checks: ', () => {
       test.setTimeout(20000);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,

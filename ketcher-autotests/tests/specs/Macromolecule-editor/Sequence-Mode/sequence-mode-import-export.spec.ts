@@ -8,11 +8,6 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
@@ -26,6 +21,8 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -74,7 +71,9 @@ test.describe('Import/export sequence:', () => {
     const contentTypeSelector =
       PasteFromClipboardDialog(page).contentTypeSelector;
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
@@ -197,10 +196,10 @@ test.describe('Import/export sequence:', () => {
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   // Fail while performance issue on Indigo side
@@ -270,7 +269,9 @@ test.describe('Import/export sequence:', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList

@@ -11,8 +11,8 @@ import {
   clickOnTheCanvas,
   clickOnCanvas,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -37,6 +37,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -231,7 +233,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -248,7 +250,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -296,7 +298,7 @@ test.describe('Erase Tool', () => {
       page,
       `Molfiles-V3000/rna-modified-sugars.mol`,
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
@@ -496,7 +498,7 @@ test.describe('Erase Tool', () => {
 
     await zoomWithMouseWheel(page, 600);
     await clickOnTheCanvas(page, 0, 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
   });
@@ -524,7 +526,7 @@ test.describe('Erase Tool', () => {
 
     await zoomWithMouseWheel(page, 600);
     await clickOnTheCanvas(page, 0, 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
   });

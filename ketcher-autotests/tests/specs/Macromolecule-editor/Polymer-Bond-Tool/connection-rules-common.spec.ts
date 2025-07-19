@@ -18,14 +18,13 @@ import {
   MacroFileType,
   MolFileFormat,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
   pressCancelAtSelectConnectionPointDialog,
@@ -44,6 +43,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -273,7 +274,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     // Peptide
     await hoverMouseOverMonomerNTymes(page, Chem.sDBL, 10);
@@ -301,7 +302,7 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   /*
@@ -433,8 +434,8 @@ test.describe('Common connection rules: ', () => {
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
-  //     'R1',
-  //     'R1',
+  //     MonomerAttachmentPoint.R1,
+  //     MonomerAttachmentPoint.R1,
   //   );
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
@@ -517,7 +518,14 @@ test.describe('Common connection rules: ', () => {
       Phosphates.Test_6_Ph,
     );
 
-    const connectionPoints = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
+    const connectionPoints = [
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R3,
+      MonomerAttachmentPoint.R4,
+      MonomerAttachmentPoint.R5,
+      'R6',
+    ];
 
     for (const connectionPoint of connectionPoints) {
       await selectLeftConnectionPointAtSelectConnectionPointDialog(

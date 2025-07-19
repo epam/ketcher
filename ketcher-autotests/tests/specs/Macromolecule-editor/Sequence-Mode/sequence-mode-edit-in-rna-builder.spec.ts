@@ -10,11 +10,7 @@ import {
   takePageScreenshot,
   takePresetsScreenshot,
 } from '@utils';
-import {
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectRectangleArea,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   modifyInRnaBuilder,
@@ -31,6 +27,8 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +36,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro(page, 'KET/nine-connected-rnas.ket');
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   test('Select one nucleotide and modify sugar', async ({ page }) => {
@@ -178,7 +178,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await moveMouseAway(page);
   });
 
@@ -301,7 +303,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await Library(page).selectMonomer(Phosphates.sP_);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -327,7 +329,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await Library(page).rnaBuilder.save();
     await page.getByText('Yes').click();
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

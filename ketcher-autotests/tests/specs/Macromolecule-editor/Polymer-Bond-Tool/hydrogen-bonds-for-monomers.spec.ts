@@ -13,11 +13,6 @@ import {
   pasteFromClipboardByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -34,6 +29,9 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MonomerAttachmentPoint } from '@utils/macromolecules/monomer';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 test.setTimeout(40000);
@@ -497,7 +495,11 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Single,
       );
 
-      await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
+      await chooseConnectionPointsInConnectionDialog(
+        page,
+        MonomerAttachmentPoint.R1,
+        MonomerAttachmentPoint.R1,
+      );
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
@@ -560,13 +562,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await zoomWithMouseWheel(page, -600);
 
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
     });
   });
 });
@@ -824,16 +830,17 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const buttonIdToTitle: {
@@ -889,16 +896,17 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const molecules: { [monomerName: string]: IMonomer } = {

@@ -22,10 +22,6 @@ import {
   getCachedBodyCenter,
   ZoomOutByKeyboard,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -41,6 +37,9 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -1097,7 +1096,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await performVerticalFlip(page);
 
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -1143,7 +1142,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await performVerticalFlip(page);
 
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -1531,7 +1530,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await performVerticalFlip(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
@@ -1589,16 +1588,20 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await performVerticalFlip(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

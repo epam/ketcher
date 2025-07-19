@@ -3,14 +3,14 @@ import { Page, Locator } from '@playwright/test';
 import { delay } from '@utils/canvas';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
 
-type TopToolbarLocators = {
+type MoleculesTopToolbarLocators = {
   copyButton: Locator;
   pasteButton: Locator;
   cutButton: Locator;
 };
 
-export const TopToolbar = (page: Page) => {
-  const locators: TopToolbarLocators = {
+export const MoleculesTopToolbar = (page: Page) => {
+  const locators: MoleculesTopToolbarLocators = {
     copyButton: page.getByTestId('copy-button'),
     pasteButton: page.getByTestId('paste-button'),
     cutButton: page.getByTestId('cut-button'),
@@ -83,4 +83,4 @@ export const TopToolbar = (page: Page) => {
   };
 };
 
-export type IndigoFunctionsToolbarType = ReturnType<typeof TopToolbar>;
+export type MoleculesTopToolbarType = ReturnType<typeof MoleculesTopToolbar>;

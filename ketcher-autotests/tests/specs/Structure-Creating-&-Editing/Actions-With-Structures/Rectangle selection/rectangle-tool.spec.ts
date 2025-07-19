@@ -4,6 +4,7 @@ import {
   clickOnAtom,
   clickOnBond,
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -170,9 +171,9 @@ test.describe('Rectangle selection tool', () => {
       SelectionToolType.Rectangle,
     );
     await selectReactionLeftPart();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await clickOnAtom(page, 'C', atomOnTheRightSide);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 });

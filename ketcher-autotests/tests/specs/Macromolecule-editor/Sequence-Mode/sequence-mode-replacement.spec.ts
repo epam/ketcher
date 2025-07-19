@@ -13,10 +13,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   pressCancelInConfirmYourActionDialog,
@@ -38,6 +34,8 @@ import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -585,7 +583,9 @@ async function selectAndReplaceSymbol(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).click();
@@ -600,7 +600,9 @@ async function selectAndReplaceSymbolWithError(
   replaceMonomer: IReplaceMonomer,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).click();
@@ -612,7 +614,9 @@ async function selectAndReplaceAllSymbols(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -633,7 +637,9 @@ async function selectAndReplaceAllSymbols(
 }
 
 async function selectAllSymbols(page: Page, sequence: ISequence) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -653,7 +659,9 @@ async function selectAndReplaceAllSymbolsWithError(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllSymbols(page, sequence);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
@@ -663,7 +671,9 @@ async function selectAndReplaceAllSymbolsInEditMode(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -688,7 +698,9 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -711,7 +723,9 @@ async function selectAndReplaceSymbolInEditMode(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).dblclick();
@@ -728,7 +742,9 @@ async function selectAndReplaceSymbolInEditModeWithError(
   replaceMonomer: IReplaceMonomer,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).dblclick();
@@ -805,7 +821,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -844,7 +862,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -883,7 +903,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -921,7 +943,9 @@ for (const replaceMonomer of replaceMonomers) {
         sequence.ReplacementPositions.LeftEnd,
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -959,7 +983,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -998,7 +1024,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1315,7 +1343,9 @@ for (const replaceMonomer of replaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1354,7 +1384,9 @@ for (const replaceMonomer of replaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1676,7 +1708,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1719,7 +1753,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1762,7 +1798,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await moveMouseAway(page);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1803,7 +1841,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1843,7 +1883,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1883,7 +1925,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1927,7 +1971,9 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   };
 
   await openFileAndAddToCanvasMacro(page, sequence.FileName);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
   }).click();
@@ -1981,7 +2027,9 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   };
 
   await openFileAndAddToCanvasMacro(page, sequence.FileName);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
     nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
@@ -2097,7 +2145,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await checkForKnownBugs(

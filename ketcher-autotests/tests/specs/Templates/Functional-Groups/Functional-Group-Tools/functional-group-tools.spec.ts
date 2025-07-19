@@ -19,6 +19,7 @@ import {
   copyToClipboardByKeyboard,
   clickOnCanvas,
   getCachedBodyCenter,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -870,7 +871,7 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 

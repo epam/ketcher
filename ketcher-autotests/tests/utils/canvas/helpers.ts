@@ -21,7 +21,10 @@ import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -355,8 +358,8 @@ export async function addBondedMonomersToCanvas(
   deltaX: number,
   deltaY: number,
   amount: number,
-  connectTitle1?: string,
-  connectTitle2?: string,
+  connectTitle1?: MonomerAttachmentPoint,
+  connectTitle2?: MonomerAttachmentPoint,
 ) {
   const monomers = [];
   for (let index = 0; index < amount; index++) {

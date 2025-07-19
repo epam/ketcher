@@ -11,6 +11,7 @@ import {
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
+import { waitForRender } from '@utils/common';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -195,6 +196,19 @@ export const Library = (page: Page) => {
       }
 
       await getElement(monomer.testId).hover();
+    },
+
+    async dragMonomerOnCanvas(
+      monomer: Monomer,
+      coordinates: { x: number; y: number },
+      selectOnFavoritesTab = false,
+    ) {
+      await this.hoverMonomer(monomer, selectOnFavoritesTab);
+      await page.mouse.down();
+      await page.mouse.move(coordinates.x, coordinates.y);
+      await waitForRender(page, async () => {
+        await page.mouse.up();
+      });
     },
 
     /**

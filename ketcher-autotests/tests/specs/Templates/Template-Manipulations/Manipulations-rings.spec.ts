@@ -3,6 +3,7 @@ import { test, Page, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   moveMouseAway,
   takeEditorScreenshot,
@@ -79,7 +80,7 @@ async function deleteRightBondInRing(page: Page) {
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
   await clickOnCanvas(page, point.x, point.y);
-  await page.keyboard.press('Delete');
+  await deleteByKeyboard(page);
 }
 
 async function checkHistoryForBondDeletion(page: Page) {

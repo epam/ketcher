@@ -10,6 +10,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerAttachmentPoint } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
@@ -71,8 +72,8 @@ test.describe('Modal window', () => {
       page,
       peptide1,
       peptide2,
-      'R1',
-      'R2',
+      MonomerAttachmentPoint.R1,
+      MonomerAttachmentPoint.R2,
       MacroBondType.Single,
       true,
       false,

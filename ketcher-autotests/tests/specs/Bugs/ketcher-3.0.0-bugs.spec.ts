@@ -404,9 +404,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       SelectionToolType.Rectangle,
     );
     await clickOnAtom(page, 'C', 0);
-    await page.keyboard.press('O');
+    await keyboardPressOnCanvas(page, 'O');
     await moveOnAtom(page, 'C', 1);
-    await page.keyboard.press('N');
+    await keyboardPressOnCanvas(page, 'N');
     await takeEditorScreenshot(page);
   });
 

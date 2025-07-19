@@ -16,6 +16,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
@@ -360,7 +361,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await moveOnAtom(page, 'C', 1);
     await deleteByKeyboard(page);
     await moveOnAtom(page, 'C', 4);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
@@ -377,7 +378,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await moveOnAtom(page, 'C', 1);
     await deleteByKeyboard(page);
     await moveOnAtom(page, 'C', 4);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 

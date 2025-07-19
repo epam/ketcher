@@ -11,6 +11,7 @@ import {
   clickOnAtom,
   waitForRender,
   waitForIndigoToLoad,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -139,9 +140,7 @@ test.describe('Open Ketcher', () => {
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('n');
-    });
+    await keyboardPressOnCanvas(page, 'n');
     await clickOnAtom(page, 'C', secondAtom);
   });
 

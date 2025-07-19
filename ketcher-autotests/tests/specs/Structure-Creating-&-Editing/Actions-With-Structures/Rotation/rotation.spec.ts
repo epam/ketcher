@@ -157,7 +157,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+h');
+    await performHorizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -173,7 +173,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+v');
+    await performVerticalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -201,14 +201,10 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(page, anyReaction);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Alt+v');
-    });
+    await performVerticalFlip(page);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Alt+h');
-    });
+    await performHorizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 

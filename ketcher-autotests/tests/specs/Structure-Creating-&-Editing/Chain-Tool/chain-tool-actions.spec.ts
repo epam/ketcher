@@ -14,6 +14,7 @@ import {
   BondType,
   MolFileFormat,
   deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
 import {
   FileType,
@@ -46,7 +47,7 @@ test.describe('Chain Tool verification', () => {
       SelectionToolType.Lasso,
     );
     await clickOnAtom(page, 'C', 0);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 

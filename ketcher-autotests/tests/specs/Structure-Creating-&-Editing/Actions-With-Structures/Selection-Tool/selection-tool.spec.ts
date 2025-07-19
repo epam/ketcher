@@ -13,6 +13,7 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
   waitForRender,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -71,7 +72,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('o');
+    await keyboardPressOnCanvas(page, 'o');
     await takeEditorScreenshot(page);
   });
 

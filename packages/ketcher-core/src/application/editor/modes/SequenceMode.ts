@@ -1237,20 +1237,23 @@ export class SequenceMode extends BaseMode {
       }
     };
 
+    const deleteHandler = (direction: Direction) => {
+      if (this.isEditInRNABuilderMode) return;
+      if (SequenceRenderer.selections.length > 0) {
+        this.deleteSelection();
+      } else {
+        deleteNode(direction);
+      }
+    };
+
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Right);
-        },
+        handler: () => deleteHandler(Direction.Right),
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Left);
-        },
+        handler: () => deleteHandler(Direction.Left),
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

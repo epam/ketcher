@@ -179,15 +179,15 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch view to Sequence mode
      * 4. Switch back to Flex mode
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
     await takePageScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takePageScreenshot(page);
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takePageScreenshot(page);
   });
 
@@ -200,7 +200,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 1. Open prepared file in Macro mode -> Flex mode
      * 2. Connect monomer to molecule's atom with implicit hydrogen in label
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/monomer-and-micro-structure.ket',
@@ -222,7 +222,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Select three @ symbols in edit mode (having blinking cursor somewhere in the middle of sequence - this is important!
      * 4. Click any monomer from the library (C peptide in my case) - click Yes in appeared Confirm Your Action dialog
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
@@ -261,7 +261,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Hover mouse cursor over base
      * 5. Take a screenshot to validate the side chain attachment point is shown in the right place
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -289,7 +289,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Enter letters
      * 6. Take a screenshot to validate user can not create new sequences in the “Modify RNA Builder” mode
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -318,7 +318,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Put the same preset from the library and put it above first one
      * 4. Take a screenshot to validate bonds length should be the same (1.5 angstroms)
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -344,12 +344,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Paste the copied preset to the beginning of the sequence
      * 6. Take a screenshot to validate the cursor blinks in the right place
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await addMonomerToCenterOfCanvas(page, Presets.T);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).clearCanvas();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await keyboardTypeOnCanvas(page, 'UUU');
     await keyboardPressOnCanvas(page, 'ArrowUp');
     await pasteFromClipboardByKeyboard(page);
@@ -553,7 +553,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Press Undo button
      * 6. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Undo_Redo operation for bonds and molecules (multi-select) works wrong.ket',
@@ -613,12 +613,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/two sequences of bases (nC6n5U).ket',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takeEditorScreenshot(page);
   });
 
@@ -684,7 +684,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Select all monomers and expand it and collapse it
      * 4. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/monomers-cycled.ket',
@@ -850,7 +850,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -871,7 +871,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Take a screenshot
      */
     // test.slow();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -902,7 +902,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Continue adding presets and observe the chain formation.
      * 5. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await Library(page).switchToRNATab();
     await Library(page).selectMonomers([
       Presets.A,

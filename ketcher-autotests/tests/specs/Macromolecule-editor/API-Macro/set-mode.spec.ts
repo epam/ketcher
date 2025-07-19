@@ -30,7 +30,7 @@ test.describe('setMode', () => {
      * Description: ketcher.setMode switch canvas to Flex Mode
      */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await setMode(page, 'flex');

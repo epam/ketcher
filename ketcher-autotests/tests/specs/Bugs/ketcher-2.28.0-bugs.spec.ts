@@ -106,7 +106,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   await clickInTheMiddleOfTheScreen(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await clickInTheMiddleOfTheScreen(page);
   await selectAllStructuresOnCanvas(page);
@@ -166,7 +166,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
    * 3. Type any text on the canvas (Sequence mode)
    * 4. Check the console to see if the change event is triggered
    */
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const consoleMessagePromise = page.waitForEvent(
     'console',
@@ -203,7 +203,7 @@ test(`Case 5: In Snake mode, structure in HELM format does not open via Paste fr
    * 3. Type any text щn the canvas (Sequence mode)
    * 4. Check the console to see if the change event is triggered
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   const errorMessages: string[] = [];
 
@@ -238,7 +238,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -297,7 +297,7 @@ test(
 
     test.fail();
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
     // await pasteFromClipboardAndAddToMacromoleculesCanvas(
     //   page,
@@ -324,13 +324,13 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
    * 5. Paste the copied preset to the end of the sequence
    * 6. Take a screenshot to validate the cursor blinks in the right place
    */
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await addMonomerToCenterOfCanvas(page, Presets.T);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await keyboardTypeOnCanvas(page, 'UUU');
   await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
@@ -379,7 +379,7 @@ test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
    * 2. Load from HELM one more ambiguous monomer
    * 3. Take a screenshot to validate Sugar label (Mod0) at center of monomer
    */
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -442,7 +442,7 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
    * 3. Select all monomers and click Create Antisense Strand from context menu
    * 4. Validate the complementary base of A is U
    */
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -470,7 +470,7 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
    * 3. Select certain monomers, call context menu and click Create Antisense Strand
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -511,7 +511,7 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
    * 3. Select half of monomers of both chains and click Create Antisense Strand from context menu
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -542,7 +542,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
    * 3. Remove hydrogen bond
    * 4. Validate system removes antisense base layout and change enumeration back to sense chain
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -585,7 +585,7 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
    * 3. Select certain monomers, call context menu and click Create Antisense Strand
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -629,7 +629,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
    * 4. Switch to Snake mode
    * 4. Take screenshot to validate all chain ordered by snake mode
    */
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -644,7 +644,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   await CommonLeftToolbar(page).selectEraseTool();
   await hydrogenBond.click({ force: true });
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -661,7 +661,7 @@ test(`Case 23: Antisense layout is wrong for any ambiguouse base from the librar
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -686,7 +686,7 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -710,7 +710,7 @@ test(`Case 28: Two chains connected by H-bond arranged wrong if third bond prese
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate all chains arranged correctly
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -734,7 +734,7 @@ test(`Case 29: Layout works wrong if bases of the same chain connected by H-bond
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout goes correct
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -759,7 +759,7 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
    * 3. Press Undo button
    * 3. Take screenshot to validate canvas is empty
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -786,7 +786,7 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
    * 3. Select all monomers and click Create Antisense Strand from context menu
    * 3. Take screenshot to validate canvas is empty
    */
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,

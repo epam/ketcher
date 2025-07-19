@@ -106,7 +106,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Add sugar from library
      * 3. Check name for sugar in the library for fR
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).selectMonomer(Sugars.fR);
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
@@ -147,7 +147,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Drag monomer across canvas and stop moving it while still holding mouse button
      * 5. Observe that a tooltip appears after monomer stops moving, even though mouse button remains pressed
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).selectMonomer(Peptides._2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
@@ -171,7 +171,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 1. Go to Macro - Flex mode
      * 2. Put any monomer on the canvas click on it and move mouse away
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).selectMonomer(Peptides.meC);
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
@@ -196,7 +196,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 1. Go to Macro - Snake mode
      * 2. Load from HELM
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -239,7 +239,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from HELM
      * 3. Try to find horizontal snap-to-distance area
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -301,7 +301,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
        * 3. Open the Sugars, Bases, or Phosphates section.
        * 4. Scroll to the bottom of the list
        */
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
       await Library(page).selectMonomer(Sugars.UNA);
       await takePageScreenshot(page, {
         hideMonomerPreview: true,
@@ -334,7 +334,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Click on any monomer in the RNA Builder section
      * 4. Observe that the corresponding monomer in the library is highlighted
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
       Sugars.UNA,
@@ -362,7 +362,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Right-click on the selected sequences and choose "Delete" from the context menu.
      * 5. Observe that all selected sequences are deleted.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -641,7 +641,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -659,7 +659,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Add nucleotide (RNA or DNA - C in my case) to the very first position
      * 4. Observe the canvas
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -681,7 +681,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -699,7 +699,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Generate the antisense sequence.
      * 4. Observe the canvas
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -729,7 +729,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Remove dash (line)
      * 4. Observe the canvas
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -764,7 +764,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Press Clear canvas button
      * 4. Press Undo button
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
@@ -794,7 +794,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Select DNA N base from the library and press Update button
      * 5. Press Save button and select HELM file format
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -829,7 +829,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Expand the monomer
      * 5. Draw cyclohexane and compare the bond length and angle
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).selectMonomer(Peptides._1Nal);
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');

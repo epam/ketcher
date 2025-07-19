@@ -1092,10 +1092,10 @@ test.describe('RNA Library', () => {
       'KET/chain-with-unsplit-nucleotides.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);

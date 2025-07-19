@@ -38,7 +38,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro(page, 'KET/nine-connected-rnas.ket');
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   });
 
   test('Select one nucleotide and modify sugar', async ({ page }) => {
@@ -178,7 +178,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await moveMouseAway(page);
   });
 
@@ -301,7 +301,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await Library(page).selectMonomer(Phosphates.sP_);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -327,7 +327,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await Library(page).rnaBuilder.save();
     await page.getByText('Yes').click();
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

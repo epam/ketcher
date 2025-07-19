@@ -213,7 +213,7 @@ test.describe('Zoom Tool', () => {
     */
     const wheelYDelta = -400;
     const wheelXDelta = -400;
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/peptides-connected-with-bonds.ket',

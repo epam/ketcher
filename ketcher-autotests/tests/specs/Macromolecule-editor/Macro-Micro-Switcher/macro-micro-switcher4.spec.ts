@@ -575,13 +575,13 @@ test(`Verify that switching between different visualization modes (e.g., flex, s
     'KET/Micro-Macro-Switcher/Switching between different visualization modes.ket',
   );
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test(`Verify the behavior when bonds are dragged and moved in macromolecules mode (e.g., ensuring they stay connected)`, async () => {
@@ -693,19 +693,19 @@ test(`Check that when entering macromolecules mode all standard stereo-labels ar
     page,
     'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -733,21 +733,21 @@ test(`Check that visible stereo-labels in macromolecules mode get selected with 
     page,
     'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

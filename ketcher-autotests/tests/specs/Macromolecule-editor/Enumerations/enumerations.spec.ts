@@ -158,7 +158,7 @@ test.describe('Enumerations', () => {
     recalculated and renumbered in both linear and branch chains
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._25R).click();
     await takeEditorScreenshot(page);
@@ -173,7 +173,7 @@ test.describe('Enumerations', () => {
     recalculated and renumbered in both linear and branch chains
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._3A6).click();
     await takeEditorScreenshot(page);
@@ -191,7 +191,7 @@ test.describe('Enumerations', () => {
       page,
       'Molfiles-V3000/rna-modified-sugars.mol',
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._5A6).click();
     await takeEditorScreenshot(page);

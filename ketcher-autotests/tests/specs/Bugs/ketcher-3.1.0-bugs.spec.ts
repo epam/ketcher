@@ -89,7 +89,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -111,7 +111,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from KET
      * 3. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
@@ -132,7 +132,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -154,7 +154,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -208,7 +208,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Select all monomers on the canvas and call context menu
      * 4. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -373,7 +373,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 5. Hover over U monomer
      * 6. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptides.O);
     await waitForMonomerPreview(page);
@@ -394,7 +394,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Select sequence with Shift+Up/Down arrow combination
      * 4. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await keyboardTypeOnCanvas(
       page,
       'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -430,7 +430,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Copy (Ctrl+C) and Paste (Ctrl+V) the structure onto the canvas.
      * 5. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/peptides-with-long-bond.ket',
@@ -457,7 +457,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Press Backspace key to delete left E symbol
      * 5. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -473,7 +473,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -511,7 +511,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -529,7 +529,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Edit mode and remove - symbol
      * 4. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -546,7 +546,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -564,7 +564,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Edit mode and remove first A nucleotide
      * 4. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -580,7 +580,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -598,7 +598,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Paste same HELM once again
      * 4. Take a screenshot
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -671,7 +671,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -690,7 +690,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Take a screenshot
      */
     const firstMonomer = getMonomerLocator(page, Peptides.F).first();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/structure-in-snake-mode.ket',
@@ -712,7 +712,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Copy and paste directly onto the canvas sequence GATYLIK
      * 3. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await switchToPeptideMode(page);
     await copyContentToClipboard(page, 'GATYLIK');
     await pasteFromClipboardByKeyboard(page);

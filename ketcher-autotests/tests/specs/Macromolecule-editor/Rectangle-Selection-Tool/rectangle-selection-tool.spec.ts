@@ -422,7 +422,7 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 850;
     const y = 500;
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptides.Hhs).hover();
     await dragMouseTo(x, y, page);

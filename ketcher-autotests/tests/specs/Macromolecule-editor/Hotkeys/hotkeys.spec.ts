@@ -182,7 +182,7 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type.
         */
-        await selectSequenceLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });
@@ -198,7 +198,7 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type when typing any sequences.
         */
-        await selectSequenceLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
         await typeAllEnglishAlphabet(page);
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);

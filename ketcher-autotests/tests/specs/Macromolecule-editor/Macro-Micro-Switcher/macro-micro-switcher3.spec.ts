@@ -1594,12 +1594,12 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

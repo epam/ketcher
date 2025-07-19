@@ -103,7 +103,7 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */
 
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
@@ -353,7 +353,7 @@ test.describe('Undo-Redo tests', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).redo();

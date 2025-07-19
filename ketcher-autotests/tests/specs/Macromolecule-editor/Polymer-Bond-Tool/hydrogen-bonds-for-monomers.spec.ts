@@ -565,13 +565,13 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await zoomWithMouseWheel(page, -600);
 
-      await selectSnakeLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     });
   });
 });
@@ -829,15 +829,15 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const buttonIdToTitle: {
@@ -893,15 +893,15 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const molecules: { [monomerName: string]: IMonomer } = {

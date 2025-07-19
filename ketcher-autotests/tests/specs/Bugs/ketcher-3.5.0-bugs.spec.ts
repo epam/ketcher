@@ -77,7 +77,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Right-click and select Modify in RNA Builder
      * 5. Click on the Base card in the RNA Builder.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -101,7 +101,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 1. Go to Macro - Flex mode (empty canvas!)
      * 2. Load from MOL
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'Molfiles-V3000/Bugs/gattaca.mol',
@@ -124,7 +124,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Undo/Redo modification
      * 5. Check that modification is applied
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -161,7 +161,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Modify it
      * 4. Check that modification is applied
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -196,7 +196,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that layout not shift
      * 4. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
@@ -219,7 +219,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that modification options are in correct order
      * 4. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -251,7 +251,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/single-benzene-ring.ket',
@@ -279,7 +279,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Select monomers without bonds
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -317,7 +317,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Right-click on the amino acid
      * 3. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -352,7 +352,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 6. Check that app not crashes
      * 7. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -393,7 +393,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -426,7 +426,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -456,7 +456,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -489,7 +489,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -522,7 +522,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -555,7 +555,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -600,7 +600,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -622,7 +622,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -655,7 +655,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Use the ruler tool to adjust the layout of the sequence (e.g., move the slider from position 30 to 20).
      * 3. Observe the canvas after the ruler is released
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await keyboardTypeOnCanvas(
       page,
       'ACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTU',

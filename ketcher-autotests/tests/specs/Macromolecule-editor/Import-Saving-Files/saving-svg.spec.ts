@@ -210,7 +210,7 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData1) {
     test(`Export to SVG: Verify it is possible to export Snake mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await selectSnakeLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -251,7 +251,7 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData2) {
     test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
@@ -298,7 +298,7 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData3) {
     test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
@@ -344,7 +344,7 @@ test.describe('Saving in .svg files', () => {
       markResetToDefaultState('defaultLayout');
 
       await openFileAndAddToCanvasMacro(page, filename);
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();

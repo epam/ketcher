@@ -276,7 +276,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     // Peptide
     await hoverMouseOverMonomerNTymes(page, Chem.sDBL, 10);
@@ -304,7 +304,7 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   /*

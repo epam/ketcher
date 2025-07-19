@@ -151,7 +151,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectSnakeLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
@@ -773,7 +773,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takePageScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
@@ -983,9 +983,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'CCC');
     await takePageScreenshot(page);
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takePageScreenshot(page);
   });
 
@@ -1007,8 +1007,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectFlexLayoutModeTool(page);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,

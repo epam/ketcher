@@ -101,6 +101,8 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -353,7 +355,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to MOL V3000
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
@@ -440,7 +442,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Take screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -463,7 +465,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Take screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -486,7 +488,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Take screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -651,7 +653,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Add O and U symbols to the sequence
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'OU');
     await takeEditorScreenshot(page);
@@ -815,7 +817,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
@@ -874,7 +876,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await takeEditorScreenshot(page);
   });
 

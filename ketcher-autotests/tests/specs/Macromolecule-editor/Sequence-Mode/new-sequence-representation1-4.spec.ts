@@ -36,13 +36,13 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 });
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -1561,7 +1561,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         MacroFileType.HELM,
         (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
       );
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await selectSequenceMode(page, monomer.Type);
       await resetZoomLevelToDefault(page);
 
@@ -1580,7 +1580,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1633,7 +1633,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         MacroFileType.HELM,
         (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
       );
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await selectSequenceMode(page, monomer.Type);
       await resetZoomLevelToDefault(page);
 
@@ -1652,7 +1652,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1704,7 +1704,7 @@ for (const monomer of monomersToAdd) {
         (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await selectSequenceMode(page, monomer.Type);
       await resetZoomLevelToDefault(page);
 
@@ -1724,7 +1724,7 @@ for (const monomer of monomersToAdd) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1756,7 +1756,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -1776,7 +1776,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1807,7 +1807,7 @@ for (const sequence of sequences) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -1827,7 +1827,7 @@ for (const sequence of sequences) {
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1874,7 +1874,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -1894,7 +1894,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1924,7 +1924,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -1943,7 +1943,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1973,7 +1973,7 @@ for (const sequence of sequences) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -1992,7 +1992,7 @@ for (const sequence of sequences) {
       (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -2022,7 +2022,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       MacroFileType.HELM,
       (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await selectSequenceMode(page, SequenceModeType.RNA);
     await resetZoomLevelToDefault(page);
 
@@ -2041,7 +2041,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -2065,7 +2065,7 @@ test(`Case 37. Verify that above and bellow the chains where the caret is placed
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,
@@ -2098,7 +2098,7 @@ test(`Case 38. Check that up and down arrows on the keyboard allow the user to s
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,
@@ -2140,7 +2140,7 @@ test(`Case 39. Check if a line break (enter) is added in SYNC mode ON, both back
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 3,
@@ -2173,7 +2173,7 @@ test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sense 
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 3,
@@ -2206,7 +2206,7 @@ test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sense 
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 3,

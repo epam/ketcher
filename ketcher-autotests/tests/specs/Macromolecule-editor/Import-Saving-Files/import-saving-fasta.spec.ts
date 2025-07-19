@@ -107,7 +107,7 @@ test.describe('Import-Saving .fasta Files', () => {
       'FASTA/fasta-snake-mode-rna.fasta',
       [MacroFileType.FASTA, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -119,7 +119,7 @@ test.describe('Import-Saving .fasta Files', () => {
       'FASTA/fasta-snake-mode-rna.fasta',
       [MacroFileType.FASTA, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await verifyFileExport(
       page,
       'FASTA/fasta-snake-mode-rna-expected.fasta',
@@ -233,7 +233,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await page.getByText('Peptide', { exact: true }).click();
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
-  //   await selectSequenceLayoutModeTool(page);
+  //   await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   //   await takeEditorScreenshot(page);
   // });
 
@@ -266,7 +266,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await page.getByText('Peptide', { exact: true }).click();
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
-  //   await selectSequenceLayoutModeTool(page);
+  //   await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   //   await moveMouseAway(page);
   //   await takeEditorScreenshot(page);
   // });
@@ -279,7 +279,7 @@ test.describe('Import-Saving .fasta Files', () => {
       MacroFileType.FASTA,
       SequenceMonomerType.Peptide,
     ]);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await getSymbolLocator(page, {
       symbolAlias: 'U',
       nodeIndexOverall: 4,
@@ -340,7 +340,7 @@ test.describe('Import-Saving .fasta Files', () => {
     After fix screenshot should be updated.
     */
       await openFileAndAddToCanvasMacro(page, 'KET/peptides-chain-cycled.ket');
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,

@@ -65,7 +65,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
 test.afterEach(async () => {
@@ -3513,13 +3513,13 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
 
   await createAntisenseStrandOption.click();
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3633,7 +3633,7 @@ test(`18. Flipping checks`, async () => {
   test.setTimeout(20000);
 
   await pageReload(page);
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3650,8 +3650,8 @@ test(`18. Flipping checks`, async () => {
     getMonomerLocator(page, { monomerAlias: 'RSpabC' }),
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -3669,7 +3669,7 @@ test(`19. Verify dot placement for a modified phosphate in sequence mode in sens
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3697,7 +3697,7 @@ test(`20. Verify correct dot placement after mode switches from Sequence to Flex
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3705,9 +3705,9 @@ test(`20. Verify correct dot placement after mode switches from Sequence to Flex
     `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -3729,7 +3729,7 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
@@ -3768,7 +3768,7 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3801,7 +3801,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3832,7 +3832,7 @@ test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3865,7 +3865,7 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3898,7 +3898,7 @@ test(`25. Verify that the antisense strand creation options are disabled for an 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -3949,7 +3949,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -3996,7 +3996,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -4045,7 +4045,7 @@ for (const monomer of monomers.filter(
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -4091,7 +4091,7 @@ for (const monomer of monomers.filter(
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -4133,7 +4133,7 @@ for (const chain of chainWithExtraBondToBase) {
       chain.shouldFail === true,
       `That test fails because of ${chain.issueNumber} issue(s).`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -4174,7 +4174,7 @@ for (const chain of chainWithExtraBondToBase) {
       chain.shouldFail === true,
       `That test fails because of ${chain.issueNumber} issue(s).`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
@@ -4217,7 +4217,7 @@ for (const monomer1 of shortMonomerList) {
         `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await loadMonomerOnCanvas(
         page,
         monomer1,
@@ -4300,7 +4300,7 @@ for (const monomer1 of shortMonomerList) {
         `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await loadMonomerOnCanvas(
         page,
         monomer1,
@@ -4373,7 +4373,7 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
    *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4412,7 +4412,7 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
    *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4453,7 +4453,7 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
    *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4495,7 +4495,7 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
    *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4537,7 +4537,7 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
    *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4577,7 +4577,7 @@ test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected t
    *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4617,7 +4617,7 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
    *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4657,7 +4657,7 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
    *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
@@ -4698,7 +4698,7 @@ test(`27. Check that if no other double-stranded sequences existed on the canvas
    *       6. Check that SYNC button is present and enabled
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
   const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
   // checking that SYNC button is not present

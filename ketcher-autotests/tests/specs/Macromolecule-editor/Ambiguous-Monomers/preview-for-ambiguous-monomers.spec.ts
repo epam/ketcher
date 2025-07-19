@@ -502,7 +502,7 @@ test.describe('Preview tooltips checks: ', () => {
       test.slow();
       await pageReload(page);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-      await selectFlexLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -541,7 +541,7 @@ test.describe('Preview tooltips checks: ', () => {
       test.setTimeout(20000);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,

@@ -1292,7 +1292,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectSnakeLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
       await Library(page).selectMonomer(data.monomer);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
@@ -1322,7 +1322,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -1941,7 +1941,7 @@ test.describe('Macro-Micro-Switcher', () => {
           'KET/two-attachment-points-added-in-micro-mode.ket',
         );
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
         if (data.sequenceType) {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
@@ -1957,7 +1957,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await keyboardPressOnCanvas(page, 'Escape');
-        await selectSnakeLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
         await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
         await getMonomerLocator(page, {
           monomerAlias: 'F1',
@@ -1986,7 +1986,7 @@ test.describe('Macro-Micro-Switcher', () => {
       */
         await drawBenzeneRing(page);
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
         if (data.sequenceType) {
           await switchSequenceEnteringButtonType(page, data.sequenceType);

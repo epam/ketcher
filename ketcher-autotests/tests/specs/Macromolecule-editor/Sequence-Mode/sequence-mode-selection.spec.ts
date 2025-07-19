@@ -37,7 +37,7 @@ test.describe('Sequence mode selection for view mode', () => {
     const SCROLL_DOWN_VALUE = 250;
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
   });
@@ -90,7 +90,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     const SCROLL_DOWN_VALUE = 250;
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     const symbolG = getSymbolLocator(page, {
@@ -127,8 +127,8 @@ test.describe('Sequence mode selection for edit mode', () => {
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectFlexLayoutModeTool(page);
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
 
     await takeEditorScreenshot(page);
   });
@@ -185,7 +185,7 @@ test.describe('Sequence mode selection for view mode', () => {
   for (const data of testData) {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(page, data.file, data.fileType);
-      await selectSequenceLayoutModeTool(page);
+      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -206,7 +206,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Test case: #3819
     Description: All selected nucleotides are highlighted.
     */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -219,7 +219,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Test case: #3819
     Description: Selection is cleared.
     */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -236,7 +236,7 @@ test.describe('Sequence mode selection for view mode', () => {
     */
     const x = 500;
     const y = 500;
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -251,7 +251,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Test case: #3819
     Description: Selection is cleared.
     */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -266,7 +266,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Test case: #3819
     Description: Selection is preserved after Zoom In/Zoom Out.
     */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
@@ -282,7 +282,7 @@ test.describe('Sequence mode selection for view mode', () => {
     Test case: #3819
     Description: Selection is cleared.
     */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);

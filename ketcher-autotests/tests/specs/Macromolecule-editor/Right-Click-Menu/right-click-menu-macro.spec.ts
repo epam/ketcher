@@ -78,7 +78,7 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
   const deleteOption = page.getByTestId(MonomerOption.Delete);
   const peptideA = getMonomerLocator(page, Peptides.A);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -94,7 +94,7 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
   await expect(pasteOption).toBeDisabled();
   await expect(deleteOption).toBeEnabled();
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await peptideA.click();
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
@@ -131,7 +131,7 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
   const peptideD = getMonomerLocator(page, Peptides.D);
   const peptideE = getMonomerLocator(page, Peptides.E);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -152,7 +152,7 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
   await expect(pasteOption).toBeDisabled();
   await expect(deleteOption).toBeEnabled();
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await page.keyboard.down('Shift');
   await peptideC.click();
   await peptideD.click();
@@ -197,7 +197,7 @@ test.fail(
       bondType: MacroBondDataIds.Single,
     }).first();
 
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -213,7 +213,7 @@ test.fail(
     await expect(pasteOption).toBeDisabled();
     await expect(deleteOption).toBeEnabled();
 
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await randomBond.click({ force: true });
     await ContextMenu(page, randomBond).open();
     await takeElementScreenshot(
@@ -251,7 +251,7 @@ test.fail(
     const deleteOption = page.getByTestId(MonomerOption.Delete);
     const canvas = page.getByTestId(KETCHER_CANVAS).first();
 
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await ContextMenu(page, canvas).open();
     await takeElementScreenshot(
@@ -262,7 +262,7 @@ test.fail(
     await expect(pasteOption).toBeDisabled();
     await expect(deleteOption).toBeDisabled();
 
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await ContextMenu(page, canvas).open();
     await takeElementScreenshot(
@@ -307,7 +307,7 @@ test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond 
    */
   const peptideA = getMonomerLocator(page, Peptides.A);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -320,7 +320,7 @@ test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond 
     ContextMenu(page, peptideA).contextMenuBody,
   );
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
@@ -363,7 +363,7 @@ test(`6. Verify that menu item order in Sequence mode matches required structure
     symbolAlias: 'A',
   }).first();
 
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -398,7 +398,7 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
   const peptideA = getMonomerLocator(page, Peptides.A);
   const canvas = page.getByTestId(KETCHER_CANVAS).first();
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -443,7 +443,7 @@ test(`8. Verify Undo/Redo after using Delete from right-click menu`, async () =>
    */
   const peptideA = getMonomerLocator(page, Peptides.A);
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -487,7 +487,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
    */
   const peptideA = getMonomerLocator(page, Peptides.A);
 
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -525,7 +525,7 @@ test(`10. Verify that context menu works correctly on canvas after panning`, asy
    */
   const peptideA = getMonomerLocator(page, Peptides.A);
 
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,

@@ -3,6 +3,8 @@ import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
+import { TopToolbar } from '../macromolecules/TopToolbar';
+import { LayoutMode } from '../constants/topToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -113,7 +115,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await page.getByTestId('layout-mode').waitFor({ state: 'visible' });
 
       if (options.enableFlexMode) {
-        await selectFlexLayoutModeTool(page);
+        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {

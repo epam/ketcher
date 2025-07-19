@@ -344,7 +344,7 @@ test.describe('Zoom Tool', () => {
      *        7. Take screenshot to witness the result
      */
     await CommonTopLeftToolbar(page).clearCanvas();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -377,7 +377,7 @@ test.describe('Zoom Tool', () => {
      *        7. Take screenshot to witness the result
      */
     await CommonTopLeftToolbar(page).clearCanvas();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -394,7 +394,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test('Ensure that the zoom behavior works correctly with large sequences where the top left monomer is off-screen before zooming', async () => {
@@ -430,7 +430,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 });
 
@@ -480,7 +480,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        8. Take screenshot to witness the result
    */
   await CommonTopLeftToolbar(page).clearCanvas();
-  await selectSnakeLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -494,7 +494,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   await resetZoomLevelToDefault(page);
   await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Sequence mode)', async () => {
@@ -513,7 +513,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        8. Take screenshot to witness the result
    */
   await CommonTopLeftToolbar(page).clearCanvas();
-  await selectSequenceLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -527,5 +527,5 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   await resetZoomLevelToDefault(page);
   await ZoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
-  await selectFlexLayoutModeTool(page);
+  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });

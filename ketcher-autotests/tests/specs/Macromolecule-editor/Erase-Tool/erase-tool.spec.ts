@@ -297,7 +297,7 @@ test.describe('Erase Tool', () => {
       page,
       `Molfiles-V3000/rna-modified-sugars.mol`,
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);

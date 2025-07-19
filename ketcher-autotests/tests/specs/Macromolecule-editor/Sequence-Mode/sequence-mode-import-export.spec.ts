@@ -74,7 +74,7 @@ test.describe('Import/export sequence:', () => {
     const contentTypeSelector =
       PasteFromClipboardDialog(page).contentTypeSelector;
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
@@ -197,10 +197,10 @@ test.describe('Import/export sequence:', () => {
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );
 
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   // Fail while performance issue on Indigo side
@@ -270,7 +270,7 @@ test.describe('Import/export sequence:', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await CommonTopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList

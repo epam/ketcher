@@ -5,7 +5,7 @@ import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   },
   tabSelection: async (page: Page) => {
     await Library(page).switchToRNATab();

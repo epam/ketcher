@@ -89,7 +89,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Go to Molecules mode and return back to Macro - Flex mode
      * 4. Grab one monomer and move it
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -117,7 +117,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      * Need to update screenshot after Indigo will be updated.
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -139,7 +139,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -149,7 +149,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -168,7 +168,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Take a screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
@@ -195,7 +195,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Switch to Flex mode
      * 5. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -208,7 +208,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -227,7 +227,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Press Delete button
      * 5. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -258,7 +258,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 5. Switch to Flex mode or Snake mode.
      * 6. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -272,7 +272,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'Delete');
     await CommonTopLeftToolbar(page).undo();
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -292,7 +292,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 5. Exit edit mode
      * 6. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -329,7 +329,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Create antisense chain for selection
      * 5. Take a screenshot.
      */
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -370,7 +370,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Click Create DNA antisense stand option
      * 5. Validate HELM export.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
@@ -396,7 +396,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Click Create DNA antisense stand option
      * 5. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -422,7 +422,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -451,7 +451,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -480,7 +480,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Grab central sugar and move it around whole structure petals
      * 4. Take a screenshot.
      */
-    await selectFlexLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
@@ -519,7 +519,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the first position
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -551,7 +551,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 6. Start typing a new sequence
      * 7. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -593,7 +593,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 6. Try to type "A" or "U" on the keyboard.
      * 7. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -631,7 +631,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add peptide (E in my case) between two As
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -661,7 +661,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) before first U and - symbol
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -893,7 +893,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Go to small molecules and expand the ribose monomers
      * 4. Take a screenshot.
      */
-    await selectSequenceLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
     await keyboardTypeOnCanvas(page, 'AA');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
@@ -920,7 +920,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

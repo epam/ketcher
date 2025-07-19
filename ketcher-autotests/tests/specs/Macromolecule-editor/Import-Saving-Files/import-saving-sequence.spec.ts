@@ -140,7 +140,7 @@ test.describe('Import-Saving .seq Files', () => {
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -152,7 +152,7 @@ test.describe('Import-Saving .seq Files', () => {
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await verifyFileExport(
       page,
       'Sequence/sequence-snake-mode-rna-expected.seq',

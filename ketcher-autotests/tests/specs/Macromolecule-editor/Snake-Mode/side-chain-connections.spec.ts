@@ -12,11 +12,6 @@ import {
   waitForPageInit,
   MolFileFormat,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
@@ -31,6 +26,8 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 let page: Page;
 

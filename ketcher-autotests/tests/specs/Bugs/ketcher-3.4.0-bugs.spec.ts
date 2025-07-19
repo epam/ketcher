@@ -27,10 +27,6 @@ import {
   TemplateLibrary,
 } from '@utils';
 import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
@@ -79,6 +75,8 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,

@@ -13,10 +13,7 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  selectSnakeLayoutModeTool,
-  selectRectangleArea,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@constants/monomers/Peptides';
@@ -27,6 +24,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(

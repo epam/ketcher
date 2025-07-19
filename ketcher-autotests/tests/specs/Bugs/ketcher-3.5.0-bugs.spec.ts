@@ -14,10 +14,6 @@ import {
   MonomerType,
   selectPartOfMolecules,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -40,6 +36,8 @@ import {
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 let page: Page;
 

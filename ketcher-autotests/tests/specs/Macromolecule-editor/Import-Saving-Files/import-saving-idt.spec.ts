@@ -22,10 +22,6 @@ import {
   takePolymerEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   closeErrorMessage,
@@ -69,6 +65,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 
 let page: Page;
 

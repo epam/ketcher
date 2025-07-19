@@ -18,10 +18,6 @@ import {
   deleteByKeyboard,
 } from '@utils';
 import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   copyAndPaste,
   cutAndPaste,
   selectAllStructuresOnCanvas,
@@ -55,6 +51,8 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();

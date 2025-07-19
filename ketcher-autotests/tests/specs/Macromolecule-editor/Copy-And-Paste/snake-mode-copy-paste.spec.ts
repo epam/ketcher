@@ -9,13 +9,12 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
 } from '@utils';
-import {
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 test.describe('Snake mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {

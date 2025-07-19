@@ -26,11 +26,6 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -63,6 +58,8 @@ import {
   BondsSetting,
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 declare global {
   interface Window {

@@ -13,12 +13,7 @@ import {
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectRectangleArea,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
@@ -30,6 +25,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 let page: Page;
 

@@ -13,11 +13,7 @@ import {
   moveMouseAway,
   MacroFileType,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectRectangleArea,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -28,6 +24,8 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {

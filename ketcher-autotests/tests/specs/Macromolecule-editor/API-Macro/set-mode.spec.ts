@@ -1,5 +1,7 @@
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -9,7 +11,6 @@ import {
   setZoom,
   moveMouseAway,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {

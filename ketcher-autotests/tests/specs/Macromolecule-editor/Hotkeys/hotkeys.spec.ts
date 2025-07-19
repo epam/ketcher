@@ -16,13 +16,12 @@ import {
   deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  typeAllEnglishAlphabet,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {

@@ -19,12 +19,7 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  openLayoutModeMenu,
-} from '@utils/canvas/tools/helpers';
+import { openLayoutModeMenu } from '@utils/canvas/tools/helpers';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -56,6 +51,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 let page: Page;
 

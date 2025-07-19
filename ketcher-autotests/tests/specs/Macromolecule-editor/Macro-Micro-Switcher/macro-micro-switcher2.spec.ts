@@ -33,11 +33,6 @@ import {
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
@@ -83,6 +78,8 @@ import {
   getArrowLocator,
   getPlusLocator,
 } from '@utils/canvas/arrow-signes/getArrow';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page

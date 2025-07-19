@@ -20,11 +20,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  selectSequenceLayoutModeTool,
-  selectFlexLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -48,6 +43,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 
 let page: Page;
 

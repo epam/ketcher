@@ -10,10 +10,6 @@ import {
   takeEditorScreenshot,
   MacroFileType,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,
@@ -30,6 +26,8 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');

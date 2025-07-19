@@ -1,7 +1,8 @@
 import { Page, test, TestInfo } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {

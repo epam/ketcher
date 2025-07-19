@@ -36,11 +36,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  switchSequenceEnteringButtonType,
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { switchSequenceEnteringButtonType } from '@utils/canvas/tools/helpers';
 import { MacroFileType, SequenceType } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -106,6 +102,8 @@ import {
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 const topLeftCorner = {
   x: -325,

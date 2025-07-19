@@ -1,14 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
 import {
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  typeAllEnglishAlphabet,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {

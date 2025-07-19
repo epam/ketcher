@@ -19,10 +19,6 @@ import {
   clickOnCanvas,
   MonomerType,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -50,6 +46,8 @@ import {
 } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
+import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;

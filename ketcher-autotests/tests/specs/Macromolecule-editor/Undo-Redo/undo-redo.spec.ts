@@ -39,8 +39,8 @@ import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -102,7 +102,7 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
@@ -352,7 +352,7 @@ test.describe('Undo-Redo tests', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).redo();

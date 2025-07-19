@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
@@ -13,7 +13,9 @@ test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   const typingModes = [

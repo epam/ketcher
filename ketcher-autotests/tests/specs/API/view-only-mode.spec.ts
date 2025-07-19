@@ -42,7 +42,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
@@ -171,7 +171,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectAllStructuresOnCanvas(page);
     await expect(CommonTopLeftToolbar(page).openButton).toBeEnabled();
     await expect(CommonTopLeftToolbar(page).saveButton).toBeEnabled();
-    await expect(TopToolbar(page).copyButton).toBeEnabled();
+    await expect(MoleculesTopToolbar(page).copyButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -202,7 +202,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
 
-    await TopToolbar(page).copyAsMOL();
+    await MoleculesTopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200);
@@ -220,7 +220,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await TopToolbar(page).copyAsKET();
+    await MoleculesTopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200);

@@ -51,8 +51,8 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -786,12 +786,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

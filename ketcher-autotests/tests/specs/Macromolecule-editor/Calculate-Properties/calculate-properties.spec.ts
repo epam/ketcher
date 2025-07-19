@@ -40,8 +40,8 @@ import {
   UnipositiveIonsUnit,
 } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -665,7 +665,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r2-r1.ket',
@@ -723,7 +723,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r3-r1.ket',
@@ -832,7 +832,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
@@ -860,7 +860,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
@@ -888,7 +888,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
@@ -916,7 +916,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
@@ -943,7 +943,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -967,7 +967,9 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).selectMonomer(Peptides.A);
     await CommonTopLeftToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
@@ -1034,7 +1036,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
@@ -1062,7 +1064,9 @@ test.describe('Calculate Properties tests', () => {
      * 2. Add a structure with multiple groups
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -1331,7 +1335,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-rna-microstructure-connected.ket',
@@ -1357,7 +1361,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-dna-microstructure-connected.ket',
@@ -1383,7 +1387,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1410,7 +1414,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/sequenses-connected-through-chem.ket',
@@ -1436,7 +1440,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-with-attachment-points.ket',
@@ -1464,7 +1468,7 @@ test.describe('Calculate Properties tests', () => {
      * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
      * After fix we need to remove screenshot and uncomment asserts
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-without-attachment-points.ket',
@@ -1494,7 +1498,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1520,7 +1526,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1546,7 +1554,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1572,7 +1582,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1598,7 +1610,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1625,7 +1639,9 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1661,7 +1677,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1698,7 +1716,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1360, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1735,7 +1755,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1180, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1772,7 +1794,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 980, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1808,7 +1832,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1839,7 +1865,9 @@ test.describe('Calculate Properties tests', () => {
      * Version 3.5
      */
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1878,7 +1906,9 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

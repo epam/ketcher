@@ -17,8 +17,8 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -500,7 +500,9 @@ test.describe('Preview tooltips checks: ', () => {
       test.slow();
       await pageReload(page);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -539,7 +541,9 @@ test.describe('Preview tooltips checks: ', () => {
       test.setTimeout(20000);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,

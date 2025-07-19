@@ -75,8 +75,8 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -181,7 +181,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'Molfiles-V3000/Bugs/System shows natural analog monomer as modified if source mol file contains only 3-letters natural analog name.mol',
       MacroFileType.MOLv3000,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -200,7 +200,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Select any Preset (U in my case)
      * 4. Press Enter key
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).selectMonomer(Presets.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -234,7 +236,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Verify that the highlight accurately outlines the selected microstructures
      * 3. Ensure no extra floating highlight artifacts appear
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/ketcher - 2025-02-03T145910.386.ket',
@@ -258,13 +260,15 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Add a Phosphates to the sequence.
      * 4. Observe the numbering of the added component.
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAPPPPPAAAAAAAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -314,7 +318,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -363,7 +367,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Take screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).selectMonomer(Peptides.O);
     await Library(page).selectMonomer(Peptides.K);
     await resetZoomLevelToDefault(page);
@@ -548,7 +554,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -658,7 +666,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await CommonTopLeftToolbar(page).calculateProperties();
@@ -732,7 +742,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
        * 4. Switch to Micro mode
        * 5. Take screenshot
        */
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await Library(page).selectMonomer(Presets.A);
       await clickInTheMiddleOfTheScreen(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

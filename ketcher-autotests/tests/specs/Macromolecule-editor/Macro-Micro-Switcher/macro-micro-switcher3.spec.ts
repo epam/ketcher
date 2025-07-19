@@ -38,8 +38,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -1592,12 +1592,16 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

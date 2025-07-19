@@ -37,8 +37,8 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -214,15 +214,17 @@ test.describe('S-Group Properties', () => {
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -569,7 +571,7 @@ test.describe('S-Group Properties', () => {
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });

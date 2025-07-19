@@ -17,8 +17,8 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -210,7 +210,9 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData1) {
     test(`Export to SVG: Verify it is possible to export Snake mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -251,7 +253,9 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData2) {
     test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
@@ -298,7 +302,9 @@ test.describe('Saving in .svg files', () => {
   for (const { filename, description } of testData3) {
     test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(page, filename);
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
@@ -344,7 +350,9 @@ test.describe('Saving in .svg files', () => {
       markResetToDefaultState('defaultLayout');
 
       await openFileAndAddToCanvasMacro(page, filename);
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();

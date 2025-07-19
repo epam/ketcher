@@ -1,12 +1,12 @@
 import { Page, test, TestInfo } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   },
   tabSelection: async (page: Page) => {
     await Library(page).switchToRNATab();

@@ -4,9 +4,9 @@ import { delay } from '@utils/index';
 import {
   AntisenseStrandType,
   LayoutMode,
-} from '../constants/topToolbar/Constants';
+} from '../constants/macromoleculesTopToolbar/Constants';
 
-type TopToolbarLocators = {
+type MacromoleculesTopToolbarLocators = {
   createAntisenseStrandDropdownButton: Locator;
   createAntisenseStrandDropdownExpandButton: Locator;
   calculatePropertiesButton: Locator;
@@ -18,8 +18,8 @@ type TopToolbarLocators = {
   peptidesButton: Locator;
 };
 
-export const TopToolbar = (page: Page) => {
-  const locators: TopToolbarLocators = {
+export const MacromoleculesTopToolbar = (page: Page) => {
+  const locators: MacromoleculesTopToolbarLocators = {
     createAntisenseStrandDropdownButton: page.getByTestId('antisenseRnaStrand'),
     createAntisenseStrandDropdownExpandButton: page
       .getByTestId('Create Antisense Strand')
@@ -142,4 +142,6 @@ export const TopToolbar = (page: Page) => {
   };
 };
 
-export type TopToolbarType = ReturnType<typeof TopToolbar>;
+export type MacromoleculesTopToolbarType = ReturnType<
+  typeof MacromoleculesTopToolbar
+>;

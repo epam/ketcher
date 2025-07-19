@@ -65,8 +65,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 
@@ -300,13 +300,17 @@ test.describe('Import-Saving .idt Files', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -340,13 +344,17 @@ test.describe('Import-Saving .idt Files', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -382,7 +390,9 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 2,
@@ -405,7 +415,9 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(page, 'IDT/idt-expected.idt', FileType.IDT);
     await openFileAndAddToCanvasAsNewProject(page, 'IDT/idt-expected.idt');
     await takeEditorScreenshot(page);
@@ -445,7 +457,9 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C`,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-2.idt',
@@ -480,7 +494,9 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -505,7 +521,9 @@ test.describe('Import-Saving .idt Files', () => {
       /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
       `,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-3.idt',
@@ -548,7 +566,9 @@ test.describe('Import-Saving .idt Files', () => {
       `/5Phos/ACG/3Phos/`,
     );
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -564,7 +584,9 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-4.idt',
@@ -638,7 +660,9 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -661,7 +685,9 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -737,10 +763,12 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -759,7 +787,9 @@ test.describe('Import-Saving .idt Files', () => {
     await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await getSymbolLocator(page, { symbolAlias: '?' }).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -967,7 +997,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await Library(page).selectMonomer(Peptides._1Nal);
     await clickOnCanvas(page, x, y);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();

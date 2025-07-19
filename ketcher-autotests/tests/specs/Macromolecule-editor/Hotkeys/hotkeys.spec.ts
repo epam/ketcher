@@ -20,8 +20,8 @@ import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
@@ -181,7 +181,9 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type.
         */
-        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });
@@ -197,7 +199,9 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type when typing any sequences.
         */
-        await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
         await typeAllEnglishAlphabet(page);
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);

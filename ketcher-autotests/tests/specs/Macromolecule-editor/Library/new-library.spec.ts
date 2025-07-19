@@ -52,13 +52,15 @@ import { MonomerType } from '@utils/types';
 import { MolFileFormat } from '@utils/formats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await switchToRNAMode(page);
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
@@ -425,7 +427,9 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -462,7 +466,9 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the bases belong to same section shown
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -499,7 +505,9 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -536,7 +544,9 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the sugars belong to same section shown
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -573,7 +583,9 @@ test(
      * 7. Click on the Phopsphate slot in RNA Builder
      * 8. Take screenshot to validate that phopsphate card appear selected in Phopsphates subsection
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -610,7 +622,9 @@ test(
      * 7. Click on the Phopsphatee slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the phopsphates belong to same section shown
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -652,7 +666,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
@@ -681,7 +695,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
@@ -710,7 +724,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
     await page.mouse.down();
     await page.mouse.move(100, 100);
@@ -739,7 +753,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
     await page.mouse.down();
     await page.mouse.move(100, 100);
@@ -770,7 +784,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
@@ -812,7 +826,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
@@ -854,7 +868,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -897,7 +911,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -936,7 +950,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
@@ -965,7 +979,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
@@ -995,7 +1009,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
@@ -1028,7 +1042,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
@@ -1062,7 +1076,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
@@ -1093,7 +1107,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
@@ -1124,7 +1138,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -1154,7 +1168,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -1186,7 +1200,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1223,7 +1237,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1257,7 +1271,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
@@ -1309,7 +1323,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
@@ -1363,7 +1377,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1399,7 +1413,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1439,7 +1453,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1506,7 +1520,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1573,7 +1587,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1620,7 +1634,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1664,10 +1678,12 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1692,7 +1708,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await CommonTopLeftToolbar(page).calculateProperties();

@@ -45,8 +45,8 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -795,7 +795,7 @@ connectionVariants.forEach(({ from, to }) => {
       5. Switch to Sequence mode
       6. Take another screenshot
     */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
@@ -815,7 +815,9 @@ connectionVariants.forEach(({ from, to }) => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -840,7 +842,7 @@ connectionVariants2.forEach(({ from, to }) => {
       4. Switch to Sequence mode
       5. Take another screenshot
     */
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
     await openFileAndAddToCanvasMacro(
@@ -858,7 +860,9 @@ connectionVariants2.forEach(({ from, to }) => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -876,7 +880,7 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -1101,7 +1105,7 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/two-peptides-connected.ket',
@@ -1135,7 +1139,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/three-monomer-connected-by-bond.ket',

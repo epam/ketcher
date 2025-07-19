@@ -43,8 +43,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -274,7 +274,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     // Peptide
     await hoverMouseOverMonomerNTymes(page, Chem.sDBL, 10);
@@ -302,7 +302,7 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   /*

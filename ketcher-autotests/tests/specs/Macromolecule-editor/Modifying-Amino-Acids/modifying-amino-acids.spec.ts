@@ -29,8 +29,8 @@ import {
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -40,7 +40,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
 test.afterEach(async () => {
@@ -48,7 +48,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await CommonTopLeftToolbar(page).clearCanvas();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await CommonTopRightToolbar(page).resetZoom();
 });
 
@@ -3487,21 +3487,23 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       ModifyAminoAcidsOption.Phosphorylation,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForPhosphorylation.shouldFail === true,
@@ -3545,21 +3547,23 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       ModifyAminoAcidsOption.SideChainAcetylation,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForSideChainAcetylation.shouldFail === true,
@@ -3603,21 +3607,23 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       ModifyAminoAcidsOption.Citrullination,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForCitrullination.shouldFail === true,
@@ -3661,21 +3667,23 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       ModifyAminoAcidsOption.Hydroxylation,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForHydroxylation.shouldFail === true,
@@ -3719,21 +3727,23 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       ModifyAminoAcidsOption.NMethylation,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNMethylation.shouldFail === true,
@@ -3777,21 +3787,23 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       ModifyAminoAcidsOption.Inversion,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForInversion.shouldFail === true,
@@ -3835,21 +3847,23 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       ModifyAminoAcidsOption.NaturalAminoAcid,
     ]);
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,
@@ -5134,7 +5148,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForPhosphorylation.shouldFail === true,
@@ -5245,7 +5259,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForCitrullination.shouldFail === true,
@@ -5301,7 +5315,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForHydroxylation.shouldFail === true,
@@ -5357,7 +5371,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNMethylation.shouldFail === true,
@@ -5413,7 +5427,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForInversion.shouldFail === true,
@@ -5469,7 +5483,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       hideMonomerPreview: true,
     });
 
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Test should be skipped if related bug exists
     test.fixme(
       aminoAcidForNaturalAminoAcid.shouldFail === true,

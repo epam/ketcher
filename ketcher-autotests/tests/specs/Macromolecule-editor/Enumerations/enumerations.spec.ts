@@ -12,8 +12,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -159,7 +159,7 @@ test.describe('Enumerations', () => {
     recalculated and renumbered in both linear and branch chains
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._25R).click();
     await takeEditorScreenshot(page);
@@ -174,7 +174,7 @@ test.describe('Enumerations', () => {
     recalculated and renumbered in both linear and branch chains
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._3A6).click();
     await takeEditorScreenshot(page);
@@ -192,7 +192,7 @@ test.describe('Enumerations', () => {
       page,
       'Molfiles-V3000/rna-modified-sugars.mol',
     );
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Sugars._5A6).click();
     await takeEditorScreenshot(page);

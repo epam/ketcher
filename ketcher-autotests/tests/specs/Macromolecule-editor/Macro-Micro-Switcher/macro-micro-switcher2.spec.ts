@@ -78,8 +78,8 @@ import {
   getArrowLocator,
   getPlusLocator,
 } from '@utils/canvas/arrow-signes/getArrow';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -148,7 +148,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
@@ -770,7 +772,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takePageScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
@@ -980,9 +982,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'CCC');
     await takePageScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takePageScreenshot(page);
   });
 
@@ -1004,8 +1008,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,

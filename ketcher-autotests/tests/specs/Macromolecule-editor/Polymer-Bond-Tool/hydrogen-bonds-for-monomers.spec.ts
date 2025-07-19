@@ -30,8 +30,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerAttachmentPoint } from '@utils/macromolecules/monomer';
-import { TopToolbar } from '@tests/pages/macromolecules/TopToolbar';
-import { LayoutMode } from '@tests/pages/constants/topToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 test.setTimeout(40000);
@@ -562,13 +562,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await zoomWithMouseWheel(page, -600);
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
     });
   });
 });
@@ -826,15 +830,17 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const buttonIdToTitle: {
@@ -890,15 +896,17 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await TopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const molecules: { [monomerName: string]: IMonomer } = {

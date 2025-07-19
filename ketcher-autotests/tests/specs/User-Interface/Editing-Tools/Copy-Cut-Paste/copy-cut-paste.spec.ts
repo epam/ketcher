@@ -1183,7 +1183,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await PasteFromClipboardDialog(page).cancelButton.click();
+    await PasteFromClipboardDialog(page).cancel();
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,

@@ -202,7 +202,7 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               className={classes.input}
               {...rest}
-              data-testId={
+              data-testid={
                 rest['data-testid']
                   ? rest['data-testid'] + '-' + val
                   : undefined

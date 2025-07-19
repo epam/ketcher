@@ -118,7 +118,7 @@ test.describe('Mapping Tools', () => {
         ReactionMappingType.ReactionMapping,
       );
       await page.getByText('CEL').click();
-      await page.keyboard.press('Delete');
+      await deleteByKeyboard(page);
       await takeEditorScreenshot(page);
 
       await CommonTopLeftToolbar(page).undo();

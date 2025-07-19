@@ -539,7 +539,7 @@ test.describe('Hot key Del', () => {
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);
     });
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await page.mouse.move(x, y);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);

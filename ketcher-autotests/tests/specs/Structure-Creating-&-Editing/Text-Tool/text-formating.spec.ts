@@ -214,7 +214,7 @@ test.describe('Text tools test cases', () => {
       )
       .dblclick();
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await pressButton(page, 'Apply');
     await openFromFileViaTextBox('Txt/longtext_test.txt', page);
     await clickInTheMiddleOfTheScreen(page);

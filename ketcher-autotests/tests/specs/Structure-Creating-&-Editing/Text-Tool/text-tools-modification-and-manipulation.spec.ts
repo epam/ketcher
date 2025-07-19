@@ -88,7 +88,7 @@ test.describe('Text tools test cases', () => {
     );
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -102,7 +102,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Cancel');
     await page.getByText('TEST').dblclick();
     await page.getByRole('dialog').getByText('TEST').dblclick();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await performUndoRedo(page);
@@ -210,7 +210,7 @@ test.describe('Text tools test cases', () => {
     );
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -231,7 +231,7 @@ test.describe('Text tools test cases', () => {
       SelectionToolType.Lasso,
     );
     await selectStructureWithSelectionTool(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
   });

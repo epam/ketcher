@@ -615,11 +615,11 @@ test.describe('Attachment Point Tool', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     point = await getAtomByIndex(page, { label: 'L#' }, 0);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
 

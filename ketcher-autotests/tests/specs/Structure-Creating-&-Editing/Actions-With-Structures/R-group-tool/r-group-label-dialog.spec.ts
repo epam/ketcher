@@ -14,6 +14,7 @@ import {
   moveMouseAway,
   ZoomOutByKeyboard,
   RxnFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,
@@ -289,9 +290,7 @@ test.describe('R-Group Label Tool', () => {
       SelectionToolType.Rectangle,
     );
     await page.getByText('R5').click();
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

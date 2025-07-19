@@ -232,7 +232,7 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/R-fragment-structure.mol',
     );
     await page.getByText('R8').click();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -249,7 +249,7 @@ test.describe('Open Ketcher', () => {
       SelectionToolType.Fragment,
     );
     await page.getByText('R8').click();
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

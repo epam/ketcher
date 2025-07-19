@@ -70,7 +70,7 @@ test.describe('Chain Tool verification', () => {
       'Molfiles-V2000/chains-expected-file.mol',
     );
     await clickOnBond(page, BondType.SINGLE, bondNumber);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

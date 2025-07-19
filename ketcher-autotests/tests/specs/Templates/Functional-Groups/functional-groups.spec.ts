@@ -610,7 +610,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -629,7 +629,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

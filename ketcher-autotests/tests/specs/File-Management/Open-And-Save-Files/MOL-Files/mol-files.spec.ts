@@ -671,7 +671,7 @@ test.describe('Open and Save file', () => {
       );
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Delete');
+      await deleteByKeyboard(page);
     });
   }
 

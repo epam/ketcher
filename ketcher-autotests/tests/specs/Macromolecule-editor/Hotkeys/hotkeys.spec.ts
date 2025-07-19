@@ -88,7 +88,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Appropriate tools are selected by hotkeys.
     */
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await page.keyboard.press('Backspace');
@@ -163,7 +163,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });

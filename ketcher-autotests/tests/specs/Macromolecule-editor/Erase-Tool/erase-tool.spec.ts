@@ -11,6 +11,7 @@ import {
   clickOnTheCanvas,
   clickOnCanvas,
   MolFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -231,7 +232,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -248,7 +249,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -496,7 +497,7 @@ test.describe('Erase Tool', () => {
 
     await zoomWithMouseWheel(page, 600);
     await clickOnTheCanvas(page, 0, 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
   });
@@ -524,7 +525,7 @@ test.describe('Erase Tool', () => {
 
     await zoomWithMouseWheel(page, 600);
     await clickOnTheCanvas(page, 0, 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
   });

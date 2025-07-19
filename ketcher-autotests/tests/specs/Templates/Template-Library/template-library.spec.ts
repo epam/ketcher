@@ -44,7 +44,7 @@ async function editAndClearTemplateName(
   await editStructureTemplate(page, templateCategory, templateName);
   await page.getByTestId('name-input').click();
   await selectAllStructuresOnCanvas(page);
-  await page.keyboard.press('Delete');
+  await deleteByKeyboard(page);
 }
 
 test.describe('Templates - Template Library', () => {

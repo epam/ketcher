@@ -3809,7 +3809,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
   );
 
   await selectAllStructuresOnCanvas(page);
-  await page.keyboard.press('Delete');
+  await deleteByKeyboard(page);
   await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {

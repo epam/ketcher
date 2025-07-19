@@ -99,7 +99,7 @@ test.describe('Fragment selection tool', () => {
       SelectionToolType.Fragment,
     );
     await clickOnAtom(page, 'Br', 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

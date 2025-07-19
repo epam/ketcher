@@ -121,7 +121,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

@@ -32,10 +32,7 @@ import {
   deleteHydrogenBond,
   getMonomerLocator,
   getSymbolLocator,
-  turnSyncEditModeOff,
-  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
-import { switchToPeptideMode } from '@utils/macromolecules/sequence';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
@@ -311,7 +308,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(1).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardTypeOnCanvas(page, 'UU');
@@ -578,7 +575,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -622,7 +619,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
     await getSymbolLocator(page, {
       symbolAlias: 'U',
       nodeIndexOverall: 2,
@@ -630,7 +627,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'U');
-    await turnSyncEditModeOn(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOn();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -667,7 +664,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       nodeIndexOverall: 1,
     }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardPressOnCanvas(page, 'E');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

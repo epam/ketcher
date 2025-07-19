@@ -3,12 +3,8 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
-  SequenceType,
 } from '@utils';
-import {
-  selectRectangleArea,
-  switchSequenceEnteringButtonType,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -256,7 +252,7 @@ test.describe('Saving in .svg files', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await switchSequenceEnteringButtonType(page, SequenceType.RNA);
+      await MacromoleculesTopToolbar(page).rna();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -305,7 +301,7 @@ test.describe('Saving in .svg files', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+      await MacromoleculesTopToolbar(page).dna();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
@@ -353,7 +349,7 @@ test.describe('Saving in .svg files', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
+      await MacromoleculesTopToolbar(page).peptides();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(

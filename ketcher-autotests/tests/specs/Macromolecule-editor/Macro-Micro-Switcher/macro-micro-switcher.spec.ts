@@ -36,8 +36,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { switchSequenceEnteringButtonType } from '@utils/canvas/tools/helpers';
-import { MacroFileType, SequenceType } from '@utils/canvas';
+import { MacroFileType } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -1920,11 +1919,7 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  const testData5 = [
-    { type: 'RNA', sequenceType: null },
-    { type: 'DNA', sequenceType: SequenceType.DNA },
-    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
-  ];
+  const testData5 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData5) {
     // eslint-disable-next-line max-len
@@ -1945,8 +1940,11 @@ test.describe('Macro-Micro-Switcher', () => {
           LayoutMode.Sequence,
         );
 
-        if (data.sequenceType) {
-          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        if (data.type === 'DNA') {
+          await MacromoleculesTopToolbar(page).dna();
+        }
+        if (data.type === 'Peptide') {
+          await MacromoleculesTopToolbar(page).peptides();
         }
 
         const symbolAt = getSymbolLocator(page, {
@@ -1972,11 +1970,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
   }
 
-  const testData6 = [
-    { type: 'RNA', sequenceType: null },
-    { type: 'DNA', sequenceType: SequenceType.DNA },
-    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
-  ];
+  const testData6 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData6) {
     // eslint-disable-next-line max-len
@@ -1994,8 +1988,11 @@ test.describe('Macro-Micro-Switcher', () => {
           LayoutMode.Sequence,
         );
 
-        if (data.sequenceType) {
-          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        if (data.type === 'DNA') {
+          await MacromoleculesTopToolbar(page).dna();
+        }
+        if (data.type === 'Peptide') {
+          await MacromoleculesTopToolbar(page).peptides();
         }
 
         const symbolAt = getSymbolLocator(page, {

@@ -11,11 +11,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  getSymbolLocator,
-  turnSyncEditModeOff,
-  turnSyncEditModeOn,
-} from '@utils/macromolecules/monomer';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -158,9 +154,9 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (syncEditMode) {
-    await turnSyncEditModeOn(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOn();
   } else {
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
@@ -541,7 +537,7 @@ test(`Case 45. Verify that when editing only one side of the sense/antisense dup
   );
   await resetZoomLevelToDefault(page);
 
-  await turnSyncEditModeOff(page);
+  await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,

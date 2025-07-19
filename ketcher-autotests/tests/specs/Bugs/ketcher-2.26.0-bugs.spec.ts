@@ -59,7 +59,6 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { switchToPeptideMode } from '@utils/macromolecules/sequence';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -651,7 +650,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'OU');
     await takeEditorScreenshot(page);
   });

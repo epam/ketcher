@@ -42,11 +42,6 @@ import {
   getSymbolLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
-import {
-  switchToDNAMode,
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -143,7 +138,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Add sequences to the canvas until they vertically fill the viewport (without using the scroll bar)
      * 3. Press the “Enter” key, and enter one more sequence by typing it manually
      */
-    await switchToRNAMode(page);
+    await MacromoleculesTopToolbar(page).rna();
     const sequences = [
       'AAAA',
       'CCC',
@@ -471,11 +466,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Undo several times >> Enter several times.
      * 4. Take a screenshot
      */
-    await switchToRNAMode(page);
+    await MacromoleculesTopToolbar(page).rna();
     await keyboardTypeOnCanvas(page, 'AAATT');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'AAATT');
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAATT');
     for (let i = 0; i < 3; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -527,7 +522,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press left on the keyboard.
      * 5. Take a screenshot
      */
-    await switchToRNAMode(page);
+    await MacromoleculesTopToolbar(page).rna();
     await keyboardTypeOnCanvas(page, 'AAATT');
     await page.keyboard.down('Shift');
     for (let i = 0; i < 3; i++) {

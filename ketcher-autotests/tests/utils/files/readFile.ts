@@ -11,7 +11,6 @@ import {
   delay,
   StructureFormat,
 } from '@utils';
-import { selectImageTool } from '@utils/canvas/tools/helpers';
 import { MolfileFormat } from 'ketcher-core';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -22,6 +21,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -156,7 +156,7 @@ export async function openImageAndAddToCanvas(
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
   await CommonLeftToolbar(page).selectHandTool();
-  await selectImageTool(page);
+  await LeftToolbar(page).image();
 
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y);

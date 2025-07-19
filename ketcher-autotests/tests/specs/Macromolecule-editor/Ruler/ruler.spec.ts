@@ -596,7 +596,7 @@ test.describe('Tests for Ruler', () => {
       page,
       'KET/1001-dna-monomers.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -50,10 +50,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Presets } from '@constants/monomers/Presets';
-import {
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
@@ -310,9 +306,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Observe the numbering of the added component.
      */
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QQQQQ');
-    await switchToRNAMode(page);
+    await MacromoleculesTopToolbar(page).rna();
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -562,9 +558,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 20: Alt+C hotkey open the “Calculate Properties” window', async () => {
@@ -602,7 +598,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeTopToolbarScreenshot(page);
     await iconButton.click();
     await takeTopToolbarScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 22: Correct Melting temperature value', async () => {
@@ -620,11 +616,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('35.6');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 23: Able to collapse monomer back after flipping and changing mode from Micro to Macro and back', async () => {
@@ -669,9 +665,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await Library(page).selectMonomer(Peptides.X);
     await Library(page).selectMonomer(Peptides.B);
     await Library(page).selectMonomer(Peptides.J);
@@ -680,7 +676,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 25: Rotation work for expanded monomers on Molecules mode', async () => {
@@ -813,7 +809,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('14.6');
@@ -822,7 +818,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('18.7');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 31: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas', async () => {
@@ -1086,7 +1082,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '354.319',
     );
@@ -1100,7 +1096,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 41: Able to export single expanded monomer to SVG Image, system not throws error: array: invalid index 0 (size=0)', async () => {
@@ -1161,7 +1157,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/sequenses-connected-through-chem.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '471.443',
     );
@@ -1175,7 +1171,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 44: Correct Calculate Properties result when monomers are connected via not a R2-R1', async () => {
@@ -1193,7 +1189,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/a-a-monomers-connected-through-r2-r2.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '144.172',
     );
@@ -1206,7 +1202,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 45: Calculated Values work if reaction arrow overlaps reactant bounding box', async () => {
@@ -1257,11 +1253,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
     ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
@@ -1280,11 +1276,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'CHEM1{[[H]([*:1])[He]1[Li][Be]2[K]3[Ca]4[Sc]5C([B]2)[N]O2[V]6[Ti]5[Rb]5[Kr]7[Br]4[SeH]4[In]8[Cd]9[Ag]%10[Pd]%11[Os]%12[Re]([W][Ru][Rh]%11[Zn][Ga]%11S([PH])[Cl]1[Ar]3[AsH]4[Ge]%10%11)[Db][Sg]1[Bh]3[Hs]4[Pm]%10[Nd]%11[Pr]1[Ce]([La])[Th][Pa][U]%11[Np][Pu]1[Am][Cm]%11[Gd]%13[Eu]([Sm]%101)[Ds]1[Mt]4[Au]([Pt]9[Ir]%123)[Hg]3[Tl]4[PbH]9[BiH]%10[PoH]%12[Xe]%14[I]([TeH]9[SbH]7[SnH]83)[Sr]5[Y]3[Cr]6[Mn]5[Ne](F2)[Na][Mg]2[Co]6[Fe]5[Nb]5[Zr]3[Cs]%14[Ba]3[Rn]7[At]%12[Mc]8[Fl]9[Nh]%10[Cn]([Tb]%13[Dy]%10[Ho]9[Er]9[Tm]%12[Yb]([No]([Md][Fm]9[Es][Cf]%10[Bk]%11)[Lr])[Lu]([Ac])[Og][Ts]([Fr]7[Ra]([Rf])[Ta][Hf]3[Mo]5[Tc][Ni]6[Cu][Si][Al]2)[Lv]%128)[Rg]41 |^3:8,34,115,^1:9,10,16,18,28,30,31,33,60,62,65,67,84,116,$;_R1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;$|]}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'CH17AcAgAlAmArAsAtAuBBaBeBhBiBkBrCaCdCeCfClCmCnCoCrCsCuDbDsDyErEsEuFFeFlFmFrGaGdGeHeHfHgHoHsIInIrKKrLaLiLrLuLvMcMdMgMnMoMtNNaNbNdNeNhNiNoNpOOgOsPPaPbPdPmPoPrPtPuRaRbReRfRgRhRnRuSSbScSeSgSiSmSnSrTaTbTcTeThTiTlTmTsUVWXeYYbZnZr',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 48: System calculate melting temperature for GC nucleotides pair', async () => {
@@ -1303,7 +1299,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{R(G)P.R(C)}|RNA2{R(G)P.R(C)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1176.844',
     );
@@ -1313,7 +1309,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('17');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 49: System not count bases that are not part of a nucleotide/nucleoside as RNA/DNA', async () => {
@@ -1333,10 +1329,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/System shouldnt count bases that are not part of a nucleotide_nucleoside as RNA_DNA.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).rnaTab.click();
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 50: Melting temperature value is missed if UPC or NAC value set to zero', async () => {
@@ -1355,14 +1351,14 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('0');
     await takePageScreenshot(page);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('140');
     await CalculateVariablesPanel(page).setOligonucleotidesValue('0');
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 51: Correct structure for PHE-L-Phenylalanine in template library', async () => {

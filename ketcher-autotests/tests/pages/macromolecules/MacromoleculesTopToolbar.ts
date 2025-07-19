@@ -1,10 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/index';
+import { delay, waitForRender } from '@utils/index';
 import {
   AntisenseStrandType,
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
+import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type MacromoleculesTopToolbarLocators = {
   createAntisenseStrandDropdownButton: Locator;
@@ -41,7 +42,9 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     ...locators,
 
     async createAntisenseStrand() {
-      await locators.createAntisenseStrandDropdownButton.click();
+      await waitForRender(page, async () => {
+        await locators.createAntisenseStrandDropdownButton.click();
+      });
     },
 
     async expandCreateAntisenseStrandDropdown() {
@@ -73,16 +76,22 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       }
     },
 
-    async selectAntisenseStrand(antisenseStrandType: AntisenseStrandType) {
+    async selectAntisenseStrand(
+      antisenseStrandType: AntisenseStrandType = AntisenseStrandType.RNA,
+    ) {
       await this.expandCreateAntisenseStrandDropdown();
-      await page.getByTestId(antisenseStrandType).click();
+      await waitForRender(page, async () => {
+        await page.getByTestId(antisenseStrandType).first().click();
+      });
     },
 
     async calculateProperties() {
-      await locators.calculatePropertiesButton.click();
+      await waitForCalculateProperties(page, async () => {
+        await locators.calculatePropertiesButton.click();
+      });
     },
 
-    async turnSyncSequenceEditModeOn() {
+    async turnSyncEditModeOn() {
       const currentState =
         await locators.syncSequenceEditModeButton.getAttribute('data-isactive');
       if (currentState !== 'true') {
@@ -90,7 +99,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       }
     },
 
-    async turnSyncSequenceEditModeOff() {
+    async turnSyncEditModeOff() {
       const currentState =
         await locators.syncSequenceEditModeButton.getAttribute('data-isactive');
       if (currentState !== 'false') {

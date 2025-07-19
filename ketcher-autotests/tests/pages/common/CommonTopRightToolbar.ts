@@ -111,7 +111,9 @@ export const CommonTopRightToolbar = (page: Page) => {
       const macroOption = page.getByTestId(Mode.Macromolecules);
       await macroOption.waitFor({ state: 'visible' });
       await macroOption.click();
-      await page.getByTestId('layout-mode').waitFor({ state: 'visible' });
+      await MacromoleculesTopToolbar(
+        page,
+      ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
       if (options.enableFlexMode) {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(

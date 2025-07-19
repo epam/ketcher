@@ -10,7 +10,6 @@ import {
   takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -61,7 +60,7 @@ async function configureInitialState(page: Page) {
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await switchToRNAMode(page);
+  await MacromoleculesTopToolbar(page).rna();
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
   await Library(page).openRNASection(RNASection.Presets);
@@ -1711,8 +1710,8 @@ for (const monomer of monomerToDrag) {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 }

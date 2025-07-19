@@ -32,15 +32,3 @@ export async function pressYesInConfirmYourActionDialog(page: Page) {
 export async function CloseConfirmYourActionDialog(page: Page) {
   await page.getByRole('button', { name: 'Close window' }).click();
 }
-
-export async function switchToRNAMode(page: Page) {
-  await page.getByTestId('RNABtn').click();
-}
-
-export async function switchToDNAMode(page: Page) {
-  await page.getByTestId('DNABtn').click();
-}
-
-export async function switchToPeptideMode(page: Page) {
-  await page.getByTestId('PEPTIDEBtn').click();
-}

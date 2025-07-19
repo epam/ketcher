@@ -259,7 +259,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       'KET/single-benzene-ring.ket',
     );
     await selectPartOfMolecules(page, 10);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -292,7 +292,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await getMonomerLocator(page, Peptides._2Nal).click();
     await getMonomerLocator(page, Peptides.Edc).click();
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '449.587',
     );
@@ -305,7 +305,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 9: N-methylation is not shown as available for Hyp', async () => {
@@ -405,7 +405,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1481.749',
     );
@@ -415,7 +415,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-1.3');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 12: The atom order in the molecule formula is correct', async () => {
@@ -438,14 +438,14 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '4113.578',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C187H291N45O59',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 13: Melting temperature not defined for one RNA/DNA nucleotide chain lenght', async () => {
@@ -470,7 +470,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '526.457',
     );
@@ -480,7 +480,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
     ).not.toBeVisible();
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 14: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides', async () => {
@@ -503,7 +503,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1303.721',
     );
@@ -513,7 +513,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-1.3');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 15: Melting temperature calculation works correct for three antistrand DNA', async () => {
@@ -536,7 +536,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1728.27',
     );
@@ -546,7 +546,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('0.8');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 16: System substract from mass of monomer mass of leaving group atom(s) if an attachment point is occupied', async () => {
@@ -570,27 +570,27 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '104.151',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H6NOS',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await getMonomerLocator(page, Peptides.C).nth(3).click();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '103.143',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H5NOS',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 17: Load from HELM work for two side chain connected sequences', async () => {
@@ -638,7 +638,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '511.443',
     );
@@ -648,7 +648,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
     ).not.toBeVisible();
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 19: Monomers not shifts out of visible area when adjusting layout with ruler in sequence edit mode', async () => {

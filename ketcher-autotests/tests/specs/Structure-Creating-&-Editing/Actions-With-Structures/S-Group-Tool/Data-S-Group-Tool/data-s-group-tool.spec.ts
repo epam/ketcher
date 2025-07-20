@@ -15,6 +15,8 @@ import {
   clickOnCanvas,
   MolFileFormat,
   deleteByKeyboard,
+  delay,
+  waitForRender,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -261,7 +263,9 @@ test.describe('Data S-Group tool', () => {
       FieldValue: 'Qw@!23#$%',
       PropertyLabelType: PropertyLabelType.Absolute,
     });
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await moveMouseToTheMiddleOfTheScreen(page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -282,7 +286,9 @@ test.describe('Data S-Group tool', () => {
       FieldValue: '8',
       PropertyLabelType: PropertyLabelType.Attached,
     });
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await moveMouseToTheMiddleOfTheScreen(page);
+    });
     await takeEditorScreenshot(page);
   });
 

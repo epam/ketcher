@@ -862,7 +862,9 @@ test.describe('Sequence Mode', () => {
     await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -888,7 +890,9 @@ test.describe('Sequence Mode', () => {
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -913,7 +917,7 @@ test.describe('Sequence Mode', () => {
     await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
+    await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -940,7 +944,7 @@ test.describe('Sequence Mode', () => {
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
+    await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

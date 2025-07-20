@@ -138,15 +138,15 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     },
 
     async rna() {
-      locators.rnaButton.click();
+      await locators.rnaButton.click();
     },
 
     async dna() {
-      locators.dnaButton.click();
+      await locators.dnaButton.click();
     },
 
     async peptides() {
-      locators.peptidesButton.click();
+      await locators.peptidesButton.click();
     },
   };
 };

@@ -20,6 +20,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -118,7 +119,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).cancel();
-    await page.getByTestId('text').click();
+    await LeftToolbar(page).text();
     await clickInTheMiddleOfTheScreen(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).apply();

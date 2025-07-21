@@ -1,11 +1,12 @@
 import { Page } from '@playwright/test';
+import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickInTheMiddleOfTheScreen } from '@utils';
 
 export async function addTextBoxToCanvas(page: Page) {
   await LeftToolbar(page).text();
   await clickInTheMiddleOfTheScreen(page);
-  await page.getByRole('dialog').getByRole('textbox').click();
+  await TextEditorDialog(page).clickTextEditor();
 }
 
 export async function addTextToCanvas(
@@ -14,13 +15,11 @@ export async function addTextToCanvas(
   x?: number,
   y?: number,
 ) {
-  await page.getByTestId('text').click();
+  await LeftToolbar(page).text();
   if (x !== undefined && y !== undefined) {
     await page.mouse.click(x, y);
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }
-  const textBox = page.getByRole('dialog').getByRole('textbox');
-  await textBox.click();
-  await textBox.fill(text);
+  await TextEditorDialog(page).setText(text);
 }

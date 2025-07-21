@@ -2,11 +2,13 @@ import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType, takeEditorScreenshot } from '..';
-import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
 import { selectButtonById } from '../canvas/tools/helpers';
 import { AtomLabelType } from './types';
-import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
+import {
+  waitForItemsToMergeInitialization,
+  waitForRender,
+} from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';

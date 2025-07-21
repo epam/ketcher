@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   clearCanvasByKeyboard,
 } from '@utils';
-import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
+import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,8 +28,8 @@ test.describe('Clear canvas', () => {
   test('Clear Canvas - "Clear canvas" button', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('one two three');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('one two three');
+    await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
@@ -72,8 +72,8 @@ test.describe('Clear canvas', () => {
     const y = 250;
     await addTextBoxToCanvas(page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('one two three');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('one two three');
+    await TextEditorDialog(page).apply();
     await selectRingButton(page, RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);

@@ -784,7 +784,7 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    if (monomerToDrag[0] === monomer) pageReload(page);
+    if (monomerToDrag[0] === monomer) await pageReload(page);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
@@ -1018,7 +1018,7 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(109, 109);
-    await page.mouse.move(110, 110);
+    await page.mouse.move(111, 111);
     await delay(0.1);
 
     await takeEditorScreenshot(page, {
@@ -1053,7 +1053,7 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(109, 109);
-    await page.mouse.move(110, 111);
+    await page.mouse.move(111, 111);
     await delay(0.1);
 
     await takeEditorScreenshot(page, {

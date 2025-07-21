@@ -48,7 +48,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await waitForRender(page, async () => {
         await page.keyboard.press('Enter');
       });
-      await locators.zoomSelector.click({ force: true });
+      await locators.zoomSelector.click({ force: true, delay: 100 });
       await zoomLocators.zoomOutButton.waitFor({ state: 'detached' });
     },
 

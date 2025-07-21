@@ -42,7 +42,7 @@ export class RxnPlusRenderer extends BaseRenderer {
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
-      .attr('data-testid', 'rxn-arrow')
+      .attr('data-testid', 'rxn-plus')
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,

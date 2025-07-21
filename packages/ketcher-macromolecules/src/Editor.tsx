@@ -106,6 +106,7 @@ import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 import { RulerArea } from 'components/Ruler/RulerArea';
 import { DragGhost } from 'components/DragGhost/DragGhost';
+import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 
 import './theme.less';
 
@@ -330,7 +331,9 @@ function Editor({
             >
               {togglerComponent}
             </TogglerComponentWrapper>
+            <VerticalDivider />
             <FullscreenButton />
+            <ButtonsComponents />
             <VerticalDivider />
             <ZoomControls />
           </TopMenuRightWrapper>

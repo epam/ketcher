@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { getLeftTopBarSize } from '../common/getLeftTopBarSize';
 import { sortItems } from '../common/sortItems';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '../constants';
-import { ArrowXy, SORT_TYPE } from '../types';
+import { Arrows, ArrowXy, Pluses, SORT_TYPE } from '../types';
 import { clickOnCanvas } from '@utils';
 
 export async function getArrowsByIndex(
@@ -37,4 +37,20 @@ export async function getArrowsByIndex(
 export async function clickOnArrow(page: Page, index: number) {
   const { x, y } = await getArrowsByIndex(page, index);
   await clickOnCanvas(page, x, y);
+}
+
+export function getArrowLocator(page: Page, type: Arrows) {
+  const element = page.getByTestId(type);
+  return {
+    click: () => element.click({ force: true }),
+    hover: () => element.hover({ force: true }),
+  };
+}
+
+export function getPlusLocator(page: Page, type: Pluses) {
+  const element = page.getByTestId(type);
+  return {
+    click: () => element.click({ force: true }),
+    hover: () => element.hover({ force: true }),
+  };
 }

@@ -117,7 +117,6 @@ class SGroupTool implements Tool {
               atomFromStruct,
               sgroups,
               functionalGroups,
-              false,
             ) ||
               SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
@@ -190,7 +189,6 @@ class SGroupTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true,
           ) || SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups)
         )
       ) {
@@ -328,7 +326,6 @@ class SGroupTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true,
           ) ||
             SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
         ) {

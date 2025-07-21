@@ -16,7 +16,6 @@ import {
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
-  getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -105,6 +104,7 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -933,14 +933,14 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    const modifier = getControlModifier();
-    await keyboardPressOnCanvas(page, `${modifier}+a`);
+
+    await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await keyboardPressOnCanvas(page, `${modifier}+a`);
+    await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
@@ -1850,7 +1850,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
   });
 

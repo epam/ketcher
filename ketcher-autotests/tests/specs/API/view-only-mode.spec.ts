@@ -43,6 +43,7 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -268,7 +269,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
     await closeErrorAndInfoModals(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -335,7 +336,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         );
         await takePageScreenshot(page, {
           mask: [
-            page.locator('[class*="Check-module_checkInfo"] > span'),
+            StructureCheckDialog(page).lastCheckInfo,
             saveStructureTextarea,
           ],
         });

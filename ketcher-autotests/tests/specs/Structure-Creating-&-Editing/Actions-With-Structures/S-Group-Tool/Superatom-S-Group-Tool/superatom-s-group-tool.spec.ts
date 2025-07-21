@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -30,35 +30,14 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import {
+  contractAbbreviation,
+  expandAbbreviation,
+  removeAbbreviation,
+} from '@utils/sgroup/helpers';
 let point: { x: number; y: number };
-
-async function addNameToSuperatom(
-  page: Page,
-  fieldLabel: string,
-  superatomName: string,
-) {
-  await page.locator('span').filter({ hasText: 'Data' }).click();
-  await page.getByRole('option', { name: 'Superatom' }).click();
-  await page.getByLabel(fieldLabel).fill(superatomName);
-  await pressButton(page, 'Apply');
-}
-
-async function addQueryComponent(page: Page) {
-  await page.locator('span').filter({ hasText: 'Data' }).click();
-  await page.getByRole('option', { name: 'Query component' }).click();
-  await pressButton(page, 'Apply');
-}
-
-async function fillFieldByLabel(
-  page: Page,
-  fieldLabel: string,
-  superatomName: string,
-) {
-  await page.getByLabel(fieldLabel).click();
-  await page.getByLabel(fieldLabel).fill(superatomName);
-}
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,7 +52,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
-    await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -85,7 +67,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
-    await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -97,7 +82,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -111,8 +99,8 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await LeftToolbar(page).sGroup();
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await fillFieldByLabel(page, 'Name', 'Test@!#$%12345');
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -252,14 +240,11 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/superatom-all-chain.ket');
 
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
     await takeEditorScreenshot(page);
-    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
-
+    await removeAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -273,13 +258,12 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/superatom-one-atom-on-chain.ket');
 
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await ContextMenu(page, point).click(SuperatomOption.ContractAbbreviation);
+    await contractAbbreviation(page, point);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, page.getByText('Test@!#$%12345')).click(
-      SuperatomOption.ExpandAbbreviation,
-    );
+    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
     await takeEditorScreenshot(page);
-    await ContextMenu(page, point).click(SuperatomOption.RemoveAbbreviation);
+
+    await removeAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
 
@@ -292,7 +276,10 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Superatom,
+      Name: 'Test@!#$%12345',
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-superatom-expected.ket',
@@ -312,7 +299,9 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await addQueryComponent(page);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
 
     await verifyFileExport(
       page,

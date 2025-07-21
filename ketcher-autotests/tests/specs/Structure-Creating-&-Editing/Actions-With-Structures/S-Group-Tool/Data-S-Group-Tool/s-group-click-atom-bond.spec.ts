@@ -326,6 +326,36 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that on import from MOL, Indigo convert the structure appropriately to KET', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on import from MOL, Indigo convert the structure appropriately to KET
+     *
+     * Case: 1. Load from MOL v3000 three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to KET
+     *       3. Load export result
+     *       3. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/S-Groups/Nucleotides and Superatoms in MOL.mol',
+    );
+    await verifyFileExport(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms in MOL-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms in MOL-expected.ket',
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Checking export to CML of Sugar, Base and Phosphate type S-Group ', async ({
     page,
   }) => {
@@ -596,6 +626,38 @@ test.describe('S-Group Properties', () => {
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Extended-SMILES/S-Groups/Nucleotides and Superatoms-expected.cxsmi',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking export to InChI of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to InChI the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to InChI
+     *       3. Load export result
+     *       4. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+
+    await verifyFileExport(
+      page,
+      'InChI/S-Groups/Nucleotides and Superatoms-expected.inchi',
+      FileType.InChI,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'InChI/S-Groups/Nucleotides and Superatoms-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });

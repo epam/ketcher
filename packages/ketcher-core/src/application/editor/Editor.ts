@@ -628,6 +628,15 @@ export class CoreEditor {
         this.renderersContainer.update(modelChanges);
       },
     );
+    this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
+  }
+
+  private onAutochain(monomerItem: MonomerItemType | IRnaPreset) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    console.log(monomerItem);
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

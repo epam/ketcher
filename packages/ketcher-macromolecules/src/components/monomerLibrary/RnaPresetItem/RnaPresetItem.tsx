@@ -19,11 +19,13 @@ import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback, useRef } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
 import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
+import { AutochainIcon } from 'components/monomerLibrary/monomerLibraryItem/styles';
+import { selectEditor } from 'state/common';
 
 const RnaPresetItem = ({
   preset,
@@ -34,6 +36,7 @@ const RnaPresetItem = ({
   onMouseMove = EmptyFunction,
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
+  const editor = useAppSelector(selectEditor);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +47,10 @@ const RnaPresetItem = ({
     },
     [dispatch, preset],
   );
+
+  const onAutochainIconClick = useCallback(() => {
+    editor?.events.autochain.dispatch(preset);
+  }, [dispatch, preset]);
 
   useLibraryItemDrag(preset, cardRef);
 
@@ -59,6 +66,11 @@ const RnaPresetItem = ({
       data-rna-preset-item-name={preset.name}
       ref={cardRef}
     >
+      <AutochainIcon
+        className="autochain"
+        name="monomer-autochain"
+        onClick={onAutochainIconClick}
+      ></AutochainIcon>
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"

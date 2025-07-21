@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
-import { Card, CardTitle, NumberCircle } from './styles';
+import { AutochainIcon, Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
+import { Icon } from 'ketcher-react';
+import { selectEditor } from 'state/common';
 
 const MonomerItem = ({
   item,
@@ -34,6 +36,7 @@ const MonomerItem = ({
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
+  const editor = useAppSelector(selectEditor);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +61,10 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
+  const onAutochainIconClick = useCallback(() => {
+    editor?.events.autochain.dispatch(monomerItem);
+  }, [dispatch, monomerItem]);
+
   useLibraryItemDrag(item, cardRef);
 
   return (
@@ -76,12 +83,19 @@ const MonomerItem = ({
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
-        <div
-          onClick={addFavorite}
-          className={`star ${item.favorite ? 'visible' : ''}`}
-        >
-          {FavoriteStarSymbol}
-        </div>
+        <>
+          <AutochainIcon
+            className="autochain"
+            name="monomer-autochain"
+            onClick={onAutochainIconClick}
+          ></AutochainIcon>
+          <div
+            onClick={addFavorite}
+            className={`star ${item.favorite ? 'visible' : ''}`}
+          >
+            {FavoriteStarSymbol}
+          </div>
+        </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (
         <NumberCircle

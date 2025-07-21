@@ -1962,3 +1962,133 @@ for (const monomer of monomerToDrag) {
     await expect(monomerOnCanvas).toHaveCount(0);
   });
 }
+
+for (const monomer of monomerToDrag) {
+  test(`37.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify drag and drop when canvas is fully zoomed out (e.g. 10%) (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to Favorites
+     * 4. Set canvas zoom to 10%
+     * 5. Drag monomer from Library and drop it on the canvas
+     * 6. Drag same monomer from Favoriters and drop it on the canvas
+     * 7. Validate number of monomers on the canvas
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).addMonomerToFavorites(monomer);
+    await CommonTopRightToolbar(page).setZoomInputValue('10');
+
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`37.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify drag and drop when canvas is fully zoomed out (e.g. 10%) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to Favorites
+     * 4. Drag monomer from Library and drop it on the canvas
+     * 5. Drag same monomer from Favoriters and drop it on the canvas
+     * 6. Validate number of monomers on the canvas
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).addMonomerToFavorites(monomer);
+    await CommonTopRightToolbar(page).setZoomInputValue('10');
+
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`38.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify drag and drop when canvas is fully zoomed in (e.g. 400%) (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to Favorites
+     * 4. Set canvas zoom to 400%
+     * 5. Drag monomer from Library and drop it on the canvas
+     * 6. Drag same monomer from Favoriters and drop it on the canvas
+     * 7. Validate number of monomers on the canvas
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).addMonomerToFavorites(monomer);
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
+    await resetZoomLevelToDefault(page);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`38.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Verify drag and drop when canvas is fully zoomed in (e.g. 400%) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to Favorites
+     * 4. Drag monomer from Library and drop it on the canvas
+     * 5. Drag same monomer from Favoriters and drop it on the canvas
+     * 6. Validate number of monomers on the canvas
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).addMonomerToFavorites(monomer);
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 6 : 2,
+    );
+    await resetZoomLevelToDefault(page);
+  });
+}

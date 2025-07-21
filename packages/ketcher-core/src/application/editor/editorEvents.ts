@@ -68,6 +68,7 @@ export interface IEditorEvents {
   toggleLineLengthHighlighting: Subscription;
   setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
+  autochain: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -136,6 +137,7 @@ export function resetEditorEvents() {
     toggleLineLengthHighlighting: new Subscription(),
     setLibraryItemDragState: new Subscription(),
     placeLibraryItemOnCanvas: new Subscription(),
+    autochain: new Subscription(),
   };
 }
 resetEditorEvents();

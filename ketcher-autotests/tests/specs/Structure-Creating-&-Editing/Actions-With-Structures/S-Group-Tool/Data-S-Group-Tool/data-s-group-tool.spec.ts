@@ -14,6 +14,8 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
+  deleteByKeyboard,
+  waitForRender,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -260,7 +262,9 @@ test.describe('Data S-Group tool', () => {
       FieldValue: 'Qw@!23#$%',
       PropertyLabelType: PropertyLabelType.Absolute,
     });
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await moveMouseToTheMiddleOfTheScreen(page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -281,7 +285,9 @@ test.describe('Data S-Group tool', () => {
       FieldValue: '8',
       PropertyLabelType: PropertyLabelType.Attached,
     });
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await moveMouseToTheMiddleOfTheScreen(page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -378,7 +384,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

@@ -14,6 +14,7 @@ import {
   moveMouseAway,
   ZoomOutByKeyboard,
   RxnFileFormat,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,
@@ -264,18 +265,10 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    // eslint-disable-next-line no-magic-numbers
-    for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
-    for (let i = 0; i < 5; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -297,9 +290,7 @@ test.describe('R-Group Label Tool', () => {
       SelectionToolType.Rectangle,
     );
     await page.getByText('R5').click();
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

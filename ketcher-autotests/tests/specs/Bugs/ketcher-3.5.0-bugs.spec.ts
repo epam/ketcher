@@ -14,10 +14,6 @@ import {
   MonomerType,
   selectPartOfMolecules,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -40,6 +36,8 @@ import {
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -77,7 +75,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Right-click and select Modify in RNA Builder
      * 5. Click on the Base card in the RNA Builder.
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -101,7 +101,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 1. Go to Macro - Flex mode (empty canvas!)
      * 2. Load from MOL
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'Molfiles-V3000/Bugs/gattaca.mol',
@@ -124,7 +124,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Undo/Redo modification
      * 5. Check that modification is applied
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -161,7 +161,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Modify it
      * 4. Check that modification is applied
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -196,7 +196,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that layout not shift
      * 4. Take a screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
@@ -219,7 +221,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that modification options are in correct order
      * 4. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -251,13 +253,13 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/single-benzene-ring.ket',
     );
     await selectPartOfMolecules(page, 10);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -279,7 +281,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Select monomers without bonds
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -290,7 +292,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await getMonomerLocator(page, Peptides._2Nal).click();
     await getMonomerLocator(page, Peptides.Edc).click();
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '449.587',
     );
@@ -303,7 +305,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 9: N-methylation is not shown as available for Hyp', async () => {
@@ -317,7 +319,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Right-click on the amino acid
      * 3. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -352,7 +354,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 6. Check that app not crashes
      * 7. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -393,7 +395,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -403,7 +405,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1481.749',
     );
@@ -413,7 +415,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-1.3');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 12: The atom order in the molecule formula is correct', async () => {
@@ -426,7 +428,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -436,14 +438,14 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '4113.578',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C187H291N45O59',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 13: Melting temperature not defined for one RNA/DNA nucleotide chain lenght', async () => {
@@ -456,7 +458,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -466,7 +470,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '526.457',
     );
@@ -476,7 +480,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
     ).not.toBeVisible();
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 14: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides', async () => {
@@ -489,7 +493,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -499,7 +503,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1303.721',
     );
@@ -509,7 +513,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-1.3');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 15: Melting temperature calculation works correct for three antistrand DNA', async () => {
@@ -522,7 +526,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -532,7 +536,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1728.27',
     );
@@ -542,7 +546,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('0.8');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 16: System substract from mass of monomer mass of leaving group atom(s) if an attachment point is occupied', async () => {
@@ -555,7 +559,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -566,27 +570,27 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '104.151',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H6NOS',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await getMonomerLocator(page, Peptides.C).nth(3).click();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '103.143',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H5NOS',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 17: Load from HELM work for two side chain connected sequences', async () => {
@@ -600,7 +604,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -622,7 +626,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -632,7 +638,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
     });
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '511.443',
     );
@@ -642,7 +648,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await expect(
       CalculateVariablesPanel(page).rnaTab.meltingTemperatureValue,
     ).not.toBeVisible();
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 19: Monomers not shifts out of visible area when adjusting layout with ruler in sequence edit mode', async () => {
@@ -655,7 +661,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Use the ruler tool to adjust the layout of the sequence (e.g., move the slider from position 30 to 20).
      * 3. Observe the canvas after the ruler is released
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(
       page,
       'ACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTU',

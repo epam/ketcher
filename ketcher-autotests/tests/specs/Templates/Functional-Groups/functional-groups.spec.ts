@@ -13,11 +13,12 @@ import {
   pressTab,
   FILE_TEST_DATA,
   waitForPageInit,
-  waitForRender,
   clickOnAtom,
   moveOnAtom,
   clickOnCanvas,
   getCachedBodyCenter,
+  deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -549,7 +550,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await moveOnAtom(page, 'C', anyAtom);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
@@ -571,7 +572,7 @@ test.describe('Functional Groups', () => {
     );
     point = await getAtomByIndex(page, { label: 'S' }, 0);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
@@ -610,7 +611,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -629,7 +630,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -648,7 +649,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('n');
+    await keyboardPressOnCanvas(page, 'n');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -666,9 +667,7 @@ test.describe('Functional Groups', () => {
       SelectionToolType.Rectangle,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('o');
-    });
+    await keyboardPressOnCanvas(page, 'o');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

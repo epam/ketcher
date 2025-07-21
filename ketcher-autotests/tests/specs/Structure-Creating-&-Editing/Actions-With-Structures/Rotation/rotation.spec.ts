@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -157,7 +156,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+h');
+    await performHorizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -173,7 +172,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+v');
+    await performVerticalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -201,14 +200,10 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(page, anyReaction);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Alt+v');
-    });
+    await performVerticalFlip(page);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Alt+h');
-    });
+    await performHorizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -353,11 +348,8 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-    const fiftyPercentZoom = 5;
     await page.setViewportSize({ width: 1200, height: 1080 });
-    for (let i = 0; i < fiftyPercentZoom; i++) {
-      await ZoomOutByKeyboard(page);
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await addStructureAndSelect(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);

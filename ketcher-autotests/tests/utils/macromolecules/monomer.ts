@@ -114,6 +114,17 @@ export type MonomerLocatorOptions = {
   | Monomer
 );
 
+export enum MonomerAttachmentPoint {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
+
 /**
  * This function returns locator for monomer in the macromolecule editor.
  * It can be used to find monomers by their alias, type, or ID. It also allows for additional options such as number of attachment points, R values, and hydrogen connection number.
@@ -256,23 +267,6 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
   });
 }
 
-export async function createAntisenseStrandByButton(
-  page: Page,
-  chosenType?: 'RNA' | 'DNA',
-) {
-  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
-  await dropdownTrigger.click();
-
-  if (!chosenType) return;
-
-  const optionTestId =
-    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
-
-  const optionButton = page.getByTestId(optionTestId).first();
-  await optionButton.waitFor({ state: 'visible' });
-  await optionButton.click();
-}
-
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
   await waitForRender(page, async () => {
     await ContextMenu(page, symbolLocator).click(
@@ -295,22 +289,6 @@ export async function deleteHydrogenBond(page: Page, symbol: Locator) {
       SequenceSymbolOption.DeleteHydrogenBonds,
     );
   });
-}
-
-export async function turnSyncEditModeOn(page: Page) {
-  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-  const editMode = await syncButton.getAttribute('data-isactive');
-  if (editMode === 'false') {
-    await syncButton.click();
-  }
-}
-
-export async function turnSyncEditModeOff(page: Page) {
-  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-  const editMode = await syncButton.getAttribute('data-isactive');
-  if (editMode === 'true') {
-    await syncButton.click();
-  }
 }
 
 type SymbolLocatorOptions = {

@@ -1870,3 +1870,95 @@ for (const monomer of monomerToDrag) {
     expect(allErrors.length).toEqual(0);
   });
 }
+
+for (const monomer of monomerToDrag) {
+  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Flex mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check that we can Clear canvas and restore by Undo/Redo elements on canvas after
+     *              drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Flex mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Flex mode
+     * 3. Add target monomer to canvas
+     * 4. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 5. Press Clear Canvas button
+     * 6. Validate number of monomers on the canvas (should be 0)
+     * 7. Undo all changes
+     * 8. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 9. Redo all changes
+     * 10. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}
+
+for (const monomer of monomerToDrag) {
+  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Snake mode)`, async () => {
+    /*
+     *
+     * Test task: https://github.com/epam/ketcher/issues/7419
+     * Description: Check that we can Clear canvas and restore by Undo/Redo elements on canvas after
+     *              drag and drop (Favoutites, RNA/DNA, Peptides, CHEM, Presets) (Snake mode)
+     *
+     * Case:
+     * 1. Open Ketcher and turn on Macromolecules editor
+     * 2. Go to Snake mode
+     * 3. Add target monomer to canvas
+     * 4. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 5. Press Clear Canvas button
+     * 6. Validate number of monomers on the canvas (should be 0)
+     * 7. Undo all changes
+     * 8. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     * 9. Redo all changes
+     * 10. Validate number of monomers on the canvas (3 for preset, 1 for the rest)
+     *
+     * Version 3.6
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).addMonomerToFavorites(monomer);
+    await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
+
+    const monomerOnCanvas = getMonomerLocator(page, {});
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await expect(monomerOnCanvas).toHaveCount(0);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await expect(monomerOnCanvas).toHaveCount(
+      Object.values(Presets).includes(monomer) ? 3 : 1,
+    );
+
+    await CommonTopLeftToolbar(page).redo();
+
+    await expect(monomerOnCanvas).toHaveCount(0);
+  });
+}

@@ -74,6 +74,10 @@ export const TextEditorDialog = (page: Page) => {
       await locators.specialSymbolsButton.click();
     },
 
+    async clickTextEditor() {
+      await locators.textEditor.click();
+    },
+
     async setText(text: string) {
       await locators.textEditor.fill(text);
     },

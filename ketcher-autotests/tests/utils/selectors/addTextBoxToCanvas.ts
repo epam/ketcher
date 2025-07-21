@@ -1,8 +1,9 @@
 import { Page } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickInTheMiddleOfTheScreen } from '@utils';
 
 export async function addTextBoxToCanvas(page: Page) {
-  await page.getByTestId('text').click();
+  await LeftToolbar(page).text();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByRole('dialog').getByRole('textbox').click();
 }

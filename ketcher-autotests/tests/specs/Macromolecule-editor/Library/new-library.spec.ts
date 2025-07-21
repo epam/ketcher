@@ -1053,7 +1053,7 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(109, 109);
-    await page.mouse.move(110, 110);
+    await page.mouse.move(110, 111);
     await delay(0.1);
 
     await takeEditorScreenshot(page, {

@@ -177,6 +177,7 @@ test.describe('Text tools test cases', () => {
     // Verify if its possible to select a text objects of any size by clicking on green frame
     await openFileAndAddToCanvas(page, 'KET/text-object.ket');
     await page.getByText('TEXT').dblclick();
+    await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setText('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -184,7 +185,7 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Delete');
     const content = await readFileContent('Txt/longtext_test.txt');
     await addTextBoxToCanvas(page);
-    await TextEditorDialog(page).setOptions({ content: content });
+    await TextEditorDialog(page).setOptions({ content });
     await takeEditorScreenshot(page);
   });
 

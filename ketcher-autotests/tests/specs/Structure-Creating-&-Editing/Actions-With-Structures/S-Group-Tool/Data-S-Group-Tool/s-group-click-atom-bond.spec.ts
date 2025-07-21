@@ -875,8 +875,8 @@ test.describe('S-Group Properties', () => {
     await clickOnCanvas(page, x, y);
     await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
     await SGroupPropertiesDialog(page).apply();
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
   });
 });

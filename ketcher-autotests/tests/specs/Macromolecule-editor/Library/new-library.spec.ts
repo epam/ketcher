@@ -53,6 +53,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -783,6 +784,8 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
+    if (monomerToDrag[0] === monomer) pageReload(page);
+
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
@@ -1016,6 +1019,7 @@ for (const monomer of monomerToDrag) {
     await page.mouse.down();
     await page.mouse.move(109, 109);
     await page.mouse.move(110, 110);
+    await delay(0.1);
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1048,7 +1052,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
+    await page.mouse.move(109, 109);
     await page.mouse.move(110, 110);
+    await delay(0.1);
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

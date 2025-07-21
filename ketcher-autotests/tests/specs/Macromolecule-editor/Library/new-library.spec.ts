@@ -1014,6 +1014,7 @@ for (const monomer of monomerToDrag) {
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
+    await page.mouse.move(109, 109);
     await page.mouse.move(110, 110);
 
     await takeEditorScreenshot(page, {

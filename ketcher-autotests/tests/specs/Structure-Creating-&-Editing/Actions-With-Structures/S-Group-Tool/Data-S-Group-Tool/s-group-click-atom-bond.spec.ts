@@ -7,6 +7,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
+  moveMouseAway,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
@@ -99,6 +100,7 @@ test.describe('S-Group Properties', () => {
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Query component' }).click();
 
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
     await takeEditorScreenshot(page);

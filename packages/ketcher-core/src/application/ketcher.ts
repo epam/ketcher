@@ -176,6 +176,10 @@ export class Ketcher {
     );
   }
 
+  getExtendedSmiles(): Promise<string> {
+    return this.getSmiles(true);
+  }
+
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(

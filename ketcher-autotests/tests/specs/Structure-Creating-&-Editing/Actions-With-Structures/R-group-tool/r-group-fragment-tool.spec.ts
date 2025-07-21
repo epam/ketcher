@@ -360,8 +360,6 @@ test.describe('R-Group Fragment Tool', () => {
     Test case: EPMLSOPKET-1604
     Description: User is able to save the structure with R-group label as .cxsmi file
     */
-    test.fail();
-    // function await getExtendedSmiles but get JSON instead cxsmi file
     await openFileAndAddToCanvas(
       page,
       'Extended-SMILES/r1-several-structures.cxsmi',

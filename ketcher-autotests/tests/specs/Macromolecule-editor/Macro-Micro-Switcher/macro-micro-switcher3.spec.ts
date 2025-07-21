@@ -492,8 +492,7 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
   await takeEditorScreenshot(page);
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5849 issue(s).`,
   );
 });
@@ -584,7 +583,7 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
 });
@@ -615,7 +614,7 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
 });
@@ -648,7 +647,7 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -681,7 +680,7 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -714,7 +713,7 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -746,7 +745,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });

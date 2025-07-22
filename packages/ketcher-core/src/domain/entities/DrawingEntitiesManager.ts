@@ -198,6 +198,10 @@ export class DrawingEntitiesManager {
     );
   }
 
+  public get selectedMonomers() {
+    return this.monomersArray.filter((monomer) => monomer.selected);
+  }
+
   public get allEntities() {
     return [
       ...(this.monomers as Map<number, DrawingEntity>),

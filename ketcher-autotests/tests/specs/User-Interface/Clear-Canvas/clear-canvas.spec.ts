@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -10,7 +13,6 @@ import {
   waitForPageInit,
   clearCanvasByKeyboard,
 } from '@utils';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {

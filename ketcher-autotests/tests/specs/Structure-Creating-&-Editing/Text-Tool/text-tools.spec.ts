@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {

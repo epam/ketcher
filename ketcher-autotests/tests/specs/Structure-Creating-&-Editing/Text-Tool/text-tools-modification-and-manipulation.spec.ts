@@ -13,13 +13,15 @@ import {
   deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {

@@ -15,13 +15,15 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {

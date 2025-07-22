@@ -1,6 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
+import { LeftToolbar } from '../LeftToolbar';
+import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 
 type FontOptions = {
   isBold?: boolean;
@@ -125,3 +127,26 @@ export const TextEditorDialog = (page: Page) => {
     },
   };
 };
+
+export async function addTextBoxToCanvas(page: Page) {
+  await LeftToolbar(page).text();
+  await clickInTheMiddleOfTheScreen(page);
+  await TextEditorDialog(page).clickTextEditor();
+}
+
+export async function addTextToCanvas(
+  page: Page,
+  text: string,
+  x?: number,
+  y?: number,
+) {
+  await LeftToolbar(page).text();
+  if (x !== undefined && y !== undefined) {
+    await page.mouse.click(x, y);
+  } else {
+    await clickInTheMiddleOfTheScreen(page);
+  }
+  await TextEditorDialog(page).setText(text);
+}
+
+export type TextEditorDialogType = ReturnType<typeof TextEditorDialog>;

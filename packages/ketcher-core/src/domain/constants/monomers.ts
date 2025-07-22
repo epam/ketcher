@@ -80,6 +80,8 @@ export const MONOMER_CONST = {
   PHOSPHATE: 'PHOSPHATE',
 };
 
+export const CREATE_MONOMER_TOOL_NAME = 'create-monomer';
+
 export const MonomerSize = 0.75;
 // Approximately equal to 15px on the screen and widely used as a measure of checking whether two vectors are in proximity
 export const HalfMonomerSize = MonomerSize / 2;

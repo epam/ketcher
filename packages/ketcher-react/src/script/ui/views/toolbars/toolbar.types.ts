@@ -131,6 +131,8 @@ type LeftToolbarItemVariant =
   | 'rgroup-label'
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
+  // create monomer
+  | 'create-monomer'
   // shape group
   | 'shapes'
   | 'shape-ellipse'

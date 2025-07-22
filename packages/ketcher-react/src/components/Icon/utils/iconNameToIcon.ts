@@ -228,7 +228,11 @@ import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
-import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import {
+  CREATE_MONOMER_TOOL_NAME,
+  IMAGE_KEY,
+  MULTITAIL_ARROW_TOOL_NAME,
+} from 'ketcher-core';
 import CrossIcon from '../../../assets/icons/files/cross.svg';
 import PlusIcon from '../../../assets/icons/files/plus.svg';
 import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
@@ -236,6 +240,7 @@ import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.sv
 import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg';
 import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
 import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
+import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
 
 export const iconNameToIcon = {
   α,
@@ -478,4 +483,5 @@ export const iconNameToIcon = {
   antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
+  [CREATE_MONOMER_TOOL_NAME]: CreateMonomerIcon,
 } as const;

@@ -20,6 +20,7 @@ import {
   findStereoAtoms,
   IMAGE_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
+  CREATE_MONOMER_TOOL_NAME,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -309,6 +310,14 @@ const toolActions = {
     title: 'Attachment Point Tool',
     action: { tool: 'apoint' },
     hidden: (options) => isHidden(options, 'rgroup-attpoints'),
+  },
+  [CREATE_MONOMER_TOOL_NAME]: {
+    shortcut: 'Mod+m',
+    title: 'Create a monomer',
+    action: {
+      tool: CREATE_MONOMER_TOOL_NAME,
+    },
+    disabled: (editor) => !editor.isMonomerCreationWizardEnabled,
   },
   shapes: {
     hidden: (options) => isHidden(options, 'shapes'),

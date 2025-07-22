@@ -573,6 +573,14 @@ class Editor implements KetcherEditor {
     // console.log(this._selection);
   }
 
+  closeMonomerCreationWizard() {
+    this._monomerCreationWizardActive = false;
+    // this.render.ctab.molecule = this.struct().clone();
+    // this.render.update();
+    this.selection(null);
+    this.tool('select');
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection; // eslint-disable-line

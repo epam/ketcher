@@ -3,9 +3,12 @@ import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
+import { useDispatch, useSelector } from 'react-redux';
+import { editorMonomerCreationWizardSelector } from '../../../state/editor/selectors';
+import { closeMonomerCreationWizard } from '../../../state/editor/actions/monomerCreation';
 
 const TypeSelectConfig = [
   {
@@ -25,6 +28,8 @@ const TypeSelectConfig = [
 ];
 
 const MonomerCreationWizard = () => {
+  const dispatch = useDispatch();
+
   const [type, setType] = useState<KetMonomerClass>();
   const onTypeChange = (value) => {
     setType(value);
@@ -40,15 +45,31 @@ const MonomerCreationWizard = () => {
     type === KetMonomerClass.Base ||
     type === KetMonomerClass.RNA;
 
-  const typeSelectOptions = TypeSelectConfig.map((option) => ({
-    ...option,
-    children: (
-      <div className={styles.typeOption}>
-        <Icon name={option.iconName} />
-        {option.label}
-      </div>
-    ),
-  }));
+  const typeSelectOptions = useMemo(
+    () =>
+      TypeSelectConfig.map((option) => ({
+        ...option,
+        children: (
+          <div className={styles.typeOption}>
+            <Icon name={option.iconName} />
+            {option.label}
+          </div>
+        ),
+      })),
+    [],
+  );
+
+  const handleDiscard = () => {
+    dispatch(closeMonomerCreationWizard());
+  };
+
+  const isMonomerCreationWizardActive = useSelector(
+    editorMonomerCreationWizardSelector,
+  );
+
+  if (!isMonomerCreationWizardActive) {
+    return null;
+  }
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -110,7 +131,9 @@ const MonomerCreationWizard = () => {
           </div>
         </div>
         <div className={styles.buttonsContainer}>
-          <button className={styles.buttonDiscard}>Discard</button>
+          <button className={styles.buttonDiscard} onClick={handleDiscard}>
+            Discard
+          </button>
           <button className={styles.buttonFinish}>Finish</button>
         </div>
       </div>

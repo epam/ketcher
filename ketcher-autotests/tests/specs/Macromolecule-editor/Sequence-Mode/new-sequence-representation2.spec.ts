@@ -11,18 +11,12 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
-  getSymbolLocator,
-  turnSyncEditModeOff,
-  turnSyncEditModeOn,
-} from '@utils/macromolecules/monomer';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -32,12 +26,16 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 });
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await resetZoomLevelToDefault(page);
 });
 
@@ -156,9 +154,9 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (syncEditMode) {
-    await turnSyncEditModeOn(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOn();
   } else {
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
@@ -365,7 +363,9 @@ for (const sequence of sequencesForAddingDash) {
       MacroFileType.HELM,
       sequence.HELM || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -384,7 +384,7 @@ for (const sequence of sequencesForAddingDash) {
       (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -414,7 +414,9 @@ for (const sequence of sequencesForAddingDash) {
       MacroFileType.HELM,
       sequence.HELM || '',
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -433,7 +435,7 @@ for (const sequence of sequencesForAddingDash) {
       (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -467,7 +469,9 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await resetZoomLevelToDefault(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -528,10 +532,12 @@ test(`Case 45. Verify that when editing only one side of the sense/antisense dup
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
   );
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await resetZoomLevelToDefault(page);
 
-  await turnSyncEditModeOff(page);
+  await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
     position: 2,

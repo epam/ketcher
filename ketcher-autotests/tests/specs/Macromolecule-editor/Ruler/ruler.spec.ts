@@ -10,16 +10,14 @@ import {
   keyboardPressOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -62,7 +60,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Ruler(page).hover();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -93,7 +91,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Ruler(page).hoverOnInputField();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -122,7 +120,7 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await page.mouse.up();
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Ruler(page).clickAndHold();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -146,7 +144,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -193,7 +191,7 @@ test.describe('Tests for Ruler', () => {
      * 5. Verify that the ruler value is set to 13
      */
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Ruler(page).setLength('8');
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -222,7 +220,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(
       page,
       'ACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTU',
@@ -241,7 +241,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -270,9 +270,11 @@ test.describe('Tests for Ruler', () => {
      * 2. Set the zoom level to 50% or below
      * 3. Verify that the ruler displays markings at intervals of 5 units
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await page.keyboard.press('Escape');
     await Ruler(page).hover();
@@ -295,7 +297,9 @@ test.describe('Tests for Ruler', () => {
      * 4. The ruler is represented by vertical lines instead of numbers
      * 5. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await page.keyboard.press('Escape');
@@ -389,7 +393,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -420,7 +424,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Set the ruler value to 12
      * 7. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-peptides.ket',
@@ -441,7 +447,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -474,7 +480,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
@@ -493,7 +501,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -524,7 +532,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Set the ruler value to 12
      * 7. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
@@ -545,7 +555,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -579,12 +589,14 @@ test.describe('Tests for Ruler', () => {
      * 7. Drag ruler slider to the left and verify that the layout is changed
      * 8. Take screenshot
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -599,7 +611,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

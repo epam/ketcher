@@ -15,6 +15,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -672,7 +673,7 @@ test.describe('Open and Save file', () => {
       );
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Delete');
+      await deleteByKeyboard(page);
     });
   }
 

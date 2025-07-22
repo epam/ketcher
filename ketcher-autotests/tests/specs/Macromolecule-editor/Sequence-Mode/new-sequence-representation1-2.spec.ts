@@ -17,28 +17,16 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
   getSymbolLocator,
-  turnSyncEditModeOff,
-  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import {
-  pressYesInConfirmYourActionDialog,
-  switchToDNAMode,
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
+import { pressYesInConfirmYourActionDialog } from '@utils/macromolecules/sequence';
 import {
   MacroBondDataIds,
   MacroBondType,
@@ -49,6 +37,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -58,13 +48,15 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 });
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -1466,16 +1458,16 @@ async function checkForKnownBugs(sequence: ISequence, monomer?: IMonomerToAdd) {
 async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
   switch (sequenceMode) {
     case SequenceModeType.RNA:
-      await switchToRNAMode(page);
+      await MacromoleculesTopToolbar(page).rna();
       break;
     case SequenceModeType.DNA:
-      await switchToDNAMode(page);
+      await MacromoleculesTopToolbar(page).dna();
       break;
     case SequenceModeType.Peptide:
-      await switchToPeptideMode(page);
+      await MacromoleculesTopToolbar(page).peptides();
       break;
     default:
-      await switchToRNAMode(page);
+      await MacromoleculesTopToolbar(page).rna();
       break;
   }
 }
@@ -1542,9 +1534,9 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (syncEditMode) {
-    await turnSyncEditModeOn(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOn();
   } else {
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
@@ -1810,7 +1802,7 @@ async function setupSenseAndAntiSenseSequences(
   senseSequence: IMonomerForHydrogenBondTest,
   antisenseSequence: IMonomerForHydrogenBondTest,
 ) {
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   if (senseSequence.ContentType === MacroFileType.HELM) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1875,7 +1867,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         antisenseSequence,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
 
       const senseSymbolId = await getSymbolLocator(page, {
         hydrogenConnectionNumber: 0,
@@ -1937,7 +1931,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         senseSymbolType === SymbolType.RNA ||
         senseSymbolType === SymbolType.DNA
       ) {
-        await selectFlexLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
 
         const hydrogenBondsAll = getBondLocator(page, {
           bondType: MacroBondDataIds.Hydrogen,
@@ -1956,7 +1952,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         );
         // All hydrogen bonds should be present (two bonds in total)
         expect(await hydrogenBondsAll.count()).toBe(2);
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
       }
 
       // 6. Check that right clicking on a symbol that has any H-bonds give the option to "Delete Hydrogen Bonds" ( Requirement: 1.2 )
@@ -2001,7 +1999,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         antisenseSequence,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
 
       const senseSymbolId = await getSymbolLocator(page, {
         hydrogenConnectionNumber: 0,
@@ -2103,7 +2103,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
 
     await setupSenseAndAntiSenseSequences(page, senseSequence, emptySequence);
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2144,7 +2146,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       symbolRepresentingMultipleMonomers,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2184,7 +2188,9 @@ test(`Case 15. Verify warning message on deleting all hydrogen bonds between two
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}|RNA3{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}|RNA4{R(U)P.R(U)P.R(U)}|RNA5{[dR](T)P.[dR](T)}|RNA6{R(U)}|RNA7{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,14:pair-2:pair|RNA1,RNA3,20:pair-11:pair|RNA1,RNA3,23:pair-8:pair|RNA1,RNA3,26:pair-5:pair|RNA1,RNA3,29:pair-2:pair|RNA1,RNA4,35:pair-8:pair|RNA1,RNA4,38:pair-5:pair|RNA1,RNA4,41:pair-2:pair|RNA1,RNA5,47:pair-5:pair|RNA1,RNA5,50:pair-2:pair|RNA1,RNA6,56:pair-2:pair|RNA1,RNA7,62:pair-11:pair|RNA1,RNA7,65:pair-8:pair|RNA1,RNA7,68:pair-5:pair|RNA1,RNA7,71:pair-2:pair$$$V2.0',
   );
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllStructuresOnCanvas(page);
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
@@ -2217,7 +2223,9 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(A)P}|PEPTIDE1{(D,N).C.D.E.F.H.I.K.L.M.N.O.P.Q.R.S.T.V.W.(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).Y}$RNA2,PEPTIDE1,3:R2-1:R1|RNA2,RNA1,2:pair-65:pair|RNA1,PEPTIDE1,2:pair-21:pair|RNA1,PEPTIDE1,5:pair-20:pair|RNA1,PEPTIDE1,8:pair-19:pair|RNA1,PEPTIDE1,11:pair-18:pair|RNA1,PEPTIDE1,14:pair-17:pair|RNA1,PEPTIDE1,17:pair-16:pair|RNA1,PEPTIDE1,20:pair-15:pair|RNA1,PEPTIDE1,23:pair-14:pair|RNA1,PEPTIDE1,26:pair-13:pair|RNA1,PEPTIDE1,29:pair-12:pair|RNA1,PEPTIDE1,32:pair-11:pair|RNA1,PEPTIDE1,35:pair-10:pair|RNA1,PEPTIDE1,38:pair-9:pair|RNA1,PEPTIDE1,41:pair-8:pair|RNA1,PEPTIDE1,44:pair-7:pair|RNA1,PEPTIDE1,47:pair-6:pair|RNA1,PEPTIDE1,50:pair-5:pair|RNA1,PEPTIDE1,53:pair-4:pair|RNA1,PEPTIDE1,56:pair-3:pair|RNA1,PEPTIDE1,59:pair-2:pair|RNA1,PEPTIDE1,62:pair-1:pair$$$V2.0',
   );
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllStructuresOnCanvas(page);
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
@@ -2277,7 +2285,9 @@ for (const monomer of monomersToAdd) {
           !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
         );
       }
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await selectSequenceMode(page, monomer.Type);
       await resetZoomLevelToDefault(page);
 
@@ -2296,7 +2306,9 @@ for (const monomer of monomersToAdd) {
         (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

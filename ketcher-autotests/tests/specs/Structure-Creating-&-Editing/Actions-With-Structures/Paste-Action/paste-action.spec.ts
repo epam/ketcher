@@ -15,7 +15,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
-import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Paste Tool', () => {
@@ -27,8 +27,8 @@ test.describe('Paste Tool', () => {
     const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
     await openFileAndAddToCanvas(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
-    await TopToolbar(page).copy();
-    await TopToolbar(page).paste();
+    await MoleculesTopToolbar(page).copy();
+    await MoleculesTopToolbar(page).paste();
     await page.getByTestId('infoModal-shortcut-for-paste').first().isVisible();
     await takeEditorScreenshot(page);
   });

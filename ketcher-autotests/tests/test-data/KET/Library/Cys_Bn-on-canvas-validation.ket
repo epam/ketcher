@@ -1,0 +1,285 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Cys_Bn___S-benzylcysteine"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 0.75,
+            "y": -0.65
+        },
+        "alias": "Cys_Bn",
+        "templateId": "Cys_Bn___S-benzylcysteine"
+    },
+    "monomerTemplate-Cys_Bn___S-benzylcysteine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -0.869,
+                    -1.496,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.004,
+                    -1.998,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.864,
+                    -1.502,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    -0.502,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.002,
+                    1.002,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.864,
+                    1.503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.864,
+                    2.503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.73,
+                    3.003,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.596,
+                    2.503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.596,
+                    1.503,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.73,
+                    1.003,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.73,
+                    -2.003,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.596,
+                    -1.506,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.728,
+                    -3.003,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    14
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Cys_Bn___S-benzylcysteine",
+        "fullName": "S-benzylcysteine",
+        "alias": "Cys_Bn",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 12,
+                "leavingGroup": {
+                    "atoms": [
+                        13
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "C"
+    }
+}

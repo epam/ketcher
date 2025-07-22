@@ -2,7 +2,6 @@
 import { Page, Locator } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type TopLeftToolbarLocators = {
   clearCanvasButton: Locator;
@@ -10,8 +9,6 @@ type TopLeftToolbarLocators = {
   saveButton: Locator;
   undoButton: Locator;
   redoButton: Locator;
-  createAntisenseStrandButton: Locator;
-  calculateMacromoleculePropertiesButton: Locator;
 };
 
 export const CommonTopLeftToolbar = (page: Page) => {
@@ -30,12 +27,6 @@ export const CommonTopLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
     redoButton: page
       .getByTestId('redo')
-      .filter({ has: page.locator(':visible') }),
-    createAntisenseStrandButton: page
-      .getByTestId('Create Antisense Strand')
-      .filter({ has: page.locator(':visible') }),
-    calculateMacromoleculePropertiesButton: page
-      .getByTestId('calculate-macromolecule-properties-button')
       .filter({ has: page.locator(':visible') }),
   };
 
@@ -88,12 +79,6 @@ export const CommonTopLeftToolbar = (page: Page) => {
     async redo() {
       await waitForRender(page, async () => {
         await locators.redoButton.click();
-      });
-    },
-
-    async calculateProperties() {
-      await waitForCalculateProperties(page, async () => {
-        await locators.calculateMacromoleculePropertiesButton.click();
       });
     },
   };

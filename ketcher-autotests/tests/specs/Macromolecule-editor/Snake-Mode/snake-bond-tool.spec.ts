@@ -21,13 +21,12 @@ import {
   waitForPageInit,
   MacroFileType,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -35,6 +34,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -102,7 +103,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Snake bond tool
     */
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).switchToPeptidesTab();
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
@@ -141,12 +142,12 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
 
     await addBondedMonomersToCanvas(page, Peptides.Tza, 100, 100, 25, 25, 18);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -156,10 +157,10 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check finding right chain sequence using snake mode
     Description: Snake bond tool
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await createBondedMonomers(page);
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -170,7 +171,7 @@ test.describe('Snake Bond Tool', () => {
     await createBondedMonomers(page);
     await expect(flexModeButton).toHaveClass(/active/);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await expect(snakeModeButton).toHaveClass(/active/);
 
     await CommonTopLeftToolbar(page).undo();
@@ -186,7 +187,7 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake bond between RNA nucleotides', async () => {
     await Library(page).switchToRNATab();
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -222,7 +223,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Check snake mode arrange for RNA chain', async () => {
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToRNATab();
 
     const { phosphate } = await addRnaPresetOnCanvas(
@@ -318,7 +319,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate7, sugar8);
     await bondTwoMonomers(page, phosphate8, sugar9);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -334,7 +335,7 @@ test.describe('Snake Bond Tool', () => {
       3,
     );
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await addBondedMonomersToCanvas(page, Peptides.bAla, 700, 500, 50, 50, 4);
     await Library(page).switchToRNATab();
@@ -368,20 +369,26 @@ test.describe('Snake Bond Tool', () => {
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
-    await bondTwoMonomers(page, phosphate2, peptide1, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      peptide1,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
 
     await takeEditorScreenshot(page);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
   });
 
   test('Create snake bond for chain with nucleoside', async () => {
     await Library(page).switchToRNATab();
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -427,13 +434,13 @@ test.describe('Snake Bond Tool', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -441,7 +448,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with side chains', async () => {
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Presets);
 
@@ -527,20 +534,38 @@ test.describe('Snake Bond Tool', () => {
 
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
-    await bondTwoMonomers(page, baseOfNucleoside, peptide, 'R2', 'R1');
+    await bondTwoMonomers(
+      page,
+      baseOfNucleoside,
+      peptide,
+      MonomerAttachmentPoint.R2,
+      MonomerAttachmentPoint.R1,
+    );
 
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
-    await bondTwoMonomers(page, phosphate2, hcyPeptide, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      hcyPeptide,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
     await bondTwoMonomers(page, hcyPeptide1, balPeptide);
-    await bondTwoMonomers(page, hcyPeptide1, balPeptide1, undefined, 'R1');
+    await bondTwoMonomers(
+      page,
+      hcyPeptide1,
+      balPeptide1,
+      undefined,
+      MonomerAttachmentPoint.R1,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -572,7 +597,7 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -583,7 +608,7 @@ test.describe('Snake Bond Tool', () => {
     */
     const x = 550;
     const y = 350;
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -609,7 +634,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 300;
     const x1 = 300;
     const y1 = 300;
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptides.meE).hover();
@@ -628,7 +653,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -638,13 +663,13 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Very long chain fit into canvas (algorithm calculate the length of rows).
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/long-peptide-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -655,19 +680,19 @@ test.describe('Snake Bond Tool', () => {
     Description: Check that switch to Flex mode on a snake chain change it into a chain with 
     straight lines press it again change it into curved lines.
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/long-peptide-chain.ket`,
     );
     await resetZoomLevelToDefault(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -681,7 +706,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 150;
     const x2 = 100;
     const y2 = 100;
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -705,7 +730,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 150;
     const x2 = 100;
     const y2 = 100;
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -732,7 +757,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/two-peptides-in-chain-connected-through-r3-r4.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -753,7 +778,9 @@ test.describe('Snake Bond Tool', () => {
 
   for (const testCase of testCases) {
     test(testCase.description, async () => {
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await openFileAndAddToCanvasAsNewProject(page, testCase.filename);
 
       // Workaround against fake scroll bars that sometimes shown even if they are not intended to
@@ -764,7 +791,9 @@ test.describe('Snake Bond Tool', () => {
         await waitForMonomerPreview(page);
       }
       await takeEditorScreenshot(page);
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page);
     });
   }
@@ -774,7 +803,7 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Peptide deleted from middle of chain in snake mode.
     */
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -790,7 +819,7 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Peptide deleted from corner of chain in snake mode.
     */
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -810,7 +839,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 550;
     const x2 = 100;
     const y2 = 100;
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -832,7 +861,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 650;
     const x2 = 100;
     const y2 = 100;
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -859,7 +888,7 @@ test.describe('Snake Bond Tool', () => {
     const y = 650;
     const x2 = 100;
     const y2 = 100;
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
@@ -879,7 +908,7 @@ test.describe('Snake Bond Tool', () => {
     */
     const x = 450;
     const y = 650;
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/chems-connected-through-r2-r1.ket`,
@@ -890,7 +919,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(-400, -400);
 
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
@@ -903,13 +932,13 @@ test.describe('Snake Bond Tool', () => {
     */
     const x = 450;
     const y = 650;
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/chems-connected-through-r2-r1-and-r1-r2.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
@@ -927,7 +956,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/sequence-with-side-connection.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -937,7 +966,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Open chain with 2000 or more rna items. Turn on snake mode. Snake mode is applied on structure 
     and maximum call stack size exceeded error not appears during snake layout.
     */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -948,7 +977,7 @@ test.describe('Snake Bond Tool', () => {
     });
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -972,7 +1001,7 @@ test.describe('Snake Bond Tool', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
     await moveMouseAway(page);
 
@@ -980,7 +1009,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, 400);
     await page.mouse.wheel(0, -400);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1000,7 +1029,7 @@ test.describe('Snake Bond Tool', () => {
     });
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1015,7 +1044,7 @@ test.describe('Snake Bond Tool', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -1026,7 +1055,7 @@ test.describe('Snake Bond Tool', () => {
     });
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1037,7 +1066,7 @@ test.describe('Snake Bond Tool', () => {
     We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4122 need to be fixed.
     Then update expected screenshot.
     */
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(
       page,
       `Molfiles-V3000/rna-mod-phosphate-example.mol`,
@@ -1056,7 +1085,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
   });
 
@@ -1066,13 +1095,13 @@ test.describe('Snake Bond Tool', () => {
     Description: Bonds connected through R1-R1 and R2-R2 connections should remain straight line. Connected through R2-R1 snake layout.
     */
     const SCROLL_DELTA = 700;
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
     await scrollDown(page, SCROLL_DELTA);
     await takeEditorScreenshot(page);

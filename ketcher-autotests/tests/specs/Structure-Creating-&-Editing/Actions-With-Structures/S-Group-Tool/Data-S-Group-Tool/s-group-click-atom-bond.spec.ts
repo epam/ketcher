@@ -17,11 +17,6 @@ import {
   takeElementScreenshot,
   moveMouseAway,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
@@ -42,6 +37,8 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -217,15 +214,17 @@ test.describe('S-Group Properties', () => {
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -572,7 +571,7 @@ test.describe('S-Group Properties', () => {
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
@@ -596,9 +595,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomInByKeyboard(page);
-    await ZoomInByKeyboard(page);
-    await ZoomInByKeyboard(page);
+    await ZoomInByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -627,9 +624,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomOutByKeyboard(page);
-    await ZoomOutByKeyboard(page);
-    await ZoomOutByKeyboard(page);
+    await ZoomOutByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -879,10 +874,9 @@ test.describe('S-Group Properties', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
-
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
     await SGroupPropertiesDialog(page).apply();
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
   });
 });

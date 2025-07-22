@@ -18,6 +18,7 @@ import {
 import { waitForPageInit } from '@utils/common';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -74,7 +75,7 @@ test.describe('Chain Tool drawing', () => {
 
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('o');
+    await keyboardPressOnCanvas(page, 'o');
     await takeEditorScreenshot(page);
   });
 

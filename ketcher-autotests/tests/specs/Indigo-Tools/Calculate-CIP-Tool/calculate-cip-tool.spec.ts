@@ -15,11 +15,8 @@ import {
   clickOnAtom,
   pressButton,
   addMonomerToCenterOfCanvas,
+  deleteByKeyboard,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -54,6 +51,8 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -351,7 +350,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 3);
     });
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
 
@@ -787,12 +786,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -1,8 +1,9 @@
 import { Page, Locator } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
+import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -47,7 +48,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await waitForRender(page, async () => {
         await page.keyboard.press('Enter');
       });
-      await locators.zoomSelector.click({ force: true });
+      await locators.zoomSelector.click({ force: true, delay: 100 });
       await zoomLocators.zoomOutButton.waitFor({ state: 'detached' });
     },
 
@@ -110,10 +111,14 @@ export const CommonTopRightToolbar = (page: Page) => {
       const macroOption = page.getByTestId(Mode.Macromolecules);
       await macroOption.waitFor({ state: 'visible' });
       await macroOption.click();
-      await page.getByTestId('layout-mode').waitFor({ state: 'visible' });
+      await MacromoleculesTopToolbar(
+        page,
+      ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
       if (options.enableFlexMode) {
-        await selectFlexLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {

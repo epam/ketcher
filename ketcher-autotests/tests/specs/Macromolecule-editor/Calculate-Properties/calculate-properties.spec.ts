@@ -18,21 +18,12 @@ import {
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
-import {
-  switchToDNAMode,
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Chem } from '@constants/monomers/Chem';
@@ -44,6 +35,8 @@ import {
   UnipositiveIonsUnit,
 } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -132,7 +125,7 @@ test.describe('Calculate Properties tests', () => {
       });
     }
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -150,7 +143,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{Q.W.D.F.G.H.E.R.T.T.I.I.Y}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -169,7 +162,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{Q.W.D.F.G.H.E.R.T.T.I.I.Y}|RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -202,7 +195,7 @@ test.describe('Calculate Properties tests', () => {
       });
     }
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takePageScreenshot(page);
@@ -225,7 +218,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{Q.W.D.F.G.H.E.R.T.T.I.I.Y}|RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
@@ -253,11 +246,11 @@ test.describe('Calculate Properties tests', () => {
      * 7. Click on the X in the "Calculate Properties" window
      * 8. Check that the window is closed
      */
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await CalculateVariablesPanel(page).close();
     await takePageScreenshot(page);
@@ -277,7 +270,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{R(A)}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).molecularMassUnitsCombobox.click();
     await expect(page.getByTestId(MolecularMassUnit.Da)).toBeVisible();
     await expect(page.getByTestId(MolecularMassUnit.MDa)).toBeVisible();
@@ -296,7 +289,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Check that within the drop-down menu for units of Molecular mass there three options Da, kDa, and MDa.
      */
     await keyboardTypeOnCanvas(page, 'AAA');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '925.653',
     );
@@ -319,7 +312,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Change the units from Da to kDa and to MDa
      */
     await keyboardTypeOnCanvas(page, 'AAA');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await page.waitForTimeout(1000);
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '925.653',
@@ -357,7 +350,7 @@ test.describe('Calculate Properties tests', () => {
      * 4. Switch to the "Peptides" tab
      */
     await keyboardTypeOnCanvas(page, 'AAA');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await CalculateVariablesPanel(page).peptidesTab.click();
     await takePageScreenshot(page);
@@ -378,7 +371,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.C.D.D.D.E.E.E.E.F.F.F.F.F.G.G.G.G.G.G.H.H.H.H.H.H.H.I.I.I.I.I.I.I.I.K.K.K.K.K.K.K.K.K.L.L.L.L.L.L.L.L.L.L.M.M.M.M.M.M.M.M.M.M.M.N.N.N.N.N.N.N.N.N.N.N.N.P.P.P.P.P.P.P.P.P.P.P.P.P.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.S.S.S.S.S.S.S.S.S.S.S.S.S.S.S.S.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.(D,N).(L,I).(E,Q).(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).[2Abz].[3Abz].[4Abz].[Abu23D].[Ac3c].[Ac6c].[Aca].[Aib].[Aoda].[Apm].[App].[Asu].[Azi].[Bmt].[Bmt_E].O.U}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
     ).toEqual('5.96');
@@ -399,7 +392,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.C.D.D.D.E.E.E.E.F.F.F.F.F.G.G.G.G.G.G.H.H.H.H.H.H.H.I.I.I.I.I.I.I.I.K.K.K.K.K.K.K.K.K.L.L.L.L.L.L.L.L.L.L.M.M.M.M.M.M.M.M.M.M.M.N.N.N.N.N.N.N.N.N.N.N.N.P.P.P.P.P.P.P.P.P.P.P.P.P.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.Q.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.S.S.S.S.S.S.S.S.S.S.S.S.S.S.S.S.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.T.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.V.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.W.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.(L,I).(D,N).(E,Q).(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).[Wil].[Tic].[Pqa].[pnT].[pnG].[Pqa].[pnC].[pnA].[Pip].[Oic3aS].[Oic].[Oic3aR].[NMe4Ab].[Dsu].[DBmtE].O.U}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getPeptideNaturalAnalogCountList(),
     ).toEqual([
@@ -456,7 +449,7 @@ test.describe('Calculate Properties tests', () => {
       });
     }
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -469,9 +462,9 @@ test.describe('Calculate Properties tests', () => {
      * 2. Add one nucleotide/nucleoside to canvas
      * 3. Click on the "Calculate Properties"
      */
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'A');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -486,13 +479,13 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Check that a valid nucleic acid (RNA/DNA) chain is any chain that contains a double stranded pure nucleotide/nucleoside
      */
-    await switchToRNAMode(page);
+    await MacromoleculesTopToolbar(page).rna();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -511,7 +504,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -530,7 +523,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('35.6');
@@ -557,7 +550,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
     await CalculateVariablesPanel(page).setUnipositiveIonsUnits(
       UnipositiveIonsUnit.μM,
@@ -606,7 +599,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](G)P.[dR](T)}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C30H38N12O16P2',
     );
@@ -645,7 +638,7 @@ test.describe('Calculate Properties tests', () => {
       });
     }
     await page.keyboard.up('Shift');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C29H37N13O17P3',
     );
@@ -667,12 +660,12 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r2-r1.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C10H13NOS',
     );
@@ -725,12 +718,12 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r3-r1.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C10H13NO2S',
     );
@@ -785,7 +778,7 @@ test.describe('Calculate Properties tests', () => {
       page,
       'KET/single-benzene-ring.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -812,7 +805,7 @@ test.describe('Calculate Properties tests', () => {
       'KET/single-benzene-ring.ket',
     );
     await selectPartOfMolecules(page, 10);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -834,13 +827,13 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectPartOfMolecules(page, -80);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -862,13 +855,13 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectPartOfMolecules(page, -80);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -890,13 +883,13 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -918,13 +911,13 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -945,10 +938,10 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -969,9 +962,11 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Library(page).selectMonomer(Peptides.A);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -993,7 +988,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await Library(page).selectMonomer(Presets.A);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -1015,7 +1010,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -1036,14 +1031,14 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptides-connected-to-molecule.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
     ).getMolecularFormula();
@@ -1064,10 +1059,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Add a structure with multiple groups
      * 3. Open the "Calculate Properties" window
      */
-    await selectSequenceLayoutModeTool(page);
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAAAA');
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const isoelectricPoint = await CalculateVariablesPanel(
       page,
     ).getIsoelectricPointValue();
@@ -1089,7 +1086,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const meltingTemperature = await CalculateVariablesPanel(
       page,
     ).getMeltingTemperatureValue();
@@ -1111,7 +1108,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     const meltingTemperature = await CalculateVariablesPanel(
       page,
     ).getMeltingTemperatureValue();
@@ -1135,7 +1132,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-12.4');
@@ -1189,7 +1186,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getMeltingTemperatureValue(),
     ).toEqual('-12.4');
@@ -1237,7 +1234,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await Library(page).selectMonomer(Peptides.A);
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1262,7 +1259,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{K.E.T.C.H.E.R}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -1286,7 +1283,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{R([baA])P.R([5meC])P.R([4imen2])P.R([cneT])P.R([5eU])}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C66H78N20O34P4',
     );
@@ -1312,7 +1309,7 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'RNA1{[dR]([4ime6A])P.[dR]([ac4C])P.[dR]([allyl9])P.[dR]([mo4bn3])P.[dR]([5fU])}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C66H80FN19O32P4',
     );
@@ -1333,12 +1330,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-rna-microstructure-connected.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H23N6O7P',
     );
@@ -1359,12 +1356,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-dna-microstructure-connected.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H23N6O6P',
     );
@@ -1385,13 +1382,13 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'RNA1{R(A)}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C13H18N6O6',
     );
@@ -1412,12 +1409,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/sequenses-connected-through-chem.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C21H23N6O7',
     );
@@ -1438,12 +1435,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-with-attachment-points.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H22N6O6',
     );
@@ -1466,12 +1463,12 @@ test.describe('Calculate Properties tests', () => {
      * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
      * After fix we need to remove screenshot and uncomment asserts
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-without-attachment-points.ket',
     );
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     // expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
     //   'C19H22N6O5',
     // );
@@ -1496,14 +1493,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1522,14 +1521,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1548,14 +1549,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1574,14 +1577,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1600,14 +1605,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
     await takeElementScreenshot(
       page,
@@ -1627,14 +1634,16 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y.A.C.D.E.F.G.H.I.K.L.M.N.Q.R.S.T.U.V.W.Y}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await page.waitForTimeout(5000);
     await takeElementScreenshot(
       page,
@@ -1663,14 +1672,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1700,14 +1711,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1360, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1737,14 +1750,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1180, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F.G.H}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1774,14 +1789,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 980, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1810,14 +1827,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1841,14 +1860,16 @@ test.describe('Calculate Properties tests', () => {
      * Version 3.5
      */
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D.E.F}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
 
     await CalculateVariablesPanel(
       page,
@@ -1880,14 +1901,16 @@ test.describe('Calculate Properties tests', () => {
     }
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{R.D.E.H.N.Q.K.S.T.G.A.C.P.M.V.W.Y.I.L.F.R.(E,Q).D.(E,Q).E.(E,Q).H.(E,Q).N.(E,Q).Q.(E,Q).K.(E,Q).S.(E,Q).T.(E,Q).G.(E,Q).A.(E,Q).C.(E,Q).P.(E,Q).M.(E,Q).V.(E,Q).W.(E,Q).Y.(E,Q).I.(E,Q).L.(E,Q).F.(E,Q)}$$$$V2.0',
     );
 
-    await CommonTopLeftToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties();
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

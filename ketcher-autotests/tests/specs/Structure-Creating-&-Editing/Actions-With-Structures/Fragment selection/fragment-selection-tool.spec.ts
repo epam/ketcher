@@ -2,6 +2,7 @@ import { Page, test } from '@playwright/test';
 import {
   clickOnAtom,
   clickOnCanvas,
+  deleteByKeyboard,
   doubleClickOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
@@ -99,7 +100,7 @@ test.describe('Fragment selection tool', () => {
       SelectionToolType.Fragment,
     );
     await clickOnAtom(page, 'Br', 0);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

@@ -152,6 +152,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       } else if (options.Type === TypeOption.Superatom) {
         await this.setNameValue(options.Name);
       } else if (options.Type === TypeOption.NucleotideComponent) {
+        await this.selectType(options.Type);
         await this.selectComponent(options.Component);
       }
       await this.apply();

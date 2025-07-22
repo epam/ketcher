@@ -1,61 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { SequenceType, waitForRender } from '@utils';
+import { waitForRender } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-
-export async function openLayoutModeMenu(page: Page) {
-  const modeSelectorButton = page.getByTestId('layout-mode');
-  await modeSelectorButton.click();
-}
-
-export async function selectSnakeLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const snakeModeButton = page.getByTestId('snake-layout-mode').first();
-
-  await snakeModeButton.waitFor({ state: 'visible' });
-  await snakeModeButton.click();
-}
-
-export async function selectSequenceLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const sequenceModeButton = page.getByTestId('sequence-layout-mode').first();
-
-  await sequenceModeButton.waitFor({ state: 'visible' });
-  await sequenceModeButton.click();
-}
-
-export async function switchSequenceEnteringType(
-  page: Page,
-  sequenceEnteringType: SequenceType,
-) {
-  await page.getByTestId('sequence-type-dropdown').click();
-  await page.getByRole('option').getByText(sequenceEnteringType).click();
-}
-
-export async function switchSequenceEnteringButtonType(
-  page: Page,
-  sequenceEnteringType: SequenceType,
-) {
-  await page.getByTestId(`${sequenceEnteringType}Btn`).click();
-}
-
-export async function selectFlexLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const flexModeButton = page.getByTestId('flex-layout-mode').first();
-
-  await flexModeButton.waitFor({ state: 'visible' });
-  await flexModeButton.click();
-}
-
-export async function selectImageTool(page: Page) {
-  const bondToolButton = page.getByTestId('images');
-  await bondToolButton.click();
-}
 
 export async function selectRectangleArea(
   page: Page,

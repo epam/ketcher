@@ -2,8 +2,12 @@ import { Page } from '@playwright/test';
 import { isMacOS } from '../os';
 import { waitForRender } from '@tests/utils';
 
+let cachedControlModifier: string | null = null;
+
 export function getControlModifier() {
-  return isMacOS() ? 'Meta' : 'Control';
+  if (cachedControlModifier) return cachedControlModifier;
+  cachedControlModifier = isMacOS() ? 'Meta' : 'Control';
+  return cachedControlModifier;
 }
 
 export async function resetZoomLevelToDefault(page: Page) {
@@ -13,18 +17,36 @@ export async function resetZoomLevelToDefault(page: Page) {
   });
 }
 
-export async function ZoomOutByKeyboard(page: Page) {
+export async function ZoomOutByKeyboard(
+  page: Page,
+  options: { repeat: number; timeout?: number } = { repeat: 1 },
+) {
   const modifier = getControlModifier();
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Minus`);
-  });
+  for (let i = 0; i < options.repeat; i++) {
+    await waitForRender(
+      page,
+      async () => {
+        await page.keyboard.press(`${modifier}+Minus`);
+      },
+      options.timeout,
+    );
+  }
 }
 
-export async function ZoomInByKeyboard(page: Page) {
+export async function ZoomInByKeyboard(
+  page: Page,
+  options: { repeat: number; timeout?: number } = { repeat: 1 },
+) {
   const modifier = getControlModifier();
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Equal`);
-  });
+  for (let i = 0; i < options.repeat; i++) {
+    await waitForRender(
+      page,
+      async () => {
+        await page.keyboard.press(`${modifier}+Equal`);
+      },
+      options.timeout,
+    );
+  }
 }
 
 export async function clearCanvasByKeyboard(page: Page) {
@@ -56,4 +78,10 @@ export async function keyboardTypeOnCanvas(
   for (const char of text) {
     await keyboardPressOnCanvas(page, char, options);
   }
+}
+
+export async function deleteByKeyboard(page: Page) {
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Delete');
+  });
 }

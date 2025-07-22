@@ -261,23 +261,15 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1527
     Description: Structure with List/Not List and Generic Group is Zoom In and Zoom Out.
     */
-    const numberOfPressZoomOut = 5;
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 

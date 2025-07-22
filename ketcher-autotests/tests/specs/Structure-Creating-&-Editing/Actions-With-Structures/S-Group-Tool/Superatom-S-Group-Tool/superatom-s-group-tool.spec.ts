@@ -12,6 +12,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
+  keyboardPressOnCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -185,7 +186,7 @@ test.describe('Superatom S-Group tool', () => {
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 3);
     await pressButton(page, 'Remove Abbreviation');
-    await page.keyboard.press('o');
+    await keyboardPressOnCanvas(page, 'o');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

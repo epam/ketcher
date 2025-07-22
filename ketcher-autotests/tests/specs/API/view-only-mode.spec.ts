@@ -235,8 +235,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
     const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
-    const aboutButton = TopRightToolbar(page).aboutButton;
-    const helpButton = TopRightToolbar(page).helpButton;
+    const aboutButton = CommonTopRightToolbar(page).aboutButton;
+    const helpButton = CommonTopRightToolbar(page).helpButton;
 
     await enableViewOnlyModeBySetOptions(page);
     await expect(helpButton).toBeEnabled();

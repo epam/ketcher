@@ -8,6 +8,8 @@ import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
   fullScreenButton: Locator;
+  helpButton: Locator;
+  aboutButton: Locator;
   zoomSelector: Locator;
 };
 
@@ -26,6 +28,8 @@ export const CommonTopRightToolbar = (page: Page) => {
     fullScreenButton: page
       .getByTestId('fullscreen-mode-button')
       .filter({ has: page.locator(':visible') }),
+    helpButton: page.getByTestId('help-button'),
+    aboutButton: page.getByTestId('about-button'),
     zoomSelector: page
       .getByTestId('zoom-selector')
       .filter({ has: page.locator(':visible') }),
@@ -41,6 +45,14 @@ export const CommonTopRightToolbar = (page: Page) => {
   return {
     ...locators,
     ...zoomLocators,
+
+    async help() {
+      await locators.helpButton.click();
+    },
+
+    async about() {
+      await locators.aboutButton.click();
+    },
 
     async setZoomInputValue(value: string) {
       await locators.zoomSelector.click();

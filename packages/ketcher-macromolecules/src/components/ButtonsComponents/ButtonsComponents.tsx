@@ -28,20 +28,20 @@ export function ButtonsComponents() {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
           iconName="help"
-          title="Help"
+          title="Help (?)"
           onClick={() =>
             window.open(
               'https://github.com/epam/ketcher/blob/master/documentation/help.md#ketcher-macromolecules-mode',
               '_blank',
             )
           }
-          data-testid="help-button"
+          testId="help-button"
         />
         <IconButton
           iconName="about"
           title="About"
           onClick={() => setAboutOpen(true)}
-          data-testid="about-button"
+          testId="about-button"
         />
       </div>
       <About {...aboutProps} />

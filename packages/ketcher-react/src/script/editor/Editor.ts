@@ -178,6 +178,8 @@ class Editor implements KetcherEditor {
     updateFloatingTools: Subscription<FloatingToolsParams>;
   };
 
+  private _monomerCreationWizardActive = false;
+
   public serverSettings = {};
 
   lastEvent: any;
@@ -536,6 +538,39 @@ class Editor implements KetcherEditor {
     this.event.zoomChanged.dispatch();
 
     return newZoomValue > MIN_ZOOM_VALUE;
+  }
+
+  public get isMonomerCreationWizardActive() {
+    return this._monomerCreationWizardActive;
+  }
+
+  public get isMonomerCreationWizardEnabled() {
+    if (this._monomerCreationWizardActive) {
+      return true;
+    }
+
+    if (
+      this._selection &&
+      Object.values(this._selection).some((map) => map.length > 0)
+    ) {
+      return true;
+    }
+
+    // TODO: Check if selection equals the whole struct or if selection is not continuous
+
+    // TODO: Check outgoing bonds (from 1 to 8, simple single bonds)
+
+    return false;
+  }
+
+  openMonomerCreationWizard() {
+    this._monomerCreationWizardActive = true;
+    // const selectedStruct = this.structSelected();
+    // this.zoomAccordingContent(selectedStruct);
+    this.selection(null);
+    // this.render.ctab.molecule = selectedStruct;
+    // this.render.update();
+    // console.log(this._selection);
   }
 
   selection(ci?: any) {

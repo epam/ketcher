@@ -1,0 +1,100 @@
+.monomerCreationWizard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100% - 66px);
+  width: calc(100% - 62px);
+  display: flex;
+  margin: 16px 11px;
+  padding: 16px;
+  border: 1px dashed #CAD3DD;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.leftColumn {
+  flex: 1;
+}
+
+.wizardTitle {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: 4px;
+}
+
+.rightColumn {
+  min-width: 288px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.attributesWindow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+  background-color: #F3F5F7;
+  border-radius: 8px;
+  pointer-events: auto;
+}
+
+.attributesTitle {
+  margin: 0;
+  font-size: 16px;
+}
+
+.attributesFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fieldTitle {
+  margin: 0;
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.input {
+  width: 200px;
+}
+
+.buttonsContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonsContainer > button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.buttonDiscard {
+  border: 1px solid #585858;
+  background-color: transparent;
+  color: #585858;
+}
+
+.buttonFinish {
+  border: 1px solid #167782;
+  background-color: #167782;
+  color: #fff;
+}
+

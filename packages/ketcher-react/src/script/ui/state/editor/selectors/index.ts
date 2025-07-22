@@ -15,3 +15,6 @@
  ***************************************************************************/
 
 export const editorOptionsSelector = (state) => state.editor?.render?.options;
+
+export const editorMonomerCreationWizardSelector = (state) =>
+  state.editor?.isMonomerCreationWizardActive;

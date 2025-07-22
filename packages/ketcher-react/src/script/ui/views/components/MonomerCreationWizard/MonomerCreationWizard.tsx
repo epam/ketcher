@@ -2,9 +2,10 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
-import Select, { Option } from '../../../component/form/Select';
+import Select from '../../../component/form/Select';
 import { useState } from 'react';
 import clsx from 'clsx';
+import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 
 const TypeSelectConfig = [
   {
@@ -28,6 +29,16 @@ const MonomerCreationWizard = () => {
   const onTypeChange = (value) => {
     setType(value);
   };
+
+  const [naturalAnalogue, setNaturalAnalogue] = useState<string>('');
+  const onNaturalAnalogueChange = (value: string) => {
+    setNaturalAnalogue(value);
+  };
+
+  const displayNaturalAnaloguePicker =
+    type === KetMonomerClass.AminoAcid ||
+    type === KetMonomerClass.Base ||
+    type === KetMonomerClass.RNA;
 
   const typeSelectOptions = TypeSelectConfig.map((option) => ({
     ...option,
@@ -82,6 +93,16 @@ const MonomerCreationWizard = () => {
                 placeholder="ex.: 5-hydroxymethyl dC-12"
               />
             </div>
+            {displayNaturalAnaloguePicker && (
+              <div className={styles.field}>
+                <p className={styles.fieldTitle}>Natural analogue*</p>
+                <NaturalAnaloguePicker
+                  monomerType={type}
+                  onChange={onNaturalAnalogueChange}
+                  value={naturalAnalogue}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.divider} />
           <div className={styles.attachmentPoints}>

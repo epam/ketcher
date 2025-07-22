@@ -42,7 +42,7 @@ interface Props {
 }
 
 const ChevronIcon = ({ className }) => (
-  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+  <Icon name="chevron" className={className} />
 );
 
 const Select = ({

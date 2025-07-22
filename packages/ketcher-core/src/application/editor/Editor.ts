@@ -22,7 +22,7 @@ import {
   SnakeMode,
 } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import { toolsMap } from 'application/editor/tools';
+import { isRnaPreset, toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
@@ -48,7 +48,14 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
+import {
+  MonomerToAtomBond,
+  Phosphate,
+  SequenceType,
+  Struct,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -103,6 +110,12 @@ interface ICoreEditorConstructorParams {
 interface ModifyAminoAcidsHandlerParams {
   monomers: BaseMonomer[];
   modificationType: string;
+}
+
+interface IAutochainMonomerAddResult {
+  modelChanges: Command;
+  firstMonomer: BaseMonomer;
+  lastMonomer: BaseMonomer;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -631,12 +644,134 @@ export class CoreEditor {
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
   }
 
-  private onAutochain(monomerItem: MonomerItemType | IRnaPreset) {
-    if (!(this.mode instanceof SequenceMode)) {
+  private onAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+    if (this.mode instanceof SequenceMode) {
       return;
     }
 
-    console.log(monomerItem);
+    const modelChanges = new Command();
+    const history = new EditorHistory(this);
+    const selectedMonomersWithFreeR2 =
+      this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
+        return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
+      });
+    const selectedMonomerToConnect =
+      selectedMonomersWithFreeR2.length === 1
+        ? selectedMonomersWithFreeR2[0]
+        : undefined;
+    const newMonomerPosition =
+      selectedMonomerToConnect?.position.add(new Vec2(1.5, 0)) ||
+      new Vec2(0, 0);
+
+    let monomersAddResult: IAutochainMonomerAddResult | undefined;
+
+    if (isRnaPreset(monomerOrRnaItem)) {
+      monomersAddResult = this.onAutochainRnaPreset(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    } else {
+      monomersAddResult = this.onAutochainMonomer(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    }
+
+    if (!monomersAddResult) {
+      return;
+    }
+
+    modelChanges.merge(monomersAddResult.modelChanges);
+
+    if (selectedMonomerToConnect) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.createPolymerBond(
+          selectedMonomerToConnect,
+          monomersAddResult.firstMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+
+      modelChanges.merge(
+        this.drawingEntitiesManager.unselectDrawingEntity(
+          selectedMonomerToConnect,
+        ),
+      );
+
+      modelChanges.merge(
+        this.drawingEntitiesManager.selectDrawingEntity(
+          monomersAddResult.lastMonomer,
+        ),
+      );
+    }
+
+    if (this.mode instanceof SnakeMode) {
+      modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
+    }
+
+    this.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
+    this.zoomTool.scrollToVerticalBottom();
+  }
+
+  private onAutochainRnaPreset(rnaPresetItem: IRnaPreset, sugarPosition: Vec2) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    if (!rnaPresetItem.sugar) {
+      this.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
+    const modelChanges = new Command();
+    const { command: addPresetModelChanges, monomers } =
+      this.drawingEntitiesManager.addRnaPreset({
+        sugar: rnaPresetItem.sugar,
+        sugarPosition: new Vec2(sugarPosition.x, sugarPosition.y),
+        phosphate: rnaPresetItem.phosphate,
+        phosphatePosition: rnaPresetItem.phosphate
+          ? new Vec2(sugarPosition.x + 1.5, sugarPosition.y)
+          : undefined,
+        rnaBase: rnaPresetItem.base,
+        rnaBasePosition: rnaPresetItem.base
+          ? new Vec2(sugarPosition.x, sugarPosition.y + 1.5)
+          : undefined,
+      });
+    const sugar = monomers.find(
+      (monomer) => monomer instanceof Sugar,
+    ) as BaseMonomer;
+    const phosphate = monomers.find((monomer) => monomer instanceof Phosphate);
+
+    modelChanges.merge(addPresetModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: sugar,
+      lastMonomer: phosphate || sugar,
+    };
+  }
+
+  private onAutochainMonomer(monomerItem: MonomerItemType, position: Vec2) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const modelChanges = new Command();
+    const monomerAddModelChanges = this.drawingEntitiesManager.addMonomer(
+      monomerItem,
+      position,
+    );
+    const monomer = monomerAddModelChanges.operations[0].monomer as BaseMonomer;
+
+    modelChanges.merge(monomerAddModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: monomer,
+      lastMonomer: monomer,
+    };
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

@@ -102,6 +102,12 @@ export interface IRnaPreset {
   editedName?: boolean;
 }
 
+export function isRnaPreset(
+  preset: IRnaPreset | MonomerItemType,
+): preset is IRnaPreset {
+  return 'sugar' in preset && preset.sugar !== undefined;
+}
+
 export interface IRnaLabeledPreset
   extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
     Pick<IKetMonomerGroupTemplate, 'templates'> {}

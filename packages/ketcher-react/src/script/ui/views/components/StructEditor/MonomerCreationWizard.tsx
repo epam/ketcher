@@ -1,8 +1,44 @@
 import styles from './MonomerCreationWizard.module.less';
+import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
-import { CREATE_MONOMER_TOOL_NAME } from 'ketcher-core';
+import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
+import Select, { Option } from '../../../component/form/Select';
+import { useState } from 'react';
+import clsx from 'clsx';
+
+const TypeSelectConfig = [
+  {
+    value: KetMonomerClass.AminoAcid,
+    label: 'Amino acid',
+    iconName: 'peptide',
+  },
+  { value: KetMonomerClass.Sugar, label: 'Sugar', iconName: 'sugar' },
+  { value: KetMonomerClass.Base, label: 'Base', iconName: 'base' },
+  {
+    value: KetMonomerClass.Phosphate,
+    label: 'Phosphate',
+    iconName: 'phosphate',
+  },
+  { value: KetMonomerClass.RNA, label: 'Nucleotide', iconName: 'nucleotide' },
+  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
+];
 
 const MonomerCreationWizard = () => {
+  const [type, setType] = useState<KetMonomerClass>();
+  const onTypeChange = (value) => {
+    setType(value);
+  };
+
+  const typeSelectOptions = TypeSelectConfig.map((option) => ({
+    ...option,
+    children: (
+      <div className={styles.typeOption}>
+        <Icon name={option.iconName} />
+        {option.label}
+      </div>
+    ),
+  }));
+
   return (
     <div className={styles.monomerCreationWizard}>
       <div className={styles.leftColumn}>
@@ -12,12 +48,23 @@ const MonomerCreationWizard = () => {
         </p>
       </div>
       <div className={styles.rightColumn}>
-        <div className={styles.attributesWindow}>
+        <div
+          className={clsx(
+            selectStyles.selectContainer,
+            styles.attributesWindow,
+          )}
+        >
           <p className={styles.attributesTitle}>Attributes</p>
           <div className={styles.attributesFields}>
             <div className={styles.field}>
               <p className={styles.fieldTitle}>Type</p>
-              <input type="text" className={styles.input} placeholder="CHEM" />
+              <Select
+                className={styles.input}
+                options={typeSelectOptions}
+                placeholder="Select monomer type"
+                onChange={onTypeChange}
+                value={type}
+              />
             </div>
             <div className={styles.field}>
               <p className={styles.fieldTitle}>Symbol</p>
@@ -36,8 +83,10 @@ const MonomerCreationWizard = () => {
               />
             </div>
           </div>
-          <hr />
-          <div className={styles.attachmentPoints}></div>
+          <div className={styles.divider} />
+          <div className={styles.attachmentPoints}>
+            <p className={styles.fieldTitle}>Attachment points</p>
+          </div>
         </div>
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard}>Discard</button>

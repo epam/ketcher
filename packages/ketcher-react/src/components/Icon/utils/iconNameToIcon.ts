@@ -218,6 +218,9 @@ import Sugar from '../../../assets/icons/files/sugar.svg';
 import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
+import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
+import Peptide from '../../../assets/icons/files/peptide.svg';
+import Chem from '../../../assets/icons/files/chem.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
 import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 import ExpandIcon from '../../../assets/icons/files/expand.svg';
@@ -227,7 +230,6 @@ import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
-import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import {
   CREATE_MONOMER_TOOL_NAME,
   IMAGE_KEY,
@@ -469,6 +471,8 @@ export const iconNameToIcon = {
   phosphate: Phosphate,
   preset: Preset,
   nucleotide: Nucleotide,
+  peptide: Peptide,
+  chem: Chem,
   'edit-filled': EditFilled,
   'vertical-dots': VerticalDots,
   expand: ExpandIcon,

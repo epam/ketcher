@@ -1,3 +1,5 @@
+@import 'src/style/variables.less';
+
 .monomerCreationWizard {
   position: absolute;
   top: 0;
@@ -31,6 +33,7 @@
 }
 
 .attributesWindow {
+  width: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -63,8 +66,23 @@
   font-size: 10px;
 }
 
+.typeOption {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  & > svg {
+    color: @color-grey-5;
+  }
+}
+
 .input {
   width: 200px;
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid @color-grey-3;
 }
 
 .buttonsContainer {
@@ -87,14 +105,14 @@
 }
 
 .buttonDiscard {
-  border: 1px solid #585858;
+  border: 1px solid @color-grey-6;
   background-color: transparent;
-  color: #585858;
+  color: @color-grey-6;
 }
 
 .buttonFinish {
-  border: 1px solid #167782;
-  background-color: #167782;
+  border: 1px solid @color-primary;
+  background-color: @color-primary;
   color: #fff;
 }
 

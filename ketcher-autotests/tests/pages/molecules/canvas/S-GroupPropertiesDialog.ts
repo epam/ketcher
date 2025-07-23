@@ -75,7 +75,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       try {
         await delay(0.1);
         await typeToSelect.waitFor({ state: 'visible' });
-        await typeToSelect.click({ force: true, timeout: 100 });
+        await typeToSelect.click();
         await typeToSelect.waitFor({ state: 'hidden' });
       } catch (error) {
         console.warn(`Failed to select type ${type}:`, error);
@@ -85,7 +85,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
           await delay(0.1);
           await typeToSelect.waitFor({ state: 'visible' });
         }
-        await typeToSelect.click({ force: true, timeout: 100 });
+        await typeToSelect.click();
         await typeToSelect.waitFor({ state: 'hidden' });
       }
     },

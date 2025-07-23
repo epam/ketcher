@@ -53,6 +53,7 @@ interface ElemAttr {
   text: string;
   path: any;
   rbb: { x: number; y: number; width: number; height: number };
+  background?: any;
 }
 
 const StereoLabelMinOpacity = 0.3;
@@ -999,15 +1000,17 @@ function buildLabel(
     usageInMacromolecule,
   } = options;
   // eslint-disable-line max-statements
-  const label: any = {
+  const label: ElemAttr = {
     text: getLabelText(atom.a, atomId, sgroup),
+    path: undefined,
+    rbb: { x: 0, y: 0, width: 0, height: 0 },
   };
   let tooltip: string | null = null;
   if (!label.text) {
     label.text = 'R#';
   }
 
-  if (label.text === atom.a.label) {
+  if (label.text) {
     const element = Elements.get(label.text);
     if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';

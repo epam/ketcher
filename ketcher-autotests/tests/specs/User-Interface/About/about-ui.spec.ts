@@ -10,9 +10,9 @@ test.describe('Open Ketcher', () => {
 
   test('About floating windows appeared', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-12191
-    Description: 'About' floating window appears
-    */
+     * Test case: EPMLSOPKET-12191
+     * Description: 'About' floating window appears
+     */
     const buildVersion = AboutDialog(page).buildVersion;
     const buildTime = AboutDialog(page).buildTime;
     const buildIndigoVersion = AboutDialog(page).buildIndigoVersion;
@@ -25,9 +25,9 @@ test.describe('Open Ketcher', () => {
 
   test('Links in About floating window', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-12193
-    Description: 'About' floating window links check
-    */
+     * Test case: EPMLSOPKET-12193
+     * Description: 'About' floating window links check
+     */
     await CommonTopRightToolbar(page).about();
 
     await clickByLink(
@@ -50,7 +50,8 @@ test.describe('Open Ketcher', () => {
 
   test('Close About floating window', async ({ page }) => {
     /* Test case: EPMLSOPKET-12192
-    Description: Close 'About' window */
+     * Description: Close 'About' window
+     */
     await CommonTopRightToolbar(page).about();
     await AboutDialog(page).closeByOk();
   });

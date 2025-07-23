@@ -8,7 +8,6 @@ import {
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
-  pressButton,
   screenshotBetweenUndoRedo,
   selectUndoByKeyboard,
   takeEditorScreenshot,

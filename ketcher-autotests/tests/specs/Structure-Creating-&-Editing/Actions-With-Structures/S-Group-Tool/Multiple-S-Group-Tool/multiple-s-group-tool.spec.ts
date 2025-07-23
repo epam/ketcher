@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
   BondType,
   clickOnAtom,
   clickOnBond,

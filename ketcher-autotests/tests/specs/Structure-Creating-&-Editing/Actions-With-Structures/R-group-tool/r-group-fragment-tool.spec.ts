@@ -1,10 +1,9 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
   openFileAndAddToCanvas,
-  pressButton,
   clickOnAtom,
   waitForPageInit,
   clickOnCanvas,

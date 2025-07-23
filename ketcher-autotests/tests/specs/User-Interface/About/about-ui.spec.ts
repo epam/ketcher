@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { takeEditorScreenshot, clickByLink, waitForPageInit } from '@utils';
 
 test.describe('Open Ketcher', () => {

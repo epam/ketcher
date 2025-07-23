@@ -25,7 +25,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
-  pressButton,
   readFileContent,
   selectFunctionalGroups,
   selectSaltsAndSolvents,

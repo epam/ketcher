@@ -1038,13 +1038,45 @@ function buildLabel(
 
   const { previewOpacity } = options;
 
-  label.path = paper.text(ps.x, ps.y, label.text).attr({
-    font,
-    'font-size': fontszInPx,
-    fill: atom.color,
-    'font-style': atom.a.pseudo ? 'italic' : '',
-    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+  const subFontSize = fontszInPx * 0.6;
+  const labelTextParts: string[] = [];
+  const regex = /(\D+)|(\d+)/g;
+  let match;
+  while ((match = regex.exec(label.text)) !== null) {
+    labelTextParts.push(match[0]);
+  }
+  let xCursor = ps.x;
+  const textSet = paper.set();
+  const subscriptYOffset = fontszInPx * 0.35;
+  let prevBbox: any = null;
+  labelTextParts.forEach((part) => {
+    let textObj;
+    if (/^\d+$/.test(part)) {
+      const subX = prevBbox ? prevBbox.x + prevBbox.width * 0.98 + 2 : xCursor;
+      textObj = paper.text(subX, ps.y + subscriptYOffset, part).attr({
+        font,
+        'font-size': subFontSize,
+        fill: atom.color,
+        'font-style': atom.a.pseudo ? 'italic' : '',
+        'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+      });
+    } else {
+      textObj = paper.text(xCursor, ps.y, part).attr({
+        font,
+        'font-size': fontszInPx,
+        fill: atom.color,
+        'font-style': atom.a.pseudo ? 'italic' : '',
+        'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+      });
+    }
+    const bbox = textObj.getBBox();
+    textSet.push(textObj);
+    if (!/^\d+$/.test(part)) {
+      xCursor += bbox.width;
+      prevBbox = bbox;
+    }
   });
+  label.path = textSet;
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {
     const backgroundSize = fontszInPx * 2;

@@ -3,12 +3,15 @@ import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationWizardSelector } from '../../../state/editor/selectors';
-import { closeMonomerCreationWizard } from '../../../state/editor/actions/monomerCreation';
+import {
+  closeMonomerCreationWizard,
+  submitMonomerCreation,
+} from '../../../state/editor/actions/monomerCreation';
 
 const TypeSelectConfig = [
   {
@@ -31,11 +34,23 @@ const MonomerCreationWizard = () => {
   const dispatch = useDispatch();
 
   const [type, setType] = useState<KetMonomerClass>();
+  const [symbol, setSymbol] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [naturalAnalogue, setNaturalAnalogue] = useState<string>('');
+
   const onTypeChange = (value) => {
     setType(value);
+    setNaturalAnalogue('');
   };
 
-  const [naturalAnalogue, setNaturalAnalogue] = useState<string>('');
+  const onSymbolChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSymbol(event.target.value);
+  };
+
+  const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
   const onNaturalAnalogueChange = (value: string) => {
     setNaturalAnalogue(value);
   };
@@ -59,8 +74,29 @@ const MonomerCreationWizard = () => {
     [],
   );
 
+  const resetWizard = () => {
+    setType(undefined);
+    setSymbol('');
+    setName('');
+    setNaturalAnalogue('');
+  };
+
   const handleDiscard = () => {
     dispatch(closeMonomerCreationWizard());
+    resetWizard();
+  };
+
+  const handleFinish = () => {
+    // TODO: Validate inputs
+    dispatch(
+      submitMonomerCreation({
+        type,
+        symbol,
+        name,
+        naturalAnalogue,
+      }),
+    );
+    resetWizard();
   };
 
   const isMonomerCreationWizardActive = useSelector(
@@ -104,6 +140,8 @@ const MonomerCreationWizard = () => {
                 type="text"
                 className={styles.input}
                 placeholder="ex.: Azs980uX"
+                value={symbol}
+                onChange={onSymbolChange}
               />
             </div>
             <div className={styles.field}>
@@ -112,6 +150,8 @@ const MonomerCreationWizard = () => {
                 type="text"
                 className={styles.input}
                 placeholder="ex.: 5-hydroxymethyl dC-12"
+                value={name}
+                onChange={onNameChange}
               />
             </div>
             {displayNaturalAnaloguePicker && (
@@ -125,16 +165,18 @@ const MonomerCreationWizard = () => {
               </div>
             )}
           </div>
-          <div className={styles.divider} />
-          <div className={styles.attachmentPoints}>
-            <p className={styles.fieldTitle}>Attachment points</p>
-          </div>
+          {/* <div className={styles.divider} /> */}
+          {/* <div className={styles.attachmentPoints}> */}
+          {/*  <p className={styles.fieldTitle}>Attachment points</p> */}
+          {/* </div> */}
         </div>
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>
             Discard
           </button>
-          <button className={styles.buttonFinish}>Finish</button>
+          <button className={styles.buttonFinish} onClick={handleFinish}>
+            Finish
+          </button>
         </div>
       </div>
     </div>

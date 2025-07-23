@@ -13,7 +13,7 @@ export const closeMonomerCreationWizard = () => ({
 });
 
 // TODO: Define the type for monomerData
-export const submitMonomerCreation = (monomerData) => ({
+export const submitMonomerCreation = (payload) => ({
   type: MonomerCreationActions.SubmitMonomer,
-  payload: monomerData,
+  payload,
 });

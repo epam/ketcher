@@ -37,6 +37,12 @@ import {
   Atom,
   Pool,
   SGroup,
+  KetSerializer,
+  KetTemplateType,
+  monomerFactory,
+  MonomerMicromolecule,
+  MONOMER_CONST,
+  KetMonomerClass,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -565,6 +571,8 @@ class Editor implements KetcherEditor {
   }
 
   private originalStruct: Struct | null = null;
+  // attachment atom id to leaving atom id
+  private attachmentPoints: Map<number, number> = new Map();
 
   openMonomerCreationWizard() {
     this._monomerCreationWizardActive = true;
@@ -592,6 +600,9 @@ class Editor implements KetcherEditor {
       const newBond = bond.clone();
       newBond[bondEdgeForLeavingAtom] = newAtomId;
       selectedStruct.bonds.set(i, newBond);
+      const attachmentAtomId =
+        bondEdgeForLeavingAtom === 'end' ? bond.begin : bond.end;
+      this.attachmentPoints.set(attachmentAtomId, newAtomId);
     });
 
     this.struct(selectedStruct);
@@ -605,7 +616,112 @@ class Editor implements KetcherEditor {
       this.originalStruct = null;
     }
 
+    this.attachmentPoints.clear();
+
     this.tool('select');
+  }
+
+  saveNewMonomer(data) {
+    const ketSerializer = new KetSerializer();
+    const ketMicromolecule = JSON.parse(
+      ketSerializer.serialize(this.render.ctab.molecule),
+    );
+
+    const { symbol, name, type, naturalAnalogue } = data;
+
+    const attachmentPoints = [];
+    this.attachmentPoints.forEach((leavingAtomId, attachmentAtomId) => {
+      const attachmentPoint = {
+        attachmentAtom: attachmentAtomId,
+        leavingGroup: {
+          atoms: [leavingAtomId],
+        },
+        type:
+          attachmentPoints.length === 0
+            ? 'left'
+            : attachmentPoints.length === 1
+            ? 'right'
+            : 'side',
+      };
+      attachmentPoints.push(attachmentPoint);
+    });
+
+    const template = {
+      type: KetTemplateType.MONOMER_TEMPLATE,
+      id: `${symbol}___${name}`,
+      class: type,
+      classHELM:
+        type === KetMonomerClass.AminoAcid
+          ? MONOMER_CONST.PEPTIDE
+          : type === KetMonomerClass.CHEM
+          ? MONOMER_CONST.CHEM
+          : MONOMER_CONST.RNA,
+      alias: symbol,
+      fullName: name,
+      naturalAnalogShort: naturalAnalogue,
+      atoms: ketMicromolecule.mol0.atoms,
+      bonds: ketMicromolecule.mol0.bonds,
+      attachmentPoints,
+      root: {
+        nodes: [],
+        connections: [],
+        templates: [
+          {
+            $ref: `monomerTemplate-${symbol}___${name}`,
+          },
+        ],
+      },
+    };
+
+    const libraryItem = JSON.stringify({
+      root: {
+        nodes: [],
+        connections: [],
+        templates: [
+          {
+            $ref: `${KetTemplateType.MONOMER_TEMPLATE}-${symbol}___${name}`,
+          },
+        ],
+      },
+      [`${KetTemplateType.MONOMER_TEMPLATE}-${symbol}___${name}`]: {
+        type: KetTemplateType.MONOMER_TEMPLATE,
+        id: `${symbol}___${name}`,
+        class: type,
+        classHELM:
+          type === KetMonomerClass.AminoAcid
+            ? MONOMER_CONST.PEPTIDE
+            : type === KetMonomerClass.CHEM
+            ? MONOMER_CONST.CHEM
+            : MONOMER_CONST.RNA,
+        alias: symbol,
+        fullName: name,
+        naturalAnalogShort: naturalAnalogue,
+        atoms: ketMicromolecule.mol0.atoms,
+        bonds: ketMicromolecule.mol0.bonds,
+        attachmentPoints,
+      },
+    });
+
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    ketcher.updateMonomersLibrary(libraryItem);
+
+    // console.log(template);
+    //
+    // const monomerItem =
+    //   ketSerializer.convertMonomerTemplateToLibraryItem(template);
+    //
+    // console.log(monomerItem);
+    //
+    // const [Monomer] = monomerFactory(monomerItem);
+    // const monomer = new Monomer(monomerItem);
+    // const monomerMicromolecule = new MonomerMicromolecule(
+    //   SGroup.TYPES.SUP,
+    //   monomer,
+    // );
+    //
+    // console.log(monomerMicromolecule);
+
+    this.closeMonomerCreationWizard();
   }
 
   selection(ci?: any) {

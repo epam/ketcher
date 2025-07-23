@@ -28,8 +28,12 @@ export const CommonTopRightToolbar = (page: Page) => {
     fullScreenButton: page
       .getByTestId('fullscreen-mode-button')
       .filter({ has: page.locator(':visible') }),
-    helpButton: page.getByTestId('help-button'),
-    aboutButton: page.getByTestId('about-button'),
+    helpButton: page
+      .getByTestId('help-button')
+      .filter({ has: page.locator(':visible') }),
+    aboutButton: page
+      .getByTestId('about-button')
+      .filter({ has: page.locator(':visible') }),
     zoomSelector: page
       .getByTestId('zoom-selector')
       .filter({ has: page.locator(':visible') }),

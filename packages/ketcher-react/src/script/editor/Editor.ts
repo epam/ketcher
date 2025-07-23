@@ -36,6 +36,7 @@ import {
   Coordinates,
   Atom,
   Pool,
+  SGroup,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -563,21 +564,47 @@ class Editor implements KetcherEditor {
     return false;
   }
 
+  private originalStruct: Struct | null = null;
+
   openMonomerCreationWizard() {
     this._monomerCreationWizardActive = true;
-    // const selectedStruct = this.structSelected();
-    // this.zoomAccordingContent(selectedStruct);
-    this.selection(null);
-    // this.render.ctab.molecule = selectedStruct;
-    // this.render.update();
-    // console.log(this._selection);
+
+    const selectedStruct = this.structSelected();
+    if (this.originalStruct === null) {
+      this.originalStruct = this.render.ctab.molecule.clone();
+    }
+
+    const selectionAtoms = selectedStruct.atoms;
+    const bondsToOutside = this.originalStruct.bonds.filter((_, bond) => {
+      return (
+        (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
+        (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+      );
+    });
+
+    bondsToOutside.forEach((bond, i) => {
+      const bondEdgeForLeavingAtom = selectedStruct.atoms.has(bond.begin)
+        ? 'end'
+        : 'begin';
+      const leavingAtom = this.originalStruct?.atoms.get(bond.end);
+      const newLeavingAtom = new Atom({ label: 'H', pp: leavingAtom?.pp });
+      const newAtomId = selectedStruct.atoms.add(newLeavingAtom);
+      const newBond = bond.clone();
+      newBond[bondEdgeForLeavingAtom] = newAtomId;
+      selectedStruct.bonds.set(i, newBond);
+    });
+
+    this.struct(selectedStruct);
   }
 
   closeMonomerCreationWizard() {
     this._monomerCreationWizardActive = false;
-    // this.render.ctab.molecule = this.struct().clone();
-    // this.render.update();
-    this.selection(null);
+
+    if (this.originalStruct !== null) {
+      this.struct(this.originalStruct);
+      this.originalStruct = null;
+    }
+
     this.tool('select');
   }
 

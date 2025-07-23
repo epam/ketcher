@@ -38,7 +38,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
@@ -235,8 +234,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
     const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
-    const aboutButton = TopRightToolbar(page).aboutButton;
-    const helpButton = TopRightToolbar(page).helpButton;
+    const aboutButton = CommonTopRightToolbar(page).aboutButton;
+    const helpButton = CommonTopRightToolbar(page).helpButton;
 
     await enableViewOnlyModeBySetOptions(page);
     await expect(helpButton).toBeEnabled();

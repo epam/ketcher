@@ -8,7 +8,6 @@ import {
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
-  pressButton,
   screenshotBetweenUndoRedo,
   selectUndoByKeyboard,
   takeEditorScreenshot,
@@ -39,6 +38,8 @@ import {
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -228,12 +229,10 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add R-Group Label and Undo/Redo on structure with SRU polymer S-group.
     */
-    const rGroupName = 'R12';
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
-    await page.getByRole('button', { name: rGroupName }).click();
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupLabels(RGroup.R12);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 

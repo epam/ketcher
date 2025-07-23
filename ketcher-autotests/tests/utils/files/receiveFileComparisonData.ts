@@ -131,6 +131,7 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   rxn: 'getRxn',
   ket: 'getKet',
   smi: 'getSmiles',
+  cxsmi: 'getExtendedSmiles' as keyof Ketcher,
   smarts: 'getSmarts',
   // TODO fix types of Ketcher. There are no getCDX and getCDXml functions
   // dirty hack to make it works

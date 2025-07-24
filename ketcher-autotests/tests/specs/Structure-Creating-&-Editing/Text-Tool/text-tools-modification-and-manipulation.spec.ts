@@ -13,12 +13,16 @@ import {
   deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -57,13 +61,12 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2228
     // Verify if possible is modify created text object by adding some extra symbols
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('TEST');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('TEST');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await page.getByText('TEST').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').click();
-    await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('TEST123');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -71,8 +74,8 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2229
     // Delte created text object with Erase tool
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('TEST');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('TEST');
+    await TextEditorDialog(page).apply();
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('TEST').click();
     await performUndoRedo(page);
@@ -113,22 +116,15 @@ test.describe('Text tools test cases', () => {
   test('Create a single text object by pasting text', async ({ page }) => {
     // Test case: EPMLSOPKET-2230
     // Verify if possible is create text object by pasting text
-    await addTextBoxToCanvas(page);
-    await page
-      .getByRole('dialog')
-      .getByRole('textbox')
-      .fill(
-        'Ketcher is a tool to draw molecular structures and chemical reactions',
-      );
-    await pressButton(page, 'Cancel');
-    await page.getByTestId('text').click();
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
-    await clickInTheMiddleOfTheScreen(page);
     const pasteText =
       'Ketcher is a tool to draw molecular structures and chemical reactions';
-    await page.getByRole('dialog').getByRole('textbox').fill(pasteText);
-    await pressButton(page, 'Apply');
+    await addTextBoxToCanvas(page);
+    await TextEditorDialog(page).setText(pasteText);
+    await TextEditorDialog(page).cancel();
+    await LeftToolbar(page).text();
+    await clickInTheMiddleOfTheScreen(page);
+    await TextEditorDialog(page).setText(pasteText);
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -138,42 +134,44 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
     // Verify if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
-    await page.keyboard.type('&&&');
-    await pressButton(page, 'Cancel');
+    await TextEditorDialog(page).setText('&&&');
+    await TextEditorDialog(page).cancel();
+
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.type('+++');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('+++');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
+
     await clickOnCanvas(page, x, y);
-    await page.getByRole('dialog').getByRole('textbox').click();
-    const text1 =
-      'Ketcher is a tool to draw molecular structures and chemical reactions';
-    await page.keyboard.type(text1);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText(
+      'Ketcher is a tool to draw molecular structures and chemical reactions',
+    );
+    await TextEditorDialog(page).apply();
 
     await page.getByText('+++').dblclick();
-    await page.keyboard.type('123');
-    await pressButton(page, 'Cancel');
+    await TextEditorDialog(page).setText('123');
+    await TextEditorDialog(page).cancel();
+
     await page.getByText('+++').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').click;
-    await waitForRender(page, async () => {
-      await page.keyboard.type('Test');
-    });
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
-    });
+    await TextEditorDialog(page).setText('Test');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
-    await page.getByText('Ketcher is').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill('123');
-    await pressButton(page, 'Cancel');
-    await page.getByText('Ketcher is').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').click;
-    await waitForRender(page, async () => {
-      await page.keyboard.type('Super');
-    });
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
-    });
+
+    await page
+      .getByText(
+        'Ketcher is a tool to draw molecular structures and chemical reactions',
+      )
+      .dblclick();
+    await TextEditorDialog(page).setText('123');
+    await TextEditorDialog(page).cancel();
+
+    await page
+      .getByText(
+        'Ketcher is a tool to draw molecular structures and chemical reactions',
+      )
+      .dblclick();
+    await TextEditorDialog(page).setText('Super');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -181,14 +179,14 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2233
     // Delete several created ealier text objects with hotkey (Delete) and  'Erase' tool.
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('&&&');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('&&&');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
+
     await page.getByTestId('canvas').click({ position: { x: 100, y: 100 } });
-    await page.getByRole('dialog').getByRole('textbox').click();
     const text2 = 'Ketcher is a coool tool';
-    await page.getByRole('dialog').getByRole('textbox').fill(text2);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText(text2);
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -242,8 +240,8 @@ test.describe('Text tools test cases', () => {
     // Verify if possible is to modify created ealier text object and moving it with use Selection Tool
     await addTextBoxToCanvas(page);
     const text3 = 'Test123';
-    await page.getByRole('dialog').getByRole('textbox').fill(text3);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText(text3);
+    await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
@@ -260,8 +258,8 @@ test.describe('Text tools test cases', () => {
     // Verify if possible is perform different manipulations with text objects using different tools (zoom)
     const text4 = 'ABC123';
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill(text4);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText(text4);
+    await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
@@ -281,8 +279,8 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2236
     // Verify if all created and selected elements are moved together
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('OneTwoThree');
+    await TextEditorDialog(page).apply();
     await selectRingButton(page, RingButton.Benzene);
     await waitForRender(page, async () => {
       await page.getByTestId('canvas').click({ position: { x, y } });

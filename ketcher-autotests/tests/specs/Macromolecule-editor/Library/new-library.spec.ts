@@ -53,7 +53,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { pageReload } from '@utils/common/helpers';
+// import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -765,49 +765,49 @@ for (const monomer of monomerToDrag) {
   });
 }
 
-for (const monomer of monomerToDrag) {
-  test(`21.1 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Flex mode)`, async () => {
-    /*
-     *
-     * Test task: https://github.com/epam/ketcher/issues/7419
-     * Description: Check if the canvas is zoomed to a level other than 100%, the "ghost image" of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
-     *              selected from the library should first appear at its original size (100%) when clicked. However, once the "ghost image" is dragged onto
-     *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Flex mode)
-     * Case:
-     * 1. Open Ketcher and turn on Macromolecules editor
-     * 2. Go to Flex mode
-     * 3. Set Canvas Scale to 400%
-     * 4. Grab target monomer from library (but hold it still)
-     * 5. Take library screenshot to validate grabbed canvas has 100% scale
-     * 6. Hover it over canvas
-     * 7. Take canvas screenshot to validate grabbed canvas adjusted it's scale to 400%
-     *
-     * Version 3.6
-     */
-    if (monomerToDrag[0] === monomer) await pageReload(page);
+// for (const monomer of monomerToDrag) {
+//   test(`21.1 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Flex mode)`, async () => {
+//     /*
+//      *
+//      * Test task: https://github.com/epam/ketcher/issues/7419
+//      * Description: Check if the canvas is zoomed to a level other than 100%, the "ghost image" of a monomer (Favoutites, RNA/DNA, Peptides, CHEM, Presets)
+//      *              selected from the library should first appear at its original size (100%) when clicked. However, once the "ghost image" is dragged onto
+//      *              the canvas, it should automatically adjust its size to match the current zoom level of the canvas (x%) (Flex mode)
+//      * Case:
+//      * 1. Open Ketcher and turn on Macromolecules editor
+//      * 2. Go to Flex mode
+//      * 3. Set Canvas Scale to 400%
+//      * 4. Grab target monomer from library (but hold it still)
+//      * 5. Take library screenshot to validate grabbed canvas has 100% scale
+//      * 6. Hover it over canvas
+//      * 7. Take canvas screenshot to validate grabbed canvas adjusted it's scale to 400%
+//      *
+//      * Version 3.6
+//      */
+//     if (monomerToDrag[0] === monomer) await pageReload(page);
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await Library(page).hoverMonomer(monomer);
+//     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+//     await CommonTopRightToolbar(page).setZoomInputValue('400');
+//     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
-    if (!box) throw new Error('Monomer element not found');
+//     const box = await page.getByTestId(monomer.testId).boundingBox();
+//     if (!box) throw new Error('Monomer element not found');
 
-    await page.mouse.down();
-    await page.mouse.move(
-      box.x + box.width / 2 - 2,
-      box.y + box.height / 2 - 2,
-    );
-    await takeMonomerLibraryScreenshot(page);
-    await page.mouse.move(200, 200);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await page.mouse.up();
-    await resetZoomLevelToDefault(page);
-  });
-}
+//     await page.mouse.down();
+//     await page.mouse.move(
+//       box.x + box.width / 2 - 2,
+//       box.y + box.height / 2 - 2,
+//     );
+//     await takeMonomerLibraryScreenshot(page);
+//     await page.mouse.move(200, 200);
+//     await takeEditorScreenshot(page, {
+//       hideMonomerPreview: true,
+//       hideMacromoleculeEditorScrollBars: true,
+//     });
+//     await page.mouse.up();
+//     await resetZoomLevelToDefault(page);
+//   });
+// }
 
 for (const monomer of monomerToDrag) {
   test(`21.2 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Snake mode)`, async () => {

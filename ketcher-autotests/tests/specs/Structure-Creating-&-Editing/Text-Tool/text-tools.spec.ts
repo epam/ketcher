@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
-  pressButton,
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
-import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+  addTextBoxToCanvas,
+  TextEditorDialog,
+} from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
+import { waitForPageInit } from '@utils/common';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,7 +21,7 @@ test.describe('Text tools test cases', () => {
   test('UI', async ({ page }) => {
     // Test case: EPMLSOPKET-2226
     // Verify if the text box displayed properly all elements
-    await page.getByTestId('text').click();
+    await addTextBoxToCanvas(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -31,12 +30,12 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2227
     // Verify action of adding text object to canvas
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('Ketcher');
-    await pressButton(page, 'Cancel');
+    await TextEditorDialog(page).setText('Ketcher');
+    await TextEditorDialog(page).cancel();
     await takeEditorScreenshot(page);
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('Ketcher');
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).setText('Ketcher');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 });

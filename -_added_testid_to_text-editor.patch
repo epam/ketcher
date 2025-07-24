@@ -1,0 +1,18 @@
+Subject: [PATCH] - added testid to text-editor
+---
+Index: packages/ketcher-react/src/script/ui/views/modal/components/Text/Text.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-react/src/script/ui/views/modal/components/Text/Text.tsx b/packages/ketcher-react/src/script/ui/views/modal/components/Text/Text.tsx
+--- a/packages/ketcher-react/src/script/ui/views/modal/components/Text/Text.tsx	(revision e79de8f076f019e2ff116da3eac50861cd1dc815)
++++ b/packages/ketcher-react/src/script/ui/views/modal/components/Text/Text.tsx	(date 1752151299493)
+@@ -156,6 +156,7 @@
+   const refEditor = useRef() as MutableRefObject<Editor>;
+   const setFocusInEditor = useCallback(() => {
+     refEditor.current.focus();
++    refEditor.current.editor?.setAttribute('data-testid', 'text-editor');
+   }, [refEditor]);
+ 
+   // set focut on component mount

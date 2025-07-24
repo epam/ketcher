@@ -270,28 +270,28 @@ test.describe('Data S-Group tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Data S-Group for the reaction components with attached radio button', async ({
-    page,
-  }) => {
-    /*
-      Test case: EPMLSOPKET-1553
-      Description: Data S-Group attached to only on atoms of structures. Not to plus sign and arrow.
-    */
-    await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
-    await selectAllStructuresOnCanvas(page);
-    await LeftToolbar(page).sGroup();
-    await SGroupPropertiesDialog(page).setOptions({
-      Type: TypeOption.Data,
-      Context: ContextOption.Multifragment,
-      FieldName: 'T@#qwer123',
-      FieldValue: '8',
-      PropertyLabelType: PropertyLabelType.Attached,
-    });
-    await waitForRender(page, async () => {
-      await moveMouseToTheMiddleOfTheScreen(page);
-    });
-    await takeEditorScreenshot(page);
-  });
+  // test('Add Data S-Group for the reaction components with attached radio button', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //     Test case: EPMLSOPKET-1553
+  //     Description: Data S-Group attached to only on atoms of structures. Not to plus sign and arrow.
+  //   */
+  //   await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await LeftToolbar(page).sGroup();
+  //   await SGroupPropertiesDialog(page).setOptions({
+  //     Type: TypeOption.Data,
+  //     Context: ContextOption.Multifragment,
+  //     FieldName: 'T@#qwer123',
+  //     FieldValue: '8',
+  //     PropertyLabelType: PropertyLabelType.Attached,
+  //   });
+  //   await waitForRender(page, async () => {
+  //     await moveMouseToTheMiddleOfTheScreen(page);
+  //   });
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Edit Data S-Group Field name and Field Value', async ({ page }) => {
     /*

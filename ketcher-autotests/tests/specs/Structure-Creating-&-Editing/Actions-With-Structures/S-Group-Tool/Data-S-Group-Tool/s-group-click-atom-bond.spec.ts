@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
@@ -17,6 +16,7 @@ import {
   takeElementScreenshot,
   moveMouseAway,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';

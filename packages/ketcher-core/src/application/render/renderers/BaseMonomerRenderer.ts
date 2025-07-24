@@ -63,6 +63,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     public monomer: BaseMonomer,
     private monomerHoveredElementId: string,
     public monomerSymbolElementId: string,
+    public monomerAutochainPreviewElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
@@ -500,6 +501,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     x: number;
     y: number;
   } | void;
+
+  public get strokeDashArray() {
+    return '9, 8';
+  }
 
   public setEnumeration(enumeration: number | null) {
     this.enumeration = enumeration;

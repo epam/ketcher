@@ -69,5 +69,13 @@ export const PhosphateAvatar = () => (
         fillOpacity="0.6"
       />
     </symbol>
+    <symbol
+      id="phosphate-autochain-preview"
+      viewBox="-1 -1 75 75"
+      width="70"
+      height="70"
+    >
+      <rect width="28" height="28" rx="15" />
+    </symbol>
   </>
 );

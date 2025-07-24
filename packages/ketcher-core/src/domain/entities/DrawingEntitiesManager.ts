@@ -182,6 +182,22 @@ export class DrawingEntitiesManager {
     return position || new Vec2(0, 0, 0);
   }
 
+  public get bottomLeftMonomerPosition(): Vec2 {
+    let position: Vec2 | null = null;
+
+    this.monomers.forEach((monomer) => {
+      if (
+        !position ||
+        monomer.position.y > position.y ||
+        (monomer.position.y === position.y && monomer.position.x < position.x)
+      ) {
+        position = monomer.position;
+      }
+    });
+
+    return position || new Vec2(0, 0, 0);
+  }
+
   get selectedEntitiesArr() {
     const selectedEntities: DrawingEntity[] = [];
     this.allEntities.forEach(([, drawingEntity]) => {

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled, { StyledComponent } from '@emotion/styled';
 import Box from '@mui/material/Box';
 
 export const TabPanelDiv = styled.div`
@@ -8,7 +8,7 @@ export const TabPanelDiv = styled.div`
   height: 100%;
 `;
 
-export const TabPanelBox = styled(Box)`
+export const TabPanelBox: StyledComponent<never> = styled(Box)`
   height: 100%;
   width: 100%;
   align-items: start;

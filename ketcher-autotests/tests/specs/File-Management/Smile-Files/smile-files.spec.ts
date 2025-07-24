@@ -566,10 +566,6 @@ test.describe('SMILES files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with other nucleotides could be saved to extended SMILE and loaded back
     */
-    test.fail();
-    // function await getExtendedSmiles but get JSON instead cxsmi file
-    // after fixing need to update the screenshot
-
     await openFileAndAddToCanvas(
       page,
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
@@ -581,7 +577,7 @@ test.describe('SMILES files', () => {
     );
     await openFileAndAddToCanvasAsNewProject(
       page,
-      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
+      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
     );
     await takeEditorScreenshot(page);
   });
@@ -593,10 +589,6 @@ test.describe('SMILES files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to extended SMILE and loaded back
     */
-    test.fail();
-    // function await getExtendedSmiles but get JSON instead cxsmi file
-    // after fixing need to update the screenshot
-
     await openFileAndAddToCanvas(
       page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',

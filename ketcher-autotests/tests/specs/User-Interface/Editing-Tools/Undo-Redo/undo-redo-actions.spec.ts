@@ -53,6 +53,8 @@ import {
   RepeatPatternOption,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -501,8 +503,7 @@ test.describe('Undo/Redo Actions', () => {
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await pressButton(page, 'R5');
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -521,8 +522,7 @@ test.describe('Undo/Redo Actions', () => {
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await pressButton(page, 'R8');
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });

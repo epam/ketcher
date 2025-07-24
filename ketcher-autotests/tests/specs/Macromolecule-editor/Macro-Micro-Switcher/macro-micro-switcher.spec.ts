@@ -25,7 +25,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
-  pressButton,
   readFileContent,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
@@ -103,6 +102,8 @@ import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPoi
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -2040,8 +2041,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await page.getByText('R1').click();
-    await page.getByText('R18').click();
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupFragment(RGroup.R18);
     await takeEditorScreenshot(page);
   });
 
@@ -2058,8 +2058,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await clickOnAtom(page, 'C', 2);
-    await page.getByText('R8').click();
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await takeEditorScreenshot(page);
   });
 

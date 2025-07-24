@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 export const About = styled('div')(({ theme }) => ({
-  width: '420px',
-  height: '260px',
-  padding: '0 22px',
+  width: '430px',
+  minHeight: '260px',
+  padding: '0 18px',
   borderRadius: '6px',
   fontSize: '12px',
   color: theme.ketcher.color.text.primary,
@@ -14,9 +14,8 @@ export const About = styled('div')(({ theme }) => ({
   },
 
   '.body': {
-    height: '174px',
     borderRadius: '6px',
-    padding: '2px 72px',
+    padding: '5px 65px',
     overflowY: 'auto',
     overflowX: 'hidden',
 
@@ -43,7 +42,7 @@ export const About = styled('div')(({ theme }) => ({
   '.headerContent': {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '0 40px',
+    padding: '0 30px',
 
     a: {
       display: 'flex',
@@ -84,7 +83,7 @@ export const About = styled('div')(({ theme }) => ({
     lineHeight: '14px',
     height: '24px',
     borderRadius: '4px',
-    fontSize: '12px',
+    fontSize: '10px',
     '&:hover': {
       color: '#333333',
       border: '1px solid  #333333',
@@ -102,7 +101,7 @@ export const About = styled('div')(({ theme }) => ({
   '.aboutFooter': {
     borderTop: '1px solid #e1e5ea',
     margin: 0,
-    padding: '20px',
+    padding: '15px 0',
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',

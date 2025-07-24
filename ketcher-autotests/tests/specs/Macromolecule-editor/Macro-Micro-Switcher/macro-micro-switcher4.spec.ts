@@ -74,7 +74,7 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
 
   // Test should be skipped if related bug exists
   test.fixme(
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5961 issue(s).`,
   );
 });

@@ -2,15 +2,11 @@ import { Page, Locator } from '@playwright/test';
 
 type TopRightToolbarLocators = {
   settingsButton: Locator;
-  helpButton: Locator;
-  aboutButton: Locator;
 };
 
 export const TopRightToolbar = (page: Page) => {
   const locators: TopRightToolbarLocators = {
     settingsButton: page.getByTestId('settings-button'),
-    helpButton: page.getByTestId('help-button'),
-    aboutButton: page.getByTestId('about-button'),
   };
 
   return {
@@ -27,14 +23,6 @@ export const TopRightToolbar = (page: Page) => {
           timeout: 5000,
         });
       }
-    },
-
-    async Help() {
-      await locators.helpButton.click();
-    },
-
-    async About() {
-      await locators.aboutButton.click();
     },
   };
 };

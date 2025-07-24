@@ -49,7 +49,7 @@
     "@babel/runtime": "^7.26.10",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@mui/material": "^5.2.4",
+    "@mui/material": "^5.18.0",
     "ajv": "^8.10.0",
     "cfb": "^1.2.2",
     "clsx": "^1.1.1",

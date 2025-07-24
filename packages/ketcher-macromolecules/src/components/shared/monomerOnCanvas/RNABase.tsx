@@ -78,5 +78,51 @@ export const RNABaseAvatar = () => (
         fillOpacity="0.6"
       />
     </symbol>
+    <symbol
+      id="rna-base-autochain-preview"
+      viewBox="0 0 36 36"
+      width="36"
+      height="36"
+      data-actual-width="36"
+      data-actual-height="36"
+    >
+      <path
+        d="M15.321 2.35696L16.2638 1.41421C17.0448 0.633166 18.3111 0.633165 19.0922 1.41421L20.0349 2.35696"
+        stroke="#167782"
+      />
+      <path
+        d="M2.35776 15.3208L1.41501 16.2635C0.633959 17.0446 0.633958 18.3109 1.41501 19.0919L2.35776 20.0347"
+        stroke="#167782"
+      />
+      <path
+        d="M32.9982 20.0347L33.9409 19.0919C34.722 18.3109 34.722 17.0446 33.941 16.2635L32.9982 15.3208"
+        stroke="#167782"
+      />
+      <path
+        d="M20.0349 32.9985L19.0922 33.9413C18.3111 34.7223 17.0448 34.7223 16.2638 33.9413L15.321 32.9985"
+        stroke="#167782"
+      />
+      <path
+        d="M18.8564 1.17871L34.1767 16.499"
+        stroke="#167782"
+        stroke-dasharray="4 4"
+      />
+      <path
+        d="M34.1767 18.8564L18.8564 34.1767"
+        stroke="#167782"
+        stroke-miterlimit="16"
+        stroke-dasharray="4 4"
+      />
+      <path
+        d="M1.17926 18.8564L16.4995 34.1767"
+        stroke="#167782"
+        stroke-dasharray="4 4"
+      />
+      <path
+        d="M16.4995 1.17871L1.17926 16.499"
+        stroke="#167782"
+        stroke-dasharray="4 4"
+      />
+    </symbol>
   </>
 );

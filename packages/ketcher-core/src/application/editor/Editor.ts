@@ -642,6 +642,51 @@ export class CoreEditor {
       },
     );
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
+    this.events.previewAutochain.add((monomerItem) =>
+      this.onPreviewAutochain(monomerItem),
+    );
+    this.events.removeAutochainPreview.add(() =>
+      this.onRemoveAutochainPreview(),
+    );
+  }
+
+  private getDataForAutochain() {
+    const selectedMonomersWithFreeR2 =
+      this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
+        return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
+      });
+    const selectedMonomerToConnect =
+      selectedMonomersWithFreeR2.length === 1
+        ? selectedMonomersWithFreeR2[0]
+        : undefined;
+    const newMonomerPosition = selectedMonomerToConnect
+      ? selectedMonomerToConnect.position.add(new Vec2(1.5, 0))
+      : this.drawingEntitiesManager.hasMonomers
+      ? this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+          new Vec2(0, 1.5),
+        )
+      : new Vec2(0, 0);
+
+    return {
+      selectedMonomerToConnect,
+      newMonomerPosition,
+    };
+  }
+
+  private onRemoveAutochainPreview() {
+    this.transientDrawingView.clear();
+  }
+
+  private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+    const { selectedMonomerToConnect, newMonomerPosition } =
+      this.getDataForAutochain();
+
+    this.transientDrawingView.showAutochainPreview(
+      monomerOrRnaItem,
+      newMonomerPosition,
+      selectedMonomerToConnect,
+    );
+    this.transientDrawingView.update();
   }
 
   private onAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
@@ -651,17 +696,8 @@ export class CoreEditor {
 
     const modelChanges = new Command();
     const history = new EditorHistory(this);
-    const selectedMonomersWithFreeR2 =
-      this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
-        return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
-      });
-    const selectedMonomerToConnect =
-      selectedMonomersWithFreeR2.length === 1
-        ? selectedMonomersWithFreeR2[0]
-        : undefined;
-    const newMonomerPosition =
-      selectedMonomerToConnect?.position.add(new Vec2(1.5, 0)) ||
-      new Vec2(0, 0);
+    const { selectedMonomerToConnect, newMonomerPosition } =
+      this.getDataForAutochain();
 
     let monomersAddResult: IAutochainMonomerAddResult | undefined;
 
@@ -713,6 +749,9 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.zoomTool.scrollToVerticalBottom();
+
+    this.onRemoveAutochainPreview();
+    this.onPreviewAutochain(monomerOrRnaItem);
   }
 
   private onAutochainRnaPreset(rnaPresetItem: IRnaPreset, sugarPosition: Vec2) {

@@ -8,6 +8,8 @@ const RNABASE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].hover;
 const RNABASE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].body;
+const RNABASE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].autochainPreview;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
   constructor(public monomer: RNABase, scale?: number) {
@@ -15,6 +17,7 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
       monomer,
       RNABASE_HOVERED_ELEMENT_ID,
       RNABASE_SYMBOL_ELEMENT_ID,
+      RNABASE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
   }

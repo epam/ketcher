@@ -349,6 +349,7 @@ export class AtomRenderer extends BaseRenderer {
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
     this.updateSelectionContour();
+    this.appendAtomProperties();
   }
 
   public appendSelection() {

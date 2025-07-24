@@ -16,7 +16,14 @@
 import { IIconProps } from './types';
 import { getIconByName } from './utils/getIconByName';
 
-const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
+const Icon = ({
+  name,
+  className,
+  title,
+  onClick,
+  dataTestId,
+  ...rest
+}: IIconProps) => {
   const Component = getIconByName(name);
 
   return (
@@ -25,6 +32,7 @@ const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
       title={title}
       onClick={onClick}
       data-testid={dataTestId}
+      {...rest}
     />
   );
 };

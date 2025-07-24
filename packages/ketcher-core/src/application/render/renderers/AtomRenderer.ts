@@ -345,6 +345,9 @@ export class AtomRenderer extends BaseRenderer {
   public redrawLabel() {
     this.removeLabel();
     this.textElement = this.appendLabel();
+    this.radicalElement?.remove();
+    this.radicalElement = undefined;
+    this.hoverElement?.remove();
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;

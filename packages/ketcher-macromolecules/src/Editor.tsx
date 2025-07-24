@@ -332,8 +332,8 @@ function Editor({
               {togglerComponent}
             </TogglerComponentWrapper>
             <VerticalDivider />
-            <FullscreenButton />
             <ButtonsComponents />
+            <FullscreenButton />
             <VerticalDivider />
             <ZoomControls />
           </TopMenuRightWrapper>

@@ -48,9 +48,13 @@ const RnaPresetItem = ({
     [dispatch, preset],
   );
 
-  const onAutochainIconClick = useCallback(() => {
-    editor?.events.autochain.dispatch(preset);
-  }, [dispatch, preset]);
+  const onAutochainIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+      editor?.events.autochain.dispatch(preset);
+    },
+    [dispatch, preset],
+  );
 
   const onAutochainIconMouseOver = useCallback(() => {
     editor?.events.previewAutochain.dispatch(preset);

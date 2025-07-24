@@ -35,6 +35,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@mui/material": "^5.18.0",
     "ketcher-core": "*",
     "ketcher-macromolecules": "*",
     "ketcher-react": "*",

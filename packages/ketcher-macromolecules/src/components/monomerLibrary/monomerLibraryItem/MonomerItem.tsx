@@ -23,8 +23,8 @@ import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { Icon } from 'ketcher-react';
 import { selectEditor } from 'state/common';
+import { blurActiveElement } from 'helpers/canvas';
 
 const MonomerItem = ({
   item,
@@ -61,9 +61,21 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
-  const onAutochainIconClick = useCallback(() => {
-    editor?.events.autochain.dispatch(monomerItem);
-  }, [dispatch, monomerItem]);
+  const onAutochainIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+      editor?.events.autochain.dispatch(monomerItem);
+    },
+    [dispatch, monomerItem],
+  );
+
+  const onAutochainIconMouseOver = useCallback(() => {
+    editor?.events.previewAutochain.dispatch(monomerItem);
+  }, [editor, monomerItem]);
+
+  const onAutochainIconMouseOut = useCallback(() => {
+    editor?.events.removeAutochainPreview.dispatch(monomerItem);
+  }, [editor, monomerItem]);
 
   useLibraryItemDrag(item, cardRef);
 
@@ -87,6 +99,8 @@ const MonomerItem = ({
           <AutochainIcon
             className="autochain"
             name="monomer-autochain"
+            onMouseOver={onAutochainIconMouseOver}
+            onMouseOut={onAutochainIconMouseOut}
             onClick={onAutochainIconClick}
           ></AutochainIcon>
           <div

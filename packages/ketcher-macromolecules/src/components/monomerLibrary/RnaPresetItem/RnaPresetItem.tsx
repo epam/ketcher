@@ -52,6 +52,13 @@ const RnaPresetItem = ({
     editor?.events.autochain.dispatch(preset);
   }, [dispatch, preset]);
 
+  const onAutochainIconMouseOver = useCallback(() => {
+    editor?.events.previewAutochain.dispatch(preset);
+  }, [editor, preset]);
+
+  const onAutochainIconMouseOut = useCallback(() => {
+    editor?.events.removeAutochainPreview.dispatch(preset);
+  }, [editor, preset]);
   useLibraryItemDrag(preset, cardRef);
 
   return (
@@ -69,6 +76,8 @@ const RnaPresetItem = ({
       <AutochainIcon
         className="autochain"
         name="monomer-autochain"
+        onMouseOver={onAutochainIconMouseOver}
+        onMouseOut={onAutochainIconMouseOut}
         onClick={onAutochainIconClick}
       ></AutochainIcon>
       <span>{preset.name}</span>

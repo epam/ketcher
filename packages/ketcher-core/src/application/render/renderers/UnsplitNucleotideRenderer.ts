@@ -9,6 +9,8 @@ const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
 const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
+const NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].autochainPreview;
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
@@ -19,6 +21,7 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       monomer,
       NUCLEOTIDE_HOVERED_ELEMENT_ID,
       NUCLEOTIDE_SYMBOL_ELEMENT_ID,
+      NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
   }

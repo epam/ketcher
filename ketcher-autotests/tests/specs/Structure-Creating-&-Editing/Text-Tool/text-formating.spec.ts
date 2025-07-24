@@ -8,7 +8,6 @@ import {
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
-  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,

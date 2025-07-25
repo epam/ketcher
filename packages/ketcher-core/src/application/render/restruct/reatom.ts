@@ -53,6 +53,7 @@ interface ElemAttr {
   text: string;
   path: any;
   rbb: { x: number; y: number; width: number; height: number };
+  background?: any;
 }
 
 const StereoLabelMinOpacity = 0.3;
@@ -208,9 +209,23 @@ class ReAtom extends ReObject {
   }
 
   getSelectionContour(render: Render, highlightPadding = 0) {
+    const struct = render.ctab.molecule;
+    const aid = struct.atoms.keyOf(this.a);
+    const sgroup = aid !== null ? struct.getGroupFromAtomId(aid) : undefined;
+
+    const isLeavingGroupAtom =
+      sgroup instanceof MonomerMicromolecule &&
+      Atom.isSuperatomLeavingGroupAtom(sgroup, aid || 0);
+
+    let leavingGroupLabel = '';
+    if (isLeavingGroupAtom) {
+      leavingGroupLabel = getLabelText(this.a, aid || 0, sgroup);
+    }
+
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
-      (this.showLabel && this.a.implicitH !== 0);
+      (this.showLabel && this.a.implicitH !== 0) ||
+      (isLeavingGroupAtom && leavingGroupLabel.length > 1);
 
     return hasLabel
       ? this.getLabeledSelectionContour(render, highlightPadding)
@@ -999,15 +1014,17 @@ function buildLabel(
     usageInMacromolecule,
   } = options;
   // eslint-disable-line max-statements
-  const label: any = {
+  const label: ElemAttr = {
     text: getLabelText(atom.a, atomId, sgroup),
+    path: undefined,
+    rbb: { x: 0, y: 0, width: 0, height: 0 },
   };
   let tooltip: string | null = null;
   if (!label.text) {
     label.text = 'R#';
   }
 
-  if (label.text === atom.a.label) {
+  if (label.text) {
     const element = Elements.get(label.text);
     if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';

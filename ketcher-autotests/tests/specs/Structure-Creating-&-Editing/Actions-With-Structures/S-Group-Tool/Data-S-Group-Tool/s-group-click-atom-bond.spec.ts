@@ -973,7 +973,7 @@ test.describe('S-Group Properties', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C18H14] > [C18H14]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.112]+[230.304] > [230.304]',
+      '[78.114]+[230.310] > [230.310]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.047]+[230.110] > [230.110]',

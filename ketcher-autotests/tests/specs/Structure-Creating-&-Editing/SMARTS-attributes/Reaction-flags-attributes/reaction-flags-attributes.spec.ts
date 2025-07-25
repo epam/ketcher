@@ -10,10 +10,8 @@ import {
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import {
-  selectExactChange,
-  selectReactionFlagsInversion,
-} from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { Inversion } from '@tests/pages/constants/atomProperties/Constants';
 
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 
@@ -54,7 +52,11 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: setting reaction flag - inverts should have no impact on SMARTS output but warning should be displayed
      */
-    await selectReactionFlagsInversion(page, 'Inverts');
+    await AtomPropertiesDialog(page).setOptions({
+      ReactionFlags: {
+        Inversion: Inversion.Inverts,
+      },
+    });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);
@@ -65,7 +67,11 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: setting reaction flag - retains should have no impact on SMARTS output but warning should be displayed
      */
-    await selectReactionFlagsInversion(page, 'Retains');
+    await AtomPropertiesDialog(page).setOptions({
+      ReactionFlags: {
+        Inversion: Inversion.Retains,
+      },
+    });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);
@@ -76,7 +82,11 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: checking exact change option at reaction flag section should have no impact on SMARTS output but warning should be displayed
      */
-    await selectExactChange(page);
+    await AtomPropertiesDialog(page).setOptions({
+      ReactionFlags: {
+        ExactChangeCheckbox: true,
+      },
+    });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);

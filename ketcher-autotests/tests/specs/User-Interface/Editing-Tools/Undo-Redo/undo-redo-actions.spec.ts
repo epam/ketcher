@@ -55,7 +55,7 @@ import {
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
-import { fillAliasForAtom } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -133,7 +133,11 @@ test.describe('Undo/Redo Actions', () => {
     );
 
     await doubleClickOnAtom(page, 'C', 0);
-    await fillAliasForAtom(page, '!@#$%123AbCd');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: {
+        Alias: '!@#$%123AbCd',
+      },
+    });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

@@ -18,12 +18,11 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
-  selectAromaticity,
-  selectSubstitutionCount,
-  selectUnsaturated,
-  setCustomQueryForAtom,
-} from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+  Aromaticity,
+  SubstitutionCount,
+} from '@tests/pages/constants/atomProperties/Constants';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -50,23 +49,39 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when atom has custom query', async ({ page }) => {
-    const customQuery = '#6;x9';
-    await setCustomQueryForAtom(page, customQuery);
+    await AtomPropertiesDialog(page).setOptions({
+      CustomQuery: {
+        CustomQueryCheckbox: true,
+        CustomQueryTextArea: '#6;x9',
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom has substitution count', async ({ page }) => {
-    await selectSubstitutionCount(page, '4');
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        SubstitutionCount: SubstitutionCount.Four,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is unsaturated', async ({ page }) => {
-    await selectUnsaturated(page);
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        UnsaturatedCheckbox: true,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is aromatic', async ({ page }) => {
-    await selectAromaticity(page, 'aromatic');
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        Aromaticity: Aromaticity.Aromatic,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 

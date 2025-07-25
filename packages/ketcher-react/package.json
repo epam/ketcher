@@ -97,7 +97,7 @@
     "@rollup/plugin-strip": "^2.0.0",
     "@svgr/rollup": "^5.4.0",
     "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "13.4.0",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",
     "@types/draft-js": "^0.11.7",
     "@types/jest": "^27.0.3",

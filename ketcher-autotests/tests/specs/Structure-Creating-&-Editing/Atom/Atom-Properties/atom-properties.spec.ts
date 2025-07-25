@@ -1161,6 +1161,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
+    await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).setSubstitutionCount('0');
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);

@@ -179,9 +179,9 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
      */
     const expectedSmarts = '[#6](-[#6])(-[c;h5;X2])-[#6]';
     await AtomPropertiesDialog(page).expandQuerySpecific();
-    await AtomPropertiesDialog(page).setHCount('5');
+    await AtomPropertiesDialog(page).setImplicitHCount('5');
     await AtomPropertiesDialog(page).setAromaticity('aromatic');
-    await AtomPropertiesDialog(page).setHCount('2');
+    await AtomPropertiesDialog(page).setConnectivity('2');
     await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
@@ -222,7 +222,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       await AtomPropertiesDialog(page).setSubstitutionCount('1');
       await AtomPropertiesDialog(page).checkUnsaturated();
       await AtomPropertiesDialog(page).setAromaticity('aliphatic');
-      await AtomPropertiesDialog(page).setHCount('2');
+      await AtomPropertiesDialog(page).setImplicitHCount('2');
       await AtomPropertiesDialog(page).setRingMembership('3');
       await AtomPropertiesDialog(page).setRingSize('4');
       await AtomPropertiesDialog(page).setConnectivity('5');

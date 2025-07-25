@@ -209,9 +209,23 @@ class ReAtom extends ReObject {
   }
 
   getSelectionContour(render: Render, highlightPadding = 0) {
+    const struct = render.ctab.molecule;
+    const aid = struct.atoms.keyOf(this.a);
+    const sgroup = aid !== null ? struct.getGroupFromAtomId(aid) : undefined;
+
+    const isLeavingGroupAtom =
+      sgroup instanceof MonomerMicromolecule &&
+      Atom.isSuperatomLeavingGroupAtom(sgroup, aid || 0);
+
+    let leavingGroupLabel = '';
+    if (isLeavingGroupAtom) {
+      leavingGroupLabel = getLabelText(this.a, aid || 0, sgroup);
+    }
+
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
-      (this.showLabel && this.a.implicitH !== 0);
+      (this.showLabel && this.a.implicitH !== 0) ||
+      (isLeavingGroupAtom && leavingGroupLabel.length > 1);
 
     return hasLabel
       ? this.getLabeledSelectionContour(render, highlightPadding)

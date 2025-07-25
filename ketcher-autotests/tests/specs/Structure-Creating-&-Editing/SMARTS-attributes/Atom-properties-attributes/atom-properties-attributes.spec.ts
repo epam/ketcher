@@ -47,7 +47,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting atom label and checking the atom number', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setLabel(value),
+      async (atomProperties, value) => atomProperties.setLabel(value),
       'Cr',
       '[#6](-[#6])(-[Cr])-[#6]',
     );
@@ -61,7 +61,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     test.fail();
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setCharge(value),
+      async (atomProperties, value) => atomProperties.setCharge(value),
       '0',
       '[#6](-[#6])(-[#6;+0])-[#6]',
     );
@@ -70,7 +70,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting positive charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setCharge(value),
+      async (atomProperties, value) => atomProperties.setCharge(value),
       '10',
       '[#6](-[#6])(-[#6;+10])-[#6]',
     );
@@ -79,7 +79,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting negative charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setCharge(value),
+      async (atomProperties, value) => atomProperties.setCharge(value),
       '-15',
       '[#6](-[#6])(-[#6;-15])-[#6]',
     );
@@ -88,7 +88,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting atomic mass', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setIsotope(value),
+      async (atomProperties, value) => atomProperties.setIsotope(value),
       '30',
       '[#6](-[#6])(-[#6;30])-[#6]',
     );
@@ -102,7 +102,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     test.fail();
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setIsotope(value),
+      async (atomProperties, value) => atomProperties.setIsotope(value),
       '0',
       '[#6](-[#6])(-[#6;0])-[#6]',
     );
@@ -114,7 +114,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      */
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setValence(value),
+      async (atomProperties, value) => atomProperties.setValence(value),
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
@@ -127,7 +127,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      */
     await setAndCheckAtomProperties(
       page,
-      async (atomProperties, value) => await atomProperties.setRadical(value),
+      async (atomProperties, value) => atomProperties.setRadical(value),
       'Monoradical',
       '[#6](-[#6])(-[#6])-[#6]',
     );

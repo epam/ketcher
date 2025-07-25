@@ -71,24 +71,13 @@ export const PhosphateAvatar = () => (
     </symbol>
     <symbol
       id="phosphate-autochain-preview"
-      viewBox="0 0 32 32"
-      width="32"
-      height="32"
-      data-actual-width="32"
-      data-actual-height="32"
+      viewBox="-1 -1 30 30"
+      width="30"
+      height="30"
+      data-actual-width="30"
+      data-actual-height="30"
     >
-      <path d="M0.99585 5V3C0.99585 1.89543 1.89128 1 2.99585 1H4.99585" />
-      <path d="M0.99585 27V29C0.99585 30.1046 1.89128 31 2.99585 31H4.99585" />
-      <path d="M30.9958 5V3C30.9958 1.89543 30.1004 1 28.9958 1H26.9958" />
-      <path d="M30.9958 27V29C30.9958 30.1046 30.1004 31 28.9958 31H26.9958" />
-      <path d="M2.99585 1L28.9959 1" stroke-dasharray="4 4" />
-      <path
-        d="M30.9958 3L30.9959 29"
-        stroke-miterlimit="16"
-        stroke-dasharray="4 4"
-      />
-      <path d="M2.99585 31L28.9959 31" stroke-dasharray="4 4" />
-      <path d="M0.99585 3L0.995851 29" stroke-dasharray="4 4" />
+      <rect width="28" height="28" rx="15" stroke-dasharray="4 4" />
     </symbol>
   </>
 );

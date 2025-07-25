@@ -3,35 +3,33 @@ import { Page, test } from '@playwright/test';
 import {
   doubleClickOnAtom,
   moveMouseAway,
-  pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import {
-  checkSmartsValue,
-  checkSmartsWarnings,
-  setAromaticity,
-  setChirality,
-  setConnectivity,
-  setHCount,
-  setImplicitHCount,
-  setRingBondCount,
-  setRingMembership,
-  setRingSize,
-  setSubstitutionCount,
-  setUnsaturated,
-} from '../utils';
+import { checkSmartsValue, checkSmartsWarnings } from '../utils';
 import { drawStructure } from '@utils/canvas/drawStructures';
+import {
+  AtomPropertiesDialog,
+  selectAromaticity,
+  selectChirality,
+  selectConnectivity,
+  selectHCount,
+  selectImplicitHCount,
+  selectRingBondCount,
+  selectRingMembership,
+  selectRingSize,
+  selectSubstitutionCount,
+  selectUnsaturated,
+} from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 async function setAndCheckQuerySpecificProperties(
   page: Page,
-  setProperty: (arg0: Page, arg1: any) => Promise<void>,
+  setProperty: (arg0: Page, arg1: string) => Promise<void>,
   value: string,
   expectedSmarts: string,
 ) {
   await setProperty(page, value);
-  await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
   await checkSmartsValue(page, expectedSmarts);
 }
@@ -52,13 +50,12 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
-    await page.getByTestId('Query specific-section').click();
   });
 
   test('Setting ring bond count', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setRingBondCount,
+      selectRingBondCount,
       '2',
       '[#6](-[#6])(-[#6;x2])-[#6]',
     );
@@ -67,7 +64,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting ring bond count - As drawn', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setRingBondCount,
+      selectRingBondCount,
       'As drawn',
       '[#6](-[#6])(-[#6;x0])-[#6]',
     );
@@ -76,7 +73,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting H count', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setHCount,
+      selectHCount,
       '3',
       '[#6](-[#6])(-[#6;H3])-[#6]',
     );
@@ -85,15 +82,14 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting substitution count', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setSubstitutionCount,
+      selectSubstitutionCount,
       '4',
       '[#6](-[#6])(-[#6;D4])-[#6]',
     );
   });
 
   test('Setting unsaturated', async ({ page }) => {
-    await setUnsaturated(page);
-    await pressButton(page, 'Apply');
+    await selectUnsaturated(page);
     await takeEditorScreenshot(page);
     await checkSmartsValue(
       page,
@@ -105,7 +101,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting aromacity - aromatic', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setAromaticity,
+      selectAromaticity,
       'aromatic',
       '[#6](-[#6])(-c)-[#6]',
     );
@@ -114,7 +110,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting aromacity - aliphatic', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setAromaticity,
+      selectAromaticity,
       'aliphatic',
       '[#6](-[#6])(-C)-[#6]',
     );
@@ -123,7 +119,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting implicit H count', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setImplicitHCount,
+      selectImplicitHCount,
       '5',
       '[#6](-[#6])(-[#6;h5])-[#6]',
     );
@@ -132,7 +128,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting ring membership', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setRingMembership,
+      selectRingMembership,
       '6',
       '[#6](-[#6])(-[#6;R6])-[#6]',
     );
@@ -141,7 +137,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting ring size', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setRingSize,
+      selectRingSize,
       '7',
       '[#6](-[#6])(-[#6;r7])-[#6]',
     );
@@ -150,7 +146,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting connectivity', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setConnectivity,
+      selectConnectivity,
       '8',
       '[#6](-[#6])(-[#6;X8])-[#6]',
     );
@@ -159,7 +155,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting chirality - anticlockwise', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setChirality,
+      selectChirality,
       'anticlockwise',
       '[#6](-[#6])(-[#6;@])-[#6]',
     );
@@ -168,7 +164,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test('Setting chirality - clockwise', async ({ page }) => {
     await setAndCheckQuerySpecificProperties(
       page,
-      setChirality,
+      selectChirality,
       'clockwise',
       '[#6](-[#6])(-[#6;@@])-[#6]',
     );
@@ -182,10 +178,11 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
      * Description: saving SMARTS with implicit H count and any other attribute should not cause any error
      */
     const expectedSmarts = '[#6](-[#6])(-[c;h5;X2])-[#6]';
-    await setImplicitHCount(page, '5');
-    await setAromaticity(page, 'aromatic');
-    await setConnectivity(page, '2');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).expandQuerySpecific();
+    await AtomPropertiesDialog(page).setHCount('5');
+    await AtomPropertiesDialog(page).setAromaticity('aromatic');
+    await AtomPropertiesDialog(page).setHCount('2');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
     await moveMouseAway(page);
@@ -196,7 +193,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     test.beforeEach(async ({ page }) => {
       const numberOfAtom = 0;
       await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
-      await page.getByTestId('Query specific-section').click();
+      await AtomPropertiesDialog(page).expandQuerySpecific();
     });
 
     test('Converting substitution count and ring bond count to custom query', async ({
@@ -207,9 +204,9 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
        * Description: attributes should be converted to custom query in correct SMARTS annotation
        * (D<n> for substitution count and x<n> for ring bond count)
        */
-      await setRingBondCount(page, '5');
-      await setSubstitutionCount(page, '7');
-      await page.getByTestId('custom-query-checkbox').check();
+      await AtomPropertiesDialog(page).setRingBondCount('5');
+      await AtomPropertiesDialog(page).setSubstitutionCount('7');
+      await AtomPropertiesDialog(page).checkCustomQuery();
       await takeEditorScreenshot(page);
     });
 
@@ -220,17 +217,17 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
        * Test case: https://github.com/epam/ketcher/issues/3445
        * Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
        */
-      await setRingBondCount(page, 'As drawn');
-      await setHCount(page, '0');
-      await setSubstitutionCount(page, '1');
-      await setUnsaturated(page);
-      await setAromaticity(page, 'aliphatic');
-      await setImplicitHCount(page, '2');
-      await setRingMembership(page, '3');
-      await setRingSize(page, '4');
-      await setConnectivity(page, '5');
-      await setChirality(page, 'clockwise');
-      await page.getByTestId('custom-query-checkbox').check();
+      await AtomPropertiesDialog(page).setRingBondCount('As drawn');
+      await AtomPropertiesDialog(page).setHCount('0');
+      await AtomPropertiesDialog(page).setSubstitutionCount('1');
+      await AtomPropertiesDialog(page).checkUnsaturated();
+      await AtomPropertiesDialog(page).setAromaticity('aliphatic');
+      await AtomPropertiesDialog(page).setHCount('2');
+      await AtomPropertiesDialog(page).setRingMembership('3');
+      await AtomPropertiesDialog(page).setRingSize('4');
+      await AtomPropertiesDialog(page).setConnectivity('5');
+      await AtomPropertiesDialog(page).setChirality('clockwise');
+      await AtomPropertiesDialog(page).checkCustomQuery();
       await takeEditorScreenshot(page);
     });
   });

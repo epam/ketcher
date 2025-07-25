@@ -6,12 +6,8 @@ import {
   doubleClickOnAtom,
   doubleClickOnBond,
   pressButton,
-  setAromaticity,
   setBondType,
-  setCustomQueryForAtom,
   setCustomQueryForBond,
-  setSubstitutionCount,
-  setUnsaturated,
   waitForAtomPropsModal,
   waitForBondPropsModal,
   waitForPageInit,
@@ -22,6 +18,12 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import {
+  selectAromaticity,
+  selectSubstitutionCount,
+  selectUnsaturated,
+  setCustomQueryForAtom,
+} from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -31,7 +33,6 @@ async function checkIsQueryStructureSelected(
   page: Page,
   isQueryStructureSelectedValue: boolean,
 ) {
-  await pressButton(page, 'Apply');
   await selectAllStructuresOnCanvas(page);
   expect(await isQueryStructureSelected(page)).toBe(
     isQueryStructureSelectedValue,
@@ -46,7 +47,6 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', anyAtom);
     await waitForAtomPropsModal(page);
-    await page.getByTestId('Query specific-section').click();
   });
 
   test('returns true, when atom has custom query', async ({ page }) => {
@@ -56,17 +56,17 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when atom has substitution count', async ({ page }) => {
-    await setSubstitutionCount(page, '4');
+    await selectSubstitutionCount(page, '4');
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is unsaturated', async ({ page }) => {
-    await setUnsaturated(page);
+    await selectUnsaturated(page);
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is aromatic', async ({ page }) => {
-    await setAromaticity(page, 'aromatic');
+    await selectAromaticity(page, 'aromatic');
     await checkIsQueryStructureSelected(page, true);
   });
 
@@ -103,6 +103,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   for (const queryBond of queryBonds) {
     test(`returns true for ${queryBond} bond`, async ({ page }) => {
       await setBondType(page, queryBond);
+      await pressButton(page, 'Apply');
       await checkIsQueryStructureSelected(page, true);
     });
   }
@@ -110,6 +111,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   test(`returns true for customQuery bond`, async ({ page }) => {
     const customQuery = 'x2&D3,D2';
     await setCustomQueryForBond(page, customQuery);
+    await pressButton(page, 'Apply');
     await checkIsQueryStructureSelected(page, true);
   });
 });

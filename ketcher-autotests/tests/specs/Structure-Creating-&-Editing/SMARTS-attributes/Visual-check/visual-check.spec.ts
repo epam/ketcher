@@ -10,25 +10,11 @@ import {
   waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  setAromaticity,
-  setChirality,
-  setConnectivity,
-  setHCount,
-  setImplicitHCount,
-  setRingBondCount,
-  setRingMembership,
-  setRingSize,
-  setSubstitutionCount,
-  setUnsaturated,
-  setAtomicMass,
-  setCharge,
-  setValence,
-} from '../utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');
@@ -61,18 +47,18 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying all query specific attributes near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '2');
-    await setHCount(page, '3');
-    await setSubstitutionCount(page, '4');
-    await setUnsaturated(page);
-    await setAromaticity(page, 'aliphatic');
-    await setImplicitHCount(page, '5');
-    await setRingMembership(page, '6');
-    await setRingSize(page, '7');
-    await setConnectivity(page, '8');
-    await setChirality(page, 'clockwise');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).expandQuerySpecific();
+    await AtomPropertiesDialog(page).setRingBondCount('2');
+    await AtomPropertiesDialog(page).setHCount('3');
+    await AtomPropertiesDialog(page).setSubstitutionCount('4');
+    await AtomPropertiesDialog(page).checkUnsaturated();
+    await AtomPropertiesDialog(page).setAromaticity('aliphatic');
+    await AtomPropertiesDialog(page).setImplicitHCount('5');
+    await AtomPropertiesDialog(page).setRingMembership('6');
+    await AtomPropertiesDialog(page).setRingSize('7');
+    await AtomPropertiesDialog(page).setConnectivity('8');
+    await AtomPropertiesDialog(page).setChirality('clockwise');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });
 
@@ -82,10 +68,10 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying few general atom attributes near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    await setCharge(page, '-8');
-    await setAtomicMass(page, '35');
-    await setValence(page, 'VIII');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setCharge('-8');
+    await AtomPropertiesDialog(page).setIsotope('35');
+    await AtomPropertiesDialog(page).setValence('VIII');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });
 
@@ -120,12 +106,12 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await setValence(page, 'VIII');
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '3');
-    await setRingSize(page, '9');
-    await setConnectivity(page, '6');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setValence('VIII');
+    await AtomPropertiesDialog(page).expandQuerySpecific();
+    await AtomPropertiesDialog(page).setRingBondCount('3');
+    await AtomPropertiesDialog(page).setRingSize('9');
+    await AtomPropertiesDialog(page).setConnectivity('6');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await waitForRender(page, async () => {
       await page.mouse.move(point.x, point.y);
     });
@@ -171,11 +157,11 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await setListOfAtoms(page, atomLabels);
     await page.getByTestId('Query specific-section').click();
-    await setAromaticity(page, 'aromatic');
-    await setImplicitHCount(page, '8');
-    await setRingMembership(page, '7');
-    await setRingSize(page, '6');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setAromaticity('aromatic');
+    await AtomPropertiesDialog(page).setImplicitHCount('8');
+    await AtomPropertiesDialog(page).setRingMembership('7');
+    await AtomPropertiesDialog(page).setRingSize('6');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await waitForRender(page, async () => {
       await page.mouse.move(point.x, point.y);
     });
@@ -192,18 +178,18 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
      * (now ring bond count should be displayed as x<n>)
      */
     let correctLabelIsDisplayed = false;
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '3');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).expandQuerySpecific();
+    await AtomPropertiesDialog(page).setRingBondCount('3');
+    await AtomPropertiesDialog(page).pressApplyButton();
     correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
     expect(correctLabelIsDisplayed).toBe(true);
     await takeEditorScreenshot(page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await waitForAtomPropsModal(page);
-    await page.getByTestId('Query specific-section').click();
-    await setConnectivity(page, '7');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).expandQuerySpecific();
+    await AtomPropertiesDialog(page).setConnectivity('7');
+    await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });
 });

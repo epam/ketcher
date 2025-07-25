@@ -2,22 +2,17 @@ import { Page, test, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
-  pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import {
-  checkSmartsValue,
-  checkSmartsWarnings,
-  setAtomicMass,
-  setCharge,
-  setLabel,
-  setRadical,
-  setValence,
-} from '../utils';
+import { checkSmartsValue, checkSmartsWarnings } from '../utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  AtomPropertiesDialog,
+  AtomPropertiesDialogType,
+} from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
   await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
@@ -28,12 +23,12 @@ async function drawStructure(page: Page, numberOfClicks: number) {
 
 async function setAndCheckAtomProperties(
   page: Page,
-  setProperty: (arg0: Page, arg1: string) => Promise<void>,
+  setProperty: (arg0: AtomPropertiesDialogType, arg1: string) => Promise<void>,
   value: string,
   expectedSmarts: string,
 ) {
-  await setProperty(page, value);
-  await pressButton(page, 'Apply');
+  await setProperty(AtomPropertiesDialog(page), value);
+  await AtomPropertiesDialog(page).pressApplyButton();
   await takeEditorScreenshot(page);
   await checkSmartsValue(page, expectedSmarts);
 }
@@ -52,7 +47,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting atom label and checking the atom number', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      setLabel,
+      async (atomProperties, value) => await atomProperties.setLabel(value),
       'Cr',
       '[#6](-[#6])(-[Cr])-[#6]',
     );
@@ -66,7 +61,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     test.fail();
     await setAndCheckAtomProperties(
       page,
-      setCharge,
+      async (atomProperties, value) => await atomProperties.setCharge(value),
       '0',
       '[#6](-[#6])(-[#6;+0])-[#6]',
     );
@@ -75,7 +70,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting positive charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      setCharge,
+      async (atomProperties, value) => await atomProperties.setCharge(value),
       '10',
       '[#6](-[#6])(-[#6;+10])-[#6]',
     );
@@ -84,7 +79,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting negative charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      setCharge,
+      async (atomProperties, value) => await atomProperties.setCharge(value),
       '-15',
       '[#6](-[#6])(-[#6;-15])-[#6]',
     );
@@ -93,7 +88,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test('Setting atomic mass', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
-      setAtomicMass,
+      async (atomProperties, value) => await atomProperties.setIsotope(value),
       '30',
       '[#6](-[#6])(-[#6;30])-[#6]',
     );
@@ -107,7 +102,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     test.fail();
     await setAndCheckAtomProperties(
       page,
-      setAtomicMass,
+      async (atomProperties, value) => await atomProperties.setIsotope(value),
       '0',
       '[#6](-[#6])(-[#6;0])-[#6]',
     );
@@ -119,7 +114,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      */
     await setAndCheckAtomProperties(
       page,
-      setValence,
+      async (atomProperties, value) => await atomProperties.setValence(value),
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
@@ -132,7 +127,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      */
     await setAndCheckAtomProperties(
       page,
-      setRadical,
+      async (atomProperties, value) => await atomProperties.setRadical(value),
       'Monoradical',
       '[#6](-[#6])(-[#6])-[#6]',
     );
@@ -144,8 +139,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await setCharge(page, '-16');
-    const applyButton = await page.getByText('Apply');
+    await AtomPropertiesDialog(page).setCharge('-16');
+    const applyButton = AtomPropertiesDialog(page).applyButton;
     const isDisabled = await applyButton.isDisabled();
     expect(isDisabled).toBe(true);
   });
@@ -155,8 +150,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await setCharge(page, '16');
-    const applyButton = await page.getByText('Apply');
+    await AtomPropertiesDialog(page).setCharge('16');
+    const applyButton = AtomPropertiesDialog(page).applyButton;
     const isDisabled = await applyButton.isDisabled();
     expect(isDisabled).toBe(true);
   });

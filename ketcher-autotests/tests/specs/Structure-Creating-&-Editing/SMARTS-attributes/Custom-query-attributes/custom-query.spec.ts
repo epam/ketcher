@@ -1,22 +1,20 @@
 import { Page, test } from '@playwright/test';
 import {
   doubleClickOnAtom,
-  pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { checkSmartsValue, setCustomQueryForAtom } from '../utils';
+import { checkSmartsValue } from '../utils';
 import { drawStructure } from '@utils/canvas/drawStructures';
+import { setCustomQueryForAtom } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 async function setAndCheckCustomQuery(
   page: Page,
-  setProperty: (arg0: Page, arg1: string) => Promise<void>,
   value: string,
   expectedSmarts: string,
 ) {
-  await setProperty(page, value);
-  await pressButton(page, 'Apply');
+  await setCustomQueryForAtom(page, value);
   await takeEditorScreenshot(page);
   await checkSmartsValue(page, expectedSmarts);
 }
@@ -35,7 +33,6 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = '#6;x9';
     await setAndCheckCustomQuery(
       page,
-      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[#6;x9])-[#6]',
     );
@@ -47,7 +44,6 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = 'x5;D0;h9;r3';
     await setAndCheckCustomQuery(
       page,
-      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[x5;D0;h9;r3])-[#6]',
     );
@@ -59,7 +55,6 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = '!C;R3';
     await setAndCheckCustomQuery(
       page,
-      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[!C;R3])-[#6]',
     );
@@ -69,7 +64,6 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = 'x2&D3,D2';
     await setAndCheckCustomQuery(
       page,
-      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[x2&D3,D2])-[#6]',
     );
@@ -84,7 +78,6 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = 'F,Cl,Br,I;A';
     await setAndCheckCustomQuery(
       page,
-      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[F,Cl,Br,I;A])-[#6]',
     );

@@ -89,7 +89,6 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
         Valence: Valence.Eight,
       },
     });
-    await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });
 

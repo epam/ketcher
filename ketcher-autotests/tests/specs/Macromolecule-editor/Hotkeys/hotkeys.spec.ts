@@ -64,7 +64,8 @@ test.describe('Hotkeys', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check Redo Capability with Ctrl+Y', async ({ page }) => {
+  test.fail('Check Redo Capability with Ctrl+Y', async ({ page }) => {
+    // Test fails because of bug: https://github.com/epam/Indigo/issues/3051
     /* 
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Clear canvas action Undo and then Redo.
@@ -74,10 +75,7 @@ test.describe('Hotkeys', () => {
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    const modifier = getControlModifier();
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyY`);
-    });
+    await selectRedoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

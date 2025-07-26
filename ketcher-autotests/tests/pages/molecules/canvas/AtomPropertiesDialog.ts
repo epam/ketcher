@@ -205,44 +205,45 @@ export const AtomPropertiesDialog = (page: Page) => {
     async setQuerySpecificProperties(
       querySpecificProperties: QuerySpecificPropertiesSettings,
     ) {
+      await this.expandQuerySpecific();
       await ifPropertyDefined(
-        this.selectRingBondCount,
+        this.selectRingBondCount.bind(this),
         querySpecificProperties.RingBondCount,
       );
       await ifPropertyDefined(
-        this.selectHCount,
+        this.selectHCount.bind(this),
         querySpecificProperties.HCount,
       );
       await ifPropertyDefined(
-        this.selectSubstitutionCount,
+        this.selectSubstitutionCount.bind(this),
         querySpecificProperties.SubstitutionCount,
       );
       await ifPropertyDefined(
-        this.setUnsaturatedCheckbox,
+        this.setUnsaturatedCheckbox.bind(this),
         querySpecificProperties.UnsaturatedCheckbox,
       );
       await ifPropertyDefined(
-        this.selectAromaticity,
+        this.selectAromaticity.bind(this),
         querySpecificProperties.Aromaticity,
       );
       await ifPropertyDefined(
-        this.selectImplicitHCount,
+        this.selectImplicitHCount.bind(this),
         querySpecificProperties.ImplicitHCount,
       );
       await ifPropertyDefined(
-        this.selectRingMembership,
+        this.selectRingMembership.bind(this),
         querySpecificProperties.RingMembership,
       );
       await ifPropertyDefined(
-        this.selectRingSize,
+        this.selectRingSize.bind(this),
         querySpecificProperties.RingSize,
       );
       await ifPropertyDefined(
-        this.selectConnectivity,
+        this.selectConnectivity.bind(this),
         querySpecificProperties.Connectivity,
       );
       await ifPropertyDefined(
-        this.selectChirality,
+        this.selectChirality.bind(this),
         querySpecificProperties.Chirality,
       );
     },
@@ -250,12 +251,13 @@ export const AtomPropertiesDialog = (page: Page) => {
     async setReactionFlagsProperties(
       reactionFlagsProperties: ReactionFlagsPropertiesSettings,
     ) {
+      await this.expandReactionFlags();
       await ifPropertyDefined(
-        this.selectInversion,
+        this.selectInversion.bind(this),
         reactionFlagsProperties.Inversion,
       );
       await ifPropertyDefined(
-        this.setExactChangeCheckbox,
+        this.setExactChangeCheckbox.bind(this),
         reactionFlagsProperties.ExactChangeCheckbox,
       );
     },
@@ -264,11 +266,11 @@ export const AtomPropertiesDialog = (page: Page) => {
       customQueryProperties: CustomQueryPropertiesSettings,
     ) {
       await ifPropertyDefined(
-        this.setCustomQueryCheckbox,
+        this.setCustomQueryCheckbox.bind(this),
         customQueryProperties.CustomQueryCheckbox,
       );
       await ifPropertyDefined(
-        this.fillCustomQueryText,
+        this.fillCustomQueryText.bind(this),
         customQueryProperties.CustomQueryTextArea,
       );
     },

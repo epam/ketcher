@@ -92,6 +92,7 @@ const AtomElement = ({ formState }: BaseProps) => {
         name="atomType"
         component={Select}
         options={getSelectOptionsFromSchema(atomProps.atomType)}
+        data-testid="atom"
       />
       {AtomFields[atomType]}
     </>

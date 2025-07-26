@@ -15,6 +15,10 @@ import {
   RingSize,
   SubstitutionCount,
   Valence,
+  GeneralPropertiesSettings,
+  QuerySpecificPropertiesSettings,
+  ReactionFlagsPropertiesSettings,
+  CustomQueryPropertiesSettings,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
@@ -22,35 +26,38 @@ import { waitForRender } from '@utils/common';
 type GeneralProperties = {
   generalSection: Locator;
   generalWrapper: Locator;
-  atomTypeSelect: Locator;
+  atomTypeDropdown: Locator;
   labelInput: Locator;
-  numberInput: Locator;
+  numberReadonlyInput: Locator;
+  listReadonlyInput: Locator;
+  notListCheckbox: Locator;
+  specialInput: Locator;
   aliasInput: Locator;
   chargeInput: Locator;
   isotopeInput: Locator;
-  valenceSelect: Locator;
-  radicalSelect: Locator;
+  valenceDropdown: Locator;
+  radicalDropdown: Locator;
 };
 
 type QuerySpecificProperties = {
   querySpecificSection: Locator;
   querySpecificWrapper: Locator;
-  ringBondCountSelect: Locator;
-  hCountSelect: Locator;
+  ringBondCountDropdown: Locator;
+  hCountDropdown: Locator;
   substitutionCountInput: Locator;
   unsaturatedCheckbox: Locator;
-  aromaticitySelect: Locator;
-  implicitHCountSelect: Locator;
-  ringMembershipSelect: Locator;
-  ringSizeSelect: Locator;
-  connectivitySelect: Locator;
-  chiralitySelect: Locator;
+  aromaticityDropdown: Locator;
+  implicitHCountDropdown: Locator;
+  ringMembershipDropdown: Locator;
+  ringSizeDropdown: Locator;
+  connectivityDropdown: Locator;
+  chiralityDropdown: Locator;
 };
 
 type ReactionFlags = {
   reactionFlagsSection: Locator;
   reactionFlagsWrapper: Locator;
-  inversionSelect: Locator;
+  inversionDropdown: Locator;
   exactChangeCheckbox: Locator;
 };
 
@@ -77,34 +84,44 @@ export const AtomPropertiesDialog = (page: Page) => {
     await page.getByTestId(valueLocatorString).click();
   };
 
+  const ifPropertyDefined = async (
+    set: (value: any) => Promise<void>,
+    value: any,
+  ) => {
+    if (value !== undefined) await set(value);
+  };
+
   const locators: AtomPropertiesDialogLocators = {
     generalSection: page.getByTestId('General-wrapper'),
     generalWrapper: page.getByTestId('General-wrapper'),
-    atomTypeSelect: page.getByTestId('atom-input-span'),
+    atomTypeDropdown: page.getByTestId('atom-input-span'),
     labelInput: page.getByTestId('label-input'),
-    numberInput: page.getByTestId(''),
+    numberReadonlyInput: page.getByTestId(''),
+    listReadonlyInput: page.getByTestId(''),
+    notListCheckbox: page.getByTestId('notList-input'),
+    specialInput: page.getByTestId(''),
     aliasInput: page.getByTestId('alias-input-span'),
     chargeInput: page.getByTestId('charge-input-span'),
     isotopeInput: page.getByTestId('isotope-input-span'),
-    valenceSelect: page.getByTestId('explicitValence-input-span'),
-    radicalSelect: page.getByTestId('radical-input-span'),
+    valenceDropdown: page.getByTestId('explicitValence-input-span'),
+    radicalDropdown: page.getByTestId('radical-input-span'),
 
     querySpecificSection: page.getByTestId('Query specific-section'),
     querySpecificWrapper: page.getByTestId('Query specific-wrapper'),
-    ringBondCountSelect: page.getByTestId('ringBondCount-input-span'),
-    hCountSelect: page.getByTestId('hCount-input-span'),
+    ringBondCountDropdown: page.getByTestId('ringBondCount-input-span'),
+    hCountDropdown: page.getByTestId('hCount-input-span'),
     substitutionCountInput: page.getByTestId('substitutionCount-input-span'),
     unsaturatedCheckbox: page.getByTestId('unsaturatedAtom-input'),
-    aromaticitySelect: page.getByTestId('aromaticity-input-span'),
-    implicitHCountSelect: page.getByTestId('implicitHCount-input-span'),
-    ringMembershipSelect: page.getByTestId('ringMembership-input-span'),
-    ringSizeSelect: page.getByTestId('ringSize-input-span'),
-    connectivitySelect: page.getByTestId('connectivity-input-span'),
-    chiralitySelect: page.getByTestId('chirality-input-span'),
+    aromaticityDropdown: page.getByTestId('aromaticity-input-span'),
+    implicitHCountDropdown: page.getByTestId('implicitHCount-input-span'),
+    ringMembershipDropdown: page.getByTestId('ringMembership-input-span'),
+    ringSizeDropdown: page.getByTestId('ringSize-input-span'),
+    connectivityDropdown: page.getByTestId('connectivity-input-span'),
+    chiralityDropdown: page.getByTestId('chirality-input-span'),
 
     reactionFlagsSection: page.getByTestId('Reaction flags-section'),
     reactionFlagsWrapper: page.getByTestId('Reaction flags-wrapper'),
-    inversionSelect: page.getByTestId('inversion-input-span'),
+    inversionDropdown: page.getByTestId('inversion-input-span'),
     exactChangeCheckbox: page.getByTestId('exactChangeFlag-input'),
 
     customQueryCheckbox: page.getByTestId('custom-query-checkbox'),
@@ -119,93 +136,114 @@ export const AtomPropertiesDialog = (page: Page) => {
     ...locators,
 
     async setOptions(options: AtomPropertiesSettings) {
-      const setOptionalProperty = async (
-        value: any,
-        set: (value: any) => Promise<void>,
-      ) => {
-        if (value) await set(value);
-      };
-
-      if (options.GeneralProperties) {
-        const generalProperties = options.GeneralProperties;
-        await setOptionalProperty(generalProperties.AtomType, this.setAtomType);
-        await setOptionalProperty(generalProperties.Label, this.setLabel);
-        await setOptionalProperty(generalProperties.Alias, this.setAlias);
-        await setOptionalProperty(generalProperties.Charge, this.setCharge);
-        await setOptionalProperty(generalProperties.Isotope, this.setIsotope);
-        await setOptionalProperty(generalProperties.Valence, this.setValence);
-        await setOptionalProperty(generalProperties.Radical, this.setRadical);
-      }
-      if (options.QuerySpecificProperties) {
-        await this.expandQuerySpecific();
-
-        const querySpecificProperties = options.QuerySpecificProperties;
-        await setOptionalProperty(
-          querySpecificProperties.RingBondCount,
-          this.setRingBondCount,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.HCount,
-          this.setHCount,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.SubstitutionCount,
-          this.setSubstitutionCount,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.UnsaturatedCheckbox,
-          this.setUnsaturated,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.Aromaticity,
-          this.setAromaticity,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.ImplicitHCount,
-          this.setImplicitHCount,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.RingMembership,
-          this.setRingMembership,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.RingSize,
-          this.setRingSize,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.Connectivity,
-          this.setConnectivity,
-        );
-        await setOptionalProperty(
-          querySpecificProperties.Chirality,
-          this.setChirality,
-        );
-      }
-      if (options.ReactionFlags) {
-        await this.expandReactionFlags();
-
-        const reactionFlagsProperties = options.ReactionFlags;
-        await setOptionalProperty(
-          reactionFlagsProperties.Inversion,
-          this.setInversion,
-        );
-        await setOptionalProperty(
-          reactionFlagsProperties.ExactChangeCheckbox,
-          this.setExactChange,
-        );
-      }
-      if (options.CustomQuery) {
-        const customQueryProperties = options.CustomQuery;
-        await setOptionalProperty(
-          customQueryProperties.CustomQueryCheckbox,
-          this.setCustomQueryCheckbox,
-        );
-        await setOptionalProperty(
-          customQueryProperties.CustomQueryTextArea,
-          this.setCustomQueryText,
-        );
-      }
+      await ifPropertyDefined(
+        this.setGeneralProperties,
+        options.GeneralProperties,
+      );
+      await ifPropertyDefined(
+        this.setQuerySpecificProperties,
+        options.QuerySpecificProperties,
+      );
+      await ifPropertyDefined(
+        this.setReactionFlagsProperties,
+        options.ReactionFlags,
+      );
+      await ifPropertyDefined(
+        this.setCustomQueryProperties,
+        options.CustomQuery,
+      );
       await this.pressApplyButton();
+    },
+
+    async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
+      await ifPropertyDefined(this.selectAtomType, generalProperties.AtomType);
+      if (generalProperties.AtomType === AtomType.Single) {
+        await ifPropertyDefined(this.fillLabel, generalProperties.Label);
+      } else if (generalProperties.AtomType === AtomType.List) {
+        await ifPropertyDefined(this.fillList, generalProperties.List);
+        await ifPropertyDefined(
+          this.setNotListCheckbox,
+          generalProperties.NotListCheckbox,
+        );
+      } else if (generalProperties.AtomType === AtomType.Special) {
+        await ifPropertyDefined(this.fillSpecial, generalProperties.Special);
+      }
+      await ifPropertyDefined(this.fillAlias, generalProperties.Alias);
+      await ifPropertyDefined(this.fillCharge, generalProperties.Charge);
+      await ifPropertyDefined(this.fillIsotope, generalProperties.Isotope);
+      await ifPropertyDefined(this.selectValence, generalProperties.Valence);
+      await ifPropertyDefined(this.selectRadical, generalProperties.Radical);
+    },
+
+    async setQuerySpecificProperties(
+      querySpecificProperties: QuerySpecificPropertiesSettings,
+    ) {
+      await ifPropertyDefined(
+        this.selectRingBondCount,
+        querySpecificProperties.RingBondCount,
+      );
+      await ifPropertyDefined(
+        this.selectHCount,
+        querySpecificProperties.HCount,
+      );
+      await ifPropertyDefined(
+        this.selectSubstitutionCount,
+        querySpecificProperties.SubstitutionCount,
+      );
+      await ifPropertyDefined(
+        this.setUnsaturatedCheckbox,
+        querySpecificProperties.UnsaturatedCheckbox,
+      );
+      await ifPropertyDefined(
+        this.selectAromaticity,
+        querySpecificProperties.Aromaticity,
+      );
+      await ifPropertyDefined(
+        this.selectImplicitHCount,
+        querySpecificProperties.ImplicitHCount,
+      );
+      await ifPropertyDefined(
+        this.selectRingMembership,
+        querySpecificProperties.RingMembership,
+      );
+      await ifPropertyDefined(
+        this.selectRingSize,
+        querySpecificProperties.RingSize,
+      );
+      await ifPropertyDefined(
+        this.selectConnectivity,
+        querySpecificProperties.Connectivity,
+      );
+      await ifPropertyDefined(
+        this.selectChirality,
+        querySpecificProperties.Chirality,
+      );
+    },
+
+    async setReactionFlagsProperties(
+      reactionFlagsProperties: ReactionFlagsPropertiesSettings,
+    ) {
+      await ifPropertyDefined(
+        this.selectInversion,
+        reactionFlagsProperties.Inversion,
+      );
+      await ifPropertyDefined(
+        this.setExactChangeCheckbox,
+        reactionFlagsProperties.ExactChangeCheckbox,
+      );
+    },
+
+    async setCustomQueryProperties(
+      customQueryProperties: CustomQueryPropertiesSettings,
+    ) {
+      await ifPropertyDefined(
+        this.setCustomQueryCheckbox,
+        customQueryProperties.CustomQueryCheckbox,
+      );
+      await ifPropertyDefined(
+        this.fillCustomQueryText,
+        customQueryProperties.CustomQueryTextArea,
+      );
     },
 
     async closeByX() {
@@ -223,23 +261,35 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
 
-    async setAtomType(option: AtomType) {
-      await selectDropdownValue(locators.atomTypeSelect, option);
+    async selectAtomType(option: AtomType) {
+      await selectDropdownValue(locators.atomTypeDropdown, option);
     },
 
-    async setLabel(value: string) {
+    async fillLabel(value: string) {
       await locators.labelInput.fill(value);
     },
 
-    async setNumber(value: string) {
-      await locators.numberInput.fill(value);
+    async getNumber() {
+      await locators.numberReadonlyInput.textContent();
     },
 
-    async setAlias(value: string) {
+    async fillList(value: string) {
+      await locators.listReadonlyInput.fill(value);
+    },
+
+    async setNotListCheckbox(checked: boolean) {
+      await locators.notListCheckbox.setChecked(checked);
+    },
+
+    async fillSpecial(value: string) {
+      await locators.specialInput.fill(value);
+    },
+
+    async fillAlias(value: string) {
       await locators.aliasInput.fill(value);
     },
 
-    async setCharge(value: string) {
+    async fillCharge(value: string) {
       await locators.chargeInput.fill(value);
     },
 
@@ -247,7 +297,7 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.chargeInput.hover();
     },
 
-    async setIsotope(value: string) {
+    async fillIsotope(value: string) {
       await locators.isotopeInput.fill(value);
     },
 
@@ -255,59 +305,59 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.isotopeInput.hover();
     },
 
-    async setValence(option: Valence) {
-      await selectDropdownValue(locators.valenceSelect, option);
+    async selectValence(option: Valence) {
+      await selectDropdownValue(locators.valenceDropdown, option);
     },
 
-    async setRadical(option: Radical) {
-      await selectDropdownValue(locators.radicalSelect, option);
+    async selectRadical(option: Radical) {
+      await selectDropdownValue(locators.radicalDropdown, option);
     },
 
-    async setRingBondCount(option: RingBondCount) {
-      await selectDropdownValue(locators.ringBondCountSelect, option);
+    async selectRingBondCount(option: RingBondCount) {
+      await selectDropdownValue(locators.ringBondCountDropdown, option);
     },
 
-    async setHCount(option: HCount) {
-      await selectDropdownValue(locators.hCountSelect, option);
+    async selectHCount(option: HCount) {
+      await selectDropdownValue(locators.hCountDropdown, option);
     },
 
-    async setSubstitutionCount(value: SubstitutionCount) {
+    async selectSubstitutionCount(value: SubstitutionCount) {
       await selectDropdownValue(locators.substitutionCountInput, value);
     },
 
-    async setUnsaturated(checked: boolean) {
+    async setUnsaturatedCheckbox(checked: boolean) {
       await locators.unsaturatedCheckbox.setChecked(checked);
     },
 
-    async setAromaticity(option: Aromaticity) {
-      await selectDropdownValue(locators.aromaticitySelect, option);
+    async selectAromaticity(option: Aromaticity) {
+      await selectDropdownValue(locators.aromaticityDropdown, option);
     },
 
-    async setImplicitHCount(option: ImplicitHCount) {
-      await selectDropdownValue(locators.implicitHCountSelect, option);
+    async selectImplicitHCount(option: ImplicitHCount) {
+      await selectDropdownValue(locators.implicitHCountDropdown, option);
     },
 
-    async setRingMembership(option: RingMembership) {
-      await selectDropdownValue(locators.ringMembershipSelect, option);
+    async selectRingMembership(option: RingMembership) {
+      await selectDropdownValue(locators.ringMembershipDropdown, option);
     },
 
-    async setRingSize(option: RingSize) {
-      await selectDropdownValue(locators.ringSizeSelect, option);
+    async selectRingSize(option: RingSize) {
+      await selectDropdownValue(locators.ringSizeDropdown, option);
     },
 
-    async setConnectivity(option: Connectivity) {
-      await selectDropdownValue(locators.connectivitySelect, option);
+    async selectConnectivity(option: Connectivity) {
+      await selectDropdownValue(locators.connectivityDropdown, option);
     },
 
-    async setChirality(option: Chirality) {
-      await selectDropdownValue(locators.chiralitySelect, option);
+    async selectChirality(option: Chirality) {
+      await selectDropdownValue(locators.chiralityDropdown, option);
     },
 
-    async setInversion(option: Inversion) {
-      await selectDropdownValue(locators.inversionSelect, option);
+    async selectInversion(option: Inversion) {
+      await selectDropdownValue(locators.inversionDropdown, option);
     },
 
-    async setExactChange(checked: boolean) {
+    async setExactChangeCheckbox(checked: boolean) {
       await locators.exactChangeCheckbox.setChecked(checked);
     },
 
@@ -315,7 +365,7 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.customQueryCheckbox.setChecked(checked);
     },
 
-    async setCustomQueryText(customQuery: string) {
+    async fillCustomQueryText(customQuery: string) {
       await locators.customQueryTextArea.fill(customQuery);
     },
 

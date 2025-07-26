@@ -1,7 +1,7 @@
 export const enum AtomType {
-  Single = 'single-option',
-  List = 'list-option',
-  Special = 'special-option',
+  Single = 'Single-option',
+  List = 'List-option',
+  Special = 'Special-option',
 }
 
 export enum Valence {
@@ -141,34 +141,54 @@ export const enum Inversion {
   Retains = 'Retains-option',
 }
 
+export type GeneralPropertiesSettings = (
+  | {
+      AtomType?: AtomType.Single;
+      Label?: string;
+    }
+  | {
+      AtomType?: AtomType.List;
+      List?: string;
+      NotListCheckbox?: string;
+    }
+  | {
+      AtomType?: AtomType.Special;
+      Special?: string;
+    }
+) & {
+  Alias?: string;
+  Charge?: string;
+  Isotope?: string;
+  Valence?: Valence;
+  Radical?: Radical;
+};
+
+export type QuerySpecificPropertiesSettings = {
+  RingBondCount?: RingBondCount;
+  HCount?: HCount;
+  SubstitutionCount?: SubstitutionCount;
+  UnsaturatedCheckbox?: boolean;
+  Aromaticity?: Aromaticity;
+  ImplicitHCount?: ImplicitHCount;
+  RingMembership?: RingMembership;
+  RingSize?: RingSize;
+  Connectivity?: Connectivity;
+  Chirality?: Chirality;
+};
+
+export type ReactionFlagsPropertiesSettings = {
+  Inversion?: Inversion;
+  ExactChangeCheckbox?: boolean;
+};
+
+export type CustomQueryPropertiesSettings = {
+  CustomQueryCheckbox?: boolean;
+  CustomQueryTextArea?: string;
+};
+
 export type AtomPropertiesSettings = {
-  GeneralProperties?: {
-    AtomType?: AtomType;
-    Label?: string;
-    Alias?: string;
-    Charge?: string;
-    Isotope?: string;
-    Valence?: Valence;
-    Radical?: Radical;
-  };
-  QuerySpecificProperties?: {
-    RingBondCount?: RingBondCount;
-    HCount?: HCount;
-    SubstitutionCount?: SubstitutionCount;
-    UnsaturatedCheckbox?: boolean;
-    Aromaticity?: Aromaticity;
-    ImplicitHCount?: ImplicitHCount;
-    RingMembership?: RingMembership;
-    RingSize?: RingSize;
-    Connectivity?: Connectivity;
-    Chirality?: Chirality;
-  };
-  ReactionFlags?: {
-    Inversion?: Inversion;
-    ExactChangeCheckbox?: boolean;
-  };
-  CustomQuery?: {
-    CustomQueryCheckbox?: boolean;
-    CustomQueryTextArea?: string;
-  };
+  GeneralProperties?: GeneralPropertiesSettings;
+  QuerySpecificProperties?: QuerySpecificPropertiesSettings;
+  ReactionFlags?: ReactionFlagsPropertiesSettings;
+  CustomQuery?: CustomQueryPropertiesSettings;
 };

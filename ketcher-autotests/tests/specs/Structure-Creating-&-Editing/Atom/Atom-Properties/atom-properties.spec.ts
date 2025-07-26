@@ -145,7 +145,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
 
-    await AtomPropertiesDialog(page).setLabel('Na');
+    await AtomPropertiesDialog(page).fillLabel('Na');
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -192,7 +192,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
 
-    await AtomPropertiesDialog(page).setLabel('J%');
+    await AtomPropertiesDialog(page).fillLabel('J%');
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -349,7 +349,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
 
-    await AtomPropertiesDialog(page).setAlias('abc123TesREasd!@');
+    await AtomPropertiesDialog(page).fillAlias('abc123TesREasd!@');
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -424,9 +424,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setOptions({
-      GeneralProperties: { AtomType: AtomType.List },
-    });
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
     await takeEditorScreenshot(page);
   });
 
@@ -439,11 +437,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setOptions({
-      GeneralProperties: {
-        AtomType: AtomType.Special,
-      },
-    });
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.Special);
     await takeEditorScreenshot(page);
   });
 
@@ -488,11 +482,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setOptions({
-      GeneralProperties: {
-        Charge: 'A',
-      },
-    });
+    await AtomPropertiesDialog(page).fillCharge('A');
     await takeEditorScreenshot(page);
   });
 
@@ -509,7 +499,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setCharge('9999');
+    await AtomPropertiesDialog(page).fillCharge('9999');
     await AtomPropertiesDialog(page).hoverCharge();
     await takeEditorScreenshot(page);
   });
@@ -595,7 +585,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setIsotope('18');
+    await AtomPropertiesDialog(page).fillIsotope('18');
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -625,11 +615,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
-    await AtomPropertiesDialog(page).setOptions({
-      GeneralProperties: {
-        Isotope: 'b',
-      },
-    });
+    await AtomPropertiesDialog(page).fillIsotope('b');
     await takeEditorScreenshot(page);
   });
 
@@ -642,7 +628,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 1);
-    await AtomPropertiesDialog(page).setIsotope('-88');
+    await AtomPropertiesDialog(page).fillIsotope('-88');
     await AtomPropertiesDialog(page).hoverIsotope();
     await takeEditorScreenshot(page);
   });
@@ -746,7 +732,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setValence(Valence.Three);
+    await AtomPropertiesDialog(page).selectValence(Valence.Three);
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -822,7 +808,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await doubleClickOnAtom(page, 'C', 0);
-    await AtomPropertiesDialog(page).setRadical(Radical.Monoradical);
+    await AtomPropertiesDialog(page).selectRadical(Radical.Monoradical);
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -962,7 +948,9 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
-    await AtomPropertiesDialog(page).setRingBondCount(RingBondCount.As_Drawn);
+    await AtomPropertiesDialog(page).selectRingBondCount(
+      RingBondCount.As_Drawn,
+    );
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -1158,7 +1146,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
-    await AtomPropertiesDialog(page).setHCount(HCount.Zero);
+    await AtomPropertiesDialog(page).selectHCount(HCount.Zero);
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -1252,7 +1240,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
-    await AtomPropertiesDialog(page).setSubstitutionCount(
+    await AtomPropertiesDialog(page).selectSubstitutionCount(
       SubstitutionCount.Zero,
     );
     await AtomPropertiesDialog(page).pressCancelButton();
@@ -1349,7 +1337,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
-    await AtomPropertiesDialog(page).setUnsaturated(true);
+    await AtomPropertiesDialog(page).setUnsaturatedCheckbox(true);
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -1534,7 +1522,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandReactionFlags();
-    await AtomPropertiesDialog(page).setInversion(Inversion.Inverts);
+    await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
     await AtomPropertiesDialog(page).pressCancelButton();
     await takeEditorScreenshot(page);
   });
@@ -1552,8 +1540,8 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await AtomPropertiesDialog(page).expandReactionFlags();
-    await AtomPropertiesDialog(page).setInversion(Inversion.Inverts);
-    await AtomPropertiesDialog(page).setExactChange(true);
+    await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
+    await AtomPropertiesDialog(page).setExactChangeCheckbox(true);
     await AtomPropertiesDialog(page).pressApplyButton();
     await takeEditorScreenshot(page);
   });

@@ -199,8 +199,8 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
        * Description: attributes should be converted to custom query in correct SMARTS annotation
        * (D<n> for substitution count and x<n> for ring bond count)
        */
-      await AtomPropertiesDialog(page).setRingBondCount(RingBondCount.Five);
-      await AtomPropertiesDialog(page).setSubstitutionCount(
+      await AtomPropertiesDialog(page).selectRingBondCount(RingBondCount.Five);
+      await AtomPropertiesDialog(page).selectSubstitutionCount(
         SubstitutionCount.Seven,
       );
       await AtomPropertiesDialog(page).setCustomQueryCheckbox(true);
@@ -214,18 +214,22 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
        * Test case: https://github.com/epam/ketcher/issues/3445
        * Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
        */
-      await AtomPropertiesDialog(page).setRingBondCount(RingBondCount.As_Drawn);
-      await AtomPropertiesDialog(page).setHCount(HCount.Zero);
-      await AtomPropertiesDialog(page).setSubstitutionCount(
+      await AtomPropertiesDialog(page).selectRingBondCount(
+        RingBondCount.As_Drawn,
+      );
+      await AtomPropertiesDialog(page).selectHCount(HCount.Zero);
+      await AtomPropertiesDialog(page).selectSubstitutionCount(
         SubstitutionCount.One,
       );
-      await AtomPropertiesDialog(page).setUnsaturated(true);
-      await AtomPropertiesDialog(page).setAromaticity(Aromaticity.Aliphatic);
-      await AtomPropertiesDialog(page).setImplicitHCount(ImplicitHCount.Two);
-      await AtomPropertiesDialog(page).setRingMembership(RingMembership.Three);
-      await AtomPropertiesDialog(page).setRingSize(RingSize.Four);
-      await AtomPropertiesDialog(page).setConnectivity(Connectivity.Five);
-      await AtomPropertiesDialog(page).setChirality(Chirality.Clockwise);
+      await AtomPropertiesDialog(page).setUnsaturatedCheckbox(true);
+      await AtomPropertiesDialog(page).selectAromaticity(Aromaticity.Aliphatic);
+      await AtomPropertiesDialog(page).selectImplicitHCount(ImplicitHCount.Two);
+      await AtomPropertiesDialog(page).selectRingMembership(
+        RingMembership.Three,
+      );
+      await AtomPropertiesDialog(page).selectRingSize(RingSize.Four);
+      await AtomPropertiesDialog(page).selectConnectivity(Connectivity.Five);
+      await AtomPropertiesDialog(page).selectChirality(Chirality.Clockwise);
       await AtomPropertiesDialog(page).setCustomQueryCheckbox(true);
       await takeEditorScreenshot(page);
     });

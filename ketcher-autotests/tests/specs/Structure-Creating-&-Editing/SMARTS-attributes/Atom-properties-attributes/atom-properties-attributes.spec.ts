@@ -131,7 +131,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await AtomPropertiesDialog(page).setCharge('-16');
+    await AtomPropertiesDialog(page).fillCharge('-16');
     expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });
 
@@ -140,7 +140,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await AtomPropertiesDialog(page).setCharge('16');
+    await AtomPropertiesDialog(page).fillCharge('16');
     expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });
 });

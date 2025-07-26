@@ -137,42 +137,69 @@ export const AtomPropertiesDialog = (page: Page) => {
 
     async setOptions(options: AtomPropertiesSettings) {
       await ifPropertyDefined(
-        this.setGeneralProperties,
+        this.setGeneralProperties.bind(this),
         options.GeneralProperties,
       );
       await ifPropertyDefined(
-        this.setQuerySpecificProperties,
+        this.setQuerySpecificProperties.bind(this),
         options.QuerySpecificProperties,
       );
       await ifPropertyDefined(
-        this.setReactionFlagsProperties,
+        this.setReactionFlagsProperties.bind(this),
         options.ReactionFlags,
       );
       await ifPropertyDefined(
-        this.setCustomQueryProperties,
+        this.setCustomQueryProperties.bind(this),
         options.CustomQuery,
       );
       await this.pressApplyButton();
     },
 
     async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
-      await ifPropertyDefined(this.selectAtomType, generalProperties.AtomType);
+      await ifPropertyDefined(
+        this.selectAtomType.bind(this),
+        generalProperties.AtomType,
+      );
       if (generalProperties.AtomType === AtomType.Single) {
-        await ifPropertyDefined(this.fillLabel, generalProperties.Label);
-      } else if (generalProperties.AtomType === AtomType.List) {
-        await ifPropertyDefined(this.fillList, generalProperties.List);
         await ifPropertyDefined(
-          this.setNotListCheckbox,
+          this.fillLabel.bind(this),
+          generalProperties.Label,
+        );
+      } else if (generalProperties.AtomType === AtomType.List) {
+        await ifPropertyDefined(
+          this.fillList.bind(this),
+          generalProperties.List,
+        );
+        await ifPropertyDefined(
+          this.setNotListCheckbox.bind(this),
           generalProperties.NotListCheckbox,
         );
       } else if (generalProperties.AtomType === AtomType.Special) {
-        await ifPropertyDefined(this.fillSpecial, generalProperties.Special);
+        await ifPropertyDefined(
+          this.fillSpecial.bind(this),
+          generalProperties.Special,
+        );
       }
-      await ifPropertyDefined(this.fillAlias, generalProperties.Alias);
-      await ifPropertyDefined(this.fillCharge, generalProperties.Charge);
-      await ifPropertyDefined(this.fillIsotope, generalProperties.Isotope);
-      await ifPropertyDefined(this.selectValence, generalProperties.Valence);
-      await ifPropertyDefined(this.selectRadical, generalProperties.Radical);
+      await ifPropertyDefined(
+        this.fillAlias.bind(this),
+        generalProperties.Alias,
+      );
+      await ifPropertyDefined(
+        this.fillCharge.bind(this),
+        generalProperties.Charge,
+      );
+      await ifPropertyDefined(
+        this.fillIsotope.bind(this),
+        generalProperties.Isotope,
+      );
+      await ifPropertyDefined(
+        this.selectValence.bind(this),
+        generalProperties.Valence,
+      );
+      await ifPropertyDefined(
+        this.selectRadical.bind(this),
+        generalProperties.Radical,
+      );
     },
 
     async setQuerySpecificProperties(

@@ -141,21 +141,12 @@ export const enum Inversion {
   Retains = 'Retains-option',
 }
 
-export type GeneralPropertiesSettings = (
-  | {
-      AtomType?: AtomType.Single;
-      Label?: string;
-    }
-  | {
-      AtomType?: AtomType.List;
-      List?: string;
-      NotListCheckbox?: string;
-    }
-  | {
-      AtomType?: AtomType.Special;
-      Special?: string;
-    }
-) & {
+export type GeneralPropertiesSettings = {
+  AtomType?: AtomType.Single;
+  NotListCheckbox?: string;
+  Label?: string;
+  List?: string;
+  Special?: string;
   Alias?: string;
   Charge?: string;
   Isotope?: string;

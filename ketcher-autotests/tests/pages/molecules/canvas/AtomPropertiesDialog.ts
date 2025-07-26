@@ -156,16 +156,17 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
-      await ifPropertyDefined(
-        this.selectAtomType.bind(this),
-        generalProperties.AtomType,
-      );
-      if (generalProperties.AtomType === AtomType.Single) {
+      if (generalProperties.Label) {
+        await ifPropertyDefined(
+          this.selectAtomType.bind(this),
+          AtomType.Single,
+        );
         await ifPropertyDefined(
           this.fillLabel.bind(this),
           generalProperties.Label,
         );
-      } else if (generalProperties.AtomType === AtomType.List) {
+      } else if (generalProperties.List || generalProperties.NotListCheckbox) {
+        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.List);
         await ifPropertyDefined(
           this.fillList.bind(this),
           generalProperties.List,
@@ -174,10 +175,19 @@ export const AtomPropertiesDialog = (page: Page) => {
           this.setNotListCheckbox.bind(this),
           generalProperties.NotListCheckbox,
         );
-      } else if (generalProperties.AtomType === AtomType.Special) {
+      } else if (generalProperties.Special) {
+        await ifPropertyDefined(
+          this.selectAtomType.bind(this),
+          AtomType.Special,
+        );
         await ifPropertyDefined(
           this.fillSpecial.bind(this),
           generalProperties.Special,
+        );
+      } else if (generalProperties.AtomType) {
+        await ifPropertyDefined(
+          this.selectAtomType.bind(this),
+          generalProperties.AtomType,
         );
       }
       await ifPropertyDefined(

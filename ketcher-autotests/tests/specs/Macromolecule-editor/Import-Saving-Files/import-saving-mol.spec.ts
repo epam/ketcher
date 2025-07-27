@@ -553,7 +553,9 @@ test.describe('Import modified .mol files from external editor', () => {
     'peptide-modified-aa-example.mol',
     // https://github.com/epam/Indigo/issues/3048
     'dna-peptideSS-conj-example.mol',
+    // https://github.com/epam/Indigo/issues/3048
     'peptide-Fmoc.mol',
+    // https://github.com/epam/Indigo/issues/3048
     'dna-peptide-conj-example.mol',
   ];
   const fileNames = [

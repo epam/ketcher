@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -12,15 +12,10 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import {
-  verifyFileExport,
-  verifyHELMExport,
-} from '@utils/files/receiveFileComparisonData';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 

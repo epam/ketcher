@@ -84,10 +84,7 @@ export const AtomPropertiesDialog = (page: Page) => {
     await page.getByTestId(valueLocatorString).click();
   };
 
-  const ifPropertyDefined = async (
-    set: (value: any) => Promise<void>,
-    value: any,
-  ) => {
+  const ifNotNull = async (set: (value: any) => Promise<void>, value: any) => {
     if (value !== undefined) await set(value);
   };
 
@@ -137,33 +134,33 @@ export const AtomPropertiesDialog = (page: Page) => {
 
     // prettier-ignore
     async setOptions(options: AtomPropertiesSettings) {
-      await ifPropertyDefined(this.setGeneralProperties.bind(this), options.GeneralProperties);
-      await ifPropertyDefined(this.setQuerySpecificProperties.bind(this), options.QuerySpecificProperties);
-      await ifPropertyDefined(this.setReactionFlagsProperties.bind(this), options.ReactionFlags);
-      await ifPropertyDefined(this.setCustomQueryProperties.bind(this), options.CustomQuery);
+      await ifNotNull(p => this.setGeneralProperties(p), options.GeneralProperties);
+      await ifNotNull(p => this.setQuerySpecificProperties(p), options.QuerySpecificProperties);
+      await ifNotNull(p => this.setReactionFlagsProperties(p), options.ReactionFlags);
+      await ifNotNull(p => this.setCustomQueryProperties(p), options.CustomQuery);
       await this.pressApplyButton();
     },
 
     // prettier-ignore
     async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
       if (generalProperties.Label) {
-        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.Single);
-        await ifPropertyDefined(this.fillLabel.bind(this), generalProperties.Label);
+        await ifNotNull(p => this.selectAtomType(p), AtomType.Single);
+        await ifNotNull(p => this.fillLabel(p), generalProperties.Label);
       } else if (generalProperties.List || generalProperties.NotListCheckbox) {
-        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.List);
-        await ifPropertyDefined(this.fillList.bind(this), generalProperties.List);
-        await ifPropertyDefined(this.setNotListCheckbox.bind(this), generalProperties.NotListCheckbox);
+        await ifNotNull(p => this.selectAtomType(p), AtomType.List);
+        await ifNotNull(p => this.fillList(p), generalProperties.List);
+        await ifNotNull(p => this.setNotListCheckbox(p), generalProperties.NotListCheckbox);
       } else if (generalProperties.Special) {
-        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.Special);
-        await ifPropertyDefined(this.fillSpecial.bind(this), generalProperties.Special);
+        await ifNotNull(p => this.selectAtomType(p), AtomType.Special);
+        await ifNotNull(p => this.fillSpecial(p), generalProperties.Special);
       } else if (generalProperties.AtomType) {
-        await ifPropertyDefined(this.selectAtomType.bind(this), generalProperties.AtomType);
+        await ifNotNull(p => this.selectAtomType(p), generalProperties.AtomType);
       }
-      await ifPropertyDefined(this.fillAlias.bind(this), generalProperties.Alias);
-      await ifPropertyDefined(this.fillCharge.bind(this), generalProperties.Charge);
-      await ifPropertyDefined(this.fillIsotope.bind(this), generalProperties.Isotope);
-      await ifPropertyDefined(this.selectValence.bind(this), generalProperties.Valence);
-      await ifPropertyDefined(this.selectRadical.bind(this), generalProperties.Radical);
+      await ifNotNull(p => this.fillAlias(p), generalProperties.Alias);
+      await ifNotNull(p => this.fillCharge(p), generalProperties.Charge);
+      await ifNotNull(p => this.fillIsotope(p), generalProperties.Isotope);
+      await ifNotNull(p => this.selectValence(p), generalProperties.Valence);
+      await ifNotNull(p => this.selectRadical(p), generalProperties.Radical);
     },
 
     // prettier-ignore
@@ -171,16 +168,16 @@ export const AtomPropertiesDialog = (page: Page) => {
       querySpecificProperties: QuerySpecificPropertiesSettings,
     ) {
       await this.expandQuerySpecific();
-      await ifPropertyDefined(this.selectRingBondCount.bind(this), querySpecificProperties.RingBondCount);
-      await ifPropertyDefined(this.selectHCount.bind(this), querySpecificProperties.HCount);
-      await ifPropertyDefined(this.selectSubstitutionCount.bind(this), querySpecificProperties.SubstitutionCount);
-      await ifPropertyDefined(this.setUnsaturatedCheckbox.bind(this), querySpecificProperties.UnsaturatedCheckbox);
-      await ifPropertyDefined(this.selectAromaticity.bind(this), querySpecificProperties.Aromaticity);
-      await ifPropertyDefined(this.selectImplicitHCount.bind(this), querySpecificProperties.ImplicitHCount);
-      await ifPropertyDefined(this.selectRingMembership.bind(this), querySpecificProperties.RingMembership);
-      await ifPropertyDefined(this.selectRingSize.bind(this), querySpecificProperties.RingSize);
-      await ifPropertyDefined(this.selectConnectivity.bind(this), querySpecificProperties.Connectivity);
-      await ifPropertyDefined(this.selectChirality.bind(this), querySpecificProperties.Chirality);
+      await ifNotNull(p => this.selectRingBondCount(p), querySpecificProperties.RingBondCount);
+      await ifNotNull(p => this.selectHCount(p), querySpecificProperties.HCount);
+      await ifNotNull(p => this.selectSubstitutionCount(p), querySpecificProperties.SubstitutionCount);
+      await ifNotNull(p => this.setUnsaturatedCheckbox(p), querySpecificProperties.UnsaturatedCheckbox);
+      await ifNotNull(p => this.selectAromaticity(p), querySpecificProperties.Aromaticity);
+      await ifNotNull(p => this.selectImplicitHCount(p), querySpecificProperties.ImplicitHCount);
+      await ifNotNull(p => this.selectRingMembership(p), querySpecificProperties.RingMembership);
+      await ifNotNull(p => this.selectRingSize(p), querySpecificProperties.RingSize);
+      await ifNotNull(p => this.selectConnectivity(p), querySpecificProperties.Connectivity);
+      await ifNotNull(p => this.selectChirality(p), querySpecificProperties.Chirality);
     },
 
     // prettier-ignore
@@ -188,16 +185,16 @@ export const AtomPropertiesDialog = (page: Page) => {
       reactionFlagsProperties: ReactionFlagsPropertiesSettings,
     ) {
       await this.expandReactionFlags();
-      await ifPropertyDefined(this.selectInversion.bind(this), reactionFlagsProperties.Inversion);
-      await ifPropertyDefined(this.setExactChangeCheckbox.bind(this), reactionFlagsProperties.ExactChangeCheckbox);
+      await ifNotNull(p => this.selectInversion(p), reactionFlagsProperties.Inversion);
+      await ifNotNull(p => this.setExactChangeCheckbox(p), reactionFlagsProperties.ExactChangeCheckbox);
     },
 
     // prettier-ignore
     async setCustomQueryProperties(
       customQueryProperties: CustomQueryPropertiesSettings,
     ) {
-      await ifPropertyDefined(this.setCustomQueryCheckbox.bind(this), customQueryProperties.CustomQueryCheckbox);
-      await ifPropertyDefined(this.fillCustomQueryText.bind(this), customQueryProperties.CustomQueryTextArea);
+      await ifNotNull(p => this.setCustomQueryCheckbox(p), customQueryProperties.CustomQueryCheckbox);
+      await ifNotNull(p => this.fillCustomQueryText(p), customQueryProperties.CustomQueryTextArea);
     },
 
     async closeByX() {

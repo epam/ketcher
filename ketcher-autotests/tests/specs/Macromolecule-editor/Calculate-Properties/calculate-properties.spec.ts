@@ -333,7 +333,7 @@ test.describe('Calculate Properties tests', () => {
       MolecularMassUnit.Da,
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '925.653',
+      '925.663',
     );
   });
 

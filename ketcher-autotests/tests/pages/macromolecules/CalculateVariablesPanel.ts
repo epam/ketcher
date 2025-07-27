@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   MolecularMassUnit,
   NucleotideNaturalAnalogCount,
@@ -165,10 +165,9 @@ export const CalculateVariablesPanel = (page: Page) => {
     async getNaturalAnalogCount(
       countValue: PeptideNaturalAnalogCount | NucleotideNaturalAnalogCount,
     ) {
-      return (await page.getByTestId(countValue).innerText()).replace(
-        /(\r\n|\n|\r)/gm,
-        '',
-      );
+      const naturalAnalog = page.getByTestId(countValue);
+      expect(await naturalAnalog.count()).toBeGreaterThan(0);
+      return (await naturalAnalog.innerText()).replace(/(\r\n|\n|\r)/gm, '');
     },
 
     async getPeptideNaturalAnalogCountList() {

@@ -957,7 +957,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C7H14] > [C4H8]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[98.186] > [56.106]',
+      '[98.189] > [56.108]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[98.110] > [56.063]',

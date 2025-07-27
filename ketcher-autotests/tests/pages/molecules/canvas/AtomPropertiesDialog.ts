@@ -135,154 +135,69 @@ export const AtomPropertiesDialog = (page: Page) => {
   return {
     ...locators,
 
+    // prettier-ignore
     async setOptions(options: AtomPropertiesSettings) {
-      await ifPropertyDefined(
-        this.setGeneralProperties.bind(this),
-        options.GeneralProperties,
-      );
-      await ifPropertyDefined(
-        this.setQuerySpecificProperties.bind(this),
-        options.QuerySpecificProperties,
-      );
-      await ifPropertyDefined(
-        this.setReactionFlagsProperties.bind(this),
-        options.ReactionFlags,
-      );
-      await ifPropertyDefined(
-        this.setCustomQueryProperties.bind(this),
-        options.CustomQuery,
-      );
+      await ifPropertyDefined(this.setGeneralProperties.bind(this), options.GeneralProperties);
+      await ifPropertyDefined(this.setQuerySpecificProperties.bind(this), options.QuerySpecificProperties);
+      await ifPropertyDefined(this.setReactionFlagsProperties.bind(this), options.ReactionFlags);
+      await ifPropertyDefined(this.setCustomQueryProperties.bind(this), options.CustomQuery);
       await this.pressApplyButton();
     },
 
+    // prettier-ignore
     async setGeneralProperties(generalProperties: GeneralPropertiesSettings) {
       if (generalProperties.Label) {
-        await ifPropertyDefined(
-          this.selectAtomType.bind(this),
-          AtomType.Single,
-        );
-        await ifPropertyDefined(
-          this.fillLabel.bind(this),
-          generalProperties.Label,
-        );
+        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.Single);
+        await ifPropertyDefined(this.fillLabel.bind(this), generalProperties.Label);
       } else if (generalProperties.List || generalProperties.NotListCheckbox) {
         await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.List);
-        await ifPropertyDefined(
-          this.fillList.bind(this),
-          generalProperties.List,
-        );
-        await ifPropertyDefined(
-          this.setNotListCheckbox.bind(this),
-          generalProperties.NotListCheckbox,
-        );
+        await ifPropertyDefined(this.fillList.bind(this), generalProperties.List);
+        await ifPropertyDefined(this.setNotListCheckbox.bind(this), generalProperties.NotListCheckbox);
       } else if (generalProperties.Special) {
-        await ifPropertyDefined(
-          this.selectAtomType.bind(this),
-          AtomType.Special,
-        );
-        await ifPropertyDefined(
-          this.fillSpecial.bind(this),
-          generalProperties.Special,
-        );
+        await ifPropertyDefined(this.selectAtomType.bind(this), AtomType.Special);
+        await ifPropertyDefined(this.fillSpecial.bind(this), generalProperties.Special);
       } else if (generalProperties.AtomType) {
-        await ifPropertyDefined(
-          this.selectAtomType.bind(this),
-          generalProperties.AtomType,
-        );
+        await ifPropertyDefined(this.selectAtomType.bind(this), generalProperties.AtomType);
       }
-      await ifPropertyDefined(
-        this.fillAlias.bind(this),
-        generalProperties.Alias,
-      );
-      await ifPropertyDefined(
-        this.fillCharge.bind(this),
-        generalProperties.Charge,
-      );
-      await ifPropertyDefined(
-        this.fillIsotope.bind(this),
-        generalProperties.Isotope,
-      );
-      await ifPropertyDefined(
-        this.selectValence.bind(this),
-        generalProperties.Valence,
-      );
-      await ifPropertyDefined(
-        this.selectRadical.bind(this),
-        generalProperties.Radical,
-      );
+      await ifPropertyDefined(this.fillAlias.bind(this), generalProperties.Alias);
+      await ifPropertyDefined(this.fillCharge.bind(this), generalProperties.Charge);
+      await ifPropertyDefined(this.fillIsotope.bind(this), generalProperties.Isotope);
+      await ifPropertyDefined(this.selectValence.bind(this), generalProperties.Valence);
+      await ifPropertyDefined(this.selectRadical.bind(this), generalProperties.Radical);
     },
 
+    // prettier-ignore
     async setQuerySpecificProperties(
       querySpecificProperties: QuerySpecificPropertiesSettings,
     ) {
       await this.expandQuerySpecific();
-      await ifPropertyDefined(
-        this.selectRingBondCount.bind(this),
-        querySpecificProperties.RingBondCount,
-      );
-      await ifPropertyDefined(
-        this.selectHCount.bind(this),
-        querySpecificProperties.HCount,
-      );
-      await ifPropertyDefined(
-        this.selectSubstitutionCount.bind(this),
-        querySpecificProperties.SubstitutionCount,
-      );
-      await ifPropertyDefined(
-        this.setUnsaturatedCheckbox.bind(this),
-        querySpecificProperties.UnsaturatedCheckbox,
-      );
-      await ifPropertyDefined(
-        this.selectAromaticity.bind(this),
-        querySpecificProperties.Aromaticity,
-      );
-      await ifPropertyDefined(
-        this.selectImplicitHCount.bind(this),
-        querySpecificProperties.ImplicitHCount,
-      );
-      await ifPropertyDefined(
-        this.selectRingMembership.bind(this),
-        querySpecificProperties.RingMembership,
-      );
-      await ifPropertyDefined(
-        this.selectRingSize.bind(this),
-        querySpecificProperties.RingSize,
-      );
-      await ifPropertyDefined(
-        this.selectConnectivity.bind(this),
-        querySpecificProperties.Connectivity,
-      );
-      await ifPropertyDefined(
-        this.selectChirality.bind(this),
-        querySpecificProperties.Chirality,
-      );
+      await ifPropertyDefined(this.selectRingBondCount.bind(this), querySpecificProperties.RingBondCount);
+      await ifPropertyDefined(this.selectHCount.bind(this), querySpecificProperties.HCount);
+      await ifPropertyDefined(this.selectSubstitutionCount.bind(this), querySpecificProperties.SubstitutionCount);
+      await ifPropertyDefined(this.setUnsaturatedCheckbox.bind(this), querySpecificProperties.UnsaturatedCheckbox);
+      await ifPropertyDefined(this.selectAromaticity.bind(this), querySpecificProperties.Aromaticity);
+      await ifPropertyDefined(this.selectImplicitHCount.bind(this), querySpecificProperties.ImplicitHCount);
+      await ifPropertyDefined(this.selectRingMembership.bind(this), querySpecificProperties.RingMembership);
+      await ifPropertyDefined(this.selectRingSize.bind(this), querySpecificProperties.RingSize);
+      await ifPropertyDefined(this.selectConnectivity.bind(this), querySpecificProperties.Connectivity);
+      await ifPropertyDefined(this.selectChirality.bind(this), querySpecificProperties.Chirality);
     },
 
+    // prettier-ignore
     async setReactionFlagsProperties(
       reactionFlagsProperties: ReactionFlagsPropertiesSettings,
     ) {
       await this.expandReactionFlags();
-      await ifPropertyDefined(
-        this.selectInversion.bind(this),
-        reactionFlagsProperties.Inversion,
-      );
-      await ifPropertyDefined(
-        this.setExactChangeCheckbox.bind(this),
-        reactionFlagsProperties.ExactChangeCheckbox,
-      );
+      await ifPropertyDefined(this.selectInversion.bind(this), reactionFlagsProperties.Inversion);
+      await ifPropertyDefined(this.setExactChangeCheckbox.bind(this), reactionFlagsProperties.ExactChangeCheckbox);
     },
 
+    // prettier-ignore
     async setCustomQueryProperties(
       customQueryProperties: CustomQueryPropertiesSettings,
     ) {
-      await ifPropertyDefined(
-        this.setCustomQueryCheckbox.bind(this),
-        customQueryProperties.CustomQueryCheckbox,
-      );
-      await ifPropertyDefined(
-        this.fillCustomQueryText.bind(this),
-        customQueryProperties.CustomQueryTextArea,
-      );
+      await ifPropertyDefined(this.setCustomQueryCheckbox.bind(this), customQueryProperties.CustomQueryCheckbox);
+      await ifPropertyDefined(this.fillCustomQueryText.bind(this), customQueryProperties.CustomQueryTextArea);
     },
 
     async closeByX() {

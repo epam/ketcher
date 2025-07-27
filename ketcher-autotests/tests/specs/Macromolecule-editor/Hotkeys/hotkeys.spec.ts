@@ -10,8 +10,6 @@ import {
   ZoomInByKeyboard,
   selectUndoByKeyboard,
   selectRedoByKeyboard,
-  waitForRender,
-  getControlModifier,
   clearCanvasByKeyboard,
   deleteByKeyboard,
 } from '@utils';

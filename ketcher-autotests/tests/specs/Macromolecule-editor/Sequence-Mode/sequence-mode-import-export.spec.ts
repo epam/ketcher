@@ -10,7 +10,7 @@ import {
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
-import { keyboardPressOnCanvas, ZoomInByKeyboard } from '@utils/keyboard/index';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
   SequenceMonomerType,

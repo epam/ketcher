@@ -73,6 +73,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -1158,6 +1159,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/sequenses-connected-through-chem.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '471.45',
     );
@@ -1190,6 +1194,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/a-a-monomers-connected-through-r2-r2.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '144.174',
     );
@@ -1306,6 +1313,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{R(G)P.R(C)}|RNA2{R(G)P.R(C)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1176.854',
     );

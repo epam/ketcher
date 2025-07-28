@@ -20,6 +20,7 @@ import {
   ReactionFlagsPropertiesSettings,
   CustomQueryPropertiesSettings,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
@@ -27,6 +28,7 @@ type GeneralProperties = {
   generalSection: Locator;
   generalWrapper: Locator;
   atomTypeDropdown: Locator;
+  editButton: Locator;
   labelInput: Locator;
   numberReadonlyInput: Locator;
   listReadonlyInput: Locator;
@@ -92,11 +94,12 @@ export const AtomPropertiesDialog = (page: Page) => {
     generalSection: page.getByTestId('General-wrapper'),
     generalWrapper: page.getByTestId('General-wrapper'),
     atomTypeDropdown: page.getByTestId('atom-input-span'),
+    editButton: page.getByTestId('edit-button'),
     labelInput: page.getByTestId('label-input'),
-    numberReadonlyInput: page.getByTestId(''),
-    listReadonlyInput: page.getByTestId(''),
+    numberReadonlyInput: page.getByTestId('element-number'),
+    listReadonlyInput: page.getByTestId('atomList-input'),
     notListCheckbox: page.getByTestId('notList-input'),
-    specialInput: page.getByTestId(''),
+    specialInput: page.getByTestId('pseudo-input'),
     aliasInput: page.getByTestId('alias-input-span'),
     chargeInput: page.getByTestId('charge-input-span'),
     isotopeInput: page.getByTestId('isotope-input-span'),
@@ -148,7 +151,7 @@ export const AtomPropertiesDialog = (page: Page) => {
         await ifNotNull(p => this.fillLabel(p), generalProperties.Label);
       } else if (generalProperties.List || generalProperties.NotListCheckbox) {
         await ifNotNull(p => this.selectAtomType(p), AtomType.List);
-        await ifNotNull(p => this.fillList(p), generalProperties.List);
+        await ifNotNull(p => this.selectAtomsList(p), generalProperties.List);
         await ifNotNull(p => this.setNotListCheckbox(p), generalProperties.NotListCheckbox);
       } else if (generalProperties.Special) {
         await ifNotNull(p => this.selectAtomType(p), AtomType.Special);
@@ -216,6 +219,10 @@ export const AtomPropertiesDialog = (page: Page) => {
       await selectDropdownValue(locators.atomTypeDropdown, option);
     },
 
+    async openTable() {
+      await locators.editButton.click();
+    },
+
     async fillLabel(value: string) {
       await locators.labelInput.fill(value);
     },
@@ -224,8 +231,16 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.numberReadonlyInput.textContent();
     },
 
-    async fillList(value: string) {
-      await locators.listReadonlyInput.fill(value);
+    async selectAtomsList(value: {
+      AtomsList: PeriodicTableElement[];
+      SelectAtoms: (atomsList: PeriodicTableElement[]) => Promise<void>;
+    }) {
+      await this.openTable();
+      await value.SelectAtoms(value.AtomsList);
+    },
+
+    async getList() {
+      await locators.listReadonlyInput.textContent();
     },
 
     async setNotListCheckbox(checked: boolean) {

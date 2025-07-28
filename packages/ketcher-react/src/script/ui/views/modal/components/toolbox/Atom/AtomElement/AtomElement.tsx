@@ -65,6 +65,7 @@ const AtomElement = ({ formState }: BaseProps) => {
               onChange,
             )
           }
+          data-testid="atomList-input"
           disabled
         />
         <Field name="notList" labelPos="before" className={classes.checkbox} />
@@ -83,6 +84,7 @@ const AtomElement = ({ formState }: BaseProps) => {
             onChange,
           )
         }
+        data-testid="pseudo-input"
       />
     ),
   };

@@ -1,3 +1,5 @@
+import { PeriodicTableElement } from '../periodicTableDialog/Constants';
+
 export const enum AtomType {
   Single = 'Single-option',
   List = 'List-option',
@@ -145,7 +147,10 @@ export type GeneralPropertiesSettings = {
   AtomType?: AtomType.Single;
   NotListCheckbox?: string;
   Label?: string;
-  List?: string;
+  List?: {
+    AtomsList: PeriodicTableElement[];
+    selectAtoms: (atomsList: PeriodicTableElement[]) => Promise<void>;
+  };
   Special?: string;
   Alias?: string;
   Charge?: string;

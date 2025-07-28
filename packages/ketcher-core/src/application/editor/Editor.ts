@@ -49,6 +49,7 @@ import {
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
 import {
+  ChainsCollection,
   MonomerToAtomBond,
   Phosphate,
   SequenceType,
@@ -65,6 +66,7 @@ import {
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
+  AmbiguousMonomerType,
   AttachmentPointName,
   MonomerItemType,
   MonomerOrAmbiguousType,
@@ -145,6 +147,8 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
@@ -601,44 +605,41 @@ export class CoreEditor {
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
+        const history = new EditorHistory(this);
         const { x, y } = position;
 
-        let modelChanges: Command;
+        let monomersAddResult: IAutochainMonomerAddResult | undefined;
 
         if (isLibraryItemRnaPreset(item)) {
-          const { sugar, phosphate, base } = item;
-          if (!sugar) {
+          if (!item.sugar) {
             return;
           }
 
-          modelChanges = this.drawingEntitiesManager.addRnaPreset({
-            sugar,
-            sugarPosition: Coordinates.canvasToModel(new Vec2(x, y)),
-            phosphate,
-            phosphatePosition: phosphate
-              ? Coordinates.canvasToModel(new Vec2(x + SnakeLayoutCellWidth, y))
-              : undefined,
-            rnaBase: base,
-            rnaBasePosition: base
-              ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
-              : undefined,
-          }).command;
+          monomersAddResult = this.onPlaceRnaPresetOnCanvas(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
         } else if (isAmbiguousMonomerLibraryItem(item)) {
-          modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
+          monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),
           );
         } else {
-          modelChanges = this.drawingEntitiesManager.addMonomer(
+          monomersAddResult = this.onPlaceMonomerOnCanvas(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),
           );
         }
 
-        const history = new EditorHistory(this);
+        if (!monomersAddResult) {
+          return;
+        }
 
-        history.update(modelChanges);
-        this.renderersContainer.update(modelChanges);
+        history.update(monomersAddResult.modelChanges);
+        this.renderersContainer.update(monomersAddResult.modelChanges);
+        this.calculateAndStoreNextAutochainPosition(
+          monomersAddResult.lastMonomer,
+        );
       },
     );
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
@@ -662,10 +663,14 @@ export class CoreEditor {
     const newMonomerPosition = selectedMonomerToConnect
       ? selectedMonomerToConnect.position.add(new Vec2(1.5, 0))
       : this.drawingEntitiesManager.hasMonomers
-      ? this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
-          new Vec2(0, 1.5),
-        )
-      : new Vec2(0, 0);
+      ? this.nextAutochainPosition
+        ? this.nextAutochainPosition
+        : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+            new Vec2(0, 1.5),
+          )
+      : Coordinates.canvasToModel(
+          new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
+        );
 
     return {
       selectedMonomerToConnect,
@@ -678,6 +683,8 @@ export class CoreEditor {
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+    this.invalidateNextAutochainPositionIfNeeded(isRnaPreset(monomerOrRnaItem));
+
     const { selectedMonomerToConnect, newMonomerPosition } =
       this.getDataForAutochain();
 
@@ -689,10 +696,14 @@ export class CoreEditor {
     this.transientDrawingView.update();
   }
 
-  private onAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+  private onAutochain(
+    monomerOrRnaItem: MonomerItemType | AmbiguousMonomerType | IRnaPreset,
+  ) {
     if (this.mode instanceof SequenceMode) {
       return;
     }
+
+    this.invalidateNextAutochainPositionIfNeeded(isRnaPreset(monomerOrRnaItem));
 
     const modelChanges = new Command();
     const history = new EditorHistory(this);
@@ -702,12 +713,17 @@ export class CoreEditor {
     let monomersAddResult: IAutochainMonomerAddResult | undefined;
 
     if (isRnaPreset(monomerOrRnaItem)) {
-      monomersAddResult = this.onAutochainRnaPreset(
+      monomersAddResult = this.onPlaceRnaPresetOnCanvas(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    } else if (isAmbiguousMonomerLibraryItem(monomerOrRnaItem)) {
+      monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
         monomerOrRnaItem,
         newMonomerPosition,
       );
     } else {
-      monomersAddResult = this.onAutochainMonomer(
+      monomersAddResult = this.onPlaceMonomerOnCanvas(
         monomerOrRnaItem,
         newMonomerPosition,
       );
@@ -749,12 +765,16 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.zoomTool.scrollToVerticalBottom();
+    this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
 
     this.onRemoveAutochainPreview();
     this.onPreviewAutochain(monomerOrRnaItem);
   }
 
-  private onAutochainRnaPreset(rnaPresetItem: IRnaPreset, sugarPosition: Vec2) {
+  private onPlaceRnaPresetOnCanvas(
+    rnaPresetItem: IRnaPreset,
+    sugarPosition: Vec2,
+  ) {
     if (this.mode instanceof SequenceMode) {
       return;
     }
@@ -792,7 +812,7 @@ export class CoreEditor {
     };
   }
 
-  private onAutochainMonomer(monomerItem: MonomerItemType, position: Vec2) {
+  private onPlaceMonomerOnCanvas(monomerItem: MonomerItemType, position: Vec2) {
     if (this.mode instanceof SequenceMode) {
       return;
     }
@@ -811,6 +831,91 @@ export class CoreEditor {
       firstMonomer: monomer,
       lastMonomer: monomer,
     };
+  }
+
+  private onPlaceAmbiguousMonomerOnCanvas(
+    monomerItem: AmbiguousMonomerType,
+    position: Vec2,
+  ) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const modelChanges = new Command();
+    const monomerAddModelChanges =
+      this.drawingEntitiesManager.addAmbiguousMonomer(monomerItem, position);
+    const monomer = monomerAddModelChanges.operations[0].monomer as BaseMonomer;
+
+    modelChanges.merge(monomerAddModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: monomer,
+      lastMonomer: monomer,
+    };
+  }
+
+  public calculateAndStoreNextAutochainPosition(
+    drawingEntitiesManagerOrMonomer: DrawingEntitiesManager | BaseMonomer,
+  ) {
+    let nextAutochainPosition: Vec2;
+
+    if (drawingEntitiesManagerOrMonomer instanceof DrawingEntitiesManager) {
+      const chainsCollection = ChainsCollection.fromMonomers(
+        drawingEntitiesManagerOrMonomer.monomersArray,
+      );
+
+      if (chainsCollection.chains.length === 1) {
+        const lastMonomerInChain = chainsCollection.lastNode.lastMonomerInNode;
+
+        nextAutochainPosition = lastMonomerInChain.position.add(
+          new Vec2(1.5, 0),
+        );
+      } else {
+        const bottomLeftMonomerPosition =
+          drawingEntitiesManagerOrMonomer.bottomLeftMonomerPosition;
+
+        nextAutochainPosition = bottomLeftMonomerPosition.add(new Vec2(0, 1.5));
+      }
+    } else {
+      const monomer = drawingEntitiesManagerOrMonomer;
+
+      nextAutochainPosition = monomer.position.add(new Vec2(1.5, 0));
+    }
+
+    this.nextAutochainPosition = nextAutochainPosition;
+  }
+
+  public invalidateNextAutochainPositionIfNeeded(isRnaPreset = false) {
+    const nextAutochainPosition = this.nextAutochainPosition;
+
+    if (!nextAutochainPosition) {
+      return;
+    }
+
+    const areaToCheck = { width: 1.5, height: 1.5 };
+    const additionalAreaToCheck = isRnaPreset ? 1.5 : 0;
+    const monomerIntersection = this.drawingEntitiesManager.monomersArray.find(
+      (monomer) => {
+        return (
+          nextAutochainPosition.x +
+            areaToCheck.width / 2 +
+            additionalAreaToCheck >
+            monomer.position.x &&
+          nextAutochainPosition.x <
+            monomer.position.x + areaToCheck.width / 2 &&
+          nextAutochainPosition.y +
+            areaToCheck.height / 2 +
+            additionalAreaToCheck >
+            monomer.position.y &&
+          nextAutochainPosition.y < monomer.position.y + areaToCheck.height / 2
+        );
+      },
+    );
+
+    if (monomerIntersection) {
+      this.nextAutochainPosition = undefined;
+    }
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

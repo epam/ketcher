@@ -64,22 +64,27 @@ const RulerInput = ({
   };
 
   return (
-    <input
-      className={clsx(
-        styles.rulerInput,
-        isDragging && styles.rulerInputDragging,
-      )}
-      type="text"
-      inputMode="numeric"
-      pattern="[0-9]*"
-      value={displayValue}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      data-testid="ruler-input"
-      disabled={isDragging}
-      ref={ref}
-    />
+    <div
+      className={styles.elementAndDropdown}
+      title="Number of monomers in a line"
+    >
+      <input
+        className={clsx(
+          styles.rulerInput,
+          isDragging && styles.rulerInputDragging,
+        )}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={displayValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        data-testid="ruler-input"
+        disabled={isDragging}
+        ref={ref}
+      />
+    </div>
   );
 };
 

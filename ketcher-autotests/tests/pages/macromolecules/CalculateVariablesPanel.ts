@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   MolecularMassUnit,
   NucleotideNaturalAnalogCount,
@@ -8,6 +8,7 @@ import {
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { delay } from '@utils/canvas';
 
 type PeptidesTabLocators = {
   isoelectricPointValue: Locator;
@@ -94,6 +95,7 @@ export const CalculateVariablesPanel = (page: Page) => {
     },
 
     async getMolecularMassValue() {
+      await delay(0.2);
       return await locators.molecularMassValue.innerText();
     },
 
@@ -165,10 +167,9 @@ export const CalculateVariablesPanel = (page: Page) => {
     async getNaturalAnalogCount(
       countValue: PeptideNaturalAnalogCount | NucleotideNaturalAnalogCount,
     ) {
-      return (await page.getByTestId(countValue).innerText()).replace(
-        /(\r\n|\n|\r)/gm,
-        '',
-      );
+      const naturalAnalog = page.getByTestId(countValue);
+      expect(await naturalAnalog.count()).toBeGreaterThan(0);
+      return (await naturalAnalog.innerText()).replace(/(\r\n|\n|\r)/gm, '');
     },
 
     async getPeptideNaturalAnalogCountList() {

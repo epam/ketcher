@@ -116,30 +116,20 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  const cases = [
-    {
-      fileName: 'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
-      description: 'DNA with modified monomer',
-    },
-    {
-      fileName: 'Molfiles-V3000/rna-mod-phosphate-mod-base-example.mol',
-      description: 'RNA with modified monomer',
-    },
-  ];
-
-  for (const testInfo of cases) {
-    test(`Check that switching between Macro and Micro mode not crash application when opened ${testInfo.description} with modyfied monomer`, async ({
-      page,
-    }) => {
+  test.fail(
+    `Check that switching between Macro and Micro mode not crash application when opened DNA with modified monomer with modyfied monomer`,
+    async ({ page }) => {
+      // Works wrong because of https://github.com/epam/Indigo/issues/3047
       /* 
         Test case: Macro-Micro-Switcher/#3747
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
         */
       await openFileAndAddToCanvasMacro(
         page,
-        testInfo.fileName,
+        'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
         MacroFileType.MOLv3000,
       );
+      expect(await getMonomerLocator(page, {}).count()).toBeGreaterThan(0);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -148,8 +138,28 @@ test.describe('Macro-Micro-Switcher2', () => {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
-    });
-  }
+    },
+  );
+
+  test(`Check that switching between Macro and Micro mode not crash application when opened RNA with modified monomer with modyfied monomer`, async ({
+    page,
+  }) => {
+    /* 
+        Test case: Macro-Micro-Switcher/#3747
+        Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
+        */
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna-mod-phosphate-mod-base-example.mol',
+      MacroFileType.MOLv3000,
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher2', () => {

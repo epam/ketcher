@@ -1,11 +1,11 @@
 $RXN
 
- -INDIGO- 0610251418
+ -INDIGO- 0726251955
 
   0  0  4
 $MOL
 
-  -INDIGO-06102514182D
+  -INDIGO-07262519552D
 
  46 51  0  0  1  0  0  0  0  0999 V2000
    19.2414   -2.4405    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -113,25 +113,21 @@ M  SAL   1  1  25
 M  SBL   1  1  27
 M  SMT   1 H
 M  SCL   1 LGRP
-M  SDS EXP  1   1
 M  SDI   1  4    0.5476    0.0203    0.0000    0.0000
 M  SAL   2  1  23
 M  SBL   2  1  25
 M  SMT   2 NH2
 M  SCL   2 LGRP
-M  SDS EXP  1   2
 M  SDI   2  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   3  1  22
 M  SBL   3  1  24
 M  SMT   3 NH2
 M  SCL   3 LGRP
-M  SDS EXP  1   3
 M  SDI   3  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   4  1  21
 M  SBL   4  1  22
 M  SMT   4 OH
 M  SCL   4 LGRP
-M  SDS EXP  1   4
 M  SDI   4  4    0.3466    0.4228    0.0000    0.0000
 M  SAL   5  8   2   3   4   5   6   7   8   9
 M  SAL   5  8  10  11  12  13  14  15  16  17
@@ -139,7 +135,6 @@ M  SAL   5  3  18  19  20
 M  SBL   5  5  24  25  22  27  51
 M  SMT   5 (R1,R2,R3,R4,R5)
 M  SCL   5 RNA
-M  SDS EXP  1   5
 M  SAP   5  5  17   0 Al  19  25 Br  15  23 Cx  13  22 Dx  11  21 Ex
 M  SDI   5  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI   5  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -148,25 +143,21 @@ M  SAL   6  1  46
 M  SBL   6  1  50
 M  SMT   6 H
 M  SCL   6 LGRP
-M  SDS EXP  1   6
 M  SDI   6  4    0.5476    0.0203    0.0000    0.0000
 M  SAL   7  1  45
 M  SBL   7  1  49
 M  SMT   7 NH2
 M  SCL   7 LGRP
-M  SDS EXP  1   7
 M  SDI   7  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   8  1  44
 M  SBL   8  1  48
 M  SMT   8 NH2
 M  SCL   8 LGRP
-M  SDS EXP  1   8
 M  SDI   8  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   9  1  43
 M  SBL   9  1  46
 M  SMT   9 OH
 M  SCL   9 LGRP
-M  SDS EXP  1   9
 M  SDI   9  4    0.3466    0.4228    0.0000    0.0000
 M  SAL  10  8   1  24  26  27  28  29  30  31
 M  SAL  10  8  32  33  34  35  36  37  38  39
@@ -174,7 +165,6 @@ M  SAL  10  3  40  41  42
 M  SBL  10  5  48  49  46  50  51
 M  SMT  10 (R1,R2,R3,R4,R5)
 M  SCL  10 RNA
-M  SDS EXP  1  10
 M  SAP  10  5  39   0 Al  41  46 Br  37  45 Cx  35  44 Dx  33  43 Ex
 M  SDI  10  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI  10  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -182,7 +172,7 @@ M  SDI  10  4   -0.5476   -0.0203    0.0000    0.0000
 M  END
 $MOL
 
-  -INDIGO-06102514182D
+  -INDIGO-07262519552D
 
  46 51  0  0  1  0  0  0  0  0999 V2000
    21.2455   -4.8068    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -290,31 +280,26 @@ M  SAL   1  1  46
 M  SBL   1  1  50
 M  SMT   1 H
 M  SCL   1 LGRP
-M  SDS EXP  1   1
 M  SDI   1  4    0.4899   -0.0776    0.0000    0.0000
 M  SAL   2  1  25
 M  SBL   2  1  27
 M  SMT   2 H
 M  SCL   2 LGRP
-M  SDS EXP  1   2
 M  SDI   2  4    0.5476    0.0203    0.0000    0.0000
 M  SAL   3  1  23
 M  SBL   3  1  25
 M  SMT   3 NH2
 M  SCL   3 LGRP
-M  SDS EXP  1   3
 M  SDI   3  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   4  1  22
 M  SBL   4  1  24
 M  SMT   4 NH2
 M  SCL   4 LGRP
-M  SDS EXP  1   4
 M  SDI   4  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   5  1  21
 M  SBL   5  1  22
 M  SMT   5 OH
 M  SCL   5 LGRP
-M  SDS EXP  1   5
 M  SDI   5  4    0.3466    0.4228    0.0000    0.0000
 M  SAL   6  8   2   3   4   5   6   7   8   9
 M  SAL   6  8  10  11  12  13  14  15  16  17
@@ -322,7 +307,6 @@ M  SAL   6  3  18  19  20
 M  SBL   6  5  24  25  22  27  51
 M  SMT   6 (R1,R2,R3,R4,R5)
 M  SCL   6 RNA
-M  SDS EXP  1   6
 M  SAP   6  5  17   0 Al  19  25 Br  15  23 Cx  13  22 Dx  11  21 Ex
 M  SDI   6  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI   6  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -331,19 +315,16 @@ M  SAL   7  1  45
 M  SBL   7  1  49
 M  SMT   7 NH2
 M  SCL   7 LGRP
-M  SDS EXP  1   7
 M  SDI   7  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   8  1  44
 M  SBL   8  1  48
 M  SMT   8 NH2
 M  SCL   8 LGRP
-M  SDS EXP  1   8
 M  SDI   8  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   9  1  43
 M  SBL   9  1  46
 M  SMT   9 OH
 M  SCL   9 LGRP
-M  SDS EXP  1   9
 M  SDI   9  4    0.3466    0.4228    0.0000    0.0000
 M  SAL  10  8   1  24  26  27  28  29  30  31
 M  SAL  10  8  32  33  34  35  36  37  38  39
@@ -351,7 +332,6 @@ M  SAL  10  3  40  41  42
 M  SBL  10  5  48  49  50  46  51
 M  SMT  10 (R1,R2,R3,R4,R5)
 M  SCL  10 RNA
-M  SDS EXP  1  10
 M  SAP  10  5  39  46 Al  41   0 Br  37  45 Cx  35  44 Dx  33  43 Ex
 M  SDI  10  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI  10  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -359,7 +339,7 @@ M  SDI  10  4   -0.5476   -0.0203    0.0000    0.0000
 M  END
 $MOL
 
-  -INDIGO-06102514182D
+  -INDIGO-07262519552D
 
  46 51  0  0  1  0  0  0  0  0999 V2000
    21.3544   -8.9794    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -467,31 +447,26 @@ M  SAL   1  1  24
 M  SBL   1  1  26
 M  SMT   1 H
 M  SCL   1 LGRP
-M  SDS EXP  1   1
 M  SDI   1  4    0.4899   -0.0776    0.0000    0.0000
 M  SAL   2  1  46
 M  SBL   2  1  50
 M  SMT   2 H
 M  SCL   2 LGRP
-M  SDS EXP  1   2
 M  SDI   2  4    0.4899   -0.0776    0.0000    0.0000
 M  SAL   3  1  23
 M  SBL   3  1  25
 M  SMT   3 NH2
 M  SCL   3 LGRP
-M  SDS EXP  1   3
 M  SDI   3  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   4  1  22
 M  SBL   4  1  24
 M  SMT   4 NH2
 M  SCL   4 LGRP
-M  SDS EXP  1   4
 M  SDI   4  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   5  1  21
 M  SBL   5  1  22
 M  SMT   5 OH
 M  SCL   5 LGRP
-M  SDS EXP  1   5
 M  SDI   5  4    0.3466    0.4228    0.0000    0.0000
 M  SAL   6  8   2   3   4   5   6   7   8   9
 M  SAL   6  8  10  11  12  13  14  15  16  17
@@ -499,7 +474,6 @@ M  SAL   6  3  18  19  20
 M  SBL   6  5  24  25  26  22  51
 M  SMT   6 (R1,R2,R3,R4,R5)
 M  SCL   6 RNA
-M  SDS EXP  1   6
 M  SAP   6  5  17  24 Al  19   0 Br  15  23 Cx  13  22 Dx  11  21 Ex
 M  SDI   6  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI   6  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -508,19 +482,16 @@ M  SAL   7  1  45
 M  SBL   7  1  49
 M  SMT   7 NH2
 M  SCL   7 LGRP
-M  SDS EXP  1   7
 M  SDI   7  4   -0.1284    0.4792    0.0000    0.0000
 M  SAL   8  1  44
 M  SBL   8  1  48
 M  SMT   8 NH2
 M  SCL   8 LGRP
-M  SDS EXP  1   8
 M  SDI   8  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   9  1  43
 M  SBL   9  1  46
 M  SMT   9 OH
 M  SCL   9 LGRP
-M  SDS EXP  1   9
 M  SDI   9  4    0.3466    0.4228    0.0000    0.0000
 M  SAL  10  8   1  25  26  27  28  29  30  31
 M  SAL  10  8  32  33  34  35  36  37  38  39
@@ -528,7 +499,6 @@ M  SAL  10  3  40  41  42
 M  SBL  10  5  48  49  50  46  51
 M  SMT  10 (R1,R2,R3,R4,R5)
 M  SCL  10 RNA
-M  SDS EXP  1  10
 M  SAP  10  5  39  46 Al  41   0 Br  37  45 Cx  35  44 Dx  33  43 Ex
 M  SDI  10  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI  10  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -536,7 +506,7 @@ M  SDI  10  4   -0.5476   -0.0203    0.0000    0.0000
 M  END
 $MOL
 
-  -INDIGO-06102514182D
+  -INDIGO-07262519552D
 
  46 51  0  0  1  0  0  0  0  0999 V2000
    21.5188  -13.2794    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -644,31 +614,26 @@ M  SAL   1  1  24
 M  SBL   1  1  26
 M  SMT   1 H
 M  SCL   1 LGRP
-M  SDS EXP  1   1
 M  SDI   1  4    0.4899   -0.0776    0.0000    0.0000
 M  SAL   2  1  25
 M  SBL   2  1  27
 M  SMT   2 H
 M  SCL   2 LGRP
-M  SDS EXP  1   2
 M  SDI   2  4    0.5476    0.0203    0.0000    0.0000
 M  SAL   3  1  45
 M  SBL   3  1  49
 M  SMT   3 H
 M  SCL   3 LGRP
-M  SDS EXP  1   3
 M  SDI   3  4    0.4899   -0.0776    0.0000    0.0000
 M  SAL   4  1  22
 M  SBL   4  1  24
 M  SMT   4 NH2
 M  SCL   4 LGRP
-M  SDS EXP  1   4
 M  SDI   4  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   5  1  21
 M  SBL   5  1  22
 M  SMT   5 OH
 M  SCL   5 LGRP
-M  SDS EXP  1   5
 M  SDI   5  4    0.3466    0.4228    0.0000    0.0000
 M  SAL   6  8   2   3   4   5   6   7   8   9
 M  SAL   6  8  10  11  12  13  14  15  16  17
@@ -676,7 +641,6 @@ M  SAL   6  3  18  19  20
 M  SBL   6  5  24  26  22  27  51
 M  SMT   6 (R1,R2,R3,R4,R5)
 M  SCL   6 RNA
-M  SDS EXP  1   6
 M  SAP   6  5  17  24 Al  19  25 Br  15   0 Cx  13  22 Dx  11  21 Ex
 M  SDI   6  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI   6  4   -0.4899    0.0776   -0.3466   -0.4228
@@ -685,19 +649,16 @@ M  SAL   7  1  46
 M  SBL   7  1  50
 M  SMT   7 H
 M  SCL   7 LGRP
-M  SDS EXP  1   7
 M  SDI   7  4    0.5476    0.0203    0.0000    0.0000
 M  SAL   8  1  44
 M  SBL   8  1  48
 M  SMT   8 NH2
 M  SCL   8 LGRP
-M  SDS EXP  1   8
 M  SDI   8  4   -0.3508   -0.3508    0.0000    0.0000
 M  SAL   9  1  43
 M  SBL   9  1  46
 M  SMT   9 OH
 M  SCL   9 LGRP
-M  SDS EXP  1   9
 M  SDI   9  4    0.3466    0.4228    0.0000    0.0000
 M  SAL  10  8   1  23  26  27  28  29  30  31
 M  SAL  10  8  32  33  34  35  36  37  38  39
@@ -705,7 +666,6 @@ M  SAL  10  3  40  41  42
 M  SBL  10  5  48  49  46  50  51
 M  SMT  10 (R1,R2,R3,R4,R5)
 M  SCL  10 RNA
-M  SDS EXP  1  10
 M  SAP  10  5  39  45 Al  41  46 Br  37   0 Cx  35  44 Dx  33  43 Ex
 M  SDI  10  4    0.3508    0.3508    0.1284   -0.4792
 M  SDI  10  4   -0.4899    0.0776   -0.3466   -0.4228

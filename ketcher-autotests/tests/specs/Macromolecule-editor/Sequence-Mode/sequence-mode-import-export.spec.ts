@@ -7,6 +7,7 @@ import {
   MacroFileType,
   resetZoomLevelToDefault,
   waitForPageInit,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
@@ -145,13 +146,12 @@ test.describe('Import/export sequence:', () => {
         Enter symbols A, T, C, G, U (case insensitive) in the sequence input.
         Ensure no errors are displayed.
     */
-
+    await clickInTheMiddleOfTheScreen(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
-
     await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

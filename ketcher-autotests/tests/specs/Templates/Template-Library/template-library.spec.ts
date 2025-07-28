@@ -5,10 +5,8 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
   deleteByKeyboard,
   FunctionalGroups,
-  getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
   selectFunctionalGroups,
   takeEditorScreenshot,
@@ -22,20 +20,25 @@ import {
   LabelDisplayAtStereogenicCentersOption,
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  AromaticsTemplate,
+  TemplateLibraryTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
 
-async function placePhenylalanineMustard(page: Page, x: number, y: number) {
-  await BottomToolbar(page).StructureLibrary();
-  const phenylalanineLocator = page.locator(
-    `div[title*="Phenylalanine mustard"] > div`,
-  );
-  if ((await phenylalanineLocator.count()) === 0) {
-    await page.getByText('Aromatics').click();
-  }
-  await waitForRender(page, async () => {
-    await phenylalanineLocator.first().click();
-    await clickOnCanvas(page, x, y);
-  });
-}
+// async function placePhenylalanineMustard(page: Page, x: number, y: number) {
+//   await BottomToolbar(page).StructureLibrary();
+//   const phenylalanineLocator = page.locator(
+//     `div[title*="Phenylalanine mustard"] > div`,
+//   );
+//   if ((await phenylalanineLocator.count()) === 0) {
+//     await page.getByText('Aromatics').click();
+//   }
+//   await waitForRender(page, async () => {
+//     await phenylalanineLocator.first().click();
+//     await clickOnCanvas(page, x, y);
+//   });
+// }
 
 async function editAndClearTemplateName(
   page: Page,
@@ -58,8 +61,8 @@ test.describe('Templates - Template Library', () => {
   }) => {
     // Phenylalanine mustard was chosen, because it has chiral flag 0, which allows us
     // to test ignoreChiralFlag, which has an effect on the structure only in this case
-    const offsetX = 300;
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    // const offsetX = 300;
+    // const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
     // Using "On" label style, to always show the stereo labels, so we can see the difference
     await setSettingsOption(
@@ -69,10 +72,16 @@ test.describe('Templates - Template Library', () => {
     );
 
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await placePhenylalanineMustard(page, x - offsetX, y);
+    await StructureLibraryDialog(page).addTemplateToCanvas(
+      TemplateLibraryTabItems.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
 
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await placePhenylalanineMustard(page, x + offsetX, y);
+    await StructureLibraryDialog(page).addTemplateToCanvas(
+      TemplateLibraryTabItems.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
     await takeEditorScreenshot(page);
   });
 

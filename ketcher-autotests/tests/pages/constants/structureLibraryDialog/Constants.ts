@@ -23,8 +23,8 @@ export enum TemplateLibraryTabItems {
   ThreeDTemplates = '3D Templates-accordion-item',
 }
 
-// Options for every Item on Template Library Tab
-export enum AlphaDSugarsOption {
+// Templates for every Item on Template Library Tab
+export enum AlphaDSugarsTemplate {
   AlphaDAllopyranose = 'alpha-D-Allopyranose',
   AlphaDAltropyranose = 'alpha-D-Altropyranose',
   AlphaDArabinofuranose = 'alpha-D-Arabinofuranose',
@@ -48,7 +48,7 @@ export enum AlphaDSugarsOption {
   AlphaDXylopyranose = 'alpha-D-Xylopyranose',
 }
 
-export enum AromaticsOption {
+export enum AromaticsTemplate {
   Cyclopenta13diene = 'Cyclopenta-1,3-diene',
   OneHindene = '1H-indene',
   Naphtalene = 'Naphtalene',
@@ -69,7 +69,7 @@ export enum AromaticsOption {
   PhenylalanineMustard = 'Phenylalanine mustard',
 }
 
-export enum BetaDSugarsOption {
+export enum BetaDSugarsTemplate {
   BetaDAllopyranose = 'beta-D-Allopyranose',
   BetaDAltropyranose = 'beta-D-Altropyranose',
   BetaDArabinofuranose = 'beta-D-Arabinofuranose',
@@ -94,7 +94,7 @@ export enum BetaDSugarsOption {
   BetaDXylopyranose = 'beta-D-Xylopyranose',
 }
 
-export enum BicyclesOption {
+export enum BicyclesTemplate {
   Bicyclo111Pentane = 'Bicyclo[1-1-1]pentane',
   Bicyclo211Hexane = 'Bicyclo[2-1-1]hexane',
   Bicyclo221Heptane = 'Bicyclo[2-2-1]heptane',
@@ -122,14 +122,14 @@ export enum BicyclesOption {
   Bicyclo551Tridecane = 'Bicyclo[5-5-1]tridecane',
 }
 
-export enum BridgedPolycyclicsOption {
+export enum BridgedPolycyclicsTemplate {
   Adamantane = 'Adamantane',
   Cubane = 'Cubane',
   Prismane = 'Prismane',
   Twistane = 'Twistane',
 }
 
-export enum CrownEthersOption {
+export enum CrownEthersTemplate {
   TwelveCrown4 = '12-Crown-4',
   ThirteenCrown4 = '13-Crown-4',
   FourteenCrown4 = '14-Crown-4',
@@ -144,7 +144,7 @@ export enum CrownEthersOption {
   ThirtyCrown10 = '30-Crown-10',
 }
 
-export enum DAminoAcidsOption {
+export enum DAminoAcidsTemplate {
   ALADAlanine = 'ALA-D-Alanine',
   ARGDArginine = 'ARG-D-Arginine',
   ASNDAsparagine = 'ASN-D-Asparagine',
@@ -167,7 +167,7 @@ export enum DAminoAcidsOption {
   VALDValine = 'VAL-D-Valine',
 }
 
-export enum DSugarsOption {
+export enum DSugarsTemplate {
   DAllose = 'D-Allose',
   DAltrose = 'D-Altrose',
   DArabinose = 'D-Arabinose',
@@ -191,7 +191,7 @@ export enum DSugarsOption {
   DXylulose = 'D-Xylulose',
 }
 
-export enum HeterocyclicRingsOption {
+export enum HeterocyclicRingsTemplate {
   OneTwoThreeOxadiazole = '1_2_3-Oxadiazole',
   Dioxane = 'Dioxane',
   Furan = 'Furan',
@@ -223,7 +223,7 @@ export enum HeterocyclicRingsOption {
   Triazole = 'Triazole',
 }
 
-export enum LAminoAcidsOption {
+export enum LAminoAcidsTemplate {
   ALALAlanine = 'ALA-L-Alanine',
   ARGLArginine = 'ARG-L-Arginine',
   ASNLAsparagine = 'ASN-L-Asparagine',
@@ -246,7 +246,7 @@ export enum LAminoAcidsOption {
   VALLValine = 'VAL-L-Valine',
 }
 
-export enum NucleobasesOption {
+export enum NucleobasesTemplate {
   Adenine = 'Adenine',
   Cytosine = 'Cytosine',
   Guanine = 'Guanine',
@@ -261,7 +261,7 @@ export enum NucleobasesOption {
   AdenosineTriphosphate = 'Adenosine triphosphate',
 }
 
-export enum RingsOption {
+export enum RingsTemplate {
   Benzene = 'Benzene',
   Boat = 'Boat',
   Chair = 'Chair',
@@ -289,7 +289,7 @@ export enum RingsOption {
   Ring21 = 'Ring21',
 }
 
-export enum SugarsOption {
+export enum SugarsTemplate {
   AlphaDAllopyranose = 'alpha-D-Allopyranose',
   AlphaDAltropyranose = 'alpha-D-Altropyranose',
   AlphaDGalactopyranose = 'alpha-D-Galactopyranose',
@@ -300,7 +300,7 @@ export enum SugarsOption {
   AlphaDTalopyranose = 'alpha-D-Talopyranose',
 }
 
-export enum ThreeDTemplatesOption {
+export enum ThreeDTemplatesTemplate {
   FullereneC60 = 'fullerene C60',
   Adamantane = 'adamantane',
   Cubane = 'cubane',
@@ -325,307 +325,323 @@ export enum ThreeDTemplatesOption {
   ChlorophyllACovalent = 'Chlorophyll A_covalent',
 }
 
+export type LibraryTemplate =
+  | AlphaDSugarsTemplate
+  | AromaticsTemplate
+  | BetaDSugarsTemplate
+  | BicyclesTemplate
+  | BridgedPolycyclicsTemplate
+  | CrownEthersTemplate
+  | DAminoAcidsTemplate
+  | DSugarsTemplate
+  | HeterocyclicRingsTemplate
+  | LAminoAcidsTemplate
+  | NucleobasesTemplate
+  | RingsTemplate
+  | SugarsTemplate
+  | ThreeDTemplatesTemplate;
+
 // Edit functionality for every Item on Template Library Tab
-export enum EditAlphaDSugarsOption {
-  EditAlphaDAllopyranose = 'edit-alpha-D-Allopyranose-button',
-  EditAlphaDAltropyranose = 'edit-alpha-D-Altropyranose-button',
-  EditAlphaDArabinofuranose = 'edit-alpha-D-Arabinofuranose-button',
-  EditAlphaDArabinopyranose = 'edit-alpha-D-Arabinopyranose-button',
-  EditAlphaDErythrofuranose = 'edit-alpha-D-Erythrofuranose-button',
-  EditAlphaDGalactopyranose = 'edit-alpha-D-Galactopyranose-button',
-  EditAlphaDGlucopyranose = 'edit-alpha-D-Glucopyranose-button',
-  EditAlphaDGulopyranose = 'edit-alpha-D-Gulopyranose-button',
-  EditAlphaDIdopyranose = 'edit-alpha-D-Idopyranose-button',
-  EditAlphaDLyxofuranose = 'edit-alpha-D-Lyxofuranose-button',
-  EditAlphaDLyxopyranose = 'edit-alpha-D-Lyxopyranose-button',
-  EditAlphaDMannopyranose = 'edit-alpha-D-Mannopyranose-button',
-  EditAlphaDPsicofuranose = 'edit-alpha-D-Psicofuranose-button',
-  EditAlphaDRibofuranose = 'edit-alpha-D-Ribofuranose-button',
-  EditAlphaDRibopyranose = 'edit-alpha-D-Ribopyranose-button',
-  EditAlphaDSorbofuranose = 'edit-alpha-D-Sorbofuranose-button',
-  EditAlphaDTagatofuranose = 'edit-alpha-D-Tagatofuranose-button',
-  EditAlphaDTalopyranose = 'edit-alpha-D-Talopyranose-button',
-  EditAlphaDThreofuranose = 'edit-alpha-D-Threofuranose-button',
-  EditAlphaDXylofuranose = 'edit-alpha-D-Xylofuranose-button',
-  EditAlphaDXylopyranose = 'edit-alpha-D-Xylopyranose-button',
-}
+// export enum EditAlphaDSugarsTemplate {
+//   EditAlphaDAllopyranose = 'edit-alpha-D-Allopyranose-button',
+//   EditAlphaDAltropyranose = 'edit-alpha-D-Altropyranose-button',
+//   EditAlphaDArabinofuranose = 'edit-alpha-D-Arabinofuranose-button',
+//   EditAlphaDArabinopyranose = 'edit-alpha-D-Arabinopyranose-button',
+//   EditAlphaDErythrofuranose = 'edit-alpha-D-Erythrofuranose-button',
+//   EditAlphaDGalactopyranose = 'edit-alpha-D-Galactopyranose-button',
+//   EditAlphaDGlucopyranose = 'edit-alpha-D-Glucopyranose-button',
+//   EditAlphaDGulopyranose = 'edit-alpha-D-Gulopyranose-button',
+//   EditAlphaDIdopyranose = 'edit-alpha-D-Idopyranose-button',
+//   EditAlphaDLyxofuranose = 'edit-alpha-D-Lyxofuranose-button',
+//   EditAlphaDLyxopyranose = 'edit-alpha-D-Lyxopyranose-button',
+//   EditAlphaDMannopyranose = 'edit-alpha-D-Mannopyranose-button',
+//   EditAlphaDPsicofuranose = 'edit-alpha-D-Psicofuranose-button',
+//   EditAlphaDRibofuranose = 'edit-alpha-D-Ribofuranose-button',
+//   EditAlphaDRibopyranose = 'edit-alpha-D-Ribopyranose-button',
+//   EditAlphaDSorbofuranose = 'edit-alpha-D-Sorbofuranose-button',
+//   EditAlphaDTagatofuranose = 'edit-alpha-D-Tagatofuranose-button',
+//   EditAlphaDTalopyranose = 'edit-alpha-D-Talopyranose-button',
+//   EditAlphaDThreofuranose = 'edit-alpha-D-Threofuranose-button',
+//   EditAlphaDXylofuranose = 'edit-alpha-D-Xylofuranose-button',
+//   EditAlphaDXylopyranose = 'edit-alpha-D-Xylopyranose-button',
+// }
 
-export enum EditAromaticsOption {
-  EditCyclopenta13diene = 'edit-Cyclopenta-1,3-diene-button',
-  EditOneHindene = 'edit-1H-indene-button',
-  EditNaphtalene = 'edit-Naphtalene-button',
-  EditAzulene = 'edit-Azulene-button',
-  EditEStilbene = 'edit-E-Stilbene-button',
-  EditZStilbene = 'edit-Z-Stilbene-button',
-  EditAnthracene = 'edit-Anthracene-button',
-  EditPhenantrene = 'edit-Phenantrene-button',
-  EditPyrene = 'edit-Pyrene-button',
-  EditTriphenylene = 'edit-Triphenylene-button',
-  EditTriptycene = 'edit-Triptycene-button',
-  EditFourteenAnnulene = 'edit-14-Annulene-button',
-  EditEighteenAnnulene = 'edit-18-Annulene-button',
-  EditPorphyrin = 'edit-Porphyrin-button',
-  EditPhthalocyanine = 'edit-Phthalocyanine-button',
-  EditC60 = 'edit-C60-button',
-  EditC80 = 'edit-C80-button',
-  EditPhenylalanineMustard = 'edit-Phenylalanine-mustard-button',
-}
+// export enum EditAromaticsTemplate {
+//   EditCyclopenta13diene = 'edit-Cyclopenta-1,3-diene-button',
+//   EditOneHindene = 'edit-1H-indene-button',
+//   EditNaphtalene = 'edit-Naphtalene-button',
+//   EditAzulene = 'edit-Azulene-button',
+//   EditEStilbene = 'edit-E-Stilbene-button',
+//   EditZStilbene = 'edit-Z-Stilbene-button',
+//   EditAnthracene = 'edit-Anthracene-button',
+//   EditPhenantrene = 'edit-Phenantrene-button',
+//   EditPyrene = 'edit-Pyrene-button',
+//   EditTriphenylene = 'edit-Triphenylene-button',
+//   EditTriptycene = 'edit-Triptycene-button',
+//   EditFourteenAnnulene = 'edit-14-Annulene-button',
+//   EditEighteenAnnulene = 'edit-18-Annulene-button',
+//   EditPorphyrin = 'edit-Porphyrin-button',
+//   EditPhthalocyanine = 'edit-Phthalocyanine-button',
+//   EditC60 = 'edit-C60-button',
+//   EditC80 = 'edit-C80-button',
+//   EditPhenylalanineMustard = 'edit-Phenylalanine-mustard-button',
+// }
 
-export enum EditBetaDSugarsOption {
-  EditBetaDAllopyranose = 'edit-beta-D-Allopyranose-button',
-  EditBetaDAltropyranose = 'edit-beta-D-Altropyranose-button',
-  EditBetaDArabinofuranose = 'edit-beta-D-Arabinofuranose-button',
-  EditBetaDArabinopyranose = 'edit-beta-D-Arabinopyranose-button',
-  EditBetaDErythrofuranose = 'edit-beta-D-Erythrofuranose-button',
-  EditBetaDFructofuranose = 'edit-beta-D-Fructofuranose-button',
-  EditBetaDGalactopyranose = 'edit-beta-D-Galactopyranose-button',
-  EditBetaDGlucopyranose = 'edit-beta-D-Glucopyranose-button',
-  EditBetaDGulopyranose = 'edit-beta-D-Gulopyranose-button',
-  EditBetaDIdopyranose = 'edit-beta-D-Idopyranose-button',
-  EditBetaDLyxofuranose = 'edit-beta-D-Lyxofuranose-button',
-  EditBetaDLyxopyranose = 'edit-beta-D-Lyxopyranose-button',
-  EditBetaDMannopyranose = 'edit-beta-D-Mannopyranose-button',
-  EditBetaDPsicofuranose = 'edit-beta-D-Psicofuranose-button',
-  EditBetaDRibofuranose = 'edit-beta-D-Ribofuranose-button',
-  EditBetaDRibopyranose = 'edit-beta-D-Ribopyranose-button',
-  EditBetaDSorbofuranose = 'edit-beta-D-Sorbofuranose-button',
-  EditBetaDTagatofuranose = 'edit-beta-D-Tagatofuranose-button',
-  EditBetaDTalopyranose = 'edit-beta-D-Talopyranose-button',
-  EditBetaDThreofuranose = 'edit-beta-D-Threofuranose-button',
-  EditBetaDXylofuranose = 'edit-beta-D-Xylofuranose-button',
-  EditBetaDXylopyranose = 'edit-beta-D-Xylopyranose-button',
-}
+// export enum EditBetaDSugarsTemplate {
+//   EditBetaDAllopyranose = 'edit-beta-D-Allopyranose-button',
+//   EditBetaDAltropyranose = 'edit-beta-D-Altropyranose-button',
+//   EditBetaDArabinofuranose = 'edit-beta-D-Arabinofuranose-button',
+//   EditBetaDArabinopyranose = 'edit-beta-D-Arabinopyranose-button',
+//   EditBetaDErythrofuranose = 'edit-beta-D-Erythrofuranose-button',
+//   EditBetaDFructofuranose = 'edit-beta-D-Fructofuranose-button',
+//   EditBetaDGalactopyranose = 'edit-beta-D-Galactopyranose-button',
+//   EditBetaDGlucopyranose = 'edit-beta-D-Glucopyranose-button',
+//   EditBetaDGulopyranose = 'edit-beta-D-Gulopyranose-button',
+//   EditBetaDIdopyranose = 'edit-beta-D-Idopyranose-button',
+//   EditBetaDLyxofuranose = 'edit-beta-D-Lyxofuranose-button',
+//   EditBetaDLyxopyranose = 'edit-beta-D-Lyxopyranose-button',
+//   EditBetaDMannopyranose = 'edit-beta-D-Mannopyranose-button',
+//   EditBetaDPsicofuranose = 'edit-beta-D-Psicofuranose-button',
+//   EditBetaDRibofuranose = 'edit-beta-D-Ribofuranose-button',
+//   EditBetaDRibopyranose = 'edit-beta-D-Ribopyranose-button',
+//   EditBetaDSorbofuranose = 'edit-beta-D-Sorbofuranose-button',
+//   EditBetaDTagatofuranose = 'edit-beta-D-Tagatofuranose-button',
+//   EditBetaDTalopyranose = 'edit-beta-D-Talopyranose-button',
+//   EditBetaDThreofuranose = 'edit-beta-D-Threofuranose-button',
+//   EditBetaDXylofuranose = 'edit-beta-D-Xylofuranose-button',
+//   EditBetaDXylopyranose = 'edit-beta-D-Xylopyranose-button',
+// }
 
-export enum EditBicyclesOption {
-  EditBicyclo111Pentane = 'edit-Bicyclo[1-1-1]pentane-button',
-  EditBicyclo211Hexane = 'edit-Bicyclo[2-1-1]hexane-button',
-  EditBicyclo221Heptane = 'edit-Bicyclo[2-2-1]heptane-button',
-  EditBicyclo311Heptane = 'edit-Bicyclo[3-1-1]heptane-button',
-  EditBicyclo222Octane = 'edit-Bicyclo[2-2-2]octane-button',
-  EditBicyclo321Octane = 'edit-Bicyclo[3-2-1]octane-button',
-  EditBicyclo411Octane = 'edit-Bicyclo[4-1-1]octane-button',
-  EditBicyclo322Nonane = 'edit-Bicyclo[3-2-2]nonane-button',
-  EditBicyclo331Nonane = 'edit-Bicyclo[3-3-1]nonane-button',
-  EditBicyclo421Nonane = 'edit-Bicyclo[4-2-1]nonane-button',
-  EditBicyclo511Nonane = 'edit-Bicyclo[5-1-1]nonane-button',
-  EditBicyclo332Decane = 'edit-Bicyclo[3-3-2]decane-button',
-  EditBicyclo422Decane = 'edit-Bicyclo[4-2-2]decane-button',
-  EditBicyclo431Decane = 'edit-Bicyclo[4-3-1]decane-button',
-  EditBicyclo521Decane = 'edit-Bicyclo[5-2-1]decane-button',
-  EditBicyclo333Undecane = 'edit-Bicyclo[3-3-3]undecane-button',
-  EditBicyclo432Undecane = 'edit-Bicyclo[4-3-2]undecane-button',
-  EditBicyclo441Undecane = 'edit-Bicyclo[4-4-1]undecane-button',
-  EditBicyclo531Undecane = 'edit-Bicyclo[5-3-1]undecane-button',
-  EditBicyclo442Dodecane = 'edit-Bicyclo[4-4-2]dodecane-button',
-  EditBicyclo532Dodecane = 'edit-Bicyclo[5-3-2]dodecane-button',
-  EditBicyclo541Dodecane = 'edit-Bicyclo[5-4-1]dodecane-button',
-  EditBicyclo533Tridecane = 'edit-Bicyclo[5-3-3]tridecane-button',
-  EditBicyclo542Tridecane = 'edit-Bicyclo[5-4-2]tridecane-button',
-  EditBicyclo551Tridecane = 'edit-Bicyclo[5-5-1]tridecane-button',
-}
+// export enum EditBicyclesTemplate {
+//   EditBicyclo111Pentane = 'edit-Bicyclo[1-1-1]pentane-button',
+//   EditBicyclo211Hexane = 'edit-Bicyclo[2-1-1]hexane-button',
+//   EditBicyclo221Heptane = 'edit-Bicyclo[2-2-1]heptane-button',
+//   EditBicyclo311Heptane = 'edit-Bicyclo[3-1-1]heptane-button',
+//   EditBicyclo222Octane = 'edit-Bicyclo[2-2-2]octane-button',
+//   EditBicyclo321Octane = 'edit-Bicyclo[3-2-1]octane-button',
+//   EditBicyclo411Octane = 'edit-Bicyclo[4-1-1]octane-button',
+//   EditBicyclo322Nonane = 'edit-Bicyclo[3-2-2]nonane-button',
+//   EditBicyclo331Nonane = 'edit-Bicyclo[3-3-1]nonane-button',
+//   EditBicyclo421Nonane = 'edit-Bicyclo[4-2-1]nonane-button',
+//   EditBicyclo511Nonane = 'edit-Bicyclo[5-1-1]nonane-button',
+//   EditBicyclo332Decane = 'edit-Bicyclo[3-3-2]decane-button',
+//   EditBicyclo422Decane = 'edit-Bicyclo[4-2-2]decane-button',
+//   EditBicyclo431Decane = 'edit-Bicyclo[4-3-1]decane-button',
+//   EditBicyclo521Decane = 'edit-Bicyclo[5-2-1]decane-button',
+//   EditBicyclo333Undecane = 'edit-Bicyclo[3-3-3]undecane-button',
+//   EditBicyclo432Undecane = 'edit-Bicyclo[4-3-2]undecane-button',
+//   EditBicyclo441Undecane = 'edit-Bicyclo[4-4-1]undecane-button',
+//   EditBicyclo531Undecane = 'edit-Bicyclo[5-3-1]undecane-button',
+//   EditBicyclo442Dodecane = 'edit-Bicyclo[4-4-2]dodecane-button',
+//   EditBicyclo532Dodecane = 'edit-Bicyclo[5-3-2]dodecane-button',
+//   EditBicyclo541Dodecane = 'edit-Bicyclo[5-4-1]dodecane-button',
+//   EditBicyclo533Tridecane = 'edit-Bicyclo[5-3-3]tridecane-button',
+//   EditBicyclo542Tridecane = 'edit-Bicyclo[5-4-2]tridecane-button',
+//   EditBicyclo551Tridecane = 'edit-Bicyclo[5-5-1]tridecane-button',
+// }
 
-export enum EditBridgedPolycyclicsOption {
-  EditAdamantane = 'edit-Adamantane-button',
-  EditCubane = 'edit-Cubane-button',
-  EditPrismane = 'edit-Prismane-button',
-  EditTwistane = 'edit-Twistane-button',
-}
+// export enum EditBridgedPolycyclicsTemplate {
+//   EditAdamantane = 'edit-Adamantane-button',
+//   EditCubane = 'edit-Cubane-button',
+//   EditPrismane = 'edit-Prismane-button',
+//   EditTwistane = 'edit-Twistane-button',
+// }
 
-export enum EditCrownEthersOption {
-  EditTwelveCrown4 = 'edit-12-Crown-4-button',
-  EditThirteenCrown4 = 'edit-13-Crown-4-button',
-  EditFourteenCrown4 = 'edit-14-Crown-4-button',
-  EditFifteenCrown5 = 'edit-15-Crown-5-button',
-  EditSixteenCrown5 = 'edit-16-Crown-5-button',
-  EditSeventeenCrown5 = 'edit-17-Crown-5-button',
-  EditEighteenCrown6 = 'edit-18-Crown-6-button',
-  EditTwentyCrown6 = 'edit-20-Crown-6-button',
-  EditTwentyOneCrown7 = 'edit-21-Crown-7-button',
-  EditTwentyFourCrown8 = 'edit-24-Crown-8-button',
-  EditTwentySevenCrown9 = 'edit-27-Crown-9-button',
-  EditThirtyCrown10 = 'edit-30-Crown-10-button',
-}
+// export enum EditCrownEthersTemplate {
+//   EditTwelveCrown4 = 'edit-12-Crown-4-button',
+//   EditThirteenCrown4 = 'edit-13-Crown-4-button',
+//   EditFourteenCrown4 = 'edit-14-Crown-4-button',
+//   EditFifteenCrown5 = 'edit-15-Crown-5-button',
+//   EditSixteenCrown5 = 'edit-16-Crown-5-button',
+//   EditSeventeenCrown5 = 'edit-17-Crown-5-button',
+//   EditEighteenCrown6 = 'edit-18-Crown-6-button',
+//   EditTwentyCrown6 = 'edit-20-Crown-6-button',
+//   EditTwentyOneCrown7 = 'edit-21-Crown-7-button',
+//   EditTwentyFourCrown8 = 'edit-24-Crown-8-button',
+//   EditTwentySevenCrown9 = 'edit-27-Crown-9-button',
+//   EditThirtyCrown10 = 'edit-30-Crown-10-button',
+// }
 
-export enum EditDAminoAcidsOption {
-  EditALADAlanine = 'edit-ALA-D-Alanine-button',
-  EditARGDArginine = 'edit-ARG-D-Arginine-button',
-  EditASNDAsparagine = 'edit-ASN-D-Asparagine-button',
-  EditASPDAsparticAcid = 'edit-ASP-D-Aspartic-acid-button',
-  EditCYSDCysteine = 'edit-CYS-D-Cysteine-button',
-  EditGLNDGlutamine = 'edit-GLN-D-Glutamine-button',
-  EditGLUDGlutamicAcid = 'edit-GLU-D-Glutamic-acid-button',
-  EditGLYGlycine = 'edit-GLY-Glycine-button',
-  EditHISDHistidine = 'edit-HIS-D-Histidine-button',
-  EditILEDIsoleucine = 'edit-ILE-D-Isoleucine-button',
-  EditLEUDLeucine = 'edit-LEU-D-Leucine-button',
-  EditLYSDLysine = 'edit-LYS-D-Lysine-button',
-  EditMETDMethionine = 'edit-MET-D-Methionine-button',
-  EditPHEDPhenylalanine = 'edit-PHE-D-Phenylalanine-button',
-  EditPRODProline = 'edit-PRO-D-Proline-button',
-  EditSERDSerine = 'edit-SER-D-Serine-button',
-  EditTHRDThreonine = 'edit-THR-D-Threonine-button',
-  EditTRPDTryptophan = 'edit-TRP-D-Tryptophan-button',
-  EditTYRDTyrosine = 'edit-TYR-D-Tyrosine-button',
-  EditVALDValine = 'edit-VAL-D-Valine-button',
-}
+// export enum EditDAminoAcidsTemplate {
+//   EditALADAlanine = 'edit-ALA-D-Alanine-button',
+//   EditARGDArginine = 'edit-ARG-D-Arginine-button',
+//   EditASNDAsparagine = 'edit-ASN-D-Asparagine-button',
+//   EditASPDAsparticAcid = 'edit-ASP-D-Aspartic-acid-button',
+//   EditCYSDCysteine = 'edit-CYS-D-Cysteine-button',
+//   EditGLNDGlutamine = 'edit-GLN-D-Glutamine-button',
+//   EditGLUDGlutamicAcid = 'edit-GLU-D-Glutamic-acid-button',
+//   EditGLYGlycine = 'edit-GLY-Glycine-button',
+//   EditHISDHistidine = 'edit-HIS-D-Histidine-button',
+//   EditILEDIsoleucine = 'edit-ILE-D-Isoleucine-button',
+//   EditLEUDLeucine = 'edit-LEU-D-Leucine-button',
+//   EditLYSDLysine = 'edit-LYS-D-Lysine-button',
+//   EditMETDMethionine = 'edit-MET-D-Methionine-button',
+//   EditPHEDPhenylalanine = 'edit-PHE-D-Phenylalanine-button',
+//   EditPRODProline = 'edit-PRO-D-Proline-button',
+//   EditSERDSerine = 'edit-SER-D-Serine-button',
+//   EditTHRDThreonine = 'edit-THR-D-Threonine-button',
+//   EditTRPDTryptophan = 'edit-TRP-D-Tryptophan-button',
+//   EditTYRDTyrosine = 'edit-TYR-D-Tyrosine-button',
+//   EditVALDValine = 'edit-VAL-D-Valine-button',
+// }
 
-export enum EditDSugarsOption {
-  EditDAllose = 'edit-D-Allose-button',
-  EditDAltrose = 'edit-D-Altrose-button',
-  EditDArabinose = 'edit-D-Arabinose-button',
-  EditDErythrose = 'edit-D-Erythrose-button',
-  EditDErythrulose = 'edit-D-Erythrulose-button',
-  EditDFructose = 'edit-D-Fructose-button',
-  EditDGalactose = 'edit-D-Galactose-button',
-  EditDGlucose = 'edit-D-Glucose-button',
-  EditDGulose = 'edit-D-Gulose-button',
-  EditDIdose = 'edit-D-Idose-button',
-  EditDLyxose = 'edit-D-Lyxose-button',
-  EditDMannose = 'edit-D-Mannose-button',
-  EditDPsicose = 'edit-D-Psicose-button',
-  EditDRibose = 'edit-D-Ribose-button',
-  EditDRibulose = 'edit-D-Ribulose-button',
-  EditDSorbose = 'edit-D-Sorbose-button',
-  EditDTagatose = 'edit-D-Tagatose-button',
-  EditDTalose = 'edit-D-Talose-button',
-  EditDThreose = 'edit-D-Threose-button',
-  EditDXylose = 'edit-D-Xylose-button',
-  EditDXylulose = 'edit-D-Xylulose-button',
-}
+// export enum EditDSugarsTemplate {
+//   EditDAllose = 'edit-D-Allose-button',
+//   EditDAltrose = 'edit-D-Altrose-button',
+//   EditDArabinose = 'edit-D-Arabinose-button',
+//   EditDErythrose = 'edit-D-Erythrose-button',
+//   EditDErythrulose = 'edit-D-Erythrulose-button',
+//   EditDFructose = 'edit-D-Fructose-button',
+//   EditDGalactose = 'edit-D-Galactose-button',
+//   EditDGlucose = 'edit-D-Glucose-button',
+//   EditDGulose = 'edit-D-Gulose-button',
+//   EditDIdose = 'edit-D-Idose-button',
+//   EditDLyxose = 'edit-D-Lyxose-button',
+//   EditDMannose = 'edit-D-Mannose-button',
+//   EditDPsicose = 'edit-D-Psicose-button',
+//   EditDRibose = 'edit-D-Ribose-button',
+//   EditDRibulose = 'edit-D-Ribulose-button',
+//   EditDSorbose = 'edit-D-Sorbose-button',
+//   EditDTagatose = 'edit-D-Tagatose-button',
+//   EditDTalose = 'edit-D-Talose-button',
+//   EditDThreose = 'edit-D-Threose-button',
+//   EditDXylose = 'edit-D-Xylose-button',
+//   EditDXylulose = 'edit-D-Xylulose-button',
+// }
 
-export enum EditHeterocyclicRingsOption {
-  EditOneTwoThreeOxadiazole = 'edit-1_2_3-Oxadiazole-button',
-  EditDioxane = 'edit-Dioxane-button',
-  EditFuran = 'edit-Furan-button',
-  EditImidazole = 'edit-Imidazole-button',
-  EditIndole = 'edit-Indole-button',
-  EditIsoquinoline = 'edit-Isoquinoline-button',
-  EditIsoxazole = 'edit-Isoxazole-button',
-  EditMorpholine = 'edit-Morpholine-button',
-  EditOxazole = 'edit-Oxazole-button',
-  EditPiperazine = 'edit-Piperazine-button',
-  EditPiperidine = 'edit-Piperidine-button',
-  EditPurine = 'edit-Purine-button',
-  EditPyran = 'edit-Pyran-button',
-  EditPyrazine = 'edit-Pyrazine-button',
-  EditPyrazol = 'edit-Pyrazol-button',
-  EditPyridazine = 'edit-Pyridazine-button',
-  EditPyridine = 'edit-Pyridine-button',
-  EditPyridone = 'edit-Pyridone-button',
-  EditPyrimidine = 'edit-Pyrimidine-button',
-  EditPyrole = 'edit-Pyrole-button',
-  EditPyrone = 'edit-Pyrone-button',
-  EditPyrrolidine = 'edit-Pyrrolidine-button',
-  EditQuinoline = 'edit-Quinoline-button',
-  EditTetrahydrofuran = 'edit-Tetrahydrofuran-button',
-  EditTetrahydrothiophene = 'edit-Tetrahydrothiophene-button',
-  EditTetrazole = 'edit-Tetrazole-button',
-  EditThiophene = 'edit-Thiophene-button',
-  EditTriazine = 'edit-Triazine-button',
-  EditTriazole = 'edit-Triazole-button',
-}
+// export enum EditHeterocyclicRingsTemplate {
+//   EditOneTwoThreeOxadiazole = 'edit-1_2_3-Oxadiazole-button',
+//   EditDioxane = 'edit-Dioxane-button',
+//   EditFuran = 'edit-Furan-button',
+//   EditImidazole = 'edit-Imidazole-button',
+//   EditIndole = 'edit-Indole-button',
+//   EditIsoquinoline = 'edit-Isoquinoline-button',
+//   EditIsoxazole = 'edit-Isoxazole-button',
+//   EditMorpholine = 'edit-Morpholine-button',
+//   EditOxazole = 'edit-Oxazole-button',
+//   EditPiperazine = 'edit-Piperazine-button',
+//   EditPiperidine = 'edit-Piperidine-button',
+//   EditPurine = 'edit-Purine-button',
+//   EditPyran = 'edit-Pyran-button',
+//   EditPyrazine = 'edit-Pyrazine-button',
+//   EditPyrazol = 'edit-Pyrazol-button',
+//   EditPyridazine = 'edit-Pyridazine-button',
+//   EditPyridine = 'edit-Pyridine-button',
+//   EditPyridone = 'edit-Pyridone-button',
+//   EditPyrimidine = 'edit-Pyrimidine-button',
+//   EditPyrole = 'edit-Pyrole-button',
+//   EditPyrone = 'edit-Pyrone-button',
+//   EditPyrrolidine = 'edit-Pyrrolidine-button',
+//   EditQuinoline = 'edit-Quinoline-button',
+//   EditTetrahydrofuran = 'edit-Tetrahydrofuran-button',
+//   EditTetrahydrothiophene = 'edit-Tetrahydrothiophene-button',
+//   EditTetrazole = 'edit-Tetrazole-button',
+//   EditThiophene = 'edit-Thiophene-button',
+//   EditTriazine = 'edit-Triazine-button',
+//   EditTriazole = 'edit-Triazole-button',
+// }
 
-export enum EditLAminoAcidsOption {
-  EditALALAlanine = 'edit-ALA-L-Alanine-button',
-  EditARGLArginine = 'edit-ARG-L-Arginine-button',
-  EditASNLAsparagine = 'edit-ASN-L-Asparagine-button',
-  EditASPLAsparticAcid = 'edit-ASP-L-Aspartic-acid-button',
-  EditCYSLCysteine = 'edit-CYS-L-Cysteine-button',
-  EditGLNLGlutamine = 'edit-GLN-L-Glutamine-button',
-  EditGLULGlutamicAcid = 'edit-GLU-L-Glutamic-acid-button',
-  EditGLYGlycine = 'edit-GLY-Glycine-button',
-  EditHISLHistidine = 'edit-HIS-L-Histidine-button',
-  EditILELIsoleucine = 'edit-ILE-L-Isoleucine-button',
-  EditLEULLeucine = 'edit-LEU-L-Leucine-button',
-  EditLYSLLysine = 'edit-LYS-L-Lysine-button',
-  EditMETLMethionine = 'edit-MET-L-Methionine-button',
-  EditPHELPhenylalanine = 'edit-PHE-L-Phenylalanine-button',
-  EditPROLProline = 'edit-PRO-L-Proline-button',
-  EditSERLSerine = 'edit-SER-L-Serine-button',
-  EditTHRLThreonine = 'edit-THR-L-Threonine-button',
-  EditTRPLTryptophan = 'edit-TRP-L-Tryptophan-button',
-  EditTYRLTyrosine = 'edit-TYR-L-Tyrosine-button',
-  EditVALLValine = 'edit-VAL-L-Valine-button',
-}
+// export enum EditLAminoAcidsTemplate {
+//   EditALALAlanine = 'edit-ALA-L-Alanine-button',
+//   EditARGLArginine = 'edit-ARG-L-Arginine-button',
+//   EditASNLAsparagine = 'edit-ASN-L-Asparagine-button',
+//   EditASPLAsparticAcid = 'edit-ASP-L-Aspartic-acid-button',
+//   EditCYSLCysteine = 'edit-CYS-L-Cysteine-button',
+//   EditGLNLGlutamine = 'edit-GLN-L-Glutamine-button',
+//   EditGLULGlutamicAcid = 'edit-GLU-L-Glutamic-acid-button',
+//   EditGLYGlycine = 'edit-GLY-Glycine-button',
+//   EditHISLHistidine = 'edit-HIS-L-Histidine-button',
+//   EditILELIsoleucine = 'edit-ILE-L-Isoleucine-button',
+//   EditLEULLeucine = 'edit-LEU-L-Leucine-button',
+//   EditLYSLLysine = 'edit-LYS-L-Lysine-button',
+//   EditMETLMethionine = 'edit-MET-L-Methionine-button',
+//   EditPHELPhenylalanine = 'edit-PHE-L-Phenylalanine-button',
+//   EditPROLProline = 'edit-PRO-L-Proline-button',
+//   EditSERLSerine = 'edit-SER-L-Serine-button',
+//   EditTHRLThreonine = 'edit-THR-L-Threonine-button',
+//   EditTRPLTryptophan = 'edit-TRP-L-Tryptophan-button',
+//   EditTYRLTyrosine = 'edit-TYR-L-Tyrosine-button',
+//   EditVALLValine = 'edit-VAL-L-Valine-button',
+// }
 
-export enum EditNucleobasesOption {
-  EditAdenine = 'edit-Adenine-button',
-  EditCytosine = 'edit-Cytosine-button',
-  EditGuanine = 'edit-Guanine-button',
-  EditThymine = 'edit-Thymine-button',
-  EditUracil = 'edit-Uracil-button',
-  EditRibose = 'edit-Ribose-button',
-  EditDeoxyribose = 'edit-Deoxyribose-button',
-  EditRiboseMonophosphate = 'edit-Ribose monophosphate-button',
-  EditDeoxyriboseMonophosphate = 'edit-Deoxyribose monophosphate-button',
-  EditAdenosineMonophosphate = 'edit-Adenosine monophosphate-button',
-  EditAdenosineDiphosphate = 'edit-Adenosine diphosphate-button',
-  EditAdenosineTriphosphate = 'edit-Adenosine triphosphate-button',
-}
+// export enum EditNucleobasesTemplate {
+//   EditAdenine = 'edit-Adenine-button',
+//   EditCytosine = 'edit-Cytosine-button',
+//   EditGuanine = 'edit-Guanine-button',
+//   EditThymine = 'edit-Thymine-button',
+//   EditUracil = 'edit-Uracil-button',
+//   EditRibose = 'edit-Ribose-button',
+//   EditDeoxyribose = 'edit-Deoxyribose-button',
+//   EditRiboseMonophosphate = 'edit-Ribose monophosphate-button',
+//   EditDeoxyriboseMonophosphate = 'edit-Deoxyribose monophosphate-button',
+//   EditAdenosineMonophosphate = 'edit-Adenosine monophosphate-button',
+//   EditAdenosineDiphosphate = 'edit-Adenosine diphosphate-button',
+//   EditAdenosineTriphosphate = 'edit-Adenosine triphosphate-button',
+// }
 
-export enum EditRingsOption {
-  EditBenzene = 'edit-Benzene-button',
-  EditBoat = 'edit-Boat-button',
-  EditChair = 'edit-Chair-button',
-  EditChair1 = 'edit-Chair1-button',
-  EditChair2 = 'edit-Chair2-button',
-  EditChair3 = 'edit-Chair3-button',
-  EditChair4 = 'edit-Chair4-button',
-  EditCyclopentadiene = 'edit-Cyclopentadiene-button',
-  EditRing3 = 'edit-Ring3-button',
-  EditRing4 = 'edit-Ring4-button',
-  EditRing5 = 'edit-Ring5-button',
-  EditRing6 = 'edit-Ring6-button',
-  EditRing7 = 'edit-Ring7-button',
-  EditRing8 = 'edit-Ring8-button',
-  EditRing9 = 'edit-Ring9-button',
-  EditRing10 = 'edit-Ring10-button',
-  EditRing11 = 'edit-Ring11-button',
-  EditRing12 = 'edit-Ring12-button',
-  EditRing13 = 'edit-Ring13-button',
-  EditRing14 = 'edit-Ring14-button',
-  EditRing15 = 'edit-Ring15-button',
-  EditRing16 = 'edit-Ring16-button',
-  EditRing18 = 'edit-Ring18-button',
-  EditRing20 = 'edit-Ring20-button',
-  EditRing21 = 'edit-Ring21-button',
-}
+// export enum EditRingsTemplate {
+//   EditBenzene = 'edit-Benzene-button',
+//   EditBoat = 'edit-Boat-button',
+//   EditChair = 'edit-Chair-button',
+//   EditChair1 = 'edit-Chair1-button',
+//   EditChair2 = 'edit-Chair2-button',
+//   EditChair3 = 'edit-Chair3-button',
+//   EditChair4 = 'edit-Chair4-button',
+//   EditCyclopentadiene = 'edit-Cyclopentadiene-button',
+//   EditRing3 = 'edit-Ring3-button',
+//   EditRing4 = 'edit-Ring4-button',
+//   EditRing5 = 'edit-Ring5-button',
+//   EditRing6 = 'edit-Ring6-button',
+//   EditRing7 = 'edit-Ring7-button',
+//   EditRing8 = 'edit-Ring8-button',
+//   EditRing9 = 'edit-Ring9-button',
+//   EditRing10 = 'edit-Ring10-button',
+//   EditRing11 = 'edit-Ring11-button',
+//   EditRing12 = 'edit-Ring12-button',
+//   EditRing13 = 'edit-Ring13-button',
+//   EditRing14 = 'edit-Ring14-button',
+//   EditRing15 = 'edit-Ring15-button',
+//   EditRing16 = 'edit-Ring16-button',
+//   EditRing18 = 'edit-Ring18-button',
+//   EditRing20 = 'edit-Ring20-button',
+//   EditRing21 = 'edit-Ring21-button',
+// }
 
-export enum EditSugarsOption {
-  EditAlphaDAllopyranose = 'edit-alpha-D-Allopyranose-button',
-  EditAlphaDAltropyranose = 'edit-alpha-D-Altropyranose-button',
-  EditAlphaDGalactopyranose = 'edit-alpha-D-Galactopyranose-button',
-  EditAlphaDGlucopyranose = 'edit-alpha-D-Glucopyranose-button',
-  EditAlphaDGulopyranose = 'edit-alpha-D-Gulopyranose-button',
-  EditAlphaDIdopyranose = 'edit-alpha-D-Idopyranose-button',
-  EditAlphaDMannopyranose = 'edit-alpha-D-Mannopyranose-button',
-  EditAlphaDTalopyranose = 'edit-alpha-D-Talopyranose-button',
-}
+// export enum EditSugarsTemplate {
+//   EditAlphaDAllopyranose = 'edit-alpha-D-Allopyranose-button',
+//   EditAlphaDAltropyranose = 'edit-alpha-D-Altropyranose-button',
+//   EditAlphaDGalactopyranose = 'edit-alpha-D-Galactopyranose-button',
+//   EditAlphaDGlucopyranose = 'edit-alpha-D-Glucopyranose-button',
+//   EditAlphaDGulopyranose = 'edit-alpha-D-Gulopyranose-button',
+//   EditAlphaDIdopyranose = 'edit-alpha-D-Idopyranose-button',
+//   EditAlphaDMannopyranose = 'edit-alpha-D-Mannopyranose-button',
+//   EditAlphaDTalopyranose = 'edit-alpha-D-Talopyranose-button',
+// }
 
-export enum EditThreeDTemplatesOption {
-  EditFullereneC60 = 'edit-fullerene C60-button',
-  EditAdamantane = 'edit-adamantane-button',
-  EditCubane = 'edit-cubane-button',
-  EditRing6Boat = 'edit-ring 6 boat-button',
-  EditRing6Chair = 'edit-ring 6 chair-button',
-  EditFerroceneCovalent = 'edit-Ferrocene_covalent-button',
-  EditFerroceneHaptic = 'edit-Ferrocene_haptic-button',
-  EditBisBenzeneChromiumHaptic = 'edit-bis(benzene)chromium_haptic-button',
-  EditBisBenzeneChromiumCovalent = 'edit-bis(benzene)chromium_covalent-button',
-  EditDodecaborate = 'edit-Dodecaborate-button',
-  EditVitaminB12Dative = 'edit-Vitamin B12_dative-button',
-  EditVitaminB12Covalent = 'edit-Vitamin B12_covalent-button',
-  EditSucrose = 'edit-sucrose-button',
-  EditHeptamolybdateIonDative = 'edit-Heptamolybdate ion_dative-button',
-  EditHeptamolybdateIonCovalent = 'edit-Heptamolybdate ion_covalent-button',
-  EditC20H20 = 'edit-C20H20-button',
-  EditTetracobaltDodecacarbonylDative = 'edit-Tetracobalt dodecacarbonyl_dative-button',
-  EditTetracobaltDodecacarbonylCovalent = 'edit-Tetracobalt dodecacarbonyl_covalent-button',
-  EditIronPentacarbonylDative = 'edit-Iron pentacarbonyl_dative-button',
-  EditIronPentacarbonylCovalent = 'edit-Iron pentacarbonyl_covalent-button',
-  EditChlorophyllADative = 'edit-Chlorophyll A_dative-button',
-  EditChlorophyllACovalent = 'edit-Chlorophyll A_covalent-button',
-}
+// export enum EditThreeDTemplatesTemplate {
+//   EditFullereneC60 = 'edit-fullerene C60-button',
+//   EditAdamantane = 'edit-adamantane-button',
+//   EditCubane = 'edit-cubane-button',
+//   EditRing6Boat = 'edit-ring 6 boat-button',
+//   EditRing6Chair = 'edit-ring 6 chair-button',
+//   EditFerroceneCovalent = 'edit-Ferrocene_covalent-button',
+//   EditFerroceneHaptic = 'edit-Ferrocene_haptic-button',
+//   EditBisBenzeneChromiumHaptic = 'edit-bis(benzene)chromium_haptic-button',
+//   EditBisBenzeneChromiumCovalent = 'edit-bis(benzene)chromium_covalent-button',
+//   EditDodecaborate = 'edit-Dodecaborate-button',
+//   EditVitaminB12Dative = 'edit-Vitamin B12_dative-button',
+//   EditVitaminB12Covalent = 'edit-Vitamin B12_covalent-button',
+//   EditSucrose = 'edit-sucrose-button',
+//   EditHeptamolybdateIonDative = 'edit-Heptamolybdate ion_dative-button',
+//   EditHeptamolybdateIonCovalent = 'edit-Heptamolybdate ion_covalent-button',
+//   EditC20H20 = 'edit-C20H20-button',
+//   EditTetracobaltDodecacarbonylDative = 'edit-Tetracobalt dodecacarbonyl_dative-button',
+//   EditTetracobaltDodecacarbonylCovalent = 'edit-Tetracobalt dodecacarbonyl_covalent-button',
+//   EditIronPentacarbonylDative = 'edit-Iron pentacarbonyl_dative-button',
+//   EditIronPentacarbonylCovalent = 'edit-Iron pentacarbonyl_covalent-button',
+//   EditChlorophyllADative = 'edit-Chlorophyll A_dative-button',
+//   EditChlorophyllACovalent = 'edit-Chlorophyll A_covalent-button',
+// }
 
 // Items on Functional Groups Tab
 export enum FunctionalGroupsTabItems {

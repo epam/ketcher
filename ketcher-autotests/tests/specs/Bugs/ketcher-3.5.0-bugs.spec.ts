@@ -38,6 +38,7 @@ import {
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 
 let page: Page;
 
@@ -267,7 +268,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       page,
     ).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
-    expect(molecularMass).toEqual('39.056');
+    expect(molecularMass).toEqual('39.057');
   });
 
   test('Case 8: Monomer selection without bonds work the same as with bonds', async () => {
@@ -294,7 +295,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     await page.keyboard.up('Shift');
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '449.587',
+      '449.584',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C21H27N3O4S2',
@@ -406,8 +407,11 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMonomerPreview: true,
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '1481.749',
+      '1481.755',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C38H53N15O36P6',
@@ -439,8 +443,11 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMonomerPreview: true,
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '4113.578',
+      '4113.641',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C187H291N45O59',
@@ -471,8 +478,11 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMonomerPreview: true,
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '526.457',
+      '526.463',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H26N8O10',
@@ -504,8 +514,11 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMonomerPreview: true,
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '1303.721',
+      '1303.731',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C38H50BrN16O25P3',
@@ -537,8 +550,11 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       hideMonomerPreview: true,
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '1728.27',
+      '1728.287',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C60H77N21O32P4',
@@ -572,7 +588,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '104.151',
+      '104.147',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H6NOS',
@@ -585,7 +601,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '103.143',
+      '103.139',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C3H5NOS',
@@ -640,7 +656,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     });
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '511.443',
+      '511.448',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H25N7O10',

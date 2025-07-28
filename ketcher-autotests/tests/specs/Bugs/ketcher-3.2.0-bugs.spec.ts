@@ -884,27 +884,31 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 28: Image not missing stereochemistry information when using abbreviations', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6764
-     * Bug: https://github.com/epam/Indigo/issues/2741
-     * Description: SVG Image not missing stereochemistry information when using abbreviations.
-     * Scenario:
-     * 1. Go to Micro
-     * 2. Load from CDXML
-     * 3. Save to SVG
-     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'CDXML/Bugs/stereochemistry.cdxml',
-    );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 28: Image not missing stereochemistry information when using abbreviations',
+    async () => {
+      // failing due to the bug: https://github.com/epam/Indigo/issues/3049
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6764
+       * Bug: https://github.com/epam/Indigo/issues/2741
+       * Description: SVG Image not missing stereochemistry information when using abbreviations.
+       * Scenario:
+       * 1. Go to Micro
+       * 2. Load from CDXML
+       * 3. Save to SVG
+       */
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'CDXML/Bugs/stereochemistry.cdxml',
+      );
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {
     /*

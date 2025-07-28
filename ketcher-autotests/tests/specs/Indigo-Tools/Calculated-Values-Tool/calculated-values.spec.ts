@@ -38,7 +38,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C7H16');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '100.202',
+      '100.205',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '100.125',
@@ -80,7 +80,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with 'C6 H6; C6 H12; C5 H6' data);
-    'Molecular Weight' field (filled with '78.112; 84.159; 66.101');
+    'Molecular Weight' field (filled with '78.114; 84.162; 66.103');
     field for the decimal places count with arrow for drop-down list is present at the right side;
     '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '78.047; 84.094; 66.047');
@@ -102,7 +102,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C6H6; C6H12; C5H6');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '78.112; 84.159; 66.101',
+      '78.114; 84.162; 66.103',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '78.047; 84.094; 66.047',
@@ -129,7 +129,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with '[C6H6] + [C2 H4] > [C8 H10]');
-    'Molecular Weight' field (filled with '[78.112] + [28.053] > [106.165]');
+    'Molecular Weight' field (filled with '[78.114]+[28.054] > [106.168]');
     field for the decimal places count with arrow for drop-down list is present at the right side;
     '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '[78.047] + [28.031] > [106.078]');
@@ -148,7 +148,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C2H4] > [C8H10]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.112]+[28.053] > [106.165]',
+      '[78.114]+[28.054] > [106.168]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.047]+[28.031] > [106.078]',
@@ -203,7 +203,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with 'C6H6' data);
-    'Molecular Weight' field (filled with '78.112');
+    'Molecular Weight' field (filled with '78.114');
     field for the decimal places count with arrow for drop-down list is present at the right side. '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '78.047');
     field for the decimal places count with arrow for drop-down list is present at the right side. '3 decimal places' are selected by default;
@@ -221,7 +221,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C6H6');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '78.112',
+      '78.114',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '78.047',
@@ -266,7 +266,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.167',
+      '149.169',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '149.060',
@@ -291,7 +291,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6] > [C6H5Br]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.112] > [157.008]',
+      '[78.114] > [157.010]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.047] > [155.957]',
@@ -321,7 +321,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('H2S');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '34.081',
+      '34.076',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '33.988',
@@ -515,18 +515,18 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-2008
-    Description: Multiple brackets should be "opened", part of the structure in the
-    brackets should be multiplied correctly. Calculation should be represented (for our example):
-    Chemical Formula:
-    C13 H28
-    Molecular Weight:
-    184.361
-    Exact Mass:
-    184.219
-    Elemental Analysis:
-    C 84.7 H 15.3
-    */
+     * Test case: EPMLSOPKET-2008
+     * Description: Multiple brackets should be "opened", part of the structure in the
+     * brackets should be multiplied correctly. Calculation should be represented (for our example):
+     * Chemical Formula:
+     * C13 H28
+     * Molecular Weight:
+     * 184.367
+     * Exact Mass:
+     * 184.219
+     * Elemental Analysis:
+     * C 84.7 H 15.3
+     */
 
     await openFileAndAddToCanvas(
       page,
@@ -537,7 +537,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C13H28');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '184.361',
+      '184.367',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '184.219',
@@ -551,17 +551,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-2010
-    Description: The brackets are ignored and calculation is represented as simple structrure.
-    Chemical Formula:
-    C12 H26
-    Molecular Weight:
-    170.335
-    Exact Mass:
-    170.203
-    Elemental Analysis:
-    C 84.6 H 15.4
-    */
+     * Test case: EPMLSOPKET-2010
+     * Description: The brackets are ignored and calculation is represented as simple structrure.
+     * Chemical Formula:
+     * C12 H26
+     * Molecular Weight:
+     * 170.340
+     * Exact Mass:
+     * 170.203
+     * Elemental Analysis:
+     * C 84.6 H 15.4
+     */
 
     await openFileAndAddToCanvas(
       page,
@@ -572,7 +572,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C12H26');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '170.335',
+      '170.340',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '170.203',
@@ -586,17 +586,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-2011
-    Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
-    Chemical Formula:
-    C17 H36
-    Molecular Weight:
-    240.468
-    Exact Mass:
-    240.282
-    Elemental Analysis:
-    C 84.9 H 15.1
-    */
+     * Test case: EPMLSOPKET-2011
+     * Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
+     * Chemical Formula:
+     * C17 H36
+     * Molecular Weight:
+     * 240.475
+     * Exact Mass:
+     * 240.282
+     * Elemental Analysis:
+     * C 84.9 H 15.1
+     */
 
     await openFileAndAddToCanvas(
       page,
@@ -607,7 +607,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C17H36');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '240.468',
+      '240.475',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '240.282',
@@ -851,17 +851,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1998
-    Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
-    Chemical Formula:
-    C18 H12 O3
-    Molecular Weight:
-    276.286
-    Exact Mass:
-    276.079
-    Elemental Analysis:
-    C 78.3 H 4.4 O 17.4
-    */
+     * Test case: EPMLSOPKET-1998
+     * Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
+     * Chemical Formula:
+     * C18 H12 O3
+     * Molecular Weight:
+     * 276.291
+     * Exact Mass:
+     * 276.079
+     * Elemental Analysis:
+     * C 78.3 H 4.4 O 17.4
+     */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/hetero-adduct.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -869,7 +869,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C18H12O3');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '276.286',
+      '276.291',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '276.079',
@@ -883,17 +883,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1998
-    Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
-    Chemical Formula:
-    C10 14 CH9Br
-    Molecular Weight:
-    223.086
-    Exact Mass:
-    221.992
-    Elemental Analysis:
-    C 60.1 H 4.1 Br 35.8
-    */
+     * Test case: EPMLSOPKET-1998
+     * Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
+     * Chemical Formula:
+     * C10 14 CH9Br
+     * Molecular Weight:
+     * 223.086
+     * Exact Mass:
+     * 221.992
+     * Elemental Analysis:
+     * C 60.1 H 4.1 Br 35.8
+     */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/c14napthylbromide.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -901,7 +901,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C1014CH9Br');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '223.086',
+      '223.089',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '221.992',
@@ -931,17 +931,17 @@ test.describe('Calculated Values Tools', () => {
 
   test('Calculation for several reaction components', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-2002
-    Description: Reaction components are calculated.
-    Chemical Formula:
-    [C2H4O2]+[C2H6O] > [C4H8O2]+[H2O]
-    Molecular Weight:
-    [60.052]+[46.068] > [88.105]+[18.015]
-    Exact Mass:
-    [60.021]+[46.042] > [88.052]+[18.011]
-    Elemental Analysis:
-    [C 40.0 H 6.7 O 53.3]+[C 52.1 H 13.1 O 34.7] > [C 54.5 H 9.2 O 36.3]+[H 11.2 O 88.8]
-    */
+     * Test case: EPMLSOPKET-2002
+     * Description: Reaction components are calculated.
+     * Chemical Formula:
+     * [C2H4O2]+[C2H6O] > [C4H8O2]+[H2O]
+     * Molecular Weight:
+     * [60.052]+[46.069] > [88.106]+[18.015]
+     * Exact Mass:
+     * [60.021]+[46.042] > [88.052]+[18.011]
+     * Elemental Analysis:
+     * [C 40.0 H 6.7 O 53.3]+[C 52.1 H 13.1 O 34.7] > [C 54.5 H 9.2 O 36.3]+[H 11.2 O 88.8]
+     */
 
     await openFileAndAddToCanvas(
       page,
@@ -952,7 +952,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C2H4O2]+[C2H6O] > [C4H8O2]+[H2O]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[60.052]+[46.068] > [88.105]+[18.015]',
+      '[60.052]+[46.069] > [88.106]+[18.015]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[60.021]+[46.042] > [88.052]+[18.011]',
@@ -968,17 +968,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-2002
-    Description: Reaction components are calculated.
-    Chemical Formula:
-    [O]+[C2H6O]
-    Molecular Weight:
-    [15.999]+[46.068]
-    Exact Mass:
-    [15.995]+[46.042]
-    Elemental Analysis:
-    [O 100.0]+[C 52.1 H 13.1 O 34.7]
-    */
+     * Test case: EPMLSOPKET-2002
+     * Description: Reaction components are calculated.
+     * Chemical Formula:
+     * [O]+[C2H6O]
+     * Molecular Weight:
+     * [15.999]+[46.069]
+     * Exact Mass:
+     * [15.995]+[46.042]
+     * Elemental Analysis:
+     * [O 100.0]+[C 52.1 H 13.1 O 34.7]
+     */
 
     const xDelta = 500;
     const yDelta = 800;
@@ -990,7 +990,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[O]+[C2H6O]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[15.999]+[46.068]',
+      '[15.999]+[46.069]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[15.995]+[46.042]',
@@ -1004,17 +1004,17 @@ test.describe('Calculated Values Tools', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1995
-    Description: Reaction components are calculated.
-    Chemical Formula:
-    C2H7
-    Molecular Weight:
-    31.077
-    Exact Mass:
-    31.055
-    Elemental Analysis:
-    C 77.3 H 22.7
-    */
+     * Test case: EPMLSOPKET-1995
+     * Description: Reaction components are calculated.
+     * Chemical Formula:
+     * C2H7
+     * Molecular Weight:
+     * 31.078
+     * Exact Mass:
+     * 31.055
+     * Elemental Analysis:
+     * C 77.3 H 22.7
+     */
 
     await openFileAndAddToCanvas(
       page,
@@ -1025,7 +1025,7 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C2H7');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '31.077',
+      '31.078',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '31.055',

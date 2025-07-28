@@ -148,7 +148,7 @@ class ReAtom extends ReObject {
   public makeMonomerAttachmentPointHighlightPlate(render: Render) {
     const restruct = render.ctab;
     const struct = restruct.molecule;
-    const aid = struct.atoms.keyOf(this.a) || undefined;
+    const aid = struct.atoms.keyOf(this.a) ?? undefined;
     const sgroup = struct.getGroupFromAtomId(aid);
 
     if (!(sgroup instanceof MonomerMicromolecule)) {
@@ -1028,6 +1028,12 @@ function buildLabel(
     const element = Elements.get(label.text);
     if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';
+    } else if (atomColoring && !element && label.text.length > 1) {
+      const firstChar = label.text.charAt(0);
+      const mainElement = Elements.get(firstChar);
+      if (mainElement) {
+        atom.color = ElementColor[firstChar] || '#000';
+      }
     }
   }
 

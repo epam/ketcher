@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { Vec2 } from 'domain/entities';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
@@ -66,7 +66,7 @@ class RnaPresetTool implements Tool {
       return;
     }
 
-    const { command: modelChanges } =
+    const { command: modelChanges, monomers } =
       this.editor.drawingEntitiesManager.addRnaPreset({
         sugar: this.sugar,
         sugarPosition: Coordinates.canvasToModel(
@@ -97,6 +97,10 @@ class RnaPresetTool implements Tool {
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
+    this.editor.calculateAndStoreNextAutochainPosition(
+      (monomers.find((monomer) => monomer instanceof Phosphate) ||
+        monomers.find((monomer) => monomer instanceof Sugar)) as BaseMonomer,
+    );
   }
 
   mousemove() {

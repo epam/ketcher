@@ -129,6 +129,7 @@ test.describe('Macro-Micro-Switcher2', () => {
         'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
         MacroFileType.MOLv3000,
       );
+      expect(await getMonomerLocator(page, {}).count()).toBeGreaterThan(0);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

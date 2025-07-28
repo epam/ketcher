@@ -168,6 +168,10 @@ test.describe('Import-Saving .mol Files', () => {
         'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
         MacroFileType.MOLv3000,
       );
+      expect(
+        await getMonomerLocator(page, { monomerAlias: `cdaC` }).count(),
+      ).toBe(1);
+
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );

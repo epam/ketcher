@@ -52,37 +52,35 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting ring bond count', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { RingBondCount: RingBondCount.Two } },
-      '[#6](-[#6])(-[#6;x2])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { RingBondCount: RingBondCount.Two },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x2])-[#6]');
   });
 
   test('Setting ring bond count - As drawn', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn } },
-      '[#6](-[#6])(-[#6;x0])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x0])-[#6]');
   });
 
   test('Setting H count', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { HCount: HCount.Three } },
-      '[#6](-[#6])(-[#6;H3])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { HCount: HCount.Three },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;H3])-[#6]');
   });
 
   test('Setting substitution count', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      {
-        QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Four },
-      },
-      '[#6](-[#6])(-[#6;D4])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Four },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;D4])-[#6]');
   });
 
   test('Setting unsaturated', async ({ page }) => {
@@ -100,67 +98,67 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting aromacity - aromatic', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { Aromaticity: Aromaticity.Aromatic } },
-      '[#6](-[#6])(-c)-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { Aromaticity: Aromaticity.Aromatic },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-c)-[#6]');
   });
 
   test('Setting aromacity - aliphatic', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { Aromaticity: Aromaticity.Aliphatic } },
-      '[#6](-[#6])(-C)-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { Aromaticity: Aromaticity.Aliphatic },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-C)-[#6]');
   });
 
   test('Setting implicit H count', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { ImplicitHCount: ImplicitHCount.Five } },
-      '[#6](-[#6])(-[#6;h5])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { ImplicitHCount: ImplicitHCount.Five },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;h5])-[#6]');
   });
 
   test('Setting ring membership', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { RingMembership: RingMembership.Six } },
-      '[#6](-[#6])(-[#6;R6])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { RingMembership: RingMembership.Six },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;R6])-[#6]');
   });
 
   test('Setting ring size', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { RingSize: RingSize.Seven } },
-      '[#6](-[#6])(-[#6;r7])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { RingSize: RingSize.Seven },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;r7])-[#6]');
   });
 
   test('Setting connectivity', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { Connectivity: Connectivity.Eight } },
-      '[#6](-[#6])(-[#6;X8])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { Connectivity: Connectivity.Eight },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;X8])-[#6]');
   });
 
   test('Setting chirality - anticlockwise', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { Chirality: Chirality.Anticlockwise } },
-      '[#6](-[#6])(-[#6;@])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { Chirality: Chirality.Anticlockwise },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@])-[#6]');
   });
 
   test('Setting chirality - clockwise', async ({ page }) => {
-    await setAndCheckQuerySpecificProperties(
-      page,
-      { QuerySpecificProperties: { Chirality: Chirality.Clockwise } },
-      '[#6](-[#6])(-[#6;@@])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: { Chirality: Chirality.Clockwise },
+    });
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@@])-[#6]');
   });
 
   test('Setting implicit H count, aromacity and connectivity', async ({

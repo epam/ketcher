@@ -14,8 +14,11 @@ import {
   moveMouseAway,
   keyboardTypeOnCanvas,
   keyboardPressOnCanvas,
+  waitForMonomerPreview,
+  takeElementScreenshot,
+  openFile,
 } from '@utils';
-import { waitForPageInit } from '@utils/common';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -30,6 +33,16 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { Chem } from '@constants/monomers/Chem';
+import { Presets } from '@constants/monomers/Presets';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -42,6 +55,25 @@ async function connectMonomerToAtom(page: Page) {
   await page.mouse.down();
   await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
   await page.mouse.up();
+}
+
+async function openPPTXFileAndValidateStructurePreview(
+  page: Page,
+  filePath: string,
+  numberOf: {
+    Structure: number;
+  } = { Structure: 1 },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await openFile(page, filePath);
+  });
+  const openPPTXFileDialog = OpenPPTXFileDialog(page);
+  if (numberOf.Structure !== 1) {
+    await openPPTXFileDialog.selectStructure(numberOf);
+  }
+  await takeEditorScreenshot(page);
+  await openPPTXFileDialog.pressOpenAsNewProjectButton();
 }
 
 test.describe('MacromoleculePropertiesWindow events access', () => {
@@ -283,5 +315,230 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 7: Rectangular input field wide enough to fit any (at least 4) digit number', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/7207
+     * Description: Rectangular input field wide enough to fit any (at least 4) digit number.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Set the ruler value to 1000
+     * 3. Verify that the ruler value is set to 1000
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      disableChainLengthRuler: false,
+    });
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await Ruler(page).setLength('1000');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 8: IDT code shown correct for SS3 CHEM`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/7187
+     * Description: IDT code shown correct for SS3 CHEM
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Hover over SS3 CHEM
+     * 4. Take a screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await Library(page).switchToCHEMTab();
+    await Library(page).hoverMonomer(Chem.SS3);
+    await waitForMonomerPreview(page);
+    await takeElementScreenshot(
+      page,
+      page.getByTestId('polymer-library-preview'),
+    );
+  });
+
+  test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/7371
+     * Description: Mouse cursor positioned at the top left corner of preset when zoom 400%
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Set zoom level to 400%
+     * 4. Drag "ghost image" on the canvas
+     * 5. Take a screenshot
+     * We have a bug https://github.com/epam/ketcher/issues/7371 when it will be fixed need to update
+     * the screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await Library(page).hoverMonomer(Presets.A);
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+    await Library(page).hoverMonomer(Presets.A);
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+
+  test(`Case 10: Delete operation not causes exception: Uncaught (in promise) Error: Minified Redux error`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/7386
+     * Description: Delete operation not causes exception: Uncaught (in promise) Error: Minified Redux error
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Add a benzene ring
+     * 3. Switch to Macro
+     * 4. Select all structures on canvas
+     * 5. Select Erase tool
+     * 6. Take a screenshot
+     */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await drawBenzeneRing(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 11: System not loads base as sugar`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/Indigo/issues/2964
+     * Description: System not loads base as sugar
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode (empty canvas)
+     * 2. Load from HELM
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{(A)}$$$$V2.0',
+    );
+    await verifyFileExport(
+      page,
+      'KET/Bugs/base-monomer-expected.ket',
+      FileType.KET,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 12: Isoelectric Point calculation formula correct for peptide C', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/Indigo/issues/2929
+     * Description: Isoelectric Point calculation formula correct for peptide C.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Check Isoelectric point
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{C}$$$V2.0',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getIsoelectricPointValue(),
+    ).toEqual('8.49');
+  });
+
+  test('Case 13: Сorrect Implementation of PKA calculation', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/Indigo/issues/2985
+     * Description: Сorrect Implementation of PKA calculation. Example for Peptide C.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Check pKa values
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{C}$$$V2.0',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getIsoelectricPointValue(),
+    ).toEqual('8.49');
+    expect(
+      await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
+    ).toEqual('125');
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '121.154',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C3H7NO2S',
+    );
+  });
+
+  test('Case 14: System not shows positive charge modificator as extra + in addition to charge modified molecule', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/Indigo/issues/1686
+     * Description: System not shows positive charge modificator as extra + in addition to charge modified molecule
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open from pptx file
+     * 3. Take screenshot
+     * Bug not fixed https://github.com/epam/Indigo/issues/1686
+     * When it will be fixed need to update the screenshot.
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Extra.plus.pptx');
+    await takeEditorScreenshot(page);
   });
 });

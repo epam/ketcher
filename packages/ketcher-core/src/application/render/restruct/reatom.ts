@@ -1061,13 +1061,61 @@ function buildLabel(
 
   const { previewOpacity } = options;
 
-  label.path = paper.text(ps.x, ps.y, label.text).attr({
-    font,
-    'font-size': fontszInPx,
-    fill: atom.color,
-    'font-style': atom.a.pseudo ? 'italic' : '',
-    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-  });
+  const isLeavingGroupAfterExpansion =
+    sgroup &&
+    Atom.isSuperatomLeavingGroupAtom(sgroup, atomId) &&
+    sgroup instanceof MonomerMicromolecule;
+
+  const regexMatch =
+    label.text && label.text.match(/^([A-Z][a-zA-Z]*)([0-9]+)$/);
+  const chemicalFormulaMatch =
+    regexMatch && isLeavingGroupAfterExpansion ? regexMatch : null; // Subscripts only for real chemical formulas after monomer expansion, not R1/R2 labels
+
+  if (chemicalFormulaMatch) {
+    const [, element, number] = chemicalFormulaMatch;
+    const elementText = paper.text(ps.x, ps.y, element).attr({
+      font,
+      'font-size': fontszInPx,
+      fill: atom.color,
+      'font-style': atom.a.pseudo ? 'italic' : '',
+      'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    });
+
+    const elementBBox = util.relBox(elementText.getBBox());
+    const numberText = paper.text(ps.x, ps.y, number).attr({
+      font,
+      'font-size': options.fontszsubInPx,
+      fill: atom.color,
+      'font-style': atom.a.pseudo ? 'italic' : '',
+      'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    });
+
+    // Position the subscript number
+    const numberBBox = util.relBox(numberText.getBBox());
+    draw.recenterText(elementText, elementBBox);
+    draw.recenterText(numberText, numberBBox);
+
+    const horizontalOffset = elementBBox.width * 0.7;
+    const verticalOffset = 0.2 * elementBBox.height; // This moves text BELOW baseline
+
+    pathAndRBoxTranslate(
+      numberText,
+      numberBBox,
+      horizontalOffset,
+      verticalOffset,
+    );
+    // Create a set with both text elements
+    label.path = paper.set().push(elementText, numberText);
+  } else {
+    // Regular text rendering for non-chemical formulas
+    label.path = paper.text(ps.x, ps.y, label.text).attr({
+      font,
+      'font-size': fontszInPx,
+      fill: atom.color,
+      'font-style': atom.a.pseudo ? 'italic' : '',
+      'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    });
+  }
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {
     const backgroundSize = fontszInPx * 2;

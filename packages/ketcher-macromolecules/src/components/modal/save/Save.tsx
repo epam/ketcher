@@ -32,6 +32,7 @@ import {
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
   legacyCopy,
+  isHelmCompatible
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -112,6 +113,11 @@ export const Save = ({
       const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
       setSvgData(svgData);
       return;
+    }
+    if (fileFormat === 'helm' && !isHelmCompatible(Array.from(editor.drawingEntitiesManager.monomers.values()), editor.monomersLibrary)) {
+      editor.events.error.dispatch(
+          "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
+      );
     }
 
     try {

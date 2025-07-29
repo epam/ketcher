@@ -116,7 +116,7 @@ export const Save = ({
     }
     if (fileFormat === 'helm' && !isHelmCompatible(Array.from(editor.drawingEntitiesManager.monomers.values()), editor.monomersLibrary)) {
       editor.events.error.dispatch(
-          "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
+        "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
       );
     }
 

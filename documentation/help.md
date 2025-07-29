@@ -224,7 +224,7 @@ If there are two attachment points on an R-Group member, there must be two corre
 
 To mark S-Groups, use the _S-Group tool_ <img src=images/29_sgroup_icon.png width = "35"/> and the following dialog that appears after selecting a fragment with this tool:
 
-<img src=images/S-Group-Properties-3.6..png width = "250"/>
+<img src=images/S-Group-Properties-3.6.png width = "250"/>
 
 Available S-Group types:
 - _Data_ - an atom, a fragment, a multifragment, a single bond, or a group without the square brackets representation;

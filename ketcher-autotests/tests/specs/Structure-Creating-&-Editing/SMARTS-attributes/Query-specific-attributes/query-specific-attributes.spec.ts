@@ -12,7 +12,6 @@ import { drawStructure } from '@utils/canvas/drawStructures';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Aromaticity,
-  AtomPropertiesSettings,
   Chirality,
   Connectivity,
   HCount,
@@ -22,16 +21,6 @@ import {
   RingSize,
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
-
-async function setAndCheckQuerySpecificProperties(
-  page: Page,
-  options: AtomPropertiesSettings,
-  expectedSmarts: string,
-) {
-  await AtomPropertiesDialog(page).setOptions(options);
-  await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
-}
 
 async function drawStructureAndDoubleClickOnAtom(
   page: Page,

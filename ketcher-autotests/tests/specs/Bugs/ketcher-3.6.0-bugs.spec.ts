@@ -17,6 +17,9 @@ import {
   waitForMonomerPreview,
   takeElementScreenshot,
   openFile,
+  readFileContent,
+  clickOnCanvas,
+  MolFileFormat,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import {
@@ -539,6 +542,54 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Extra.plus.pptx');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 15: System not saves unique structure monomer named same as monomer in the library as the monomer from the library', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/Indigo/issues/3024
+     * Description: System saves unique structure monomer named same as monomer in the library as the monomer from the library.
+     * System loads original monomer (with unique structure) and monomer from library
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open from pptx file
+     * 3. Take screenshot
+     * Bug not fixed https://github.com/epam/Indigo/issues/3024
+     * For now system loads both monomers from the same (with unique structure)
+     * When it will be fixed need to update the screenshot.
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    const fileContent = await readFileContent(
+      'Molfiles-V3000/Bugs/monomer-with-unique-structure.mol',
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.MOLv3000,
+      fileContent,
+    );
+    await Library(page).selectMonomer(Peptides.Cys_Bn);
+    await clickOnCanvas(page, 580, 388);
+    await keyboardPressOnCanvas(page, 'Escape');
+    await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
+    await waitForMonomerPreview(page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/monomer-with-unique-structure-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'Molfiles-V3000/Bugs/monomer-with-unique-structure-expected.mol',
+    );
+    await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -25,42 +25,45 @@ import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type GeneralProperties = {
-  generalSection: Locator;
-  generalWrapper: Locator;
-  atomTypeDropdown: Locator;
-  editButton: Locator;
-  labelInput: Locator;
-  numberReadonlyInput: Locator;
-  listReadonlyInput: Locator;
-  notListCheckbox: Locator;
-  specialInput: Locator;
-  aliasInput: Locator;
-  chargeInput: Locator;
-  isotopeInput: Locator;
-  valenceDropdown: Locator;
-  radicalDropdown: Locator;
+  generalSection: Locator & {
+    foldStateKeeper: Locator;
+    atomTypeDropdown: Locator;
+    editButton: Locator;
+    labelInput: Locator;
+    numberReadonlyInput: Locator;
+    listReadonlyInput: Locator;
+    notListCheckbox: Locator;
+    specialInput: Locator;
+    aliasInput: Locator;
+    chargeInput: Locator;
+    isotopeInput: Locator;
+    valenceDropdown: Locator;
+    radicalDropdown: Locator;
+  };
 };
 
 type QuerySpecificProperties = {
-  querySpecificSection: Locator;
-  querySpecificWrapper: Locator;
-  ringBondCountDropdown: Locator;
-  hCountDropdown: Locator;
-  substitutionCountInput: Locator;
-  unsaturatedCheckbox: Locator;
-  aromaticityDropdown: Locator;
-  implicitHCountDropdown: Locator;
-  ringMembershipDropdown: Locator;
-  ringSizeDropdown: Locator;
-  connectivityDropdown: Locator;
-  chiralityDropdown: Locator;
+  querySpecificSection: Locator & {
+    foldStateKeeper: Locator;
+    ringBondCountDropdown: Locator;
+    hCountDropdown: Locator;
+    substitutionCountInput: Locator;
+    unsaturatedCheckbox: Locator;
+    aromaticityDropdown: Locator;
+    implicitHCountDropdown: Locator;
+    ringMembershipDropdown: Locator;
+    ringSizeDropdown: Locator;
+    connectivityDropdown: Locator;
+    chiralityDropdown: Locator;
+  };
 };
 
 type ReactionFlags = {
-  reactionFlagsSection: Locator;
-  reactionFlagsWrapper: Locator;
-  inversionDropdown: Locator;
-  exactChangeCheckbox: Locator;
+  reactionFlagsSection: Locator & {
+    foldStateKeeper: Locator;
+    inversionDropdown: Locator;
+    exactChangeCheckbox: Locator;
+  };
 };
 
 type CustomQuery = {
@@ -91,38 +94,49 @@ export const AtomPropertiesDialog = (page: Page) => {
   };
 
   const locators: AtomPropertiesDialogLocators = {
-    generalSection: page.getByTestId('General-wrapper'),
-    generalWrapper: page.getByTestId('General-wrapper'),
-    atomTypeDropdown: page.getByTestId('atom-input-span'),
-    editButton: page.getByTestId('edit-button'),
-    labelInput: page.getByTestId('label-input'),
-    numberReadonlyInput: page.getByTestId('element-number'),
-    listReadonlyInput: page.getByTestId('atomList-input'),
-    notListCheckbox: page.getByTestId('notList-input'),
-    specialInput: page.getByTestId('pseudo-input'),
-    aliasInput: page.getByTestId('alias-input-span'),
-    chargeInput: page.getByTestId('charge-input-span'),
-    isotopeInput: page.getByTestId('isotope-input-span'),
-    valenceDropdown: page.getByTestId('explicitValence-input-span'),
-    radicalDropdown: page.getByTestId('radical-input-span'),
+    generalSection: Object.assign(page.getByTestId('General-wrapper'), {
+      foldStateKeeper: page.getByTestId('General-wrapper'),
+      atomTypeDropdown: page.getByTestId('atom-input-span'),
+      editButton: page.getByTestId('edit-button'),
+      labelInput: page.getByTestId('label-input'),
+      numberReadonlyInput: page.getByTestId('element-number'),
+      listReadonlyInput: page.getByTestId('atomList-input'),
+      notListCheckbox: page.getByTestId('notList-input'),
+      specialInput: page.getByTestId('pseudo-input'),
+      aliasInput: page.getByTestId('alias-input-span'),
+      chargeInput: page.getByTestId('charge-input-span'),
+      isotopeInput: page.getByTestId('isotope-input-span'),
+      valenceDropdown: page.getByTestId('explicitValence-input-span'),
+      radicalDropdown: page.getByTestId('radical-input-span'),
+    }),
 
-    querySpecificSection: page.getByTestId('Query specific-section'),
-    querySpecificWrapper: page.getByTestId('Query specific-wrapper'),
-    ringBondCountDropdown: page.getByTestId('ringBondCount-input-span'),
-    hCountDropdown: page.getByTestId('hCount-input-span'),
-    substitutionCountInput: page.getByTestId('substitutionCount-input-span'),
-    unsaturatedCheckbox: page.getByTestId('unsaturatedAtom-input'),
-    aromaticityDropdown: page.getByTestId('aromaticity-input-span'),
-    implicitHCountDropdown: page.getByTestId('implicitHCount-input-span'),
-    ringMembershipDropdown: page.getByTestId('ringMembership-input-span'),
-    ringSizeDropdown: page.getByTestId('ringSize-input-span'),
-    connectivityDropdown: page.getByTestId('connectivity-input-span'),
-    chiralityDropdown: page.getByTestId('chirality-input-span'),
+    querySpecificSection: Object.assign(
+      page.getByTestId('Query specific-section'),
+      {
+        foldStateKeeper: page.getByTestId('Query specific-wrapper'),
+        ringBondCountDropdown: page.getByTestId('ringBondCount-input-span'),
+        hCountDropdown: page.getByTestId('hCount-input-span'),
+        substitutionCountInput: page.getByTestId(
+          'substitutionCount-input-span',
+        ),
+        unsaturatedCheckbox: page.getByTestId('unsaturatedAtom-input'),
+        aromaticityDropdown: page.getByTestId('aromaticity-input-span'),
+        implicitHCountDropdown: page.getByTestId('implicitHCount-input-span'),
+        ringMembershipDropdown: page.getByTestId('ringMembership-input-span'),
+        ringSizeDropdown: page.getByTestId('ringSize-input-span'),
+        connectivityDropdown: page.getByTestId('connectivity-input-span'),
+        chiralityDropdown: page.getByTestId('chirality-input-span'),
+      },
+    ),
 
-    reactionFlagsSection: page.getByTestId('Reaction flags-section'),
-    reactionFlagsWrapper: page.getByTestId('Reaction flags-wrapper'),
-    inversionDropdown: page.getByTestId('inversion-input-span'),
-    exactChangeCheckbox: page.getByTestId('exactChangeFlag-input'),
+    reactionFlagsSection: Object.assign(
+      page.getByTestId('Reaction flags-section'),
+      {
+        foldStateKeeper: page.getByTestId('Reaction flags-wrapper'),
+        inversionDropdown: page.getByTestId('inversion-input-span'),
+        exactChangeCheckbox: page.getByTestId('exactChangeFlag-input'),
+      },
+    ),
 
     customQueryCheckbox: page.getByTestId('custom-query-checkbox'),
     customQueryTextArea: page.getByTestId('atom-custom-query'),
@@ -216,19 +230,22 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async selectAtomType(option: AtomType) {
-      await selectDropdownValue(locators.atomTypeDropdown, option);
+      await selectDropdownValue(
+        locators.generalSection.atomTypeDropdown,
+        option,
+      );
     },
 
     async openTable() {
-      await locators.editButton.click();
+      await locators.generalSection.editButton.click();
     },
 
     async fillLabel(value: string) {
-      await locators.labelInput.fill(value);
+      await locators.generalSection.labelInput.fill(value);
     },
 
     async getNumber() {
-      await locators.numberReadonlyInput.textContent();
+      await locators.generalSection.numberReadonlyInput.textContent();
     },
 
     async selectAtomsList(value: {
@@ -240,91 +257,131 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async getList() {
-      await locators.listReadonlyInput.textContent();
+      await locators.generalSection.listReadonlyInput.textContent();
     },
 
     async setNotListCheckbox(checked: boolean) {
-      await locators.notListCheckbox.setChecked(checked);
+      await locators.generalSection.notListCheckbox.setChecked(checked);
     },
 
     async fillSpecial(value: string) {
-      await locators.specialInput.fill(value);
+      await locators.generalSection.specialInput.fill(value);
     },
 
     async fillAlias(value: string) {
-      await locators.aliasInput.fill(value);
+      await locators.generalSection.aliasInput.fill(value);
     },
 
     async fillCharge(value: string) {
-      await locators.chargeInput.fill(value);
+      await locators.generalSection.chargeInput.fill(value);
     },
 
     async hoverCharge() {
-      await locators.chargeInput.hover();
+      await locators.generalSection.chargeInput.hover();
     },
 
     async fillIsotope(value: string) {
-      await locators.isotopeInput.fill(value);
+      await locators.generalSection.isotopeInput.fill(value);
     },
 
     async hoverIsotope() {
-      await locators.isotopeInput.hover();
+      await locators.generalSection.isotopeInput.hover();
     },
 
     async selectValence(option: Valence) {
-      await selectDropdownValue(locators.valenceDropdown, option);
+      await selectDropdownValue(
+        locators.generalSection.valenceDropdown,
+        option,
+      );
     },
 
     async selectRadical(option: Radical) {
-      await selectDropdownValue(locators.radicalDropdown, option);
+      await selectDropdownValue(
+        locators.generalSection.radicalDropdown,
+        option,
+      );
     },
 
     async selectRingBondCount(option: RingBondCount) {
-      await selectDropdownValue(locators.ringBondCountDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.ringBondCountDropdown,
+        option,
+      );
     },
 
     async selectHCount(option: HCount) {
-      await selectDropdownValue(locators.hCountDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.hCountDropdown,
+        option,
+      );
     },
 
     async selectSubstitutionCount(value: SubstitutionCount) {
-      await selectDropdownValue(locators.substitutionCountInput, value);
+      await selectDropdownValue(
+        locators.querySpecificSection.substitutionCountInput,
+        value,
+      );
     },
 
     async setUnsaturatedCheckbox(checked: boolean) {
-      await locators.unsaturatedCheckbox.setChecked(checked);
+      await locators.querySpecificSection.unsaturatedCheckbox.setChecked(
+        checked,
+      );
     },
 
     async selectAromaticity(option: Aromaticity) {
-      await selectDropdownValue(locators.aromaticityDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.aromaticityDropdown,
+        option,
+      );
     },
 
     async selectImplicitHCount(option: ImplicitHCount) {
-      await selectDropdownValue(locators.implicitHCountDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.implicitHCountDropdown,
+        option,
+      );
     },
 
     async selectRingMembership(option: RingMembership) {
-      await selectDropdownValue(locators.ringMembershipDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.ringMembershipDropdown,
+        option,
+      );
     },
 
     async selectRingSize(option: RingSize) {
-      await selectDropdownValue(locators.ringSizeDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.ringSizeDropdown,
+        option,
+      );
     },
 
     async selectConnectivity(option: Connectivity) {
-      await selectDropdownValue(locators.connectivityDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.connectivityDropdown,
+        option,
+      );
     },
 
     async selectChirality(option: Chirality) {
-      await selectDropdownValue(locators.chiralityDropdown, option);
+      await selectDropdownValue(
+        locators.querySpecificSection.chiralityDropdown,
+        option,
+      );
     },
 
     async selectInversion(option: Inversion) {
-      await selectDropdownValue(locators.inversionDropdown, option);
+      await selectDropdownValue(
+        locators.reactionFlagsSection.inversionDropdown,
+        option,
+      );
     },
 
     async setExactChangeCheckbox(checked: boolean) {
-      await locators.exactChangeCheckbox.setChecked(checked);
+      await locators.reactionFlagsSection.exactChangeCheckbox.setChecked(
+        checked,
+      );
     },
 
     async setCustomQueryCheckbox(checked: boolean) {
@@ -337,7 +394,9 @@ export const AtomPropertiesDialog = (page: Page) => {
 
     async expandQuerySpecific() {
       const querySpecificSectionClasses =
-        await locators.querySpecificWrapper.getAttribute('class');
+        await locators.querySpecificSection.foldStateKeeper.getAttribute(
+          'class',
+        );
       const isQuerySpecificCollapsed =
         querySpecificSectionClasses?.includes('hidden');
       if (isQuerySpecificCollapsed) {
@@ -347,7 +406,9 @@ export const AtomPropertiesDialog = (page: Page) => {
 
     async expandReactionFlags() {
       const reactionFlagsSectionClasses =
-        await locators.reactionFlagsWrapper.getAttribute('class');
+        await locators.reactionFlagsSection.foldStateKeeper.getAttribute(
+          'class',
+        );
       const isreactionFlagsCollapsed =
         reactionFlagsSectionClasses?.includes('hidden');
       if (isreactionFlagsCollapsed) {

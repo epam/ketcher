@@ -158,37 +158,47 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
   );
 });
 
-test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1859(1)
-   * Description: v3000 mol file with abbreviation is opened and saved correctly
-   */
-  await waitForPageInit(page);
+test.fail(
+  'Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 - open',
+  async ({ page }) => {
+    // Fails because of bug: https://github.com/epam/Indigo/issues/3052
+    /**
+     * Test case: EPMLSOPKET-1859(1)
+     * Description: v3000 mol file with abbreviation is opened and saved correctly
+     */
+    await waitForPageInit(page);
 
-  await openFileAndAddToCanvas(page, 'Molfiles-V3000/sec-butyl-abr-V3000.mol');
-  // check that structure opened from file is displayed correctly
-  await takeEditorScreenshot(page);
-});
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/sec-butyl-abr-V3000.mol',
+    );
+    // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
+  },
+);
 
-test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save', async ({
-  page,
-}) => {
-  /*
-   * Test case: EPMLSOPKET-1859(2)
-   * Description: v3000 mol file with abbreviation is opened and saved correctly
-   */
-  await waitForPageInit(page);
+test.fail(
+  'Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save',
+  async ({ page }) => {
+    // Fails because of bug: https://github.com/epam/Indigo/issues/3052
+    /*
+     * Test case: EPMLSOPKET-1859(2)
+     * Description: v3000 mol file with abbreviation is opened and saved correctly
+     */
+    await waitForPageInit(page);
 
-  await openFileAndAddToCanvas(page, 'Molfiles-V3000/sec-butyl-abr-V3000.mol');
-  await verifyFileExport(
-    page,
-    'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
-    FileType.MOL,
-    MolFileFormat.v3000,
-  );
-});
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/sec-butyl-abr-V3000.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+  },
+);
 
 test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
   page,

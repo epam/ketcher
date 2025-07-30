@@ -352,7 +352,6 @@ export class RenderersManager {
         if (bondAtom.renderer?.atom.id !== atom.atom.id) return;
 
         atom.redrawLabel();
-
       });
     });
 
@@ -371,10 +370,12 @@ export class RenderersManager {
         monomerToAtomBond.renderer?.move(),
       );
 
-      if (firstAtom === bond.secondAtom ||
+      if (
+        firstAtom === bond.secondAtom ||
         secondAtom === bond.firstAtom ||
         firstAtom === bond.firstAtom ||
-        secondAtom === bond.secondAtom) {
+        secondAtom === bond.secondAtom
+      ) {
         redrawBondRenderer.move();
       }
     });

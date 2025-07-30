@@ -1,9 +1,9 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconName } from 'components';
+import { Icon } from 'components';
 import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,14 +13,15 @@ import {
   submitMonomerCreation,
 } from '../../../state/editor/actions/monomerCreation';
 import AttributeField from './components/AttributeField/AttributeField';
+import Notification from './components/Notification/Notification';
+import {
+  MonomerTypeSelectItem,
+  WizardAction,
+  WizardFormFieldId,
+  WizardState,
+} from './MonomerCreationWizard.types';
 
-type TypeSelectConfigItem = {
-  value: KetMonomerClass;
-  label: string;
-  iconName: IconName;
-};
-
-const TypeSelectConfig: TypeSelectConfigItem[] = [
+const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
   {
     value: KetMonomerClass.AminoAcid,
     label: 'Amino acid',
@@ -37,29 +38,88 @@ const TypeSelectConfig: TypeSelectConfigItem[] = [
   { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
 ];
 
+const initialWizardState: WizardState = {
+  values: {
+    type: undefined,
+    symbol: '',
+    name: '',
+    naturalAnalogue: '',
+  },
+  errors: {},
+  notifications: [
+    {
+      id: 0,
+      type: 'info',
+      message:
+        'Open bonds are replaced with Hydrogen (H), and set as Attachment Points by default',
+    },
+  ],
+};
+
+const wizardReducer = (
+  state: WizardState,
+  action: WizardAction,
+): WizardState => {
+  switch (action.type) {
+    case 'SetFieldValue': {
+      const { fieldId, value } = action;
+      return {
+        ...state,
+        values: {
+          ...state.values,
+          [fieldId]: value,
+        },
+        errors: {
+          ...state.errors,
+          [fieldId]: undefined,
+        },
+      };
+    }
+
+    case 'ResetWizard': {
+      return initialWizardState;
+    }
+
+    case 'RemoveNotification':
+      return {
+        ...state,
+        notifications: state.notifications.filter(
+          (notification) => notification.id !== action.id,
+        ),
+      };
+
+    default:
+      return state;
+  }
+};
+
 const MonomerCreationWizard = () => {
-  const dispatch = useDispatch();
+  const reduxDispatch = useDispatch();
+  const [wizardState, wizardStateDispatch] = useReducer(
+    wizardReducer,
+    initialWizardState,
+  );
 
-  const [type, setType] = useState<KetMonomerClass>();
-  const [symbol, setSymbol] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [naturalAnalogue, setNaturalAnalogue] = useState<string>('');
+  const { values, notifications, errors } = wizardState;
+  const { type, symbol, name, naturalAnalogue } = values;
 
-  const onTypeChange = (value) => {
-    setType(value);
-    setNaturalAnalogue('');
-  };
-
-  const onSymbolChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSymbol(event.target.value);
-  };
-
-  const onNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  const onNaturalAnalogueChange = (value: string) => {
-    setNaturalAnalogue(value);
+  const handleFieldChange = (
+    fieldId: WizardFormFieldId,
+    value: KetMonomerClass | string,
+  ) => {
+    if (fieldId === 'type') {
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'type',
+        value: value as KetMonomerClass,
+      });
+    } else {
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId,
+        value,
+      });
+    }
   };
 
   const displayNaturalAnaloguePicker =
@@ -67,9 +127,9 @@ const MonomerCreationWizard = () => {
     type === KetMonomerClass.Base ||
     type === KetMonomerClass.RNA;
 
-  const typeSelectOptions = useMemo(
+  const monomerTypeSelectOptions = useMemo(
     () =>
-      TypeSelectConfig.map((option) => ({
+      MonomerTypeSelectConfig.map((option) => ({
         ...option,
         children: (
           <div className={styles.typeOption}>
@@ -82,20 +142,17 @@ const MonomerCreationWizard = () => {
   );
 
   const resetWizard = () => {
-    setType(undefined);
-    setSymbol('');
-    setName('');
-    setNaturalAnalogue('');
+    wizardStateDispatch({ type: 'ResetWizard' });
   };
 
   const handleDiscard = () => {
-    dispatch(closeMonomerCreationWizard());
+    reduxDispatch(closeMonomerCreationWizard());
     resetWizard();
   };
 
   const handleSubmit = () => {
     // TODO: Validate inputs
-    dispatch(
+    reduxDispatch(
       submitMonomerCreation({
         type,
         symbol,
@@ -121,18 +178,20 @@ const MonomerCreationWizard = () => {
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
           Create Monomer
         </p>
+
         <div className={styles.notificationsArea}>
-          <div className={styles.notification}>
-            <div className={styles.notificationStrip} />
-            <Icon name="checkFilled" className={styles.notificationIcon} />
-            <p className={styles.notificationText}>
-              Open bonds are replaced with Hydrogen (H), and set as Attachment
-              Points by default
-            </p>
-            <button className={styles.notificationButton}>OK</button>
-          </div>
+          {notifications.map(({ id, type, message }) => (
+            <Notification
+              id={id}
+              type={type}
+              message={message}
+              key={id}
+              wizardStateDispatch={wizardStateDispatch}
+            />
+          ))}
         </div>
       </div>
+
       <div className={styles.rightColumn}>
         <div
           className={clsx(
@@ -147,10 +206,10 @@ const MonomerCreationWizard = () => {
               control={
                 <Select
                   className={styles.input}
-                  options={typeSelectOptions}
+                  options={monomerTypeSelectOptions}
                   placeholder="Select monomer type"
-                  onChange={onTypeChange}
                   value={type}
+                  onChange={(value) => handleFieldChange('type', value)}
                 />
               }
               required
@@ -163,7 +222,9 @@ const MonomerCreationWizard = () => {
                   className={styles.input}
                   placeholder="ex.: Azs980uX"
                   value={symbol}
-                  onChange={onSymbolChange}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    handleFieldChange('symbol', event.target.value)
+                  }
                 />
               }
               required
@@ -176,7 +237,9 @@ const MonomerCreationWizard = () => {
                   className={styles.input}
                   placeholder="ex.: 5-hydroxymethyl dC-12"
                   value={name}
-                  onChange={onNameChange}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    handleFieldChange('name', event.target.value)
+                  }
                 />
               }
               required
@@ -186,8 +249,10 @@ const MonomerCreationWizard = () => {
               control={
                 <NaturalAnaloguePicker
                   monomerType={type}
-                  onChange={onNaturalAnalogueChange}
                   value={naturalAnalogue}
+                  onChange={(value) =>
+                    handleFieldChange('naturalAnalogue', value)
+                  }
                   disabled={!displayNaturalAnaloguePicker}
                 />
               }
@@ -195,7 +260,9 @@ const MonomerCreationWizard = () => {
               required
             />
           </div>
+
           <div className={styles.divider} />
+
           <div className={styles.attributesFields}>
             <p className={styles.attachmentPointsTitle}>Attachment points</p>
             <div className={styles.attachmentPoints}>
@@ -218,6 +285,7 @@ const MonomerCreationWizard = () => {
             </div>
           </div>
         </div>
+
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>
             Discard

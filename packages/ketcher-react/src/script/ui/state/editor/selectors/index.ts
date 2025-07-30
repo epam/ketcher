@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import type { MonomerCreationState } from '../../../../editor/Editor';
 
 export const editorOptionsSelector = (state) => state.editor?.render?.options;
 
-export const editorMonomerCreationWizardSelector = (state) =>
-  state.editor?.isMonomerCreationWizardActive;
+export const editorMonomerCreationStateSelector = (
+  state,
+): MonomerCreationState => state.editor?.monomerCreationState;

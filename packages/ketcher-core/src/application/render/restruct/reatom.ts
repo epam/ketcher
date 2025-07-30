@@ -1008,7 +1008,7 @@ function buildLabel(
     label.text = 'R#';
   }
 
-  if (label.text) {
+  if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
     // atom.color = ElementColor[label.text] || '#000';
 

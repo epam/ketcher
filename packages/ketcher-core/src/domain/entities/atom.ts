@@ -752,16 +752,13 @@ export class Atom extends BaseMicromoleculeEntity {
       return false;
     }
 
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
-
-    if (!sgroup || !(sgroup instanceof MonomerMicromolecule)) {
-      return false;
-    }
-
-    return sgroup.getAttachmentPoints().some((ap) => ap.leaveAtomId === atomId);
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(
+        structOrSgroup,
+        atomId,
+        searchBySgroups,
+      ),
+    );
   }
 
   public static isSuperatomAttachmentAtom(struct: Struct, atomId?: number) {

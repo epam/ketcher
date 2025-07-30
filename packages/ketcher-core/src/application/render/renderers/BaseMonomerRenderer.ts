@@ -502,10 +502,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     y: number;
   } | void;
 
-  public get strokeDashArray() {
-    return '9, 8';
-  }
-
   public setEnumeration(enumeration: number | null) {
     this.enumeration = enumeration;
   }

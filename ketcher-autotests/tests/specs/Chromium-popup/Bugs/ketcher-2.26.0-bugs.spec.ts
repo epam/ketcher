@@ -832,7 +832,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
       await clickInTheMiddleOfTheScreen(page);
       const middleOfTheScreen = await getCachedBodyCenter(page);
-      await waitForRender(page, { tag: ['@chromium-popup'] }, async () => {
+      await waitForRender(page, async () => {
         await ContextMenu(page, middleOfTheScreen).click(
           MultiTailedArrowOption.AddNewTail,
         );

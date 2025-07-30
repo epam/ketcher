@@ -243,6 +243,8 @@ import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg
 import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
 import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
 import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
+import CheckFilledIcon from '../../../assets/icons/files/check-filled.svg';
+import WarningFilledIcon from '../../../assets/icons/files/warning-filled.svg';
 
 export const iconNameToIcon = {
   α,
@@ -488,4 +490,6 @@ export const iconNameToIcon = {
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerIcon,
+  checkFilled: CheckFilledIcon,
+  warningFilled: WarningFilledIcon,
 } as const;

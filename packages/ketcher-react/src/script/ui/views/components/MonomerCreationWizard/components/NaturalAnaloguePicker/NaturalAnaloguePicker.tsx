@@ -16,6 +16,7 @@ interface ChipGridSelectProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -62,16 +63,10 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   value,
   onChange,
   className,
+  disabled,
 }) => {
-  // const [currentOption, setCurrentOption] = useState<ChipOption | undefined>();
-
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;
-
-  // useEffect(() => {
-  //   const option = options.find((opt) => opt.value === value);
-  //   setCurrentOption(option);
-  // }, [options, value]);
 
   const renderValue = useCallback(
     (selected: unknown) => {
@@ -92,7 +87,6 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
     [options],
   );
 
-  // Custom menu props to style the dropdown with grid layout
   const menuProps: Partial<MenuProps> = useMemo(
     () => ({
       className: styles.dropdownMenu,
@@ -120,6 +114,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       MenuProps={menuProps}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
+      disabled={disabled}
     >
       {options.map((option) => (
         <MenuItem

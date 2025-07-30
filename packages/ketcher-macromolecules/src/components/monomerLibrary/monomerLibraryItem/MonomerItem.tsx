@@ -24,7 +24,6 @@ import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibrary
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import { selectEditor } from 'state/common';
-import { blurActiveElement } from 'helpers/canvas';
 
 const MonomerItem = ({
   item,

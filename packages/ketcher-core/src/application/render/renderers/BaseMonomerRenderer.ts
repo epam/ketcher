@@ -311,7 +311,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   protected appendRootElement(
-    canvas: D3SvgElementSelection<SVGSVGElement, void>,
+    canvas:
+      | D3SvgElementSelection<SVGSVGElement, void>
+      | D3SvgElementSelection<SVGGElement, void>,
   ) {
     const rootElement = canvas
       .append('g')

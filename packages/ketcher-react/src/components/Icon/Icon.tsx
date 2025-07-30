@@ -21,8 +21,9 @@ const Icon = ({
   className,
   title,
   onClick,
+  onMouseOver,
+  onMouseOut,
   dataTestId,
-  ...rest
 }: IIconProps) => {
   const Component = getIconByName(name);
 
@@ -32,7 +33,8 @@ const Icon = ({
       title={title}
       onClick={onClick}
       data-testid={dataTestId}
-      {...rest}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
     />
   );
 };

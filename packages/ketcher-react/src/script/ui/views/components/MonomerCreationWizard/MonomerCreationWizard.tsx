@@ -12,6 +12,7 @@ import {
   closeMonomerCreationWizard,
   submitMonomerCreation,
 } from '../../../state/editor/actions/monomerCreation';
+import AttributeField from './components/AttributeField/AttributeField';
 
 type TypeSelectConfigItem = {
   value: KetMonomerClass;
@@ -120,6 +121,17 @@ const MonomerCreationWizard = () => {
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
           Create Monomer
         </p>
+        <div className={styles.notificationsArea}>
+          <div className={styles.notification}>
+            <div className={styles.notificationStrip} />
+            <Icon name="checkFilled" className={styles.notificationIcon} />
+            <p className={styles.notificationText}>
+              Open bonds are replaced with Hydrogen (H), and set as Attachment
+              Points by default
+            </p>
+            <button className={styles.notificationButton}>OK</button>
+          </div>
+        </div>
       </div>
       <div className={styles.rightColumn}>
         <div
@@ -130,50 +142,62 @@ const MonomerCreationWizard = () => {
         >
           <p className={styles.attributesTitle}>Attributes</p>
           <div className={styles.attributesFields}>
-            <div className={styles.field}>
-              <p className={styles.fieldTitle}>Type</p>
-              <Select
-                className={styles.input}
-                options={typeSelectOptions}
-                placeholder="Select monomer type"
-                onChange={onTypeChange}
-                value={type}
-              />
-            </div>
-            <div className={styles.field}>
-              <p className={styles.fieldTitle}>Symbol</p>
-              <input
-                type="text"
-                className={styles.input}
-                placeholder="ex.: Azs980uX"
-                value={symbol}
-                onChange={onSymbolChange}
-              />
-            </div>
-            <div className={styles.field}>
-              <p className={styles.fieldTitle}>Name</p>
-              <input
-                type="text"
-                className={styles.input}
-                placeholder="ex.: 5-hydroxymethyl dC-12"
-                value={name}
-                onChange={onNameChange}
-              />
-            </div>
-            {displayNaturalAnaloguePicker && (
-              <div className={styles.field}>
-                <p className={styles.fieldTitle}>Natural analogue*</p>
+            <AttributeField
+              title="Type"
+              control={
+                <Select
+                  className={styles.input}
+                  options={typeSelectOptions}
+                  placeholder="Select monomer type"
+                  onChange={onTypeChange}
+                  value={type}
+                />
+              }
+              required
+            />
+            <AttributeField
+              title="Symbol"
+              control={
+                <input
+                  type="text"
+                  className={styles.input}
+                  placeholder="ex.: Azs980uX"
+                  value={symbol}
+                  onChange={onSymbolChange}
+                />
+              }
+              required
+            />
+            <AttributeField
+              title="Name"
+              control={
+                <input
+                  type="text"
+                  className={styles.input}
+                  placeholder="ex.: 5-hydroxymethyl dC-12"
+                  value={name}
+                  onChange={onNameChange}
+                />
+              }
+              required
+            />
+            <AttributeField
+              title="Natural analogue"
+              control={
                 <NaturalAnaloguePicker
                   monomerType={type}
                   onChange={onNaturalAnalogueChange}
                   value={naturalAnalogue}
+                  disabled={!displayNaturalAnaloguePicker}
                 />
-              </div>
-            )}
+              }
+              disabled={!displayNaturalAnaloguePicker}
+              required
+            />
           </div>
           <div className={styles.divider} />
           <div className={styles.attributesFields}>
-            <p className={styles.fieldTitle}>Attachment points</p>
+            <p className={styles.attachmentPointsTitle}>Attachment points</p>
             <div className={styles.attachmentPoints}>
               {[...attachmentPoints.entries()].map(
                 ([attachmentAtomId, leavingAtomId], index) => (

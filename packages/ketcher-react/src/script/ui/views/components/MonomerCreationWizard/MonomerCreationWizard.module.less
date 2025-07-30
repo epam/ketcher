@@ -7,6 +7,7 @@
   height: calc(100% - 66px);
   width: calc(100% - 62px);
   display: flex;
+  justify-content: space-between;
   margin: 16px 11px;
   padding: 16px;
   border: 1px dashed #CAD3DD;
@@ -15,7 +16,9 @@
 }
 
 .leftColumn {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .wizardTitle {
@@ -23,6 +26,51 @@
   align-items: center;
   margin: 0;
   gap: 4px;
+}
+
+.notificationsArea {
+
+}
+
+.notification {
+  position: relative;
+  max-width: 678px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #C3FFD7;
+  pointer-events: auto;
+}
+
+.notificationStrip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 6px;
+  background-color: #06A729;
+  border-radius: 4px 0 0 4px;
+}
+
+.notificationIcon {
+  height: 18px;
+  width: 18px;
+  color: @color-text-primary;
+}
+
+.notificationText {
+  flex-grow: 1;
+  margin: 0;
+}
+
+.notificationButton {
+  padding: 4px 8px;
+  background-color: transparent;
+  border: 1px solid @color-grey-6;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .rightColumn {
@@ -54,18 +102,6 @@
   gap: 8px;
 }
 
-.field {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.fieldTitle {
-  margin: 0;
-  font-weight: 500;
-  font-size: 12px;
-}
-
 .typeOption {
   display: flex;
   align-items: center;
@@ -83,6 +119,12 @@
 .divider {
   width: 100%;
   border-bottom: 1px solid @color-grey-3;
+}
+
+.attachmentPointsTitle {
+  margin: 0;
+  font-weight: 500;
+  font-size: 12px;
 }
 
 .attachmentPoints {

@@ -991,7 +991,7 @@ function buildLabel(
   label: ElemAttr;
 } {
   const {
-    atomColoring,
+    // atomColoring,
     font,
     fontszInPx,
     currentlySelectedMonomerAttachmentPoint,
@@ -1002,14 +1002,17 @@ function buildLabel(
   const label: any = {
     text: getLabelText(atom.a, atomId, sgroup),
   };
+
   let tooltip: string | null = null;
   if (!label.text) {
     label.text = 'R#';
   }
 
-  if (label.text === atom.a.label) {
+  if (label.text) {
     const element = Elements.get(label.text);
-    if (atomColoring && element) {
+    // atom.color = ElementColor[label.text] || '#000';
+
+    if (element) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }

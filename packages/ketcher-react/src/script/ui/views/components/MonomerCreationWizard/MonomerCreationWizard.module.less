@@ -85,6 +85,38 @@
   border-bottom: 1px solid @color-grey-3;
 }
 
+.attachmentPoints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 8px;
+}
+
+.attachmentPoint {
+  //height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 8px 4px 8px 8px;
+  border: 1px solid @color-grey-4;
+  border-radius: 4px;
+  background-color: @color-grey-3;
+}
+
+.attachmentPointText {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.attachmentPointIndex {
+  font-weight: 700;
+}
+
+.attachmentPointIcon {
+  width: 16px;
+  height: 16px;
+  color: @color-text-primary;
+  opacity: 0.4;
+}
+
 .buttonsContainer {
   width: 100%;
   display: flex;
@@ -110,7 +142,7 @@
   color: @color-grey-6;
 }
 
-.buttonFinish {
+.buttonSubmit {
   border: 1px solid @color-primary;
   background-color: @color-primary;
   color: #fff;

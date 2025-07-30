@@ -1,19 +1,25 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon } from 'components';
+import { Icon, IconName } from 'components';
 import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { ChangeEvent, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { editorMonomerCreationWizardSelector } from '../../../state/editor/selectors';
+import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import {
   closeMonomerCreationWizard,
   submitMonomerCreation,
 } from '../../../state/editor/actions/monomerCreation';
 
-const TypeSelectConfig = [
+type TypeSelectConfigItem = {
+  value: KetMonomerClass;
+  label: string;
+  iconName: IconName;
+};
+
+const TypeSelectConfig: TypeSelectConfigItem[] = [
   {
     value: KetMonomerClass.AminoAcid,
     label: 'Amino acid',
@@ -86,7 +92,7 @@ const MonomerCreationWizard = () => {
     resetWizard();
   };
 
-  const handleFinish = () => {
+  const handleSubmit = () => {
     // TODO: Validate inputs
     dispatch(
       submitMonomerCreation({
@@ -99,13 +105,13 @@ const MonomerCreationWizard = () => {
     resetWizard();
   };
 
-  const isMonomerCreationWizardActive = useSelector(
-    editorMonomerCreationWizardSelector,
-  );
+  const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
-  if (!isMonomerCreationWizardActive) {
+  if (!monomerCreationState) {
     return null;
   }
+
+  const { attachmentPoints } = monomerCreationState;
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -165,17 +171,35 @@ const MonomerCreationWizard = () => {
               </div>
             )}
           </div>
-          {/* <div className={styles.divider} /> */}
-          {/* <div className={styles.attachmentPoints}> */}
-          {/*  <p className={styles.fieldTitle}>Attachment points</p> */}
-          {/* </div> */}
+          <div className={styles.divider} />
+          <div className={styles.attributesFields}>
+            <p className={styles.fieldTitle}>Attachment points</p>
+            <div className={styles.attachmentPoints}>
+              {[...attachmentPoints.entries()].map(
+                ([attachmentAtomId, leavingAtomId], index) => (
+                  <div
+                    className={styles.attachmentPoint}
+                    key={`${attachmentAtomId}-${leavingAtomId}`}
+                  >
+                    <p className={styles.attachmentPointText}>
+                      <span className={styles.attachmentPointIndex}>
+                        R{index + 1}
+                      </span>
+                      &nbsp;(H)
+                    </p>
+                    <Icon name="close" className={styles.attachmentPointIcon} />
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
         </div>
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>
             Discard
           </button>
-          <button className={styles.buttonFinish} onClick={handleFinish}>
-            Finish
+          <button className={styles.buttonSubmit} onClick={handleSubmit}>
+            Submit
           </button>
         </div>
       </div>

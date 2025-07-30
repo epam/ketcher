@@ -42,7 +42,7 @@ const AUTO_SCROLL_OFFSET_X = 10;
 const AUTO_SCROLL_OFFSET_Y = 10;
 
 export class ZoomTool implements BaseTool {
-  public canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  public canvas: D3SvgElementSelection<SVGGElement, void>;
   public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
@@ -243,6 +243,7 @@ export class ZoomTool implements BaseTool {
     xOffset?,
     yOffset?,
     isOffsetInPercents = true,
+    needScrollVertical = true,
   ) {
     const canvasWrapperHeight =
       this.canvasWrapper.node()?.height.baseVal.value || 0;
@@ -254,17 +255,24 @@ export class ZoomTool implements BaseTool {
       canvasWrapperWidth / 2 -
         (isNumber(xOffset) && !isOffsetInPercents
           ? xOffset
-          : (canvasWrapperWidth * (xOffset || AUTO_SCROLL_OFFSET_X)) / 100),
+          : (canvasWrapperWidth *
+              (isNumber(xOffset) ? xOffset : AUTO_SCROLL_OFFSET_X)) /
+            100),
       canvasWrapperHeight / 2 -
         (isNumber(yOffset) && !isOffsetInPercents
           ? yOffset
-          : (canvasWrapperHeight * (yOffset || AUTO_SCROLL_OFFSET_Y)) / 100),
+          : (canvasWrapperHeight *
+              (isNumber(yOffset) ? yOffset : AUTO_SCROLL_OFFSET_Y)) /
+            100),
     );
+    const currentY = this._zoomTransform?.y || 0;
 
     this.zoom?.translateTo(
       this.canvasWrapper,
       position.x + this.unzoomValue(offset.x),
-      position.y + this.unzoomValue(offset.y * (stickToBottom ? -1 : 1)),
+      needScrollVertical
+        ? position.y + this.unzoomValue(offset.y * (stickToBottom ? -1 : 1))
+        : this.unzoomValue(canvasWrapperHeight / 2 - currentY),
     );
   }
 
@@ -449,7 +457,7 @@ export class ZoomTool implements BaseTool {
     }
   }
 
-  private get canvasWrapperHeight() {
+  public get canvasWrapperHeight() {
     // TODO create class for Canvas and move this getter there
     const canvasWrapperBbox = this.canvasWrapper
       .node()
@@ -457,7 +465,14 @@ export class ZoomTool implements BaseTool {
     return canvasWrapperBbox?.height || 0;
   }
 
-  private get canvasWrapperSize() {
+  public get canvasWrapperWidth() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.width || 0;
+  }
+
+  public get canvasWrapperSize() {
     const canvasWrapperBbox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect();

@@ -55,6 +55,11 @@ export const PeriodicTableDialog = (page: Page) => {
         await getButton(elementName).click();
       }
     },
+
+    async addElements(elementNames: PeriodicTableElement[]) {
+      await this.selectElements(elementNames);
+      await this.add();
+    },
   };
 };
 

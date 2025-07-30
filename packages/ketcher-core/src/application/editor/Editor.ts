@@ -100,6 +100,24 @@ import {
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { debounce } from 'lodash';
+import { D3SvgElementSelection } from 'application/render/types';
+
+const SCROLL_SMOOTHNESS_IM_MS = 300;
+
+const turnOnScrollAnimation = (
+  canvas: D3SvgElementSelection<SVGGElement, void>,
+) => {
+  canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
+};
+
+const debouncedTurnOffScrollAnimation = debounce(
+  (canvas: D3SvgElementSelection<SVGGElement, void>) => {
+    canvas.style('transition', 'none');
+  },
+  SCROLL_SMOOTHNESS_IM_MS,
+);
 
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
@@ -663,7 +681,7 @@ export class CoreEditor {
     const newMonomerPosition = selectedMonomerToConnect
       ? selectedMonomerToConnect.position.add(new Vec2(1.5, 0))
       : this.drawingEntitiesManager.hasMonomers
-      ? this.nextAutochainPosition
+      ? this.nextAutochainPosition && !(this.mode instanceof SnakeMode)
         ? this.nextAutochainPosition
         : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
             new Vec2(0, 1.5),
@@ -764,8 +782,78 @@ export class CoreEditor {
 
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
-    this.zoomTool.scrollToVerticalBottom();
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
+
+    if (this.mode instanceof SnakeMode) {
+      this.zoomTool.scrollToVerticalBottom();
+    } else if (this.mode instanceof FlexMode) {
+      const editorSettings = provideEditorSettings();
+      const chainsCollection = ChainsCollection.fromMonomers([
+        monomersAddResult.lastMonomer,
+      ]);
+      const monomersInChainUsedForAutochain =
+        chainsCollection.chains[0].monomers;
+      const chainBbox = DrawingEntitiesManager.getStructureBbox(
+        monomersInChainUsedForAutochain,
+      );
+      const canvasWrapperSize = this.zoomTool.canvasWrapperSize;
+      const MIN_OFFSET_FROM_RIGHT = 7.5 * editorSettings.macroModeScale;
+      const offsetFromRight = Math.min(
+        MIN_OFFSET_FROM_RIGHT,
+        canvasWrapperSize.width / 2,
+      );
+      const chainLeftTopInViewCoordinates = Coordinates.modelToView(
+        new Vec2(chainBbox.left, chainBbox.top),
+      );
+      const chainRightBottomInViewCoordinates = Coordinates.modelToView(
+        new Vec2(chainBbox.right, chainBbox.bottom),
+      );
+      const chainWidthInViewCoordinates =
+        chainRightBottomInViewCoordinates.x - chainLeftTopInViewCoordinates.x;
+      const lastAddedMonomerPositionInViewCoordinates = Coordinates.modelToView(
+        monomersAddResult.lastMonomer.position,
+      );
+      const isStructureWithAutochainOffsetFitCanvas =
+        canvasWrapperSize.width - chainWidthInViewCoordinates > offsetFromRight;
+      const isAddedMonomerHorizontallyOutOfCanvas =
+        lastAddedMonomerPositionInViewCoordinates.x <= 0 ||
+        lastAddedMonomerPositionInViewCoordinates.x >= canvasWrapperSize.width;
+      const isAddedMonomerVerticallyOutOfCanvas =
+        lastAddedMonomerPositionInViewCoordinates.y <= 0 ||
+        lastAddedMonomerPositionInViewCoordinates.y >= canvasWrapperSize.height;
+
+      if (
+        isAddedMonomerHorizontallyOutOfCanvas ||
+        isAddedMonomerVerticallyOutOfCanvas
+      ) {
+        const needToScrollToBeginningOfChain =
+          Boolean(selectedMonomerToConnect) &&
+          isStructureWithAutochainOffsetFitCanvas;
+
+        turnOnScrollAnimation(this.zoomTool.canvas);
+        this.zoomTool.scrollTo(
+          needToScrollToBeginningOfChain
+            ? Coordinates.modelToCanvas(
+                chainsCollection.firstNode.firstMonomerInNode.position,
+              )
+            : Coordinates.modelToCanvas(
+                monomersAddResult.lastMonomer.position,
+              ).sub(
+                new Vec2(
+                  this.zoomTool.unzoomValue(canvasWrapperSize.width) -
+                    offsetFromRight,
+                  0,
+                ),
+              ),
+          false,
+          needToScrollToBeginningOfChain ? 2 : 0,
+          undefined,
+          true,
+          isAddedMonomerVerticallyOutOfCanvas,
+        );
+        debouncedTurnOffScrollAnimation(this.zoomTool.canvas);
+      }
+    }
 
     this.onRemoveAutochainPreview();
     this.onPreviewAutochain(monomerOrRnaItem);

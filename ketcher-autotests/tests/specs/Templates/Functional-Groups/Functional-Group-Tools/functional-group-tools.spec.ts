@@ -802,7 +802,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
 
     await selectAllStructuresOnCanvas(page);
-
     await contractAbbreviation(page, middleOfTheScreen);
 
     await takeEditorScreenshot(page);

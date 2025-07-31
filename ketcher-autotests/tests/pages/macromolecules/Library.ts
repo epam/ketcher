@@ -177,7 +177,17 @@ export const Library = (page: Page) => {
         await this.goToMonomerLocation(location);
       }
 
-      await getElement(monomer.testId).click();
+      const monomerCard = getElement(monomer.testId);
+      const monomerCardBbox = await monomerCard.boundingBox();
+
+      await monomerCard.click({
+        position: {
+          // eslint-disable-next-line no-magic-numbers
+          x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
+          // eslint-disable-next-line no-magic-numbers
+          y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
+        },
+      });
     },
 
     /**
@@ -216,7 +226,18 @@ export const Library = (page: Page) => {
      */
     async selectCustomPreset(presetTestId: string) {
       await this.goToMonomerLocation(rnaTabPresetsSection);
-      await getElement(presetTestId).click();
+
+      const presetCard = getElement(presetTestId);
+      const presetCardBbox = await presetCard.boundingBox();
+
+      await presetCard.click({
+        position: {
+          // eslint-disable-next-line no-magic-numbers
+          x: presetCardBbox?.width ? presetCardBbox.width / 2 : 0,
+          // eslint-disable-next-line no-magic-numbers
+          y: presetCardBbox?.height ? presetCardBbox.height - 10 : 0,
+        },
+      });
     },
 
     async rightClickOnPreset(preset: Monomer) {

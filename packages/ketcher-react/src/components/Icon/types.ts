@@ -32,5 +32,6 @@ export interface IIconProps {
   onClick?: (e: MouseEvent) => void;
   onMouseOver?: (e: MouseEvent) => void;
   onMouseOut?: (e: MouseEvent) => void;
+  onDoubleClick?: (e: MouseEvent) => void;
   dataTestId?: string;
 }

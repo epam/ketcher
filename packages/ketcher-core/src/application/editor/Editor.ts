@@ -792,6 +792,8 @@ export class CoreEditor {
       this.zoomTool.scrollToVerticalBottom();
     } else if (this.mode instanceof FlexMode) {
       const editorSettings = provideEditorSettings();
+      const oneLayoutCellInAngstroms =
+        SnakeLayoutCellWidth / editorSettings.macroModeScale;
       const chainsCollection = ChainsCollection.fromMonomers([
         monomersAddResult.lastMonomer,
       ]);
@@ -801,7 +803,8 @@ export class CoreEditor {
         monomersInChainUsedForAutochain,
       );
       const canvasWrapperSize = this.zoomTool.canvasWrapperSize;
-      const MIN_OFFSET_FROM_RIGHT = 7.5 * editorSettings.macroModeScale;
+      const MIN_OFFSET_FROM_RIGHT =
+        oneLayoutCellInAngstroms * 5 * editorSettings.macroModeScale;
       const offsetFromRight = Math.min(
         MIN_OFFSET_FROM_RIGHT,
         canvasWrapperSize.width / 2,
@@ -822,9 +825,12 @@ export class CoreEditor {
       const isAddedMonomerHorizontallyOutOfCanvas =
         lastAddedMonomerPositionInViewCoordinates.x <= 0 ||
         lastAddedMonomerPositionInViewCoordinates.x >= canvasWrapperSize.width;
-      const isAddedMonomerVerticallyOutOfCanvas =
-        lastAddedMonomerPositionInViewCoordinates.y <= 0 ||
+      const isAddedMonomerOutAboveCanvas =
+        lastAddedMonomerPositionInViewCoordinates.y <= 0;
+      const isAddedMonomerOutBelowCanvas =
         lastAddedMonomerPositionInViewCoordinates.y >= canvasWrapperSize.height;
+      const isAddedMonomerVerticallyOutOfCanvas =
+        isAddedMonomerOutAboveCanvas || isAddedMonomerOutBelowCanvas;
 
       if (
         isAddedMonomerHorizontallyOutOfCanvas ||
@@ -849,10 +855,14 @@ export class CoreEditor {
                   0,
                 ),
               ),
+          isAddedMonomerOutBelowCanvas,
+          needToScrollToBeginningOfChain
+            ? oneLayoutCellInAngstroms * editorSettings.macroModeScale
+            : 0,
+          isAddedMonomerOutBelowCanvas
+            ? oneLayoutCellInAngstroms * 2 * editorSettings.macroModeScale
+            : undefined,
           false,
-          needToScrollToBeginningOfChain ? 2 : 0,
-          undefined,
-          true,
           isAddedMonomerVerticallyOutOfCanvas,
         );
         debouncedTurnOffScrollAnimation(this.zoomTool.canvas);

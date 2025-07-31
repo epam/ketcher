@@ -53,7 +53,7 @@ const RnaPresetItem = ({
       event.stopPropagation();
       editor?.events.autochain.dispatch(preset);
     },
-    [dispatch, preset],
+    [editor, preset],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
@@ -87,6 +87,7 @@ const RnaPresetItem = ({
         onMouseOver={onAutochainIconMouseOver}
         onMouseOut={onAutochainIconMouseOut}
         onClick={onAutochainIconClick}
+        onDoubleClick={(e) => e.stopPropagation()}
       ></AutochainIcon>
       <span>{preset.name}</span>
       <StyledIcon

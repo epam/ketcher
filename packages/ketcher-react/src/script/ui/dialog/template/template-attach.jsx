@@ -313,7 +313,7 @@ class Attach extends Component {
               placeholder="template"
             />
             <span>Selected attachment points</span>
-            <AttachmentOutput>
+            <AttachmentOutput data-testId="attach-output">
               Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
               <strong>{bondid}</strong>
             </AttachmentOutput>
@@ -322,6 +322,7 @@ class Attach extends Component {
                 variant="outlined"
                 onClick={this.props.onCancel}
                 className={classes.button}
+                testId="template-cancel-button"
               >
                 Cancel
               </CancelButton>
@@ -330,6 +331,7 @@ class Attach extends Component {
                 onClick={() => this.props.onOk(this.onResult())}
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
+                testId="template-edit-button"
               >
                 {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
               </SaveButton>

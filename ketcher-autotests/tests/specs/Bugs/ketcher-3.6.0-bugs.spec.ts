@@ -18,6 +18,7 @@ import {
   takeElementScreenshot,
   openFile,
   readFileContent,
+  clickOnCanvas,
   MolFileFormat,
   takePageScreenshot,
 } from '@utils';
@@ -49,7 +50,6 @@ import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -260,7 +260,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheScreen(page);
-    await expandMonomer(page, getAbbreviationLocator(page, { name: 'baA' }));
+    await expandMonomer(page, page.getByText('baA'));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -290,10 +290,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheScreen(page);
-    await ContextMenu(
-      page,
-      getAbbreviationLocator(page, { name: 'Cys_Bn' }),
-    ).open();
+    await ContextMenu(page, page.getByText('Cys_Bn')).open();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: false,
@@ -574,10 +571,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.MOLv3000,
       fileContent,
     );
-    await Library(page).dragMonomerOnCanvas(Peptides.Cys_Bn, {
-      x: 580,
-      y: 388,
-    });
+    await Library(page).selectMonomer(Peptides.Cys_Bn);
+    await clickOnCanvas(page, 580, 388);
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);

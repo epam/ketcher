@@ -1101,8 +1101,6 @@ export class CoreEditor {
 
     if (this.mode instanceof SequenceMode) {
       this.mode.insertMonomerFromLibrary(monomer);
-    } else {
-      this.selectTool(ToolName.monomer, monomer);
     }
   }
 
@@ -1117,12 +1115,6 @@ export class CoreEditor {
 
     if (this.mode instanceof SequenceMode) {
       this.mode.insertPresetFromLibrary(preset);
-    } else {
-      if (preset) {
-        this.selectTool(ToolName.preset, preset);
-      } else {
-        this.tool = undefined;
-      }
     }
   }
 

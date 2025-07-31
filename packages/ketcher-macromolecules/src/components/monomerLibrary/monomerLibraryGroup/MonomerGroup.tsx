@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback } from 'react';
-import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -25,7 +24,7 @@ import {
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectEditor, selectTool, showPreview } from 'state/common';
+import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
 import {
@@ -40,7 +39,6 @@ const MonomerGroup = ({
   selectedMonomerUniqueKey,
   libraryName,
   disabled,
-  onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -115,13 +113,9 @@ const MonomerGroup = ({
   };
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
-    dispatch(selectTool('monomer'));
-
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor?.events.selectMonomer.dispatch(monomer);
     }
-
-    onItemClick(monomer);
   };
 
   const isMonomerSelected = (monomer: MonomerOrAmbiguousType) => {

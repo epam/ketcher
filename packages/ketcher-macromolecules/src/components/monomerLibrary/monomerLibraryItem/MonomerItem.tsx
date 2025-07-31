@@ -89,6 +89,10 @@ const MonomerItem = ({
       code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onDoubleClick={(e) => {
+        onAutochainIconClick(e);
+        onAutochainIconMouseOut();
+      }}
       {...(!isDisabled ? { onClick } : {})}
       ref={cardRef}
     >

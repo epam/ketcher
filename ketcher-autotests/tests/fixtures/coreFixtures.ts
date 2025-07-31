@@ -34,7 +34,8 @@ export const test = base.extend<object, CoreWorkerFixtures>({
   ],
 
   ketcher: [
-    async (_, use) => {
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use) => {
       await use({});
     },
     { scope: 'worker', auto: true },

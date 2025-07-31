@@ -7,10 +7,12 @@ export const test = base.extend<{
   clearLocalStorage: (page: Page) => Promise<void>;
   resetZoomLevelToDefault: (page: Page) => Promise<void>;
 }>({
-  clearLocalStorage: async (_, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  clearLocalStorage: async ({}, use) => {
     await use(clearLocalStorage);
   },
-  resetZoomLevelToDefault: async (_, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  resetZoomLevelToDefault: async ({}, use) => {
     await use(resetZoomLevelToDefault);
   },
 });

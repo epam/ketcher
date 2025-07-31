@@ -20,13 +20,16 @@ type CommonPageObjects = {
 };
 
 export const test = base.extend<CommonPageObjects>({
-  CommonTopRightToolbar: async (_, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  CommonTopRightToolbar: async ({}, use) => {
     await use(CommonTopRightToolbar);
   },
-  CommonTopLeftToolbar: async (_, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  CommonTopLeftToolbar: async ({}, use) => {
     await use(CommonTopLeftToolbar);
   },
-  MacromoleculesTopToolbar: async (_, use) => {
+  // eslint-disable-next-line no-empty-pattern
+  MacromoleculesTopToolbar: async ({}, use) => {
     await use(MacromoleculesTopToolbar);
   },
 });

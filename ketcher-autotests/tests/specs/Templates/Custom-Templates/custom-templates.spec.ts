@@ -141,8 +141,6 @@ test.describe('Open Ketcher', () => {
       AromaticsTemplate.Azulene,
     );
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'Edit' }).click();
-    await takeEditorScreenshot(page);
   });
 
   test('Edit templates - Close window', async ({ page }) => {

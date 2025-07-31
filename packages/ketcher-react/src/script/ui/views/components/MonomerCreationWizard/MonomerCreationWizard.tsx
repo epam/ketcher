@@ -18,7 +18,11 @@ import {
   MonomerTypeSelectItem,
   WizardAction,
   WizardFormFieldId,
+  WizardNotification,
+  WizardNotificationId,
+  WizardNotificationMessageMap,
   WizardState,
+  WizardValues,
 } from './MonomerCreationWizard.types';
 
 const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
@@ -38,6 +42,16 @@ const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
   { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
 ];
 
+const notificationMessages: WizardNotificationMessageMap = {
+  defaultAttachmentPoints:
+    'Attachment points are set by default with hydrogens as leaving groups.',
+  emptyMandatoryFields: 'Mandatory fields must be filled.',
+  invalidSymbol:
+    'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  symbolExists:
+    'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+};
+
 const initialWizardState: WizardState = {
   values: {
     type: undefined,
@@ -46,15 +60,18 @@ const initialWizardState: WizardState = {
     naturalAnalogue: '',
   },
   errors: {},
-  notifications: [
-    {
-      id: 0,
-      type: 'info',
-      message:
-        'Open bonds are replaced with Hydrogen (H), and set as Attachment Points by default',
-    },
-  ],
+  notifications: new Map([
+    [
+      'defaultAttachmentPoints',
+      { type: 'info', message: notificationMessages.defaultAttachmentPoints },
+    ],
+  ]),
 };
+
+const isNaturalAnalogueRequired = (monomerType: KetMonomerClass | undefined) =>
+  monomerType === KetMonomerClass.AminoAcid ||
+  monomerType === KetMonomerClass.Base ||
+  monomerType === KetMonomerClass.RNA;
 
 const wizardReducer = (
   state: WizardState,
@@ -76,21 +93,81 @@ const wizardReducer = (
       };
     }
 
+    case 'SetErrors': {
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          ...action.errors,
+        },
+      };
+    }
+
+    case 'SetNotifications': {
+      return {
+        ...state,
+        notifications: new Map([
+          ...state.notifications,
+          ...action.notifications,
+        ]),
+      };
+    }
+
+    case 'ResetErrors': {
+      return {
+        ...state,
+        errors: {},
+      };
+    }
+
     case 'ResetWizard': {
       return initialWizardState;
     }
 
-    case 'RemoveNotification':
+    case 'RemoveNotification': {
+      const notifications = new Map(state.notifications);
+      notifications.delete(action.id);
+
       return {
         ...state,
-        notifications: state.notifications.filter(
-          (notification) => notification.id !== action.id,
-        ),
+        notifications,
       };
+    }
 
     default:
       return state;
   }
+};
+
+const validateInputs = (values: WizardValues) => {
+  const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (!value?.trim()) {
+      if (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('emptyMandatoryFields', {
+          type: 'error',
+          message: notificationMessages.emptyMandatoryFields,
+        });
+      }
+      return;
+    }
+
+    if (key === 'symbol') {
+      const symbolRegex = /^[a-zA-Z0-9-_*]*$/;
+      if (!symbolRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidSymbol', {
+          type: 'error',
+          message: notificationMessages.invalidSymbol,
+        });
+      }
+    }
+  });
+
+  return { errors, notifications };
 };
 
 const MonomerCreationWizard = () => {
@@ -101,6 +178,7 @@ const MonomerCreationWizard = () => {
   );
 
   const { values, notifications, errors } = wizardState;
+  console.log('errors', errors);
   const { type, symbol, name, naturalAnalogue } = values;
 
   const handleFieldChange = (
@@ -151,7 +229,14 @@ const MonomerCreationWizard = () => {
   };
 
   const handleSubmit = () => {
-    // TODO: Validate inputs
+    wizardStateDispatch({ type: 'ResetErrors' });
+    const { errors, notifications } = validateInputs(values);
+    if (Object.keys(errors).length > 0) {
+      wizardStateDispatch({ type: 'SetErrors', errors });
+      wizardStateDispatch({ type: 'SetNotifications', notifications });
+      return;
+    }
+
     reduxDispatch(
       submitMonomerCreation({
         type,
@@ -180,15 +265,17 @@ const MonomerCreationWizard = () => {
         </p>
 
         <div className={styles.notificationsArea}>
-          {notifications.map(({ id, type, message }) => (
-            <Notification
-              id={id}
-              type={type}
-              message={message}
-              key={id}
-              wizardStateDispatch={wizardStateDispatch}
-            />
-          ))}
+          {Array.from(notifications.entries()).map(
+            ([id, { type, message }]) => (
+              <Notification
+                id={id}
+                type={type}
+                message={message}
+                key={id}
+                wizardStateDispatch={wizardStateDispatch}
+              />
+            ),
+          )}
         </div>
       </div>
 
@@ -205,7 +292,7 @@ const MonomerCreationWizard = () => {
               title="Type"
               control={
                 <Select
-                  className={styles.input}
+                  className={clsx(styles.input, errors.type && styles.error)}
                   options={monomerTypeSelectOptions}
                   placeholder="Select monomer type"
                   value={type}
@@ -219,7 +306,7 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={styles.input}
+                  className={clsx(styles.input, errors.symbol && styles.error)}
                   placeholder="ex.: Azs980uX"
                   value={symbol}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -234,7 +321,7 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={styles.input}
+                  className={clsx(styles.input, errors.name && styles.error)}
                   placeholder="ex.: 5-hydroxymethyl dC-12"
                   value={name}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -248,6 +335,7 @@ const MonomerCreationWizard = () => {
               title="Natural analogue"
               control={
                 <NaturalAnaloguePicker
+                  className={clsx(errors.type && styles.error)}
                   monomerType={type}
                   value={naturalAnalogue}
                   onChange={(value) =>

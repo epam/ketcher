@@ -29,7 +29,9 @@
 }
 
 .notificationsArea {
-
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .rightColumn {
@@ -73,6 +75,11 @@
 
 .input {
   width: 200px;
+
+  &.error {
+    background-color: #FDE0DF;
+    border: 1px solid @color-secondary-red;
+  }
 }
 
 .divider {

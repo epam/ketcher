@@ -3,12 +3,13 @@ import { Icon, IconName } from 'components';
 import clsx from 'clsx';
 import {
   WizardAction,
+  WizardNotificationId,
   WizardNotificationType,
 } from '../../MonomerCreationWizard.types';
 import { Dispatch } from 'react';
 
 type Props = {
-  id: number;
+  id: WizardNotificationId;
   type: WizardNotificationType;
   message: string;
   wizardStateDispatch: Dispatch<WizardAction>;

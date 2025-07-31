@@ -701,6 +701,10 @@ export class CoreEditor {
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
     this.invalidateNextAutochainPositionIfNeeded(isRnaPreset(monomerOrRnaItem));
 
     const { selectedMonomerToConnect, newMonomerPosition } =

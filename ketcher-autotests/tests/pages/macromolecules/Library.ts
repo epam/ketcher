@@ -12,6 +12,7 @@ import {
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
 import { waitForRender } from '@utils/common';
+import { getCoordinatesOfTheMiddleOfTheScreen } from '@utils';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -210,12 +211,22 @@ export const Library = (page: Page) => {
 
     async dragMonomerOnCanvas(
       monomer: Monomer,
-      coordinates: { x: number; y: number },
+      coordinates: { x: number; y: number; fromCenter?: boolean },
       selectOnFavoritesTab = false,
     ) {
+      let x = coordinates.x;
+      let y = coordinates.y;
+
+      if (coordinates.fromCenter) {
+        const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+        x = centerOfCanvas.x;
+        y = centerOfCanvas.y;
+      }
+
       await this.hoverMonomer(monomer, selectOnFavoritesTab);
       await page.mouse.down();
-      await page.mouse.move(coordinates.x, coordinates.y);
+      await page.mouse.move(x, y);
       await waitForRender(page, async () => {
         await page.mouse.up();
       });

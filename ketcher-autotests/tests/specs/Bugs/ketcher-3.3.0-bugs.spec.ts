@@ -106,8 +106,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Check name for sugar in the library for fR
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).selectMonomer(Sugars.fR);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Sugars.fR, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Sugars.fR).first().hover();
     await waitForMonomerPreview(page);
@@ -147,7 +150,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 5. Observe that a tooltip appears after monomer stops moving, even though mouse button remains pressed
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).selectMonomer(Peptides._2Nal);
+    await Library(page).dragMonomerOnCanvas(Peptides._2Nal, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
@@ -171,7 +178,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Put any monomer on the canvas click on it and move mouse away
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).selectMonomer(Peptides.meC);
+    await Library(page).dragMonomerOnCanvas(Peptides.meC, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptides.meC).click();
@@ -839,7 +850,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 5. Draw cyclohexane and compare the bond length and angle
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).selectMonomer(Peptides._1Nal);
+    await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {

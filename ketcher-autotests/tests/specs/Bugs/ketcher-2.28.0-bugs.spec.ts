@@ -11,7 +11,6 @@ import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
-  FunctionalGroups,
   MacroFileType,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -20,7 +19,6 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   selectCanvasArea,
-  selectFunctionalGroups,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -48,7 +46,10 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   getSettingsOptionValue,
@@ -60,6 +61,8 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 declare global {
   interface Window {
@@ -136,8 +139,10 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
       console.log('hello'),
     );
   });
-
-  await selectFunctionalGroups(FunctionalGroups.CF3, page);
+  await BottomToolbar(page).StructureLibrary();
+  await StructureLibraryDialog(page).addFunctionalGroup(
+    FunctionalGroupsTabItems.CF3,
+  );
   await clickInTheMiddleOfTheScreen(page);
   await atomToolbar.clickAtom(Atom.Bromine);
 

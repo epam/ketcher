@@ -4,7 +4,7 @@ import {
   LibraryTemplate,
   SaltsAndSolventsTabItems,
   TabSection,
-  TemplateLibraryTabItems,
+  TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 type TemplateLibraryTabLocators = {
@@ -31,6 +31,7 @@ type StructureLibraryDialogLocators = {
   functionalGroupTab: Locator;
   saltsAndSalventsTab: Locator;
   saveToSdfButton: Locator;
+  deleteTemplateButton: Locator;
 };
 
 export const StructureLibraryDialog = (page: Page) => {
@@ -39,27 +40,25 @@ export const StructureLibraryDialog = (page: Page) => {
 
   const templateLibraryTab: Locator & TemplateLibraryTabLocators =
     Object.assign(page.getByTestId(TabSection.TemplateLibraryTab), {
-      alphaDSugarsSection: page.getByTestId(
-        TemplateLibraryTabItems.AlphaDSugars,
-      ),
-      aromaticsSection: page.getByTestId(TemplateLibraryTabItems.Aromatics),
-      betaDSugarsSection: page.getByTestId(TemplateLibraryTabItems.BetaDSugars),
-      bicyclesSection: page.getByTestId(TemplateLibraryTabItems.Bicycles),
+      alphaDSugarsSection: page.getByTestId(TemplateLibraryTab.AlphaDSugars),
+      aromaticsSection: page.getByTestId(TemplateLibraryTab.Aromatics),
+      betaDSugarsSection: page.getByTestId(TemplateLibraryTab.BetaDSugars),
+      bicyclesSection: page.getByTestId(TemplateLibraryTab.Bicycles),
       bridgedPolycyclicsSection: page.getByTestId(
-        TemplateLibraryTabItems.BridgedPolycyclics,
+        TemplateLibraryTab.BridgedPolycyclics,
       ),
-      crownEthersSection: page.getByTestId(TemplateLibraryTabItems.CrownEthers),
-      dAminoAcidsSection: page.getByTestId(TemplateLibraryTabItems.DAminoAcids),
-      dSugarsSection: page.getByTestId(TemplateLibraryTabItems.DSugars),
+      crownEthersSection: page.getByTestId(TemplateLibraryTab.CrownEthers),
+      dAminoAcidsSection: page.getByTestId(TemplateLibraryTab.DAminoAcids),
+      dSugarsSection: page.getByTestId(TemplateLibraryTab.DSugars),
       heterocyclicRingsSection: page.getByTestId(
-        TemplateLibraryTabItems.HeterocyclicRings,
+        TemplateLibraryTab.HeterocyclicRings,
       ),
-      lAminoAcidsSection: page.getByTestId(TemplateLibraryTabItems.LAminoAcids),
-      nucleobasesSection: page.getByTestId(TemplateLibraryTabItems.Nucleobases),
-      ringsSection: page.getByTestId(TemplateLibraryTabItems.Rings),
-      sugarsSection: page.getByTestId(TemplateLibraryTabItems.Sugars),
+      lAminoAcidsSection: page.getByTestId(TemplateLibraryTab.LAminoAcids),
+      nucleobasesSection: page.getByTestId(TemplateLibraryTab.Nucleobases),
+      ringsSection: page.getByTestId(TemplateLibraryTab.Rings),
+      sugarsSection: page.getByTestId(TemplateLibraryTab.Sugars),
       threeDTemplatesSection: page.getByTestId(
-        TemplateLibraryTabItems.ThreeDTemplates,
+        TemplateLibraryTab.ThreeDTemplates,
       ),
     });
 
@@ -70,6 +69,7 @@ export const StructureLibraryDialog = (page: Page) => {
     functionalGroupTab: page.getByTestId(TabSection.FunctionalGroupsTab),
     saltsAndSalventsTab: page.getByTestId(TabSection.SaltsAndSolventsTab),
     saveToSdfButton: page.getByTestId('save-to-sdf-button'),
+    deleteTemplateButton: page.getByTestId('delete-template-button'),
   };
 
   return {
@@ -92,11 +92,17 @@ export const StructureLibraryDialog = (page: Page) => {
       return ariaSelected === 'true';
     },
 
-    async isSectionOpened(sectionName: LibraryTemplate): Promise<boolean> {
+    async isSectionOpened(sectionName: TemplateLibraryTab): Promise<boolean> {
       const ariaExpanded = await getElement(sectionName).getAttribute(
         'aria-expanded',
       );
       return ariaExpanded === 'true';
+    },
+
+    async openSection(sectionName: TemplateLibraryTab) {
+      if (!(await this.isSectionOpened(sectionName))) {
+        await getElement(sectionName).click();
+      }
     },
 
     async openTab(tabSection: TabSection) {
@@ -126,48 +132,60 @@ export const StructureLibraryDialog = (page: Page) => {
       );
     },
 
+    async clickSearch() {
+      await locators.searchEditBox.click();
+    },
+
     async setSearchValue(value = '') {
       await locators.searchEditBox.fill(value);
     },
 
-    async getSearchValue(): Promise<string | null> {
-      return await locators.searchEditBox.inputValue();
+    async openTemplateLibrarySection(sectionName: TemplateLibraryTab) {
+      if (!(await this.isSectionOpened(sectionName))) {
+        await page.getByTestId(sectionName).click();
+      }
     },
 
-    async openTemplateLibrarySection(name: TemplateLibraryTabItems) {
-      await page.getByTestId(name).click();
-    },
-
-    async addTemplateToCanvas(
-      sectionName: TemplateLibraryTabItems,
+    async addTemplate(
+      sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate,
     ) {
       if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
         await this.switchToTemplateLibraryTab();
       }
-      await this.openTemplateLibrarySection(sectionName);
+      if (!(await this.isSectionOpened(sectionName))) {
+        await this.openTemplateLibrarySection(sectionName);
+      }
       await page.getByTestId(templateName).click();
     },
 
     async editTemplate(
-      sectionName: TemplateLibraryTabItems,
+      sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate,
     ) {
       if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
         await this.switchToTemplateLibraryTab();
       }
       await this.openTemplateLibrarySection(sectionName);
-      await page.getByTestId(templateName).getByLabel('button').click();
+      await page
+        .getByTestId(templateName)
+        .locator('..')
+        .getByTestId('edit-template-button')
+        .click();
     },
 
-    async addFunctionalGroupToCanvas(cardName: FunctionalGroupsTabItems) {
+    async deleteMyTemplate() {
+      await locators.deleteTemplateButton.click();
+    },
+
+    async addFunctionalGroup(cardName: FunctionalGroupsTabItems) {
       if (!(await this.isTabOpened(TabSection.FunctionalGroupsTab))) {
         await this.switchToFunctionalGroupTab();
       }
       await page.getByTestId(cardName).click();
     },
 
-    async addSaltsAndSolventsToCanvas(cardName: SaltsAndSolventsTabItems) {
+    async addSaltsAndSolvents(cardName: SaltsAndSolventsTabItems) {
       if (!(await this.isTabOpened(TabSection.SaltsAndSolventsTab))) {
         await this.switchToSaltsAndSolventsTab();
       }

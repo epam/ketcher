@@ -3,9 +3,7 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
-  FunctionalGroups,
   clickInTheMiddleOfTheScreen,
-  selectFunctionalGroups,
   waitForPageInit,
   takeRightToolbarScreenshot,
   clickOnAtom,
@@ -19,7 +17,12 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
+import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -51,7 +54,10 @@ test.describe('Open Ketcher', () => {
         */
     await takeTopToolbarScreenshot(page);
 
-    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Bn,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
     await resetCurrentTool(page);

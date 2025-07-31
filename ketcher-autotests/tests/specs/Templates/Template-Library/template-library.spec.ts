@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-  BottomToolbar,
-  openStructureLibrary,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,

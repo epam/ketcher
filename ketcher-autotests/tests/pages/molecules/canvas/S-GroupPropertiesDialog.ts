@@ -8,6 +8,7 @@ import {
   SGroupPropertiesSettings,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type SGroupPropertiesLocators = {
@@ -71,9 +72,22 @@ export const SGroupPropertiesDialog = (page: Page) => {
 
       await locators.typeDropdown.waitFor({ state: 'visible' });
       await locators.typeDropdown.click();
-      await typeToSelect.waitFor({ state: 'visible' });
-      await typeToSelect.click({ force: true });
-      await typeToSelect.waitFor({ state: 'hidden' });
+      try {
+        await delay(0.1);
+        await typeToSelect.waitFor({ state: 'visible' });
+        await typeToSelect.click();
+        await typeToSelect.waitFor({ state: 'hidden' });
+      } catch (error) {
+        console.warn(`Failed to select type ${type}:`, error);
+        // one more attempt to click
+        if (!(await typeToSelect.isVisible())) {
+          await locators.typeDropdown.click();
+          await delay(0.1);
+          await typeToSelect.waitFor({ state: 'visible' });
+        }
+        await typeToSelect.click();
+        await typeToSelect.waitFor({ state: 'hidden' });
+      }
     },
 
     async selectContext(context: ContextOption) {

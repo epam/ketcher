@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
@@ -17,6 +16,7 @@ import {
   takeElementScreenshot,
   moveMouseAway,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
@@ -28,6 +28,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { removeAbbreviation } from '@utils/sgroup/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -265,7 +266,7 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to MOL v2000 format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
@@ -297,7 +298,7 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to MOL v3000 format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
@@ -325,11 +326,41 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that on import from MOL, Indigo convert the structure appropriately to KET', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on import from MOL, Indigo convert the structure appropriately to KET
+     *
+     * Case: 1. Load from MOL v3000 three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to KET
+     *       3. Load export result
+     *       3. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/S-Groups/Nucleotides and Superatoms in MOL.mol',
+    );
+    await verifyFileExport(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms in MOL-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms in MOL-expected.ket',
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Checking export to CML of Sugar, Base and Phosphate type S-Group ', async ({
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CML format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
@@ -361,7 +392,7 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to PNG format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
@@ -389,7 +420,7 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to PNG format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
@@ -417,14 +448,14 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CDXML format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
      * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
      *       2. Verify export to CDXML
      *       3. Load export result
-     *       3. Take screenshot to validate export work correct
+     *       4. Take screenshot to validate export work correct
      *
      *  Version 3.6
      * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7410
@@ -449,14 +480,14 @@ test.describe('S-Group Properties', () => {
     page,
   }) => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/7401
+     * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CDX format (only the structure
      *              (with appropriate APs with H leaving groups) and the class)
      *
      * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
      *       2. Verify export to CDX
      *       3. Load export result
-     *       3. Take screenshot to validate export work correct
+     *       4. Take screenshot to validate export work correct
      *
      *  Version 3.6
      * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7411
@@ -473,6 +504,160 @@ test.describe('S-Group Properties', () => {
     await openFileAndAddToCanvasAsNewProject(
       page,
       'CDX/S-Groups/Nucleotides and Superatoms-expected.cdx',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking export to HELM of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to HELM the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to HELM
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    await verifyHELMExport(
+      page,
+      'CHEM1{[C1C(C2CCC2)CC1C1CCCCCCC1]}|CHEM2{[C1C(C2CCC2)CC1C1CCCCCCC1]}$$$$V2.0',
+    );
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  test('Checking export to SMARTS of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to SMARTS the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to SMARTS
+     *       3. Load export result
+     *       4. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+
+    await verifyFileExport(
+      page,
+      'SMARTS/S-Groups/Nucleotides and Superatoms-expected.smarts',
+      FileType.SMARTS,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMARTS/S-Groups/Nucleotides and Superatoms-expected.smarts',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking export to SMILES of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to SMILES the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to SMILES
+     *       3. Load export result
+     *       4. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+
+    await verifyFileExport(
+      page,
+      'SMILES/S-Groups/Nucleotides and Superatoms-expected.smi',
+      FileType.SMILES,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMILES/S-Groups/Nucleotides and Superatoms-expected.smi',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking export to Extended SMILES of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to Extended SMILES the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to Extended SMILES
+     *       3. Load export result
+     *       4. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+
+    await verifyFileExport(
+      page,
+      'Extended-SMILES/S-Groups/Nucleotides and Superatoms-expected.cxsmi',
+      FileType.ExtendedSMILES,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Extended-SMILES/S-Groups/Nucleotides and Superatoms-expected.cxsmi',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Checking export to InChI of Sugar, Base and Phosphate type S-Group ', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7428
+     * Description: Check that on export to InChI the superatom S-group treated as a small molecule (current behavior)
+     *
+     * Case: 1. Load from KET three molecules inside Sugar, Base and Phosphate typeed S-Groups and superatoms groups for comparison
+     *       2. Verify export to InChI
+     *       3. Load export result
+     *       4. Take screenshot to validate export work correct
+     *
+     *  Version 3.6
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/S-Groups/Nucleotides and Superatoms.ket',
+    );
+
+    await verifyFileExport(
+      page,
+      'InChI/S-Groups/Nucleotides and Superatoms-expected.inchi',
+      FileType.InChI,
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'InChI/S-Groups/Nucleotides and Superatoms-expected.inchi',
     );
     await takeEditorScreenshot(page);
   });
@@ -788,7 +973,7 @@ test.describe('S-Group Properties', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C18H14] > [C18H14]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.112]+[230.304] > [230.304]',
+      '[78.114]+[230.310] > [230.310]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.047]+[230.110] > [230.110]',
@@ -875,8 +1060,8 @@ test.describe('S-Group Properties', () => {
     await clickOnCanvas(page, x, y);
     await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
     await moveMouseAway(page);
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
     await SGroupPropertiesDialog(page).apply();
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

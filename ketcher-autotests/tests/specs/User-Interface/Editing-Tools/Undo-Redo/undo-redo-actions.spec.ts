@@ -53,6 +53,9 @@ import {
   RepeatPatternOption,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -73,11 +76,6 @@ async function selectBondProperties(
     .getByRole('option', { name: bondReactingCenter, exact: true })
     .click();
   await pressButton(page, finalizationButton);
-}
-
-async function fillAliasForAtom(page: Page, alias: string, button: string) {
-  await page.getByLabel('Alias').fill(alias);
-  await pressButton(page, button);
 }
 
 test.describe('Undo/Redo Actions', () => {
@@ -135,7 +133,11 @@ test.describe('Undo/Redo Actions', () => {
     );
 
     await doubleClickOnAtom(page, 'C', 0);
-    await fillAliasForAtom(page, '!@#$%123AbCd', 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: {
+        Alias: '!@#$%123AbCd',
+      },
+    });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -501,8 +503,7 @@ test.describe('Undo/Redo Actions', () => {
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await pressButton(page, 'R5');
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -521,8 +522,7 @@ test.describe('Undo/Redo Actions', () => {
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await pressButton(page, 'R8');
-    await pressButton(page, 'Apply');
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });

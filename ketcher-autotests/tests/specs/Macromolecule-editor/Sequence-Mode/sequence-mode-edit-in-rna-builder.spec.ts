@@ -80,6 +80,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).nth(2);
+    await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
 
     // should see uploaded nucleotide (nucleoside + phosphate) data to RNA Builder and disabled "Update" button
@@ -97,12 +98,13 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     page,
   }) => {
     // Coordinates for rectangle selection
-    const startX = 280;
-    const startY = 100;
-    const endX = 320;
-    const endY = 200;
+    const startX = 230;
+    const startY = 80;
+    const endX = 260;
+    const endY = 100;
     await selectRectangleArea(page, startX, startY, endX, endY);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).nth(2);
+    await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
 
     // should see uploaded data to RNA Builder and disabled "Update" button
@@ -134,13 +136,14 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     page,
   }) => {
     // Coordinates for rectangle selection
-    const startX = 100;
-    const startY = 100;
-    const endX = 200;
-    const endY = 200;
+    const startX = 80;
+    const startY = 80;
+    const endX = 120;
+    const endY = 100;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
+    await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);

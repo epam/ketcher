@@ -38,6 +38,8 @@ import {
   setSettingsOptions,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
@@ -78,13 +80,11 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
+
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 1);
-    await page.getByRole('button', { name: 'R7' }).click();
-    await page.getByRole('button', { name: 'Apply' }).click();
-    await page
-      .getByRole('button', { name: 'Apply' })
-      .waitFor({ state: 'detached' });
+    await RGroupDialog(page).setRGroupLabels(RGroup.R7);
+
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await CommonTopLeftToolbar(page).saveFile();
@@ -103,8 +103,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByRole('button', { name: 'R22' }).click();
-    await page.getByRole('button', { name: 'Apply' }).click();
+    await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
   });

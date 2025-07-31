@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -12,11 +12,10 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -442,10 +441,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '65. Multi-character presets of monomers without phosphate with IDs without square brackets',
-    HELMString:
-      'RNA1{afl2Nm(nC6n5C)}|RNA2{R(tCnitr)}|RNA3{Sm5ALl(G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
-    differentHELMExport:
-      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
+    HELMString: 'RNA1{[afl2Nm]([nC6n5C]).R([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
   },
   {
     helmDescription:
@@ -503,9 +499,7 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '73. Mix of multi-character presets of monomers without phosphate with IDs with and without square brackets',
     HELMString:
-      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{afl2Nm(nC6n5C)}|RNA5{R(tCnitr)}|RNA6{Sm5ALl(G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
-    differentHELMExport:
-      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{[afl2Nm]([nC6n5C])}|RNA5{R([tCnitr])}|RNA6{[Sm5ALl](G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
+      'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).R([tCnitr]).R([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
   },
   {
     helmDescription:
@@ -762,22 +756,12 @@ test.describe('Export to HELM: ', () => {
         MacroFileType.HELM,
         correctHELMString.HELMString,
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.HELM,
-      );
-
-      const HELMExportResult = await SaveStructureDialog(
-        page,
-      ).getTextAreaValue();
 
       if (correctHELMString.differentHELMExport) {
-        expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
+        await verifyHELMExport(page, correctHELMString.differentHELMExport);
       } else {
-        expect(HELMExportResult).toEqual(correctHELMString.HELMString);
+        await verifyHELMExport(page, correctHELMString.HELMString);
       }
-
-      await SaveStructureDialog(page).cancel();
     });
   }
 });

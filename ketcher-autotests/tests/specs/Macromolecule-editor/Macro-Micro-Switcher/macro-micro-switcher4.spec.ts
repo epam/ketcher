@@ -74,7 +74,7 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
 
   // Test should be skipped if related bug exists
   test.fixme(
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5961 issue(s).`,
   );
 });
@@ -313,13 +313,8 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  // await closeErrorMessage(page);
+  await closeErrorMessage(page);
   await SaveStructureDialog(page).cancel();
-  test.fixme(
-    true,
-    `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
-     Test should be updated after fix`,
-  );
 });
 
 test(`Verify that all 16 bond types can't be saved correctly in macromolecules mode into IDT`, async () => {

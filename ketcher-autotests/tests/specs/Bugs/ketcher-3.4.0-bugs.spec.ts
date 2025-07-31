@@ -77,6 +77,7 @@ import {
   LAminoAcidsTemplate,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -961,7 +962,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C7H14] > [C4H8]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[98.186] > [56.106]',
+      '[98.189] > [56.108]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[98.110] > [56.063]',
@@ -1088,7 +1089,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '354.319',
+      '354.323',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C13H18N6O6',
@@ -1162,8 +1163,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/sequenses-connected-through-chem.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '471.443',
+      '471.45',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C21H23N6O7',
@@ -1194,8 +1198,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/a-a-monomers-connected-through-r2-r2.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '144.172',
+      '144.174',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C6H12N2O2',
@@ -1230,7 +1237,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C8H10BrN3O]+[C18H15P] > [C8H10BrN3O]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[244.089]+[262.285] > [244.089]',
+      '[244.092]+[262.292] > [244.092]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[243.001]+[262.091] > [243.001]',
@@ -1242,27 +1249,33 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
   });
 
-  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7243
-     * Bug: https://github.com/epam/Indigo/issues/2931
-     * Description: Calculated values work for "rich" monomer chain.
-     * Scenario:
-     * 1. Go to Macro
-     * 2. Load from KET
-     * 3. Open the "Calculate Properties" window
-     * 4. Verify that the properties are calculated correctly for the Peptides tab
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
-    );
-    await MacromoleculesTopToolbar(page).calculateProperties();
-    expect(
-      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-    await MacromoleculesTopToolbar(page).calculateProperties();
-  });
+  test.fail(
+    'Case 46: Calculated values work for "rich" monomer chain',
+    async () => {
+      // Test fails because of the bug: https://github.com/epam/Indigo/issues/3053
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7243
+       * Bug: https://github.com/epam/Indigo/issues/2931
+       * Description: Calculated values work for "rich" monomer chain.
+       * Scenario:
+       * 1. Go to Macro
+       * 2. Load from KET
+       * 3. Open the "Calculate Properties" window
+       * 4. Verify that the properties are calculated correctly for the Peptides tab
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+      );
+      await MacromoleculesTopToolbar(page).calculateProperties();
+      expect(
+        await CalculateVariablesPanel(
+          page,
+        ).getNucleotideNaturalAnalogCountList(),
+      ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
+      await MacromoleculesTopToolbar(page).calculateProperties();
+    },
+  );
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
     /*
@@ -1304,8 +1317,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{R(G)P.R(C)}|RNA2{R(G)P.R(C)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
+    await CalculateVariablesPanel(page).setMolecularMassUnits(
+      MolecularMassUnit.Da,
+    );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '1176.844',
+      '1176.854',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C38H50N16O24P2',

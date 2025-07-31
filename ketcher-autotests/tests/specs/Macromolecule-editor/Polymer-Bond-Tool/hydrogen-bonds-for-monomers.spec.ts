@@ -527,7 +527,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       test.fixme(
         // eslint-disable-next-line no-self-compare
-        true === true,
+        true,
         `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
       );
     });

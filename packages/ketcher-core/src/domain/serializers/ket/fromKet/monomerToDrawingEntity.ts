@@ -29,7 +29,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     idtAliases: template.idtAliases,
     unresolved: template.unresolved,
     modificationType: template.modificationType,
-    ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {})
+    ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
   };
 }
 

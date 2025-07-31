@@ -8,7 +8,6 @@ import {
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
-  modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
@@ -58,7 +57,7 @@ export function monomerToDrawingEntity(
         expanded,
       }),
       ...(transformation !== undefined && {
-        transformation: modifyTransformation(transformation),
+        transformation,
       }),
     },
     position,

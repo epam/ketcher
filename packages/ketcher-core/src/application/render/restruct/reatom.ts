@@ -42,6 +42,7 @@ import { tfx } from 'utilities';
 import {
   RenderOptions,
   RenderOptionStyles,
+  UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
@@ -483,7 +484,8 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(this, options.showHydrogenLabels)
+        displayHydrogen(this, options.showHydrogenLabels) &&
+        options.usageInMacromolecule !== UsageInMacromolecule.MonomerPreview
       ) {
         const data = showHydrogen(this, render, implh, {
           hydrogen: {},
@@ -1113,7 +1115,7 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
 
   if (atom.alias) return atom.alias;
 
-  if (atom.label === 'R#' && atom.rglabel !== null) {
+  if (atom.label && atom.rglabel !== null) {
     let text = '';
 
     for (let rgi = 0; rgi < 32; rgi++) {
@@ -1129,7 +1131,6 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
     ) {
       text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] || text;
     }
-
     return text;
   }
 

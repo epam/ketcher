@@ -51,21 +51,25 @@ export const RNABuilder = (page: Page) => {
 
     async selectSugarSlot() {
       await moveMouseAway(page);
+      await expect(locators.sugarSlot).toBeInViewport();
       await locators.sugarSlot.click();
     },
 
     async selectBaseSlot() {
       await moveMouseAway(page);
+      await expect(locators.baseSlot).toBeInViewport();
       await locators.baseSlot.click();
     },
 
     async selectPhosphateSlot() {
       await moveMouseAway(page);
+      await expect(locators.phosphateSlot).toBeInViewport();
       await locators.phosphateSlot.click();
     },
 
     async addToPresets() {
       await moveMouseAway(page);
+      await expect(locators.addToPresetsButton).toBeInViewport();
       await locators.addToPresetsButton.click();
     },
 

@@ -49,7 +49,10 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
         });
       } catch (error) {
         await page.keyboard.press('Escape');
-        await locators.contextMenuBody.waitFor({ state: 'hidden' });
+        await locators.contextMenuBody.waitFor({
+          state: 'hidden',
+          timeout: 2000,
+        });
       }
       await moveMouseAway(page);
     },

@@ -358,8 +358,11 @@ export async function addMonomerToCenterOfCanvas(
   page: Page,
   monomerType: Monomer,
 ) {
-  await Library(page).selectMonomer(monomerType);
-  await clickInTheMiddleOfTheScreen(page);
+  await Library(page).dragMonomerOnCanvas(monomerType, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );

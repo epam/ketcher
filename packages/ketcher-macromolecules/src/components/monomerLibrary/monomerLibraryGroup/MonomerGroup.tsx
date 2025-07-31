@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback } from 'react';
+import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -39,6 +40,7 @@ const MonomerGroup = ({
   selectedMonomerUniqueKey,
   libraryName,
   disabled,
+  onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -116,6 +118,8 @@ const MonomerGroup = ({
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor?.events.selectMonomer.dispatch(monomer);
     }
+
+    onItemClick(monomer);
   };
 
   const isMonomerSelected = (monomer: MonomerOrAmbiguousType) => {

@@ -18,7 +18,6 @@ import {
   takeElementScreenshot,
   openFile,
   readFileContent,
-  clickOnCanvas,
   MolFileFormat,
   takePageScreenshot,
 } from '@utils';
@@ -575,8 +574,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.MOLv3000,
       fileContent,
     );
-    await Library(page).selectMonomer(Peptides.Cys_Bn);
-    await clickOnCanvas(page, 580, 388);
+    await Library(page).dragMonomerOnCanvas(Peptides.Cys_Bn, {
+      x: 580,
+      y: 388,
+      fromCenter: true,
+    });
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);

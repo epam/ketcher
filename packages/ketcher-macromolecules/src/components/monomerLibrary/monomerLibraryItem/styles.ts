@@ -99,8 +99,8 @@ export const Card = styled.div<{
   > .star {
     color: #cad3dd;
     position: absolute;
-    top: 12px;
-    right: 3px;
+    left: calc(50% - 7px);
+    top: 11px;
     font-size: 13px;
     line-height: 13px;
     opacity: 0;

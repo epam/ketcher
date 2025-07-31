@@ -19,16 +19,27 @@ export type WizardValues = {
 
 export type WizardNotificationType = 'info' | 'error';
 
+export type WizardNotificationId =
+  | 'defaultAttachmentPoints'
+  | 'emptyMandatoryFields'
+  | 'invalidSymbol'
+  | 'symbolExists';
+
+export type WizardNotificationMessageMap = Record<WizardNotificationId, string>;
+
 export type WizardNotification = {
-  id: number;
   type: WizardNotificationType;
   message: string;
 };
 
+export type WizardErrors = Partial<Record<WizardFormFieldId, boolean>>;
+
+export type WizardNotifications = Map<WizardNotificationId, WizardNotification>;
+
 export type WizardState = {
   values: WizardValues;
-  errors: Partial<Record<WizardFormFieldId, string>>;
-  notifications: WizardNotification[];
+  errors: WizardErrors;
+  notifications: WizardNotifications;
 };
 
 export type WizardAction =
@@ -39,13 +50,20 @@ export type WizardAction =
       value: string;
     }
   | {
-      type: 'ResetWizard';
+      type: 'SetErrors';
+      errors: WizardErrors;
+    }
+  | {
+      type: 'SetNotifications';
+      notifications: WizardNotifications;
     }
   | {
       type: 'RemoveNotification';
-      id: number;
+      id: WizardNotificationId;
     }
   | {
-      type: 'AddNotification';
-      notification: WizardNotification;
+      type: 'ResetWizard';
+    }
+  | {
+      type: 'ResetErrors';
     };

@@ -810,6 +810,7 @@ export class Atom extends BaseMicromoleculeEntity {
         const isExternalBondBetweenMonomers =
           bond.isExternalBondBetweenMonomers(struct);
 
+        // test
         return (
           isExternalBondBetweenMonomers ||
           beginAtom?.fragment !== atom?.fragment ||

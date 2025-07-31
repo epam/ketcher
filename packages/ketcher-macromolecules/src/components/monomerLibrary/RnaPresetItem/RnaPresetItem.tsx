@@ -72,6 +72,10 @@ const RnaPresetItem = ({
       onContextMenu={onContextMenu}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onDoubleClick={(e) => {
+        onAutochainIconClick(e);
+        onAutochainIconMouseOut();
+      }}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}

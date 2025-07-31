@@ -23,6 +23,7 @@ const Icon = ({
   onClick,
   onMouseOver,
   onMouseOut,
+  onDoubleClick,
   dataTestId,
 }: IIconProps) => {
   const Component = getIconByName(name);
@@ -35,6 +36,7 @@ const Icon = ({
       data-testid={dataTestId}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
+      onDoubleClick={onDoubleClick}
     />
   );
 };

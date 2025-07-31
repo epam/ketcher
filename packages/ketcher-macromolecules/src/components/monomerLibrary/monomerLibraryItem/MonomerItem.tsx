@@ -65,7 +65,7 @@ const MonomerItem = ({
       event.stopPropagation();
       editor?.events.autochain.dispatch(monomerItem);
     },
-    [dispatch, monomerItem],
+    [editor, monomerItem],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
@@ -105,6 +105,7 @@ const MonomerItem = ({
             onMouseOver={onAutochainIconMouseOver}
             onMouseOut={onAutochainIconMouseOut}
             onClick={onAutochainIconClick}
+            onDoubleClick={(e) => e.stopPropagation()}
           ></AutochainIcon>
           <div
             onClick={addFavorite}

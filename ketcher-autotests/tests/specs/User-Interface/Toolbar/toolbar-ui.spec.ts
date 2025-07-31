@@ -23,7 +23,6 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Open Ketcher', () => {

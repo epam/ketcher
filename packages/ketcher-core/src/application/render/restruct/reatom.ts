@@ -485,7 +485,10 @@ class ReAtom extends ReObject {
         !this.a.alias &&
         implh > 0 &&
         displayHydrogen(this, options.showHydrogenLabels) &&
-        options.usageInMacromolecule !== UsageInMacromolecule.MonomerPreview
+        ((options.usageInMacromolecule !==
+          UsageInMacromolecule.MonomerPreview &&
+          options.usageInMacromolecule !== undefined) ||
+          (options.usageInMacromolecule === undefined && sgroup))
       ) {
         const data = showHydrogen(this, render, implh, {
           hydrogen: {},

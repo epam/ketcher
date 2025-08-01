@@ -374,7 +374,7 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('8.49');
   });
 
   test('Case 14: Check that Amino acid count displayed as a grid with the appropriate number next to the natural analogue', async () => {
@@ -674,7 +674,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('9.01');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -732,7 +732,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('5.96');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

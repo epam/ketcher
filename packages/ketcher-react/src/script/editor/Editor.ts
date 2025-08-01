@@ -43,6 +43,7 @@ import {
   MonomerMicromolecule,
   MONOMER_CONST,
   KetMonomerClass,
+  Bond,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -149,7 +150,7 @@ export interface Selection {
 
 export type MonomerCreationState = {
   originalStruct: Struct;
-  // attachment atom id to leaving atom id
+  // Attachment atom id to leaving atom id
   attachmentPoints: Map<number, number>;
 } | null;
 
@@ -562,72 +563,100 @@ class Editor implements KetcherEditor {
     return Boolean(this._monomerCreationState);
   }
 
+  // This field is now used to determine attachments for monomer creation only
+  private singleBondsToOutsideOfSelection: Pool<Bond> = new Pool();
+
   public get isMonomerCreationWizardEnabled() {
     if (this._monomerCreationState) {
       return true;
     }
 
-    if (
-      this._selection &&
-      Object.values(this._selection).some((map) => map.length > 0)
-    ) {
-      return true;
+    const selection: Selection = this.explicitSelected();
+
+    if (selection && selection.atoms?.length && selection.bonds?.length) {
+      const currentStruct = this.render.ctab.molecule;
+      // TODO: Check if selection equals the whole struct or if selection is not continuous
+      // const selectedStruct = this.structSelected();
+      // console.log('selectedStruct', selectedStruct);
+      // selectedStruct.markFragments();
+      // console.log('selectedStruct after mark', selectedStruct);
+      // console.log(selectedStruct.frags);
+      const selectionAtoms = new Set(selection.atoms);
+      const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
+        return (
+          (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
+          (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+        );
+      });
+
+      this.singleBondsToOutsideOfSelection = bondsToOutside.filter(
+        (_, bond) => bond.type === Bond.PATTERN.TYPE.SINGLE,
+      );
+
+      return (
+        this.singleBondsToOutsideOfSelection.size > 0 &&
+        this.singleBondsToOutsideOfSelection.size <= 8
+      );
     }
-
-    // TODO: Check if selection equals the whole struct or if selection is not continuous
-
-    // TODO: Check outgoing bonds (from 1 to 8, simple single bonds)
 
     return false;
   }
 
   openMonomerCreationWizard() {
     const currentStruct = this.render.ctab.molecule;
+    const selection: Selection = this.explicitSelected();
+    const selectionAtoms = new Set(selection.atoms);
     const selectedStruct = this.structSelected();
-    const selectionAtoms = selectedStruct.atoms;
-    const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
-      return (
-        (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
-        (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
-      );
-    });
 
     const attachmentPoints = new Map<number, number>();
-    bondsToOutside.forEach((bond, i) => {
-      const bondEdgeForLeavingAtom = selectedStruct.atoms.has(bond.begin)
+    this.singleBondsToOutsideOfSelection.forEach((bond) => {
+      // Iterate over each bond which goes outside the selection, create a leaving atom and a new bond between it and attachment atom in selected struct
+      const bondEdgeForLeavingAtom = selectionAtoms.has(bond.begin)
         ? 'end'
         : 'begin';
-      const leavingAtom = currentStruct.atoms.get(bond.end);
+      const leavingAtomId = bond[bondEdgeForLeavingAtom];
+      const leavingAtom = currentStruct.atoms.get(leavingAtomId);
       const newLeavingAtom = new Atom({ label: 'H', pp: leavingAtom?.pp });
-      const newAtomId = selectedStruct.atoms.add(newLeavingAtom);
-      const newBond = bond.clone();
-      newBond[bondEdgeForLeavingAtom] = newAtomId;
-      selectedStruct.bonds.set(i, newBond);
-      const attachmentAtomId =
-        bondEdgeForLeavingAtom === 'end' ? bond.begin : bond.end;
-      attachmentPoints.set(attachmentAtomId, newAtomId);
+      const newLeavingAtomId = selectedStruct.atoms.add(newLeavingAtom);
+
+      /*
+       * We need to pass begin and end atoms ids when creating a new bond
+       *
+       * Leaving atom id is known as we've just created it, but attachment atom id in the selected struct is unknown:
+       * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
+       *
+       * Original atom ids can be retrieved from the selection data (do not confuse with the selected struct) by index:
+       * E.g. selection.atoms = [3, 5, 7] will correspond to selectedStruct.atoms = [0, 1, 2]
+       *
+       * However, ids get sorted upon cloning so we have to sort the selection atoms first as well in order to retrieve the correct index
+       */
+      const bondEdgeForAttachmentAtom =
+        bondEdgeForLeavingAtom === 'end' ? 'begin' : 'end';
+      const attachmentAtomId = bond[bondEdgeForAttachmentAtom];
+      const attachmentAtomIdInSelectedStruct = [...(selection.atoms ?? [])]
+        .sort((a, b) => a - b)
+        .indexOf(attachmentAtomId);
+
+      if (attachmentAtomIdInSelectedStruct === -1) {
+        return;
+      }
+
+      const newBond = new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: attachmentAtomIdInSelectedStruct,
+        end: newLeavingAtomId,
+      });
+      selectedStruct.bonds.add(newBond);
+
+      attachmentPoints.set(attachmentAtomIdInSelectedStruct, newLeavingAtomId);
     });
 
     this._monomerCreationState = {
       originalStruct: currentStruct.clone(),
       attachmentPoints,
     };
-    // const attachmentAtoms: Atom[] = [];
-    // const leavingAtoms: Atom[] = [];
-    // for (const [attachmentAtomId, leavingAtomId] of attachmentPoints) {
-    //   const attachmentAtom = selectedStruct.atoms.get(attachmentAtomId);
-    //   if (attachmentAtom) {
-    //     attachmentAtoms.push(attachmentAtom);
-    //   }
-    //   const leavingAtom = selectedStruct.atoms.get(leavingAtomId);
-    //   if (leavingAtom) {
-    //     leavingAtoms.push(leavingAtom);
-    //   }
-    // }
-    console.log(attachmentPoints);
+
     this.render.monomerCreationRenderState = {
-      // attachmentAtoms,
-      // leavingAtoms,
       attachmentPoints,
     };
 

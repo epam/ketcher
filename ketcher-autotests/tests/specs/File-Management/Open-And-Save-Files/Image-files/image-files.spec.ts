@@ -1421,7 +1421,18 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('[C6H6] > [C6H6]');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '[78.114] > [78.114]',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '[78.047] > [78.047]',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('[C 92.3 H 7.7] > [C 92.3 H 7.7]');
     await CalculatedValuesDialog(page).closeByX();
     await verifyFileExport(
       page,

@@ -40,10 +40,13 @@ import {
   KetSerializer,
   KetTemplateType,
   monomerFactory,
-  MonomerMicromolecule,
   MONOMER_CONST,
   KetMonomerClass,
   Bond,
+  MacromoleculesConverter,
+  fromSgroupAddition,
+  IKetAttachmentPoint,
+  IKetMonomerTemplate,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -66,7 +69,6 @@ import {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
-import { checkUndoRedo } from 'playwright-testing/tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -575,7 +577,6 @@ class Editor implements KetcherEditor {
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
-      // TODO: Check if selection equals the whole struct
       const isSelectionContinuous = Editor.isSelectionContinuous(
         selection,
         currentStruct,
@@ -647,11 +648,28 @@ class Editor implements KetcherEditor {
     return visited.size === atoms.length;
   }
 
+  private originalSelection: Selection = {};
+  // Selected struct atom id to original struct atom id
+  private atomIdsMap = new Map<number, number>();
+  private selectionBBox;
+
   openMonomerCreationWizard() {
     const currentStruct = this.render.ctab.molecule;
     const selection: Selection = this.explicitSelected();
+    this.originalSelection = selection;
     const selectionAtoms = new Set(selection.atoms);
     const selectedStruct = this.structSelected();
+
+    this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
+
+    // Original struct atom id to selected struct atom id
+    const atomIdsMap = new Map<number, number>();
+    [...(selection.atoms ?? [])]
+      .sort((a, b) => a - b)
+      .forEach((atomId, i) => {
+        atomIdsMap.set(atomId, i);
+        this.atomIdsMap.set(i, atomId);
+      });
 
     const attachmentPoints = new Map<number, number>();
     this.singleBondsToOutsideOfSelection.forEach((bond) => {
@@ -663,6 +681,7 @@ class Editor implements KetcherEditor {
       const leavingAtom = currentStruct.atoms.get(leavingAtomId);
       const newLeavingAtom = new Atom({ label: 'H', pp: leavingAtom?.pp });
       const newLeavingAtomId = selectedStruct.atoms.add(newLeavingAtom);
+      this.atomIdsMap.set(newLeavingAtomId, leavingAtomId);
 
       /*
        * We need to pass begin and end atoms ids when creating a new bond
@@ -678,11 +697,9 @@ class Editor implements KetcherEditor {
       const bondEdgeForAttachmentAtom =
         bondEdgeForLeavingAtom === 'end' ? 'begin' : 'end';
       const attachmentAtomId = bond[bondEdgeForAttachmentAtom];
-      const attachmentAtomIdInSelectedStruct = [...(selection.atoms ?? [])]
-        .sort((a, b) => a - b)
-        .indexOf(attachmentAtomId);
+      const attachmentAtomIdInSelectedStruct = atomIdsMap.get(attachmentAtomId);
 
-      if (attachmentAtomIdInSelectedStruct === -1) {
+      if (attachmentAtomIdInSelectedStruct === undefined) {
         return;
       }
 
@@ -694,6 +711,7 @@ class Editor implements KetcherEditor {
       selectedStruct.bonds.add(newBond);
 
       attachmentPoints.set(attachmentAtomIdInSelectedStruct, newLeavingAtomId);
+      this.atomIdsMap.set(attachmentAtomIdInSelectedStruct, attachmentAtomId);
     });
 
     this._monomerCreationState = {
@@ -734,10 +752,10 @@ class Editor implements KetcherEditor {
 
     const { symbol, name, type, naturalAnalogue } = data;
 
-    const attachmentPoints = [];
+    const attachmentPoints: IKetAttachmentPoint[] = [];
     this._monomerCreationState.attachmentPoints.forEach(
       (leavingAtomId, attachmentAtomId) => {
-        const attachmentPoint = {
+        const attachmentPoint: IKetAttachmentPoint = {
           attachmentAtom: attachmentAtomId,
           leavingGroup: {
             atoms: [leavingAtomId],
@@ -753,36 +771,27 @@ class Editor implements KetcherEditor {
       },
     );
 
-    // const template = {
-    //   type: KetTemplateType.MONOMER_TEMPLATE,
-    //   id: `${symbol}___${name}`,
-    //   class: type,
-    //   classHELM:
-    //     type === KetMonomerClass.AminoAcid
-    //       ? MONOMER_CONST.PEPTIDE
-    //       : type === KetMonomerClass.CHEM
-    //       ? MONOMER_CONST.CHEM
-    //       : MONOMER_CONST.RNA,
-    //   alias: symbol,
-    //   fullName: name,
-    //   naturalAnalogShort: naturalAnalogue,
-    //   atoms: ketMicromolecule.mol0.atoms,
-    //   bonds: ketMicromolecule.mol0.bonds,
-    //   attachmentPoints,
-    //   root: {
-    //     nodes: [],
-    //     connections: [],
-    //     templates: [
-    //       {
-    //         $ref: `monomerTemplate-${symbol}___${name}`,
-    //       },
-    //     ],
-    //   },
-    // };
-
-    const libraryItem = JSON.stringify({
+    const monomerTemplate: IKetMonomerTemplate = {
+      type: KetTemplateType.MONOMER_TEMPLATE,
+      id: `${symbol}___${name}`,
+      class: type,
+      classHELM:
+        type === KetMonomerClass.AminoAcid
+          ? MONOMER_CONST.PEPTIDE
+          : type === KetMonomerClass.CHEM
+          ? MONOMER_CONST.CHEM
+          : MONOMER_CONST.RNA,
+      alias: symbol,
+      fullName: name,
+      naturalAnalogShort: naturalAnalogue,
+      atoms: ketMicromolecule.mol0.atoms,
+      bonds: ketMicromolecule.mol0.bonds,
+      attachmentPoints,
       root: {
         nodes: [],
+        // TODO: Revisit IKetMonomerTemplate type
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         connections: [],
         templates: [
           {
@@ -790,45 +799,50 @@ class Editor implements KetcherEditor {
           },
         ],
       },
+    };
+
+    const { root: templateRoot, ...templateData } = monomerTemplate;
+    const libraryItem = JSON.stringify({
+      root: {
+        ...templateRoot,
+      },
       [`${KetTemplateType.MONOMER_TEMPLATE}-${symbol}___${name}`]: {
-        type: KetTemplateType.MONOMER_TEMPLATE,
-        id: `${symbol}___${name}`,
-        class: type,
-        classHELM:
-          type === KetMonomerClass.AminoAcid
-            ? MONOMER_CONST.PEPTIDE
-            : type === KetMonomerClass.CHEM
-            ? MONOMER_CONST.CHEM
-            : MONOMER_CONST.RNA,
-        alias: symbol,
-        fullName: name,
-        naturalAnalogShort: naturalAnalogue,
-        atoms: ketMicromolecule.mol0.atoms,
-        bonds: ketMicromolecule.mol0.bonds,
-        attachmentPoints,
+        ...templateData,
       },
     });
 
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     ketcher.updateMonomersLibrary(libraryItem);
 
-    // console.log(template);
-    //
-    // const monomerItem =
-    //   ketSerializer.convertMonomerTemplateToLibraryItem(template);
-    //
-    // console.log(monomerItem);
-    //
-    // const [Monomer] = monomerFactory(monomerItem);
-    // const monomer = new Monomer(monomerItem);
-    // const monomerMicromolecule = new MonomerMicromolecule(
-    //   SGroup.TYPES.SUP,
-    //   monomer,
-    // );
-    //
-    // console.log(monomerMicromolecule);
+    const monomerItem =
+      ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
+    const [Monomer] = monomerFactory(monomerItem);
+    const monomerPosition = new Vec2(
+      (this.selectionBBox.min.x + this.selectionBBox.max.x) / 2,
+      (this.selectionBBox.min.y + this.selectionBBox.max.y) / 2,
+    );
+    const monomer = new Monomer(monomerItem, monomerPosition);
 
     this.closeMonomerCreationWizard();
+
+    const action = fromSgroupAddition(
+      this.render.ctab,
+      SGroup.TYPES.SUP,
+      this.originalSelection.atoms,
+      { expanded: true },
+      this.render.ctab.molecule.sgroups.newId(),
+      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+        monomer,
+        this.atomIdsMap,
+      ),
+      monomer.position,
+      true,
+      monomer.monomerItem.props.MonomerName,
+      undefined,
+      monomer,
+    );
+
+    this.update(action);
   }
 
   selection(ci?: any) {

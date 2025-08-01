@@ -45,6 +45,7 @@ import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar'
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -274,7 +275,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     });
     await closeErrorAndInfoModals(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C6H6');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '78.114',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '78.047',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 92.3 H 7.7');
     await closeErrorAndInfoModals(page);
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);

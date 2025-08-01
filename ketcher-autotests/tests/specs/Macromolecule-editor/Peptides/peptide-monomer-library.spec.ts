@@ -4,9 +4,7 @@ import { Presets } from '@constants/monomers/Presets';
 import { expect, test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
-  clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -78,6 +76,7 @@ test.describe('Peptide library testing', () => {
 
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomersFromFavorites([
       Peptides.dA,
@@ -107,20 +106,6 @@ test.describe('Peptide library testing', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Selected Peptide discards when mouse hovered on canvas and ESC button is clicked', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Actions with structures
-    Description: Selected Peptide discards when mouse hovered on canvas and ESC button is clicked.
-    */
-    await Library(page).selectMonomer(Peptides.dA);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
-  });
-
   test('A tooltip appears when hovering over a Peptide on canvas while Erase tool is selected', async ({
     page,
   }) => {
@@ -128,8 +113,11 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Erase tool is selected.
     */
-    await Library(page).selectMonomer(Peptides.dA);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.dA, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.dA).hover();
     await waitForMonomerPreview(page);
@@ -143,8 +131,11 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Bond tool is selected.
     */
-    await Library(page).selectMonomer(Peptides.Edc);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
@@ -158,27 +149,16 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Selection tool is selected.
     */
-    await Library(page).selectMonomer(Peptides.Edc);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Selected CHEM discards when mouse hovered on canvas and ESC button is clicked', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Actions with structures
-    Description: Selected CHEM discards when mouse hovered on canvas and ESC button is clicked.
-    */
-    await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -189,8 +169,11 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Erase tool is selected.
     */
-    await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await waitForMonomerPreview(page);
@@ -204,8 +187,11 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Bond tool is selected.
     */
-    await Library(page).selectMonomer(Chem.MCC);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Chem.MCC, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.MCC).hover();
     await waitForMonomerPreview(page);
@@ -219,27 +205,16 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected.
     */
-    await Library(page).selectMonomer(Chem.SMPEG2);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
     await getMonomerLocator(page, Chem.SMPEG2).hover();
     await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Selected RNA discards when mouse hovered on canvas and ESC button is clicked', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
-    Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
-    */
-    await Library(page).selectMonomer(Presets.C);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
   });
 

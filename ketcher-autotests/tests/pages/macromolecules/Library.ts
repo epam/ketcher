@@ -220,8 +220,8 @@ export const Library = (page: Page) => {
       if (coordinates.fromCenter) {
         const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-        x = centerOfCanvas.x;
-        y = centerOfCanvas.y;
+        x = centerOfCanvas.x + coordinates.x;
+        y = centerOfCanvas.y + coordinates.y;
       }
 
       await this.hoverMonomer(monomer, selectOnFavoritesTab);

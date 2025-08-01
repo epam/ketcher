@@ -36,7 +36,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { expandAbbreviation, expandMonomer } from '@utils/sgroup/helpers';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,

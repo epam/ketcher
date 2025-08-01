@@ -5,7 +5,9 @@ import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { ChangeEvent, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
-import NaturalAnaloguePicker from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
+import NaturalAnaloguePicker, {
+  naturalAnaloguePickerEnabled,
+} from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import {
@@ -178,7 +180,6 @@ const MonomerCreationWizard = () => {
   );
 
   const { values, notifications, errors } = wizardState;
-  console.log('errors', errors);
   const { type, symbol, name, naturalAnalogue } = values;
 
   const handleFieldChange = (
@@ -199,11 +200,6 @@ const MonomerCreationWizard = () => {
       });
     }
   };
-
-  const displayNaturalAnaloguePicker =
-    type === KetMonomerClass.AminoAcid ||
-    type === KetMonomerClass.Base ||
-    type === KetMonomerClass.RNA;
 
   const monomerTypeSelectOptions = useMemo(
     () =>
@@ -230,6 +226,7 @@ const MonomerCreationWizard = () => {
 
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
+
     const { errors, notifications } = validateInputs(values);
     if (Object.keys(errors).length > 0) {
       wizardStateDispatch({ type: 'SetErrors', errors });
@@ -341,10 +338,9 @@ const MonomerCreationWizard = () => {
                   onChange={(value) =>
                     handleFieldChange('naturalAnalogue', value)
                   }
-                  disabled={!displayNaturalAnaloguePicker}
                 />
               }
-              disabled={!displayNaturalAnaloguePicker}
+              disabled={!naturalAnaloguePickerEnabled(type)}
               required
             />
           </div>

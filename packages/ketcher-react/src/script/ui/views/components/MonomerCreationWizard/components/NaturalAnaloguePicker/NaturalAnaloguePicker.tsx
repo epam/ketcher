@@ -9,14 +9,10 @@ import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
 
 interface ChipGridSelectProps {
-  monomerType:
-    | KetMonomerClass.AminoAcid
-    | KetMonomerClass.Base
-    | KetMonomerClass.RNA;
+  monomerType: KetMonomerClass | undefined;
   value: string;
   onChange: (value: string) => void;
   className?: string;
-  disabled?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -58,13 +54,24 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
+export const naturalAnaloguePickerEnabled = (
+  monomerType: KetMonomerClass | undefined,
+) => {
+  return (
+    monomerType === KetMonomerClass.AminoAcid ||
+    monomerType === KetMonomerClass.Base ||
+    monomerType === KetMonomerClass.RNA
+  );
+};
+
 const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   monomerType,
   value,
   onChange,
   className,
-  disabled,
 }) => {
+  const disabled = !naturalAnaloguePickerEnabled(monomerType);
+
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;
 

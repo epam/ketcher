@@ -98,6 +98,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             onClick={() => onSelect(tmpl)}
           >
             <StructRender
+              testId={tmpl.struct.name}
               struct={tmpl.struct}
               className={classes.struct}
               fullsize={true}
@@ -117,6 +118,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             </div>
             {tmpl.props.group === 'User Templates' && (
               <button
+                data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
                 onClick={() => onDelete!(tmpl)}
               >
@@ -126,6 +128,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             {!isFunctionalGroupTemplate(tmpl) &&
               !isSaltOrSolventTemplate(tmpl) && (
                 <button
+                  data-testid={'edit-template-button'}
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
                     e.stopPropagation();

@@ -1,15 +1,16 @@
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
-  FunctionalGroups,
-  selectFunctionalGroups,
-  putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('Salts and Solvents replacement', () => {
@@ -28,10 +29,17 @@ test.describe('Salts and Solvents replacement', () => {
       */
       test.slow();
 
-      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAnhydride,
+      );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
-      await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAcid,
+      );
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -49,19 +57,32 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
       await atomToolbar.clickAtom(Atom.Carbon);
       await clickInTheMiddleOfTheScreen(page);
-      await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
-
-      await selectFunctionalGroups(FunctionalGroups.Bz, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAcid,
+      );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addFunctionalGroup(
+        FunctionalGroupsTabItems.Bz,
+      );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAcid,
+      );
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
 
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAcid,
+      );
+      await clickInTheMiddleOfTheScreen(page);
       page.setDefaultTimeout(originalTimeout);
       await takeEditorScreenshot(page);
     },
@@ -74,8 +95,10 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
-
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.MethaneSulphonicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

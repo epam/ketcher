@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { expect, mergeTests } from '@playwright/test';
-import { test as flexCanvas } from '@fixtures/canvas/flexCanvasFixtures';
-import { test as microCanvas } from '@fixtures/canvas/microCanvasFixtures';
+import { expect, Page } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   BondsSetting,
   MeasurementUnit,
@@ -14,7 +13,6 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   deleteByKeyboard,
 } from '@utils';
@@ -25,18 +23,16 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 
-const test = mergeTests(flexCanvas, microCanvas);
-test.beforeAll(async ({ createPage }) => {
-  const page = await createPage();
-  await waitForPageInit(page);
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
 });
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 
 test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1855(1)
@@ -48,8 +44,7 @@ test('Open and Save files - Open/Save structure with atom properties 1/2 - open'
 });
 
 test('Open and Save files - Open/Save structure with atom properties 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1855(2)
@@ -65,8 +60,7 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
 });
 
 test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1857(1)
@@ -81,8 +75,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
 });
 
 test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1857(2)
@@ -101,8 +94,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
 });
 
 test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1894(1)
@@ -114,8 +106,7 @@ test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
 });
 
 test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1894(2)
@@ -131,8 +122,7 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
 });
 
 test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1858(1)
@@ -144,8 +134,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 
 });
 
 test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1858(2)
@@ -162,7 +151,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
 
 test.fail(
   'Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 - open',
-  async ({ MicroCanvas: _, page }) => {
+  async ({ MoleculesCanvas: _ }) => {
     // Fails because of bug: https://github.com/epam/Indigo/issues/3052
     /**
      * Test case: EPMLSOPKET-1859(1)
@@ -179,7 +168,7 @@ test.fail(
 
 test.fail(
   'Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save',
-  async ({ MicroCanvas: _, page }) => {
+  async ({ MoleculesCanvas: _ }) => {
     // Fails because of bug: https://github.com/epam/Indigo/issues/3052
     /*
      * Test case: EPMLSOPKET-1859(2)
@@ -199,8 +188,7 @@ test.fail(
 );
 
 test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1873(1)
@@ -212,8 +200,7 @@ test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
 });
 
 test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1873(2)
@@ -229,8 +216,7 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
 });
 
 test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1878(1)
@@ -245,8 +231,7 @@ test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', asyn
 });
 
 test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1878(2)
@@ -265,8 +250,7 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
 });
 
 test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1882(1)
@@ -278,8 +262,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 -
 });
 
 test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /*
    * Test case: EPMLSOPKET-1882(2)
@@ -295,8 +278,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
 });
 
 test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1879(1)
@@ -308,8 +290,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', as
 });
 
 test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1879(2)
@@ -325,8 +306,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
 });
 
 test('Open and Save file - Open/Save file with Attached data 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1880(1)
@@ -338,8 +318,7 @@ test('Open and Save file - Open/Save file with Attached data 1/2 - open', async 
 });
 
 test('Open and Save file - Open/Save file with Attached data 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1880(2)
@@ -355,8 +334,7 @@ test('Open and Save file - Open/Save file with Attached data 2/2 - save', async 
 });
 
 test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1883(1)
@@ -368,8 +346,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - ope
 });
 
 test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1883(2)
@@ -385,8 +362,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
 });
 
 test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 1/2 - open', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1884(1)
@@ -398,8 +374,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
 });
 
 test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 2/2 - save', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /*
    * Test case: EPMLSOPKET-1884(2)
@@ -415,8 +390,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
 });
 
 test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /*
    * Test case: EPMLSOPKET-1985
@@ -432,8 +406,7 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
 });
 
 test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   /**
    * Test case: EPMLSOPKET-1986
@@ -452,8 +425,7 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
 });
 
 test('Open V3000 file with R-Groups with Fragments', async ({
-  MicroCanvas: _,
-  page,
+  MoleculesCanvas: _,
 }) => {
   // Related Github issue https://github.com/epam/ketcher/issues/2774
   await openFileAndAddToCanvas(
@@ -521,7 +493,7 @@ test.describe('Open and Save file', () => {
     ];
 
     for (const file of files) {
-      test(`${file.testName}`, async ({ MicroCanvas: _, page }) => {
+      test(`${file.testName}`, async ({ MoleculesCanvas: _ }) => {
         await openFileAndAddToCanvas(page, file.path);
         await takeEditorScreenshot(page);
       });
@@ -538,7 +510,7 @@ test.describe('Open and Save file', () => {
       {
         tag: ['@SlowTest'],
       },
-      async ({ MicroCanvas: _, page }) => {
+      async ({ MoleculesCanvas: _ }) => {
         test.slow();
 
         await openFileAndAddToCanvasAsNewProject(
@@ -589,7 +561,7 @@ test.describe('Open and Save file', () => {
     ];
 
     for (const file of files) {
-      test(`${file.testName}`, async ({ MicroCanvas: _, page }) => {
+      test(`${file.testName}`, async ({ MoleculesCanvas: _ }) => {
         await openFileAndAddToCanvas(page, file.pathToOpen);
 
         await verifyFileExport(
@@ -607,7 +579,7 @@ test.describe('Open and Save file', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ MicroCanvas: _, page }) => {
+    async ({ MoleculesCanvas: _ }) => {
       /**
        * Test case: EPMLSOPKET-1859(2)
        * Description: v3000 mol file contains more than 900 symbolsis opened and saved correctly

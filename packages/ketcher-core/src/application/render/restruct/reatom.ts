@@ -1005,7 +1005,7 @@ function buildLabel(
   label: ElemAttr;
 } {
   const {
-    // atomColoring,
+    atomColoring,
     font,
     fontszInPx,
     currentlySelectedMonomerAttachmentPoint,
@@ -1026,7 +1026,7 @@ function buildLabel(
     const element = Elements.get(label.text);
     // atom.color = ElementColor[label.text] || '#000';
 
-    if (element) {
+    if (element && atomColoring) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }
@@ -1109,15 +1109,6 @@ function buildLabel(
 }
 
 function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
-  console.log('getLabelText called:', {
-    atomId,
-    atomLabel: atom.label,
-    rglabel: atom.rglabel,
-    sgroupType: sgroup?.constructor.name,
-    isMonomerMicromolecule: sgroup instanceof MonomerMicromolecule,
-    usageInMacromolecule: options?.usageInMacromolecule,
-  });
-
   if (sgroup?.isSuperatomWithoutLabel) {
     const attachmentPoint = sgroup
       .getAttachmentPoints()
@@ -1164,11 +1155,8 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
     ) {
       text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] || text;
     }
-    console.log('getLabelText - returning R-group label:', text);
     return text;
   }
-
-  console.log('getLabelText - returning default atom label:', atom.label);
   return atom.label;
 }
 

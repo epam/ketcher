@@ -748,8 +748,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Presets.A);
-      await clickInTheMiddleOfTheScreen(page);
+      await Library(page).dragMonomerOnCanvas(Presets.A, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
     },

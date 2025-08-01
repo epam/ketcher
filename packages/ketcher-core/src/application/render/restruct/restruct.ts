@@ -427,11 +427,14 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
     Object.keys(ReStruct.maps).forEach((elementKey) => {
       selection[elementKey]?.forEach((elementId) => {
-        const box = this[elementKey].get(elementId).getVBoxObj(this.render);
-        if (box) {
-          boundingBox = boundingBox
-            ? Box2Abs.union(boundingBox, box)
-            : box.clone();
+        const element = this[elementKey].get(elementId);
+        if (element) {
+          const box = element.getVBoxObj(this.render);
+          if (box) {
+            boundingBox = boundingBox
+              ? Box2Abs.union(boundingBox, box)
+              : box.clone();
+          }
         }
       });
     });

@@ -69,6 +69,7 @@ const RulerInput = ({
         styles.rulerInput,
         isDragging && styles.rulerInputDragging,
       )}
+      title="Number of monomers in a line"
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"

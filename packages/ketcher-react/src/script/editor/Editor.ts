@@ -802,14 +802,16 @@ class Editor implements KetcherEditor {
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
       res.bonds.forEach((bid) => {
-        const bond = struct.bonds.get(bid)!;
-        res.atoms = res.atoms || [];
-        if (res.atoms.indexOf(bond.begin) < 0) {
-          res.atoms.push(bond.begin);
-        }
+        const bond = struct.bonds.get(bid);
+        if (bond) {
+          res.atoms = res.atoms || [];
+          if (res.atoms.indexOf(bond.begin) < 0) {
+            res.atoms.push(bond.begin);
+          }
 
-        if (res.atoms.indexOf(bond.end) < 0) {
-          res.atoms.push(bond.end);
+          if (res.atoms.indexOf(bond.end) < 0) {
+            res.atoms.push(bond.end);
+          }
         }
       });
     }

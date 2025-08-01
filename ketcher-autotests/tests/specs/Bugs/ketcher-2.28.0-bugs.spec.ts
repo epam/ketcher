@@ -34,7 +34,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { expandMonomer } from '@utils/sgroup/helpers';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
@@ -833,7 +833,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
   );
 
-  await expandMonomer(
+  await expandAbbreviation(
     page,
     getAbbreviationLocator(page, { name: 'dC_2' }).first(),
   );

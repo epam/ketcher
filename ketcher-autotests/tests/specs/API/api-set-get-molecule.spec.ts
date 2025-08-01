@@ -14,6 +14,7 @@ import {
   readFileContent,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import {
   FileType,
   verifyFileExport,
@@ -359,8 +360,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await takeEditorScreenshot(page);
   });
 

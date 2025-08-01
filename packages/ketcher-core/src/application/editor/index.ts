@@ -34,6 +34,7 @@ export * from './modes';
 export * from './editorEvents';
 export * from './editorSettings';
 export * from './tools';
+export * from './MacromoleculesConverter';
 export * from 'application/editor/tools/types';
 export type { FlipDirection } from 'application/editor/shared/utils.types';
 export type { LibraryItemDragState } from 'application/editor/editor.types';

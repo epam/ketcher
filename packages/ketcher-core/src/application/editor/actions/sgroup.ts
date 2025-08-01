@@ -26,7 +26,13 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy,
 } from '../operations';
-import { Pile, SGroup, SGroupAttachmentPoint, Vec2 } from 'domain/entities';
+import {
+  BaseMonomer,
+  Pile,
+  SGroup,
+  SGroupAttachmentPoint,
+  Vec2,
+} from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
@@ -480,6 +486,7 @@ export function fromSgroupAddition(
   expanded?,
   name?,
   oldSgroup?,
+  monomer?: BaseMonomer,
 ) {
   // eslint-disable-line
   let action = new Action();
@@ -489,7 +496,9 @@ export function fromSgroupAddition(
   sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
 
   if (type === 'SUP') {
-    action.addOp(new SGroupCreate(sgid, type, pp, expanded, name, oldSgroup));
+    action.addOp(
+      new SGroupCreate(sgid, type, pp, expanded, name, oldSgroup, monomer),
+    );
   } else {
     action.addOp(new SGroupCreate(sgid, type, pp));
   }

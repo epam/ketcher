@@ -123,7 +123,7 @@ const monomers: IMonomer[] = [
     monomerDescription: '2. Ambiguous peptide X (alternatives, from library)',
     contentType: MacroFileType.HELM,
     HELMString:
-      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
+      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,p,Q,r,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Peptides.X,
@@ -154,9 +154,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '5. Sugar R (from library)',
+    monomerDescription: '5. Sugar r (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R}$$$$V2.0',
+    HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Sugars.R,
@@ -262,9 +262,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '15. Phosphate P (from library)',
+    monomerDescription: '15. Phosphate p (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Phosphates.P,
@@ -364,9 +364,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '24. Nucleoside - R(A)',
+    monomerDescription: '24. Nucleoside - r(A)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -398,9 +398,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '27. Nucleoside with ambuguous alternative DNA base N - R(A,C,G,T)',
+      '27. Nucleoside with ambuguous alternative DNA base N - r(A,C,G,T)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,T)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
     monomerLocatorOptions: Bases.DNA_N,
@@ -408,9 +408,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '28. Nucleoside with ambuguous alternative RNA base N - R(A,C,G,U)',
+      '28. Nucleoside with ambuguous alternative RNA base N - r(A,C,G,U)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,U)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.RNA_N,
@@ -420,9 +420,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '29. Nucleoside with ambuguous alternative base M - R(A,C)',
+      '29. Nucleoside with ambuguous alternative base M - r(A,C)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
     monomerLocatorOptions: Bases.M,
@@ -430,9 +430,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '30. Nucleoside with ambuguous mixture RNA base - R(A+C+G+T)',
+      '30. Nucleoside with ambuguous mixture RNA base - r(A+C+G+T)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C+G+T)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C+G+T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: false,
     monomerLocatorOptions: {
@@ -445,9 +445,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '31. Nucleoside with ambuguous mixture DNA base - R(A+C+G+U)',
+      '31. Nucleoside with ambuguous mixture DNA base - r(A+C+G+U)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C+G+U)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C+G+U)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: false,
     monomerLocatorOptions: {
@@ -459,9 +459,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '32. Nucleoside with ambuguous mixture base - R(A+C)',
+    monomerDescription: '32. Nucleoside with ambuguous mixture base - r(A+C)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -473,9 +473,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '33. Nucleotide A - R(A)P',
+    monomerDescription: '33. Nucleotide A - r(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -483,21 +483,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '34. Nucleotide A with ambiguous alternative phosphate - R(A)([bnn],[bP])',
+      '34. Nucleotide A with ambiguous alternative phosphate - r(A)([bnn],[bP])',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)([bnn],[bP])}$$$$V2.0',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/6090',
-    unsplitNucleotide: false,
-  },
-  {
-    monomerDescription:
-      '35. Nucleotide A with ambiguous mixture phosphate - R(A)([bnn]+[bP])',
-    contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)([bnn]+[bP])}$$$$V2.0',
+    HELMString: 'RNA1{r(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -507,9 +495,21 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '36. Nucleotide of base A with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A)P',
+      '35. Nucleotide A with ambiguous mixture phosphate - r(A)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A)([bnn]+[bP])}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Bases.A,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6090',
+    unsplitNucleotide: false,
+  },
+  {
+    monomerDescription:
+      '36. Nucleotide of base A with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A)p',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -532,9 +532,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '38. Nucleotide of base A with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A)P',
+      '38. Nucleotide of base A with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -583,9 +583,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '42. Nucleotide of DNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,T)P',
+      '42. Nucleotide of DNA base N with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.DNA_N,
@@ -608,9 +608,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '44. Nucleotide of DNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,T)P',
+      '44. Nucleotide of DNA base N with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.DNA_N,
@@ -659,9 +659,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '48. Nucleotide of RNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,U)P',
+      '48. Nucleotide of RNA base N with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C,G,U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.RNA_N,
@@ -684,9 +684,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '50. Nucleotide of RNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,U)P',
+      '50. Nucleotide of RNA base N with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A,C,G,U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.RNA_N,
@@ -735,9 +735,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '54. Nucleotide of alternative base M with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C)P',
+      '54. Nucleotide of alternative base M with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.M,
@@ -760,9 +760,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '56. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)P',
+      '56. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.M,
@@ -811,9 +811,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '60. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A+C+G+T)P',
+      '60. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A+C+G+T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -841,9 +841,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '62. Nucleotide of mixed DNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C+G+T)P',
+      '62. Nucleotide of mixed DNA base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C+G+T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -901,9 +901,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '66. Nucleotide of mixed RNA base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A+C+G+U)P',
+      '66. Nucleotide of mixed RNA base % with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A+C+G+U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -931,9 +931,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '68. Nucleotide of mixed RNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C+G+U)P',
+      '68. Nucleotide of mixed RNA base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C+G+U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -991,9 +991,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '72. Nucleotide of mixed base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A+C)P',
+      '72. Nucleotide of mixed base % with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A+C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1021,7 +1021,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '74. Nucleotide of mixed base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C)P',
+      '74. Nucleotide of mixed base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C)p',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: false,
@@ -1173,10 +1173,10 @@ for (const monomer of monomers.filter(
 const chainWithExtraBondToBase: IMonomer[] = [
   {
     monomerDescription:
-      '1. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '1. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1184,10 +1184,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '2. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '2. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1200,10 +1200,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '3. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '3. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1216,10 +1216,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '4. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '4. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1227,10 +1227,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '5. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '5. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1243,10 +1243,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '6. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '6. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1259,10 +1259,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '7. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '7. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1270,10 +1270,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '8. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '8. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1286,10 +1286,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '9. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '9. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1302,10 +1302,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '10. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '10. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1313,10 +1313,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '11. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '11. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1329,10 +1329,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '12. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '12. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1721,10 +1721,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '37. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '37. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1738,10 +1738,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '38. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '38. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1755,10 +1755,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '39. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '39. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1768,10 +1768,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '40. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '40. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1785,10 +1785,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '41. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '41. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1802,10 +1802,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '42. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '42. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1815,10 +1815,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '43. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '43. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1832,10 +1832,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '44. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '44. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1849,10 +1849,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '45. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '45. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1862,10 +1862,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '46. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '46. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1879,10 +1879,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '47. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '47. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1896,10 +1896,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '48. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '48. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1909,10 +1909,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '49. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '49. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1920,10 +1920,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '50. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '50. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1936,10 +1936,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '51. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '51. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1952,10 +1952,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '52. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '52. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -1963,10 +1963,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '53. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '53. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1979,10 +1979,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '54. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '54. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1995,10 +1995,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '55. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '55. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2006,10 +2006,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '56. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '56. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2022,10 +2022,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '57. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '57. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2038,10 +2038,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '58. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '58. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2049,10 +2049,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '59. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '59. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2065,10 +2065,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '60. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '60. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2456,10 +2456,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '85. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '85. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2473,10 +2473,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '86. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '86. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2490,10 +2490,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '87. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '87. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2503,10 +2503,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '88. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '88. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2519,10 +2519,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '89. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '89. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2536,10 +2536,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '90. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '90. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2549,10 +2549,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '91. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '91. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2565,10 +2565,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '92. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '92. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2582,10 +2582,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '93. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '93. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2595,10 +2595,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '94. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '94. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2611,10 +2611,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '95. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '95. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2627,10 +2627,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '96. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '96. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2697,16 +2697,16 @@ const shortMonomerList: IMonomer[] = [
     monomerDescription: '2. Ambiguous peptide X (alternatives, from library)',
     contentType: MacroFileType.HELM,
     HELMString:
-      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
+      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,p,Q,r,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Peptides.X,
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '3. Sugar R (from library)',
+    monomerDescription: '3. Sugar r (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R}$$$$V2.0',
+    HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Sugars.R,
@@ -2732,9 +2732,9 @@ const shortMonomerList: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '6. Phosphate P (from library)',
+    monomerDescription: '6. Phosphate p (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Phosphates.P,
@@ -2773,18 +2773,18 @@ const shortMonomerList: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '10. Nucleoside - R(A)',
+    monomerDescription: '10. Nucleoside - r(A)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '11. Nucleotide A - R(A)P',
+    monomerDescription: '11. Nucleotide A - r(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.A,
@@ -2792,9 +2792,9 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '12. Nucleotide of DNA base N with sugar R and phosphate P - R(A,C,G,T)P',
+      '12. Nucleotide of DNA base N with sugar r and phosphate p - r(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.DNA_N,
@@ -2802,10 +2802,10 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '13. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '13. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2813,10 +2813,10 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '14. Nucleoside of sugar R, base that have extra covalent bond and phosphate P - R([nC6n8A])P',
+      '14. Nucleoside of sugar r, base that have extra covalent bond and phosphate p - r([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2824,10 +2824,10 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '15. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '15. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2835,10 +2835,10 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '16. Nucleoside of sugar R, base that have extra hydrogen bond and phosphate P - R([nC6n8A])P',
+      '16. Nucleoside of sugar r, base that have extra hydrogen bond and phosphate p - r([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: Bases.nC6n8A,
@@ -2981,7 +2981,7 @@ const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer = {
   HELMString:
     'RNA1{[25d3r]([4ime6A])[bP].[25mo3r]([az8A])[cm].[25moe3]([baA])[cmp].[25R]([br8A])[co].[3A6]([c3A])[fl2me].[4sR]([c7io7A])' +
     '[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].[Am2d]([m2A])[Smp].[ALtri2]([io2A])[s2p].[ALtri1]([imprn2])[Rsp].[ALmecl]([impr6n])[Rmp].' +
-    '[allyl2]([fl2A])[prn].[aFR]([eaA])[P-].[afl2Nm]([e6A])[oxy].[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].' +
+    '[allyl2]([fl2A])[prn].[aFR]([eaA])[p-].[afl2Nm]([e6A])[oxy].[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].' +
     '[5S6Sm5]([cyh6A])[moen].[5S6Rm5]([cpmA])[mn].[5R6Sm5]([clA])[mepo2].[5R6Rm5]([cl8A])[me].[5formD]([cl2cyp])[m2np].[aoe2r]([mo2A])[en].' +
     '[aR]([moprn2])[sP].[bcdna]([ms2A])[eop].[Bcm2r]([n2A])[sP-]}$$$$V2.0',
   eligibleForAntisense: true,
@@ -2990,17 +2990,17 @@ const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"`, async () => {
+test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *              and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *              chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"
+   *              chain that contains ribose (r), phosphate (p), and the appropriate "antisense base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
 
@@ -3084,17 +3084,17 @@ const chainOfNucleosidesWithAllTypesOfSugar: IMonomer[] = [
   },
 ];
 
-test(`7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense base"`, async () => {
+test(`7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
 
@@ -3180,7 +3180,7 @@ const chainOfNucleotidesAndPeptides: IMonomer = {
   monomerDescription: 'All types of modified monomers in one chain',
   contentType: MacroFileType.HELM,
   HELMString:
-    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+    'RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
   monomerLocatorOptions: Bases.U,
@@ -3346,9 +3346,9 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
    *       4. Take screenshot to validate Antisense creation
-   *       5. Delete sugar R from the antisense chain
+   *       5. Delete sugar r from the antisense chain
    *       6. Take screenshot to validate deletion
-   *       7. Move sugar R to the new position
+   *       7. Move sugar r to the new position
    *       8. Take screenshot to validate movement
    *       9. Undo all actions taking screenshots after each action to validate the undo functionality
    *      10. Redo all actions taking screenshots after each action to validate the redo functionality
@@ -3466,7 +3466,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
 
   await verifyHELMExport(
     page,
-    `RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}|PEPTIDE2{[AspOMe].[Cys_Bn].[1Nal]}|RNA2{P.R(G)P.R(C)P.R(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
+    `RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}|PEPTIDE2{[Asp_OMe].[Cys_Bn].[1Nal]}|RNA2{p.r(G)p.r(C)p.r(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
   );
 });
 
@@ -3637,7 +3637,7 @@ test(`18. Flipping checks`, async () => {
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{[dR](A,C,G,T)P.[dR](A,G,T)P.[dR](A,T)P}|RNA2{R(A,C,G,U)P.R(A,C,U)P.R(A,U)[Ssp]}|RNA3{[RSpabC](A,U)P}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0`,
+    `RNA1{[dR](A,C,G,T)p.[dR](A,G,T)p.[dR](A,T)p}|RNA2{r(A,C,G,U)p.r(A,C,U)p.r(A,U)[Ssp]}|RNA3{[RSpabC](A,U)p}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0`,
   );
   for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
 
@@ -3675,7 +3675,7 @@ test(`19. Verify dot placement for a modified phosphate in sequence mode in sens
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await takeEditorScreenshot(page, {
@@ -3705,7 +3705,7 @@ test(`20. Verify correct dot placement after mode switches from Sequence to Flex
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -3782,7 +3782,7 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3817,7 +3817,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3850,7 +3850,7 @@ test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3885,7 +3885,7 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3920,7 +3920,7 @@ test(`25. Verify that the antisense strand creation options are disabled for an 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A+C)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}$$$$V2.0`,
+    `RNA1{r(A+C)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}$$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -4476,18 +4476,18 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
   });
 });
 
-test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"`, async () => {
+test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   *                 chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -4520,18 +4520,18 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
   });
 });
 
-test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense DNA base"`, async () => {
+test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense DNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   *                 chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -4564,18 +4564,18 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
   });
 });
 
-test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"`, async () => {
+test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense RNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense RNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -4607,17 +4607,17 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
   });
 });
 
-test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"`, async () => {
+test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense DNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense DNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -4758,7 +4758,7 @@ test(`27. Check that if no other double-stranded sequences existed on the canvas
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
   );
 
   // checking that SYNC button is not present

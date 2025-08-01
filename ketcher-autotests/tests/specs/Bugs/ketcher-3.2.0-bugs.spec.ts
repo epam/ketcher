@@ -115,7 +115,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A,C,G,U)P.R(C,G,U)P.R(A,G,U)P.R(A,C,U)P.R(G,U)P.R(A,U)P.R(C,U)P}$$$$V2.0',
+      'RNA1{r(A,C,G,U)p.r(C,G,U)p.r(A,G,U)p.r(A,C,U)p.r(G,U)p.r(A,U)p.r(C,U)p}$$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -139,7 +139,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -199,7 +199,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P}|RNA2{R(A)P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,6:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p}|RNA2{r(A)p}|RNA3{r(U)p.r(U)p.r(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,6:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair$$$V2.0',
     );
     await getSymbolLocator(page, { symbolAlias: 'p' }).first().click();
     await page.mouse.down();
@@ -233,7 +233,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,8:pair-8:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,8:pair-8:pair$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -266,7 +266,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)p.r(U)p.r(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -302,7 +302,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)p.r(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -339,7 +339,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)[bP].R(A)}$$$$V2.0',
+      'RNA1{r(A)p.r(A)[bP].r(A)}$$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -384,11 +384,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
+    const anySymbolR = getSymbolLocator(page, { symbolAlias: 'r' }).first();
     await createDNAAntisenseChain(page, anySymbolR);
     await verifyHELMExport(
       page,
-      'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)}|RNA2{R(A,C,G,U)P.R(A,G,U)P.R(A,C,U)P.R(A,U)}|RNA3{R(A,C)P.R(A,G)P.R(A,C,G)}|RNA4{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA5{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)P.[dR](C,T)P.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
+      'RNA1{r(A,C,G,T)p.r(A,G,T)p.r(A,C,T)p.r(A,T)}|RNA2{r(A,C,G,U)p.r(A,G,U)p.r(A,C,U)p.r(A,U)}|RNA3{r(A,C)p.r(A,G)p.r(A,C,G)}|RNA4{[dR](A,T)p.[dR](A,G,T)p.[dR](A,C,T)p.[dR](A,C,G,T)}|RNA5{[dR](A,T)p.[dR](A,G,T)p.[dR](A,C,T)p.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)p.[dR](C,T)p.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
     );
   });
 
@@ -410,7 +410,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)p.r(U)p.r(U)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
@@ -438,7 +438,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{P.R(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{p.r(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
     );
     await getSymbolLocator(page, {
       symbolAlias: 'A',
@@ -469,7 +469,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'CHEM1{[4aPEGMal]}|RNA1{R(U)P}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{R(A)P}|RNA3{P}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      'CHEM1{[4aPEGMal]}|RNA1{r(U)p}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{r(A)p}|RNA3{p}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
     );
     await getSymbolLocator(page, {
       symbolAlias: 'U',
@@ -539,7 +539,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
     await getSymbolLocator(page, {
       symbolAlias: 'A',
@@ -573,7 +573,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
     await getSymbolLocator(page, {
@@ -617,7 +617,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)p.r(A)p.r(A)}|RNA2{r(U)p.r(U)p.r(U)p.r(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
     await getSymbolLocator(page, {
@@ -657,7 +657,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+      'RNA1{r(A)p.r(A)}|RNA2{r(U)p.r(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
     await getSymbolLocator(page, {
       symbolAlias: 'A',
@@ -689,7 +689,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{R(A)}|RNA2{R(U)P.R(U)}|RNA3{R(A)}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,5:pair-2:pair$$$V2.0',
+      'RNA1{r(A)}|RNA2{r(U)p.r(U)}|RNA3{r(A)}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,5:pair-2:pair$$$V2.0',
     );
     await getSymbolLocator(page, {
       symbolAlias: 'U',
@@ -737,11 +737,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 21: R Group logic condition is not wrong if loaded from MOL', async () => {
+  test('Case 21: r Group logic condition is not wrong if loaded from MOL', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
-     * Description: R Group logic condition is not wrong if loaded from MOL.
+     * Description: r Group logic condition is not wrong if loaded from MOL.
      * Scenario:
      * 1. Go to Micro
      * 2. Load from MOL
@@ -755,11 +755,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: R Group logic condition is not wrong if loaded from complex structure MOL', async () => {
+  test('Case 22: r Group logic condition is not wrong if loaded from complex structure MOL', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
-     * Description: R Group logic condition is not wrong if loaded from MOL.
+     * Description: r Group logic condition is not wrong if loaded from MOL.
      * Scenario:
      * 1. Go to Micro
      * 2. Load from MOL
@@ -906,11 +906,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {
+  test('Case 29: Correct R1 attachment atom for natural Ribose (r) in the library', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6750
-     * Description: Correct R1 attachment atom for natural Ribose (R) in the library.
+     * Description: Correct R1 attachment atom for natural Ribose (r) in the library.
      * Scenario:
      * 1. Go to Macro - Sequence mode (clean canvas)
      * 2. Type AA (RNA typing type)
@@ -925,7 +925,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectAllStructuresOnCanvas(page);
     const symbolP = page
       .getByTestId(KETCHER_CANVAS)
-      .getByText('P', { exact: true });
+      .getByText('p', { exact: true });
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');
@@ -950,7 +950,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[dR](A,C,G,T)P.[dR](A,G,T)P.[dR](A,T)P}|RNA2{R(A,C,G,U)P.R(A,C,U)P.R(A,U)[Ssp]}|RNA3{[RSpabC](A,U)P}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0',
+      'RNA1{[dR](A,C,G,T)p.[dR](A,G,T)p.[dR](A,T)p}|RNA2{r(A,C,G,U)p.r(A,C,U)p.r(A,U)[Ssp]}|RNA3{[RSpabC](A,U)p}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

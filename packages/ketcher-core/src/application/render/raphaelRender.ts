@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Box2Abs, Struct, Vec2 } from 'domain/entities';
+import { Box2Abs, Struct, Vec2 } from 'domain/entities';
 import { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
@@ -29,8 +29,6 @@ import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 
 export type MonomerCreationRenderState = {
-  // attachmentAtoms: Atom[];
-  // leavingAtoms: Atom[];
   attachmentPoints: Map<number, number>;
 } | null;
 

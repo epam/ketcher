@@ -104,6 +104,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 const topLeftCorner = {
   x: -325,
@@ -276,7 +277,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
   });
@@ -325,9 +326,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x1, y1, page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x2, y2, page);
     await takeEditorScreenshot(page);
   });
@@ -1485,7 +1486,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await CommonLeftToolbar(page).selectEraseTool();
-      await page.getByText(data.monomer.alias).click();
+      await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);

@@ -60,6 +60,7 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 declare global {
   interface Window {
@@ -823,16 +824,14 @@ test.fail(
      * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-
     await openFileAndAddToCanvasAsNewProject(
       page,
       'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
     );
-
-    const dC2SGroup = page.getByText('dC_2').first();
-
-    await expandMonomer(page, dC2SGroup);
-
+    await expandMonomer(
+      page,
+      getAbbreviationLocator(page, { name: 'dC_2' }).first(),
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

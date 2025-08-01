@@ -47,6 +47,7 @@ import {
   removeAbbreviation,
 } from '@utils/sgroup/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -86,8 +87,10 @@ test.describe('Functional Groups', () => {
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
-
-    await removeAbbreviation(page, page.getByText('Bz'));
+    await removeAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Bz' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -753,7 +756,10 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await resetCurrentTool(page);
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await page.keyboard.press('n');
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);

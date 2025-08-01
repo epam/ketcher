@@ -47,6 +47,7 @@ import {
   expandAbbreviation,
   removeAbbreviation,
 } from '@utils/sgroup/helpers';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 const X_DELTA = 300;
 
@@ -282,13 +283,13 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
-
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-
-    await removeAbbreviation(page, page.getByText('CO2Et').first());
-
+    await removeAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CO2Et' }).first(),
+    );
     await CommonTopLeftToolbar(page).undo();
     await resetCurrentTool(page);
     await CommonTopLeftToolbar(page).redo();
@@ -397,13 +398,13 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('Boc').first().click();
+    await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
-    await page.getByText('Boc').first().click();
+    await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
     await CommonLeftToolbar(page).selectEraseTool();
 
     await resetCurrentTool(page);
@@ -548,7 +549,10 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-bond-fg.mol');
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -741,26 +745,21 @@ test.describe('Templates - Functional Group Tools3', () => {
     2) All selected FG's are contracted. 3) All selected FG's abbreviations are removed.
    */
     const middleOfTheScreen = await getCachedBodyCenter(page);
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/contracted-fg-abbreviation.mol',
     );
     await selectAllStructuresOnCanvas(page);
-
-    const bocSuperatom = page.getByText('Boc');
-    await expandAbbreviation(page, bocSuperatom);
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await takeEditorScreenshot(page);
-
     await selectAllStructuresOnCanvas(page);
-
     await contractAbbreviation(page, middleOfTheScreen);
-
     await takeEditorScreenshot(page);
-
     await selectAllStructuresOnCanvas(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-
     await removeAbbreviation(page, point);
     await takeEditorScreenshot(page);
   });
@@ -799,7 +798,10 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('Bn'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Bn' }),
+    );
 
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -835,7 +837,10 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('CCl3'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CCl3' }),
+    );
 
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -917,7 +922,7 @@ test.describe('Templates - Functional Group Tools3', () => {
       'Molfiles-V2000/functional-group-and-benzene.mol',
     );
     await waitForRender(page, async () => {
-      await page.getByText('Boc').click();
+      await getAbbreviationLocator(page, { name: 'Boc' }).click();
     });
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

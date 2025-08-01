@@ -69,6 +69,7 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
 
@@ -693,7 +694,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('1Nal'));
+    await expandMonomers(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
     await collapseMonomers(page, page.getByText('NH'));
     await takeEditorScreenshot(page);
@@ -963,7 +964,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/modified-phosphates.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('mph').first());
+    await expandMonomers(
+      page,
+      getAbbreviationLocator(page, { name: 'mph' }).first(),
+    );
     await takeEditorScreenshot(page);
   });
 

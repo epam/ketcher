@@ -313,9 +313,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-
-    const superAtom = page.getByText('Some Name');
-    await expandAbbreviation(page, superAtom);
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Some Name' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -443,7 +444,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Some Name'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Some Name' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -489,7 +493,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -569,7 +576,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Some Name'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Some Name' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -609,7 +619,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -668,7 +681,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Boc'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Boc' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -709,7 +725,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    await expandAbbreviation(page, page.getByText('Some Name'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Some Name' }),
+    );
     await takeEditorScreenshot(page);
   });
   test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async ({

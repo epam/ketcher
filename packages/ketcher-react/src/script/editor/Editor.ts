@@ -662,7 +662,12 @@ class Editor implements KetcherEditor {
 
     this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
 
-    // Original struct atom id to selected struct atom id
+    /*
+     * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
+     * Original atom ids can be retrieved from the selection data (do not confuse with the selected struct) by index:
+     * E.g. selection.atoms = [3, 5, 7] will correspond to selectedStruct.atoms = [0, 1, 2]
+     * However, ids get sorted upon cloning so we have to sort the selection atoms first as well in order to retrieve the correct index
+     */
     const atomIdsMap = new Map<number, number>();
     [...(selection.atoms ?? [])]
       .sort((a, b) => a - b)
@@ -683,17 +688,6 @@ class Editor implements KetcherEditor {
       const newLeavingAtomId = selectedStruct.atoms.add(newLeavingAtom);
       this.atomIdsMap.set(newLeavingAtomId, leavingAtomId);
 
-      /*
-       * We need to pass begin and end atoms ids when creating a new bond
-       *
-       * Leaving atom id is known as we've just created it, but attachment atom id in the selected struct is unknown:
-       * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
-       *
-       * Original atom ids can be retrieved from the selection data (do not confuse with the selected struct) by index:
-       * E.g. selection.atoms = [3, 5, 7] will correspond to selectedStruct.atoms = [0, 1, 2]
-       *
-       * However, ids get sorted upon cloning so we have to sort the selection atoms first as well in order to retrieve the correct index
-       */
       const bondEdgeForAttachmentAtom =
         bondEdgeForLeavingAtom === 'end' ? 'begin' : 'end';
       const attachmentAtomId = bond[bondEdgeForAttachmentAtom];
@@ -784,6 +778,7 @@ class Editor implements KetcherEditor {
       alias: symbol,
       fullName: name,
       naturalAnalogShort: naturalAnalogue,
+      // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
       atoms: ketMicromolecule.mol0.atoms,
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
@@ -838,7 +833,7 @@ class Editor implements KetcherEditor {
       monomer.position,
       true,
       monomer.monomerItem.props.MonomerName,
-      undefined,
+      null,
       monomer,
     );
 

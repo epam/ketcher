@@ -136,7 +136,7 @@ test.describe('Open Ketcher', () => {
     Click on Edit button in right down corner of template (e.g. alpha-D-Arabinofuranose)
     */
     await BottomToolbar(page).StructureLibrary();
-    StructureLibraryDialog(page).editTemplate(
+    await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );

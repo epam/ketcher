@@ -575,12 +575,15 @@ class Editor implements KetcherEditor {
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
-      // TODO: Check if selection equals the whole struct or if selection is not continuous
-      // const selectedStruct = this.structSelected();
-      // console.log('selectedStruct', selectedStruct);
-      // selectedStruct.markFragments();
-      // console.log('selectedStruct after mark', selectedStruct);
-      // console.log(selectedStruct.frags);
+      // TODO: Check if selection equals the whole struct
+      const isSelectionContinuous = Editor.isSelectionContinuous(
+        selection,
+        currentStruct,
+      );
+      if (!isSelectionContinuous) {
+        return false;
+      }
+
       const selectionAtoms = new Set(selection.atoms);
       const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
         return (
@@ -600,6 +603,48 @@ class Editor implements KetcherEditor {
     }
 
     return false;
+  }
+
+  static isSelectionContinuous(selection: Selection, struct: Struct): boolean {
+    const { atoms, bonds } = selection;
+
+    if (!atoms || atoms.length === 0 || !bonds || bonds.length === 0) {
+      return false;
+    }
+
+    const adjacencyList: Map<number, number[]> = new Map();
+    for (const atomId of atoms) {
+      adjacencyList.set(atomId, []);
+    }
+    bonds.forEach((bondId) => {
+      const bond = struct.bonds.get(bondId);
+      if (!bond) {
+        return;
+      }
+
+      const { begin, end } = bond;
+      if (adjacencyList.has(begin) && adjacencyList.has(end)) {
+        adjacencyList.get(begin)?.push(end);
+        adjacencyList.get(end)?.push(begin);
+      }
+    });
+
+    const visited = new Set<number>();
+    const queue = [atoms[0]];
+
+    while (queue.length > 0) {
+      const nextAtomId = queue.shift();
+      if (nextAtomId !== undefined && !visited.has(nextAtomId)) {
+        visited.add(nextAtomId);
+        for (const neighbor of adjacencyList.get(nextAtomId) ?? []) {
+          if (!visited.has(neighbor)) {
+            queue.push(neighbor);
+          }
+        }
+      }
+    }
+
+    return visited.size === atoms.length;
   }
 
   openMonomerCreationWizard() {

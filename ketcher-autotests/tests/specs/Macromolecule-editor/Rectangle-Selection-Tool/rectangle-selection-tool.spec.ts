@@ -178,10 +178,12 @@ test.describe('Rectangle Selection Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await moveMonomer(page, peptide2, 200, 400);
 
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

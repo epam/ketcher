@@ -76,7 +76,6 @@ test.describe('Peptide library testing', () => {
 
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
-    await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomersFromFavorites([
       Peptides.dA,

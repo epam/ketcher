@@ -577,7 +577,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await Library(page).dragMonomerOnCanvas(Peptides.Cys_Bn, {
       x: 580,
       y: 388,
-      fromCenter: true,
     });
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();

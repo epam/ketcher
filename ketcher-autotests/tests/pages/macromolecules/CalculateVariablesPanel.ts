@@ -168,6 +168,7 @@ export const CalculateVariablesPanel = (page: Page) => {
       countValue: PeptideNaturalAnalogCount | NucleotideNaturalAnalogCount,
     ) {
       const naturalAnalog = page.getByTestId(countValue);
+      await naturalAnalog.waitFor({ state: 'visible', timeout: 5000 });
       expect(await naturalAnalog.count()).toBeGreaterThan(0);
       return (await naturalAnalog.innerText()).replace(/(\r\n|\n|\r)/gm, '');
     },

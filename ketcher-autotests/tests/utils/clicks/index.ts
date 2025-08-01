@@ -163,6 +163,13 @@ export async function dragMouseTo(x: number, y: number, page: Page) {
   });
 }
 
+export async function dragMouseAndMoveTo(page: Page, shift: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  const coordinatesWithShift = x + shift;
+  await dragMouseTo(coordinatesWithShift, y, page);
+}
+
 export async function clickOnTheCanvas(
   page: Page,
   xOffsetFromCenter: number,

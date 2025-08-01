@@ -224,14 +224,15 @@ If there are two attachment points on an R-Group member, there must be two corre
 
 To mark S-Groups, use the _S-Group tool_ <img src=images/29_sgroup_icon.png width = "35"/> and the following dialog that appears after selecting a fragment with this tool:
 
-<img src=images/S-Group-Properties-3.0..png width = "250"/>
+<img src=images/S-Group-Properties-3.6.png width = "250"/>
 
 Available S-Group types:
 - _Data_ - an atom, a fragment, a multifragment, a single bond, or a group without the square brackets representation;
 - _Multiple group_ - indicates a number of replications of a fragment or a part of a structure in contracted form;
 - _SRU Polymer_ - the Structural Repeating Unit (SRU) brackets enclose the structural repeating of a polymer. You have three available patterns: head-to-tail (the default), head-to-head, and either/unknown;
 - _Superatom_ - part of the structure or the whole structure that will be abbreviated to a text label or expanded to see the group chemistry surrounded with square brackets;
-- _Queary component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties.
+- _Query component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties;
+- _Nucleotide Component_ - a special kind of superatom S-group used to indicate if a structure is a sugar, a base, or a phosphate.
 
 ### Superatom S-Group
 
@@ -574,7 +575,7 @@ Clicking on _Add to Presets_ will save the preset and add it to the Presets sect
 
 Right clicking on selected presets in sequence mode gives the option to _Modify in RNA Builder..._
 
-<img src=images/Modify-in-RNA-Builder-3.3..png width = "200"/>
+<img src=images/Modify-in-RNA-Builder-3.6..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-2-3.0..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will again open appropriate sections of the library so that selected nucleotides can be conveniently modified.
@@ -614,7 +615,7 @@ In addition to typing and pasting text or formats who always result in natural m
 
 Already existing monomers can also be replaced by selecting them and clicking on a library card. Nuclotides can be modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above), and amino acids can be modified by choosing an appropriate modification from the right-click drop-down menu:
 
-<img src=images/Modify-AAs-Sequence-3.5..png width = "500"/>
+<img src=images/Modify-AAs-Sequence-3.6..png width = "500"/>
 
 ## Snake and Flex Modes
 
@@ -643,6 +644,13 @@ Different shapes of monomers indicate different monomer types:
 Modifications are also noted for amino acids, sugars, bases and phosphates using a banner over the monomer symbol:
 
 <img src=images/Snake-and-Flex-4-3.0..png width = "500"/>
+
+Monomers/presets/structures can be added to snake and flex modes by:
+- Opening them from a file;
+- Pasting them on the canvas;
+- Adding them from the library though drag and drop:
+
+<img src=images/Drag-and-drop-3.6..gif width = "500"/>
 
 ### Establishing Bonds
 
@@ -681,7 +689,7 @@ _Select Connection Point_ dialog contains structures of both monomers and allows
 
 Covalent bonds can be **eddited** by choosing _Edit Connection Points..._ from the right-click menu. _Edit Connection Points..._ allows the user to change the attachment points and reestablish the bond.
 
-<img src=images/Edit-CP-3.0..png width = "250"/>
+<img src=images/Edit-CP-3.6..png width = "250"/>
 <img src=images/Edit-CP-2-3.0..png width = "350"/>
 
 #### Hydrogen Bonds
@@ -696,7 +704,7 @@ Bond preview and _Edit Connection Points..._ dialog are not available for hydrog
 
 Similarely to sequence layout mode, amino acids in snake and flex modes can be modified from the context menu:
 
-<img src=images/Modify-AAs-Snake-3.5..png width = "500"/>
+<img src=images/Modify-AAs-Snake-3.6..png width = "500"/>
 
 ### Snake and Flex Modes Differences
 
@@ -729,7 +737,7 @@ Antisense chains can be created in all layout modes from a right-click drop-down
 
 Creation of an RNA antisense strand in sequence layout mode from the right-click drop-down menu:
 
-<img src=images/Create-AS-In-Sequence-1-3.3..png width = "300"/>
+<img src=images/Create-AS-In-Sequence-1-3.6..png width = "300"/>
 <img src=images/Create-AS-In-Sequence-2-3.2..png width = "125"/>
 
 Creation of a DNA antisense strand in flex layout mode using the _Create Antisense Strand_ icon:
@@ -751,12 +759,12 @@ In sequence layout mode:
 
 Hydrogen bond establishment/deletion is available in the right-click drop-down menu. When deleting, all hydrogen bonds that the selected monomers participate in will be removed:
 
-<img src=images/Delete-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Delete-H-Bonds-1-3.6..png width = "250"/>
 <img src=images/Delete-H-Bonds-2-3.2..png width = "125"/>
 
 When establishing, hydrogen bonds will be established with the monomers represented on the other side of the double-stranded sequence:
 
-<img src=images/Establish-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Establish-H-Bonds-1-3.6..png width = "250"/>
 <img src=images/Establish-H-Bonds-2-3.2..png width = "125"/>
 
 Depending on if the sync/non-sync toggle on the main toolbar is on or off, editing of the double-stranded sequence will happen differently.

@@ -199,6 +199,7 @@ const Atom: FC<Props> = (props: Props) => {
             name="invRet"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.invRet)}
+            data-testid="inversion"
           />
           <Field
             name="exactChangeFlag"
@@ -253,6 +254,7 @@ const Atom: FC<Props> = (props: Props) => {
                     [classes.accordionDetailsWrapper]: true,
                     [classes.hiddenAccordion]: !shouldGroupBeRended,
                   })}
+                  data-testid={`${groupName}-wrapper`}
                 >
                   <div className={classes.accordionDetails}>{component}</div>
                 </div>

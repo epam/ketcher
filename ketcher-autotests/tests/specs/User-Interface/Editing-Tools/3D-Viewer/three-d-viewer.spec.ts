@@ -12,6 +12,7 @@ import {
   waitForPageInit,
   takeTopToolbarScreenshot,
   waitForRender,
+  dragMouseAndMoveTo,
 } from '@utils';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
@@ -42,9 +43,7 @@ test.describe('3D Viewer', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 20, y, page);
+    await dragMouseAndMoveTo(page, 20);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressCancelButton();
     });
@@ -60,9 +59,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 20, y, page);
+    await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressCancelButton();
     });
@@ -79,9 +76,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 20, y, page);
+    await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressCancelButton();
     });
@@ -101,9 +96,7 @@ test.describe('3D Viewer', () => {
       'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 20, y, page);
+    await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressCancelButton();
     });
@@ -189,9 +182,7 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 80, y, page);
+    await dragMouseAndMoveTo(page, 80);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressApplyButton();
     });
@@ -212,9 +203,7 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 75, y, page);
+    await dragMouseAndMoveTo(page, 75);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressApplyButton();
     });
@@ -238,9 +227,7 @@ test.describe('3D Viewer', () => {
     );
     const initialStructureData = await getKet(page);
     await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 90, y, page);
+    await dragMouseAndMoveTo(page, -90);
     await waitForRender(page, async () => {
       await MiewDialog(page).pressApplyButton();
     });

@@ -398,10 +398,10 @@ export const isHelmCompatible = (
 ) => {
   return monomers
     .map((monomer) =>
-      monomersLibrary.find(
-        (libraryMonomer) =>
-          isAmbiguousMonomerLibraryItem(libraryMonomer) ? libraryMonomer.id === monomer.monomerItem.props.id
-            : libraryMonomer.props?.id === monomer.monomerItem.props.id,
+      monomersLibrary.find((libraryMonomer) =>
+        isAmbiguousMonomerLibraryItem(libraryMonomer)
+          ? libraryMonomer.id === monomer.monomerItem.props.id
+          : libraryMonomer.props?.id === monomer.monomerItem.props.id,
       ),
     )
     .every((monomer) => Boolean(monomer?.props.aliasHELM));

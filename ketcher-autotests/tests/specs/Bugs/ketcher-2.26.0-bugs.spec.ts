@@ -97,6 +97,7 @@ import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -956,7 +957,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/monomers-cycled.ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('1Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeLeftToolbarScreenshot(page);
@@ -1194,7 +1195,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/5. Unsplit nucleotide 5hMedC (from library).ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('5hMedC'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '5hMedC' }));
     await takeEditorScreenshot(page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await ContextMenu(page, point).open();

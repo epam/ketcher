@@ -46,12 +46,6 @@ async function moveStructureToNewPosition(page: Page) {
   await page.mouse.up();
 }
 
-async function performUndoRedo(page: Page) {
-  await CommonTopLeftToolbar(page).undo();
-  await CommonTopLeftToolbar(page).redo();
-  await CommonTopLeftToolbar(page).undo();
-}
-
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -78,7 +72,9 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('TEST').click();
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -93,7 +89,9 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
     await deleteByKeyboard(page);
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -109,7 +107,9 @@ test.describe('Text tools test cases', () => {
     await deleteByKeyboard(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -195,7 +195,9 @@ test.describe('Text tools test cases', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -210,7 +212,9 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
     await deleteByKeyboard(page);
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -224,14 +228,18 @@ test.describe('Text tools test cases', () => {
       .getByTestId('erase')
       .filter({ has: page.locator(':visible') })
       .click();
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
     await selectStructureWithSelectionTool(page);
     await deleteByKeyboard(page);
-    await performUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

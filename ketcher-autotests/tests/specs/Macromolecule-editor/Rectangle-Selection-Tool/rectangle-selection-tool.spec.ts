@@ -9,7 +9,6 @@ import {
   waitForPageInit,
   moveMouseAway,
   clickOnCanvas,
-  clickInTheMiddleOfTheScreen,
   resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -147,14 +146,22 @@ test.describe('Rectangle Selection Tool', () => {
     Description: check ability to move items on the canvas
     */
 
-    // Choose peptide
-    await Library(page).selectMonomer(Peptides.Tza);
-
-    // Create 4 peptides on canvas
-    await clickOnCanvas(page, 300, 400);
-    await clickOnCanvas(page, 400, 400);
-    await clickOnCanvas(page, 500, 500);
-    await clickOnCanvas(page, 600, 600);
+    await Library(page).dragMonomerOnCanvas(Peptides.Tza, {
+      x: 300,
+      y: 400,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptides.Tza, {
+      x: 400,
+      y: 400,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptides.Tza, {
+      x: 500,
+      y: 500,
+    });
+    await Library(page).dragMonomerOnCanvas(Peptides.Tza, {
+      x: 600,
+      y: 600,
+    });
 
     // Get 4 peptides locators
     const peptides = getMonomerLocator(page, Peptides.Tza);
@@ -189,12 +196,16 @@ test.describe('Rectangle Selection Tool', () => {
       x: center.x - shift,
       y: center.y,
     };
-    await Library(page).selectMonomer(Peptides.bAla);
-    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
+    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+      x: betaAlaninePosition.x - 10,
+      y: betaAlaninePosition.y - 10,
+    });
 
-    await Library(page).selectMonomer(Peptides.Edc);
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
-    await clickOnCanvas(page, center.x + shift, center.y);
+    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+      x: center.x + shift,
+      y: center.y,
+    });
     await page.keyboard.press('Escape');
 
     // Now Beta Alanine must be above Ethylthiocysteine
@@ -256,9 +267,9 @@ test.describe('Rectangle Selection Tool', () => {
     // Select monomers pointly by clicking Shift+LClick
     await page.keyboard.down('Shift');
 
-    await clickOnCanvas(page, 300, 300);
-    await clickOnCanvas(page, 400, 400);
-    await clickOnCanvas(page, 500, 350);
+    await clickOnCanvas(page, 310, 310);
+    await clickOnCanvas(page, 410, 410);
+    await clickOnCanvas(page, 510, 360);
 
     await page.keyboard.up('Shift');
 
@@ -310,8 +321,11 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await Library(page).selectMonomer(Chem.A6OH);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Chem.A6OH, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

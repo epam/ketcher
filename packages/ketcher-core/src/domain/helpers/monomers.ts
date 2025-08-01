@@ -400,7 +400,8 @@ export const isHelmCompatible = (
     .map((monomer) =>
       monomersLibrary.find(
         (libraryMonomer) =>
-          libraryMonomer.props.id === monomer.monomerItem.props.id,
+          isAmbiguousMonomerLibraryItem(libraryMonomer) ? libraryMonomer.id === monomer.monomerItem.props.id
+            : libraryMonomer.props?.id === monomer.monomerItem.props.id,
       ),
     )
     .every((monomer) => Boolean(monomer?.props.aliasHELM));

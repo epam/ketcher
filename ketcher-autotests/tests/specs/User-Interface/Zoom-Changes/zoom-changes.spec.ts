@@ -24,6 +24,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
@@ -103,7 +104,11 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await expandAbbreviation(page, page.getByText('CO2Et'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CO2Et' }),
+    );
+
     await zoomSelector.click();
     await zoomInButton.click();
 
@@ -124,7 +129,10 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await expandAbbreviation(page, page.getByText('CO2Et'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CO2Et' }),
+    );
     await zoomSelector.click();
     await zoomOut.click();
 

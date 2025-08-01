@@ -78,6 +78,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -293,7 +294,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('3FAM'));
+    await expandMonomers(page, getAbbreviationLocator(page, { name: '3FAM' }));
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeEditorScreenshot(page);
   });
@@ -488,8 +489,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
     await takeEditorScreenshot(page);
-    const point = page.getByText('X');
+    const point = getAbbreviationLocator(page, { name: 'X' });
     await ContextMenu(page, point).open();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -509,7 +511,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/17. Unknown nucleotide.ket',
     );
     await takeEditorScreenshot(page);
-    const point = page.getByText('Unknown');
+    const point = getAbbreviationLocator(page, { name: 'Unknown' });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
@@ -531,7 +533,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       page,
       'KET/Bugs/two-monomers-connected.ket',
     );
-    await expandMonomer(page, page.getByText('Edc'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -642,7 +644,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
-    await expandMonomer(page, page.getByText('Edc'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
@@ -696,7 +698,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
-    await expandMonomer(page, page.getByText('Edc'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
@@ -766,7 +768,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
-    await expandMonomer(page, page.getByText('Edc'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await page.mouse.move(650, 350);
     await takeEditorScreenshot(page);
   });
@@ -1117,7 +1119,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
-    await expandMonomer(page, page.getByText('Edc'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');

@@ -50,6 +50,7 @@ import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -260,7 +261,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheScreen(page);
-    await expandMonomer(page, page.getByText('baA'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: 'baA' }));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -290,7 +291,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheScreen(page);
-    await ContextMenu(page, page.getByText('Cys_Bn')).open();
+    await ContextMenu(
+      page,
+      getAbbreviationLocator(page, { name: 'Cys_Bn' }),
+    ).open();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: false,

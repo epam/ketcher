@@ -38,6 +38,7 @@ import {
   FunctionalGroupsTabItems,
   SaltsAndSolventsTabItems,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -253,7 +254,7 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('Cbz').hover();
+    await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
     await page.keyboard.up('Control');
@@ -281,7 +282,10 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('Cbz'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Cbz' }),
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
@@ -308,7 +312,7 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('formic acid').hover();
+    await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
     await page.keyboard.up('Control');
@@ -336,7 +340,10 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('formic acid'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'formic acid' }),
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);

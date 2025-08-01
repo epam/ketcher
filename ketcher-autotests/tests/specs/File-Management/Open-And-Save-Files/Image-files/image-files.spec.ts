@@ -49,12 +49,14 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  openStructureLibrary,
+  BottomToolbar,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -938,11 +940,11 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
     await CommonTopLeftToolbar(page).clearCanvas();
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page
-      .getByPlaceholder('Search by elements...')
-      .fill('My Custom Template');
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('My Custom Template');
     await takeEditorScreenshot(page);
     await page.getByText('My Custom Template').click();
     await clickInTheMiddleOfTheScreen(page);

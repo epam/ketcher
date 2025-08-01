@@ -5,8 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  TemplateLibrary,
-  selectUserTemplatesAndPlaceInTheMiddle,
   waitForPageInit,
   clickOnAtom,
   getEditorScreenshot,
@@ -20,8 +18,12 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   BottomToolbar,
   drawBenzeneRing,
-  openStructureLibrary,
 } from '@tests/pages/molecules/BottomToolbar';
+import {
+  TemplateLibraryTab,
+  AromaticsTemplate,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -38,12 +40,6 @@ async function saveToTemplates(page: Page, shouldSave = true) {
   }
 }
 
-async function saveUserTemplate(page: Page) {
-  await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-  await CommonTopLeftToolbar(page).saveFile();
-  await clickInTheMiddleOfTheScreen(page);
-}
-
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -54,7 +50,11 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-13158
       Description: open template
     */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -70,7 +70,12 @@ test.describe('Click User Templates on canvas', () => {
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
 
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
@@ -78,10 +83,11 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('template').fill(' name ');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-    await openStructureLibrary(page);
-    await pressButton(page, 'User Templates (1)');
-    await page.getByPlaceholder('Search by elements...').fill('name');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('name');
     await takeEditorScreenshot(page);
   });
 
@@ -93,23 +99,27 @@ test.describe('Click User Templates on canvas', () => {
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
+
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('to_delete');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page.getByTitle('to_delete').getByRole('button').first().click();
-
-    await openStructureLibrary(page);
-    await page.getByPlaceholder('Search by elements...').fill('to_delete');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('to_delete');
+    await StructureLibraryDialog(page).deleteMyTemplate();
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).setSearchValue('to_delete');
     await takeEditorScreenshot(page);
   });
 
@@ -131,12 +141,11 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('template').fill('simple_object_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page
-      .getByPlaceholder('Search by elements...')
-      .fill('simple_object_template');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('simple_object_template');
     await takeEditorScreenshot(page);
   });
 
@@ -159,12 +168,13 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page
-      .getByPlaceholder('Search by elements...')
-      .fill('reaction_arrow_template');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue(
+      'reaction_arrow_template',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -211,7 +221,9 @@ test.describe('Create and Save Templates', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -226,10 +238,12 @@ test.describe('Create and Save Templates', () => {
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
@@ -238,8 +252,10 @@ test.describe('Create and Save Templates', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await IndigoFunctionsToolbar(page).cleanUp();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await page.getByText('user_template_1').click();
     await takeEditorScreenshot(page);
   });
@@ -257,8 +273,10 @@ test.describe('Create and Save Templates', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await page.getByText('My Template').click();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -277,7 +295,13 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-11852
       Description: warning message validation
     */
-    await saveUserTemplate(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
     await page.getByRole('button', { name: 'Save to Templates' }).click();
     await getEditorScreenshot(page);
   });
@@ -287,7 +311,13 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(1)
       Description: no mote than 128 symbols error validation
     */
-    await saveUserTemplate(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
 
@@ -303,7 +333,13 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(2)
       Description: empty field validation
     */
-    await saveUserTemplate(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('name');
@@ -319,10 +355,12 @@ test.describe('Templates field lenght validations', () => {
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();

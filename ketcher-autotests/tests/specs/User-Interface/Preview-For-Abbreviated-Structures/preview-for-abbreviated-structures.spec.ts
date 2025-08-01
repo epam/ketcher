@@ -1,12 +1,15 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  selectFunctionalGroups,
-  FunctionalGroups,
   moveMouseToTheMiddleOfTheScreen,
   BondType,
   waitForPageInit,
@@ -14,11 +17,6 @@ import {
 } from '@utils';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-
-async function selectFunctionalGroup(page: Page) {
-  // select a functional group from structure library
-  await selectFunctionalGroups(FunctionalGroups.Boc, page);
-}
 
 /* Show abbreviated structure preview when hovering over atoms or bonds
  * with the template tool selected
@@ -35,7 +33,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should show a preview of a functional group when hovering over atom', async ({
     page,
   }) => {
-    await selectFunctionalGroup(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
@@ -44,7 +45,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should hide preview of a functional group when hovering over atom and then moving the mouse away', async ({
     page,
   }) => {
-    await selectFunctionalGroup(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -54,7 +58,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should remove preview and add the functional group to atom in contracted state when clicked', async ({
     page,
   }) => {
-    await selectFunctionalGroup(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await clickOnCanvas(page, point.x, point.y);
@@ -65,7 +72,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should remove preview when context menu is shown after right click', async ({
     page,
   }) => {
-    await selectFunctionalGroup(page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);

@@ -1,6 +1,12 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
@@ -8,10 +14,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  selectFunctionalGroups,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
-  FunctionalGroups,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
@@ -47,7 +49,10 @@ test.describe('Click Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
@@ -63,7 +68,10 @@ test.describe('Click Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
@@ -103,8 +111,10 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;

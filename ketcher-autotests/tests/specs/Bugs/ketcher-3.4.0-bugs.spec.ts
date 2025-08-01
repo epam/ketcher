@@ -23,8 +23,6 @@ import {
   openFile,
   pressButton,
   clickOnTheCanvas,
-  selectUserTemplate,
-  TemplateLibrary,
 } from '@utils';
 import {
   copyAndPaste,
@@ -60,7 +58,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
-import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   BondsSetting,
   MeasurementUnit,
@@ -73,6 +71,12 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  DAminoAcidsTemplate,
+  LAminoAcidsTemplate,
+  TemplateLibraryTab,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
@@ -1387,15 +1391,17 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Put selected template to canvas
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openStructureLibrary(page);
-    await page.getByRole('tab', { name: 'Template Library' }).click();
-    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
-    await selectUserTemplate(TemplateLibrary.PHEDPhenylalanine, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.DAminoAcids,
+      DAminoAcidsTemplate.PHEDPhenylalanine,
+    );
     await clickOnTheCanvas(page, 200, 200);
-    await openStructureLibrary(page);
-    await page.getByRole('tab', { name: 'Template Library' }).click();
-    await page.getByRole('button', { name: 'L-Amino Acids' }).click();
-    await selectUserTemplate(TemplateLibrary.PHELPhenylalanine, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.LAminoAcids,
+      LAminoAcidsTemplate.PHELPhenylalanine,
+    );
     await clickOnTheCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });

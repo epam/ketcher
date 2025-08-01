@@ -24,7 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@fixtures/*": ["tests/fixtures/*"],
+      "@fixtures": ["tests/fixtures/fixtures.ts"],
       "@utils/*": ["tests/utils/*"],
       "@utils": ["tests/utils"],
       "@tests/*": ["tests/*"],

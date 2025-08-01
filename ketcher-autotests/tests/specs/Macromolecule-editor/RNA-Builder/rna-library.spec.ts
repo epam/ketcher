@@ -57,11 +57,18 @@ async function drawThreeMonomers(page: Page) {
   const y2 = 504;
   const x3 = 705;
   const y3 = 106;
-  await Library(page).selectMonomer(Sugars._3A6);
-  await clickOnCanvas(page, x1, y1);
-  await Library(page).selectMonomer(Bases.baA);
-  await clickOnCanvas(page, x2, y2);
-  await Library(page).selectMonomer(Phosphates.P);
+  await Library(page).dragMonomerOnCanvas(Sugars._3A6, {
+    x: x1,
+    y: y1,
+  });
+  await Library(page).dragMonomerOnCanvas(Bases.baA, {
+    x: x2,
+    y: y2,
+  });
+  await Library(page).dragMonomerOnCanvas(Phosphates.P, {
+    x: x3,
+    y: y3,
+  });
   await clickOnCanvas(page, x3, y3);
 }
 
@@ -88,10 +95,15 @@ async function drawBasePhosphate(page: Page) {
   const base = getMonomerLocator(page, Bases.baA).nth(0);
   const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
-  await Library(page).selectMonomer(Bases.baA);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Phosphates.P);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Bases.baA, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Phosphates.P, {
+    x,
+    y,
+  });
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await base.hover();
   await page.mouse.down();
@@ -107,10 +119,15 @@ async function drawSugarPhosphate(page: Page) {
   const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
   const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
-  await Library(page).selectMonomer(Sugars._3A6);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Phosphates.P);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Sugars._3A6, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Phosphates.P, {
+    x,
+    y,
+  });
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
@@ -123,10 +140,15 @@ async function drawSugarBase(page: Page) {
   const y = 350;
   const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
   const base = getMonomerLocator(page, Bases.baA).nth(0);
-  await Library(page).selectMonomer(Sugars._3A6);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Bases.baA);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Sugars._3A6, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Bases.baA, {
+    x,
+    y,
+  });
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
@@ -917,8 +939,11 @@ test.describe('RNA Library', () => {
       const anyPointX = 300;
       const anyPointY = 500;
       await page.getByTestId(`summary-${molecule.type}`).click();
-      await page.getByTestId(molecule.description.testId).click();
-      await clickInTheMiddleOfTheScreen(page);
+      await Library(page).dragMonomerOnCanvas(molecule.description, {
+        x: -10,
+        y: -10,
+        fromCenter: true,
+      });
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -1180,8 +1205,10 @@ test.describe('RNA Library', () => {
       const x = 300;
       const y = 500;
 
-      await Library(page).selectMonomer(monomer);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(monomer, {
+        x,
+        y,
+      });
       await page.keyboard.press('Escape');
       await clickOnCanvas(page, x, y);
       await moveMouseAway(page);
@@ -1212,9 +1239,11 @@ test.describe('RNA Library', () => {
     */
       const x = 200;
       const y = 200;
-      await Library(page).selectMonomer(monomer);
-
-      await clickInTheMiddleOfTheScreen(page);
+      await Library(page).dragMonomerOnCanvas(monomer, {
+        x: -10,
+        y: -10,
+        fromCenter: true,
+      });
       await page.keyboard.press('Escape');
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(x, y, page);

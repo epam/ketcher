@@ -18,6 +18,7 @@ import {
   takeTopToolbarScreenshot,
   clickOnCanvas,
   MonomerType,
+  Monomer,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
@@ -720,8 +721,17 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugars._3A6, Bases.baA]);
     await Library(page).rnaBuilder.addToPresets();
-    await Library(page).selectCustomPreset('3A6(baA)_baA_3A6_.');
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: '3A6(baA)_baA_3A6_.',
+        testId: '3A6(baA)_baA_3A6_.',
+      } as Monomer,
+      {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      },
+    );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -740,8 +750,17 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugars._3A6, Phosphates.bP]);
     await Library(page).rnaBuilder.addToPresets();
-    await Library(page).selectCustomPreset('3A6()bP_._3A6_bP');
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: '3A6()bP_._3A6_bP',
+        testId: '3A6()bP_._3A6_bP',
+      } as Monomer,
+      {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      },
+    );
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -1056,9 +1075,12 @@ test.describe('RNA Library', () => {
 
       const x = 200;
       const y = 200;
-      await Library(page).selectMonomer(monomer);
+      await Library(page).dragMonomerOnCanvas(monomer, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
 
-      await clickInTheMiddleOfTheScreen(page);
       await page.keyboard.press('Escape');
       await Library(page).openRNASection(RNASection.Nucleotides);
       await clickInTheMiddleOfTheScreen(page);

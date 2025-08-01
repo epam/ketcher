@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IMAGE_KEY } from 'ketcher-core';
+import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 
 import APointTool from './apoint';
 import AtomTool from './atom';
@@ -39,6 +39,7 @@ import TextTool from './text';
 import { ToolConstructorInterface } from './Tool';
 import { ImageTool } from './image';
 import { SelectCommonTool } from './select';
+import CreateMonomerTool from './create-monomer';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,
@@ -64,4 +65,5 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   simpleobject: SimpleObjectTool,
   text: TextTool,
   [IMAGE_KEY]: ImageTool,
+  [CREATE_MONOMER_TOOL_NAME]: CreateMonomerTool,
 };

@@ -17,7 +17,7 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -25,6 +25,7 @@ import { Icon } from 'components';
 export interface Option {
   value: string;
   label: string;
+  children?: ReactNode;
 }
 
 interface Props {
@@ -36,11 +37,12 @@ interface Props {
   disabled?: boolean;
   formName?: string;
   name?: string;
+  placeholder?: string;
   'data-testid'?: string;
 }
 
 const ChevronIcon = ({ className }) => (
-  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+  <Icon name="chevron" className={className} />
 );
 
 const Select = ({
@@ -52,6 +54,7 @@ const Select = ({
   options,
   formName,
   name,
+  placeholder,
   'data-testid': testId,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
@@ -75,6 +78,7 @@ const Select = ({
       onChange={handleChange}
       multiple={multiple}
       disabled={disabled}
+      placeholder={placeholder}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
       data-testid={testId}
@@ -98,7 +102,7 @@ const Select = ({
               })}
               data-testid={`${option.label}-option`}
             >
-              {option.label}
+              {option.children ?? option.label}
             </MenuItem>
           );
         })}

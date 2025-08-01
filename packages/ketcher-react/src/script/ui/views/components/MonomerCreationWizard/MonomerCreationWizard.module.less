@@ -1,0 +1,157 @@
+@import '../../../../../style/variables.less';
+
+.monomerCreationWizard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100% - 66px);
+  width: calc(100% - 62px);
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 11px;
+  padding: 16px;
+  border: 1px dashed #CAD3DD;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wizardTitle {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: 4px;
+}
+
+.notificationsArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rightColumn {
+  min-width: 288px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.attributesWindow {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+  background-color: #F3F5F7;
+  border-radius: 8px;
+  pointer-events: auto;
+}
+
+.attributesTitle {
+  margin: 0;
+  font-size: 16px;
+}
+
+.attributesFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.typeOption {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  & > svg {
+    color: @color-grey-5;
+  }
+}
+
+.input {
+  width: 200px;
+
+  &.error {
+    background-color: #FDE0DF;
+    border: 1px solid @color-secondary-red;
+  }
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid @color-grey-3;
+}
+
+.attachmentPointsTitle {
+  margin: 0;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.attachmentPoints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 8px;
+}
+
+.attachmentPoint {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px 8px 8px;
+  border: 1px solid @color-grey-4;
+  border-radius: 4px;
+  background-color: @color-grey-3;
+}
+
+.attachmentPointText {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.attachmentPointIndex {
+  font-weight: 700;
+}
+
+.attachmentPointIcon {
+  width: 16px;
+  height: 16px;
+  color: @color-text-primary;
+  opacity: 0.4;
+}
+
+.buttonsContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonsContainer > button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.buttonDiscard {
+  border: 1px solid @color-grey-6;
+  background-color: transparent;
+  color: @color-grey-6;
+}
+
+.buttonSubmit {
+  border: 1px solid @color-primary;
+  background-color: @color-primary;
+  color: #fff;
+}
+

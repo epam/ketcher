@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { FC, MutableRefObject, useRef } from 'react';
-import { IMAGE_KEY } from 'ketcher-core';
+import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -167,7 +167,11 @@ const LeftToolbar = (props: Props) => {
         <div className={classes.listener} ref={sizeRef}>
           <Group
             className={classes.groupItem}
-            items={[{ id: 'sgroup' }, { id: 'rgroup', options: rGroupOptions }]}
+            items={[
+              { id: 'sgroup' },
+              { id: 'rgroup', options: rGroupOptions },
+              { id: CREATE_MONOMER_TOOL_NAME },
+            ]}
           />
         </div>
 

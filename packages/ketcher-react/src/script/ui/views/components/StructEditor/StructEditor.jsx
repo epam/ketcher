@@ -27,6 +27,7 @@ import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
+import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -354,6 +355,8 @@ class StructEditor extends Component {
         <FloatingToolContainer />
 
         <ContextMenu />
+
+        <MonomerCreationWizard />
       </Tag>
     );
   }

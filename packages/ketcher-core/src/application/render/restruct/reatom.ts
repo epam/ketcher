@@ -482,6 +482,9 @@ class ReAtom extends ReObject {
       }
       const isPreviewMode =
         options.usageInMacromolecule === UsageInMacromolecule.MonomerPreview ||
+        options.usageInMacromolecule === UsageInMacromolecule.BondPreview ||
+        options.usageInMacromolecule ===
+          UsageInMacromolecule.MonomerConnectionsModal ||
         (options.usageInMacromolecule === undefined && !sgroup);
 
       const isLeavingGroupAtom =
@@ -1106,6 +1109,15 @@ function buildLabel(
 }
 
 function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
+  console.log('getLabelText called:', {
+    atomId,
+    atomLabel: atom.label,
+    rglabel: atom.rglabel,
+    sgroupType: sgroup?.constructor.name,
+    isMonomerMicromolecule: sgroup instanceof MonomerMicromolecule,
+    usageInMacromolecule: options?.usageInMacromolecule,
+  });
+
   if (sgroup?.isSuperatomWithoutLabel) {
     const attachmentPoint = sgroup
       .getAttachmentPoints()

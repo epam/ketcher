@@ -1247,6 +1247,7 @@ test.describe('RNA Library', () => {
       await page.keyboard.press('Escape');
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(x, y, page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);

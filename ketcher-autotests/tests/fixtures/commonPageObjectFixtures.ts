@@ -1,3 +1,5 @@
+/* eslint-disable no-empty-pattern */
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   CommonTopLeftToolbar,
   CommonTopLeftToolbarType,
@@ -19,17 +21,25 @@ type CommonPageObjects = {
   CommonTopLeftToolbar: (page: Page) => CommonTopLeftToolbarType;
 };
 
-export const test = base.extend<CommonPageObjects>({
-  // eslint-disable-next-line no-empty-pattern
-  CommonTopRightToolbar: async ({}, use) => {
-    await use(CommonTopRightToolbar);
-  },
-  // eslint-disable-next-line no-empty-pattern
-  CommonTopLeftToolbar: async ({}, use) => {
-    await use(CommonTopLeftToolbar);
-  },
-  // eslint-disable-next-line no-empty-pattern
-  MacromoleculesTopToolbar: async ({}, use) => {
-    await use(MacromoleculesTopToolbar);
-  },
+export const test = base.extend<{}, CommonPageObjects>({
+  CommonTopRightToolbar: [
+    async ({}, use) => {
+      await use(CommonTopRightToolbar);
+    },
+    { scope: 'worker', auto: true },
+  ],
+
+  CommonTopLeftToolbar: [
+    async ({}, use) => {
+      await use(CommonTopLeftToolbar);
+    },
+    { scope: 'worker', auto: true },
+  ],
+
+  MacromoleculesTopToolbar: [
+    async ({}, use) => {
+      await use(MacromoleculesTopToolbar);
+    },
+    { scope: 'worker', auto: true },
+  ],
 });

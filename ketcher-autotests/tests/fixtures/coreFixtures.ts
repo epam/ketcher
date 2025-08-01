@@ -1,4 +1,7 @@
+/* eslint-disable no-empty-pattern */
+/* eslint-disable @typescript-eslint/ban-types */
 import { test as base, Page } from '@playwright/test';
+import { waitForPageInit } from '@utils';
 
 type CoreWorkerFixtures = {
   ketcher: {
@@ -8,14 +11,15 @@ type CoreWorkerFixtures = {
   closePage: () => Promise<void>;
 };
 
-export const test = base.extend<object, CoreWorkerFixtures>({
+export const test = base.extend<{}, CoreWorkerFixtures>({
   createPage: [
     async ({ browser, ketcher }, use) => {
       await use(async () => {
         const context = await browser.newContext();
         const page = await context.newPage();
         ketcher.page = page;
-        return page;
+        await waitForPageInit(ketcher.page);
+        return ketcher.page;
       });
       ketcher.page = undefined;
     },
@@ -34,7 +38,6 @@ export const test = base.extend<object, CoreWorkerFixtures>({
   ],
 
   ketcher: [
-    // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
       await use({});
     },

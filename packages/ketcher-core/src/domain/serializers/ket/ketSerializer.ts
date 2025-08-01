@@ -458,7 +458,6 @@ export class KetSerializer implements Serializer<Struct> {
             Number(leavingGroupAtom.rglabel),
           )
         ] = leavingGroupAtom.label;
-        // leavingGroupAtom.label = 'R#';
       },
     );
   }

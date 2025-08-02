@@ -17,7 +17,6 @@
 import {
   Box2Abs,
   FunctionalGroup,
-  Pile,
   SGroup,
   Vec2,
   MonomerMicromolecule,
@@ -220,25 +219,26 @@ class ReSGroup extends ReObject {
           functionalGroups,
         )
       ) {
-        // sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
-        //   options.hoverStyle,
-        // );
+        sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
+          options.hoverStyle,
+        );
+        hoversToCombine.push(sGroupItem.hovering);
       } else if (!this.selected) {
-        // sGroupItem.hovering = paper
-        //   .path(
-        //     'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-        //     tfx(a0.x),
-        //     tfx(a0.y),
-        //     tfx(a1.x),
-        //     tfx(a1.y),
-        //     tfx(b1.x),
-        //     tfx(b1.y),
-        //     tfx(b0.x),
-        //     tfx(b0.y),
-        //   )
-        //   .attr(options.hoverStyle);
+        sGroupItem.hovering = paper
+          .path(
+            'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+            tfx(a0.x),
+            tfx(a0.y),
+            tfx(a1.x),
+            tfx(a1.y),
+            tfx(b1.x),
+            tfx(b1.y),
+            tfx(b0.x),
+            tfx(b0.y),
+          )
+          .attr(options.hoverStyle);
+        otherHovers.push(sGroupItem.hovering);
       }
-      // otherHovers.push(sGroupItem.hovering);
 
       SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
         const atom = render?.ctab?.atoms?.get(aid);
@@ -267,7 +267,7 @@ class ReSGroup extends ReObject {
       function paperPathFromSVGElement(element) {
         const tagName = element.tagName;
         let path;
-        console.log(tagName, element);
+
         if (tagName === 'circle') {
           // Convert circle to Paper.js Path.Circle
           const cx = parseFloat(element.getAttribute('cx'));
@@ -327,11 +327,7 @@ class ReSGroup extends ReObject {
         this.visel,
         paper.path(combinedPathD).attr(options.hoverStyle),
       );
-      // render.ctab.addReObjectPath(
-      //   LayerMap.hovering,
-      //   this.visel,
-      //   otherHovers,
-      // );
+      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, otherHovers);
     }
   }
 

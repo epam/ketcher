@@ -125,7 +125,7 @@ test.describe('Check attachment point rotation', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.mouse.move(400, 400);
+    await page.mouse.move(410, 410);
     await dragMouseTo(200, 400, page);
     await moveMouseAway(page);
 

@@ -44,7 +44,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
-  protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  protected canvas: D3SvgElementSelection<SVGGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper =
       ZoomTool.instance?.canvasWrapper || select(canvasSelector);

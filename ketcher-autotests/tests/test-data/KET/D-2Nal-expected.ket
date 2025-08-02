@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 14.75,
-            "y": -7.65
+            "x": 15.125,
+            "y": -8.025
         },
         "alias": "D-2Nal",
         "templateId": "D-2Nal___D-3-(2-naphthyl)-alanine"

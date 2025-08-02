@@ -143,8 +143,11 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: CHEM is deleted.
     */
-    await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await CommonLeftToolbar(page).selectEraseTool();
@@ -431,8 +434,11 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await Library(page).selectMonomer(Peptides.X);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Peptides.X, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -459,8 +465,11 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await Library(page).selectMonomer(Bases.DNA_N);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Bases.DNA_N, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -487,8 +496,11 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await Library(page).selectMonomer(Peptides.Z);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Peptides.Z, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -515,8 +527,11 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await Library(page).selectMonomer(Bases.RNA_N);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Bases.RNA_N, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

@@ -1,7 +1,6 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   moveMouseAway,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -34,8 +33,11 @@ test.describe('Macromolecules default presets', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await Library(page).selectMonomer(Presets.G);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Presets.G, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
 
     await takeEditorScreenshot(page);

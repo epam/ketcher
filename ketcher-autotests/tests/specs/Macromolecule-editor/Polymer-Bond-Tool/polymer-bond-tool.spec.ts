@@ -6,13 +6,11 @@ import { test, expect, Page } from '@playwright/test';
 import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
-  clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
-  clickOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   waitForPageInit,
@@ -139,12 +137,14 @@ test('Create bond between two chems', async () => {
     Description: Polymer bond tool
     */
   // Choose chems
-  await Library(page).selectMonomer(Chem.hxy);
-
-  // Create 2 chems on canvas
-  await clickOnCanvas(page, 300, 300);
-  await moveMouseAway(page);
-  await clickOnCanvas(page, 400, 400);
+  await Library(page).dragMonomerOnCanvas(Chem.hxy, {
+    x: 300,
+    y: 300,
+  });
+  await Library(page).dragMonomerOnCanvas(Chem.hxy, {
+    x: 400,
+    y: 400,
+  });
 
   // Get 2 chems locators
   const chem1 = getMonomerLocator(page, Chem.hxy).first();
@@ -209,10 +209,15 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await Library(page).selectMonomer(Peptides.bAla);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Peptides.Edc);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    x,
+    y,
+  });
   await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -229,10 +234,15 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await Library(page).selectMonomer(Presets.MOE_A_P);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Presets.dR_U_P);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Presets.MOE_A_P, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Presets.dR_U_P, {
+    x,
+    y,
+  });
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -249,10 +259,15 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await Library(page).selectMonomer(Chem.A6OH);
-  await clickInTheMiddleOfTheScreen(page);
-  await Library(page).selectMonomer(Chem.Test_6_Ch);
-  await clickOnCanvas(page, x, y);
+  await Library(page).dragMonomerOnCanvas(Chem.A6OH, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+  await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+    x,
+    y,
+  });
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await page
     .locator('div')
@@ -551,8 +566,11 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded.
     */
   const bondLine = getBondLocator(page, {}).nth(1);
-  await Library(page).selectMonomer(Presets.MOE_A_P);
-  await clickInTheMiddleOfTheScreen(page);
+  await Library(page).dragMonomerOnCanvas(Presets.MOE_A_P, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
   await ContextMenu(page, bondLine).click(MacroBondOption.EditConnectionPoints);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();

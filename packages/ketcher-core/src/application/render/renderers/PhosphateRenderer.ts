@@ -9,6 +9,8 @@ const PHOSPHATE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].hover;
 const PHOSPHATE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].body;
+const PHOSPHATE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].autochainPreview;
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Phosphate, scale?: number) {
@@ -16,6 +18,7 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       monomer,
       PHOSPHATE_HOVERED_ELEMENT_ID,
       PHOSPHATE_SYMBOL_ELEMENT_ID,
+      PHOSPHATE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
   }

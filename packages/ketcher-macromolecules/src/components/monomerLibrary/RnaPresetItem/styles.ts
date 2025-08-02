@@ -36,8 +36,8 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
 
   > .star {
     right: 0;
-    left: 4px;
-    top: 10px;
+    left: calc(50% - 7px);
+    top: 11px;
     width: min-content;
   }
 `;

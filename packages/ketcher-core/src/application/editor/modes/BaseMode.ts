@@ -211,6 +211,8 @@ export abstract class BaseMode {
     }
 
     this.updateEntitiesPosition(drawingEntitiesManager);
+    editor.calculateAndStoreNextAutochainPosition(drawingEntitiesManager);
+
     const { command: modelChanges, mergedDrawingEntities } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
 

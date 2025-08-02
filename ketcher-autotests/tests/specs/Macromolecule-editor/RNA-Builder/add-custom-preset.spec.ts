@@ -5,12 +5,12 @@ import { Page, test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
+  Monomer,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -73,10 +73,17 @@ test.describe('Macromolecules custom presets', () => {
 
     await takeMonomerLibraryScreenshot(page);
 
-    await Library(page).selectCustomPreset('MyRNA_baA_25R_.');
-    await page.click('#polymer-editor-canvas');
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: 'MyRNA_baA_25R_.',
+        testId: 'MyRNA_baA_25R_.',
+      } as Monomer,
+      {
+        x: 100,
+        y: 100,
+      },
+    );
 
-    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });

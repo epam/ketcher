@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import {
-  clickOnTheCanvas,
   moveMouseAway,
   takeEditorScreenshot,
   waitForMonomerPreview,
@@ -123,8 +122,11 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
           2. Click at the center of canvas
           3. Take screenshot of the canvas to make sure selected monomer appeared on the canvas
         */
-      await Library(page).selectMonomer(AmbiguousMonomer.AmbiguousMonomer);
-      await clickOnTheCanvas(page, 0, 0);
+      await Library(page).dragMonomerOnCanvas(
+        AmbiguousMonomer.AmbiguousMonomer,
+        { x: 0, y: 0, fromCenter: true },
+      );
+
       await moveMouseAway(page);
       await getMonomerLocator(page, AmbiguousMonomer.AmbiguousMonomer).hover();
       await waitForMonomerPreview(page);

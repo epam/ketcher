@@ -7,7 +7,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
-  clickInTheMiddleOfTheScreen,
   dragMouseTo,
   hideMonomerPreview,
   moveMouseAway,
@@ -20,7 +19,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  clickOnCanvas,
   selectUndoByKeyboard,
   getControlModifier,
   MacroFileType,
@@ -201,8 +199,10 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await Library(page).selectMonomer(Peptides.bAla);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+        x,
+        y,
+      });
     };
 
     const numberOfRows = 6;
@@ -242,8 +242,10 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await Library(page).selectMonomer(Chem.SMPEG2);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
+        x,
+        y,
+      });
     };
 
     const numberOfRows = 6;
@@ -409,8 +411,11 @@ test.describe('Undo-Redo tests', () => {
     */
     await Library(page).switchToRNATab();
     await takePageScreenshot(page);
-    await Library(page).selectMonomer(Peptides.Edc);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
@@ -426,8 +431,11 @@ test.describe('Undo-Redo tests', () => {
     */
     const x = 200;
     const y = 200;
-    await Library(page).selectMonomer(Presets.C);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Presets.C, {
+      x,
+      y,
+      fromCenter: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
@@ -457,8 +465,11 @@ test.describe('Undo-Redo tests', () => {
           9. Take screenshot to make sure it is on canvas
     */
     await Library(page).switchToRNATab();
-    await Library(page).selectMonomer(Peptides.X);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Peptides.X, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -498,8 +509,11 @@ test.describe('Undo-Redo tests', () => {
           9. Take screenshot to make sure it is on canvas
     */
     await Library(page).switchToRNATab();
-    await Library(page).selectMonomer(Bases.DNA_N);
-    await clickOnTheCanvas(page, 0, 0);
+    await Library(page).dragMonomerOnCanvas(Bases.DNA_N, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

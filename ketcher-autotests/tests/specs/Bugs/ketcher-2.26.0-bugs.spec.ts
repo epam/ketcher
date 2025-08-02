@@ -1787,8 +1787,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await Library(page).selectMonomer(Sugars.R);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Sugars.R, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,

@@ -34,6 +34,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       monomer,
       monomerSymbolElementsIds.hover,
       monomerSymbolElementsIds.body,
+      monomerSymbolElementsIds.autochainPreview,
       scale,
     );
 

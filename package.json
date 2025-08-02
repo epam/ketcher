@@ -71,8 +71,7 @@
     "nth-check": "^2.1.1"
   },
   "dependencies": {
-    "@playwright/test": "^1.44.1",
-    "paper": "^0.12.18"
+    "@playwright/test": "^1.44.1"
   },
   "stylelint": {
     "overrides": [

@@ -336,7 +336,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
     SnakeCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -424,7 +423,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -448,7 +446,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -472,7 +469,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -638,7 +634,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 22: O and U sumbols are supported in sequence mode', async ({
     SequenceCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -676,7 +671,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -742,7 +736,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -778,7 +771,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -803,7 +795,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 28: Cursor position is correct when editing sequence in Macro mode', async ({
     SequenceCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -829,7 +820,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -855,7 +845,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -880,7 +869,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 31: Moving of selected microstructures on macro canvas works correct', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -962,7 +950,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 34: Clear canvas work for micro structures on macro mode', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1043,7 +1030,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1340,7 +1326,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1756,7 +1741,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 65: System should throw an error in case of wrong IUBcode', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1772,7 +1756,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
 
   test('Case 66: Sugar R should not save in the IDT format', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947

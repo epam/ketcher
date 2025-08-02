@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import {
@@ -30,10 +31,9 @@ test.beforeAll(async ({ initMoleculesCanvas }) => {
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1855(1)
    * Description: Structure with atom properties is opened and saved correctly
@@ -43,9 +43,7 @@ test('Open and Save files - Open/Save structure with atom properties 1/2 - open'
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save files - Open/Save structure with atom properties 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save files - Open/Save structure with atom properties 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1855(2)
    * Description: Structure with atom properties is opened and saved correctly
@@ -59,9 +57,7 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
   );
 });
 
-test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1857(1)
    * Description: Structure with atom and bond properties is opened and saved correctly
@@ -74,9 +70,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1857(2)
    * Description: Structure with atom and bond properties is opened and saved correctly
@@ -93,9 +87,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
   );
 });
 
-test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save Markush files 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1894(1)
    * Description: Markush structure is displayed as an RGroup structure.
@@ -105,9 +97,7 @@ test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save Markush files 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1894(2)
    * Description: Markush structure is displayed as an RGroup structure.
@@ -121,9 +111,7 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
   );
 });
 
-test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1858(1)
    * Description: v2000 mol file with abbreviation is opened and saved correctly
@@ -133,9 +121,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1858(2)
    * Description: v2000 mol file with abbreviation is opened and saved correctly
@@ -149,9 +135,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
   );
 });
 
-test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 - open', async () => {
   // Fails because of bug: https://github.com/epam/Indigo/issues/3052
   /**
    * Test case: EPMLSOPKET-1859(1)
@@ -162,9 +146,7 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save', async () => {
   // Fails because of bug: https://github.com/epam/Indigo/issues/3052
   /*
    * Test case: EPMLSOPKET-1859(2)
@@ -179,9 +161,7 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
   );
 });
 
-test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1873(1)
    * Description: Structure with R-Groups is correctly opened from Mol file
@@ -191,9 +171,7 @@ test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1873(2)
    * Description: Structure with R-Groups is correctly saved to Mol file
@@ -207,9 +185,7 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
   );
 });
 
-test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1878(1)
    * Description: Structure with heteroatoms is opened from mol file correctly
@@ -222,9 +198,7 @@ test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', asyn
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1878(2)
    * Description: Structure with heteroatoms is saved to mol file correctly
@@ -241,9 +215,7 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
   );
 });
 
-test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1882(1)
    * Description: Structure with attached data is opened from mol file correctly
@@ -253,9 +225,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 -
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 - save', async () => {
   /*
    * Test case: EPMLSOPKET-1882(2)
    * Description: Structure with attached data is saved to mol file correctly
@@ -269,9 +239,7 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
   );
 });
 
-test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1879(1)
    * Description: Structure with heteroatoms is opened from mol v3000 file correctly
@@ -281,9 +249,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', as
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1879(2)
    * Description: Structure with heteroatoms is saved correctly to mol file
@@ -297,9 +263,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
   );
 });
 
-test('Open and Save file - Open/Save file with Attached data 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file with Attached data 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1880(1)
    * Description: Structure with heteroatoms is opened from mol v3000 file correctly
@@ -309,9 +273,7 @@ test('Open and Save file - Open/Save file with Attached data 1/2 - open', async 
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save file with Attached data 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file with Attached data 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1880(2)
    * Description: Structure with heteroatoms is saved correctly to mol file
@@ -325,9 +287,7 @@ test('Open and Save file - Open/Save file with Attached data 2/2 - save', async 
   );
 });
 
-test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1883(1)
    * Description: File with abs stereochemistry is opened correctly from mol file
@@ -337,9 +297,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - ope
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - save', async () => {
   /**
    * Test case: EPMLSOPKET-1883(2)
    * Description: Structure with abs stereochemistry is saved correctly to mol file
@@ -353,9 +311,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
   );
 });
 
-test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 1/2 - open', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 1/2 - open', async () => {
   /**
    * Test case: EPMLSOPKET-1884(1)
    * Description: File with abs stereochemistry is opened correctly from mol v3000 file
@@ -365,9 +321,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 2/2 - save', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 2/2 - save', async () => {
   /*
    * Test case: EPMLSOPKET-1884(2)
    * Description: Structure with abs stereochemistry is saved correctly to mol file
@@ -381,9 +335,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
   );
 });
 
-test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Save V2000 molfile as V3000 molfile', async () => {
   /*
    * Test case: EPMLSOPKET-1985
    * Description: Structure opened from V2000 molfile can be saved to V3000 molfile
@@ -397,9 +349,7 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
   );
 });
 
-test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open and Save file - Save V3000 molfile as V2000 molfile', async () => {
   /**
    * Test case: EPMLSOPKET-1986
    * Description: Structure opened from V3000 molfile can be saved to V2000 molfile
@@ -416,9 +366,7 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
   );
 });
 
-test('Open V3000 file with R-Groups with Fragments', async ({
-  MoleculesCanvas: _,
-}) => {
+test('Open V3000 file with R-Groups with Fragments', async () => {
   // Related Github issue https://github.com/epam/ketcher/issues/2774
   await openFileAndAddToCanvas(
     page,
@@ -485,7 +433,7 @@ test.describe('Open and Save file', () => {
     ];
 
     for (const file of files) {
-      test(`${file.testName}`, async ({ MoleculesCanvas: _ }) => {
+      test(`${file.testName}`, async () => {
         await openFileAndAddToCanvas(page, file.path);
         await takeEditorScreenshot(page);
       });
@@ -502,7 +450,7 @@ test.describe('Open and Save file', () => {
       {
         tag: ['@SlowTest'],
       },
-      async ({ MoleculesCanvas: _ }) => {
+      async () => {
         test.slow();
 
         await openFileAndAddToCanvasAsNewProject(
@@ -553,7 +501,7 @@ test.describe('Open and Save file', () => {
     ];
 
     for (const file of files) {
-      test(`${file.testName}`, async ({ MoleculesCanvas: _ }) => {
+      test(`${file.testName}`, async () => {
         await openFileAndAddToCanvas(page, file.pathToOpen);
 
         await verifyFileExport(
@@ -571,7 +519,7 @@ test.describe('Open and Save file', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ MoleculesCanvas: _ }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1859(2)
        * Description: v3000 mol file contains more than 900 symbolsis opened and saved correctly
@@ -774,7 +722,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 62: Import monomer that fully matches library (class, symbol, InChI)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -793,7 +740,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 63: Import monomer with same class and symbol, but modified structure (InChI mismatch)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -815,7 +761,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 64: Import monomer with same class and symbol, but modified name', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -837,7 +782,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 65: Import monomer with same symbol but different class', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -859,7 +803,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 66: Import monomer with same class but different symbol', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -881,7 +824,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 67: Import monomer with same class and symbol but different casing (e.g. aa instead of AA)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -903,7 +845,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 68: Import monomer with special characters in symbol or class (AA*)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -925,7 +866,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 69: Import corrupted or invalid MOL file (e.g. broken atom block)', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -945,10 +885,7 @@ test.describe('Open and Save file', () => {
     });
   });
 
-  test('Case 70: Export mapped monomer to MOL', async ({
-    FlexCanvas: _,
-    page,
-  }) => {
+  test('Case 70: Export mapped monomer to MOL', async ({ FlexCanvas: _ }) => {
     /*
      * Version 3.6
      * Test case: https://github.com/epam/ketcher/issues/7403
@@ -979,7 +916,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 71: Export custom (unmapped) monomer to MOL', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6
@@ -1011,7 +947,6 @@ test.describe('Open and Save file', () => {
 
   test('Case 72: Export structure containing both mapped and custom monomers', async ({
     FlexCanvas: _,
-    page,
   }) => {
     /*
      * Version 3.6

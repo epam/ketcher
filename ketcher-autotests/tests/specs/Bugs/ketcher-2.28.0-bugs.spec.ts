@@ -816,24 +816,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
    * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-test(`Case 32: S-group in the middle of a chain does not expand when opening an SDF V3000 file`, async () => {
-  // Fails because of the bug: https://github.com/epam/Indigo/issues/3050
-  /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 32
-   * Bug: https://github.com/epam/ketcher/issues/6185
-   * Description: S-group in the middle of a chain does not expand when opening an SDF V3000 file
-   * Scenario:
-   * 1. Go to Molecules mode
-   * 2. Load an SDF file in V3000 format
-   * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
-   * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
-   */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
-  await openFileAndAddToCanvasAsNewProject(
-    page,
-    'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
-  );
   await openFileAndAddToCanvasAsNewProject(
     page,
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
@@ -844,11 +827,6 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
     getAbbreviationLocator(page, { name: 'dC_2' }).first(),
   );
 
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
-});
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

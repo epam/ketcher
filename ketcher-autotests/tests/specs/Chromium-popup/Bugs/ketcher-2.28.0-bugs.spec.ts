@@ -11,7 +11,6 @@ import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
-  FunctionalGroups,
   MacroFileType,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -20,7 +19,6 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   selectCanvasArea,
-  selectFunctionalGroups,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -44,8 +42,6 @@ import {
 } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';

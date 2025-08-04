@@ -15,8 +15,6 @@ import {
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
 } from '@utils';

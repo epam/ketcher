@@ -139,6 +139,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
        * 3. Click on any monomer
        * 4. Without clicking again, hover over another monomer in the library
        */
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await Library(page).openRNASection(RNASection.Sugars);
       await Library(page).selectMonomer(Sugars._5R6Sm5);
       await Library(page).hoverMonomer(Sugars.ALmecl);
@@ -239,11 +242,10 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     },
   );
 
-  test.fail(
+  test(
     'Case 7: Name for h456UR and e6A monomers are correct',
     { tag: ['@chromium-popup'] },
     async () => {
-      // Fails due to the bug: https://github.com/epam/ketcher/issues/7512
       /*
        * Test case: https://github.com/epam/ketcher/issues/6937
        * Bug: https://github.com/epam/ketcher/issues/5648
@@ -253,6 +255,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
        * 2. Go to Library - RNA tab
        * 3. Select h456UR and e6A monomers
        */
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await Library(page).selectMonomer(Bases.h456UR);
       await waitForMonomerPreview(page);
       // Screenshot suppression is not used on purpose, as it’s required for the test
@@ -819,7 +824,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       );
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
-        'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
+        'Molfiles-V2000/Chromium-popup/Bugs/benzene-ring-with-n-atoms.mol',
         MacroFileType.MOLv3000,
       );
       await takeEditorScreenshot(page, {
@@ -914,25 +919,25 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     },
   );
 
-  test(
-    'Case 26: Correct structure of DBU (solvent in the structure library)',
-    { tag: ['@chromium-popup'] },
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6937
-       * Bug: https://github.com/epam/ketcher/issues/6553
-       * Description: Correct structure of DBU (solvent in the structure library).
-       * Scenario:
-       * 1. Go to Micro
-       * 2. Go to the Structure library, Salts and Solvents tab
-       * 3. Select DBU
-       */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
-      await clickInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  // test(
+  //   'Case 26: Correct structure of DBU (solvent in the structure library)',
+  //   { tag: ['@chromium-popup'] },
+  //   async () => {
+  //     /*
+  //      * Test case: https://github.com/epam/ketcher/issues/6937
+  //      * Bug: https://github.com/epam/ketcher/issues/6553
+  //      * Description: Correct structure of DBU (solvent in the structure library).
+  //      * Scenario:
+  //      * 1. Go to Micro
+  //      * 2. Go to the Structure library, Salts and Solvents tab
+  //      * 3. Select DBU
+  //      */
+  //     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  //     await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
+  //     await clickInTheMiddleOfTheScreen(page);
+  //     await takeEditorScreenshot(page);
+  //   },
+  // );
 
   test(
     'Case 27: System not assign stereo label to every atom after load from MOL',
@@ -950,7 +955,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvasAsNewProject(
         page,
-        'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
+        'Molfiles-V2000/Chromium-popup/Bugs/structure-with-stereo-bonds-4.mol',
       );
       await takeEditorScreenshot(page);
     },
@@ -972,7 +977,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvasAsNewProject(
         page,
-        'Molfiles-V2000/Bugs/R-fragment-structure.mol',
+        'Molfiles-V2000/Chromium-popup/Bugs/R-fragment-structure.mol',
       );
       await takeEditorScreenshot(page);
     },

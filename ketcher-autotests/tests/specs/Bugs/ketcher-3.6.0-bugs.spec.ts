@@ -18,7 +18,6 @@ import {
   takeElementScreenshot,
   openFile,
   readFileContent,
-  clickOnCanvas,
   MolFileFormat,
   takePageScreenshot,
 } from '@utils';

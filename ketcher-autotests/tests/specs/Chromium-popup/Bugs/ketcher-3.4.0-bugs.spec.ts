@@ -6,6 +6,7 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   clickInTheMiddleOfTheScreen,
+  getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -58,8 +59,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Presets.A);
-      await clickInTheMiddleOfTheScreen(page);
+
+      const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await Library(page).dragMonomerOnCanvas(Presets.A, centerPoint);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
     },

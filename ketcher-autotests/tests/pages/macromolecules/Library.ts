@@ -181,6 +181,7 @@ export const Library = (page: Page) => {
       }
 
       const monomerCard = getElement(monomer.testId);
+      await expect(monomerCard).toBeInViewport();
       const monomerCardBbox = await monomerCard.boundingBox();
 
       await monomerCard.click({

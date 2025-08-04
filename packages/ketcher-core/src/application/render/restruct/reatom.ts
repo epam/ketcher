@@ -42,6 +42,7 @@ import { tfx } from 'utilities';
 import {
   RenderOptions,
   RenderOptionStyles,
+  UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
@@ -481,11 +482,24 @@ class ReAtom extends ReObject {
           true,
         );
       }
+      const isPreviewMode =
+        options.usageInMacromolecule === UsageInMacromolecule.MonomerPreview ||
+        options.usageInMacromolecule === UsageInMacromolecule.BondPreview ||
+        options.usageInMacromolecule ===
+          UsageInMacromolecule.MonomerConnectionsModal ||
+        (options.usageInMacromolecule === undefined && !sgroup);
+
+      const isLeavingGroupAtom =
+        this.a.rglabel !== null && this.a.rglabel !== '0';
+
+      const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
+
       if (
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(this, options.showHydrogenLabels)
+        displayHydrogen(this, options.showHydrogenLabels) &&
+        !shouldHideHydrogenInPreview
       ) {
         const data = showHydrogen(this, render, implh, {
           hydrogen: {},
@@ -1002,8 +1016,9 @@ function buildLabel(
   } = options;
   // eslint-disable-line max-statements
   const label: any = {
-    text: getLabelText(atom.a, atomId, sgroup),
+    text: getLabelText(atom.a, atomId, sgroup, options),
   };
+
   let tooltip: string | null = null;
   if (!label.text) {
     label.text = 'R#';
@@ -1099,7 +1114,7 @@ function buildLabel(
   return { label, rightMargin, leftMargin };
 }
 
-function getLabelText(atom, atomId: number, sgroup?: SGroup) {
+function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
   if (sgroup?.isSuperatomWithoutLabel) {
     const attachmentPoint = sgroup
       .getAttachmentPoints()
@@ -1108,7 +1123,10 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
       });
 
     if (attachmentPoint && attachmentPoint.attachmentPointNumber) {
-      return getAttachmentPointLabel(attachmentPoint.attachmentPointNumber);
+      const result = getAttachmentPointLabel(
+        attachmentPoint.attachmentPointNumber,
+      );
+      return result;
     }
   }
 
@@ -1118,26 +1136,33 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
 
   if (atom.alias) return atom.alias;
 
-  if (atom.label === 'R#' && atom.rglabel !== null) {
-    let text = '';
+  if (
+    atom.label &&
+    atom.rglabel !== null &&
+    sgroup instanceof MonomerMicromolecule
+  ) {
+    const isExpandMode = options?.usageInMacromolecule === undefined && sgroup;
 
+    if (isExpandMode) {
+      return atom.label;
+    }
+  }
+
+  if (atom.label && atom.rglabel !== null) {
+    let text = '';
     for (let rgi = 0; rgi < 32; rgi++) {
       if (atom.rglabel & (1 << rgi)) {
-        // eslint-disable-line max-depth
         text += 'R' + (rgi + 1).toString();
       }
     }
-
     if (
       sgroup instanceof MonomerMicromolecule &&
       Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)
     ) {
       text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] || text;
     }
-
     return text;
   }
-
   return atom.label;
 }
 

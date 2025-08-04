@@ -75,6 +75,7 @@ export const RNABuilder = (page: Page) => {
 
     async save() {
       await moveMouseAway(page);
+      await expect(locators.saveButton).toBeInViewport();
       await locators.saveButton.click();
     },
 

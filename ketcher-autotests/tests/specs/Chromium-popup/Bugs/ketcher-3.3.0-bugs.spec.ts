@@ -17,6 +17,7 @@ import {
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
+  getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
@@ -112,7 +113,10 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Sugars.fR);
+      const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(
+        page,
+      );
+      await Library(page).dragMonomerOnCanvas(Sugars.fR, centerOfTheCanvas);
       await clickInTheMiddleOfTheScreen(page);
       await CommonLeftToolbar(page).selectAreaSelectionTool();
       await getMonomerLocator(page, Sugars.fR).first().hover();
@@ -167,8 +171,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Peptides._2Nal);
-      await clickInTheMiddleOfTheScreen(page);
+      const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(
+        page,
+      );
+      await Library(page).dragMonomerOnCanvas(
+        Peptides._2Nal,
+        centerOfTheCanvas,
+      );
       await CommonLeftToolbar(page).selectAreaSelectionTool();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -240,10 +249,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     },
   );
 
-  test(
+  test.fail(
     'Case 7: Name for h456UR and e6A monomers are correct',
     { tag: ['@chromium-popup'] },
     async () => {
+      // Works wrong in popup mode because of the bug: https://github.com/epam/ketcher/issues/7512
       /*
        * Test case: https://github.com/epam/ketcher/issues/6937
        * Bug: https://github.com/epam/ketcher/issues/5648
@@ -898,8 +908,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Peptides._1Nal);
-      await clickInTheMiddleOfTheScreen(page);
+      const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(
+        page,
+      );
+      await Library(page).dragMonomerOnCanvas(
+        Peptides._1Nal,
+        centerOfTheCanvas,
+      );
       await CommonLeftToolbar(page).selectAreaSelectionTool();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,

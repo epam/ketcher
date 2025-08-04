@@ -180,7 +180,6 @@ const correctHELMStrings: IHELMString[] = [
       '26. List of peptides connected to another list of peptides via R3 to R1',
     HELMString:
       'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.R.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
-      shouldFail: true
   },
   {
     helmDescription:
@@ -262,6 +261,7 @@ const correctHELMStrings: IHELMString[] = [
       "39. Two peptides connected R2-R2, one of them don't have R1 AP",
     HELMString:
       'PEPTIDE1{[DACys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
+    differentHELMExport: 'PEPTIDE1{[deamino-Cys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0'
   },
   {
     helmDescription:
@@ -337,8 +337,8 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '50. RNA(RP) with single inline Extended SMILES (p)',
-    HELMString: 'RNA1{r[p%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{r.[p([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{r.[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
   },
   {
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (r)',
@@ -349,8 +349,8 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (p)',
-    HELMString: 'RNA1{r(A)[p%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{r(A)[p([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{r(A)[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -426,37 +426,38 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '61. Multi-character peptide IDs without square brackets',
     HELMString: 'PEPTIDE1{Ac-.1Nal.Cys_Bn.D*.-NHEt}$$$$V2.0',
-    differentHELMExport: 'PEPTIDE1{[Ac-].[1Nal].[Cys_Bn].[D*].[-NHEt]}$$$$V2.0',
+    differentHELMExport: 'PEPTIDE1{[ac].[1Nal].[Cys_Bn].[D*].[NHEt]}$$$$V2.0',
   },
   {
     helmDescription:
       '62. Multi-character preset of all monomer IDs without square brackets',
     HELMString: 'RNA1{5S6Rm5(mo6pur)sP-}$$$$V2.0',
-    differentHELMExport: 'RNA1{[5S6Rm5]([mo6pur])[sP-]}$$$$V2.0',
+    differentHELMExport: 'RNA1{[5S6Rm5cEt]([mo6pur])[sP-]}$$$$V2.0',
   },
   {
     helmDescription:
       '63. Multi-character presets of monomers with one monomer ID without square brackets',
-    HELMString: 'RNA1{25moe3(A)P-.5S6Rm5(nC6n5U)p.r(mo4bn3)fl2me}$$$$V2.0',
+    HELMString: 'RNA1{25moe3(A)P-.5S6Rm5(nC6n5U)P.R(mo4bn3)fl2me}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3](A)[P-].[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])p.r([mo4bn3T])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
       '64. Multi-character presets of monomers with two monomer IDs without square brackets',
-    HELMString: 'RNA1{5R6Sm5(C)p.r(purine)p.r(T)m2nen}$$$$V2.0',
-    differentHELMExport: 'RNA1{[5R6Sm5](C)p.r([purine])p.r(T)[m2nen]}$$$$V2.0',
+    HELMString: 'RNA1{5R6Sm5(C)P.R(purine)P.R(T)m2nen}$$$$V2.0',
+    differentHELMExport: 'RNA1{[5R6Sm5cEt](C)p.r([purine])p.r(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '65. Multi-character presets of monomers without phosphate with IDs without square brackets',
-    HELMString: 'RNA1{[afl2Nm]([nC6n5C]).r([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
+    HELMString: 'RNA1{[afl2Nm]([nC6n5C]).R([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
+    differentHELMExport: 'RNA1{[afl2Nmc]([nC6ncee5C]).r([tCnitro]).[Sm5ALlna](G)}$$$$V2.0'
   },
   {
     helmDescription:
       '66. Multi-character presets of monomers without base with IDs without square brackets',
-    HELMString: 'RNA1{ALmecl.m2nen.ALtri1.p.r.moen}$$$$V2.0',
-    differentHELMExport: 'RNA1{[ALmecl].[m2nen].[ALtri1].p.r.[moen]}$$$$V2.0',
+    HELMString: 'RNA1{ALmecl.m2nen.ALtri1.P.R.moen}$$$$V2.0',
+    differentHELMExport: 'RNA1{[ALmeclna].[m2nen].[ALtrina1].p.r.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -479,44 +480,46 @@ const correctHELMStrings: IHELMString[] = [
       '69. Mix of multi-character peptide IDs with and without square brackets',
     HELMString: 'PEPTIDE1{Ac-.1Nal.1Nal.Cys_Bn.Cys_Bn.D*.D*.-NHEt}$$$$V2.0',
     differentHELMExport:
-      'PEPTIDE1{[Ac-].[1Nal].[1Nal].[Cys_Bn].[Cys_Bn].[D*].[D*].[-NHEt]}$$$$V2.0',
+      'PEPTIDE1{[ac].[1Nal].[1Nal].[Cys_Bn].[Cys_Bn].[D*].[D*].[NHEt]}$$$$V2.0',
   },
   {
     helmDescription:
       '70. Mix of multi-character preset of all monomer IDs with and without square brackets',
     HELMString: 'RNA1{5S6Rm5(mo6pur)sP-.5S6Rm5(mo6pur)sP-}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[5S6Rm5]([mo6pur])[sP-].[5S6Rm5]([mo6pur])[sP-]}$$$$V2.0',
+      'RNA1{[5S6Rm5cEt]([mo6pur])[sP-].[5S6Rm5cEt]([mo6pur])[sP-]}$$$$V2.0',
   },
   {
     helmDescription:
       '71. Mix of multi-character presets of monomers with one monomer IDs with and without square brackets',
     HELMString:
-      'RNA1{25moe3(A)P-.[25moe3](A)P-.5S6Rm5(nC6n5U)p.[5S6Rm5]([nC6n5U])p.r(mo4bn3)fl2me.r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{25moe3(A)P-.[25moe3](A)P-.5S6Rm5(nC6n5U)P.[5S6Rm5]([nC6n5U])P.R(mo4bn3)fl2me.R([mo4bn3])[fl2me]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3](A)[P-].[25moe3](A)[P-].[5S6Rm5]([nC6n5U])p.[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me].r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3r](A)[P-].[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])p.[5S6Rm5cEt]([nC6ncee5U])p.r([mo4bn3T])[fl2me].r([mo4bn3T])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
       '72. Mix of multi-character presets of monomers with two monomer IDs with and without square brackets',
     HELMString:
-      'RNA1{5R6Sm5(C)p.[5R6Sm5](C)p.r(purine)p.r([purine])p.r(T)m2nen.r(T)[m2nen]}$$$$V2.0',
+      'RNA1{5R6Sm5(C)P.[5R6Sm5](C)P.R(purine)P.R([purine])P.R(T)m2nen.R(T)[m2nen]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[5R6Sm5](C)p.[5R6Sm5](C)p.r([purine])p.r([purine])p.r(T)[m2nen].r(T)[m2nen]}$$$$V2.0',
+      'RNA1{[5R6Sm5cEt](C)p.[5R6Sm5cEt](C)p.r([purine])p.r([purine])p.r(T)[m2nen].r(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '73. Mix of multi-character presets of monomers without phosphate with IDs with and without square brackets',
     HELMString:
-      'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).r([tCnitr]).r([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
+      'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).R([tCnitr]).R([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[afl2Nmc]([nC6ncee5C]).[afl2Nmc]([nC6ncee5C]).r([tCnitro]).r([tCnitro]).[Sm5ALlna](G).[Sm5ALlna](G)}$$$$V2.0'
   },
   {
     helmDescription:
       '74. Mix of multi-character presets of monomers without base with IDs with and without square brackets',
     HELMString:
-      'RNA1{[ALmecl][m2nen].ALmecl.m2nen.[ALtri1]p.ALtri1.p.r[moen].r.moen}$$$$V2.0',
+      'RNA1{[ALmecl][m2nen].ALmecl.m2nen.[ALtri1]P.ALtri1.P.R[moen].R.moen}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[ALmecl].[m2nen].[ALmecl].[m2nen].[ALtri1].p.[ALtri1].p.r.[moen].r.[moen]}$$$$V2.0',
+      'RNA1{[ALmeclna].[m2nen].[ALmeclna].[m2nen].[ALtrina1].p.[ALtrina1].p.r.[moen].r.[moen]}$$$$V2.0',
   },
   {
     helmDescription:

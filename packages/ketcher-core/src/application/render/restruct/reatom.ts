@@ -148,7 +148,7 @@ class ReAtom extends ReObject {
   public makeMonomerAttachmentPointHighlightPlate(render: Render) {
     const restruct = render.ctab;
     const struct = restruct.molecule;
-    const aid = struct.atoms.keyOf(this.a) || undefined;
+    const aid = struct.atoms.keyOf(this.a) ?? undefined;
     const sgroup = struct.getGroupFromAtomId(aid);
 
     if (!(sgroup instanceof MonomerMicromolecule)) {
@@ -573,6 +573,34 @@ class ReAtom extends ReObject {
           0.3 * label.rbb.height,
         );
         /* eslint-enable no-mixed-operators */
+      }
+    }
+
+    if (render.monomerCreationRenderState) {
+      const { attachmentPoints } = render.monomerCreationRenderState;
+      const restruct = render.ctab;
+      const struct = restruct.molecule;
+      const aid = struct.atoms.keyOf(this.a);
+
+      if (aid !== null) {
+        const attachmentAtoms = Array.from(attachmentPoints.keys());
+        const leavingGroups = Array.from(attachmentPoints.values());
+
+        let style: RenderOptionStyles | undefined;
+        if (attachmentAtoms.includes(aid)) {
+          style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
+        } else if (leavingGroups.includes(aid)) {
+          style = {
+            fill: '#fff8c5',
+            stroke: '#f8dc8f',
+            'stroke-width': '2px',
+          };
+        }
+
+        if (style) {
+          const path = this.makeHighlightePlate(restruct, style, -4);
+          restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
       }
     }
 

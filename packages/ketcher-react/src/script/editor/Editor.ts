@@ -36,6 +36,17 @@ import {
   Coordinates,
   Atom,
   Pool,
+  SGroup,
+  KetSerializer,
+  KetTemplateType,
+  monomerFactory,
+  Bond,
+  MacromoleculesConverter,
+  fromSgroupAddition,
+  IKetAttachmentPoint,
+  IKetMonomerTemplate,
+  setMonomerTemplatePrefix,
+  getHELMClassByKetMonomerClass,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -139,6 +150,12 @@ export interface Selection {
   [MULTITAIL_ARROW_KEY]?: Array<number>;
 }
 
+export type MonomerCreationState = {
+  originalStruct: Struct;
+  // Attachment atom id to leaving atom id
+  attachmentAtomIdToLeavingAtomId: Map<number, number>;
+} | null;
+
 class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: any;
@@ -177,6 +194,8 @@ class Editor implements KetcherEditor {
     cursor: Subscription;
     updateFloatingTools: Subscription<FloatingToolsParams>;
   };
+
+  private _monomerCreationState: MonomerCreationState = null;
 
   public serverSettings = {};
 
@@ -536,6 +555,288 @@ class Editor implements KetcherEditor {
     this.event.zoomChanged.dispatch();
 
     return newZoomValue > MIN_ZOOM_VALUE;
+  }
+
+  public get monomerCreationState() {
+    return this._monomerCreationState;
+  }
+
+  public get isMonomerCreationWizardActive() {
+    return Boolean(this._monomerCreationState);
+  }
+
+  // This field is now used to determine attachments for monomer creation only
+  private singleBondsToOutsideOfSelection: Pool<Bond> = new Pool();
+
+  public get isMonomerCreationWizardEnabled() {
+    if (this._monomerCreationState) {
+      return true;
+    }
+
+    const selection: Selection = this.explicitSelected();
+
+    if (selection && selection.atoms?.length && selection.bonds?.length) {
+      const currentStruct = this.render.ctab.molecule;
+      const isSelectionContinuous = Editor.isSelectionContinuous(
+        selection,
+        currentStruct,
+      );
+      if (!isSelectionContinuous) {
+        return false;
+      }
+
+      const selectionAtoms = new Set(selection.atoms);
+      const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
+        return (
+          (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
+          (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+        );
+      });
+
+      this.singleBondsToOutsideOfSelection = bondsToOutside.filter(
+        (_, bond) => bond.type === Bond.PATTERN.TYPE.SINGLE,
+      );
+
+      return (
+        this.singleBondsToOutsideOfSelection.size > 0 &&
+        this.singleBondsToOutsideOfSelection.size <= 8
+      );
+    }
+
+    return false;
+  }
+
+  static isSelectionContinuous(selection: Selection, struct: Struct): boolean {
+    const { atoms, bonds } = selection;
+
+    if (!atoms || atoms.length === 0 || !bonds || bonds.length === 0) {
+      return false;
+    }
+
+    const adjacencyList: Map<number, number[]> = new Map();
+    for (const atomId of atoms) {
+      adjacencyList.set(atomId, []);
+    }
+    bonds.forEach((bondId) => {
+      const bond = struct.bonds.get(bondId);
+      if (!bond) {
+        return;
+      }
+
+      const { begin, end } = bond;
+      if (adjacencyList.has(begin) && adjacencyList.has(end)) {
+        adjacencyList.get(begin)?.push(end);
+        adjacencyList.get(end)?.push(begin);
+      }
+    });
+
+    const visited = new Set<number>();
+    const queue = [atoms[0]];
+
+    while (queue.length > 0) {
+      const nextAtomId = queue.shift();
+      if (nextAtomId !== undefined && !visited.has(nextAtomId)) {
+        visited.add(nextAtomId);
+        for (const neighbor of adjacencyList.get(nextAtomId) ?? []) {
+          if (!visited.has(neighbor)) {
+            queue.push(neighbor);
+          }
+        }
+      }
+    }
+
+    return visited.size === atoms.length;
+  }
+
+  private originalSelection: Selection = {};
+  // Selected struct atom id to original struct atom id
+  private atomIdsMap = new Map<number, number>();
+  private selectionBBox;
+
+  openMonomerCreationWizard() {
+    const currentStruct = this.render.ctab.molecule;
+    const selection: Selection = this.explicitSelected();
+    this.originalSelection = selection;
+    const selectionAtoms = new Set(selection.atoms);
+    const selectedStruct = this.structSelected();
+
+    this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
+
+    /*
+     * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
+     * Original atom ids can be retrieved from the selection data (do not confuse with the selected struct) by index:
+     * E.g. selection.atoms = [3, 5, 7] will correspond to selectedStruct.atoms = [0, 1, 2]
+     * However, ids get sorted upon cloning so we have to sort the selection atoms first as well in order to retrieve the correct index
+     */
+    const atomIdsMap = new Map<number, number>();
+    [...(selection.atoms ?? [])]
+      .sort((a, b) => a - b)
+      .forEach((atomId, i) => {
+        atomIdsMap.set(atomId, i);
+        this.atomIdsMap.set(i, atomId);
+      });
+
+    const attachmentPoints = new Map<number, number>();
+    this.singleBondsToOutsideOfSelection.forEach((bond) => {
+      // Iterate over each bond which goes outside the selection, create a leaving atom and a new bond between it and attachment atom in selected struct
+      const bondEdgeForLeavingAtom = selectionAtoms.has(bond.begin)
+        ? 'end'
+        : 'begin';
+      const leavingAtomId = bond[bondEdgeForLeavingAtom];
+      const leavingAtom = currentStruct.atoms.get(leavingAtomId);
+      const newLeavingAtom = new Atom({ label: 'H', pp: leavingAtom?.pp });
+      const newLeavingAtomId = selectedStruct.atoms.add(newLeavingAtom);
+      this.atomIdsMap.set(newLeavingAtomId, leavingAtomId);
+
+      const bondEdgeForAttachmentAtom =
+        bondEdgeForLeavingAtom === 'end' ? 'begin' : 'end';
+      const attachmentAtomId = bond[bondEdgeForAttachmentAtom];
+      const attachmentAtomIdInSelectedStruct = atomIdsMap.get(attachmentAtomId);
+
+      if (attachmentAtomIdInSelectedStruct === undefined) {
+        return;
+      }
+
+      const newBond = new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: attachmentAtomIdInSelectedStruct,
+        end: newLeavingAtomId,
+      });
+      selectedStruct.bonds.add(newBond);
+
+      attachmentPoints.set(attachmentAtomIdInSelectedStruct, newLeavingAtomId);
+      this.atomIdsMap.set(attachmentAtomIdInSelectedStruct, attachmentAtomId);
+    });
+
+    this._monomerCreationState = {
+      originalStruct: currentStruct.clone(),
+      attachmentAtomIdToLeavingAtomId: attachmentPoints,
+    };
+
+    this.render.monomerCreationRenderState = {
+      attachmentPoints,
+    };
+
+    this.struct(selectedStruct);
+  }
+
+  closeMonomerCreationWizard() {
+    if (!this._monomerCreationState) {
+      return;
+    }
+
+    this.render.monomerCreationRenderState = null;
+    this.struct(this._monomerCreationState.originalStruct);
+    this._monomerCreationState = null;
+
+    this.tool('select');
+  }
+
+  saveNewMonomer(data) {
+    if (!this._monomerCreationState) {
+      throw new Error(
+        'Monomer creation wizard is not active, cannot save new monomer',
+      );
+    }
+
+    const ketSerializer = new KetSerializer();
+    const ketMicromolecule = JSON.parse(
+      ketSerializer.serialize(this.render.ctab.molecule),
+    );
+
+    const { symbol, name, type, naturalAnalogue } = data;
+
+    const attachmentPoints: IKetAttachmentPoint[] = [];
+    this._monomerCreationState.attachmentAtomIdToLeavingAtomId.forEach(
+      (leavingAtomId, attachmentAtomId) => {
+        const attachmentPoint: IKetAttachmentPoint = {
+          attachmentAtom: attachmentAtomId,
+          leavingGroup: {
+            atoms: [leavingAtomId],
+          },
+          type:
+            attachmentPoints.length === 0
+              ? 'left'
+              : attachmentPoints.length === 1
+              ? 'right'
+              : 'side',
+        };
+        attachmentPoints.push(attachmentPoint);
+      },
+    );
+
+    const monomerId = `${symbol}___${name}`;
+    const monomerRef = setMonomerTemplatePrefix(monomerId);
+    const monomerHELMClass = getHELMClassByKetMonomerClass(type);
+
+    const monomerTemplate: IKetMonomerTemplate = {
+      type: KetTemplateType.MONOMER_TEMPLATE,
+      id: monomerId,
+      class: type,
+      classHELM: monomerHELMClass,
+      alias: symbol,
+      fullName: name,
+      naturalAnalogShort: naturalAnalogue,
+      // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
+      atoms: ketMicromolecule.mol0.atoms,
+      bonds: ketMicromolecule.mol0.bonds,
+      attachmentPoints,
+      root: {
+        nodes: [],
+        // TODO: Revisit IKetMonomerTemplate type
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        connections: [],
+        templates: [
+          {
+            $ref: monomerRef,
+          },
+        ],
+      },
+    };
+
+    const { root: templateRoot, ...templateData } = monomerTemplate;
+    const libraryItem = JSON.stringify({
+      root: {
+        ...templateRoot,
+      },
+      [monomerRef]: {
+        ...templateData,
+      },
+    });
+
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    ketcher.updateMonomersLibrary(libraryItem);
+
+    const monomerItem =
+      ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
+    const [Monomer] = monomerFactory(monomerItem);
+    const monomerPosition = new Vec2(
+      (this.selectionBBox.min.x + this.selectionBBox.max.x) / 2,
+      (this.selectionBBox.min.y + this.selectionBBox.max.y) / 2,
+    );
+    const monomer = new Monomer(monomerItem, monomerPosition);
+
+    this.closeMonomerCreationWizard();
+
+    const action = fromSgroupAddition(
+      this.render.ctab,
+      SGroup.TYPES.SUP,
+      this.originalSelection.atoms,
+      { expanded: true },
+      this.render.ctab.molecule.sgroups.newId(),
+      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+        monomer,
+        this.atomIdsMap,
+      ),
+      monomer.position,
+      true,
+      monomer.monomerItem.props.MonomerName,
+      null,
+      monomer,
+    );
+
+    this.update(action);
   }
 
   selection(ci?: any) {

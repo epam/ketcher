@@ -17,7 +17,8 @@
 import { Axis, Axises, Struct, Vec2 } from 'domain/entities';
 import { cloneDeep, cloneDeepWith } from 'lodash';
 import { EditorSelection } from 'application/editor';
-import { MonomerTransformation } from 'application/formatters';
+import { KetMonomerClass, MonomerTransformation } from 'application/formatters';
+import { MONOMER_CONST } from 'domain/constants';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -42,6 +43,20 @@ export const setAmbiguousMonomerPrefix = (monomerId: number) =>
 
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
+};
+
+export const getHELMClassByKetMonomerClass = (
+  monomerClass: KetMonomerClass,
+) => {
+  if (monomerClass === KetMonomerClass.AminoAcid) {
+    return MONOMER_CONST.PEPTIDE;
+  }
+
+  if (monomerClass === KetMonomerClass.CHEM) {
+    return MONOMER_CONST.CHEM;
+  }
+
+  return MONOMER_CONST.RNA;
 };
 
 const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {

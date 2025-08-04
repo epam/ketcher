@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { moveMouseAway } from '@utils/moveMouseAway';
 
 type RNABuilderLocators = {

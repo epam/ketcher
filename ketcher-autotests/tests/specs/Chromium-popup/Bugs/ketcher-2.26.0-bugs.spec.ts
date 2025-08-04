@@ -777,7 +777,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     },
   );
 
-  test.fail(
+  test(
     'Case 24: Bond/monomer tooltip preview placed correct in on edge cases',
     { tag: ['@chromium-popup'] },
     async () => {
@@ -804,10 +804,16 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await getMonomerLocator(page, Peptides.Cys_Bn).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
-      await getMonomerLocator(page, Sugars._25mo3r).hover();
+      await moveMouseAway(page);
+
+      const _25mo3rSugars = getMonomerLocator(page, Sugars._25mo3r);
+      await _25mo3rSugars.hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
-      await getMonomerLocator(page, Phosphates.msp).hover();
+      await moveMouseAway(page);
+
+      const mspPhosphates = getMonomerLocator(page, Phosphates.msp);
+      await mspPhosphates.hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },

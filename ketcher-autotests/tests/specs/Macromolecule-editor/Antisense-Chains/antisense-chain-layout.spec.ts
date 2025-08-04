@@ -159,7 +159,7 @@ const shortMonomerList: IMonomer[] = [
     alias: 'P',
     type: MonomerType.Phosphate,
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Phosphates.P,

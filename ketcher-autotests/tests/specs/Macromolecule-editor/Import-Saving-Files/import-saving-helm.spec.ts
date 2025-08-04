@@ -224,6 +224,8 @@ const correctHELMStrings: IHELMString[] = [
       '34. Multi-char RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A]+[nobn6pur]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
   },
   {
     helmDescription:
@@ -252,6 +254,8 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A]:1+[nobn6pur]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
   },
   {
     helmDescription:
@@ -281,6 +285,8 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A],[nobn6pur],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
     pageReloadNeeded: true,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
   },
   {
     helmDescription:
@@ -311,6 +317,8 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A]:10,[nobn6pur]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
     pageReloadNeeded: true,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
   },
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
@@ -429,9 +437,9 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '63. Multi-character presets of monomers with one monomer ID without square brackets',
-    HELMString: 'RNA1{25moe3(A)p-.5S6Rm5(nC6n5U)p.r(mo4bn3)fl2me}$$$$V2.0',
+    HELMString: 'RNA1{25moe3(A)P-.5S6Rm5(nC6n5U)p.r(mo4bn3)fl2me}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3](A)[p-].[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3](A)[P-].[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -484,9 +492,9 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '71. Mix of multi-character presets of monomers with one monomer IDs with and without square brackets',
     HELMString:
-      'RNA1{25moe3(A)p-.[25moe3](A)p-.5S6Rm5(nC6n5U)p.[5S6Rm5]([nC6n5U])p.r(mo4bn3)fl2me.r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{25moe3(A)P-.[25moe3](A)P-.5S6Rm5(nC6n5U)p.[5S6Rm5]([nC6n5U])p.r(mo4bn3)fl2me.r([mo4bn3])[fl2me]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3](A)[p-].[25moe3](A)[p-].[5S6Rm5]([nC6n5U])p.[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me].r([mo4bn3])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3](A)[P-].[25moe3](A)[P-].[5S6Rm5]([nC6n5U])p.[5S6Rm5]([nC6n5U])p.r([mo4bn3])[fl2me].r([mo4bn3])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:

@@ -834,7 +834,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Bases.DNA_N);
     await Library(page).rnaBuilder.save();
-    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
+    await verifyHELMExport(page, 'RNA1{r(A)p.r(A,C,G,T)p.r(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {

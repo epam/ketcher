@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getAtomByIndex } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { AtomLabelType } from '@utils/clicks/types';
 
 export async function addSuperatomAttachmentPoint(

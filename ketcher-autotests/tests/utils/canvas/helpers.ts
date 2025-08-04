@@ -314,8 +314,10 @@ export async function addSingleMonomerToCanvas(
   positionY: number,
   index: number,
 ) {
-  await Library(page).selectMonomer(monomer);
-  await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
+  await Library(page).dragMonomerOnCanvas(monomer, {
+    x: positionX,
+    y: positionY,
+  });
   await hideMonomerPreview(page);
   return getMonomerLocator(page, monomer).nth(index);
 }
@@ -358,16 +360,22 @@ export async function addMonomerToCenterOfCanvas(
   page: Page,
   monomerType: Monomer,
 ) {
-  await Library(page).selectMonomer(monomerType);
-  await clickInTheMiddleOfTheScreen(page);
+  await Library(page).dragMonomerOnCanvas(monomerType, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
 }
 
 export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
-  await page.getByTestId(peptide.testId).click();
-  await clickInTheMiddleOfTheScreen(page);
+  await Library(page).dragMonomerOnCanvas(peptide, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
 }
 
 export async function addRnaPresetOnCanvas(
@@ -378,8 +386,10 @@ export async function addRnaPresetOnCanvas(
   sugarIndex: number,
   phosphateIndex: number,
 ) {
-  await page.getByTestId(preset.testId).click();
-  await clickOnCanvas(page, positionX, positionY);
+  await Library(page).dragMonomerOnCanvas(preset, {
+    x: positionX,
+    y: positionY,
+  });
   await hideMonomerPreview(page);
   const sugar = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)

@@ -211,6 +211,10 @@ const addToCanvas = ({
   if (isCanvasEmptyBeforeOpenStructure) {
     editor.zoomToStructuresIfNeeded();
   }
+
+  editor.calculateAndStoreNextAutochainPosition(
+    deserialisedKet.drawingEntitiesManager,
+  );
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file

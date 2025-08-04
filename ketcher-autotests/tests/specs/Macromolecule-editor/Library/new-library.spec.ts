@@ -10,7 +10,7 @@ import {
   takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common/loaders';
+import { waitForPageInit, waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -1020,7 +1020,7 @@ for (const monomer of monomerToDrag) {
     await page.mouse.down();
     await page.mouse.move(111, 111);
     if (monomerToDrag[4] === monomer) await page.mouse.move(109, 109);
-    await delay(0.1);
+    await waitForRender(page);
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

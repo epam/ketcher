@@ -206,8 +206,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await Library(page).selectMonomer(Peptides.meC);
-      await clickInTheMiddleOfTheScreen(page);
+      await Library(page).dragMonomerOnCanvas(Peptides.meC, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
       await CommonLeftToolbar(page).selectAreaSelectionTool();
       await getMonomerLocator(page, Peptides.meC).click();
       await takeEditorScreenshot(page, {

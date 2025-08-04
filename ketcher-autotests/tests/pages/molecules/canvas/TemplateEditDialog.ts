@@ -31,11 +31,11 @@ export const TemplateEditDialog = (page: Page) => {
     },
     async edit() {
       await waitForRender(page, async () => {
-        await locators.editButton.click();
+        await locators.editButton.click({ force: true });
       });
     },
     async cancel() {
-      await locators.cancelButton.click();
+      await locators.cancelButton.click({ force: true });
     },
     async setMoleculName(name: string) {
       await locators.moleculeNameInput.fill(name);

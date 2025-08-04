@@ -322,7 +322,7 @@ class Attach extends Component {
                 variant="outlined"
                 onClick={this.props.onCancel}
                 className={classes.button}
-                testId="template-cancel-button"
+                data-testId="template-cancel-button"
               >
                 Cancel
               </CancelButton>
@@ -331,7 +331,7 @@ class Attach extends Component {
                 onClick={() => this.props.onOk(this.onResult())}
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
-                testId="template-edit-button"
+                data-testId="template-edit-button"
               >
                 {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
               </SaveButton>

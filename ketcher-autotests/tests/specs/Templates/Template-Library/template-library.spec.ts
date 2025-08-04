@@ -117,14 +117,14 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates - name with just spaces', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
-    const inputText = 'test';
+    const inputText = '   ';
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
     await TemplateEditDialog(page).setMoleculName(inputText);
-    await TemplateEditDialog(page).cancel();
+    await TemplateEditDialog(page).close();
     await StructureLibraryDialog(page).openTemplateLibrarySection(
       TemplateLibraryTab.BetaDSugars,
     );
@@ -180,9 +180,13 @@ test.describe('Templates - Template Library', () => {
   });
 
   test('My test2', async ({ page }) => {
-    const x = 3;
-    const y = 4;
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    const x = 180;
+    const y = 180;
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
     await TemplateEditDialog(page).clickOnCanvas(x, y);
     await waitForRender(page);
     await TemplateEditDialog(page).getSelectedAttachmentPoints();

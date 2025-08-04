@@ -674,6 +674,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       });
       await modifyInRnaBuilder(page, symbolLocator);
       await Library(page).rnaBuilder.selectBaseSlot();
+      expect(Bases.V.testId).toBeInViewport();
       await Library(page).selectMonomer(Bases.V);
       await Library(page).rnaBuilder.save();
       await takeEditorScreenshot(page, {
@@ -887,6 +888,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
 
       await modifyInRnaBuilder(page, symbolLocator);
       await Library(page).rnaBuilder.selectBaseSlot();
+      expect(Bases.DNA_N.testId).toBeInViewport();
       await Library(page).selectMonomer(Bases.DNA_N);
       await Library(page).rnaBuilder.save();
       await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');

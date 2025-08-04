@@ -740,6 +740,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       await symbolN.click();
       await modifyInRnaBuilder(page, symbolN);
       await Library(page).rnaBuilder.selectBaseSlot();
+      expect(Bases._4ime6A.testId).toBeInViewport();
       await Library(page).selectMonomer(Bases._4ime6A);
       await Library(page).rnaBuilder.save();
       await takeEditorScreenshot(page, {

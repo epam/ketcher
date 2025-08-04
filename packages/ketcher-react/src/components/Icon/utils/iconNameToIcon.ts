@@ -236,6 +236,7 @@ import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.sv
 import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg';
 import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
 import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
+import MonomerAutochainIcon from '../../../assets/icons/files/monomer-autochain.svg';
 
 export const iconNameToIcon = {
   α,
@@ -478,4 +479,5 @@ export const iconNameToIcon = {
   antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
+  'monomer-autochain': MonomerAutochainIcon,
 } as const;

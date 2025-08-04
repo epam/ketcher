@@ -25,7 +25,7 @@ import {
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectEditor, selectTool, showPreview } from 'state/common';
+import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
 import {
@@ -115,8 +115,6 @@ const MonomerGroup = ({
   };
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
-    dispatch(selectTool('monomer'));
-
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor?.events.selectMonomer.dispatch(monomer);
     }

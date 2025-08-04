@@ -1,7 +1,6 @@
 import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
   takeEditorScreenshot,
@@ -23,9 +22,12 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await Library(page).selectMonomer(Chem.sDBL);
+  await Library(page).dragMonomerOnCanvas(Chem.sDBL, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
   // Click on <svg> #polymer-editor-canvas
-  await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);
 
   await takeEditorScreenshot(page);

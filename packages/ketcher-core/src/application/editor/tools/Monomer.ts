@@ -72,6 +72,9 @@ class MonomerTool implements BaseTool {
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
+    this.editor.calculateAndStoreNextAutochainPosition(
+      modelChanges.operations[0].monomer as BaseMonomer,
+    );
   }
 
   mousemove() {

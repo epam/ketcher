@@ -388,7 +388,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await createDNAAntisenseChain(page, anySymbolR);
     await verifyHELMExport(
       page,
-      'RNA1{r(A,C,G,T)p.r(A,G,T)p.r(A,C,T)p.r(A,T)}|RNA2{r(A,C,G,U)p.r(A,G,U)p.r(A,C,U)p.r(A,U)}|RNA3{r(A,C)p.r(A,G)p.r(A,C,G)}|RNA4{[dR](A,T)p.[dR](A,G,T)p.[dR](A,C,T)p.[dR](A,C,G,T)}|RNA5{[dR](A,T)p.[dR](A,G,T)p.[dR](A,C,T)p.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)p.[dR](C,T)p.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
+      'RNA1{r(A,C,G,T)p.r(A,G,T)p.r(A,C,T)p.r(A,T)}|RNA2{r(A,C,G,U)p.r(A,G,U)p.r(A,C,U)p.r(A,U)}|RNA3{r(A,C)p.r(A,G)p.r(A,C,G)}|RNA4{d(A,T)p.d(A,G,T)p.d(A,C,T)p.d(A,C,G,T)}|RNA5{d(A,T)p.d(A,G,T)p.d(A,C,T)p.d(A,C,G,T)}|RNA6{d(C,G,T)p.d(C,T)p.d(G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
     );
   });
 
@@ -422,68 +422,74 @@ test.describe('Ketcher bugs in 3.2.0', () => {
   });
 
   // https://github.com/epam/Indigo/issues/3061
-  test.fail('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6764
-     * Bug: https://github.com/epam/ketcher/issues/6606
-     * Description: System adds both sense and antisense chain nucleosids in SYNC mode.
-     * Scenario:
-     * 1. Go to Macro - Sequence mode (clean canvas)
-     * 2. Load from HELM
-     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
-     * 4. Take a screenshot.
-     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{p.r(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
-    );
-    await getSymbolLocator(page, {
-      symbolAlias: 'A',
-      nodeIndexOverall: 2,
-    }).dblclick();
-    await keyboardPressOnCanvas(page, 'ArrowRight');
-    await keyboardPressOnCanvas(page, 'C');
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
+  test.fail(
+    'Case 12: System adds both sense and antisense chain nucleosids in SYNC mode',
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6764
+       * Bug: https://github.com/epam/ketcher/issues/6606
+       * Description: System adds both sense and antisense chain nucleosids in SYNC mode.
+       * Scenario:
+       * 1. Go to Macro - Sequence mode (clean canvas)
+       * 2. Load from HELM
+       * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
+       * 4. Take a screenshot.
+       */
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        'RNA1{r(A)p.r(A)p.r(A)}|RNA2{p.r(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
+      );
+      await getSymbolLocator(page, {
+        symbolAlias: 'A',
+        nodeIndexOverall: 2,
+      }).dblclick();
+      await keyboardPressOnCanvas(page, 'ArrowRight');
+      await keyboardPressOnCanvas(page, 'C');
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
 
   // https://github.com/epam/Indigo/issues/3061
-  test.fail('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6764
-     * Bug: https://github.com/epam/ketcher/issues/6531
-     * Description: System can add nucleotide between phosphate and nucleotide in antisence chain.
-     * Scenario:
-     * 1. Go to Macro - Sequence mode (clean canvas)
-     * 2. Load from HELM
-     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
-     * 4. Take a screenshot.
-     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'CHEM1{[4aPEGMal]}|RNA1{r(U)p}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{r(A)p}|RNA3{p}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
-    );
-    await getSymbolLocator(page, {
-      symbolAlias: 'U',
-      nodeIndexOverall: 1,
-    }).dblclick();
-    await keyboardPressOnCanvas(page, 'ArrowLeft');
-    await keyboardPressOnCanvas(page, 'C');
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
+  test.fail(
+    'Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain',
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6764
+       * Bug: https://github.com/epam/ketcher/issues/6531
+       * Description: System can add nucleotide between phosphate and nucleotide in antisence chain.
+       * Scenario:
+       * 1. Go to Macro - Sequence mode (clean canvas)
+       * 2. Load from HELM
+       * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
+       * 4. Take a screenshot.
+       */
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        'CHEM1{[4aPEGMal]}|RNA1{r(U)p}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{r(A)p}|RNA3{p}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
+      );
+      await getSymbolLocator(page, {
+        symbolAlias: 'U',
+        nodeIndexOverall: 1,
+      }).dblclick();
+      await keyboardPressOnCanvas(page, 'ArrowLeft');
+      await keyboardPressOnCanvas(page, 'C');
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
 
   test('Case 14: Snapping not wipes monomer labels in some cases', async () => {
     /*

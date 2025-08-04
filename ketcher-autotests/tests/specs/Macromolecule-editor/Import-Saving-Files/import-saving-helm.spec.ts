@@ -224,7 +224,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A]+[nobn6pur]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062',
   },
   {
     helmDescription:
@@ -254,14 +254,15 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[Sm5moe]([m2nprn2A]:1+[nobn6pur]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062',
   },
   {
     helmDescription:
       "39. Two peptides connected R2-R2, one of them don't have R1 AP",
     HELMString:
       'PEPTIDE1{[DACys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
-    differentHELMExport: 'PEPTIDE1{[deamino-Cys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0'
+    differentHELMExport:
+      'PEPTIDE1{[deamino-Cys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
   },
   {
     helmDescription:
@@ -286,7 +287,7 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{[Sm5moe]([m2nprn2A],[nobn6pur],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
     pageReloadNeeded: true,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062',
   },
   {
     helmDescription:
@@ -318,7 +319,7 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{[Sm5moe]([m2nprn2A]:10,[nobn6pur]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
     pageReloadNeeded: true,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/3062'
+    issueNumber: 'https://github.com/epam/Indigo/issues/3062',
   },
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
@@ -445,19 +446,22 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '64. Multi-character presets of monomers with two monomer IDs without square brackets',
     HELMString: 'RNA1{5R6Sm5(C)P.R(purine)P.R(T)m2nen}$$$$V2.0',
-    differentHELMExport: 'RNA1{[5R6Sm5cEt](C)p.r([purine])p.r(T)[m2nen]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[5R6Sm5cEt](C)p.r([purine])p.r(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '65. Multi-character presets of monomers without phosphate with IDs without square brackets',
     HELMString: 'RNA1{[afl2Nm]([nC6n5C]).R([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
-    differentHELMExport: 'RNA1{[afl2Nmc]([nC6ncee5C]).r([tCnitro]).[Sm5ALlna](G)}$$$$V2.0'
+    differentHELMExport:
+      'RNA1{[afl2Nmc]([nC6ncee5C]).r([tCnitro]).[Sm5ALlna](G)}$$$$V2.0',
   },
   {
     helmDescription:
       '66. Multi-character presets of monomers without base with IDs without square brackets',
     HELMString: 'RNA1{ALmecl.m2nen.ALtri1.P.R.moen}$$$$V2.0',
-    differentHELMExport: 'RNA1{[ALmeclna].[m2nen].[ALtrina1].p.r.[moen]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[ALmeclna].[m2nen].[ALtrina1].p.r.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -511,7 +515,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).R([tCnitr]).R([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[afl2Nmc]([nC6ncee5C]).[afl2Nmc]([nC6ncee5C]).r([tCnitro]).r([tCnitro]).[Sm5ALlna](G).[Sm5ALlna](G)}$$$$V2.0'
+      'RNA1{[afl2Nmc]([nC6ncee5C]).[afl2Nmc]([nC6ncee5C]).r([tCnitro]).r([tCnitro]).[Sm5ALlna](G).[Sm5ALlna](G)}$$$$V2.0',
   },
   {
     helmDescription:

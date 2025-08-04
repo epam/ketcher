@@ -174,6 +174,106 @@ ketcher.setSettings({ "general.dearomatize-on-load": true })
 ketcher.setSettings({ "ignoreChiralFlag": true })
 ```
 
+## Events
+Ketcher allows to subscribe on events to react to changes in the editor.
+
+---
+
+`Subscribe()` - method that allows you to attach an event handler function for event.
+
+#### Syntax:
+`ketcher.editor.subscribe(eventName, handler)`
+
+#### Parameters:
+
+`eventName: string` - event type, such as 'change'.
+
+`handler: function` - a function to execute when the event is triggered.
+
+
+#### Return value:
+
+A new object that has one field 'handler'.
+
+--- 
+
+`Unsubscribe()` - method that removes event handler.
+
+#### Syntax:
+`ketcher.editor.unsubscribe(eventName, subscriber)`
+
+#### Parameters:
+
+`eventName: string` - one event type, such as 'change'.
+
+`subscriber: object` - an object that is returned from the subscriber function.
+
+#### Return value:
+
+
+undefined
+
+---
+
+### Change event
+The 'change' event is triggered when the structure in the editor changes. This can happen when a user draws a new structure, modifies an existing one, or performs any action that alters the current state of the editor.
+
+#### Example:
+```js
+ketcher.editor.subscribe('change', (eventData) => {
+    console.log('Structure changed:', eventData);
+});
+```
+
+eventData is an object that contains information about the change. Below is the list of data items that can be present in the eventData object:
+
+| ActionResult (e.g.) | Example                                                                     |
+| :-- |:----------------------------------------------------------------------------|
+| Add atom | {operation: 'Add atom',id: 1,label: 'C',position: { x:  3.37, y: 6.03 }}    |
+| Move atom | {operation: 'Move atom',id: 1,position: { x:  0.02, y: 2.4 }}               |
+| Set atom attribute | {operation: 'Set atom attribute',id: 22,from: 0,to: 1,attribute: 'charge'}  |
+| Delete atom | {operation: 'Delete atom',id: 1,label: 'C',position: { x:  3.37, y: 6.03 }} |
+| Add bond | {operation: 'Add bond',id: 31}                                              |
+| Move bond | {operation: 'Move bond'}                                                    |
+| Set bond attribute | {operation: 'Set bond attribute'}                                           |
+| Delete bond | {operation: 'Delete bond',id: 31}                                           |
+| Move loop | {operation: 'Move loop'}                                                    |
+| Add atom to s-group | {operation: 'Add atom to s-group',sGroupId: 0,atomId: 16}                   |
+| Remove atom from s-group | {operation: 'Remove atom from s-group'}                                     |
+| Create s-group | {operation: 'Create s-group',sGroupId: 0,type: 'GEN'}                       |
+| Set s-group attribute | {operation: 'Set s-group attribute'}                                        |
+| Delete s-group | {operation: 'Delete s-group',sGroupId: 0,type: 'GEN'}                       |
+| Add s-group to hierarchy | {operation: 'Add s-group to hierarchy'}                                     |
+| Delete s-group from hierarchy | {operation: 'Delete s-group to hierarchy'}                                  |
+| Set r-group attribute | {operation: 'Set r-group attribute'}                                        |
+| R-group fragment | {operation: 'R-group fragment',id: 1}                                       |
+| Update | {operation: 'Update'}                                                       |
+| Restore | {operation: 'Restore'}                                                      |
+| Add rxn arrow | {operation: 'Add rxn arrow',id: 1,position: { x:  4.02, y: 4.83 }}          |
+| Delete rxn arrow | {operation: 'Delete rxn arrow',id: 1,position: { x:  4.02, y: 4.83 }}       |
+| Move rxn arrow | {operation: 'Move rxn arrow',id: 1,position: { x:  0.07, y: 1.18 }}         |
+| Add rxn plus | {operation: 'Add rxn plus'}                                                 |
+| Delete rxn plus | {operation: 'Delete rxn plus'}                                              |
+| Move rxn plus | {operation: 'Move rxn plus'}                                                |
+| Move s-group data | {operation: 'Move s-group data'}                                            |
+| Load canvas | {operation: 'Load canvas'}                                                  |
+| Align descriptors | {operation: 'Align descriptors'}                                            |
+| Add simple object | {operation: 'Add simple object',id: 1,type: 'circle'}                       |
+| Move simple object | {operation: 'Move simple object',id: 1,position: { x:  0.07, y: 1.18 }}     |
+| Resize simple object | {operation: 'Resize simple object',id: 1}                                   |
+| Delete simple object | {operation: 'Delete simple object',id: 1,type: 'circle'}                    |
+| Restore descriptors position | {operation: 'Restore descriptors position'}                                 |
+| Add fragment | {operation: 'Add fragment',id: 1}                                           |
+| Delete fragment | {operation: 'Delete fragment',id: 1}                                        |
+| Add fragment stereo flag | {operation: 'Add fragment stereo flag'}                                     |
+| Add stereo atom to fragment | {operation: 'Add stereo atom to fragment',atomId: 1,fragId: 2}              |
+| Delete stereo atom from fragment | {operation: 'Delete stereo atom from fragment',atomId: 1,fragId: 2}         |
+| Move enhanced flag | {operation: 'Move enhanced flag'}                                           |
+
+
+
+
+
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).

@@ -728,6 +728,12 @@ test.describe('Import correct HELM sequence: ', () => {
        */
       test.setTimeout(25000);
 
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctHELMString.shouldFail === true,
+        `That test fails because of ${correctHELMString.issueNumber} issue.`,
+      );
+
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -737,12 +743,6 @@ test.describe('Import correct HELM sequence: ', () => {
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-
-      // Test should be skipped if related bug exists
-      test.fixme(
-        correctHELMString.shouldFail === true,
-        `That test fails because of ${correctHELMString.issueNumber} issue.`,
-      );
     });
   }
 });

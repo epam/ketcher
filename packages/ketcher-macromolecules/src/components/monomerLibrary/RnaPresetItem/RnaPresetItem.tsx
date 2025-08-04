@@ -88,7 +88,7 @@ const RnaPresetItem = ({
         onMouseOut={onAutochainIconMouseOut}
         onClick={onAutochainIconClick}
         onDoubleClick={(e) => e.stopPropagation()}
-      ></AutochainIcon>
+      />
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"

@@ -34,6 +34,7 @@ const Icon = ({
       title={title}
       onClick={onClick}
       data-testid={dataTestId}
+      // TODO wrap icon into a button and use mouse events there
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
       onDoubleClick={onDoubleClick}

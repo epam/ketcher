@@ -22,7 +22,7 @@ import {
   SnakeMode,
 } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import { isRnaPreset, toolsMap } from 'application/editor/tools';
+import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
@@ -705,7 +705,9 @@ export class CoreEditor {
       return;
     }
 
-    this.invalidateNextAutochainPositionIfNeeded(isRnaPreset(monomerOrRnaItem));
+    this.invalidateNextAutochainPositionIfNeeded(
+      isLibraryItemRnaPreset(monomerOrRnaItem),
+    );
 
     const { selectedMonomerToConnect, newMonomerPosition } =
       this.getDataForAutochain();
@@ -725,7 +727,9 @@ export class CoreEditor {
       return;
     }
 
-    this.invalidateNextAutochainPositionIfNeeded(isRnaPreset(monomerOrRnaItem));
+    this.invalidateNextAutochainPositionIfNeeded(
+      isLibraryItemRnaPreset(monomerOrRnaItem),
+    );
 
     const modelChanges = new Command();
     const history = new EditorHistory(this);
@@ -734,7 +738,7 @@ export class CoreEditor {
 
     let monomersAddResult: IAutochainMonomerAddResult | undefined;
 
-    if (isRnaPreset(monomerOrRnaItem)) {
+    if (isLibraryItemRnaPreset(monomerOrRnaItem)) {
       monomersAddResult = this.onPlaceRnaPresetOnCanvas(
         monomerOrRnaItem,
         newMonomerPosition,

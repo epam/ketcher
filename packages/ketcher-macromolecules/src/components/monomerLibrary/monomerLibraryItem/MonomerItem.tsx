@@ -106,7 +106,7 @@ const MonomerItem = ({
             onMouseOut={onAutochainIconMouseOut}
             onClick={onAutochainIconClick}
             onDoubleClick={(e) => e.stopPropagation()}
-          ></AutochainIcon>
+          />
           <div
             onClick={addFavorite}
             className={`star ${item.favorite ? 'visible' : ''}`}

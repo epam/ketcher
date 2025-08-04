@@ -4,13 +4,13 @@ import {
   Coordinates,
   CoreEditor,
   IRnaPreset,
-  isRnaPreset,
   monomerFactory,
 } from 'application/editor';
 import { MonomerItemType } from 'domain/types';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { KetcherLogger } from 'utilities';
+import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
 
 export type AutochainPreviewViewParams = {
   monomerOrRnaItem: MonomerItemType | IRnaPreset;
@@ -90,7 +90,7 @@ export class AutochainPreviewView extends TransientView {
     const scaledPosition = Coordinates.modelToCanvas(position);
     let sizeOfAutochainPreviewToConnect: { width: number; height: number };
 
-    if (isRnaPreset(monomerOrRnaItem)) {
+    if (isLibraryItemRnaPreset(monomerOrRnaItem)) {
       if (!monomerOrRnaItem.sugar) {
         KetcherLogger.error(
           'Cannot show autochain preview for RNA preset without sugar',

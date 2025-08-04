@@ -18,12 +18,12 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="5" p="272.615448 207.278580"/>
-            <n id="6" p="298.596252 222.278580"/>
-            <n id="7" p="324.576996 207.278580"/>
-            <n id="8" p="350.557770 222.278580"/>
-            <n id="9" p="376.538513 207.278580"/>
-            <n id="10" p="402.519287 222.278580"/>
+            <n id="5" p="452.615448 220.778580"/>
+            <n id="6" p="478.596252 235.778580"/>
+            <n id="7" p="504.576996 220.778580"/>
+            <n id="8" p="530.557739 235.778580"/>
+            <n id="9" p="556.538574 220.778580"/>
+            <n id="10" p="582.519287 235.778580"/>
             <b id="20" B="5" E="6"/>
             <b id="21" B="6" E="7"/>
             <b id="22" B="7" E="8"/>
@@ -31,29 +31,29 @@
             <b id="24" B="9" E="10"/>
         </fragment>
         <fragment id="11">
-            <n id="12" Element="17" NumHydrogens="1" p="193.637238 362.824890">
-                <t p="193.637238 362.824890" LabelJustification="Left">
+            <n id="12" Element="17" NumHydrogens="1" p="373.637238 376.324921">
+                <t p="373.637238 376.324921" LabelJustification="Left">
                     <s font="3" size="10" face="96">ClH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="13">
-            <n id="14" Element="35" NumHydrogens="1" p="116.104782 223.141220">
-                <t p="116.104782 223.141220" LabelJustification="Left">
+            <n id="14" Element="35" NumHydrogens="1" p="296.104767 236.641235">
+                <t p="296.104767 236.641235" LabelJustification="Left">
                     <s font="3" size="10" face="96">BrH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="15">
-            <n id="16" Element="8" NumHydrogens="2" p="199.822052 88.675102">
-                <t p="199.822052 88.675102" LabelJustification="Left">
+            <n id="16" Element="8" NumHydrogens="2" p="379.822052 102.175102">
+                <t p="379.822052 102.175102" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>
             </n>
         </fragment>
-        <arrow id="17" BoundingBox="194.634308 331.016907 194.634308 133.882599" FillType="None" ArrowheadHead="Full" ArrowheadType="Angle" HeadSize="600" ArrowheadCenterSize="600" ArrowheadWidth="150" ArrowShaftSpacing="600" Head3D="194.634308 331.016907 0.000000" Tail3D="194.634308 133.882599 0.000000"/>
-        <graphic id="25" SupersededBy="17" GraphicType="Line" ArrowType="RetroSynthetic" HeadSize="600" BoundingBox="194.634308 331.016907 194.634308 133.882599"/>
+        <arrow id="17" BoundingBox="374.634308 344.516876 374.634308 147.382599" FillType="None" ArrowheadHead="Full" ArrowheadType="Angle" HeadSize="600" ArrowheadCenterSize="600" ArrowheadWidth="150" ArrowShaftSpacing="600" Head3D="374.634308 344.516876 0.000000" Tail3D="374.634308 147.382599 0.000000"/>
+        <graphic id="25" SupersededBy="17" GraphicType="Line" ArrowType="RetroSynthetic" HeadSize="600" BoundingBox="374.634308 344.516876 374.634308 147.382599"/>
         <scheme>
             <step ReactionStepReactants="15" ReactionStepProducts="11" ReactionStepObjectsAboveArrow="4 13" ReactionStepArrows="25"/>
         </scheme>

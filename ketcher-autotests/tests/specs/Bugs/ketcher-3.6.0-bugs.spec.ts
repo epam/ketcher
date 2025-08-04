@@ -575,9 +575,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.MOLv3000,
       fileContent,
     );
-    await Library(page).selectMonomer(Peptides.Cys_Bn);
-    await clickOnCanvas(page, 580, 388);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await Library(page).dragMonomerOnCanvas(Peptides.Cys_Bn, {
+      x: 580,
+      y: 388,
+    });
     await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

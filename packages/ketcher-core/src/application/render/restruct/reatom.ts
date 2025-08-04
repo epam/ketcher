@@ -1024,7 +1024,7 @@ function buildLabel(
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
-    if (element && atomColoring) {
+    if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }

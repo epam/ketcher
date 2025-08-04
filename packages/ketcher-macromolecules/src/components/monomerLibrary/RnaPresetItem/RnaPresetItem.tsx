@@ -19,11 +19,13 @@ import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback, useRef } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
 import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
+import { AutochainIcon } from 'components/monomerLibrary/monomerLibraryItem/styles';
+import { selectEditor } from 'state/common';
 
 const RnaPresetItem = ({
   preset,
@@ -34,6 +36,7 @@ const RnaPresetItem = ({
   onMouseMove = EmptyFunction,
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
+  const editor = useAppSelector(selectEditor);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -45,6 +48,21 @@ const RnaPresetItem = ({
     [dispatch, preset],
   );
 
+  const onAutochainIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+      editor?.events.autochain.dispatch(preset);
+    },
+    [editor, preset],
+  );
+
+  const onAutochainIconMouseOver = useCallback(() => {
+    editor?.events.previewAutochain.dispatch(preset);
+  }, [editor, preset]);
+
+  const onAutochainIconMouseOut = useCallback(() => {
+    editor?.events.removeAutochainPreview.dispatch(preset);
+  }, [editor, preset]);
   useLibraryItemDrag(preset, cardRef);
 
   return (
@@ -54,11 +72,23 @@ const RnaPresetItem = ({
       onContextMenu={onContextMenu}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onDoubleClick={(e) => {
+        onAutochainIconClick(e);
+        onAutochainIconMouseOut();
+      }}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
       ref={cardRef}
     >
+      <AutochainIcon
+        className="autochain"
+        name="monomer-autochain"
+        onMouseOver={onAutochainIconMouseOver}
+        onMouseOut={onAutochainIconMouseOut}
+        onClick={onAutochainIconClick}
+        onDoubleClick={(e) => e.stopPropagation()}
+      />
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"

@@ -8,6 +8,8 @@ const PEPTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
 const PEPTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
+const PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].autochainPreview;
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';
@@ -18,6 +20,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       monomer,
       PEPTIDE_HOVERED_ELEMENT_ID,
       PEPTIDE_SYMBOL_ELEMENT_ID,
+      PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
   }

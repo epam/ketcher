@@ -1,8 +1,8 @@
 import { select } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
-import { ZoomTool } from 'application/editor';
+import { IRnaPreset, ZoomTool } from 'application/editor';
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { HydrogenBond, PolymerBond } from 'domain/entities';
+import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
 import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
@@ -15,6 +15,8 @@ import {
   LineLengthHighlightView,
   LineLengthHighlightViewParams,
 } from './LineLengthHighlightView';
+import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
+import { MonomerItemType } from 'domain/types';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -151,6 +153,21 @@ export class TransientDrawingView {
 
   public hideLineLengthHighlight() {
     this.removeView(LineLengthHighlightView.viewName);
+  }
+
+  public showAutochainPreview(
+    monomerOrRnaItem: MonomerItemType | IRnaPreset,
+    position: Vec2,
+    selectedMonomerToConnect?: BaseMonomer,
+  ) {
+    this.addView(AutochainPreviewView.viewName, {
+      show: AutochainPreviewView.show,
+      params: { monomerOrRnaItem, position, selectedMonomerToConnect },
+    });
+  }
+
+  public hideAutochainPreview() {
+    this.removeView(AutochainPreviewView.viewName);
   }
 
   public clear() {

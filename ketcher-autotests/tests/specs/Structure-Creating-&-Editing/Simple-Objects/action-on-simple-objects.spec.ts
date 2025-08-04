@@ -32,6 +32,8 @@ import {
   BottomToolbar,
   drawBenzeneRing,
 } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -192,7 +194,9 @@ test.describe('Action on simples objects', () => {
     await saveToTemplates(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await takeEditorScreenshot(page);
   });
 });

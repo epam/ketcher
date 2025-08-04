@@ -126,29 +126,27 @@ test.describe('Save files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999',
-    async ({ page }) => {
-      // Failes because of https://github.com/epam/Indigo/issues/3048
-      /**
-       * Test case: EPMLSOPKET-5260
-       * Description: Structure is saved according to automated selected format MDL Molfile v3000
-       */
+  test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-5260
+     * Description: Structure is saved according to automated selected format MDL Molfile v3000
+     */
 
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
-      );
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
+    );
 
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-        [1],
-      );
-    },
-  );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+      [1],
+    );
+  });
 
   test('The file formats in the Save Structure window match the mockup', async ({
     page,

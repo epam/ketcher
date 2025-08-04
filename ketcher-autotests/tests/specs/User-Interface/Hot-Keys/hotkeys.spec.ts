@@ -12,11 +12,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  selectFunctionalGroups,
-  FunctionalGroups,
   dragMouseTo,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
   clickOnCanvas,
   deleteByKeyboard,
 } from '@utils';
@@ -31,11 +27,18 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -243,12 +246,15 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('Cbz').hover();
+    await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
     await page.keyboard.up('Control');
@@ -268,12 +274,18 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('Cbz'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Cbz' }),
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
@@ -292,12 +304,15 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('formic acid').hover();
+    await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
     await page.keyboard.up('Control');
@@ -317,12 +332,18 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await BottomToolbar(page).StructureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await expandAbbreviation(page, page.getByText('formic acid'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'formic acid' }),
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);

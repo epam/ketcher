@@ -1,0 +1,134 @@
+Subject: [PATCH] added testids to templates library
+---
+Index: packages/ketcher-react/src/script/ui/dialog/template/TemplateTable.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-react/src/script/ui/dialog/template/TemplateTable.tsx b/packages/ketcher-react/src/script/ui/dialog/template/TemplateTable.tsx
+--- a/packages/ketcher-react/src/script/ui/dialog/template/TemplateTable.tsx	(revision 4d054f706c64b8c475c5c4d780a113e50753e6cc)
++++ b/packages/ketcher-react/src/script/ui/dialog/template/TemplateTable.tsx	(date 1753190951871)
+@@ -98,6 +98,7 @@
+             onClick={() => onSelect(tmpl)}
+           >
+             <StructRender
++              testId={tmpl.struct.name}
+               struct={tmpl.struct}
+               className={classes.struct}
+               fullsize={true}
+@@ -117,6 +118,7 @@
+             </div>
+             {tmpl.props.group === 'User Templates' && (
+               <button
++                data-testid={'delete-' + tmpl.struct.name + '-button'}
+                 className={`${classes.button} ${classes.deleteButton}`}
+                 onClick={() => onDelete!(tmpl)}
+               >
+@@ -126,6 +128,7 @@
+             {!isFunctionalGroupTemplate(tmpl) &&
+               !isSaltOrSolventTemplate(tmpl) && (
+                 <button
++                  data-testid={'edit-' + tmpl.struct.name + '-button'}
+                   className={`${classes.button} ${classes.editButton}`}
+                   onClick={(e) => {
+                     e.stopPropagation();
+Index: packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.tsx b/packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.tsx
+--- a/packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.tsx	(revision 4d054f706c64b8c475c5c4d780a113e50753e6cc)
++++ b/packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.tsx	(date 1753190850560)
+@@ -118,7 +118,9 @@
+ );
+ 
+ const FooterContent = ({ data, tab }) => {
+-  const clickToAddToCanvas = <span>Click to add to canvas</span>;
++  const clickToAddToCanvas = (
++    <span data-testid="add-to-canvas-button">Click to add to canvas</span>
++  );
+   if (tab === TemplateTabs.SaltsAndSolvents) {
+     return clickToAddToCanvas;
+   }
+@@ -135,6 +137,7 @@
+         key="save-to-SDF"
+         data={data}
+         className={classes.saveButton}
++        testId="save-to-sdf-button"
+         filename={
+           tab === TemplateTabs.TemplateLibrary
+             ? 'ketcher-tmpls.sdf'
+@@ -241,6 +244,7 @@
+           onChange={(value) => onFilter(value)}
+           placeholder="Search by elements..."
+           isFocused={true}
++          data-testid="template-search-input"
+         />
+         <Icon name="search" className={classes.searchIcon} />
+       </div>
+@@ -251,14 +255,17 @@
+       >
+         <Tab
+           label="Template Library"
++          data-testId="template-library-tab"
+           {...a11yProps(TemplateTabs.TemplateLibrary)}
+         />
+         <Tab
+           label="Functional Groups"
++          data-testId="functional-groups-tab"
+           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
+         />
+         <Tab
+           label="Salts and Solvents"
++          data-testId="salts-and-solvents-tab"
+           {...a11yProps(TemplateTabs.SaltsAndSolvents)}
+         />
+       </Tabs>
+@@ -278,6 +285,7 @@
+                   >
+                     <AccordionSummary
+                       className={classes.accordionSummary}
++                      data-testid={`${groupName}-accordion-item`}
+                       expandIcon={
+                         <Icon className={classes.expandIcon} name="chevron" />
+                       }
+Index: packages/ketcher-react/src/components/StructRender/types.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-react/src/components/StructRender/types.ts b/packages/ketcher-react/src/components/StructRender/types.ts
+--- a/packages/ketcher-react/src/components/StructRender/types.ts	(revision 4d054f706c64b8c475c5c4d780a113e50753e6cc)
++++ b/packages/ketcher-react/src/components/StructRender/types.ts	(date 1753190686135)
+@@ -26,4 +26,5 @@
+   className?: string;
+   update?: boolean;
+   fullsize?: boolean;
++  testId?: string;
+ }
+Index: packages/ketcher-react/src/components/StructRender/StructRender.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-react/src/components/StructRender/StructRender.tsx b/packages/ketcher-react/src/components/StructRender/StructRender.tsx
+--- a/packages/ketcher-react/src/components/StructRender/StructRender.tsx	(revision 4d054f706c64b8c475c5c4d780a113e50753e6cc)
++++ b/packages/ketcher-react/src/components/StructRender/StructRender.tsx	(date 1753190686142)
+@@ -43,6 +43,7 @@
+   className,
+   fullsize,
+   update,
++  testId,
+ }: IStructRenderProps) => {
+   const renderRef = useRef<HTMLDivElement>(null);
+   useEffect(() => {
+@@ -57,7 +58,7 @@
+ 
+   return (
+     <Container
+-      data-testid="monomer-preview-micro"
++      data-testid={testId || 'monomer-preview-micro'}
+       ref={renderRef}
+       className={className}
+       fullsize={fullsize}

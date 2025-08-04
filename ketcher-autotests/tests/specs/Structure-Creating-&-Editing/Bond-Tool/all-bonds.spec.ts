@@ -9,8 +9,6 @@ import {
   takeEditorScreenshot,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
-  selectFunctionalGroups,
-  FunctionalGroups,
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
@@ -39,6 +37,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
@@ -47,6 +46,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { BondTopologyOption } from '@tests/pages/constants/bondProperties/Constants';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -65,7 +66,7 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-let page: Page;
+export let page: Page;
 
 test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
@@ -399,7 +400,10 @@ test.describe('Bond Tool', () => {
        *Test case: EPMLSOPKET-10086
        *Description: A bond is added to a contracted functional group and form a bond
        */
-      await selectFunctionalGroups(FunctionalGroups.Boc, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addFunctionalGroup(
+        FunctionalGroupsTabItems.Boc,
+      );
       await clickInTheMiddleOfTheScreen(page);
       await CommonLeftToolbar(page).selectBondTool(tool);
       await clickInTheMiddleOfTheScreen(page);

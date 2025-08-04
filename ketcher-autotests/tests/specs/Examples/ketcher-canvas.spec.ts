@@ -2,12 +2,10 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   clickOnAtom,
   waitForPageInit,
+  dragMouseAndMoveTo,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -22,17 +20,13 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   });
 
   test('drawing atom, then dragging other atom', async ({ page }) => {
-    const xDelta = 100;
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await moveMouseToTheMiddleOfTheScreen(page);
-
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y, page);
+    await dragMouseAndMoveTo(page, 100);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

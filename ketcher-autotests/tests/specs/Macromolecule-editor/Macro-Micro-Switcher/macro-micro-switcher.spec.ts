@@ -8,9 +8,7 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
-  FunctionalGroups,
   MolFileFormat,
-  SaltsAndSolvents,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -26,8 +24,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
-  selectFunctionalGroups,
-  selectSaltsAndSolvents,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
@@ -81,6 +77,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
@@ -102,8 +99,14 @@ import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPoi
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 const topLeftCorner = {
   x: -325,
@@ -276,7 +279,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
   });
@@ -325,9 +328,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x1, y1, page);
-    await page.getByText('Edc').hover();
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
     await dragMouseTo(x2, y2, page);
     await takeEditorScreenshot(page);
   });
@@ -1112,7 +1115,10 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addFunctionalGroup(
+        FunctionalGroupsTabItems.FMOC,
+      );
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1140,7 +1146,10 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+      await BottomToolbar(page).StructureLibrary();
+      await StructureLibraryDialog(page).addSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAnhydride,
+      );
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1485,7 +1494,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await CommonLeftToolbar(page).selectEraseTool();
-      await page.getByText(data.monomer.alias).click();
+      await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);

@@ -365,17 +365,19 @@ class ReAtom extends ReObject {
           options.font.indexOf(' ') + 1,
           options.font.length,
         );
+        const sGroupName =
+          sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class] || '';
         const path = render.paper
-          .text(
-            position.x,
-            position.y,
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class] || '',
-          )
+          .text(position.x, position.y, sGroupName)
           .attr({
             'font-weight': 700,
             'font-size': options.fontszInPx,
             'font-family': fontFamily,
           });
+
+        path.node?.setAttribute('data-sgroup-id', sgroup.id);
+        path.node?.setAttribute('data-sgroup-name', sGroupName);
+        path.node?.setAttribute('data-sgroup-type', sgroup.type);
 
         restruct.addReObjectPath(
           LayerMap.data,
@@ -1037,6 +1039,12 @@ function buildLabel(
   }
 
   const { previewOpacity } = options;
+
+  // not properly centered otherwise
+  if (label.text === '*') {
+    ps.x = ps.x - 1;
+    ps.y = ps.y + 3;
+  }
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font,

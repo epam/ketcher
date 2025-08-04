@@ -118,7 +118,9 @@ const HeaderContent = () => (
 );
 
 const FooterContent = ({ data, tab }) => {
-  const clickToAddToCanvas = <span>Click to add to canvas</span>;
+  const clickToAddToCanvas = (
+    <span data-testid="add-to-canvas-button">Click to add to canvas</span>
+  );
   if (tab === TemplateTabs.SaltsAndSolvents) {
     return clickToAddToCanvas;
   }
@@ -135,6 +137,7 @@ const FooterContent = ({ data, tab }) => {
         key="save-to-SDF"
         data={data}
         className={classes.saveButton}
+        testId="save-to-sdf-button"
         filename={
           tab === TemplateTabs.TemplateLibrary
             ? 'ketcher-tmpls.sdf'
@@ -241,6 +244,7 @@ const TemplateDialog: FC<Props> = (props) => {
           onChange={(value) => onFilter(value)}
           placeholder="Search by elements..."
           isFocused={true}
+          data-testid="template-search-input"
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
@@ -251,14 +255,17 @@ const TemplateDialog: FC<Props> = (props) => {
       >
         <Tab
           label="Template Library"
+          data-testId="template-library-tab"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
         />
         <Tab
           label="Functional Groups"
+          data-testId="functional-groups-tab"
           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
         />
         <Tab
           label="Salts and Solvents"
+          data-testId="salts-and-solvents-tab"
           {...a11yProps(TemplateTabs.SaltsAndSolvents)}
         />
       </Tabs>
@@ -278,6 +285,7 @@ const TemplateDialog: FC<Props> = (props) => {
                   >
                     <AccordionSummary
                       className={classes.accordionSummary}
+                      data-testid={`${groupName}-accordion-item`}
                       expandIcon={
                         <Icon className={classes.expandIcon} name="chevron" />
                       }

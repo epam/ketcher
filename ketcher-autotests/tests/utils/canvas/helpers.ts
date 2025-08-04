@@ -14,7 +14,6 @@ import {
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
-import { TemplateLibrary } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -30,37 +29,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-
-export async function openEditDialogForTemplate(
-  page: Page,
-  itemToChoose: TemplateLibrary,
-  _newName?: string,
-) {
-  await BottomToolbar(page).StructureLibrary();
-  await page.getByRole('tab', { name: 'Template Library' }).click();
-  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
-  await page.getByTitle(itemToChoose).getByRole('button').click();
-  await page.getByPlaceholder('template').click();
-}
-
-export async function selectAzuleneOnTemplateLibrary(page: Page) {
-  await page.getByRole('tab', { name: 'Template Library' }).click();
-  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
-  await page.getByTitle('Azulene').getByRole('button').click();
-}
-
-export async function selectAnyStructuresFromAromaticsTable(
-  page: Page,
-  itemToChoose: TemplateLibrary,
-) {
-  await page.getByRole('tab', { name: 'Template Library' }).click();
-  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
-  await page.getByTitle(itemToChoose).getByRole('button').click();
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
   const atomToolbar = RightToolbar(page);

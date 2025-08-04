@@ -296,15 +296,17 @@ export class CoreEditor {
       );
 
       const newMonomerProps = newMonomer.props;
-      const monomerIdToUse = newMonomerProps.id || newMonomerProps.MonomerName;
+      const monomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-${
+        newMonomerProps.id || newMonomerProps.MonomerName
+      }`;
 
       if (existingMonomerIndex !== -1) {
         this._monomersLibrary[existingMonomerIndex] = newMonomer;
 
         const existingMonomerProps =
           this._monomersLibrary[existingMonomerIndex].props;
-        const existingMonomerIdToUse =
-          existingMonomerProps.id || existingMonomerProps.MonomerName;
+        const existingMonomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-
+          ${existingMonomerProps.id || existingMonomerProps.MonomerName}`;
         // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion

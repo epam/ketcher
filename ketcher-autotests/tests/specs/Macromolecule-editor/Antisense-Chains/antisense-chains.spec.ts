@@ -2711,6 +2711,8 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Sugars.R,
     unsplitNucleotide: false,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     monomerDescription: '4. Base A (from library)',
@@ -2739,6 +2741,8 @@ const shortMonomerList: IMonomer[] = [
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Phosphates.P,
     unsplitNucleotide: false,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     monomerDescription: '7. Unsplit monomer 2-damdA (from library)',

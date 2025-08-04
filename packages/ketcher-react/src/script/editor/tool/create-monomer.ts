@@ -6,7 +6,9 @@ class CreateMonomerTool implements Tool {
     this.editor.openMonomerCreationWizard();
   }
 
-  cancel() {}
+  cancel() {
+    this.editor.closeMonomerCreationWizard();
+  }
 }
 
 export default CreateMonomerTool;

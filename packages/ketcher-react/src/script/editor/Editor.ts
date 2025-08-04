@@ -40,13 +40,13 @@ import {
   KetSerializer,
   KetTemplateType,
   monomerFactory,
-  MONOMER_CONST,
-  KetMonomerClass,
   Bond,
   MacromoleculesConverter,
   fromSgroupAddition,
   IKetAttachmentPoint,
   IKetMonomerTemplate,
+  setMonomerTemplatePrefix,
+  getHELMClassByKetMonomerClass,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -153,7 +153,7 @@ export interface Selection {
 export type MonomerCreationState = {
   originalStruct: Struct;
   // Attachment atom id to leaving atom id
-  attachmentPoints: Map<number, number>;
+  attachmentAtomIdToLeavingAtomId: Map<number, number>;
 } | null;
 
 class Editor implements KetcherEditor {
@@ -710,7 +710,7 @@ class Editor implements KetcherEditor {
 
     this._monomerCreationState = {
       originalStruct: currentStruct.clone(),
-      attachmentPoints,
+      attachmentAtomIdToLeavingAtomId: attachmentPoints,
     };
 
     this.render.monomerCreationRenderState = {
@@ -747,7 +747,7 @@ class Editor implements KetcherEditor {
     const { symbol, name, type, naturalAnalogue } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
-    this._monomerCreationState.attachmentPoints.forEach(
+    this._monomerCreationState.attachmentAtomIdToLeavingAtomId.forEach(
       (leavingAtomId, attachmentAtomId) => {
         const attachmentPoint: IKetAttachmentPoint = {
           attachmentAtom: attachmentAtomId,
@@ -765,16 +765,15 @@ class Editor implements KetcherEditor {
       },
     );
 
+    const monomerId = `${symbol}___${name}`;
+    const monomerRef = setMonomerTemplatePrefix(monomerId);
+    const monomerHELMClass = getHELMClassByKetMonomerClass(type);
+
     const monomerTemplate: IKetMonomerTemplate = {
       type: KetTemplateType.MONOMER_TEMPLATE,
-      id: `${symbol}___${name}`,
+      id: monomerId,
       class: type,
-      classHELM:
-        type === KetMonomerClass.AminoAcid
-          ? MONOMER_CONST.PEPTIDE
-          : type === KetMonomerClass.CHEM
-          ? MONOMER_CONST.CHEM
-          : MONOMER_CONST.RNA,
+      classHELM: monomerHELMClass,
       alias: symbol,
       fullName: name,
       naturalAnalogShort: naturalAnalogue,
@@ -790,7 +789,7 @@ class Editor implements KetcherEditor {
         connections: [],
         templates: [
           {
-            $ref: `${KetTemplateType.MONOMER_TEMPLATE}-${symbol}___${name}`,
+            $ref: monomerRef,
           },
         ],
       },
@@ -801,7 +800,7 @@ class Editor implements KetcherEditor {
       root: {
         ...templateRoot,
       },
-      [`${KetTemplateType.MONOMER_TEMPLATE}-${symbol}___${name}`]: {
+      [monomerRef]: {
         ...templateData,
       },
     });

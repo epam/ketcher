@@ -54,7 +54,7 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
-export const naturalAnaloguePickerEnabled = (
+export const isNaturalAnalogueRequired = (
   monomerType: KetMonomerClass | undefined,
 ) => {
   return (
@@ -70,7 +70,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   onChange,
   className,
 }) => {
-  const disabled = !naturalAnaloguePickerEnabled(monomerType);
+  const disabled = !isNaturalAnalogueRequired(monomerType);
 
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;

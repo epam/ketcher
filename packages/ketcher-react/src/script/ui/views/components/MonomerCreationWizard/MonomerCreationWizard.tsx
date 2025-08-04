@@ -6,7 +6,7 @@ import Select from '../../../component/form/Select';
 import { ChangeEvent, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
-  naturalAnaloguePickerEnabled,
+  isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
@@ -69,11 +69,6 @@ const initialWizardState: WizardState = {
     ],
   ]),
 };
-
-const isNaturalAnalogueRequired = (monomerType: KetMonomerClass | undefined) =>
-  monomerType === KetMonomerClass.AminoAcid ||
-  monomerType === KetMonomerClass.Base ||
-  monomerType === KetMonomerClass.RNA;
 
 const wizardReducer = (
   state: WizardState,
@@ -251,7 +246,7 @@ const MonomerCreationWizard = () => {
     return null;
   }
 
-  const { attachmentPoints } = monomerCreationState;
+  const { attachmentAtomIdToLeavingAtomId } = monomerCreationState;
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -340,7 +335,7 @@ const MonomerCreationWizard = () => {
                   }
                 />
               }
-              disabled={!naturalAnaloguePickerEnabled(type)}
+              disabled={!isNaturalAnalogueRequired(type)}
               required
             />
           </div>
@@ -350,7 +345,7 @@ const MonomerCreationWizard = () => {
           <div className={styles.attributesFields}>
             <p className={styles.attachmentPointsTitle}>Attachment points</p>
             <div className={styles.attachmentPoints}>
-              {[...attachmentPoints.entries()].map(
+              {[...attachmentAtomIdToLeavingAtomId.entries()].map(
                 ([attachmentAtomId, leavingAtomId], index) => (
                   <div
                     className={styles.attachmentPoint}

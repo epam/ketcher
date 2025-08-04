@@ -5,7 +5,6 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
-  clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';

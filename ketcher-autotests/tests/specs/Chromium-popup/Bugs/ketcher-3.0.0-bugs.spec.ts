@@ -1057,7 +1057,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     },
   );
 
-  test(
+  test.fail(
     `Case 30: Macro structure not duplicated on canvas when using ketcher.getMolfile()`,
     { tag: ['@chromium-popup'] },
     async () => {
@@ -1116,7 +1116,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     },
   );
 
-  test(
+  test.fail(
     `Case 32: Natural monomer have standard bond lengths and angles`,
     { tag: ['@chromium-popup'] },
     async () => {

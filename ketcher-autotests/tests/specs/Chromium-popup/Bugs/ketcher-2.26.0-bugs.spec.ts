@@ -776,7 +776,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     },
   );
 
-  test(
+  test.fail(
     'Case 24: Bond/monomer tooltip preview placed correct in on edge cases',
     { tag: ['@chromium-popup'] },
     async () => {

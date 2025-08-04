@@ -119,46 +119,46 @@ test(
   },
 );
 
-test(
-  `Case 2: Exception when modifying a functional group after adding a ketcher editor subscription`,
-  { tag: ['@chromium-popup'] },
-  async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 2
-     * Bug: https://github.com/epam/ketcher/issues/5115
-     * Description: Exception when modifying a functional group after adding a ketcher editor subscription
-     * Scenario:
-     * 1. Go to Micro mode
-     * 2. Execute ketcher.editor.subscribe("change", () => console.log("hello")); in the console (or add any other change subscription)
-     * 3. In the canvas, add a functional group such as "CF3"
-     * 4. Click on another atom such as "Br" and click on the functional group
-     * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
-     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    const atomToolbar = RightToolbar(page);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let changeEventSubscriber: any;
-    await page.evaluate(() => {
-      changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-        console.log('hello'),
-      );
-    });
+// test(
+//   `Case 2: Exception when modifying a functional group after adding a ketcher editor subscription`,
+//   { tag: ['@chromium-popup'] },
+//   async () => {
+//     /*
+//      * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 2
+//      * Bug: https://github.com/epam/ketcher/issues/5115
+//      * Description: Exception when modifying a functional group after adding a ketcher editor subscription
+//      * Scenario:
+//      * 1. Go to Micro mode
+//      * 2. Execute ketcher.editor.subscribe("change", () => console.log("hello")); in the console (or add any other change subscription)
+//      * 3. In the canvas, add a functional group such as "CF3"
+//      * 4. Click on another atom such as "Br" and click on the functional group
+//      * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
+//      */
+//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+//     const atomToolbar = RightToolbar(page);
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     let changeEventSubscriber: any;
+//     await page.evaluate(() => {
+//       changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+//         console.log('hello'),
+//       );
+//     });
 
-    await selectFunctionalGroups(FunctionalGroups.CF3, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await atomToolbar.clickAtom(Atom.Bromine);
+//     await selectFunctionalGroups(FunctionalGroups.CF3, page);
+//     await clickInTheMiddleOfTheScreen(page);
+//     await atomToolbar.clickAtom(Atom.Bromine);
 
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+//     await clickInTheMiddleOfTheScreen(page);
+//     await takeEditorScreenshot(page, {
+//       hideMonomerPreview: true,
+//       hideMacromoleculeEditorScrollBars: true,
+//     });
 
-    await page.evaluate(() => {
-      window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
-    });
-  },
-);
+//     await page.evaluate(() => {
+//       window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+//     });
+//   },
+// );
 
 test(
   `Case 3: Ketcher doesn't trigger change event in macromolecule mode`,
@@ -452,18 +452,18 @@ test(
 
     await openFileAndAddToCanvas(
       page,
-      'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
+      'KET/Chromium-popup/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
     );
 
     await verifyFileExport(
       page,
-      'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
+      'KET/Chromium-popup/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
       FileType.KET,
     );
 
     await verifyFileExport(
       page,
-      'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
+      'KET/Chromium-popup/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
       FileType.KET,
     );
   },

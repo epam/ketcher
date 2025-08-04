@@ -61,3 +61,5 @@ export const TemplateEditDialog = (page: Page) => {
     },
   };
 };
+
+export type TemplateEditDialogType = ReturnType<typeof TemplateEditDialog>;

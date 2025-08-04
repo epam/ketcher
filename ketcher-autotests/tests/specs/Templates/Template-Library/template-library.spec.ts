@@ -18,6 +18,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import {
   LabelDisplayAtStereogenicCentersOption,
   StereochemistrySetting,
@@ -43,7 +44,7 @@ async function editAndClearTemplateName(
   templateName: string,
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
-  await page.getByTestId('name-input').click();
+  await TemplateEditDialog(page).moleculeNameInput.click();
   await selectAllStructuresOnCanvas(page);
   await deleteByKeyboard(page);
 }
@@ -128,9 +129,10 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates - name with just spaces', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
+    const inputText = 'test';
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('name-input').fill('   ');
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculName(inputText);
+    await TemplateEditDialog(page).cancel();
     await page.getByText('β-D-Sugars').click();
     await takeEditorScreenshot(page);
   });
@@ -155,7 +157,7 @@ test.describe('Templates - Template Library', () => {
     await getEditorScreenshot(page);
   });
 
-  test('Text field 128 characters limit test ', async ({ page }) => {
+  test('Text field 128 characters limit test', async ({ page }) => {
     // Verify maximum character validation on the name field
     const textField = page.getByTestId('name-input');
     const number = 129;
@@ -165,5 +167,24 @@ test.describe('Templates - Template Library', () => {
       await textField.type(inputText);
     });
     await getEditorScreenshot(page);
+  });
+
+  test('My test', async ({ page }) => {
+    await TemplateEditDialog(page).getSelectedAttachmentPoints();
+  });
+
+  test('My test2', async ({ page }) => {
+    const x = 3;
+    const y = 4;
+    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await TemplateEditDialog(page).clickOnCanvas(x, y);
+    await waitForRender(page);
+    await TemplateEditDialog(page).getSelectedAttachmentPoints();
+    await TemplateEditDialog(page).close();
+  });
+
+  test('My test3', async ({ page }) => {
+    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await TemplateEditDialog(page).editButton.click();
   });
 });

@@ -1,0 +1,63 @@
+@import 'src/style/variables.less';
+
+
+.notification {
+  position: relative;
+  max-width: 678px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  pointer-events: auto;
+
+  &Strip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 6px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  &.info {
+    background-color: #C3FFD7;
+
+    &Strip {
+      background-color: #06A729;
+    }
+  }
+
+  &.error {
+    background-color: #FDE0DF;
+
+    &Strip {
+      background-color: @color-secondary-red;
+    }
+  }
+
+  &Icon {
+    height: 18px;
+    width: 18px;
+    color: @color-text-primary;
+  }
+
+  &Text {
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  &Button {
+    padding: 4px 8px;
+    background-color: transparent;
+    border: 1px solid @color-grey-6;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+
+
+
+
+

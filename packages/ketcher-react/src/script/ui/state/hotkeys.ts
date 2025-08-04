@@ -102,6 +102,11 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   if (state.modal || selectIsAbbreviationLookupOpen(state)) return;
 
   const { editor } = state;
+
+  if (editor.isMonomerCreationWizardActive) {
+    return;
+  }
+
   const { render } = editor;
   const actionState = state.actionState;
   const actionTool = actionState.activeTool;

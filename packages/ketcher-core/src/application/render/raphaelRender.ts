@@ -28,6 +28,10 @@ import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 
+export type MonomerCreationRenderState = {
+  attachmentPoints: Map<number, number>;
+} | null;
+
 export class Render {
   public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
@@ -42,6 +46,7 @@ export class Render {
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
+  private _monomerCreationRenderState: MonomerCreationRenderState = null;
 
   constructor(
     clientArea: HTMLElement,
@@ -263,5 +268,13 @@ export class Render {
 
       notifyRenderComplete();
     }
+  }
+
+  get monomerCreationRenderState() {
+    return this._monomerCreationRenderState;
+  }
+
+  set monomerCreationRenderState(state: MonomerCreationRenderState) {
+    this._monomerCreationRenderState = state;
   }
 }

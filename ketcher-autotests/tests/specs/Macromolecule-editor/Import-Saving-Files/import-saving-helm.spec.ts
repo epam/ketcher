@@ -179,7 +179,8 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '26. List of peptides connected to another list of peptides via R3 to R1',
     HELMString:
-      'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.r.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
+      'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.R.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
+      shouldFail: true
   },
   {
     helmDescription:

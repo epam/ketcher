@@ -421,7 +421,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
+  // https://github.com/epam/Indigo/issues/3061
+  test.fail('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6606
@@ -452,7 +453,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
+  // https://github.com/epam/Indigo/issues/3061
+  test.fail('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6531
@@ -737,11 +739,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 21: r Group logic condition is not wrong if loaded from MOL', async () => {
+  test('Case 21: R Group logic condition is not wrong if loaded from MOL', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
-     * Description: r Group logic condition is not wrong if loaded from MOL.
+     * Description: R Group logic condition is not wrong if loaded from MOL.
      * Scenario:
      * 1. Go to Micro
      * 2. Load from MOL
@@ -755,11 +757,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: r Group logic condition is not wrong if loaded from complex structure MOL', async () => {
+  test('Case 22: R Group logic condition is not wrong if loaded from complex structure MOL', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
-     * Description: r Group logic condition is not wrong if loaded from MOL.
+     * Description: R Group logic condition is not wrong if loaded from MOL.
      * Scenario:
      * 1. Go to Micro
      * 2. Load from MOL
@@ -906,11 +908,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 29: Correct R1 attachment atom for natural Ribose (r) in the library', async () => {
+  test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6750
-     * Description: Correct R1 attachment atom for natural Ribose (r) in the library.
+     * Description: Correct R1 attachment atom for natural Ribose (R) in the library.
      * Scenario:
      * 1. Go to Macro - Sequence mode (clean canvas)
      * 2. Type AA (RNA typing type)
@@ -925,7 +927,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectAllStructuresOnCanvas(page);
     const symbolP = page
       .getByTestId(KETCHER_CANVAS)
-      .getByText('p', { exact: true });
+      .getByText('P', { exact: true });
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
     await clickOnCanvas(page, 500, 500);
     await CommonTopRightToolbar(page).setZoomInputValue('60');

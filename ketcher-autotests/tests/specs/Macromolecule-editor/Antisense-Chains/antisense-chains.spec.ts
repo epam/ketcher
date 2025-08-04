@@ -123,7 +123,7 @@ const monomers: IMonomer[] = [
     monomerDescription: '2. Ambiguous peptide X (alternatives, from library)',
     contentType: MacroFileType.HELM,
     HELMString:
-      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,p,Q,r,S,T,U,V,W,Y)}$$$$V2.0',
+      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Peptides.X,
@@ -2697,7 +2697,7 @@ const shortMonomerList: IMonomer[] = [
     monomerDescription: '2. Ambiguous peptide X (alternatives, from library)',
     contentType: MacroFileType.HELM,
     HELMString:
-      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,p,Q,r,S,T,U,V,W,Y)}$$$$V2.0',
+      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Peptides.X,

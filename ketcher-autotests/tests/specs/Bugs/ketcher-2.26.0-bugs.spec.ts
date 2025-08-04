@@ -2,7 +2,8 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -39,7 +40,7 @@ import {
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { waitForPageInit, waitForRender } from '@utils/common';
+import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -110,16 +111,15 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 }
 
 let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
 
 test.describe('Ketcher bugs in 2.26.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  });
-
-  test.afterEach(async ({ context: _ }, testInfo) => {
+  test.afterEach(async () => {
     await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -127,11 +127,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).reset();
     await SettingsDialog(page).apply();
     await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
-
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    await processResetToDefaultState(test.info(), page);
   });
 
   test('Case 1: The options for layout about smart-layout, aromatize-skip-superatoms and etc is sent as not undefined', async () => {
@@ -339,7 +335,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5634
@@ -349,8 +347,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Save to MOL V3000
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
@@ -426,7 +422,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5711
@@ -436,8 +434,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -449,7 +445,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5710
@@ -459,8 +457,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -472,7 +468,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5709
@@ -482,8 +480,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -637,7 +633,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await disableViewOnlyModeBySetOptions(page);
   });
 
-  test('Case 22: O and U sumbols are supported in sequence mode', async () => {
+  test('Case 22: O and U sumbols are supported in sequence mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5621
@@ -647,10 +645,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Start new sequence
      * 3. Add O and U symbols to the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'OU');
     await takeEditorScreenshot(page);
@@ -676,7 +670,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
+  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5557
@@ -687,9 +683,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Hover over the bond/monomer
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond tooltip preview placed wrong in on edge cases.ket',
@@ -742,7 +735,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async () => {
+  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5205
@@ -757,9 +752,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 7. Take screenshot
      */
     const bondLine = getBondLocator(page, {});
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasMacro(page, 'KET/two-nucleotides.ket');
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditConnectionPoints,
@@ -778,7 +770,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
+  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5788
@@ -789,9 +783,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Select all
      * 4. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -803,7 +794,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 28: Cursor position is correct when editing sequence in Macro mode', async () => {
+  test('Case 28: Cursor position is correct when editing sequence in Macro mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5725
@@ -813,10 +806,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Add a sequence of monomers to the canvas
      * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
@@ -830,7 +819,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async () => {
+  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5686
@@ -842,9 +833,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Delete the selected structures
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bonds between micro and macro structures can be selected and deleted.ket',
@@ -856,7 +844,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async () => {
+  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5673
@@ -867,9 +857,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to Macro mode - Sequence
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
@@ -881,7 +868,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 31: Moving of selected microstructures on macro canvas works correct', async () => {
+  test('Case 31: Moving of selected microstructures on macro canvas works correct', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5659
@@ -893,9 +882,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Move selected structures to the right
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -963,7 +949,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Case 34: Clear canvas work for micro structures on macro mode', async () => {
+  test('Case 34: Clear canvas work for micro structures on macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5657
@@ -973,9 +961,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -1044,7 +1029,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async () => {
+  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5886
@@ -1053,9 +1040,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 1. Open file in macro mode->Flex mode
      * 2. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/monomers-connected-to-microstructures.ket',
@@ -1341,7 +1325,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async () => {
+  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2440
@@ -1353,9 +1339,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Click on Save to IDT
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Ambiguous DNA Bases (alternatives).ket',
@@ -1757,7 +1740,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 65: System should throw an error in case of wrong IUBcode', async () => {
+  test('Case 65: System should throw an error in case of wrong IUBcode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2331
@@ -1766,14 +1751,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 1. Toggle to Macro - Flex mode
      * 2. Load IDT from paste from clipboard way: (YY:00330067)
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
     await takeEditorScreenshot(page);
   });
 
-  test('Case 66: Sugar R should not save in the IDT format', async () => {
+  test('Case 66: Sugar R should not save in the IDT format', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2122
@@ -1784,9 +1768,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to IDT
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await Library(page).selectMonomer(Sugars.R);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();

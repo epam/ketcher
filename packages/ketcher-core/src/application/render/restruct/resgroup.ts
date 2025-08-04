@@ -54,6 +54,38 @@ export const SUPERATOM_CLASS_TEXT = {
   [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
 };
 
+// Helper function to convert SVG elements into Paper.js paths
+export function paperPathFromSVGElement(element) {
+  const tagName = element.tagName;
+  let path;
+
+  if (tagName === 'circle') {
+    // Convert circle to Paper.js Path.Circle
+    const cx = parseFloat(element.getAttribute('cx'));
+    const cy = parseFloat(element.getAttribute('cy'));
+    const r = parseFloat(element.getAttribute('r'));
+    path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
+  } else if (tagName === 'rect') {
+    // Convert rectangle to Paper.js Path.Rectangle
+    const x = parseFloat(element.getAttribute('x'));
+    const y = parseFloat(element.getAttribute('y'));
+    const width = parseFloat(element.getAttribute('width'));
+    const height = parseFloat(element.getAttribute('height'));
+    path = new paperjs.Path.Rectangle(
+      new paperjs.Rectangle(x, y, width, height),
+      new paperjs.Size(
+        parseFloat(element.getAttribute('rx') || '0'),
+        parseFloat(element.getAttribute('ry') || '0'),
+      ),
+    );
+  } else if (tagName === 'path') {
+    // Use the `d` attribute directly for Path data
+    const d = element.getAttribute('d');
+    path = new paperjs.CompoundPath(d);
+  }
+  return path;
+}
+
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
@@ -261,39 +293,6 @@ class ReSGroup extends ReObject {
       });
 
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
-
-      // Helper function to convert SVG elements into Paper.js paths
-      // eslint-disable-next-line no-inner-declarations
-      function paperPathFromSVGElement(element) {
-        const tagName = element.tagName;
-        let path;
-
-        if (tagName === 'circle') {
-          // Convert circle to Paper.js Path.Circle
-          const cx = parseFloat(element.getAttribute('cx'));
-          const cy = parseFloat(element.getAttribute('cy'));
-          const r = parseFloat(element.getAttribute('r'));
-          path = new paperjs.Path.Circle(new paperjs.Point(cx, cy), r);
-        } else if (tagName === 'rect') {
-          // Convert rectangle to Paper.js Path.Rectangle
-          const x = parseFloat(element.getAttribute('x'));
-          const y = parseFloat(element.getAttribute('y'));
-          const width = parseFloat(element.getAttribute('width'));
-          const height = parseFloat(element.getAttribute('height'));
-          path = new paperjs.Path.Rectangle(
-            new paperjs.Rectangle(x, y, width, height),
-            new paperjs.Size(
-              parseFloat(element.getAttribute('rx') || '0'),
-              parseFloat(element.getAttribute('ry') || '0'),
-            ),
-          );
-        } else if (tagName === 'path') {
-          // Use the `d` attribute directly for Path data
-          const d = element.getAttribute('d');
-          path = new paperjs.CompoundPath(d);
-        }
-        return path;
-      }
 
       // Generate Paper.js paths from all SVG elements
       let combinedPath: any = null;

@@ -439,7 +439,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       await createDNAAntisenseChain(page, anySymbolR);
       await verifyHELMExport(
         page,
-        'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)}|RNA2{R(A,C,G,U)P.R(A,G,U)P.R(A,C,U)P.R(A,U)}|RNA3{R(A,C)P.R(A,G)P.R(A,C,G)}|RNA4{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA5{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)P.[dR](C,T)P.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
+        'RNA1{r(A,C,G,T)p.r(A,G,T)p.r(A,C,T)p.r(A,T)}|RNA2{r(A,C,G,U)p.r(A,G,U)p.r(A,C,U)p.r(A,U)}|RNA3{r(A,C)p.r(A,G)p.r(A,C,G)}|RNA4{d(A,T)p.d(A,G,T)p.d(A,C,T)p.d(A,C,G,T)}|RNA5{d(A,T)p.d(A,G,T)p.d(A,C,T)p.d(A,C,G,T)}|RNA6{d(C,G,T)p.d(C,T)p.d(G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
       );
     },
   );

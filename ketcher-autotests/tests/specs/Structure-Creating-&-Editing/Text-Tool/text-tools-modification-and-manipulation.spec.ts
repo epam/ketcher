@@ -153,6 +153,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).cancel();
 
     await page.getByText('+++').dblclick();
+    await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setText('Test');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);

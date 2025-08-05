@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { Monomer } from '@utils/types';
 import {
   FavoriteStarSymbol,
@@ -138,6 +138,7 @@ export const Library = (page: Page) => {
 
     async openTab(libraryTab: LibraryTab) {
       if (!(await this.isTabOpened(libraryTab))) {
+        await expect(getElement(libraryTab)).toBeInViewport();
         await getElement(libraryTab).click();
       }
     },
@@ -149,6 +150,7 @@ export const Library = (page: Page) => {
     async openRNASection(rnaSection: RNASection) {
       await this.openTab(LibraryTab.RNA);
       if (!(await this.isRNASectionOpened(rnaSection))) {
+        await expect(getElement(rnaSection)).toBeInViewport();
         await getElement(rnaSection).click();
       }
     },

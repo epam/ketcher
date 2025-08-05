@@ -578,7 +578,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       x: 580,
       y: 388,
     });
-    await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

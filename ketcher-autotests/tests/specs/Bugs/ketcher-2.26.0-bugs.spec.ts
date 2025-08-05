@@ -26,8 +26,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  readFileContent,
-  pasteFromClipboardAndOpenAsNewProject,
   moveMouseToTheMiddleOfTheScreen,
   copyToClipboardByIcon,
   moveMouseAway,

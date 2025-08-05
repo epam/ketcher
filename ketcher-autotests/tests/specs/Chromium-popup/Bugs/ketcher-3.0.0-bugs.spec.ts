@@ -25,7 +25,6 @@ import {
   setMolecule,
   FILE_TEST_DATA,
   moveMouseAway,
-  RxnFileFormat,
   MolFileFormat,
   SequenceFileFormat,
 } from '@utils';

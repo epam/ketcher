@@ -107,6 +107,7 @@ import {
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1937,7 +1938,18 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C6H6');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '78.114',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '78.047',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 92.3 H 7.7');
   });
 
   test('Check that 3D view works for molecules with AP but hydrohen is shown instead of AP', async () => {

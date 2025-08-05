@@ -71,6 +71,8 @@ export interface IEditorEvents {
   autochain: Subscription;
   previewAutochain: Subscription;
   removeAutochainPreview: Subscription;
+  switchToMacromoleculesMode: Subscription;
+  switchToMoleculesMode: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -142,6 +144,8 @@ export function resetEditorEvents() {
     autochain: new Subscription(),
     previewAutochain: new Subscription(),
     removeAutochainPreview: new Subscription(),
+    switchToMacromoleculesMode: new Subscription(),
+    switchToMoleculesMode: new Subscription(),
   };
 }
 resetEditorEvents();

@@ -391,3 +391,18 @@ export const getAminoAcidsToModify = (
 
   return aminoAcidsToModify;
 };
+
+export const isHelmCompatible = (
+  monomers: BaseMonomer[],
+  monomersLibrary: MonomerItemType[],
+) => {
+  return monomers
+    .map((monomer) =>
+      monomersLibrary.find((libraryMonomer) =>
+        isAmbiguousMonomerLibraryItem(libraryMonomer)
+          ? libraryMonomer.id === monomer.monomerItem.props.id
+          : libraryMonomer.props?.id === monomer.monomerItem.props.id,
+      ),
+    )
+    .every((monomer) => Boolean(monomer?.props.aliasHELM));
+};

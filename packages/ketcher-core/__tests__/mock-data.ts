@@ -767,6 +767,7 @@ export const peptideMonomerItem: MonomerItemType = {
 
 export const polymerEditorTheme = {
   monomer: { color: { A: { regular: 'yellow' } } },
+  peptide: { color: { A: { regular: 'yellow' } } },
 };
 
 export const getFinishedPolymerBond = (x1, y1, x2, y2) => {

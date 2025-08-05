@@ -161,6 +161,7 @@ export interface IKetMonomerTemplate {
   id: string;
   fullName?: string;
   alias: string;
+  aliasHELM?: string;
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {

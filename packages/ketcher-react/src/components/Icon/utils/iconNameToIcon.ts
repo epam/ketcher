@@ -218,6 +218,9 @@ import Sugar from '../../../assets/icons/files/sugar.svg';
 import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
+import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
+import Peptide from '../../../assets/icons/files/peptide.svg';
+import Chem from '../../../assets/icons/files/chem.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
 import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 import ExpandIcon from '../../../assets/icons/files/expand.svg';
@@ -227,8 +230,11 @@ import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
-import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
-import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import {
+  CREATE_MONOMER_TOOL_NAME,
+  IMAGE_KEY,
+  MULTITAIL_ARROW_TOOL_NAME,
+} from 'ketcher-core';
 import CrossIcon from '../../../assets/icons/files/cross.svg';
 import PlusIcon from '../../../assets/icons/files/plus.svg';
 import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
@@ -236,6 +242,10 @@ import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.sv
 import DeleteContextMenu from '../../../assets/icons/files/deleteContextMenu.svg';
 import PasteContextMenu from '../../../assets/icons/files/paste-nav-bar.svg';
 import EditContextMenu from '../../../assets/icons/files/edit-nav-bar.svg';
+import MonomerAutochainIcon from '../../../assets/icons/files/monomer-autochain.svg';
+import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
+import CheckFilledIcon from '../../../assets/icons/files/check-filled.svg';
+import WarningFilledIcon from '../../../assets/icons/files/warning-filled.svg';
 
 export const iconNameToIcon = {
   α,
@@ -463,6 +473,8 @@ export const iconNameToIcon = {
   phosphate: Phosphate,
   preset: Preset,
   nucleotide: Nucleotide,
+  peptide: Peptide,
+  chem: Chem,
   'edit-filled': EditFilled,
   'vertical-dots': VerticalDots,
   expand: ExpandIcon,
@@ -478,4 +490,8 @@ export const iconNameToIcon = {
   antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
+  'monomer-autochain': MonomerAutochainIcon,
+  [CREATE_MONOMER_TOOL_NAME]: CreateMonomerIcon,
+  checkFilled: CheckFilledIcon,
+  warningFilled: WarningFilledIcon,
 } as const;

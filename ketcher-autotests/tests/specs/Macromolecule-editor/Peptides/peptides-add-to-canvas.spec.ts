@@ -1,6 +1,5 @@
 import { test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
@@ -26,8 +25,11 @@ test.describe('Peptide', () => {
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {
-    await Library(page).selectMonomer(Peptides.A);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
     await hideMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -37,8 +39,11 @@ test.describe('Peptide', () => {
     Test case: #2869 - Preview of monomer structures on canvas
     Description: Add monomer preview on canvas
     */
-    await Library(page).selectMonomer(Peptides.A);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+      x: -10,
+      y: -10,
+      fromCenter: true,
+    });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForMonomerPreview(page);

@@ -44,7 +44,7 @@ import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 
 export class MacromoleculesConverter {
-  private static convertMonomerToMonomerMicromolecule(
+  public static convertMonomerToMonomerMicromolecule(
     monomer: BaseMonomer,
     struct: Struct,
   ) {
@@ -125,6 +125,28 @@ export class MacromoleculesConverter {
     };
   }
 
+  public static convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+    monomer: BaseMonomer,
+    atomIdsMap: Map<number, number>,
+  ) {
+    return monomer.listOfAttachmentPoints.map(
+      (attachmentPointName, attachmentPointIndex) => {
+        const attachmentPointNumber =
+          getAttachmentPointNumberFromLabel(attachmentPointName);
+        const attachmentPoint = monomer.monomerItem.attachmentPoints?.[
+          attachmentPointIndex
+        ] as IKetAttachmentPoint;
+
+        return new SGroupAttachmentPoint(
+          atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
+          atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
+          undefined,
+          attachmentPointNumber,
+        );
+      },
+    );
+  }
+
   public static convertDrawingEntitiesToStruct(
     drawingEntitiesManager: DrawingEntitiesManager,
     struct: Struct,
@@ -185,21 +207,9 @@ export class MacromoleculesConverter {
         });
 
         monomerMicromolecule.addAttachmentPoints(
-          monomer.listOfAttachmentPoints.map(
-            (attachmentPointName, attachmentPointIndex) => {
-              const attachmentPointNumber =
-                getAttachmentPointNumberFromLabel(attachmentPointName);
-              const attachmentPoint = monomer.monomerItem.attachmentPoints?.[
-                attachmentPointIndex
-              ] as IKetAttachmentPoint;
-
-              return new SGroupAttachmentPoint(
-                atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
-                atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
-                undefined,
-                attachmentPointNumber,
-              );
-            },
+          MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+            monomer,
+            atomIdsMap,
           ) || [],
           false,
         );

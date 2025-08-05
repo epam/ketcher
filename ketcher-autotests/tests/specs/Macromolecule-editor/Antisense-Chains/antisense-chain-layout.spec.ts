@@ -159,10 +159,12 @@ const shortMonomerList: IMonomer[] = [
     alias: 'P',
     type: MonomerType.Phosphate,
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorOptions: Phosphates.P,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     id: 7,
@@ -302,6 +304,14 @@ for (const leftMonomer of shortMonomerList) {
        *       4. Take screenshot to validate layout (connection should be considered as side chain)
        */
       test.setTimeout(30000);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+        `That test fails because of ${leftMonomer.issueNumber || ''} ${
+          leftMonomer.issueNumber || ''
+        } issue(s).`,
+      );
 
       await loadMonomerOnCanvas(page, leftMonomer);
       let leftMonomerAlias;
@@ -869,6 +879,14 @@ for (const leftMonomer of shortMonomerList) {
          *  Screenshots must be updated after fix and fixme should be removed
          */
         test.setTimeout(20000);
+
+        // Test should be skipped if related bug exists
+        test.fixme(
+          leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+          `That test fails because of ${leftMonomer.issueNumber || ''} ${
+            leftMonomer.issueNumber || ''
+          } issue(s).`,
+        );
 
         await loadMonomerOnCanvas(page, leftMonomer);
         let leftMonomerAlias;

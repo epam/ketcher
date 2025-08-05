@@ -48,7 +48,15 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
+import {
+  ChainsCollection,
+  MonomerToAtomBond,
+  Phosphate,
+  SequenceType,
+  Struct,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -58,6 +66,7 @@ import {
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
+  AmbiguousMonomerType,
   AttachmentPointName,
   MonomerItemType,
   MonomerOrAmbiguousType,
@@ -91,6 +100,24 @@ import {
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { debounce } from 'lodash';
+import { D3SvgElementSelection } from 'application/render/types';
+
+const SCROLL_SMOOTHNESS_IM_MS = 300;
+
+const turnOnScrollAnimation = (
+  canvas: D3SvgElementSelection<SVGGElement, void>,
+) => {
+  canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
+};
+
+const debouncedTurnOffScrollAnimation = debounce(
+  (canvas: D3SvgElementSelection<SVGGElement, void>) => {
+    canvas.style('transition', 'none');
+  },
+  SCROLL_SMOOTHNESS_IM_MS,
+);
 
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
@@ -103,6 +130,12 @@ interface ICoreEditorConstructorParams {
 interface ModifyAminoAcidsHandlerParams {
   monomers: BaseMonomer[];
   modificationType: string;
+}
+
+interface IAutochainMonomerAddResult {
+  modelChanges: Command;
+  firstMonomer: BaseMonomer;
+  lastMonomer: BaseMonomer;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -132,6 +165,8 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
@@ -261,15 +296,17 @@ export class CoreEditor {
       );
 
       const newMonomerProps = newMonomer.props;
-      const monomerIdToUse = newMonomerProps.id || newMonomerProps.MonomerName;
+      const monomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-${
+        newMonomerProps.id || newMonomerProps.MonomerName
+      }`;
 
       if (existingMonomerIndex !== -1) {
         this._monomersLibrary[existingMonomerIndex] = newMonomer;
 
         const existingMonomerProps =
           this._monomersLibrary[existingMonomerIndex].props;
-        const existingMonomerIdToUse =
-          existingMonomerProps.id || existingMonomerProps.MonomerName;
+        const existingMonomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-
+          ${existingMonomerProps.id || existingMonomerProps.MonomerName}`;
         // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -588,46 +625,405 @@ export class CoreEditor {
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
+        const history = new EditorHistory(this);
         const { x, y } = position;
 
-        let modelChanges: Command;
+        let monomersAddResult: IAutochainMonomerAddResult | undefined;
 
         if (isLibraryItemRnaPreset(item)) {
-          const { sugar, phosphate, base } = item;
-          if (!sugar) {
+          if (!item.sugar) {
             return;
           }
 
-          modelChanges = this.drawingEntitiesManager.addRnaPreset({
-            sugar,
-            sugarPosition: Coordinates.canvasToModel(new Vec2(x, y)),
-            phosphate,
-            phosphatePosition: phosphate
-              ? Coordinates.canvasToModel(new Vec2(x + SnakeLayoutCellWidth, y))
-              : undefined,
-            rnaBase: base,
-            rnaBasePosition: base
-              ? Coordinates.canvasToModel(new Vec2(x, y + SnakeLayoutCellWidth))
-              : undefined,
-          }).command;
+          monomersAddResult = this.onPlaceRnaPresetOnCanvas(
+            item,
+            Coordinates.canvasToModel(new Vec2(x, y)),
+          );
         } else if (isAmbiguousMonomerLibraryItem(item)) {
-          modelChanges = this.drawingEntitiesManager.addAmbiguousMonomer(
+          monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),
           );
         } else {
-          modelChanges = this.drawingEntitiesManager.addMonomer(
+          monomersAddResult = this.onPlaceMonomerOnCanvas(
             item,
             Coordinates.canvasToModel(new Vec2(x, y)),
           );
         }
 
-        const history = new EditorHistory(this);
+        if (!monomersAddResult) {
+          return;
+        }
 
-        history.update(modelChanges);
-        this.renderersContainer.update(modelChanges);
+        history.update(monomersAddResult.modelChanges);
+        this.renderersContainer.update(monomersAddResult.modelChanges);
+        this.calculateAndStoreNextAutochainPosition(
+          monomersAddResult.lastMonomer,
+        );
       },
     );
+    this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
+    this.events.previewAutochain.add((monomerItem) =>
+      this.onPreviewAutochain(monomerItem),
+    );
+    this.events.removeAutochainPreview.add(() =>
+      this.onRemoveAutochainPreview(),
+    );
+  }
+
+  private getDataForAutochain() {
+    const selectedMonomersWithFreeR2 =
+      this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
+        return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
+      });
+    const selectedMonomerToConnect =
+      selectedMonomersWithFreeR2.length === 1
+        ? selectedMonomersWithFreeR2[0]
+        : undefined;
+    const newMonomerPosition = selectedMonomerToConnect
+      ? selectedMonomerToConnect.position.add(new Vec2(1.5, 0))
+      : this.drawingEntitiesManager.hasMonomers
+      ? this.nextAutochainPosition && !(this.mode instanceof SnakeMode)
+        ? this.nextAutochainPosition
+        : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+            new Vec2(0, 1.5),
+          )
+      : Coordinates.canvasToModel(
+          new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
+        );
+
+    return {
+      selectedMonomerToConnect,
+      newMonomerPosition,
+    };
+  }
+
+  private onRemoveAutochainPreview() {
+    this.transientDrawingView.clear();
+  }
+
+  private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    this.invalidateNextAutochainPositionIfNeeded(
+      isLibraryItemRnaPreset(monomerOrRnaItem),
+    );
+
+    const { selectedMonomerToConnect, newMonomerPosition } =
+      this.getDataForAutochain();
+
+    this.transientDrawingView.showAutochainPreview(
+      monomerOrRnaItem,
+      newMonomerPosition,
+      selectedMonomerToConnect,
+    );
+    this.transientDrawingView.update();
+  }
+
+  private onAutochain(
+    monomerOrRnaItem: MonomerItemType | AmbiguousMonomerType | IRnaPreset,
+  ) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    this.invalidateNextAutochainPositionIfNeeded(
+      isLibraryItemRnaPreset(monomerOrRnaItem),
+    );
+
+    const modelChanges = new Command();
+    const history = new EditorHistory(this);
+    const { selectedMonomerToConnect, newMonomerPosition } =
+      this.getDataForAutochain();
+
+    let monomersAddResult: IAutochainMonomerAddResult | undefined;
+
+    if (isLibraryItemRnaPreset(monomerOrRnaItem)) {
+      monomersAddResult = this.onPlaceRnaPresetOnCanvas(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    } else if (isAmbiguousMonomerLibraryItem(monomerOrRnaItem)) {
+      monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    } else {
+      monomersAddResult = this.onPlaceMonomerOnCanvas(
+        monomerOrRnaItem,
+        newMonomerPosition,
+      );
+    }
+
+    if (!monomersAddResult) {
+      return;
+    }
+
+    modelChanges.merge(monomersAddResult.modelChanges);
+
+    if (selectedMonomerToConnect) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.createPolymerBond(
+          selectedMonomerToConnect,
+          monomersAddResult.firstMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+
+      modelChanges.merge(
+        this.drawingEntitiesManager.unselectDrawingEntity(
+          selectedMonomerToConnect,
+        ),
+      );
+
+      modelChanges.merge(
+        this.drawingEntitiesManager.selectDrawingEntity(
+          monomersAddResult.lastMonomer,
+        ),
+      );
+    }
+
+    if (this.mode instanceof SnakeMode) {
+      modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
+    }
+
+    this.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
+    this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
+
+    if (this.mode instanceof SnakeMode) {
+      this.zoomTool.scrollToVerticalBottom();
+    } else if (this.mode instanceof FlexMode) {
+      const editorSettings = provideEditorSettings();
+      const oneLayoutCellInAngstroms =
+        SnakeLayoutCellWidth / editorSettings.macroModeScale;
+      const chainsCollection = ChainsCollection.fromMonomers([
+        monomersAddResult.lastMonomer,
+      ]);
+      const monomersInChainUsedForAutochain =
+        chainsCollection.chains[0].monomers;
+      const chainBbox = DrawingEntitiesManager.getStructureBbox(
+        monomersInChainUsedForAutochain,
+      );
+      const canvasWrapperSize = this.zoomTool.canvasWrapperSize;
+      const MIN_OFFSET_FROM_RIGHT =
+        oneLayoutCellInAngstroms * 5 * editorSettings.macroModeScale;
+      const offsetFromRight = Math.min(
+        MIN_OFFSET_FROM_RIGHT,
+        canvasWrapperSize.width / 2,
+      );
+      const chainLeftTopInViewCoordinates = Coordinates.modelToView(
+        new Vec2(chainBbox.left, chainBbox.top),
+      );
+      const chainRightBottomInViewCoordinates = Coordinates.modelToView(
+        new Vec2(chainBbox.right, chainBbox.bottom),
+      );
+      const chainWidthInViewCoordinates =
+        chainRightBottomInViewCoordinates.x - chainLeftTopInViewCoordinates.x;
+      const lastAddedMonomerPositionInViewCoordinates = Coordinates.modelToView(
+        monomersAddResult.lastMonomer.position,
+      );
+      const isStructureWithAutochainOffsetFitCanvas =
+        canvasWrapperSize.width - chainWidthInViewCoordinates > offsetFromRight;
+      const isAddedMonomerHorizontallyOutOfCanvas =
+        lastAddedMonomerPositionInViewCoordinates.x <= 0 ||
+        lastAddedMonomerPositionInViewCoordinates.x >= canvasWrapperSize.width;
+      const isAddedMonomerOutAboveCanvas =
+        lastAddedMonomerPositionInViewCoordinates.y <= 0;
+      const isAddedMonomerOutBelowCanvas =
+        lastAddedMonomerPositionInViewCoordinates.y >= canvasWrapperSize.height;
+      const isAddedMonomerVerticallyOutOfCanvas =
+        isAddedMonomerOutAboveCanvas || isAddedMonomerOutBelowCanvas;
+
+      if (
+        isAddedMonomerHorizontallyOutOfCanvas ||
+        isAddedMonomerVerticallyOutOfCanvas
+      ) {
+        const needToScrollToBeginningOfChain =
+          Boolean(selectedMonomerToConnect) &&
+          isStructureWithAutochainOffsetFitCanvas;
+
+        turnOnScrollAnimation(this.zoomTool.canvas);
+        this.zoomTool.scrollTo(
+          needToScrollToBeginningOfChain
+            ? Coordinates.modelToCanvas(
+                chainsCollection.firstNode.firstMonomerInNode.position,
+              )
+            : Coordinates.modelToCanvas(
+                monomersAddResult.lastMonomer.position,
+              ).sub(
+                new Vec2(
+                  this.zoomTool.unzoomValue(canvasWrapperSize.width) -
+                    offsetFromRight,
+                  0,
+                ),
+              ),
+          isAddedMonomerOutBelowCanvas,
+          needToScrollToBeginningOfChain
+            ? oneLayoutCellInAngstroms * editorSettings.macroModeScale
+            : 0,
+          isAddedMonomerOutBelowCanvas
+            ? oneLayoutCellInAngstroms * 2 * editorSettings.macroModeScale
+            : undefined,
+          false,
+          isAddedMonomerVerticallyOutOfCanvas,
+        );
+        debouncedTurnOffScrollAnimation(this.zoomTool.canvas);
+      }
+    }
+
+    this.onRemoveAutochainPreview();
+    this.onPreviewAutochain(monomerOrRnaItem);
+  }
+
+  private onPlaceRnaPresetOnCanvas(
+    rnaPresetItem: IRnaPreset,
+    sugarPosition: Vec2,
+  ) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    if (!rnaPresetItem.sugar) {
+      this.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
+    const modelChanges = new Command();
+    const { command: addPresetModelChanges, monomers } =
+      this.drawingEntitiesManager.addRnaPreset({
+        sugar: rnaPresetItem.sugar,
+        sugarPosition: new Vec2(sugarPosition.x, sugarPosition.y),
+        phosphate: rnaPresetItem.phosphate,
+        phosphatePosition: rnaPresetItem.phosphate
+          ? new Vec2(sugarPosition.x + 1.5, sugarPosition.y)
+          : undefined,
+        rnaBase: rnaPresetItem.base,
+        rnaBasePosition: rnaPresetItem.base
+          ? new Vec2(sugarPosition.x, sugarPosition.y + 1.5)
+          : undefined,
+      });
+    const sugar = monomers.find(
+      (monomer) => monomer instanceof Sugar,
+    ) as BaseMonomer;
+    const phosphate = monomers.find((monomer) => monomer instanceof Phosphate);
+
+    modelChanges.merge(addPresetModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: sugar,
+      lastMonomer: phosphate || sugar,
+    };
+  }
+
+  private onPlaceMonomerOnCanvas(monomerItem: MonomerItemType, position: Vec2) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const modelChanges = new Command();
+    const monomerAddModelChanges = this.drawingEntitiesManager.addMonomer(
+      monomerItem,
+      position,
+    );
+    const monomer = monomerAddModelChanges.operations[0].monomer as BaseMonomer;
+
+    modelChanges.merge(monomerAddModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: monomer,
+      lastMonomer: monomer,
+    };
+  }
+
+  private onPlaceAmbiguousMonomerOnCanvas(
+    monomerItem: AmbiguousMonomerType,
+    position: Vec2,
+  ) {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const modelChanges = new Command();
+    const monomerAddModelChanges =
+      this.drawingEntitiesManager.addAmbiguousMonomer(monomerItem, position);
+    const monomer = monomerAddModelChanges.operations[0].monomer as BaseMonomer;
+
+    modelChanges.merge(monomerAddModelChanges);
+
+    return {
+      modelChanges,
+      firstMonomer: monomer,
+      lastMonomer: monomer,
+    };
+  }
+
+  public calculateAndStoreNextAutochainPosition(
+    drawingEntitiesManagerOrMonomer: DrawingEntitiesManager | BaseMonomer,
+  ) {
+    let nextAutochainPosition: Vec2;
+
+    if (drawingEntitiesManagerOrMonomer instanceof DrawingEntitiesManager) {
+      const chainsCollection = ChainsCollection.fromMonomers(
+        drawingEntitiesManagerOrMonomer.monomersArray,
+      );
+
+      if (chainsCollection.chains.length === 1) {
+        const lastMonomerInChain = chainsCollection.lastNode.lastMonomerInNode;
+
+        nextAutochainPosition = lastMonomerInChain.position.add(
+          new Vec2(1.5, 0),
+        );
+      } else {
+        const bottomLeftMonomerPosition =
+          drawingEntitiesManagerOrMonomer.bottomLeftMonomerPosition;
+
+        nextAutochainPosition = bottomLeftMonomerPosition.add(new Vec2(0, 1.5));
+      }
+    } else {
+      const monomer = drawingEntitiesManagerOrMonomer;
+
+      nextAutochainPosition = monomer.position.add(new Vec2(1.5, 0));
+    }
+
+    this.nextAutochainPosition = nextAutochainPosition;
+  }
+
+  public invalidateNextAutochainPositionIfNeeded(isRnaPreset = false) {
+    const nextAutochainPosition = this.nextAutochainPosition;
+
+    if (!nextAutochainPosition) {
+      return;
+    }
+
+    const areaToCheck = { width: 1.5, height: 1.5 };
+    const additionalAreaToCheck = isRnaPreset ? 1.5 : 0;
+    const monomerIntersection = this.drawingEntitiesManager.monomersArray.find(
+      (monomer) => {
+        return (
+          nextAutochainPosition.x +
+            areaToCheck.width / 2 +
+            additionalAreaToCheck >
+            monomer.position.x &&
+          nextAutochainPosition.x <
+            monomer.position.x + areaToCheck.width / 2 &&
+          nextAutochainPosition.y +
+            areaToCheck.height / 2 +
+            additionalAreaToCheck >
+            monomer.position.y &&
+          nextAutochainPosition.y < monomer.position.y + areaToCheck.height / 2
+        );
+      },
+    );
+
+    if (monomerIntersection) {
+      this.nextAutochainPosition = undefined;
+    }
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -721,8 +1117,6 @@ export class CoreEditor {
 
     if (this.mode instanceof SequenceMode) {
       this.mode.insertMonomerFromLibrary(monomer);
-    } else {
-      this.selectTool(ToolName.monomer, monomer);
     }
   }
 
@@ -737,12 +1131,6 @@ export class CoreEditor {
 
     if (this.mode instanceof SequenceMode) {
       this.mode.insertPresetFromLibrary(preset);
-    } else {
-      if (preset) {
-        this.selectTool(ToolName.preset, preset);
-      } else {
-        this.tool = undefined;
-      }
     }
   }
 

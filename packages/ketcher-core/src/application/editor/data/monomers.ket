@@ -2543,6 +2543,7 @@
     "id": "12ddR___1',2'-dideoxyribose",
     "fullName": "1',2'-dideoxyribose",
     "alias": "12ddR",
+    "aliasHELM": "d12r",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -2764,6 +2765,7 @@
     "id": "25R___Ribose (2,5 connectivity)",
     "fullName": "Ribose (2,5 connectivity)",
     "alias": "25R",
+    "aliasHELM": "25r",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -3900,6 +3902,7 @@
     "id": "3SS6___Thiol Modifier 6 S-S (3' end)",
     "fullName": "Thiol Modifier 6 S-S (3' end)",
     "alias": "3SS6",
+    "aliasHELM": "36SS",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -4121,6 +4124,7 @@
     "id": "4sR___4-Thio-Ribose",
     "fullName": "4-Thio-Ribose",
     "alias": "4sR",
+    "aliasHELM": "s4r",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -5559,6 +5563,7 @@
     "id": "5eU___5-ethynyl-uracil",
     "fullName": "5-ethynyl-uracil",
     "alias": "5eU",
+    "aliasHELM": "ethy5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -5733,6 +5738,7 @@
     "id": "5fU___5-fluoro-uracil",
     "fullName": "5-fluoro-uracil",
     "alias": "5fU",
+    "aliasHELM": "fl5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -5907,6 +5913,7 @@
     "id": "5iU___5-iodo-uracil",
     "fullName": "5-iodo-uracil",
     "alias": "5iU",
+    "aliasHELM": "io5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -6081,6 +6088,7 @@
     "id": "5meC___5-methylcytosine",
     "fullName": "5-methylcytosine",
     "alias": "5meC",
+    "aliasHELM": "m5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -6390,6 +6398,7 @@
     "id": "5tpU___5-tris-propynyl-uracil",
     "fullName": "5-tris-propynyl-uracil",
     "alias": "5tpU",
+    "aliasHELM": "tp5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -6586,6 +6595,7 @@
     "id": "A___Adenine",
     "fullName": "Adenine",
     "alias": "A",
+    "aliasHELM": "A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -6745,6 +6755,7 @@
     "id": "C___Cytosine",
     "fullName": "Cytosine",
     "alias": "C",
+    "aliasHELM": "C",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -7197,6 +7208,7 @@
     "id": "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",
     "fullName": "2'-O-Tris-trifluoromethoxyethyl ribose",
     "alias": "FMOE",
+    "aliasHELM": "ctfl3moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -7426,6 +7438,7 @@
     "id": "G___Guanine",
     "fullName": "Guanine",
     "alias": "G",
+    "aliasHELM": "G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -7622,6 +7635,7 @@
     "id": "In___Inosine",
     "fullName": "Inosine",
     "alias": "In",
+    "aliasHELM": "Hyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -8146,6 +8160,7 @@
     "id": "MOE___2'-O-Methoxyethyl ribose",
     "fullName": "2'-O-Methoxyethyl ribose",
     "alias": "MOE",
+    "aliasHELM": "moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -8513,6 +8528,7 @@
     "id": "P___Phosphate",
     "fullName": "Phosphate",
     "alias": "P",
+    "aliasHELM": "p",
     "idtAliases": {
       "base": "Phos",
       "modifications": {
@@ -8666,6 +8682,7 @@
     "id": "PONA___2-(methylamino)ethanol (PHONA sugar)",
     "fullName": "2-(methylamino)ethanol (PHONA sugar)",
     "alias": "PONA",
+    "aliasHELM": "PONA",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -8896,6 +8913,7 @@
     "id": "R___Ribose",
     "fullName": "Ribose",
     "alias": "R",
+    "aliasHELM": "r",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -9053,6 +9071,7 @@
     "id": "RGNA___R Propanetriol (GNA sugar)",
     "fullName": "R Propanetriol (GNA sugar)",
     "alias": "RGNA",
+    "aliasHELM": "Rgna",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -9210,6 +9229,7 @@
     "id": "SGNA___S Propanetriol (GNA sugar)",
     "fullName": "S Propanetriol (GNA sugar)",
     "alias": "SGNA",
+    "aliasHELM": "Sgna",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -9402,6 +9422,7 @@
     "id": "T___Thymine",
     "fullName": "Thymine",
     "alias": "T",
+    "aliasHELM": "T",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -9561,6 +9582,7 @@
     "id": "U___Uracil",
     "fullName": "Uracil",
     "alias": "U",
+    "aliasHELM": "U",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -9762,6 +9784,7 @@
     "id": "UNA___2'-3'-Unlocked-ribose",
     "fullName": "2'-3'-Unlocked-ribose",
     "alias": "UNA",
+    "aliasHELM": "una",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -9992,6 +10015,7 @@
     "id": "aFR___alpha-FANA",
     "fullName": "alpha-FANA",
     "alias": "aFR",
+    "aliasHELM": "fana",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -10222,6 +10246,7 @@
     "id": "aR___3-Amino-Ribose",
     "fullName": "3-Amino-Ribose",
     "alias": "aR",
+    "aliasHELM": "n3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -10774,6 +10799,7 @@
     "id": "bP___Boranophosphate",
     "fullName": "Boranophosphate",
     "alias": "bP",
+    "aliasHELM": "bp",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -11091,6 +11117,7 @@
     "id": "baA___N6-benzyladenine",
     "fullName": "N6-benzyladenine",
     "alias": "baA",
+    "aliasHELM": "bn6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -11332,6 +11359,7 @@
     "id": "cdaC___5-cyclopropyl-4-dimethylamino-cytosine",
     "fullName": "5-cyclopropyl-4-dimethylamino-cytosine",
     "alias": "cdaC",
+    "aliasHELM": "cp5m42C",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -11677,6 +11705,7 @@
     "id": "clA___T-clamp OMe",
     "fullName": "T-clamp OMe",
     "alias": "clA",
+    "aliasHELM": "tclampA",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -11888,6 +11917,7 @@
     "id": "cpC___5-cyclopropyl-cytosine",
     "fullName": "5-cyclopropyl-cytosine",
     "alias": "cpC",
+    "aliasHELM": "cp5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -12099,6 +12129,7 @@
     "id": "cpU___5-cyclopropyl-uracil",
     "fullName": "5-cyclopropyl-uracil",
     "alias": "cpU",
+    "aliasHELM": "cp5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -12362,6 +12393,7 @@
     "id": "cpmA___N6-cyclopropylmethyladenine",
     "fullName": "N6-cyclopropylmethyladenine",
     "alias": "cpmA",
+    "aliasHELM": "cpm6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -12557,6 +12589,7 @@
     "id": "dR___Deoxy-Ribose",
     "fullName": "Deoxy-Ribose",
     "alias": "dR",
+    "aliasHELM": "d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -12801,6 +12834,7 @@
     "id": "daA___N6,N6-dimethyladenine",
     "fullName": "N6,N6-dimethyladenine",
     "alias": "daA",
+    "aliasHELM": "m62A",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -13027,6 +13061,7 @@
     "id": "dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine",
     "fullName": "7-deaza-8-aza-7-bromo-2-amino-Adenine",
     "alias": "dabA",
+    "aliasHELM": "n2br7c7z8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -13186,6 +13221,7 @@
     "id": "dfB___2,4-Difluoro-Benzene",
     "fullName": "2,4-Difluoro-Benzene",
     "alias": "dfB",
+    "aliasHELM": "fl24Ph",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -14674,6 +14710,7 @@
     "id": "fR___2'-Fluoro-Ribose",
     "fullName": "2'-Fluoro-Ribose",
     "alias": "fR",
+    "aliasHELM": "fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -14902,6 +14939,7 @@
     "id": "hx___hexitol",
     "fullName": "hexitol",
     "alias": "hx",
+    "aliasHELM": "hna",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -15154,6 +15192,7 @@
     "id": "lLR___2,'4'-locked-Ribose (alpha-L-LNA)",
     "fullName": "2,'4'-locked-Ribose (alpha-L-LNA)",
     "alias": "lLR",
+    "aliasHELM": "ALlna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -15399,6 +15438,7 @@
     "id": "mR___2'-O-Methyl-Ribose",
     "fullName": "2'-O-Methyl-Ribose",
     "alias": "mR",
+    "aliasHELM": "m",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -15628,6 +15668,7 @@
     "id": "meA___N6-methyladenine",
     "fullName": "N6-methyladenine",
     "alias": "meA",
+    "aliasHELM": "m6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -15821,6 +15862,7 @@
     "id": "mph___morpholino",
     "fullName": "morpholino",
     "alias": "mph",
+    "aliasHELM": "mph",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -16247,6 +16289,7 @@
     "id": "prpC___5-Propynyl-Cytosine",
     "fullName": "5-Propynyl-Cytosine",
     "alias": "prpC",
+    "aliasHELM": "pry5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -16451,6 +16494,7 @@
     "id": "prpU___5-propynyl Uracil",
     "fullName": "5-propynyl Uracil",
     "alias": "prpU",
+    "aliasHELM": "pry5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -16738,6 +16782,7 @@
     "id": "qR___2-O-beta-hydroxy-ethoxy-methyl Ribose (Qiagen)",
     "fullName": "2-O-beta-hydroxy-ethoxy-methyl Ribose (Qiagen)",
     "alias": "qR",
+    "aliasHELM": "oheom2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -16848,6 +16893,7 @@
     "id": "sP___Phosporothioate",
     "fullName": "Phosporothioate",
     "alias": "sP",
+    "aliasHELM": "sp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -17037,6 +17083,7 @@
     "id": "tR___Threose Nucleic Acid",
     "fullName": "Threose Nucleic Acid",
     "alias": "tR",
+    "aliasHELM": "tna",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -17274,6 +17321,7 @@
     "id": "tfU___5-trifluoromethyl-uracil",
     "fullName": "5-trifluoromethyl-uracil",
     "alias": "tfU",
+    "aliasHELM": "tflm5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -17398,6 +17446,7 @@
     "id": "A___Alanine",
     "fullName": "Alanine",
     "alias": "A",
+    "aliasHELM": "A",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -18014,6 +18063,7 @@
     "id": "Aad___L-2-aminoadipic acid",
     "fullName": "L-2-aminoadipic acid",
     "alias": "Aad",
+    "aliasHELM": "Aad",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -18171,6 +18221,7 @@
     "id": "Abu___L-2-aminobutyric acid",
     "fullName": "L-2-aminobutyric acid",
     "alias": "Abu",
+    "aliasHELM": "Abu",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -18409,6 +18460,7 @@
     "id": "Aca___L-decyline",
     "fullName": "L-decyline",
     "alias": "Aca",
+    "aliasHELM": "Aca",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -18555,6 +18607,7 @@
     "id": "Aib___2-aminoisobutyric acid",
     "fullName": "2-aminoisobutyric acid",
     "alias": "Aib",
+    "aliasHELM": "Aib",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -18778,6 +18831,7 @@
     "id": "Apm___L-2-aminopimelic acid",
     "fullName": "L-2-aminopimelic acid",
     "alias": "Apm",
+    "aliasHELM": "Apm",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -19064,6 +19118,7 @@
     "id": "App___(3R,4S)-4-amino-3-hydroxy-5-phenylpentanoic acid",
     "fullName": "(3R,4S)-4-amino-3-hydroxy-5-phenylpentanoic acid",
     "alias": "App",
+    "aliasHELM": "App",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -19302,6 +19357,7 @@
     "id": "Asu___(R)-2-aminooctanedioic acid",
     "fullName": "(R)-2-aminooctanedioic acid",
     "alias": "Asu",
+    "aliasHELM": "Asu",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -19466,6 +19522,7 @@
     "id": "Aze___L-azetidine-2-carboxylic acid",
     "fullName": "L-azetidine-2-carboxylic acid",
     "alias": "Aze",
+    "aliasHELM": "Aze",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -19597,6 +19654,7 @@
     "id": "bAla___beta-Alanine",
     "fullName": "beta-Alanine",
     "alias": "bAla",
+    "aliasHELM": "bAla",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -19713,6 +19771,7 @@
     "id": "Bua-___N-Terminal butanoyl",
     "fullName": "N-Terminal butanoyl",
     "alias": "Bua-",
+    "aliasHELM": "Bua",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -19867,6 +19926,7 @@
     "id": "Bux___(3S)-4-amino-3-hydroxybutanoic acid",
     "fullName": "(3S)-4-amino-3-hydroxybutanoic acid",
     "alias": "Bux",
+    "aliasHELM": "Bux",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -20030,6 +20090,7 @@
     "id": "C___Cysteine",
     "fullName": "Cysteine",
     "alias": "C",
+    "aliasHELM": "C",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -20317,6 +20378,7 @@
     "id": "Cap___(2R,3S)-3-amino-2-hydroxy-5-cyclohexylpentanoic acid",
     "fullName": "(2R,3S)-3-amino-2-hydroxy-5-cyclohexylpentanoic acid",
     "alias": "Cap",
+    "aliasHELM": "Cap",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -20547,6 +20609,7 @@
     "id": "Cha___3-cyclohexylalanine",
     "fullName": "3-cyclohexylalanine",
     "alias": "Cha",
+    "aliasHELM": "Cha",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -20770,6 +20833,7 @@
     "id": "Cit___Citrulline",
     "fullName": "Citrulline",
     "alias": "Cit",
+    "aliasHELM": "Cit",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -20964,6 +21028,7 @@
     "id": "Cya___Cysteic acid",
     "fullName": "Cysteic acid",
     "alias": "Cya",
+    "aliasHELM": "Cya",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -21157,6 +21222,7 @@
     "id": "D___Aspartic acid",
     "fullName": "Aspartic acid",
     "alias": "D",
+    "aliasHELM": "D",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -21646,6 +21712,7 @@
     "id": "Dab___L-2,4-diaminobutanoic acid",
     "fullName": "L-2,4-diaminobutanoic acid",
     "alias": "Dab",
+    "aliasHELM": "Dab",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -21895,6 +21962,7 @@
     "id": "Dpm___diaminopimelic acid",
     "fullName": "diaminopimelic acid",
     "alias": "Dpm",
+    "aliasHELM": "Dpm",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -22058,6 +22126,7 @@
     "id": "Dap___3-aminoalanine",
     "fullName": "3-aminoalanine",
     "alias": "Dap",
+    "aliasHELM": "Dap",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -22320,6 +22389,7 @@
     "id": "Dsu___2,7-diaminosuberic acid",
     "fullName": "2,7-diaminosuberic acid",
     "alias": "Dsu",
+    "aliasHELM": "Dsu",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -22528,6 +22598,7 @@
     "id": "E___Glutamic acid",
     "fullName": "Glutamic acid",
     "alias": "E",
+    "aliasHELM": "E",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -22731,6 +22802,7 @@
     "id": "Edc___S-ethylthiocysteine",
     "fullName": "S-ethylthiocysteine",
     "alias": "Edc",
+    "aliasHELM": "Cys_SEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -22961,6 +23033,7 @@
     "id": "F___Phenylalanine",
     "fullName": "Phenylalanine",
     "alias": "F",
+    "aliasHELM": "F",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -23078,6 +23151,7 @@
     "id": "G___Glycine",
     "fullName": "Glycine",
     "alias": "G",
+    "aliasHELM": "G",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -23272,6 +23346,7 @@
     "id": "gGlu___gamma-glutamic acid",
     "fullName": "gamma-glutamic acid",
     "alias": "gGlu",
+    "aliasHELM": "gGlu",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -23519,6 +23594,7 @@
     "id": "Gla___gamma-carboxyglutamic acid",
     "fullName": "gamma-carboxyglutamic acid",
     "alias": "Gla",
+    "aliasHELM": "Gla",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -23629,6 +23705,7 @@
     "id": "Glc___glycolic acid",
     "fullName": "glycolic acid",
     "alias": "Glc",
+    "aliasHELM": "Glc",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -23850,6 +23927,7 @@
     "id": "H___Histidine",
     "fullName": "Histidine",
     "alias": "H",
+    "aliasHELM": "H",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -24276,6 +24354,7 @@
     "id": "Hcy___homocysteine",
     "fullName": "homocysteine",
     "alias": "Hcy",
+    "aliasHELM": "Hcy",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -24530,6 +24609,7 @@
     "id": "Hhs___homohistidine",
     "fullName": "homohistidine",
     "alias": "Hhs",
+    "aliasHELM": "hHis",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -24702,6 +24782,7 @@
     "id": "Hse___homoserine",
     "fullName": "homoserine",
     "alias": "Hse",
+    "aliasHELM": "Hse",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -24850,6 +24931,7 @@
     "id": "Hva___(2S)-2-hydroxypentanoic acid",
     "fullName": "(2S)-2-hydroxypentanoic acid",
     "alias": "Hva",
+    "aliasHELM": "Hva",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -25064,6 +25146,7 @@
     "id": "Hyl5xi___5-hydroxylysine",
     "fullName": "5-hydroxylysine",
     "alias": "Hyl5xi",
+    "aliasHELM": "Hyl_5xi",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -25261,6 +25344,7 @@
     "id": "Hyp___trans-4-hydroxy-L-proline",
     "fullName": "trans-4-hydroxy-L-proline",
     "alias": "Hyp",
+    "aliasHELM": "Hyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -25442,6 +25526,7 @@
     "id": "I___Isoleucine",
     "fullName": "Isoleucine",
     "alias": "I",
+    "aliasHELM": "I",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -25607,6 +25692,7 @@
     "id": "Iva___isovaline",
     "fullName": "isovaline",
     "alias": "Iva",
+    "aliasHELM": "Iva",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -25815,6 +25901,7 @@
     "id": "K___Lysine",
     "fullName": "Lysine",
     "alias": "K",
+    "aliasHELM": "K",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -26003,6 +26090,7 @@
     "id": "L___Leucine",
     "fullName": "Leucine",
     "alias": "L",
+    "aliasHELM": "L",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -26122,6 +26210,7 @@
     "id": "L-OAla___lactic acid",
     "fullName": "lactic acid",
     "alias": "L-OAla",
+    "aliasHELM": "L-OAla",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -26291,6 +26380,7 @@
     "id": "M___Methionine",
     "fullName": "Methionine",
     "alias": "M",
+    "aliasHELM": "M",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -26440,6 +26530,7 @@
     "id": "Mba___(2S)-2-mercaptobutyric acid",
     "fullName": "(2S)-2-mercaptobutyric acid",
     "alias": "Mba",
+    "aliasHELM": "Mba",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -26640,6 +26731,7 @@
     "id": "Mhp___3-hydroxy-4-methylproline",
     "fullName": "3-hydroxy-4-methylproline",
     "alias": "Mhp",
+    "aliasHELM": "Pro_4Me3OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -26773,6 +26865,7 @@
     "id": "Mpa___Thiolactic acid",
     "fullName": "Thiolactic acid",
     "alias": "Mpa",
+    "aliasHELM": "Mpa",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -26966,6 +27059,7 @@
     "id": "N___Asparagine",
     "fullName": "Asparagine",
     "alias": "N",
+    "aliasHELM": "N",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -27273,6 +27367,7 @@
     "id": "2Nal___3-(2-naphthyl)-alanine",
     "fullName": "3-(2-naphthyl)-alanine",
     "alias": "2Nal",
+    "aliasHELM": "2Nal",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -27451,6 +27546,7 @@
     "id": "Nle___norleucine",
     "fullName": "norleucine",
     "alias": "Nle",
+    "aliasHELM": "Nle",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -27614,6 +27710,7 @@
     "id": "Nva___norvaline",
     "fullName": "norvaline",
     "alias": "Nva",
+    "aliasHELM": "Nva",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -27851,6 +27948,7 @@
     "id": "Oic___(2S)-perhydroindolic acid",
     "fullName": "(2S)-perhydroindolic acid",
     "alias": "Oic",
+    "aliasHELM": "Oic_3axi-7axi",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -28044,6 +28142,7 @@
     "id": "Orn___L-ornithine",
     "fullName": "L-ornithine",
     "alias": "Orn",
+    "aliasHELM": "Orn",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -28223,6 +28322,7 @@
     "id": "P___Proline",
     "fullName": "Proline",
     "alias": "P",
+    "aliasHELM": "P",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -28417,6 +28517,7 @@
     "id": "Pen___Penicillamine",
     "fullName": "Penicillamine",
     "alias": "Pen",
+    "aliasHELM": "Pen",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -28641,6 +28742,7 @@
     "id": "Phg___L-phenylglycine",
     "fullName": "L-phenylglycine",
     "alias": "Phg",
+    "aliasHELM": "Phg",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -29018,6 +29120,7 @@
     "id": "Pqa___2-(4-xxo-6-(piperazin-1-yl)quinazolin-3(4H)-yl)acetic acid",
     "fullName": "2-(4-xxo-6-(piperazin-1-yl)quinazolin-3(4H)-yl)acetic acid",
     "alias": "Pqa",
+    "aliasHELM": "Pqa",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -29226,6 +29329,7 @@
     "id": "Q___Glutamine",
     "fullName": "Glutamine",
     "alias": "Q",
+    "aliasHELM": "Q",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -29474,6 +29578,7 @@
     "id": "R___Arginine",
     "fullName": "Arginine",
     "alias": "R",
+    "aliasHELM": "R",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -29647,6 +29752,7 @@
     "id": "S___Serine",
     "fullName": "Serine",
     "alias": "S",
+    "aliasHELM": "S",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -29788,6 +29894,7 @@
     "id": "meG___Sarcosine",
     "fullName": "Sarcosine",
     "alias": "meG",
+    "aliasHELM": "meG",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -29972,6 +30079,7 @@
     "id": "Ar5c___Cycloleucine",
     "fullName": "Cycloleucine",
     "alias": "Ar5c",
+    "aliasHELM": "Ar5c",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -30197,6 +30305,7 @@
     "id": "Sta___Statine",
     "fullName": "Statine",
     "alias": "Sta",
+    "aliasHELM": "Sta_3S4S",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -30377,6 +30486,7 @@
     "id": "T___Threonine",
     "fullName": "Threonine",
     "alias": "T",
+    "aliasHELM": "T",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -30602,6 +30712,7 @@
     "id": "Thi___3-(2-thienyl)-alanine",
     "fullName": "3-(2-thienyl)-alanine",
     "alias": "Thi",
+    "aliasHELM": "Thi",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -30854,6 +30965,7 @@
     "id": "Tic___1,2,3,4-tetrahydro-3-isoquinolinecarboxylic acid",
     "fullName": "1,2,3,4-tetrahydro-3-isoquinolinecarboxylic acid",
     "alias": "Tic",
+    "aliasHELM": "Tic",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -31032,6 +31144,7 @@
     "id": "tLeu___L-tert-leucine",
     "fullName": "L-tert-leucine",
     "alias": "tLeu",
+    "aliasHELM": "Ala_tBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -31271,6 +31384,7 @@
     "id": "LysMe3___epsilon-N-trimethyllysine",
     "fullName": "epsilon-N-trimethyllysine",
     "alias": "LysMe3",
+    "aliasHELM": "Lys_Me3",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -31486,6 +31600,7 @@
     "id": "Tza___3-(4-Thiazolyl)-alanine",
     "fullName": "3-(4-Thiazolyl)-alanine",
     "alias": "Tza",
+    "aliasHELM": "Tza",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -31649,6 +31764,7 @@
     "id": "V___Valine",
     "fullName": "Valine",
     "alias": "V",
+    "aliasHELM": "V",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -31947,6 +32063,7 @@
     "id": "W___Tryptophan",
     "fullName": "Tryptophan",
     "alias": "W",
+    "aliasHELM": "W",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -32217,6 +32334,7 @@
     "id": "Wil___Willardiine",
     "fullName": "Willardiine",
     "alias": "Wil",
+    "aliasHELM": "Wil",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -32477,6 +32595,7 @@
     "id": "Y___Tyrosine",
     "fullName": "Tyrosine",
     "alias": "Y",
+    "aliasHELM": "Y",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -32573,6 +32692,7 @@
     "id": "Ac-___N-Terminal acetyl",
     "fullName": "N-Terminal acetyl",
     "alias": "Ac-",
+    "aliasHELM": "ac",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -32620,6 +32740,7 @@
     "id": "-Am___C-Terminal amino",
     "fullName": "C-Terminal amino",
     "alias": "-Am",
+    "aliasHELM": "am",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -32744,6 +32865,7 @@
     "id": "dA___D-Alanine",
     "fullName": "D-Alanine",
     "alias": "dA",
+    "aliasHELM": "dA",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -32908,6 +33030,7 @@
     "id": "dC___D-Cysteine",
     "fullName": "D-Cysteine",
     "alias": "dC",
+    "aliasHELM": "dC",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -33111,6 +33234,7 @@
     "id": "dD___D-Aspartic acid",
     "fullName": "D-Aspartic acid",
     "alias": "dD",
+    "aliasHELM": "dD",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -33329,6 +33453,7 @@
     "id": "dE___D-Glutamic acid",
     "fullName": "D-Glutamic acid",
     "alias": "dE",
+    "aliasHELM": "dE",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -33569,6 +33694,7 @@
     "id": "dF___D-Phenylalanine",
     "fullName": "D-Phenylalanine",
     "alias": "dF",
+    "aliasHELM": "dF",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -33800,6 +33926,7 @@
     "id": "dH___D-Histidine",
     "fullName": "D-Histidine",
     "alias": "dH",
+    "aliasHELM": "dH",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34018,6 +34145,7 @@
     "id": "dK___D-Lysine",
     "fullName": "D-Lysine",
     "alias": "dK",
+    "aliasHELM": "dK",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34206,6 +34334,7 @@
     "id": "dL___D-Leucine",
     "fullName": "D-Leucine",
     "alias": "dL",
+    "aliasHELM": "dL",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34385,6 +34514,7 @@
     "id": "dM___D-Methionine",
     "fullName": "D-Methionine",
     "alias": "dM",
+    "aliasHELM": "dM",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34579,6 +34709,7 @@
     "id": "dN___D-Asparagine",
     "fullName": "D-Asparagine",
     "alias": "dN",
+    "aliasHELM": "dN",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34759,6 +34890,7 @@
     "id": "dP___D-Proline",
     "fullName": "D-Proline",
     "alias": "dP",
+    "aliasHELM": "dP",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -34968,6 +35100,7 @@
     "id": "dQ___D-Glutamine",
     "fullName": "D-Glutamine",
     "alias": "dQ",
+    "aliasHELM": "dQ",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -35216,6 +35349,7 @@
     "id": "dR___D-Arginine",
     "fullName": "D-Arginine",
     "alias": "dR",
+    "aliasHELM": "dR",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -35389,6 +35523,7 @@
     "id": "dS___D-Serine",
     "fullName": "D-Serine",
     "alias": "dS",
+    "aliasHELM": "dS",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -35562,6 +35697,7 @@
     "id": "dV___D-Valine",
     "fullName": "D-Valine",
     "alias": "dV",
+    "aliasHELM": "dV",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -35743,6 +35879,7 @@
     "id": "dI___D-Isoleucine",
     "fullName": "D-Isoleucine",
     "alias": "dI",
+    "aliasHELM": "dI",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -35924,6 +36061,7 @@
     "id": "dT___D-Threonine",
     "fullName": "D-Threonine",
     "alias": "dT",
+    "aliasHELM": "dT",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -36231,6 +36369,7 @@
     "id": "dW___D-Tryptophan",
     "fullName": "D-Tryptophan",
     "alias": "dW",
+    "aliasHELM": "dW",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -36501,6 +36640,7 @@
     "id": "dY___D-Tyrosine",
     "fullName": "D-Tyrosine",
     "alias": "dY",
+    "aliasHELM": "dY",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -36828,6 +36968,7 @@
     "id": "fmoc-___N-Terminal fluorenylmethoxycarbonyl",
     "fullName": "N-Terminal fluorenylmethoxycarbonyl",
     "alias": "fmoc-",
+    "aliasHELM": "fmoc",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -36967,6 +37108,7 @@
     "id": "meA___N-Methyl-Alanine",
     "fullName": "N-Methyl-Alanine",
     "alias": "meA",
+    "aliasHELM": "meA",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -37146,6 +37288,7 @@
     "id": "meC___N-Methyl-Cysteine",
     "fullName": "N-Methyl-Cysteine",
     "alias": "meC",
+    "aliasHELM": "meC",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -37349,6 +37492,7 @@
     "id": "meD___N-Methyl-Aspartic acid",
     "fullName": "N-Methyl-Aspartic acid",
     "alias": "meD",
+    "aliasHELM": "meD",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -37567,6 +37711,7 @@
     "id": "meE___N-Methyl-Glutamic acid",
     "fullName": "N-Methyl-Glutamic acid",
     "alias": "meE",
+    "aliasHELM": "meE",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -37822,6 +37967,7 @@
     "id": "meF___N-Methyl-Phenylalanine",
     "fullName": "N-Methyl-Phenylalanine",
     "alias": "meF",
+    "aliasHELM": "meF",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -38053,6 +38199,7 @@
     "id": "meH___N-Methyl-Histidine",
     "fullName": "N-Methyl-Histidine",
     "alias": "meH",
+    "aliasHELM": "meH",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -38249,6 +38396,7 @@
     "id": "meI___N-Methyl-Isoleucine",
     "fullName": "N-Methyl-Isoleucine",
     "alias": "meI",
+    "aliasHELM": "meI",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -38473,6 +38621,7 @@
     "id": "meK___N-Methyl-Lysine",
     "fullName": "N-Methyl-Lysine",
     "alias": "meK",
+    "aliasHELM": "meK",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -38676,6 +38825,7 @@
     "id": "meL___N-Methyl-Leucine",
     "fullName": "N-Methyl-Leucine",
     "alias": "meL",
+    "aliasHELM": "meL",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -38870,6 +39020,7 @@
     "id": "meM___N-Methyl-Methionine",
     "fullName": "N-Methyl-Methionine",
     "alias": "meM",
+    "aliasHELM": "meM",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -39064,6 +39215,7 @@
     "id": "meN___N-Methyl-Asparagine",
     "fullName": "N-Methyl-Asparagine",
     "alias": "meN",
+    "aliasHELM": "meN",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -39273,6 +39425,7 @@
     "id": "meQ___N-Methyl-Glutamine",
     "fullName": "N-Methyl-Glutamine",
     "alias": "meQ",
+    "aliasHELM": "meQ",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -39512,6 +39665,7 @@
     "id": "meR___N-Methyl-Arginine",
     "fullName": "N-Methyl-Arginine",
     "alias": "meR",
+    "aliasHELM": "meR",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -39676,6 +39830,7 @@
     "id": "meS___N-Methyl-Serine",
     "fullName": "N-Methyl-Serine",
     "alias": "meS",
+    "aliasHELM": "meS",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -39857,6 +40012,7 @@
     "id": "meT___N-Methyl-Threonine",
     "fullName": "N-Methyl-Threonine",
     "alias": "meT",
+    "aliasHELM": "meT",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -40036,6 +40192,7 @@
     "id": "meV___N-Methyl-Valine",
     "fullName": "N-Methyl-Valine",
     "alias": "meV",
+    "aliasHELM": "meV",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -40334,6 +40491,7 @@
     "id": "meW___N-Methyl-Tryptophan",
     "fullName": "N-Methyl-Tryptophan",
     "alias": "meW",
+    "aliasHELM": "meW",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -40595,6 +40753,7 @@
     "id": "meY___N-Methyl-Tyrosine",
     "fullName": "N-Methyl-Tyrosine",
     "alias": "meY",
+    "aliasHELM": "meY",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -40966,6 +41125,7 @@
     "id": "pnA___PNA Adenine",
     "fullName": "PNA Adenine",
     "alias": "pnA",
+    "aliasHELM": "pnA",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -41299,6 +41459,7 @@
     "id": "pnC___PNA Cytosine",
     "fullName": "PNA Cytosine",
     "alias": "pnC",
+    "aliasHELM": "pnC",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -41684,6 +41845,7 @@
     "id": "pnG___PNA Guanine",
     "fullName": "PNA Guanine",
     "alias": "pnG",
+    "aliasHELM": "pnG",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -42032,6 +42194,7 @@
     "id": "pnT___PNA Thymine",
     "fullName": "PNA Thymine",
     "alias": "pnT",
+    "aliasHELM": "pnT",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -42195,6 +42358,7 @@
     "id": "U___Selenocysteine",
     "fullName": "Selenocysteine",
     "alias": "U",
+    "aliasHELM": "seC",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47141,6 +47305,7 @@
     "id": "O___Pyrrolysine",
     "fullName": "Pyrrolysine",
     "alias": "O",
+    "aliasHELM": "Pyl",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47213,6 +47378,7 @@
     "id": "-NMe___C-Terminal methylamino",
     "fullName": "C-Terminal methylamino",
     "alias": "-NMe",
+    "aliasHELM": "NHMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47275,6 +47441,7 @@
     "id": "-OMe___C-Terminal methoxy",
     "fullName": "C-Terminal methoxy",
     "alias": "-OMe",
+    "aliasHELM": "-OMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47382,6 +47549,7 @@
     "id": "-OtBu___C-Terminal tert-butoxy",
     "fullName": "C-Terminal tert-butoxy",
     "alias": "-OtBu",
+    "aliasHELM": "OtBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47655,6 +47823,7 @@
     "id": "-OBn___C-Terminal benzyloxy",
     "fullName": "C-Terminal benzyloxy",
     "alias": "-OBn",
+    "aliasHELM": "-OBn",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -47702,6 +47871,7 @@
     "id": "-Me___C-Terminal methyl",
     "fullName": "C-Terminal methyl",
     "alias": "-Me",
+    "aliasHELM": "-Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -47873,6 +48043,7 @@
     "id": "aIle___L-allo-Isoleucine",
     "fullName": "L-allo-Isoleucine",
     "alias": "aIle",
+    "aliasHELM": "aIle",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -48066,6 +48237,7 @@
     "id": "D-gGlu___D-Gamma glutamic acid",
     "fullName": "D-Gamma glutamic acid",
     "alias": "D-gGlu",
+    "aliasHELM": "D-gGlu",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -48253,6 +48425,7 @@
     "id": "D-Nle___D-Norleucine",
     "fullName": "D-Norleucine",
     "alias": "D-Nle",
+    "aliasHELM": "D-Nle",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -48498,6 +48671,7 @@
     "id": "D-hPhe___D-Homophenylalanine",
     "fullName": "D-Homophenylalanine",
     "alias": "D-hPhe",
+    "aliasHELM": "D-hPhe",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -48685,6 +48859,7 @@
     "id": "D-Hyp___trans-4-hydroxy-D-proline",
     "fullName": "trans-4-hydroxy-D-proline",
     "alias": "D-Hyp",
+    "aliasHELM": "D-Hyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -48848,6 +49023,7 @@
     "id": "D-Nva___D-Norvaline",
     "fullName": "D-Norvaline",
     "alias": "D-Nva",
+    "aliasHELM": "D-Nva",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -49041,6 +49217,7 @@
     "id": "D-Orn___D-Ornithine",
     "fullName": "D-Ornithine",
     "alias": "D-Orn",
+    "aliasHELM": "D-Orn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -49235,6 +49412,7 @@
     "id": "Pyr___Pyroglutamic acid",
     "fullName": "Pyroglutamic acid",
     "alias": "Pyr",
+    "aliasHELM": "Pyr",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -49420,6 +49598,7 @@
     "id": "D-Pyr___D-Pyroglutamic acid",
     "fullName": "D-Pyroglutamic acid",
     "alias": "D-Pyr",
+    "aliasHELM": "D-Pyr",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -49665,6 +49844,7 @@
     "id": "Phe3Cl___3-Chloro-L-phenylalanine",
     "fullName": "3-Chloro-L-phenylalanine",
     "alias": "Phe3Cl",
+    "aliasHELM": "Phe_3Cl",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -49910,6 +50090,7 @@
     "id": "Phe4Cl___4-Chloro-L-phenylalanine",
     "fullName": "4-Chloro-L-phenylalanine",
     "alias": "Phe4Cl",
+    "aliasHELM": "Phe_4Cl",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -50155,6 +50336,7 @@
     "id": "Phe4NH___p-Aminophenylalanine",
     "fullName": "p-Aminophenylalanine",
     "alias": "Phe4NH",
+    "aliasHELM": "Phe_4NH2",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -50363,6 +50545,7 @@
     "id": "SertBu___O-tert-Butyl-L-serine",
     "fullName": "O-tert-Butyl-L-serine",
     "alias": "SertBu",
+    "aliasHELM": "Ser_tBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -50720,6 +50903,7 @@
     "id": "Tyr_Bn___O-Benzyl-L-tyrosine",
     "fullName": "O-Benzyl-L-tyrosine",
     "alias": "Tyr_Bn",
+    "aliasHELM": "Tyr_Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -51017,6 +51201,7 @@
     "id": "1Nal___3-(1-naphthyl)-alanine",
     "fullName": "3-(1-naphthyl)-alanine",
     "alias": "1Nal",
+    "aliasHELM": "1Nal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -51315,6 +51500,7 @@
     "id": "LysBoc___N-epsilon-tert-Boc-L-lysine",
     "fullName": "N-epsilon-tert-Boc-L-lysine",
     "alias": "LysBoc",
+    "aliasHELM": "Lys_Boc",
     "attachmentPoints": [
       {
         "attachmentAtom": 13,
@@ -51480,6 +51666,7 @@
     "id": "aThr___L-allo-Threonine",
     "fullName": "L-allo-Threonine",
     "alias": "aThr",
+    "aliasHELM": "aThr",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -51777,6 +51964,7 @@
     "id": "D-2Nal___D-3-(2-naphthyl)-alanine",
     "fullName": "D-3-(2-naphthyl)-alanine",
     "alias": "D-2Nal",
+    "aliasHELM": "D-2Nal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -51992,6 +52180,7 @@
     "id": "D-2Thi___3-(2-thienyl)-D-alanine",
     "fullName": "3-(2-thienyl)-D-alanine",
     "alias": "D-2Thi",
+    "aliasHELM": "D-2Thi",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -52179,6 +52368,7 @@
     "id": "D-aHyp___cis-4-hydroxy-D-proline",
     "fullName": "cis-4-hydroxy-D-proline",
     "alias": "D-aHyp",
+    "aliasHELM": "D-aHyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -52359,6 +52549,7 @@
     "id": "D-aIle___D-allo-Isoleucine",
     "fullName": "D-allo-Isoleucine",
     "alias": "D-aIle",
+    "aliasHELM": "D-aIle",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -52574,6 +52765,7 @@
     "id": "D-Phg___D-phenylglycine",
     "fullName": "D-phenylglycine",
     "alias": "D-Phg",
+    "aliasHELM": "D-Phg",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -52782,6 +52974,7 @@
     "id": "DSertB___O-tert-Butyl-D-serine",
     "fullName": "O-tert-Butyl-D-serine",
     "alias": "DSertB",
+    "aliasHELM": "D-Ser_tBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -53027,6 +53220,7 @@
     "id": "Phe4Me___p-Methylphenylalanine",
     "fullName": "p-Methylphenylalanine",
     "alias": "Phe4Me",
+    "aliasHELM": "Phe_4Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -53287,6 +53481,7 @@
     "id": "Ser_Bn___O-Benzyl-L-serine",
     "fullName": "O-Benzyl-L-serine",
     "alias": "Ser_Bn",
+    "aliasHELM": "Ser_Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -53592,6 +53787,7 @@
     "id": "TyrtBu___O-tert-Butyl-L-tyrosine",
     "fullName": "O-tert-Butyl-L-tyrosine",
     "alias": "TyrtBu",
+    "aliasHELM": "Tyr_tBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -53779,6 +53975,7 @@
     "id": "aHyp___cis-4-hydroxy-L-proline",
     "fullName": "cis-4-hydroxy-L-proline",
     "alias": "aHyp",
+    "aliasHELM": "aHyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -54024,6 +54221,7 @@
     "id": "hPhe___Homophenylalanine",
     "fullName": "Homophenylalanine",
     "alias": "hPhe",
+    "aliasHELM": "hPhe",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -54321,6 +54519,7 @@
     "id": "D-1Nal___D-3-(1-naphthyl)-alanine",
     "fullName": "D-3-(1-naphthyl)-alanine",
     "alias": "D-1Nal",
+    "aliasHELM": "D-1Nal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -54486,6 +54685,7 @@
     "id": "D-aThr___D-allo-Threonine",
     "fullName": "D-allo-Threonine",
     "alias": "D-aThr",
+    "aliasHELM": "D-aThr",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -54716,6 +54916,7 @@
     "id": "D-Cha___3-cyclohexyl-D-alanine",
     "fullName": "3-cyclohexyl-D-alanine",
     "alias": "D-Cha",
+    "aliasHELM": "D-Cha",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -54909,6 +55110,7 @@
     "id": "D-Pen___D-penicillamine",
     "fullName": "D-penicillamine",
     "alias": "D-Pen",
+    "aliasHELM": "D-Pen",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -55163,6 +55365,7 @@
     "id": "DPhe4C___4-Chloro-D-phenylalanine",
     "fullName": "4-Chloro-D-phenylalanine",
     "alias": "DPhe4C",
+    "aliasHELM": "D-Phe_4Cl",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -55423,6 +55626,7 @@
     "id": "DSerBn___O-Benzyl-D-serine",
     "fullName": "O-Benzyl-D-serine",
     "alias": "DSerBn",
+    "aliasHELM": "D-Ser_Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -55524,6 +55728,7 @@
     "id": "MsO-___N-Terminal methanesulfonyl",
     "fullName": "N-Terminal methanesulfonyl",
     "alias": "MsO-",
+    "aliasHELM": "MsO",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -55756,6 +55961,7 @@
     "id": "Oic3aS___(2S,3aS,7aS)-perhydroindolic acid",
     "fullName": "(2S,3aS,7aS)-perhydroindolic acid",
     "alias": "Oic3aS",
+    "aliasHELM": "Oic_3aS-7aS",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -55941,6 +56147,7 @@
     "id": "Pip___Pipecolic acid",
     "fullName": "Pipecolic acid",
     "alias": "Pip",
+    "aliasHELM": "Pip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -56171,6 +56378,7 @@
     "id": "3Pal___3-(3-pyridyl)-alanine",
     "fullName": "3-(3-pyridyl)-alanine",
     "alias": "3Pal",
+    "aliasHELM": "3Pal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -56401,6 +56609,7 @@
     "id": "4Pal___3-(4-Pyridyl)-alanine",
     "fullName": "3-(4-Pyridyl)-alanine",
     "alias": "4Pal",
+    "aliasHELM": "4Pal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -56616,6 +56825,7 @@
     "id": "Chg___Alpha-cyclohexylglycine",
     "fullName": "Alpha-cyclohexylglycine",
     "alias": "Chg",
+    "aliasHELM": "Chg",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -56846,6 +57056,7 @@
     "id": "D-3Pal___D-3-(3-pyridyl)-alanine",
     "fullName": "D-3-(3-pyridyl)-alanine",
     "alias": "D-3Pal",
+    "aliasHELM": "D-3Pal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -57010,6 +57221,7 @@
     "id": "DaMeAb___D-Isovaline",
     "fullName": "D-Isovaline",
     "alias": "DaMeAb",
+    "aliasHELM": "D-aMeAbu",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -57225,6 +57437,7 @@
     "id": "D-Chg___D-Alpha-cyclohexylglycine",
     "fullName": "D-Alpha-cyclohexylglycine",
     "alias": "D-Chg",
+    "aliasHELM": "D-Chg",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -57448,6 +57661,7 @@
     "id": "D-Cit___D-citrulline",
     "fullName": "D-citrulline",
     "alias": "D-Cit",
+    "aliasHELM": "D-Cit",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -57626,6 +57840,7 @@
     "id": "D-Dab___D-2,4-diaminobutanoic acid",
     "fullName": "D-2,4-diaminobutanoic acid",
     "alias": "D-Dab",
+    "aliasHELM": "D-Dab",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -57820,6 +58035,7 @@
     "id": "D-Pip___D-Pipecolic acid",
     "fullName": "D-Pipecolic acid",
     "alias": "D-Pip",
+    "aliasHELM": "D-Pip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58072,6 +58288,7 @@
     "id": "D-Tic___D-1,2,3,4-tetrahydro-3-isoquinolinecarboxylic acid",
     "fullName": "D-1,2,3,4-tetrahydro-3-isoquinolinecarboxylic acid",
     "alias": "D-Tic",
+    "aliasHELM": "D-Tic",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58302,6 +58519,7 @@
     "id": "D-2Pal___D-3-(2-Pyridyl)-alanine",
     "fullName": "D-3-(2-Pyridyl)-alanine",
     "alias": "D-2Pal",
+    "aliasHELM": "D-2Pal",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58450,6 +58668,7 @@
     "id": "D-Abu___D-2-aminobutanoic acid",
     "fullName": "D-2-aminobutanoic acid",
     "alias": "D-Abu",
+    "aliasHELM": "D-Abu",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -58613,6 +58832,7 @@
     "id": "D-Dap___3-amino-D-alanine",
     "fullName": "3-amino-D-alanine",
     "alias": "D-Dap",
+    "aliasHELM": "D-Dap",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58820,6 +59040,7 @@
     "id": "Cbz-___N-Terminal carboxybenzyl",
     "fullName": "N-Terminal carboxybenzyl",
     "alias": "Cbz-",
+    "aliasHELM": "Cbz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58882,6 +59103,7 @@
     "id": "-Et___C-Terminal ethyl",
     "fullName": "C-Terminal ethyl",
     "alias": "-Et",
+    "aliasHELM": "-Et",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -58959,6 +59181,7 @@
     "id": "-NHEt___C-Terminal ethylamino",
     "fullName": "C-Terminal ethylamino",
     "alias": "-NHEt",
+    "aliasHELM": "NHEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -59036,6 +59259,7 @@
     "id": "-OEt___C-terminal ethoxy",
     "fullName": "C-terminal ethoxy",
     "alias": "-OEt",
+    "aliasHELM": "OEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -59225,6 +59449,7 @@
     "id": "Tos-___N-Terminal tosyl",
     "fullName": "N-Terminal tosyl",
     "alias": "Tos-",
+    "aliasHELM": "Tos",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -59386,6 +59611,7 @@
     "id": "D-Thz___D-thioproline",
     "fullName": "D-thioproline",
     "alias": "D-Thz",
+    "aliasHELM": "D-Thz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -59502,6 +59728,7 @@
     "id": "DACys___Deamino-Cysteine",
     "fullName": "Deamino-Cysteine",
     "alias": "DACys",
+    "aliasHELM": "deamino-Cys",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -59639,6 +59866,7 @@
     "id": "DADab___4-aminobutanoic acid",
     "fullName": "4-aminobutanoic acid",
     "alias": "DADab",
+    "aliasHELM": "deamino-Dab",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -59746,6 +59974,7 @@
     "id": "DAGlyC___2-cyanoacetic acid",
     "fullName": "2-cyanoacetic acid",
     "alias": "DAGlyC",
+    "aliasHELM": "deamino-Gly_CN",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -59905,6 +60134,7 @@
     "id": "DAGlyP___2-cyclopentylacetic acid",
     "fullName": "2-cyclopentylacetic acid",
     "alias": "DAGlyP",
+    "aliasHELM": "deamino-Gly_cPent",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -60012,6 +60242,7 @@
     "id": "DAGlyO___2-hydroxyacetic acid",
     "fullName": "2-hydroxyacetic acid",
     "alias": "DAGlyO",
+    "aliasHELM": "deamino-Gly_OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -60180,6 +60411,7 @@
     "id": "DAGlyT___2-thiopheneacetic acid",
     "fullName": "2-thiopheneacetic acid",
     "alias": "DAGlyT",
+    "aliasHELM": "deamino-Gly_thien2yl",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -60483,6 +60715,7 @@
     "id": "DTrpFo___1-formyl-D-tryptophan",
     "fullName": "1-formyl-D-tryptophan",
     "alias": "DTrpFo",
+    "aliasHELM": "D-Trp_For",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -60584,6 +60817,7 @@
     "id": "DANcy___Thioglycolic acid",
     "fullName": "Thioglycolic acid",
     "alias": "DANcy",
+    "aliasHELM": "deamino-Ncy",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -60788,6 +61022,7 @@
     "id": "PhLA___3-phenyllactic acid",
     "fullName": "3-phenyllactic acid",
     "alias": "PhLA",
+    "aliasHELM": "deamino-Phe",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -60992,6 +61227,7 @@
     "id": "DAPhg3___2-(3,5-dimethylphenyl)acetic acid",
     "fullName": "2-(3,5-dimethylphenyl)acetic acid",
     "alias": "DAPhg3",
+    "aliasHELM": "deamino-Phg_35diMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -61129,6 +61365,7 @@
     "id": "DALeu___4-methylpentanoic acid",
     "fullName": "4-methylpentanoic acid",
     "alias": "DALeu",
+    "aliasHELM": "deamino-Leu",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -61238,6 +61475,7 @@
     "id": "D-OAla___D-Lactic acid",
     "fullName": "D-Lactic acid",
     "alias": "D-OAla",
+    "aliasHELM": "D-OAla",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -61377,6 +61615,7 @@
     "id": "L-OVal___2-hydroxyisovaleric acid",
     "fullName": "2-hydroxyisovaleric acid",
     "alias": "L-OVal",
+    "aliasHELM": "L-OVal",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -61536,6 +61775,7 @@
     "id": "NHBn-___N-Terminal benzylamino",
     "fullName": "N-Terminal benzylamino",
     "alias": "NHBn-",
+    "aliasHELM": "NHBn-",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -61695,6 +61935,7 @@
     "id": "Bz-___N-Terminal benzoyl",
     "fullName": "N-Terminal benzoyl",
     "alias": "Bz-",
+    "aliasHELM": "Bz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -61757,6 +61998,7 @@
     "id": "Et-___N-Terminal ethyl",
     "fullName": "N-Terminal ethyl",
     "alias": "Et-",
+    "aliasHELM": "Et-",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -61804,6 +62046,7 @@
     "id": "Me-___N-Terminal methyl",
     "fullName": "N-Terminal methyl",
     "alias": "Me-",
+    "aliasHELM": "Me-",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -62070,6 +62313,7 @@
     "id": "DTyrEt___O-ethyl-D-tyrosine",
     "fullName": "O-ethyl-D-tyrosine",
     "alias": "DTyrEt",
+    "aliasHELM": "D-Tyr_Et",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -62308,6 +62552,7 @@
     "id": "Lys_Ac___N-epsilon-acetyl-L-lysine",
     "fullName": "N-epsilon-acetyl-L-lysine",
     "alias": "Lys_Ac",
+    "aliasHELM": "Lys_Ac",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -62380,6 +62625,7 @@
     "id": "OMe-___N-Terminal methoxy",
     "fullName": "N-Terminal methoxy",
     "alias": "OMe-",
+    "aliasHELM": "OMe-",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -62564,6 +62810,7 @@
     "id": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
     "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
     "alias": "AspOMe",
+    "aliasHELM": "Asp_OMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -62777,6 +63024,7 @@
     "id": "NMe23A___3-(dimethylamino)benzoic acid",
     "fullName": "3-(dimethylamino)benzoic acid",
     "alias": "NMe23A",
+    "aliasHELM": "NMe23Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -62998,6 +63246,7 @@
     "id": "PheaDH___Dehydrophenylalanine",
     "fullName": "Dehydrophenylalanine",
     "alias": "PheaDH",
+    "aliasHELM": "Phe_ab-dehydro",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -63219,6 +63468,7 @@
     "id": "Sta3xi___4-amino-3-hydroxy-6-methylheptanoic acid",
     "fullName": "4-amino-3-hydroxy-6-methylheptanoic acid",
     "alias": "Sta3xi",
+    "aliasHELM": "Sta_3xi4xi",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -63477,6 +63727,7 @@
     "id": "TyrabD___(2E)-2-amino-3-(4-methoxyphenyl)prop-2-enoic acid",
     "fullName": "(2E)-2-amino-3-(4-methoxyphenyl)prop-2-enoic acid",
     "alias": "TyrabD",
+    "aliasHELM": "Tyr_ab-dehydroMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -63580,6 +63831,7 @@
     "id": "DAlaol___D-alaninol",
     "fullName": "D-alaninol",
     "alias": "DAlaol",
+    "aliasHELM": "D-Ala-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -63771,6 +64023,7 @@
     "id": "DPhgol___D-phenylglycinol",
     "fullName": "D-phenylglycinol",
     "alias": "DPhgol",
+    "aliasHELM": "D-Phg-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -63912,6 +64165,7 @@
     "id": "Thr-ol___L-threoninol",
     "fullName": "L-threoninol",
     "alias": "Thr-ol",
+    "aliasHELM": "Thr-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -63989,6 +64243,7 @@
     "id": "Gly-ol___aminomethanol",
     "fullName": "aminomethanol",
     "alias": "Gly-ol",
+    "aliasHELM": "Gly-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -64098,6 +64353,7 @@
     "id": "Ala-ol___L-Alaninol",
     "fullName": "L-Alaninol",
     "alias": "Ala-ol",
+    "aliasHELM": "Ala-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -64267,6 +64523,7 @@
     "id": "Lys-ol___(2S)-2,6-diaminohexan-1-ol",
     "fullName": "(2S)-2,6-diaminohexan-1-ol",
     "alias": "Lys-ol",
+    "aliasHELM": "Lys-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -64458,6 +64715,7 @@
     "id": "Phg-ol___L-phenylglycinol",
     "fullName": "L-phenylglycinol",
     "alias": "Phg-ol",
+    "aliasHELM": "Phg-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -64604,6 +64862,7 @@
     "id": "Pro-ol___L-prolinol",
     "fullName": "L-prolinol",
     "alias": "Pro-ol",
+    "aliasHELM": "Pro-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -64743,6 +65002,7 @@
     "id": "Val-ol___L-valinol",
     "fullName": "L-valinol",
     "alias": "Val-ol",
+    "aliasHELM": "Val-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -64852,6 +65112,7 @@
     "id": "Ala-al___(2S)-2-aminopropanal",
     "fullName": "(2S)-2-aminopropanal",
     "alias": "Ala-al",
+    "aliasHELM": "Ala-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -65051,6 +65312,7 @@
     "id": "Arg-al___Argininal",
     "fullName": "Argininal",
     "alias": "Arg-al",
+    "aliasHELM": "Arg-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -65205,6 +65467,7 @@
     "id": "Asp-al___(3S)-3-amino-4-oxobutanoic acid",
     "fullName": "(3S)-3-amino-4-oxobutanoic acid",
     "alias": "Asp-al",
+    "aliasHELM": "Asp-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -65374,6 +65637,7 @@
     "id": "Lys-al___(2S)-2,6-diaminohexanal",
     "fullName": "(2S)-2,6-diaminohexanal",
     "alias": "Lys-al",
+    "aliasHELM": "Lys-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -65520,6 +65784,7 @@
     "id": "Pro-al___(2S)-pyrrolidine-2-carbaldehyde",
     "fullName": "(2S)-pyrrolidine-2-carbaldehyde",
     "alias": "Pro-al",
+    "aliasHELM": "Pro-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -65679,6 +65944,7 @@
     "id": "-NHBn___C-Terminal benzylamino",
     "fullName": "C-Terminal benzylamino",
     "alias": "-NHBn",
+    "aliasHELM": "-NHBn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -65878,6 +66144,7 @@
     "id": "Met_O2___L-methionine sulfone",
     "fullName": "L-methionine sulfone",
     "alias": "Met_O2",
+    "aliasHELM": "Met_O2",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -66123,6 +66390,7 @@
     "id": "Phe2Me___2-methyl-L-phenylalanine",
     "fullName": "2-methyl-L-phenylalanine",
     "alias": "Phe2Me",
+    "aliasHELM": "Phe_2Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -66383,6 +66651,7 @@
     "id": "Phe34d___3,4-dichloro-L-phenylalanine",
     "fullName": "3,4-dichloro-L-phenylalanine",
     "alias": "Phe34d",
+    "aliasHELM": "Phe_34diCl",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -66628,6 +66897,7 @@
     "id": "Phe4Br___4-bromo-L-phenylalanine",
     "fullName": "4-bromo-L-phenylalanine",
     "alias": "Phe4Br",
+    "aliasHELM": "Phe_4Br",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -66873,6 +67143,7 @@
     "id": "Phe_4I___4-iodo-L-phenylalanine",
     "fullName": "4-iodo-L-phenylalanine",
     "alias": "Phe_4I",
+    "aliasHELM": "Phe_4I",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -67277,6 +67548,7 @@
     "id": "Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid",
     "fullName": "(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid",
     "alias": "Phe4SD",
+    "aliasHELM": "Phe_4Sdihydroorotamido",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -67485,6 +67757,7 @@
     "id": "SerPO3___O-phospho-L-serine",
     "fullName": "O-phospho-L-serine",
     "alias": "SerPO3",
+    "aliasHELM": "Ser_PO3H2",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -67711,6 +67984,7 @@
     "id": "ThrPO3___O-phospho-L-threonine",
     "fullName": "O-phospho-L-threonine",
     "alias": "ThrPO3",
+    "aliasHELM": "Thr_PO3H2",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -67882,6 +68156,7 @@
     "id": "Thz___L-thioproline",
     "fullName": "L-thioproline",
     "alias": "Thz",
+    "aliasHELM": "Thz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -68179,6 +68454,7 @@
     "id": "Trp_Me___1-methyl-L-tryptophan",
     "fullName": "1-methyl-L-tryptophan",
     "alias": "Trp_Me",
+    "aliasHELM": "Trp_Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -68454,6 +68730,7 @@
     "id": "Tyr26d___2,6-dimethyl-L-tyrosine",
     "fullName": "2,6-dimethyl-L-tyrosine",
     "alias": "Tyr26d",
+    "aliasHELM": "Tyr_26diMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -68714,6 +68991,7 @@
     "id": "Tyr_3I___3-iodo-L-tyrosine",
     "fullName": "3-iodo-L-tyrosine",
     "alias": "Tyr_3I",
+    "aliasHELM": "Tyr_3I",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -69006,6 +69284,7 @@
     "id": "Tyr3NO___3-nitro-L-tyrosine",
     "fullName": "3-nitro-L-tyrosine",
     "alias": "Tyr3NO",
+    "aliasHELM": "Tyr_3NO2",
     "attachmentPoints": [
       {
         "attachmentAtom": 12,
@@ -69363,6 +69642,7 @@
     "id": "TyrPh4___(2S)-2-amino-3-[4-(4-hydroxyphenoxy)phenyl]propanoic acid",
     "fullName": "(2S)-2-amino-3-[4-(4-hydroxyphenoxy)phenyl]propanoic acid",
     "alias": "TyrPh4",
+    "aliasHELM": "Tyr_Ph4OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 12,
@@ -69668,6 +69948,7 @@
     "id": "TyrSO3___O-sulfo-L-tyrosine",
     "fullName": "O-sulfo-L-tyrosine",
     "alias": "TyrSO3",
+    "aliasHELM": "Tyr_SO3H",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -69846,6 +70127,7 @@
     "id": "Val3OH___3-hydroxy-L-valine",
     "fullName": "3-hydroxy-L-valine",
     "alias": "Val3OH",
+    "aliasHELM": "Val_3OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -70024,6 +70306,7 @@
     "id": "xiIle___(2S)-2-amino-3-methylpentanoic acid",
     "fullName": "(2S)-2-amino-3-methylpentanoic acid",
     "alias": "xiIle",
+    "aliasHELM": "xiIle",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -70237,6 +70520,7 @@
     "id": "NMe2Ab___2-(methylamino)benzoic acid",
     "fullName": "2-(methylamino)benzoic acid",
     "alias": "NMe2Ab",
+    "aliasHELM": "NMe2Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -70383,6 +70667,7 @@
     "id": "NMebAl___N-methyl-beta-alanine",
     "fullName": "N-methyl-beta-alanine",
     "alias": "NMebAl",
+    "aliasHELM": "NMebAla",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -70629,6 +70914,7 @@
     "id": "aMePhe___alpha-methyl-L-phenylalanine",
     "fullName": "alpha-methyl-L-phenylalanine",
     "alias": "aMePhe",
+    "aliasHELM": "aMePhe",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -70815,6 +71101,7 @@
     "id": "aMePro___alpha-methyl-L-proline",
     "fullName": "alpha-methyl-L-proline",
     "alias": "aMePro",
+    "aliasHELM": "aMePro",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -71091,6 +71378,7 @@
     "id": "aMeTy3___L-methyldopa",
     "fullName": "L-methyldopa",
     "alias": "aMeTy3",
+    "aliasHELM": "aMeTyr_3OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -71334,6 +71622,7 @@
     "id": "Bmt___(2S,3R,4R)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "fullName": "(2S,3R,4R)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "alias": "Bmt",
+    "aliasHELM": "Bmt",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -71576,6 +71865,7 @@
     "id": "Bmt_E___(2S,3R,4R,6E)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "fullName": "(2S,3R,4R,6E)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "alias": "Bmt_E",
+    "aliasHELM": "Bmt_E",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -71836,6 +72126,7 @@
     "id": "Cys_Bn___S-benzylcysteine",
     "fullName": "S-benzylcysteine",
     "alias": "Cys_Bn",
+    "aliasHELM": "Cys_Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -72066,6 +72357,7 @@
     "id": "His1Me___1-methyl-L-histidine",
     "fullName": "1-methyl-L-histidine",
     "alias": "His1Me",
+    "aliasHELM": "His_1Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -72229,6 +72521,7 @@
     "id": "Glyall___(2S)-2-aminopent-4-enoic acid",
     "fullName": "(2S)-2-aminopent-4-enoic acid",
     "alias": "Glyall",
+    "aliasHELM": "Gly_allyl",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -72399,6 +72692,7 @@
     "id": "GlycPr___(2S)-2-amino-2-cyclopropylacetic acid",
     "fullName": "(2S)-2-amino-2-cyclopropylacetic acid",
     "alias": "GlycPr",
+    "aliasHELM": "Gly_cPr",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -72554,6 +72848,7 @@
     "id": "Hsl___L-homoserine lactone",
     "fullName": "L-homoserine lactone",
     "alias": "Hsl",
+    "aliasHELM": "Hsl",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -72820,6 +73115,7 @@
     "id": "Kyn___Kynurenine",
     "fullName": "Kynurenine",
     "alias": "Kyn",
+    "aliasHELM": "Asp_Ph2NH2",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -72960,6 +73256,7 @@
     "id": "Azi___(2S)-aziridine-2-carboxylic acid",
     "fullName": "(2S)-aziridine-2-carboxylic acid",
     "alias": "Azi",
+    "aliasHELM": "Azi",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -73158,6 +73455,7 @@
     "id": "2Abz___Anthranilic acid",
     "fullName": "Anthranilic acid",
     "alias": "2Abz",
+    "aliasHELM": "2Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -73356,6 +73654,7 @@
     "id": "3Abz___3-Aminobenzoic acid",
     "fullName": "3-Aminobenzoic acid",
     "alias": "3Abz",
+    "aliasHELM": "3Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -73554,6 +73853,7 @@
     "id": "4Abz___4-Aminobenzoic acid",
     "fullName": "4-Aminobenzoic acid",
     "alias": "4Abz",
+    "aliasHELM": "4Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -73707,6 +74007,7 @@
     "id": "Ac3c___1-aminocyclopropane-1-carboxylic acid",
     "fullName": "1-aminocyclopropane-1-carboxylic acid",
     "alias": "Ac3c",
+    "aliasHELM": "Ac3c",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -73905,6 +74206,7 @@
     "id": "Ac6c___Homocycloleucine",
     "fullName": "Homocycloleucine",
     "alias": "Ac6c",
+    "aliasHELM": "Ac6c",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -74148,6 +74450,7 @@
     "id": "D-Bmt___(2R,3S,4S)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "fullName": "(2R,3S,4S)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "alias": "D-Bmt",
+    "aliasHELM": "D-Bmt",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -74390,6 +74693,7 @@
     "id": "DBmtE___(2R,3S,4S,6E)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "fullName": "(2R,3S,4S,6E)-2-amino-3-hydroxy-4-methyloct-6-enoic acid",
     "alias": "DBmtE",
+    "aliasHELM": "D-Bmt_E",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -74628,6 +74932,7 @@
     "id": "D-hArg___D-homoarginine",
     "fullName": "D-homoarginine",
     "alias": "D-hArg",
+    "aliasHELM": "D-hArg",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -74873,6 +75178,7 @@
     "id": "DPhe4F___4-fluoro-D-phenylalanine",
     "fullName": "4-fluoro-D-phenylalanine",
     "alias": "DPhe4F",
+    "aliasHELM": "D-Phe_4F",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -75170,6 +75476,7 @@
     "id": "DTrp2M___2-methyl-D-tryptophan",
     "fullName": "2-methyl-D-tryptophan",
     "alias": "DTrp2M",
+    "aliasHELM": "D-Trp_2Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -75430,6 +75737,7 @@
     "id": "DTyr3O___D-methyldopa",
     "fullName": "D-methyldopa",
     "alias": "DTyr3O",
+    "aliasHELM": "D-Tyr_3OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 13,
@@ -75681,6 +75989,7 @@
     "id": "DTyrMe___O-methyl-D-tyrosine",
     "fullName": "O-methyl-D-tyrosine",
     "alias": "DTyrMe",
+    "aliasHELM": "D-Tyr_Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -75859,6 +76168,7 @@
     "id": "DxiIle___(2R)-2-amino-3-methylpentanoic acid",
     "fullName": "(2R)-2-amino-3-methylpentanoic acid",
     "alias": "DxiIle",
+    "aliasHELM": "D-xiIle",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -76097,6 +76407,7 @@
     "id": "LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid",
     "fullName": "(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid",
     "alias": "LysiPr",
+    "aliasHELM": "Lys_iPr",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -76250,6 +76561,7 @@
     "id": "-Bn___C-Terminal benzyl",
     "fullName": "C-Terminal benzyl",
     "alias": "-Bn",
+    "aliasHELM": "-Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -76379,6 +76691,7 @@
     "id": "-Ph___C-terminal phenyl",
     "fullName": "C-terminal phenyl",
     "alias": "-Ph",
+    "aliasHELM": "Ph",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -76516,6 +76829,7 @@
     "id": "Boc-___N-Terminal tert-butyloxycarbonyl",
     "fullName": "N-Terminal tert-butyloxycarbonyl",
     "alias": "Boc-",
+    "aliasHELM": "Boc",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -76690,6 +77004,7 @@
     "id": "DAChg___2-cyclohexylacetic acid",
     "fullName": "2-cyclohexylacetic acid",
     "alias": "DAChg",
+    "aliasHELM": "deamino-Chg",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -76976,6 +77291,7 @@
     "id": "DADip___3,3-diphenylpropanoic acid",
     "fullName": "3,3-diphenylpropanoic acid",
     "alias": "DADip",
+    "aliasHELM": "deamino-Dip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -77113,6 +77429,7 @@
     "id": "DAGlyB___3,3-dimethylbutanoic acid",
     "fullName": "3,3-dimethylbutanoic acid",
     "alias": "DAGlyB",
+    "aliasHELM": "deamino-Gly_tBu",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -77317,6 +77634,7 @@
     "id": "DAhPhe___4-phenylbutanoic acid",
     "fullName": "4-phenylbutanoic acid",
     "alias": "DAhPhe",
+    "aliasHELM": "deamino-hPhe",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -77521,6 +77839,7 @@
     "id": "DAnTyr___4-methoxyphenylacetic acid",
     "fullName": "4-methoxyphenylacetic acid",
     "alias": "DAnTyr",
+    "aliasHELM": "deamino-nTyr_Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -77710,6 +78029,7 @@
     "id": "DAPhg4___4-chlorophenylacetic acid",
     "fullName": "4-chlorophenylacetic acid",
     "alias": "DAPhg4",
+    "aliasHELM": "deamino-Phg_4Cl",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -77849,6 +78169,7 @@
     "id": "D-OVal___D-2-hydroxyisovaleric acid",
     "fullName": "D-2-hydroxyisovaleric acid",
     "alias": "D-OVal",
+    "aliasHELM": "D-OVal",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -78003,6 +78324,7 @@
     "id": "OLeu___L-leucic acid",
     "fullName": "L-leucic acid",
     "alias": "OLeu",
+    "aliasHELM": "OLeu",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -78147,6 +78469,7 @@
     "id": "Bn-___N-Terminal benzyl",
     "fullName": "N-Terminal benzyl",
     "alias": "Bn-",
+    "aliasHELM": "Bn-",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -78306,6 +78629,7 @@
     "id": "OBn-___N-Terminal benzyloxy",
     "fullName": "N-Terminal benzyloxy",
     "alias": "OBn-",
+    "aliasHELM": "OBn-",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -78490,6 +78814,7 @@
     "id": "DALys___(2S)-6-amino-2-hydroxyhexanoic acid",
     "fullName": "(2S)-6-amino-2-hydroxyhexanoic acid",
     "alias": "DALys",
+    "aliasHELM": "deamino-Lys",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -78703,6 +79028,7 @@
     "id": "NMe24A___4-(dimethylamino)benzoic acid",
     "fullName": "4-(dimethylamino)benzoic acid",
     "alias": "NMe24A",
+    "aliasHELM": "NMe24Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -78969,6 +79295,7 @@
     "id": "PheNO2___2-amino-3-(3-nitrophenyl)prop-2-enoic acid",
     "fullName": "2-amino-3-(3-nitrophenyl)prop-2-enoic acid",
     "alias": "PheNO2",
+    "aliasHELM": "Phe_ab-dehydro_3NO2",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -79100,6 +79427,7 @@
     "id": "Aib-ol___2-amino-2-methylpropan-1-ol",
     "fullName": "2-amino-2-methylpropan-1-ol",
     "alias": "Aib-ol",
+    "aliasHELM": "Aib-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -79246,6 +79574,7 @@
     "id": "DProol___D-prolinol",
     "fullName": "D-prolinol",
     "alias": "DProol",
+    "aliasHELM": "D-Pro-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -79400,6 +79729,7 @@
     "id": "Leu-ol___L-leucinol",
     "fullName": "L-leucinol",
     "alias": "Leu-ol",
+    "aliasHELM": "Leu-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -79606,6 +79936,7 @@
     "id": "Phe-ol___L-phenylalaninol",
     "fullName": "L-phenylalaninol",
     "alias": "Phe-ol",
+    "aliasHELM": "Phe-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -79747,6 +80078,7 @@
     "id": "dThrol___D-threoninol",
     "fullName": "D-threoninol",
     "alias": "dThrol",
+    "aliasHELM": "D-Thr-ol",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -79839,6 +80171,7 @@
     "id": "Gly-al___2-aminoacetaldehyde",
     "fullName": "2-aminoacetaldehyde",
     "alias": "Gly-al",
+    "aliasHELM": "Gly-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -79993,6 +80326,7 @@
     "id": "Leu-al___(2S)-2-amino-4-methylpentanal",
     "fullName": "(2S)-2-amino-4-methylpentanal",
     "alias": "Leu-al",
+    "aliasHELM": "Leu-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -80199,6 +80533,7 @@
     "id": "Phe-al___(2S)-2-amino-3-phenylpropanal",
     "fullName": "(2S)-2-amino-3-phenylpropanal",
     "alias": "Phe-al",
+    "aliasHELM": "Phe-al",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -80488,6 +80823,7 @@
     "id": "LhArgE___(2S)-2-amino-6-{[bis(ethylamino)methylidene]amino}hexanoic acid",
     "fullName": "(2S)-2-amino-6-{[bis(ethylamino)methylidene]amino}hexanoic acid",
     "alias": "LhArgE",
+    "aliasHELM": "L-hArg_2Et",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -80681,6 +81017,7 @@
     "id": "Met_O___L-methionine sulfoxide",
     "fullName": "L-methionine sulfoxide",
     "alias": "Met_O",
+    "aliasHELM": "Met_O",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -80911,6 +81248,7 @@
     "id": "nTyr___L-4-Hydroxyphenylglycine",
     "fullName": "L-4-Hydroxyphenylglycine",
     "alias": "nTyr",
+    "aliasHELM": "nTyr",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -81152,6 +81490,7 @@
     "id": "Oic3aR___(2S,3aR,7aS)-perhydroindolic acid",
     "fullName": "(2S,3aR,7aS)-perhydroindolic acid",
     "alias": "Oic3aR",
+    "aliasHELM": "Oic_3aR-7aS",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -81397,6 +81736,7 @@
     "id": "Phe_2F___2-fluoro-L-phenylalanine",
     "fullName": "2-fluoro-L-phenylalanine",
     "alias": "Phe_2F",
+    "aliasHELM": "Phe_2F",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -81642,6 +81982,7 @@
     "id": "Phe_3F___3-fluoro-L-phenylalanine",
     "fullName": "3-fluoro-L-phenylalanine",
     "alias": "Phe_3F",
+    "aliasHELM": "Phe_3F",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -81887,6 +82228,7 @@
     "id": "Phe_4F___4-fluoro-L-phenylalanine",
     "fullName": "4-fluoro-L-phenylalanine",
     "alias": "Phe_4F",
+    "aliasHELM": "Phe_4F",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -82164,6 +82506,7 @@
     "id": "Phe4NO___4-nitro-L-phenylalanine",
     "fullName": "4-nitro-L-phenylalanine",
     "alias": "Phe4NO",
+    "aliasHELM": "Phe_4NO2",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -82424,6 +82767,7 @@
     "id": "Phebbd___(2S)-2-amino-3-methyl-3-phenylbutanoic acid",
     "fullName": "(2S)-2-amino-3-methyl-3-phenylbutanoic acid",
     "alias": "Phebbd",
+    "aliasHELM": "Phe_bbdiMe",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -82721,6 +83065,7 @@
     "id": "Trp5OH___5-hydroxy-L-tryptophan",
     "fullName": "5-hydroxy-L-tryptophan",
     "alias": "Trp5OH",
+    "aliasHELM": "Trp_5OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -83033,6 +83378,7 @@
     "id": "TrpOme___(2S)-2-amino-3-(1-methoxy-1H-indol-3-yl)propanoic acid",
     "fullName": "(2S)-2-amino-3-(1-methoxy-1H-indol-3-yl)propanoic acid",
     "alias": "TrpOme",
+    "aliasHELM": "Trp_Ome",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -83308,6 +83654,7 @@
     "id": "Tyr35d___3,5-diiodo-L-tyrosine",
     "fullName": "3,5-diiodo-L-tyrosine",
     "alias": "Tyr35d",
+    "aliasHELM": "Tyr_35diI",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -83568,6 +83915,7 @@
     "id": "Tyr3OH___3-hydroxy-L-tyrosine",
     "fullName": "3-hydroxy-L-tyrosine",
     "alias": "Tyr3OH",
+    "aliasHELM": "Tyr_3OH",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -83828,6 +84176,7 @@
     "id": "Tyr_Me___O-methyl-L-tyrosine",
     "fullName": "O-methyl-L-tyrosine",
     "alias": "Tyr_Me",
+    "aliasHELM": "Tyr_Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -84133,6 +84482,7 @@
     "id": "TyrPO3___O-phospho-L-tyrosine",
     "fullName": "O-phospho-L-tyrosine",
     "alias": "TyrPO3",
+    "aliasHELM": "Tyr_PO3H2",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -84319,6 +84669,7 @@
     "id": "xiHyp___4-hydroxy-L-proline",
     "fullName": "4-hydroxy-L-proline",
     "alias": "xiHyp",
+    "aliasHELM": "xiHyp",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -84482,6 +84833,7 @@
     "id": "xiThr___(2S)-2-amino-3-hydroxybutanoic acid",
     "fullName": "(2S)-2-amino-3-hydroxybutanoic acid",
     "alias": "xiThr",
+    "aliasHELM": "xiThr",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -84695,6 +85047,7 @@
     "id": "NMe4Ab___4-(methylamino)benzoic acid",
     "fullName": "4-(methylamino)benzoic acid",
     "alias": "NMe4Ab",
+    "aliasHELM": "NMe4Abz",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -84956,6 +85309,7 @@
     "id": "aMeTyr___alpha-methyl-tyrosine",
     "fullName": "alpha-methyl-tyrosine",
     "alias": "aMeTyr",
+    "aliasHELM": "aMeTyr",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -85209,6 +85563,7 @@
     "id": "Aoda___(2S)-2-amino-8-oxodecanoic acid",
     "fullName": "(2S)-2-amino-8-oxodecanoic acid",
     "alias": "Aoda",
+    "aliasHELM": "Aoda",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -85566,6 +85921,7 @@
     "id": "Bpa___4-benzoylphenylalanine",
     "fullName": "4-benzoylphenylalanine",
     "alias": "Bpa",
+    "aliasHELM": "Bpa",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -85729,6 +86085,7 @@
     "id": "Cys_Me___S-methylcysteine",
     "fullName": "S-methylcysteine",
     "alias": "Cys_Me",
+    "aliasHELM": "Cys_Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -86056,6 +86413,7 @@
     "id": "Dip___3,3-diphenylalanine",
     "fullName": "3,3-diphenylalanine",
     "alias": "Dip",
+    "aliasHELM": "Dip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -86294,6 +86652,7 @@
     "id": "hArg___(2S)-2-amino-6-[(diaminomethyl)amino]hexanoic acid",
     "fullName": "(2S)-2-amino-6-[(diaminomethyl)amino]hexanoic acid",
     "alias": "hArg",
+    "aliasHELM": "hArg",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -86621,6 +86980,7 @@
     "id": "His1Bn___(2S)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
     "fullName": "(2S)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
     "alias": "His1Bn",
+    "aliasHELM": "His_1Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -86851,6 +87211,7 @@
     "id": "His3Me___3-methyl-L-histidine",
     "fullName": "3-methyl-L-histidine",
     "alias": "His3Me",
+    "aliasHELM": "His_3Me",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -87178,6 +87539,7 @@
     "id": "Bip___Biphenylalanine",
     "fullName": "Biphenylalanine",
     "alias": "Bip",
+    "aliasHELM": "Bip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -87324,6 +87686,7 @@
     "id": "Abu23D___(2Z)-2-aminobut-2-enoic acid",
     "fullName": "(2Z)-2-aminobut-2-enoic acid",
     "alias": "Abu23D",
+    "aliasHELM": "Abu_23dehydro",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -87651,6 +88014,7 @@
     "id": "D-Dip___3,3-diphenyl-D-alanine",
     "fullName": "3,3-diphenyl-D-alanine",
     "alias": "D-Dip",
+    "aliasHELM": "D-Dip",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -87782,6 +88146,7 @@
     "id": "Dha___Dehydroalanine",
     "fullName": "Dehydroalanine",
     "alias": "Dha",
+    "aliasHELM": "Dha",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -88080,6 +88445,7 @@
     "id": "DhArgE___(2R)-2-amino-6-{[bis(ethylamino)methylidene]amino}hexanoic acid",
     "fullName": "(2R)-2-amino-6-{[bis(ethylamino)methylidene]amino}hexanoic acid",
     "alias": "DhArgE",
+    "aliasHELM": "D-hArg_Et2",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -88275,6 +88641,7 @@
     "id": "DMetSO___L-methionine (S)-S-oxide",
     "fullName": "L-methionine (S)-S-oxide",
     "alias": "DMetSO",
+    "aliasHELM": "D-Met_S-O",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -88602,6 +88969,7 @@
     "id": "DHis1B___(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
     "fullName": "(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
     "alias": "DHis1B",
+    "aliasHELM": "D-His_1Bn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -88832,6 +89200,7 @@
     "id": "D-nTyr___D-4-Hydroxyphenylglycine",
     "fullName": "D-4-Hydroxyphenylglycine",
     "alias": "D-nTyr",
+    "aliasHELM": "D-nTyr",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -89122,6 +89491,7 @@
     "id": "DPhe4u___(2R)-2-amino-3-[4-(carbamoylamino)phenyl]propanoic acid",
     "fullName": "(2R)-2-amino-3-[4-(carbamoylamino)phenyl]propanoic acid",
     "alias": "DPhe4u",
+    "aliasHELM": "D-Phe_4ureido",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -89941,6 +90311,7 @@
     "id": "oC3o___1,3 Propanediol",
     "fullName": "1,3 Propanediol",
     "alias": "oC3o",
+    "aliasHELM": "oC3o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -90228,6 +90599,7 @@
     "id": "tCo___1,3-Diaza-2-oxophenoxazin",
     "fullName": "1,3-Diaza-2-oxophenoxazin",
     "alias": "tCo",
+    "aliasHELM": "phoxC",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -90397,6 +90769,7 @@
     "id": "dhp___1,3-Dihydroxy-2-propoxymethyl (ganciclovir sugar)",
     "fullName": "1,3-Dihydroxy-2-propoxymethyl (ganciclovir sugar)",
     "alias": "dhp",
+    "aliasHELM": "dhp",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -90552,6 +90925,7 @@
     "id": "oC4o___1,4 Butanediol",
     "fullName": "1,4 Butanediol",
     "alias": "oC4o",
+    "aliasHELM": "oC4o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -90713,6 +91087,7 @@
     "id": "oC5o___1,5 Pentanediol",
     "fullName": "1,5 Pentanediol",
     "alias": "oC5o",
+    "aliasHELM": "oC5o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -90889,6 +91264,7 @@
     "id": "oC6o___1,6 Hexanediol",
     "fullName": "1,6 Hexanediol",
     "alias": "oC6o",
+    "aliasHELM": "oC6o",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -91080,6 +91456,7 @@
     "id": "oC7o___1,7 Heptanediol",
     "fullName": "1,7 Heptanediol",
     "alias": "oC7o",
+    "aliasHELM": "oC7o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -91331,6 +91708,7 @@
     "id": "oC11o___1,11 Undecanediol",
     "fullName": "1,11 Undecanediol",
     "alias": "oC11o",
+    "aliasHELM": "oC11o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -91597,6 +91975,7 @@
     "id": "oC12o___1,12 Dodecanediol",
     "fullName": "1,12 Dodecanediol",
     "alias": "oC12o",
+    "aliasHELM": "oC12o",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -91780,6 +92159,7 @@
     "id": "m1Yra___N1-methyl-pseudouracil",
     "fullName": "N1-methyl-pseudouracil",
     "alias": "m1Yra",
+    "aliasHELM": "m1Yra",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -91991,6 +92371,7 @@
     "id": "m1A___N1-methyladenine",
     "fullName": "N1-methyladenine",
     "alias": "m1A",
+    "aliasHELM": "m1A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -92217,6 +92598,7 @@
     "id": "m1G___N1-methylguanine",
     "fullName": "N1-methylguanine",
     "alias": "m1G",
+    "aliasHELM": "m1G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -92549,6 +92931,7 @@
     "id": "nC62r___2-O-(6-aminohexyl)ribose",
     "fullName": "2-O-(6-aminohexyl)ribose",
     "alias": "nC62r",
+    "aliasHELM": "nC62r",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -92817,6 +93200,7 @@
     "id": "m22G___N2,N2-dimethylguanine",
     "fullName": "N2,N2-dimethylguanine",
     "alias": "m22G",
+    "aliasHELM": "m22G",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -93051,6 +93435,7 @@
     "id": "ox23ar___2,3-Oxetanearabinose",
     "fullName": "2,3-Oxetanearabinose",
     "alias": "ox23ar",
+    "aliasHELM": "ox23ar",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -93281,6 +93666,7 @@
     "id": "ar___Arabinose",
     "fullName": "Arabinose",
     "alias": "ar",
+    "aliasHELM": "ar",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -93548,6 +93934,7 @@
     "id": "bnanc___2,4-BNANC (oxyamino-BNA)",
     "fullName": "2,4-BNANC (oxyamino-BNA)",
     "alias": "bnanc",
+    "aliasHELM": "bnanc",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -93830,6 +94217,7 @@
     "id": "bnancm___2,4-BNANCMe (N-Methyl-oxyamino BNA)",
     "fullName": "2,4-BNANCMe (N-Methyl-oxyamino BNA)",
     "alias": "bnancm",
+    "aliasHELM": "bnancm",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -94059,6 +94447,7 @@
     "id": "n2A___2-Aminoadenine",
     "fullName": "2-Aminoadenine",
     "alias": "n2A",
+    "aliasHELM": "n2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -94323,6 +94712,7 @@
     "id": "mon2ln___2-(Methoxy)amino LNA",
     "fullName": "2-(Methoxy)amino LNA",
     "alias": "mon2ln",
+    "aliasHELM": "mon2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -94575,6 +94965,7 @@
     "id": "lna___LNA (2,4-BNA)",
     "fullName": "LNA (2,4-BNA)",
     "alias": "lna",
+    "aliasHELM": "lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -94902,6 +95293,7 @@
     "id": "moeon2___2-(Methoxyethoxy)amino LNA (N-MOE)",
     "fullName": "2-(Methoxyethoxy)amino LNA (N-MOE)",
     "alias": "moeon2",
+    "aliasHELM": "moeon2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -95171,6 +95563,7 @@
     "id": "Rmclna___2-(R)-Methyl-cLNA",
     "fullName": "2-(R)-Methyl-cLNA",
     "alias": "Rmclna",
+    "aliasHELM": "Rmclna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -95527,6 +95920,7 @@
     "id": "impr6n___2-Amino-N6-imidazoylpropyladenine",
     "fullName": "2-Amino-N6-imidazoylpropyladenine",
     "alias": "impr6n",
+    "aliasHELM": "impr6n2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -95739,6 +96133,7 @@
     "id": "n2r___2-Aminoribose",
     "fullName": "2-Aminoribose",
     "alias": "n2r",
+    "aliasHELM": "n2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -95984,6 +96379,7 @@
     "id": "Bcm2r___2-C-Methylribose",
     "fullName": "2-C-Methylribose",
     "alias": "Bcm2r",
+    "aliasHELM": "Bcm2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -96295,6 +96691,7 @@
     "id": "cl2cyp___2-Chloro-N6-cyclopentyladenine",
     "fullName": "2-Chloro-N6-cyclopentyladenine",
     "alias": "cl2cyp",
+    "aliasHELM": "cl2cyp6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -96506,6 +96903,7 @@
     "id": "cl2A___2-Chloroadenine",
     "fullName": "2-Chloroadenine",
     "alias": "cl2A",
+    "aliasHELM": "cl2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -96778,6 +97176,7 @@
     "id": "mopr2d___2-Deoxy-2-methoxypropyl",
     "fullName": "2-Deoxy-2-methoxypropyl",
     "alias": "mopr2d",
+    "aliasHELM": "mopr2d",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -97007,6 +97406,7 @@
     "id": "fl2A___2-Fluoroadenine",
     "fullName": "2-Fluoroadenine",
     "alias": "fl2A",
+    "aliasHELM": "fl2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -97218,6 +97618,7 @@
     "id": "io2A___2-Iodoadenine",
     "fullName": "2-Iodoadenine",
     "alias": "io2A",
+    "aliasHELM": "io2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -97444,6 +97845,7 @@
     "id": "mo2A___2-Methoxyadenine",
     "fullName": "2-Methoxyadenine",
     "alias": "mo2A",
+    "aliasHELM": "mo2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -97566,6 +97968,7 @@
     "id": "moen___2-Methoxyethylamino",
     "fullName": "2-Methoxyethylamino",
     "alias": "moen",
+    "aliasHELM": "moen",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -97786,6 +98189,7 @@
     "id": "m2A___2-Methyladenine",
     "fullName": "2-Methyladenine",
     "alias": "m2A",
+    "aliasHELM": "m2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -98012,6 +98416,7 @@
     "id": "m2G___N2-methylguanine",
     "fullName": "N2-methylguanine",
     "alias": "m2G",
+    "aliasHELM": "m2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -98239,6 +98644,7 @@
     "id": "se2r___2-Methylseleno-2-deoxyribose",
     "fullName": "2-Methylseleno-2-deoxyribose",
     "alias": "se2r",
+    "aliasHELM": "se2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -98484,6 +98890,7 @@
     "id": "ms2r___2-Methylthio-2-deoxyribose",
     "fullName": "2-Methylthio-2-deoxyribose",
     "alias": "ms2r",
+    "aliasHELM": "ms2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -98728,6 +99135,7 @@
     "id": "ms2A___2-Methylthioadenine",
     "fullName": "2-Methylthioadenine",
     "alias": "ms2A",
+    "aliasHELM": "ms2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -99000,6 +99408,7 @@
     "id": "mnc2r___2-N-Methylcarbamoylribose",
     "fullName": "2-N-Methylcarbamoylribose",
     "alias": "mnc2r",
+    "aliasHELM": "mnc2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -99372,6 +99781,7 @@
     "id": "imbu2r___2-O-4-(Imidazo-1-yl) butylribose",
     "fullName": "2-O-4-(Imidazo-1-yl) butylribose",
     "alias": "imbu2r",
+    "aliasHELM": "imbu2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 19,
@@ -99722,6 +100132,7 @@
     "id": "fl5pr2___2-O-(2,2,3,3,3-Pentafluoropropyl)ribose",
     "fullName": "2-O-(2,2,3,3,3-Pentafluoropropyl)ribose",
     "alias": "fl5pr2",
+    "aliasHELM": "fl5pr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 18,
@@ -100012,6 +100423,7 @@
     "id": "nac2r___2-O-(2-Acetamide)ribose",
     "fullName": "2-O-(2-Acetamide)ribose",
     "alias": "nac2r",
+    "aliasHELM": "nac2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -100287,6 +100699,7 @@
     "id": "ne2r___2-O-(2-Amino)ethylribose",
     "fullName": "2-O-(2-Amino)ethylribose",
     "alias": "ne2r",
+    "aliasHELM": "ne2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -100562,6 +100975,7 @@
     "id": "fle2r___2-O-(2-Fluoroethyl)ribose",
     "fullName": "2-O-(2-Fluoroethyl)ribose",
     "alias": "fle2r",
+    "aliasHELM": "fle2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 13,
@@ -100867,6 +101281,7 @@
     "id": "menoe2___2-O-(2-Formaldoximino)ethylribose",
     "fullName": "2-O-(2-Formaldoximino)ethylribose",
     "alias": "menoe2",
+    "aliasHELM": "menoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -101239,6 +101654,7 @@
     "id": "phoe2r___2-O-(2-Phenoxyethyl)ribose",
     "fullName": "2-O-(2-Phenoxyethyl)ribose",
     "alias": "phoe2r",
+    "aliasHELM": "phoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 19,
@@ -101544,6 +101960,7 @@
     "id": "fl3e2r___2-O-(2-Trifluoro)ethylribose",
     "fullName": "2-O-(2-Trifluoro)ethylribose",
     "alias": "fl3e2r",
+    "aliasHELM": "fl3e2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -101864,6 +102281,7 @@
     "id": "fl3pr2___2-O-(3,3,3-Trifluoropropyl)ribose",
     "fullName": "2-O-(3,3,3-Trifluoropropyl)ribose",
     "alias": "fl3pr2",
+    "aliasHELM": "fl3pr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -102169,6 +102587,7 @@
     "id": "nbu2r___2-O-(4-Aminobutyl)ribose",
     "fullName": "2-O-(4-Aminobutyl)ribose",
     "alias": "nbu2r",
+    "aliasHELM": "nbu2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -104130,6 +104549,7 @@
     "id": "GalNAc___2-O-(6-(N-glutaryl-GalNAc3)aminohexylribose",
     "fullName": "2-O-(6-(N-glutaryl-GalNAc3)aminohexylribose",
     "alias": "GalNAc",
+    "aliasHELM": "GalNAc3C62r",
     "attachmentPoints": [
       {
         "attachmentAtom": 122,
@@ -104435,6 +104855,7 @@
     "id": "nma___2-O-(N-Methylacetamide)ribose",
     "fullName": "2-O-(N-Methylacetamide)ribose",
     "alias": "nma",
+    "aliasHELM": "nma",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -104948,6 +105369,7 @@
     "id": "pyren1___2-O-(Pyren-1-yl)methylribose",
     "fullName": "2-O-(Pyren-1-yl)methylribose",
     "alias": "pyren1",
+    "aliasHELM": "pyren1ylm2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -105255,6 +105677,7 @@
     "id": "Sm2moe___2-O-(S)-Methyl MOE",
     "fullName": "2-O-(S)-Methyl MOE",
     "alias": "Sm2moe",
+    "aliasHELM": "Sm2moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -105575,6 +105998,7 @@
     "id": "dmaoe___2-O-[(dimethylaminooxy)ethyl]ribose (DMAOE)",
     "fullName": "2-O-[(dimethylaminooxy)ethyl]ribose (DMAOE)",
     "alias": "dmaoe",
+    "aliasHELM": "dmaoe",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -105850,6 +106274,7 @@
     "id": "allyl2___2-O-Allylribose",
     "fullName": "2-O-Allylribose",
     "alias": "allyl2",
+    "aliasHELM": "allyl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -106140,6 +106565,7 @@
     "id": "aoe2r___2-O-Aminooxyethylribose (AOE)",
     "fullName": "2-O-Aminooxyethylribose (AOE)",
     "alias": "aoe2r",
+    "aliasHELM": "aoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -106460,6 +106886,7 @@
     "id": "nC52r___2-O-Aminopentylribose",
     "fullName": "2-O-Aminopentylribose",
     "alias": "nC52r",
+    "aliasHELM": "nC52r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -106750,6 +107177,7 @@
     "id": "npr2r___2-O-Aminopropylribose",
     "fullName": "2-O-Aminopropylribose",
     "alias": "npr2r",
+    "aliasHELM": "npr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -107137,6 +107565,7 @@
     "id": "bnoe2r___2-O-Benzyloxyethylribose",
     "fullName": "2-O-Benzyloxyethylribose",
     "alias": "bnoe2r",
+    "aliasHELM": "bnoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -107479,6 +107908,7 @@
     "id": "bn2r___2-O-Benzylribose",
     "fullName": "2-O-Benzylribose",
     "alias": "bn2r",
+    "aliasHELM": "bn2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 17,
@@ -107769,6 +108199,7 @@
     "id": "bu2r___2-O-Butylribose",
     "fullName": "2-O-Butylribose",
     "alias": "bu2r",
+    "aliasHELM": "bu2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -108074,6 +108505,7 @@
     "id": "m2nc2r___2-O-Dimethylaminocarbamoylribose",
     "fullName": "2-O-Dimethylaminocarbamoylribose",
     "alias": "m2nc2r",
+    "aliasHELM": "m2nc2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -108379,6 +108811,7 @@
     "id": "m2e2r___2-O-Dimethylaminoethylribose",
     "fullName": "2-O-Dimethylaminoethylribose",
     "alias": "m2e2r",
+    "aliasHELM": "m2e2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -108669,6 +109102,7 @@
     "id": "eom2r___2-O-Ethoxymethylribose",
     "fullName": "2-O-Ethoxymethylribose",
     "alias": "eom2r",
+    "aliasHELM": "eom2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -108929,6 +109363,7 @@
     "id": "e2r___2-O-Ethylribose",
     "fullName": "2-O-Ethylribose",
     "alias": "e2r",
+    "aliasHELM": "e2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 12,
@@ -109204,6 +109639,7 @@
     "id": "ipr2r___2-O-Isopropylribose",
     "fullName": "2-O-Isopropylribose",
     "alias": "ipr2r",
+    "aliasHELM": "ipr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -109449,6 +109885,7 @@
     "id": "c4m___2-O-Methyl carbocyclic ribose",
     "fullName": "2-O-Methyl carbocyclic ribose",
     "alias": "c4m",
+    "aliasHELM": "c4m",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -109694,6 +110131,7 @@
     "id": "s4m___2-O-Methyl-4-thioribose",
     "fullName": "2-O-Methyl-4-thioribose",
     "alias": "s4m",
+    "aliasHELM": "s4m",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -109984,6 +110422,7 @@
     "id": "mne2r___2-O-Methylaminoethylribose (MMAE)",
     "fullName": "2-O-Methylaminoethylribose (MMAE)",
     "alias": "mne2r",
+    "aliasHELM": "mne2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -110334,6 +110773,7 @@
     "id": "mseac___2-O-N-[2-(methylsulfanyl)ethyl]acetamidoribose",
     "fullName": "2-O-N-[2-(methylsulfanyl)ethyl]acetamidoribose",
     "alias": "mseac",
+    "aliasHELM": "mseac",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -110699,6 +111139,7 @@
     "id": "C92r___2-O-Nonylribose",
     "fullName": "2-O-Nonylribose",
     "alias": "C92r",
+    "aliasHELM": "C92r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -111004,6 +111445,7 @@
     "id": "C52r___2-O-Pentylribose",
     "fullName": "2-O-Pentylribose",
     "alias": "C52r",
+    "aliasHELM": "C52r",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -111331,6 +111773,7 @@
     "id": "ph2r___2-O-Phenylribose",
     "fullName": "2-O-Phenylribose",
     "alias": "ph2r",
+    "aliasHELM": "ph2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -111591,6 +112034,7 @@
     "id": "prparg___2-O-Propargylribose",
     "fullName": "2-O-Propargylribose",
     "alias": "prparg",
+    "aliasHELM": "prpargyl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -111866,6 +112310,7 @@
     "id": "pr2r___2-O-Propylribose",
     "fullName": "2-O-Propylribose",
     "alias": "pr2r",
+    "aliasHELM": "pr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 13,
@@ -112208,6 +112653,7 @@
     "id": "ime2r___2-O-[2-(1-Imidizolyl)ethyl] ribose",
     "fullName": "2-O-[2-(1-Imidizolyl)ethyl] ribose",
     "alias": "ime2r",
+    "aliasHELM": "ime2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -112588,6 +113034,7 @@
     "id": "trimoe___2-O-[2-(2-Methoxyethoxy)ethoxy]ethylribose (TriMOE)",
     "fullName": "2-O-[2-(2-Methoxyethoxy)ethoxy]ethylribose (TriMOE)",
     "alias": "trimoe",
+    "aliasHELM": "trimoe",
     "attachmentPoints": [
       {
         "attachmentAtom": 20,
@@ -112938,6 +113385,7 @@
     "id": "e2noe2___2-O-[2-((N,N-diethyl)aminooxy)ethyl]ribose",
     "fullName": "2-O-[2-((N,N-diethyl)aminooxy)ethyl]ribose",
     "alias": "e2noe2",
+    "aliasHELM": "e2noe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -113288,6 +113736,7 @@
     "id": "iprmno___2-O-[2-((N-Isopropyl-N-methyl)aminooxy)ethyl]ribose",
     "fullName": "2-O-[2-((N-Isopropyl-N-methyl)aminooxy)ethyl]ribose",
     "alias": "iprmno",
+    "aliasHELM": "iprmnoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -113608,6 +114057,7 @@
     "id": "guane2___2-O-[2-(Guanidinium)ethyl]ribose",
     "fullName": "2-O-[2-(Guanidinium)ethyl]ribose",
     "alias": "guane2",
+    "aliasHELM": "guane2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -113898,6 +114348,7 @@
     "id": "mse2r___2-O-[2-(Methylthio)ethyl]ribose",
     "fullName": "2-O-[2-(Methylthio)ethyl]ribose",
     "alias": "mse2r",
+    "aliasHELM": "mse2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -114203,6 +114654,7 @@
     "id": "msoe2r___2-O-[2-(methylsulfinyl)ethyl]ribose",
     "fullName": "2-O-[2-(methylsulfinyl)ethyl]ribose",
     "alias": "msoe2r",
+    "aliasHELM": "msoe2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -114553,6 +115005,7 @@
     "id": "dmaeoe___2-O-[2-[2-(N,N-dimethyl)aminoethoxy]ethyl]ribose",
     "fullName": "2-O-[2-[2-(N,N-dimethyl)aminoethoxy]ethyl]ribose",
     "alias": "dmaeoe",
+    "aliasHELM": "dmaeoe",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -114873,6 +115326,7 @@
     "id": "m2npr2___2-O-[3-(N,N-Dimethyl)aminopropyl]ribose",
     "fullName": "2-O-[3-(N,N-Dimethyl)aminopropyl]ribose",
     "alias": "m2npr2",
+    "aliasHELM": "m2npr2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -115163,6 +115617,7 @@
     "id": "s4moe___2-O-[(2-Methoxy)ethyl]-4-thioribose",
     "fullName": "2-O-[(2-Methoxy)ethyl]-4-thioribose",
     "alias": "s4moe",
+    "aliasHELM": "s4moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -115513,6 +115968,7 @@
     "id": "m2nenc___2-O-[(Dimethylamino)ethylcarbamoyl]ribose",
     "fullName": "2-O-[(Dimethylamino)ethylcarbamoyl]ribose",
     "alias": "m2nenc",
+    "aliasHELM": "m2nenc2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -115833,6 +116289,7 @@
     "id": "dmac___2-O-[(N,N-dimethyl)acetamido]ribose",
     "fullName": "2-O-[(N,N-dimethyl)acetamido]ribose",
     "alias": "dmac",
+    "aliasHELM": "dmac",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -116198,6 +116655,7 @@
     "id": "dmaeac___2-O-[N-[2-(Dimethylamino)ethyl]acetamido]ribose",
     "fullName": "2-O-[N-[2-(Dimethylamino)ethyl]acetamido]ribose",
     "alias": "dmaeac",
+    "aliasHELM": "dmaeac",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -116525,6 +116983,7 @@
     "id": "phs2r___2-Phenylthio-2-deoxyribose",
     "fullName": "2-Phenylthio-2-deoxyribose",
     "alias": "phs2r",
+    "aliasHELM": "phs2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -116777,6 +117236,7 @@
     "id": "s2lna___2-Thio LNA",
     "fullName": "2-Thio LNA",
     "alias": "s2lna",
+    "aliasHELM": "s2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -117046,6 +117506,7 @@
     "id": "Rs2cEt___2-Thio-(R)-cEt",
     "fullName": "2-Thio-(R)-cEt",
     "alias": "Rs2cEt",
+    "aliasHELM": "Rs2cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -117315,6 +117776,7 @@
     "id": "Ss2cEt___2-Thio-(S)-cEt",
     "fullName": "2-Thio-(S)-cEt",
     "alias": "Ss2cEt",
+    "aliasHELM": "Ss2cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -117492,6 +117954,7 @@
     "id": "s2C___2-Thiocytosine",
     "fullName": "2-Thiocytosine",
     "alias": "s2C",
+    "aliasHELM": "s2C",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -117666,6 +118129,7 @@
     "id": "s2T___2-Thiothymine",
     "fullName": "2-Thiothymine",
     "alias": "s2T",
+    "aliasHELM": "s2T",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -117855,6 +118319,7 @@
     "id": "m3T___N3-methylthymine",
     "fullName": "N3-methylthymine",
     "alias": "m3T",
+    "aliasHELM": "m3T",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -118014,6 +118479,7 @@
     "id": "s2U___2-Thiouracil",
     "fullName": "2-Thiouracil",
     "alias": "s2U",
+    "aliasHELM": "s2U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -118241,6 +118707,7 @@
     "id": "Ae2d___2-ethyl-2-deoxyribose",
     "fullName": "2-ethyl-2-deoxyribose",
     "alias": "Ae2d",
+    "aliasHELM": "Ae2d",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -118471,6 +118938,7 @@
     "id": "Am2d___2-alpha-C-Methyl-2-deoxyribose",
     "fullName": "2-alpha-C-Methyl-2-deoxyribose",
     "alias": "Am2d",
+    "aliasHELM": "Am2d",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -118790,6 +119258,7 @@
     "id": "m2nprn___N3-(dimethylamino)propylaminoadenine",
     "fullName": "N3-(dimethylamino)propylaminoadenine",
     "alias": "m2nprn",
+    "aliasHELM": "m2nprn2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -119017,6 +119486,7 @@
     "id": "clhna___3-Chloro HNA",
     "fullName": "3-Chloro HNA",
     "alias": "clhna",
+    "aliasHELM": "clhna",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -119291,6 +119761,7 @@
     "id": "c3ally___3-Deaza-3-allylguanine",
     "fullName": "3-Deaza-3-allylguanine",
     "alias": "c3ally",
+    "aliasHELM": "c3allyl3G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -119487,6 +119958,7 @@
     "id": "c3A___3-Deazaadenine",
     "fullName": "3-Deazaadenine",
     "alias": "c3A",
+    "aliasHELM": "c3A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -119698,6 +120170,7 @@
     "id": "c3G___3-Deazaguanine",
     "fullName": "3-Deazaguanine",
     "alias": "c3G",
+    "aliasHELM": "c3G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -119925,6 +120398,7 @@
     "id": "n3m___3-Deoxy-3-amino-2-O-methylribose",
     "fullName": "3-Deoxy-3-amino-2-O-methylribose",
     "alias": "n3m",
+    "aliasHELM": "n3m",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -120138,6 +120612,7 @@
     "id": "n3d___3-Deoxy-3-amino-2-deoxyribose",
     "fullName": "3-Deoxy-3-amino-2-deoxyribose",
     "alias": "n3d",
+    "aliasHELM": "n3d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -120368,6 +120843,7 @@
     "id": "n3fl2r___3-Deoxy-3-amino-2-fluororibose",
     "fullName": "3-Deoxy-3-amino-2-fluororibose",
     "alias": "n3fl2r",
+    "aliasHELM": "n3fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -120581,6 +121057,7 @@
     "id": "n3co4d___3-Deoxy-3-amino-4-carboxyl-deoxyribose",
     "fullName": "3-Deoxy-3-amino-4-carboxyl-deoxyribose",
     "alias": "n3co4d",
+    "aliasHELM": "n3co4d",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -120826,6 +121303,7 @@
     "id": "me3m___3-Deoxy-3-methylene-2-O-methylribose",
     "fullName": "3-Deoxy-3-methylene-2-O-methylribose",
     "alias": "me3m",
+    "aliasHELM": "me3m",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -121039,6 +121517,7 @@
     "id": "me3d___3-Deoxy-3-methylene-2-deoxyribose",
     "fullName": "3-Deoxy-3-methylene-2-deoxyribose",
     "alias": "me3d",
+    "aliasHELM": "me3d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -121269,6 +121748,7 @@
     "id": "me3fl2___3-Deoxy-3-methylene-2-fluororibose",
     "fullName": "3-Deoxy-3-methylene-2-fluororibose",
     "alias": "me3fl2",
+    "aliasHELM": "me3fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -121499,6 +121979,7 @@
     "id": "me3r___3-Deoxy-3-methyleneribose",
     "fullName": "3-Deoxy-3-methyleneribose",
     "alias": "me3r",
+    "aliasHELM": "me3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -121712,6 +122193,7 @@
     "id": "s3d___3-Deoxy-3-thio-2-deoxyribose",
     "fullName": "3-Deoxy-3-thio-2-deoxyribose",
     "alias": "s3d",
+    "aliasHELM": "s3d",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -121925,6 +122407,7 @@
     "id": "25d3r___3-Deoxyribose (2,5 connectivity)",
     "fullName": "3-Deoxyribose (2,5 connectivity)",
     "alias": "25d3r",
+    "aliasHELM": "25d3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -122170,6 +122653,7 @@
     "id": "fhna___3-Fluoro HNA",
     "fullName": "3-Fluoro HNA",
     "alias": "fhna",
+    "aliasHELM": "fhna",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -122438,6 +122922,7 @@
     "id": "m3ALln___3-Methyl-alpha-L-LNA",
     "fullName": "3-Methyl-alpha-L-LNA",
     "alias": "m3ALln",
+    "aliasHELM": "m3ALlna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -122630,6 +123115,7 @@
     "id": "m3C___3-Methylcytosine",
     "fullName": "3-Methylcytosine",
     "alias": "m3C",
+    "aliasHELM": "m3C",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -122804,6 +123290,7 @@
     "id": "m3U___3-Methyluracil",
     "fullName": "3-Methyluracil",
     "alias": "m3U",
+    "aliasHELM": "m3U",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -123120,6 +123607,7 @@
     "id": "mo4bn3___3-N-(p-Methoxybenzyl)thymine",
     "fullName": "3-N-(p-Methoxybenzyl)thymine",
     "alias": "mo4bn3",
+    "aliasHELM": "mo4bn3T",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -123392,6 +123880,7 @@
     "id": "fleana___3-O-FEt ANA",
     "fullName": "3-O-FEt ANA",
     "alias": "fleana",
+    "aliasHELM": "fleana",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -123697,6 +124186,7 @@
     "id": "moe3an___3-O-MOE-ANA",
     "fullName": "3-O-MOE-ANA",
     "alias": "moe3an",
+    "aliasHELM": "moe3ana",
     "attachmentPoints": [
       {
         "attachmentAtom": 15,
@@ -123957,6 +124447,7 @@
     "id": "m3ana___3-O-Methyl-ANA",
     "fullName": "3-O-Methyl-ANA",
     "alias": "m3ana",
+    "aliasHELM": "m3ana",
     "attachmentPoints": [
       {
         "attachmentAtom": 12,
@@ -124247,6 +124738,7 @@
     "id": "25moe3___3-O-methoxyethyl ribose (2,5 connectivity)",
     "fullName": "3-O-methoxyethyl ribose (2,5 connectivity)",
     "alias": "25moe3",
+    "aliasHELM": "25moe3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -124492,6 +124984,7 @@
     "id": "afhna___Ara-FHNA",
     "fullName": "Ara-FHNA",
     "alias": "afhna",
+    "aliasHELM": "afhna",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -124720,6 +125213,7 @@
     "id": "Bcm3d___3-beta-C-Methyl-2-deoxyribose",
     "fullName": "3-beta-C-Methyl-2-deoxyribose",
     "alias": "Bcm3d",
+    "aliasHELM": "Bcm3d",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -124965,6 +125459,7 @@
     "id": "Bcm3r___3-beta-C-Methylribose",
     "fullName": "3-beta-C-Methylribose",
     "alias": "Bcm3r",
+    "aliasHELM": "Bcm3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -125142,6 +125637,7 @@
     "id": "h456U___tetrahydro-4-hydroxy-1H-pyrimidin-2-one",
     "fullName": "tetrahydro-4-hydroxy-1H-pyrimidin-2-one",
     "alias": "h456U",
+    "aliasHELM": "h456U",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -125382,6 +125878,7 @@
     "id": "acn4d___N-acetyl-2-deoxyazaribose",
     "fullName": "N-acetyl-2-deoxyazaribose",
     "alias": "acn4d",
+    "aliasHELM": "acn4d",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -125604,6 +126101,7 @@
     "id": "ac4C___N4-acetylcytosine",
     "fullName": "N4-acetylcytosine",
     "alias": "ac4C",
+    "aliasHELM": "ac4C",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -125838,6 +126336,7 @@
     "id": "cnes4T___4-Cyanoethylthiothymine",
     "fullName": "4-Cyanoethylthiothymine",
     "alias": "cnes4T",
+    "aliasHELM": "cnes4T",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -125982,6 +126481,7 @@
     "id": "d4U___2-hydroxypyrimidine",
     "fullName": "2-hydroxypyrimidine",
     "alias": "d4U",
+    "aliasHELM": "d4U",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -126276,6 +126776,7 @@
     "id": "oC64m5___4-Hexan-6-ol-5-methylcytosine",
     "fullName": "4-Hexan-6-ol-5-methylcytosine",
     "alias": "oC64m5",
+    "aliasHELM": "oC64m5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -126459,6 +126960,7 @@
     "id": "m4C___4-Methylcytosine",
     "fullName": "4-Methylcytosine",
     "alias": "m4C",
+    "aliasHELM": "m4C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -126633,6 +127135,7 @@
     "id": "oh4C___4N-Hydroxycytosine",
     "fullName": "4N-Hydroxycytosine",
     "alias": "oh4C",
+    "aliasHELM": "oh4C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -126828,6 +127331,7 @@
     "id": "s4d___4-Thio-2-deoxyribose",
     "fullName": "4-Thio-2-deoxyribose",
     "alias": "s4d",
+    "aliasHELM": "s4d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -127020,6 +127524,7 @@
     "id": "s4T___4-Thiothymidine",
     "fullName": "4-Thiothymidine",
     "alias": "s4T",
+    "aliasHELM": "s4T",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -127179,6 +127684,7 @@
     "id": "s4U___4-Thiouracil",
     "fullName": "4-Thiouracil",
     "alias": "s4U",
+    "aliasHELM": "s4U",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -127353,6 +127859,7 @@
     "id": "h56T___5,6-Dihydrothymine",
     "fullName": "5,6-Dihydrothymine",
     "alias": "h56T",
+    "aliasHELM": "h56T",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -127542,6 +128049,7 @@
     "id": "m6T___5,6-Dimethyluracil",
     "fullName": "5,6-Dimethyluracil",
     "alias": "m6T",
+    "aliasHELM": "m6T",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -127753,6 +128261,7 @@
     "id": "pr56U___6,7-dihydro-1H-cyclopenta[d]pyrimidine-2,4(3H,5H)-dione",
     "fullName": "6,7-dihydro-1H-cyclopenta[d]pyrimidine-2,4(3H,5H)-dione",
     "alias": "pr56U",
+    "aliasHELM": "pr56U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -127957,6 +128466,7 @@
     "id": "brviny___(E)-5-(2-bromovinyl)uracil",
     "fullName": "(E)-5-(2-bromovinyl)uracil",
     "alias": "brviny",
+    "aliasHELM": "brvinyl5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -128176,6 +128686,7 @@
     "id": "npry5C___5-(Propargylamine)cytosine",
     "fullName": "5-(Propargylamine)cytosine",
     "alias": "npry5C",
+    "aliasHELM": "npry5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -128444,6 +128955,7 @@
     "id": "5R6Rm5___5-(R)-Methyl-(R)-cEt BNA",
     "fullName": "5-(R)-Methyl-(R)-cEt BNA",
     "alias": "5R6Rm5",
+    "aliasHELM": "5R6Rm5cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -128730,6 +129242,7 @@
     "id": "5R6Sm5___5-(R)-Methyl-(S)-cEt BNA",
     "fullName": "5-(R)-Methyl-(S)-cEt BNA",
     "alias": "5R6Sm5",
+    "aliasHELM": "5R6Sm5cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -129016,6 +129529,7 @@
     "id": "5S6Rm5___5-(S)-Methyl-(R)-cEt BNA",
     "fullName": "5-(S)-Methyl-(R)-cEt BNA",
     "alias": "5S6Rm5",
+    "aliasHELM": "5S6Rm5cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -129302,6 +129816,7 @@
     "id": "5S6Sm5___5-(S)-Methyl-(S)-cEt BNA",
     "fullName": "5-(S)-Methyl-(S)-cEt BNA",
     "alias": "5S6Sm5",
+    "aliasHELM": "5S6Sm5cEt",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -129524,6 +130039,7 @@
     "id": "allyl5___5-Allyluracil",
     "fullName": "5-Allyluracil",
     "alias": "allyl5",
+    "aliasHELM": "allyl5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -129788,6 +130304,7 @@
     "id": "nC65C___5-Aminohexylcytosine",
     "fullName": "5-Aminohexylcytosine",
     "alias": "nC65C",
+    "aliasHELM": "nC65C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -130067,6 +130584,7 @@
     "id": "nC65U___5-Aminohexyluracil",
     "fullName": "5-Aminohexyluracil",
     "alias": "nC65U",
+    "aliasHELM": "nC65U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -130295,6 +130813,7 @@
     "id": "npr5U___5-Aminopropyluracil",
     "fullName": "5-Aminopropyluracil",
     "alias": "npr5U",
+    "aliasHELM": "npr5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -130469,6 +130988,7 @@
     "id": "br5C___5-Bromocytosine",
     "fullName": "5-Bromocytosine",
     "alias": "br5C",
+    "aliasHELM": "br5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -130643,6 +131163,7 @@
     "id": "br5U___5-Bromouracil",
     "fullName": "5-Bromouracil",
     "alias": "br5U",
+    "aliasHELM": "br5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -130817,6 +131338,7 @@
     "id": "cl5C___5-Chlorocytosine",
     "fullName": "5-Chlorocytosine",
     "alias": "cl5C",
+    "aliasHELM": "cl5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -130991,6 +131513,7 @@
     "id": "cl5U___5-Chlorouracil",
     "fullName": "5-Chlorouracil",
     "alias": "cl5U",
+    "aliasHELM": "cl5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -131180,6 +131703,7 @@
     "id": "CN5U___5-Cyanouracil",
     "fullName": "5-Cyanouracil",
     "alias": "CN5U",
+    "aliasHELM": "CN5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -131900,6 +132424,7 @@
     "id": "DBCOnC___5-DBCO-U",
     "fullName": "5-DBCO-U",
     "alias": "DBCOnC",
+    "aliasHELM": "DBCOnC6ncee5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -132112,6 +132637,7 @@
     "id": "d5m___5-Deoxy-2-O-methylribose",
     "fullName": "5-Deoxy-2-O-methylribose",
     "alias": "d5m",
+    "aliasHELM": "d5m",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -132387,6 +132913,7 @@
     "id": "d5moe___5-Deoxy-2-O-methyoxyethylribose",
     "fullName": "5-Deoxy-2-O-methyoxyethylribose",
     "alias": "d5moe",
+    "aliasHELM": "d5moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -132632,6 +133159,7 @@
     "id": "n5m___5-Deoxy-5-amino-2-O-methylribose",
     "fullName": "5-Deoxy-5-amino-2-O-methylribose",
     "alias": "n5m",
+    "aliasHELM": "n5m",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -132845,6 +133373,7 @@
     "id": "n5d___5-Deoxy-5-amino-2-deoxyribose",
     "fullName": "5-Deoxy-5-amino-2-deoxyribose",
     "alias": "n5d",
+    "aliasHELM": "n5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -133075,6 +133604,7 @@
     "id": "n5fl2r___5-Deoxy-5-amino-2-fluororibose",
     "fullName": "5-Deoxy-5-amino-2-fluororibose",
     "alias": "n5fl2r",
+    "aliasHELM": "n5fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -133305,6 +133835,7 @@
     "id": "n5r___5-Deoxy-5-aminoribose",
     "fullName": "5-Deoxy-5-aminoribose",
     "alias": "n5r",
+    "aliasHELM": "n5r",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -133518,6 +134049,7 @@
     "id": "s5d___5-Deoxy-5-thioribose",
     "fullName": "5-Deoxy-5-thioribose",
     "alias": "s5d",
+    "aliasHELM": "s5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -133725,6 +134257,7 @@
     "id": "e5U___5-Ethyluracil",
     "fullName": "5-Ethyluracil",
     "alias": "e5U",
+    "aliasHELM": "e5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -133929,6 +134462,7 @@
     "id": "ethy5C___5-Ethynylcytosine",
     "fullName": "5-Ethynylcytosine",
     "alias": "ethy5C",
+    "aliasHELM": "ethy5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -134103,6 +134637,7 @@
     "id": "fl5C___5-Fluorocytosine",
     "fullName": "5-Fluorocytosine",
     "alias": "fl5C",
+    "aliasHELM": "fl5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -134298,6 +134833,7 @@
     "id": "5formD___5-Formyl-2-deoxyribose",
     "fullName": "5-Formyl-2-deoxyribose",
     "alias": "5formD",
+    "aliasHELM": "5formD",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -134505,6 +135041,7 @@
     "id": "form5C___5-Formylcytosine",
     "fullName": "5-Formylcytosine",
     "alias": "form5C",
+    "aliasHELM": "form5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -134694,6 +135231,7 @@
     "id": "form5U___5-Formyluracil",
     "fullName": "5-Formyluracil",
     "alias": "form5U",
+    "aliasHELM": "form5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -134868,6 +135406,7 @@
     "id": "oh5C___5-Hydroxycytosine",
     "fullName": "5-Hydroxycytosine",
     "alias": "oh5C",
+    "aliasHELM": "oh5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -135057,6 +135596,7 @@
     "id": "hm5C___5-Hydroxymethylcytosine",
     "fullName": "5-Hydroxymethylcytosine",
     "alias": "hm5C",
+    "aliasHELM": "hm5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -135231,6 +135771,7 @@
     "id": "oh5U___5-Hydroxyuracil",
     "fullName": "5-Hydroxyuracil",
     "alias": "oh5U",
+    "aliasHELM": "oh5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -135420,6 +135961,7 @@
     "id": "ohm5U___5-Hyroxymethyluracil",
     "fullName": "5-Hyroxymethyluracil",
     "alias": "ohm5U",
+    "aliasHELM": "ohm5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -135594,6 +136136,7 @@
     "id": "io5C___5-Iodocytosine",
     "fullName": "5-Iodocytosine",
     "alias": "io5C",
+    "aliasHELM": "io5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -135798,6 +136341,7 @@
     "id": "ipr5U___5-Isopropyluracil",
     "fullName": "5-Isopropyluracil",
     "alias": "ipr5U",
+    "aliasHELM": "ipr5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -135987,6 +136531,7 @@
     "id": "mo5U___5-Methoxyuracil",
     "fullName": "5-Methoxyuracil",
     "alias": "mo5U",
+    "aliasHELM": "mo5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -136229,6 +136774,7 @@
     "id": "m5m___5-Methyl-2-O-methylribose",
     "fullName": "5-Methyl-2-O-methylribose",
     "alias": "m5m",
+    "aliasHELM": "m5m",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -136457,6 +137003,7 @@
     "id": "m5d___5-Methyldeoxyribose",
     "fullName": "5-Methyldeoxyribose",
     "alias": "m5d",
+    "aliasHELM": "m5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -136716,6 +137263,7 @@
     "id": "thiz5C___5-Thiazolecytidine",
     "fullName": "5-Thiazolecytidine",
     "alias": "thiz5C",
+    "aliasHELM": "thiaz5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -136957,6 +137505,7 @@
     "id": "thiz5U___5-Thiazoleuracil",
     "fullName": "5-Thiazoleuracil",
     "alias": "thiz5U",
+    "aliasHELM": "thiaz5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -137198,6 +137747,7 @@
     "id": "thien5___5-Thienyl-6-azauracil",
     "fullName": "5-Thienyl-6-azauracil",
     "alias": "thien5",
+    "aliasHELM": "thien5z6U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -137417,6 +137967,7 @@
     "id": "fl3mC___5-Trifluoromethylcytosine",
     "fullName": "5-Trifluoromethylcytosine",
     "alias": "fl3mC",
+    "aliasHELM": "fl3mC",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -137606,6 +138157,7 @@
     "id": "vinyl5___5-Vinyluracil",
     "fullName": "5-Vinyluracil",
     "alias": "vinyl5",
+    "aliasHELM": "vinyl5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -137810,6 +138362,7 @@
     "id": "mnm5U___5-[(methylamino)methyl]uracil",
     "fullName": "5-[(methylamino)methyl]uracil",
     "alias": "mnm5U",
+    "aliasHELM": "mnm5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -138165,6 +138718,7 @@
     "id": "nobn6p___6-(p-Nitrobenzylthio)purine",
     "fullName": "6-(p-Nitrobenzylthio)purine",
     "alias": "nobn6p",
+    "aliasHELM": "nobn6pur",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -138511,6 +139065,7 @@
     "id": "nC6n2G___6-Aminohexyl-2-aminoguanine",
     "fullName": "6-Aminohexyl-2-aminoguanine",
     "alias": "nC6n2G",
+    "aliasHELM": "nC6n2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -138875,6 +139430,7 @@
     "id": "nC6n8A___6-Aminohexyl-8-aminoadenine",
     "fullName": "6-Aminohexyl-8-aminoadenine",
     "alias": "nC6n8A",
+    "aliasHELM": "nC6n8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 13,
@@ -139097,6 +139653,7 @@
     "id": "z6pry5___6-Aza-5-propynyluracil",
     "fullName": "6-Aza-5-propynyluracil",
     "alias": "z6pry5",
+    "aliasHELM": "z6pry5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -139256,6 +139813,7 @@
     "id": "z5C___6-Azacytosine",
     "fullName": "6-Azacytosine",
     "alias": "z5C",
+    "aliasHELM": "z5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -139430,6 +139988,7 @@
     "id": "z5T___6-Azathymine",
     "fullName": "6-Azathymine",
     "alias": "z5T",
+    "aliasHELM": "z5T",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -139589,6 +140148,7 @@
     "id": "z6U___6-Azauracil",
     "fullName": "6-Azauracil",
     "alias": "z6U",
+    "aliasHELM": "z6U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -139800,6 +140360,7 @@
     "id": "cl6G___6-Chloroguanine",
     "fullName": "6-Chloroguanine",
     "alias": "cl6G",
+    "aliasHELM": "cl6G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -139996,6 +140557,7 @@
     "id": "cl6pur___6-Chloropurine",
     "fullName": "6-Chloropurine",
     "alias": "cl6pur",
+    "aliasHELM": "cl6pur",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -140289,6 +140851,7 @@
     "id": "cyh6A___N6-cyclohexyladenine",
     "fullName": "N6-cyclohexyladenine",
     "alias": "cyh6A",
+    "aliasHELM": "cyh6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -140567,6 +141130,7 @@
     "id": "cyp6A___N6-cyclopentyladenine",
     "fullName": "N6-cyclopentyladenine",
     "alias": "cyp6A",
+    "aliasHELM": "cyp6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -140808,6 +141372,7 @@
     "id": "e6A___2-amino-6-etoxypurine",
     "fullName": "2-amino-6-etoxypurine",
     "alias": "e6A",
+    "aliasHELM": "e6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -141019,6 +141584,7 @@
     "id": "mo6pur___6-Methoxypurine",
     "fullName": "6-Methoxypurine",
     "alias": "mo6pur",
+    "aliasHELM": "mo6pur",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -141245,6 +141811,7 @@
     "id": "m6G___6-O-methylguanine",
     "fullName": "6-O-methylguanine",
     "alias": "m6G",
+    "aliasHELM": "m6G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -141441,6 +142008,7 @@
     "id": "m6pur___6-Methylpurine",
     "fullName": "6-Methylpurine",
     "alias": "m6pur",
+    "aliasHELM": "m6pur",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -141667,6 +142235,7 @@
     "id": "ms6G___6-Methylthioguanine",
     "fullName": "6-Methylthioguanine",
     "alias": "ms6G",
+    "aliasHELM": "ms6G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -141878,6 +142447,7 @@
     "id": "ms6pur___6-Methylthiopurine",
     "fullName": "6-Methylthiopurine",
     "alias": "ms6pur",
+    "aliasHELM": "ms6pur",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -142052,6 +142622,7 @@
     "id": "m6U___6-Methyluracil",
     "fullName": "6-Methyluracil",
     "alias": "m6U",
+    "aliasHELM": "m6U",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -142263,6 +142834,7 @@
     "id": "s6G___6-Thioguanine",
     "fullName": "6-Thioguanine",
     "alias": "s6G",
+    "aliasHELM": "s6G",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -142459,6 +143031,7 @@
     "id": "s6puri___6-Mercaptopurine",
     "fullName": "6-Mercaptopurine",
     "alias": "s6puri",
+    "aliasHELM": "s6purine",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -142671,6 +143244,7 @@
     "id": "Bcoh4d___6-beta-Hydroxycarbo-2-deoxyribose",
     "fullName": "6-beta-Hydroxycarbo-2-deoxyribose",
     "alias": "Bcoh4d",
+    "aliasHELM": "Bcoh4d",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -142900,6 +143474,7 @@
     "id": "z7G___7-Azaguanine",
     "fullName": "7-Azaguanine",
     "alias": "z7G",
+    "aliasHELM": "z7G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -143126,6 +143701,7 @@
     "id": "c7cn7A___7-Deaza-7-cyanoadenine",
     "fullName": "7-Deaza-7-cyanoadenine",
     "alias": "c7cn7A",
+    "aliasHELM": "c7cn7A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -143352,6 +143928,7 @@
     "id": "c7io7n___7-Deaza-7-iodo-2-aminoadenine",
     "fullName": "7-Deaza-7-iodo-2-aminoadenine",
     "alias": "c7io7n",
+    "aliasHELM": "c7io7n2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -143563,6 +144140,7 @@
     "id": "c7io7A___7-Deaza-7-iodoadenine",
     "fullName": "7-Deaza-7-iodoadenine",
     "alias": "c7io7A",
+    "aliasHELM": "c7io7A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -144000,6 +144578,7 @@
     "id": "c7io7G___7-Deaza-7-iodoguanine",
     "fullName": "7-Deaza-7-iodoguanine",
     "alias": "c7io7G",
+    "aliasHELM": "c7io7G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -144256,6 +144835,7 @@
     "id": "c7py7N___7-Deaza-7-propyne-2-aminoadenine",
     "fullName": "7-Deaza-7-propyne-2-aminoadenine",
     "alias": "c7py7N",
+    "aliasHELM": "c7pry7n2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -144497,6 +145077,7 @@
     "id": "c7py7A___7-Deaza-7-propynyladenine",
     "fullName": "7-Deaza-7-propynyladenine",
     "alias": "c7py7A",
+    "aliasHELM": "c7pry7A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -144693,6 +145274,7 @@
     "id": "c7A___7-Deazaadenine",
     "fullName": "7-Deazaadenine",
     "alias": "c7A",
+    "aliasHELM": "c7A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -144904,6 +145486,7 @@
     "id": "c7G___7-Deazaguanine",
     "fullName": "7-Deazaguanine",
     "alias": "c7G",
+    "aliasHELM": "c7G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -145130,6 +145713,7 @@
     "id": "m7h8G___N7-methyl-8-dihydroguanine",
     "fullName": "N7-methyl-8-dihydroguanine",
     "alias": "m7h8G",
+    "aliasHELM": "m7h8G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -145358,6 +145942,7 @@
     "id": "m7G___N7-methylguanine",
     "fullName": "N7-methylguanine",
     "alias": "m7G",
+    "aliasHELM": "m7G",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -145683,6 +146268,7 @@
     "id": "tCnitr___7-Nitro-1,3-diaza-2-oxophenothiazin",
     "fullName": "7-Nitro-1,3-diaza-2-oxophenothiazin",
     "alias": "tCnitr",
+    "aliasHELM": "tCnitro",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -145894,6 +146480,7 @@
     "id": "n8A___8-Aminoadenine",
     "fullName": "8-Aminoadenine",
     "alias": "n8A",
+    "aliasHELM": "n8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -146120,6 +146707,7 @@
     "id": "n8G___8-Aminoguanine",
     "fullName": "8-Aminoguanine",
     "alias": "n8G",
+    "aliasHELM": "n8G",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -146331,6 +146919,7 @@
     "id": "z8c3G___8-Aza-3-deazaguanine",
     "fullName": "8-Aza-3-deazaguanine",
     "alias": "z8c3G",
+    "aliasHELM": "z8c3G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -146527,6 +147116,7 @@
     "id": "z8A___8-Azaadenine",
     "fullName": "8-Azaadenine",
     "alias": "z8A",
+    "aliasHELM": "z8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -146738,6 +147328,7 @@
     "id": "br8A___8-Bromoadenine",
     "fullName": "8-Bromoadenine",
     "alias": "br8A",
+    "aliasHELM": "br8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -146964,6 +147555,7 @@
     "id": "br8G___8-Bromoguanine",
     "fullName": "8-Bromoguanine",
     "alias": "br8G",
+    "aliasHELM": "br8G",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -147175,6 +147767,7 @@
     "id": "cl8A___8-Chloroadenine",
     "fullName": "8-Chloroadenine",
     "alias": "cl8A",
+    "aliasHELM": "cl8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -147401,6 +147994,7 @@
     "id": "o8s9G___8-Oxo-9-thioguanine",
     "fullName": "8-Oxo-9-thioguanine",
     "alias": "o8s9G",
+    "aliasHELM": "o8s9G",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -147612,6 +148206,7 @@
     "id": "o8A___8-Oxoadenine",
     "fullName": "8-Oxoadenine",
     "alias": "o8A",
+    "aliasHELM": "o8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 5,
@@ -147838,6 +148433,7 @@
     "id": "o8G___8-Oxoguanine",
     "fullName": "8-Oxoguanine",
     "alias": "o8G",
+    "aliasHELM": "o8G",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -148064,6 +148660,7 @@
     "id": "s8G___8-Thioguanine",
     "fullName": "8-Thioguanine",
     "alias": "s8G",
+    "aliasHELM": "s8G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -148335,6 +148932,7 @@
     "id": "allyl9___N9-allyl-8-oxoguanine",
     "fullName": "N9-allyl-8-oxoguanine",
     "alias": "allyl9",
+    "aliasHELM": "allyl9G",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -148586,6 +149184,7 @@
     "id": "Smclna___(2S)-methyl-cLNA",
     "fullName": "(2S)-methyl-cLNA",
     "alias": "Smclna",
+    "aliasHELM": "Smclna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -148855,6 +149454,7 @@
     "id": "Rm5lna___(5R)-5-Methyl-LNA",
     "fullName": "(5R)-5-Methyl-LNA",
     "alias": "Rm5lna",
+    "aliasHELM": "Rm5lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -149124,6 +149724,7 @@
     "id": "Rm5ALl___(5R)-5-methyl-alpha-L-LNA",
     "fullName": "(5R)-5-methyl-alpha-L-LNA",
     "alias": "Rm5ALl",
+    "aliasHELM": "Rm5ALlna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -149431,6 +150032,7 @@
     "id": "Rm5moe___(5R)-Me-2O-MOE",
     "fullName": "(5R)-Me-2O-MOE",
     "alias": "Rm5moe",
+    "aliasHELM": "Rm5moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -149678,6 +150280,7 @@
     "id": "Sm5fl2___(5S)-2-Fluoro-5-methylribose",
     "fullName": "(5S)-2-Fluoro-5-methylribose",
     "alias": "Sm5fl2",
+    "aliasHELM": "Sm5fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -149947,6 +150550,7 @@
     "id": "Sm5ALl___(5S)-5-Methyl-alpha-L-LNA",
     "fullName": "(5S)-5-Methyl-alpha-L-LNA",
     "alias": "Sm5ALl",
+    "aliasHELM": "Sm5ALlna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -150231,6 +150835,7 @@
     "id": "Svinyl___(5S)-5-Vinyl-BNA",
     "fullName": "(5S)-5-Vinyl-BNA",
     "alias": "Svinyl",
+    "aliasHELM": "Svinyl5lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -150500,6 +151105,7 @@
     "id": "Sm5lna___(5S)-5-methyl-LNA",
     "fullName": "(5S)-5-methyl-LNA",
     "alias": "Sm5lna",
+    "aliasHELM": "Sm5lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -150807,6 +151413,7 @@
     "id": "Sm5moe___(5S)-Methyl-2O-MOE",
     "fullName": "(5S)-Methyl-2O-MOE",
     "alias": "Sm5moe",
+    "aliasHELM": "Sm5moe",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -151069,6 +151676,7 @@
     "id": "Sm6fhn___(6S)-6-methyl-FHNA",
     "fullName": "(6S)-6-methyl-FHNA",
     "alias": "Sm6fhn",
+    "aliasHELM": "Sm6fhna",
     "attachmentPoints": [
       {
         "attachmentAtom": 12,
@@ -151338,6 +151946,7 @@
     "id": "Sm6ALl___(6S)-6-methyl-alpha-L-LNA",
     "fullName": "(6S)-6-methyl-alpha-L-LNA",
     "alias": "Sm6ALl",
+    "aliasHELM": "Sm6ALlna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -151463,6 +152072,7 @@
     "id": "nen___Ethylenediamine",
     "fullName": "Ethylenediamine",
     "alias": "nen",
+    "aliasHELM": "nen",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -151813,6 +152423,7 @@
     "id": "Diprgl___(D)-2-O-(2,3-Isopropylidene glycer-1-yl)ribose",
     "fullName": "(D)-2-O-(2,3-Isopropylidene glycer-1-yl)ribose",
     "alias": "Diprgl",
+    "aliasHELM": "Diprglyol2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -151968,6 +152579,7 @@
     "id": "m2nen___N1,N1-dimethylethane-1,2-diamine",
     "fullName": "N1,N1-dimethylethane-1,2-diamine",
     "alias": "m2nen",
+    "aliasHELM": "m2nen",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -152318,6 +152930,7 @@
     "id": "Liprgl___(L)-2-O-(2,3-Isopropylidene glycer-1-yl)ribose",
     "fullName": "(L)-2-O-(2,3-Isopropylidene glycer-1-yl)ribose",
     "alias": "Liprgl",
+    "aliasHELM": "Liprglyol2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -152497,6 +153110,7 @@
     "id": "h456UR___(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one",
     "fullName": "(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one",
     "alias": "h456UR",
+    "aliasHELM": "h456U_R",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -152726,6 +153340,7 @@
     "id": "Rm5fl2___(R)-2-Fluoro-5-methylribose",
     "fullName": "(R)-2-Fluoro-5-methylribose",
     "alias": "Rm5fl2",
+    "aliasHELM": "Rm5fl2r",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -152956,6 +153571,7 @@
     "id": "Rm5d___(R)-5-Methyldeoxyribose",
     "fullName": "(R)-5-Methyldeoxyribose",
     "alias": "Rm5d",
+    "aliasHELM": "Rm5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -153216,6 +153832,7 @@
     "id": "Rhe5d___(R)-5-hydroxyethyl 2-deoxyribose",
     "fullName": "(R)-5-hydroxyethyl 2-deoxyribose",
     "alias": "Rhe5d",
+    "aliasHELM": "Rhe5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -153485,6 +154102,7 @@
     "id": "Rflcln___(R)-F-cLNA",
     "fullName": "(R)-F-cLNA",
     "alias": "Rflcln",
+    "aliasHELM": "Rflclna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -153752,6 +154370,7 @@
     "id": "Rso2ln___(R)-Sulfoxide BNA",
     "fullName": "(R)-Sulfoxide BNA",
     "alias": "Rso2ln",
+    "aliasHELM": "Rso2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -154019,6 +154638,7 @@
     "id": "Sso2ln___(S)-Sulfoxide BNA",
     "fullName": "(S)-Sulfoxide BNA",
     "alias": "Sso2ln",
+    "aliasHELM": "Sso2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -154288,6 +154908,7 @@
     "id": "Rcet___(R)-cEt BNA",
     "fullName": "(R)-cEt BNA",
     "alias": "Rcet",
+    "aliasHELM": "Rcet",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -154587,6 +155208,7 @@
     "id": "Rcmoe___(R)-cMOE BNA",
     "fullName": "(R)-cMOE BNA",
     "alias": "Rcmoe",
+    "aliasHELM": "Rcmoe",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -154886,6 +155508,7 @@
     "id": "RSpabC___(RC5,SP)-a,b-CNA",
     "fullName": "(RC5,SP)-a,b-CNA",
     "alias": "RSpabC",
+    "aliasHELM": "RSpabCNA",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -154998,6 +155621,7 @@
     "id": "Rmp___(Rp)-Methylphosphonate",
     "fullName": "(Rp)-Methylphosphonate",
     "alias": "Rmp",
+    "aliasHELM": "Rmp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -155101,6 +155725,7 @@
     "id": "Rsp___(Rp)-Phosphorothioate",
     "fullName": "(Rp)-Phosphorothioate",
     "alias": "Rsp",
+    "aliasHELM": "Rsp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -155352,6 +155977,7 @@
     "id": "She5d___(S)-5-Hydroxyethyl-2-deoxyribose",
     "fullName": "(S)-5-Hydroxyethyl-2-deoxyribose",
     "alias": "She5d",
+    "aliasHELM": "She5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -155582,6 +156208,7 @@
     "id": "Sm5d___(S)-5-Methyldeoxyribose",
     "fullName": "(S)-5-Methyldeoxyribose",
     "alias": "Sm5d",
+    "aliasHELM": "Sm5d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -155851,6 +156478,7 @@
     "id": "cet___(S)-cEt BNA",
     "fullName": "(S)-cEt BNA",
     "alias": "cet",
+    "aliasHELM": "cet",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -156150,6 +156778,7 @@
     "id": "Scmoe___(S)-cMOE BNA",
     "fullName": "(S)-cMOE BNA",
     "alias": "Scmoe",
+    "aliasHELM": "Scmoe",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -156434,6 +157063,7 @@
     "id": "ScPr___(S)-cPr-BNA",
     "fullName": "(S)-cPr-BNA",
     "alias": "ScPr",
+    "aliasHELM": "ScPr",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -156733,6 +157363,7 @@
     "id": "SRpabC___(SC5,RP)-a,b-CNA",
     "fullName": "(SC5,RP)-a,b-CNA",
     "alias": "SRpabC",
+    "aliasHELM": "SRpabCNA",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -156845,6 +157476,7 @@
     "id": "Smp___(Sp)-Methylphosphonate",
     "fullName": "(Sp)-Methylphosphonate",
     "alias": "Smp",
+    "aliasHELM": "Smp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -156948,6 +157580,7 @@
     "id": "Ssp___(Sp)-Phosphorothioate",
     "fullName": "(Sp)-Phosphorothioate",
     "alias": "Ssp",
+    "aliasHELM": "Ssp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -157184,6 +157817,7 @@
     "id": "ana___ANA",
     "fullName": "ANA",
     "alias": "ana",
+    "aliasHELM": "ana",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -157264,6 +157898,7 @@
     "id": "hn___Amino",
     "fullName": "Amino",
     "alias": "hn",
+    "aliasHELM": "hn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -157539,6 +158174,7 @@
     "id": "Smn2ce___Amino(S)-cEt (N-methyl)",
     "fullName": "Amino(S)-cEt (N-methyl)",
     "alias": "Smn2ce",
+    "aliasHELM": "Smn2cet",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -157823,6 +158459,7 @@
     "id": "Rmn2ce___Amino(R)-cEt (N-methyl)",
     "fullName": "Amino(R)-cEt (N-methyl)",
     "alias": "Rmn2ce",
+    "aliasHELM": "Rmn2cet",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -158210,6 +158847,7 @@
     "id": "nC6n5U___Amino-Modier C6 dT",
     "fullName": "Amino-Modier C6 dT",
     "alias": "nC6n5U",
+    "aliasHELM": "nC6ncee5U",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -158597,6 +159235,7 @@
     "id": "nC6n5C___Amino-Modier C6 dC",
     "fullName": "Amino-Modier C6 dC",
     "alias": "nC6n5C",
+    "aliasHELM": "nC6ncee5C",
     "attachmentPoints": [
       {
         "attachmentAtom": 16,
@@ -158858,6 +159497,7 @@
     "id": "az8A___8-azidoadenine",
     "fullName": "8-azidoadenine",
     "alias": "az8A",
+    "aliasHELM": "az8A",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -159032,6 +159672,7 @@
     "id": "bnn___Benzylamino",
     "fullName": "Benzylamino",
     "alias": "bnn",
+    "aliasHELM": "bnn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -159290,6 +159931,7 @@
     "id": "bcdna___BicycloDNA",
     "fullName": "BicycloDNA",
     "alias": "bcdna",
+    "aliasHELM": "bcdna",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -159503,6 +160145,7 @@
     "id": "c4d___Carbocyclic-2-deoxyribose",
     "fullName": "Carbocyclic-2-deoxyribose",
     "alias": "c4d",
+    "aliasHELM": "c4d",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -159598,6 +160241,7 @@
     "id": "co___Carbonyl",
     "fullName": "Carbonyl",
     "alias": "co",
+    "aliasHELM": "co",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -159699,6 +160343,7 @@
     "id": "cm___Carbonylmethyl",
     "fullName": "Carbonylmethyl",
     "alias": "cm",
+    "aliasHELM": "cm",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -159918,6 +160563,7 @@
     "id": "cena___CeNA",
     "fullName": "CeNA",
     "alias": "cena",
+    "aliasHELM": "cena",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -160185,6 +160831,7 @@
     "id": "ena___2-(O,4-Ethylene) bridged nucleic acid (ENA)",
     "fullName": "2-(O,4-Ethylene) bridged nucleic acid (ENA)",
     "alias": "ena",
+    "aliasHELM": "ena",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -160295,6 +160942,7 @@
     "id": "fl2me___Difluoromethylene",
     "fullName": "Difluoromethylene",
     "alias": "fl2me",
+    "aliasHELM": "fl2me",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -160463,6 +161111,7 @@
     "id": "hU___Dihydrouracil",
     "fullName": "Dihydrouracil",
     "alias": "hU",
+    "aliasHELM": "hU",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -160555,6 +161204,7 @@
     "id": "en___Ethylamino",
     "fullName": "Ethylamino",
     "alias": "en",
+    "aliasHELM": "en",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -160686,6 +161336,7 @@
     "id": "eop___Ethylphosphate",
     "fullName": "Ethylphosphate",
     "alias": "eop",
+    "aliasHELM": "eop",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -160922,6 +161573,7 @@
     "id": "fcena___Fluoro-CeNA",
     "fullName": "Fluoro-CeNA",
     "alias": "fcena",
+    "aliasHELM": "fcena",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -161278,6 +161930,7 @@
     "id": "gclamp___G-clamp",
     "fullName": "G-clamp",
     "alias": "gclamp",
+    "aliasHELM": "gclampC",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -161661,6 +162314,7 @@
     "id": "ggclam___guanidino-G-clamp",
     "fullName": "guanidino-G-clamp",
     "alias": "ggclam",
+    "aliasHELM": "ggclampC",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -161865,6 +162519,7 @@
     "id": "Oro___Orotic Acid",
     "fullName": "Orotic Acid",
     "alias": "Oro",
+    "aliasHELM": "Oro",
     "attachmentPoints": [
       {
         "attachmentAtom": 4,
@@ -161987,6 +162642,7 @@
     "id": "ibun___Isobutylamino",
     "fullName": "Isobutylamino",
     "alias": "ibun",
+    "aliasHELM": "ibun",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -162207,6 +162863,7 @@
     "id": "isoG___Isoguanine",
     "fullName": "Isoguanine",
     "alias": "isoG",
+    "aliasHELM": "isoG",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,
@@ -162402,6 +163059,7 @@
     "id": "Ld___L-2-deoxyribose",
     "fullName": "L-2-deoxyribose",
     "alias": "Ld",
+    "aliasHELM": "Ld",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -162497,6 +163155,7 @@
     "id": "mn___Methylamino",
     "fullName": "Methylamino",
     "alias": "mn",
+    "aliasHELM": "mn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -162568,6 +163227,7 @@
     "id": "me___Methylene",
     "fullName": "Methylene",
     "alias": "me",
+    "aliasHELM": "me",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -162826,6 +163486,7 @@
     "id": "meclna___Methylene cLNA",
     "fullName": "Methylene cLNA",
     "alias": "meclna",
+    "aliasHELM": "meclna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -162951,6 +163612,7 @@
     "id": "mepo2___Hydroxymethylphosphonic acid",
     "fullName": "Hydroxymethylphosphonic acid",
     "alias": "mepo2",
+    "aliasHELM": "mepo2",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -163052,6 +163714,7 @@
     "id": "mp___Methylphosphonate",
     "fullName": "Methylphosphonate",
     "alias": "mp",
+    "aliasHELM": "mp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -163153,6 +163816,7 @@
     "id": "msp___Methylphosphonothioic acid",
     "fullName": "Methylphosphonothioic acid",
     "alias": "msp",
+    "aliasHELM": "msp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -163418,6 +164082,7 @@
     "id": "nen2G___N2-(2-Amino)ethyl guanine",
     "fullName": "N2-(2-Amino)ethyl guanine",
     "alias": "nen2G",
+    "aliasHELM": "nen2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -163689,6 +164354,7 @@
     "id": "npr2G___N2-(3-Aminopropyl) guanine",
     "fullName": "N2-(3-Aminopropyl) guanine",
     "alias": "npr2G",
+    "aliasHELM": "npr2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -163945,6 +164611,7 @@
     "id": "nen2A___N2-(Aminoethyl)aminoadenine",
     "fullName": "N2-(Aminoethyl)aminoadenine",
     "alias": "nen2A",
+    "aliasHELM": "nen2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -164231,6 +164898,7 @@
     "id": "moprn2___N2-(Methoxypropylamino)adenine",
     "fullName": "N2-(Methoxypropylamino)adenine",
     "alias": "moprn2",
+    "aliasHELM": "moprn2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -164569,6 +165237,7 @@
     "id": "impr2G___N2-Imidazoylpropylguanine",
     "fullName": "N2-Imidazoylpropylguanine",
     "alias": "impr2G",
+    "aliasHELM": "impr2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -164907,6 +165576,7 @@
     "id": "phen2A___N2-Phenethylaminoadenine",
     "fullName": "N2-Phenethylaminoadenine",
     "alias": "phen2A",
+    "aliasHELM": "phen2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -165230,6 +165900,7 @@
     "id": "2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine",
     "fullName": "N2-[(Imidazo-2-yl)ethylamino]adenine",
     "alias": "2imen2",
+    "aliasHELM": "2imen2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -165553,6 +166224,7 @@
     "id": "4imen2___N2-[(Imidazol-4-yl)ethyl]guanine",
     "fullName": "N2-[(Imidazol-4-yl)ethyl]guanine",
     "alias": "4imen2",
+    "aliasHELM": "4imen2G",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -165787,6 +166459,7 @@
     "id": "cneT___N3-(2-Cyanoethyl)thymine",
     "fullName": "N3-(2-Cyanoethyl)thymine",
     "alias": "cneT",
+    "aliasHELM": "cneT",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -166095,6 +166768,7 @@
     "id": "4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine",
     "fullName": "N6-[2-(4-Imidazoyl)ethyl]adenine",
     "alias": "4ime6A",
+    "aliasHELM": "4ime6A",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -166433,6 +167107,7 @@
     "id": "imprn2___2-(1-(3-aminopropyl)imidazole)adenine",
     "fullName": "2-(1-(3-aminopropyl)imidazole)adenine",
     "alias": "imprn2",
+    "aliasHELM": "imprn2A",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -166697,6 +167372,7 @@
     "id": "mnobna___N-(Methyl)aminooxy BNA",
     "fullName": "N-(Methyl)aminooxy BNA",
     "alias": "mnobna",
+    "aliasHELM": "mnobna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -166822,6 +167498,7 @@
     "id": "gly___N-Hydroxyglycine",
     "fullName": "N-Hydroxyglycine",
     "alias": "gly",
+    "aliasHELM": "gly",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -167080,6 +167757,7 @@
     "id": "mn2lna___N-Methylamino LNA",
     "fullName": "N-Methylamino LNA",
     "alias": "mn2lna",
+    "aliasHELM": "mn2lna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -167528,6 +168206,7 @@
     "id": "npomT___NPOM-caged thymine",
     "fullName": "NPOM-caged thymine",
     "alias": "npomT",
+    "aliasHELM": "npomT",
     "attachmentPoints": [
       {
         "attachmentAtom": 3,
@@ -167764,6 +168443,7 @@
     "id": "afl2Nm___North-2-ara-fluoro-methanocarbocycle",
     "fullName": "North-2-ara-fluoro-methanocarbocycle",
     "alias": "afl2Nm",
+    "aliasHELM": "afl2Nmc",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -168018,6 +168698,7 @@
     "id": "fl2Nmc___North-2-fluoro-methanocarbocycle",
     "fullName": "North-2-fluoro-methanocarbocycle",
     "alias": "fl2Nmc",
+    "aliasHELM": "fl2Nmc",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -168255,6 +168936,7 @@
     "id": "Nmc___North-methanocarbocycle",
     "fullName": "North-methanocarbocycle",
     "alias": "Nmc",
+    "aliasHELM": "Nmc",
     "attachmentPoints": [
       {
         "attachmentAtom": 10,
@@ -168335,6 +169017,7 @@
     "id": "oxy___Oxy",
     "fullName": "Oxy",
     "alias": "oxy",
+    "aliasHELM": "oxy",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -168676,6 +169359,7 @@
     "id": "Sp18___PEG/HEG 18 atom spacer",
     "fullName": "PEG/HEG 18 atom spacer",
     "alias": "Sp18",
+    "aliasHELM": "Sp18",
     "attachmentPoints": [
       {
         "attachmentAtom": 19,
@@ -168897,6 +169581,7 @@
     "id": "pna___PNA (peptide nucleic acid)",
     "fullName": "PNA (peptide nucleic acid)",
     "alias": "pna",
+    "aliasHELM": "pna",
     "attachmentPoints": [
       {
         "attachmentAtom": 7,
@@ -169204,6 +169889,7 @@
     "id": "Dlyspn___PNA D-Lysine (peptide nucleic acid)",
     "fullName": "PNA D-Lysine (peptide nucleic acid)",
     "alias": "Dlyspn",
+    "aliasHELM": "Dlyspna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -169511,6 +170197,7 @@
     "id": "Llyspn___PNA L-Lysine (peptide nucleic acid)",
     "fullName": "PNA L-Lysine (peptide nucleic acid)",
     "alias": "Llyspn",
+    "aliasHELM": "Llyspna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -169666,6 +170353,7 @@
     "id": "cmp___Phosphonoacetate",
     "fullName": "Phosphonoacetate",
     "alias": "cmp",
+    "aliasHELM": "cmp",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -169797,6 +170485,7 @@
     "id": "m2np___Phosphorodiamidate",
     "fullName": "Phosphorodiamidate",
     "alias": "m2np",
+    "aliasHELM": "m2np",
     "attachmentPoints": [
       {
         "attachmentAtom": 0,
@@ -169898,6 +170587,7 @@
     "id": "s2p___Phosphorodithioate",
     "fullName": "Phosphorodithioate",
     "alias": "s2p",
+    "aliasHELM": "s2p",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -170014,6 +170704,7 @@
     "id": "prn___Propylamino",
     "fullName": "Propylamino",
     "alias": "prn",
+    "aliasHELM": "prn",
     "attachmentPoints": [
       {
         "attachmentAtom": 1,
@@ -170182,6 +170873,7 @@
     "id": "psiU___Pseudouracil",
     "fullName": "Pseudouracil",
     "alias": "psiU",
+    "aliasHELM": "psiU",
     "attachmentPoints": [
       {
         "attachmentAtom": 2,
@@ -170363,6 +171055,7 @@
     "id": "purine___Purine",
     "fullName": "Purine",
     "alias": "purine",
+    "aliasHELM": "purine",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -170582,6 +171275,7 @@
     "id": "Smc___South-methanocarbacycle",
     "fullName": "South-methanocarbacycle",
     "alias": "Smc",
+    "aliasHELM": "Smc",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -170890,6 +171584,7 @@
     "id": "trina1___Tricyclic Nucleoside (TriNA1)",
     "fullName": "Tricyclic Nucleoside (TriNA1)",
     "alias": "trina1",
+    "aliasHELM": "trina1",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -171198,6 +171893,7 @@
     "id": "trina2___Tricyclic Nucleoside (TriNA2)",
     "fullName": "Tricyclic Nucleoside (TriNA2)",
     "alias": "trina2",
+    "aliasHELM": "trina2",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -171489,6 +172185,7 @@
     "id": "tcdna___TricycloDNA",
     "fullName": "TricycloDNA",
     "alias": "tcdna",
+    "aliasHELM": "tcdna",
     "attachmentPoints": [
       {
         "attachmentAtom": 11,
@@ -171718,6 +172415,7 @@
     "id": "Xan___Xanthine",
     "fullName": "Xanthine",
     "alias": "Xan",
+    "aliasHELM": "Xan",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -171968,6 +172666,7 @@
     "id": "ALmecl___alpha-L-Methylene cLNA",
     "fullName": "alpha-L-Methylene cLNA",
     "alias": "ALmecl",
+    "aliasHELM": "ALmeclna",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -172276,6 +172975,7 @@
     "id": "ALtri1___alpha-L-TriNA1",
     "fullName": "alpha-L-TriNA1",
     "alias": "ALtri1",
+    "aliasHELM": "ALtrina1",
     "attachmentPoints": [
       {
         "attachmentAtom": 14,
@@ -172582,6 +173282,7 @@
     "id": "ALtri2___alpha-L-TriNA2",
     "fullName": "alpha-L-TriNA2",
     "alias": "ALtri2",
+    "aliasHELM": "ALtrina2",
     "attachmentPoints": [
       {
         "attachmentAtom": 9,
@@ -172864,6 +173565,7 @@
     "id": "ciPr___ciPr BNA",
     "fullName": "ciPr BNA",
     "alias": "ciPr",
+    "aliasHELM": "ciPr",
     "attachmentPoints": [
       {
         "attachmentAtom": 6,
@@ -173109,6 +173811,7 @@
     "id": "25mo3r___3-O-Methylribose (2,5 connectivity)",
     "fullName": "3-O-Methylribose (2,5 connectivity)",
     "alias": "25mo3r",
+    "aliasHELM": "25mo3r",
     "attachmentPoints": [
       {
         "attachmentAtom": 8,

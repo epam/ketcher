@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  BondType,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -174,28 +173,5 @@ test.describe('Templates - Template Library', () => {
       await textField.type(inputText);
     });
     await getEditorScreenshot(page);
-  });
-
-  test('My test2', async ({ page }) => {
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).editTemplate(
-      TemplateLibraryTab.Aromatics,
-      AromaticsTemplate.Naphtalene,
-    );
-    await TemplateEditDialog(page).getMoleculeName();
-    await TemplateEditDialog(page).selectBond({ type: BondType.DOUBLE }, 0);
-    await TemplateEditDialog(page).selectAtom({ label: 'O' }, 1);
-    await TemplateEditDialog(page).getSelectedAttachmentPoints();
-    await takeEditorScreenshot(page);
-
-    test('My test4', async ({ page }) => {
-      const atomId = 1;
-      await TemplateEditDialog(page).selectAtomById(atomId);
-    });
-
-    test('My test5', async ({ page }) => {
-      const _bondId = 2;
-      await TemplateEditDialog(page).selectBondById(_bondId);
-    });
   });
 });

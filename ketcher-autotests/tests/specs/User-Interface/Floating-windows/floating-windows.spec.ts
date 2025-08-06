@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -62,7 +62,18 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323.440',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323.200',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculated values: check accuracy', async ({ page }) => {
@@ -74,7 +85,18 @@ test.describe('Floating windows', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
     await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(0);
     await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(0);
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculated values: check accuracy 2', async ({ page }) => {
@@ -86,7 +108,18 @@ test.describe('Floating windows', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
     await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(7);
     await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(7);
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323.4399935',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323.1997615',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculate values: verify UI (empty canvas)', async ({ page }) => {
@@ -95,7 +128,14 @@ test.describe('Floating windows', () => {
       Description: verify empty fields in floating window for empty canvas 
     */
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('Chemical Formula:');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toBeEmpty();
+    await expect(CalculatedValuesDialog(page).exactMassInput).toBeEmpty();
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toBeEmpty();
   });
 
   test('Open structure: Open window', async ({ page }) => {
@@ -130,7 +170,18 @@ test.describe('Floating windows', () => {
     await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(1);
     await CalculatedValuesDialog(page).closeByX();
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C7H16');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '100.2050',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '100.1',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 83.9 H 16.1');
   });
 
   test('Opening text file', async ({ page }) => {

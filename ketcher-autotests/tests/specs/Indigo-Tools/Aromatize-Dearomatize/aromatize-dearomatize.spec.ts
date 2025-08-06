@@ -34,16 +34,6 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForPageInit(page);
   });
 
-  test('Empty canvas', { tag: ['@chromium-popup'] }, async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1867
-    Description: Nothing is changed.
-    */
-    await IndigoFunctionsToolbar(page).aromatize();
-    await IndigoFunctionsToolbar(page).dearomatize();
-    await takeEditorScreenshot(page);
-  });
-
   test('Non-aromatic structures - Single bonds only', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1868

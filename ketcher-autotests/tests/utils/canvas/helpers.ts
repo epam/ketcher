@@ -6,7 +6,6 @@ import {
   Locator,
 } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,

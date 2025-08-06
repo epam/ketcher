@@ -3769,7 +3769,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('[C7H14] > [C4H8]');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '[98.189] > [56.108]',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '[98.110] > [56.063]',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('[C 85.6 H 14.4] > [C 85.6 H 14.4]');
     await CalculatedValuesDialog(page).closeByX();
     await takeEditorScreenshot(page);
     await verifyFileExport(

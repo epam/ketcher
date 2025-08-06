@@ -56,7 +56,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   workers: numWorkers,
   reporter: [
-    ['html', { open: process.env.DOCKER ? 'never' : 'on-failure' }],
+    ['blob', { open: process.env.DOCKER ? 'never' : 'on-failure' }],
     ['line'],
     ['json', { outputFile: 'results.json' }],
   ],

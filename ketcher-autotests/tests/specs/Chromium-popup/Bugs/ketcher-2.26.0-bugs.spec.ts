@@ -721,6 +721,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         SelectionToolType.Fragment,
       );
       await enableViewOnlyModeBySetOptions(page);
+      await CommonLeftToolbar(page).selectHandTool();
+      await CommonLeftToolbar(page).selectAreaSelectionTool();
       await takeLeftToolbarScreenshot(page);
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Lasso,

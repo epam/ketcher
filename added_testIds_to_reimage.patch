@@ -1,0 +1,22 @@
+Subject: [PATCH] added testIds to reimage
+---
+Index: packages/ketcher-core/src/application/render/restruct/reImage.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/ketcher-core/src/application/render/restruct/reImage.ts b/packages/ketcher-core/src/application/render/restruct/reImage.ts
+--- a/packages/ketcher-core/src/application/render/restruct/reImage.ts	(revision 0139635b8f733da54fdccfda54bd5139c63d132a)
++++ b/packages/ketcher-core/src/application/render/restruct/reImage.ts	(date 1754391458211)
+@@ -183,6 +183,11 @@
+       dimensions.x,
+       dimensions.y,
+     );
++    image.node.setAttribute('data-testid', 'image');
++    image.node.setAttribute(
++      'data-image-id',
++      restruct.molecule.images.keyOf(this.image),
++    );
+     restruct.addReObjectPath(LayerMap.images, this.visel, image);
+ 
+     if (nextPath) {

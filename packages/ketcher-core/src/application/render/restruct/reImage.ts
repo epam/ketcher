@@ -183,6 +183,11 @@ export class ReImage extends ReObject {
       dimensions.x,
       dimensions.y,
     );
+    image.node.setAttribute('data-testid', 'image');
+    image.node.setAttribute(
+      'data-image-id',
+      restruct.molecule.images.keyOf(this.image),
+    );
     restruct.addReObjectPath(LayerMap.images, this.visel, image);
 
     if (nextPath) {

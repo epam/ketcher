@@ -123,7 +123,7 @@ test.describe('Templates - Template Library', () => {
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
-    await TemplateEditDialog(page).setMoleculName(inputText);
+    await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).edit();
     await StructureLibraryDialog(page).openTemplateLibrarySection(
       TemplateLibraryTab.BetaDSugars,

@@ -37,7 +37,7 @@ export const TemplateEditDialog = (page: Page) => {
     async cancel() {
       await locators.cancelButton.click({ force: true });
     },
-    async setMoleculName(name: string) {
+    async setMoleculeName(name: string) {
       await locators.moleculeNameInput.fill(name);
     },
     async getMoleculeName(): Promise<string> {

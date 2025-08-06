@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
+  BondType,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -124,7 +125,7 @@ test.describe('Templates - Template Library', () => {
       BetaDSugarsTemplate.BetaDAllopyranose,
     );
     await TemplateEditDialog(page).setMoleculName(inputText);
-    await TemplateEditDialog(page).close();
+    await TemplateEditDialog(page).edit();
     await StructureLibraryDialog(page).openTemplateLibrarySection(
       TemplateLibraryTab.BetaDSugars,
     );
@@ -175,26 +176,26 @@ test.describe('Templates - Template Library', () => {
     await getEditorScreenshot(page);
   });
 
-  test('My test', async ({ page }) => {
-    await TemplateEditDialog(page).getSelectedAttachmentPoints();
-  });
-
   test('My test2', async ({ page }) => {
-    const x = 180;
-    const y = 180;
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).editTemplate(
-      TemplateLibraryTab.BetaDSugars,
-      BetaDSugarsTemplate.BetaDAllopyranose,
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
-    await TemplateEditDialog(page).clickOnCanvas(x, y);
-    await waitForRender(page);
+    await TemplateEditDialog(page).getMoleculeName();
+    await TemplateEditDialog(page).selectBond({ type: BondType.DOUBLE }, 0);
+    await TemplateEditDialog(page).selectAtom({ label: 'O' }, 1);
     await TemplateEditDialog(page).getSelectedAttachmentPoints();
-    await TemplateEditDialog(page).close();
-  });
+    await takeEditorScreenshot(page);
 
-  test('My test3', async ({ page }) => {
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await TemplateEditDialog(page).editButton.click();
+    test('My test4', async ({ page }) => {
+      const atomId = 1;
+      await TemplateEditDialog(page).selectAtomById(atomId);
+    });
+
+    test('My test5', async ({ page }) => {
+      const _bondId = 2;
+      await TemplateEditDialog(page).selectBondById(_bondId);
+    });
   });
 });

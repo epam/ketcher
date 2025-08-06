@@ -63,18 +63,18 @@ const MonomerItem = ({
   const onAutochainIconClick = useCallback(
     (event) => {
       event.stopPropagation();
-      editor?.events.autochain.dispatch(monomerItem);
+      editor?.events.autochain.dispatch(item);
     },
-    [editor, monomerItem],
+    [editor, item],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
-    editor?.events.previewAutochain.dispatch(monomerItem);
-  }, [editor, monomerItem]);
+    editor?.events.previewAutochain.dispatch(item);
+  }, [editor, item]);
 
   const onAutochainIconMouseOut = useCallback(() => {
-    editor?.events.removeAutochainPreview.dispatch(monomerItem);
-  }, [editor, monomerItem]);
+    editor?.events.removeAutochainPreview.dispatch(item);
+  }, [editor, item]);
 
   useLibraryItemDrag(item, cardRef);
 

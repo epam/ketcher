@@ -23,6 +23,7 @@ import {
   addTextBoxToCanvas,
   TextEditorDialog,
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +39,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).selectFontSize(20);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
-    await page.getByText('TEST').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).selectFontSize(10);
     await TextEditorDialog(page).apply();
@@ -102,7 +103,7 @@ test.describe('Text tools test cases', () => {
       isSuperscript: true,
     });
     await takeEditorScreenshot(page);
-    await page.getByText('TEST123').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST123' }).dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setOptions({
       isSubscript: true,
@@ -115,7 +116,6 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEST321');
-    await page.getByText('TEST321').dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setOptions({
       fontSize: 20,
@@ -138,7 +138,7 @@ test.describe('Text tools test cases', () => {
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByText('TEST321').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST321' }).dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setOptions({
       isItalic: true,
@@ -178,7 +178,7 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2274
     // Verify if its possible to select a text objects of any size by clicking on green frame
     await openFileAndAddToCanvas(page, 'KET/text-object.ket');
-    await page.getByText('TEXT').dblclick();
+    await getTextLabelLocator(page, { text: 'TEXT' }).dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setText('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP');
     await TextEditorDialog(page).apply();

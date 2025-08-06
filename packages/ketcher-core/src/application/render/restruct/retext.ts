@@ -173,6 +173,11 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles,
           });
+        path.node.setAttribute('data-testid', 'text');
+        path.node.setAttribute(
+          'data-text-id',
+          restruct.molecule.texts.keyOf(this.item),
+        );
         path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
         row.push(path);
         shiftX += path.getBBox().width;

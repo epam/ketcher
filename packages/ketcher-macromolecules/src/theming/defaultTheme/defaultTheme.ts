@@ -32,7 +32,7 @@ const monomerColors: Record<string, MonomerColorScheme> = {
   colorST: { regular: '#FF8D8D', hover: '#ED6868' },
   colorW: { regular: '#99458B', hover: '#7F006B' },
   colorU: { regular: '#FF973C', hover: '#2EE55D' },
-  colorX: { regular: '#E1E6ED', hover: '#CAD3E0' }, // Grey 4 for X natural analogue
+  colorX: { regular: '#CAD3DD', hover: '#B8BBCC' },
   chem: { regular: '#333333', hover: '#555555' },
   default: { regular: '#CCCBD6', hover: '#B8BBCC' },
 };

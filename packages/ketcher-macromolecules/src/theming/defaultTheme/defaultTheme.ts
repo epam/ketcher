@@ -19,19 +19,20 @@ import { EditorTheme } from '.';
 import { MonomerColorScheme } from 'ketcher-core';
 
 const monomerColors: Record<string, MonomerColorScheme> = {
-  colorA: { regular: '#CCCBD6', hover: '#B8BBCC' },
-  colorCM: { regular: '#FFE34C', hover: '#FFD700' },
+  colorA: { regular: '#5ADC11', hover: '#4FC218' },
+  colorCM: { regular: '#59D0FF', hover: '#3CB9EB' },
   colorDQ: { regular: '#AD4551', hover: '#AB0014' },
   colorEN: { regular: '#93F5F5', hover: '#00F0F0' },
   colorFY: { regular: '#5656BF', hover: '#2626BF' },
-  colorGX: { regular: '#E1E6ED', hover: '#CAD3E0' },
+  colorGX: { regular: '#FFE97B', hover: '#F8DC50' },
   colorH: { regular: '#BFC9FF', hover: '#99AAFF' },
   colorILV: { regular: '#50E576', hover: '#00D936' },
   colorKR: { regular: '#365CFF', hover: '#002CEB' },
   colorP: { regular: '#F2C5B6', hover: '#FFA98C' },
-  colorST: { regular: '#FFC44C', hover: '#FFAA00' },
+  colorST: { regular: '#FF8D8D', hover: '#ED6868' },
   colorW: { regular: '#99458B', hover: '#7F006B' },
-  colorU: { regular: '#99458B', hover: '#7F006B' },
+  colorU: { regular: '#FF973C', hover: '#2EE55D' },
+  colorX: { regular: '#E1E6ED', hover: '#CAD3E0' }, // Grey 4 for X natural analogue
   chem: { regular: '#333333', hover: '#555555' },
   default: { regular: '#CCCBD6', hover: '#B8BBCC' },
 };
@@ -202,7 +203,7 @@ export const defaultTheme: EditorTheme = {
       F: monomerColors.colorFY,
       Y: monomerColors.colorFY,
       G: monomerColors.colorGX,
-      X: monomerColors.colorGX,
+      X: monomerColors.colorX,
       H: monomerColors.colorH,
       I: monomerColors.colorILV,
       L: monomerColors.colorILV,

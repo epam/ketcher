@@ -92,6 +92,26 @@ export class Render {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
         this.options = { ...this.options, ...passedOptions };
+        if (typeof this.options.offset === 'object') {
+          if (!(this.options.offset instanceof Vec2)) {
+            this.options.offset = new Vec2();
+            const storageVersion = this.options.offset as
+              | Partial<{ x: number; y: number; z: number }>
+              | null
+              | undefined;
+            if (
+              storageVersion?.x != null &&
+              storageVersion?.y != null &&
+              storageVersion?.z != null
+            ) {
+              this.options.offset = new Vec2(
+                storageVersion.x,
+                storageVersion.y,
+                storageVersion.z,
+              );
+            }
+          }
+        }
         return this.options;
       }
     } catch (e) {

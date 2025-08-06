@@ -11,7 +11,7 @@ export function getTextLabelLocator(
 ): Locator {
   const attributes: Record<string, string> = {};
 
-  attributes['data-testid'] = 'text';
+  attributes['data-testid'] = 'text-label';
 
   if (options.id !== undefined) {
     attributes['data-text-id'] = String(options.id);

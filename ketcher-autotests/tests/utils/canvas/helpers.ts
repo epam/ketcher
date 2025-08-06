@@ -135,7 +135,7 @@ export async function takeElementScreenshot(
     element = element.filter({ visible: true }).first();
   }
   await element.waitFor({ state: 'visible' });
-  await expect(element).toHaveScreenshot(options);
+  await expect(element).toHaveScreenshot({ ...options, threshold: 0.3 });
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {

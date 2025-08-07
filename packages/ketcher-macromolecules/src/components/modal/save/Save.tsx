@@ -22,7 +22,11 @@ import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { IconButton, IndigoProvider } from 'ketcher-react';
+import {
+  IconButton,
+  IndigoProvider,
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+} from 'ketcher-react';
 import {
   ChemicalMimeType,
   KetSerializer,
@@ -96,6 +100,7 @@ export const Save = ({
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = CoreEditor.provideEditorInstance();
+  const [editorOffset, setEditorOffset] = useState({ x: 0, y: 0 });
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -110,7 +115,10 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
+        horizontal: editorOffset.x,
+        vertical: editorOffset.y,
+      });
       setSvgData(svgData);
       return;
     }
@@ -162,10 +170,25 @@ export const Save = ({
     setCurrentFileName(value);
   };
 
+  const calculateOffset = () => {
+    // calculate editor offset in case ketcher popup is used
+    const ketcherEditorRoot = document.querySelector(
+      KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+    );
+    const ketcherEditorRootBoundingClientRect =
+      ketcherEditorRoot?.getBoundingClientRect();
+    const offsetX = ketcherEditorRootBoundingClientRect?.x || 0;
+    const offsetY = ketcherEditorRootBoundingClientRect?.y || 0;
+    setEditorOffset({ x: offsetX, y: offsetY });
+  };
+
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
+        horizontal: editorOffset.x,
+        vertical: editorOffset.y,
+      });
       if (!svgData) {
         onClose();
         return;
@@ -198,6 +221,10 @@ export const Save = ({
       dispatch(openErrorModal('This feature is not available in your browser'));
     }
   };
+
+  useEffect(() => {
+    calculateOffset();
+  }, []);
 
   useEffect(() => {
     if (currentFileFormat === 'ket') {

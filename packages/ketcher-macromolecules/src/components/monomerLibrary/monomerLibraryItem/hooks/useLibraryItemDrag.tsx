@@ -43,8 +43,8 @@ export const useLibraryItemDrag = (
             const { top, left, right, bottom } =
               canvasWrapperBoundingClientRect;
             const transform = ZoomTool.instance.zoomTransform;
-            const adjustedX = x - left + 15;
-            const adjustedY = y - top + 15;
+            const adjustedX = x - left + transform.k * 15;
+            const adjustedY = y - top + transform.k * 15;
             const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
+import { safePostMessage } from './utils/safePostMessage';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -52,13 +53,9 @@ const DuoApp = () => {
           structServiceProvider={structServiceProvider1}
           onInit={(ketcher: Ketcher) => {
             window.ketcher = ketcher;
-
-            window.parent.postMessage(
-              {
-                eventType: 'init',
-              },
-              '*',
-            );
+            safePostMessage({
+              eventType: 'init',
+            });
             window.scrollTo(0, 0);
           }}
         />
@@ -89,13 +86,9 @@ const DuoApp = () => {
           structServiceProvider={structServiceProvider2}
           onInit={(ketcher: Ketcher) => {
             window.ketcher = ketcher;
-
-            window.parent.postMessage(
-              {
-                eventType: 'init',
-              },
-              '*',
-            );
+            safePostMessage({
+              eventType: 'init',
+            });
             window.scrollTo(0, 0);
           }}
         />

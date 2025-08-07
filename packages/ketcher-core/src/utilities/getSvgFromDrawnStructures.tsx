@@ -21,7 +21,10 @@ export const getSvgFromDrawnStructures = (
   // Convert number to Margins object to support backward compatibility
   const marginValues: Margins = typeof margins === 'number' 
     ? { horizontal: margins, vertical: margins }
-    : margins;
+    : {
+      horizontal: DEFAULT_MARGIN + margins.horizontal,
+      vertical: DEFAULT_MARGIN + margins.vertical
+    };
 
   // Copy and clean up svg structures before previewing or saving
   let svgInnerHTML = canvas?.innerHTML || '';

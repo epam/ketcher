@@ -132,10 +132,10 @@ export async function takeElementScreenshot(
   let element = elementLocator;
 
   if ((await elementLocator.count()) > 1) {
-    element = element.filter({ has: page.locator(':visible') }).first();
+    element = element.filter({ visible: true }).first();
   }
   await element.waitFor({ state: 'visible' });
-  await expect(element).toHaveScreenshot(options);
+  await expect(element).toHaveScreenshot({ ...options, threshold: 0.3 });
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {

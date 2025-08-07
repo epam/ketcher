@@ -1,11 +1,9 @@
-'use client';
-
-import { StandaloneStructServiceProvider as StandaloneStructServiceProviderType } from 'ketcher-standalone';
-import { Editor } from 'ketcher-react';
-
-import 'ketcher-react/dist/index.css';
-
-const safePostMessage = (
+/**
+ * Safely sends a postMessage to parent window with proper error handling
+ * @param message - The message to send
+ * @param fallbackOrigin - Fallback origin if parent origin is not available
+ */
+export const safePostMessage = (
   message: Record<string, unknown>,
   fallbackOrigin: string = window.location.origin,
 ): void => {
@@ -55,7 +53,6 @@ const safePostMessage = (
       parentOrigin = fallbackOrigin;
     }
 
-    // Определяем target window
     const targetWindow = isInIframe ? window.parent : window.opener;
     if (targetWindow) {
       targetWindow.postMessage(message, parentOrigin);
@@ -67,27 +64,3 @@ const safePostMessage = (
     console.error('Failed to send postMessage:', error);
   }
 };
-
-const StandaloneStructServiceProvider =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  StandaloneStructServiceProviderType as unknown as new () => any;
-
-const structServiceProvider = new StandaloneStructServiceProvider();
-
-export function EditorComponent() {
-  return (
-    <Editor
-      staticResourcesUrl={process.env.PUBLIC_URL || ''}
-      structServiceProvider={structServiceProvider}
-      errorHandler={(message: string) => {
-        console.error(message);
-      }}
-      onInit={(ketcher) => {
-        window.ketcher = ketcher;
-        safePostMessage({
-          eventType: 'init',
-        });
-      }}
-    />
-  );
-}

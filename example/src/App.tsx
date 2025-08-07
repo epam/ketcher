@@ -5,6 +5,7 @@ import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import 'ketcher-react/dist/index.css';
 
 import { getStructServiceProvider } from './utils';
+import { safePostMessage } from './utils/safePostMessage';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -46,13 +47,9 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
-
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
+          safePostMessage({
+            eventType: 'init',
+          });
           window.scrollTo(0, 0);
         }}
       />

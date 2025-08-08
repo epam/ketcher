@@ -58,7 +58,7 @@ const config: PlaywrightTestConfig = {
   reporter: [
     ['html', { open: process.env.DOCKER ? 'never' : 'on-failure' }],
     ['line'],
-    ['json', { outputFile: 'results.json' }],
+    ['json', { outputFile: './playwright-report/results.json' }],
   ],
   use: {
     actionTimeout: 0,

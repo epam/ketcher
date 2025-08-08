@@ -177,7 +177,13 @@ export function load(struct: Struct, options?) {
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
           const atomSet = new Pile(sg.atoms);
           const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
-          SGroup.bracketPos(sg, parsedStruct, crossBonds);
+          SGroup.bracketPos(
+            sg,
+            parsedStruct,
+            crossBonds,
+            undefined,
+            editor.render,
+          );
           if (offset) sg.updateOffset(offset);
         });
       }

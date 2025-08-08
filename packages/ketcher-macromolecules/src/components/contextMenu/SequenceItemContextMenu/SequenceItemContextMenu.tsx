@@ -103,23 +103,7 @@ export const SequenceItemContextMenu = ({
   const isModifyBlockVisible =
     !!modifyAminoAcidsMenuItems.length ||
     (menuProps?.isSelectedOnlyNucleoelements && !menuProps.hasAntisense);
-  const menuItems = [
-    {
-      name: SequenceItemContextMenuNames.title,
-      title: menuProps?.title,
-      isMenuTitle: true,
-      disabled: true,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return (
-          !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleoelement
-        );
-      },
-    },
+  const copyPasteItems = [
     {
       name: SequenceItemContextMenuNames.copy,
       title: 'Copy',
@@ -131,8 +115,9 @@ export const SequenceItemContextMenu = ({
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: false,
-      separator: true,
     },
+  ];
+  const startEditSequenceItems = [
     {
       name: SequenceItemContextMenuNames.editSequence,
       title: 'Edit sequence',
@@ -149,6 +134,8 @@ export const SequenceItemContextMenu = ({
       disabled: false,
       separator: isAntisenseBlockVisible || isHydrogenBondBlockVisible,
     },
+  ];
+  const antisenseItems = [
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
       title: 'Create RNA antisense strand',
@@ -206,6 +193,8 @@ export const SequenceItemContextMenu = ({
         props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
       }) => !props?.sequenceItemRenderer,
     },
+  ];
+  const modificationItems = [
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
       title: 'Modify in RNA Builder...',
@@ -229,12 +218,38 @@ export const SequenceItemContextMenu = ({
       hidden: !modifyAminoAcidsMenuItems.length,
       subMenuItems: modifyAminoAcidsMenuItems,
     },
+  ];
+  const deleteItems = [
     {
       name: SequenceItemContextMenuNames.delete,
       title: 'Delete',
       disabled: selectedMonomers?.length === 0,
       icon: <Icon name={'deleteMenu' as IconName} />,
     },
+  ];
+
+  const menuItems = [
+    {
+      name: SequenceItemContextMenuNames.title,
+      title: menuProps?.title,
+      isMenuTitle: true,
+      disabled: true,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return (
+          !props?.sequenceItemRenderer ||
+          !menuProps?.isSelectedAtLeastOneNucleoelement
+        );
+      },
+    },
+    copyPasteItems,
+    startEditSequenceItems,
+    antisenseItems,
+    modificationItems,
+    deleteItems,
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {

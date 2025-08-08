@@ -12,7 +12,6 @@ import {
   RxnFileFormat,
   deleteByKeyboard,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
   verifyFileExport,
@@ -23,6 +22,9 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -81,11 +83,11 @@ test.describe('Mapping Tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await dragMouseTo(x, y, page);
   });

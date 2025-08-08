@@ -1,6 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
-import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  AtomsSetting,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -13,7 +16,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import {
   FileType,
@@ -336,10 +339,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.oneUnknownSuperatomExpandedV2000,
         ),
     );
-
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -381,11 +387,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () =>
         await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV2000),
     );
-
     await takeEditorScreenshot(page);
 
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -467,10 +476,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.oneUnknownSuperatomExpandedV3000,
         ),
     );
-
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -516,8 +528,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -598,8 +613,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -642,8 +661,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await takeEditorScreenshot(page);
 
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await contractAbbreviation(page, point);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await contractAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
+    );
     await takeEditorScreenshot(page);
   });
 

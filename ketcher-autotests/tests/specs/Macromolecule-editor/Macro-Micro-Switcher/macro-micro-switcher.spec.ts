@@ -32,7 +32,6 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroFileType } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   addSuperatomAttachmentPoint,
@@ -82,7 +81,10 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { setSettingsOptions } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  setSettingsOption,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   AtomsSetting,
   BondsSetting,
@@ -108,6 +110,7 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const topLeftCorner = {
   x: -325,
@@ -1020,8 +1023,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/chain-with-eight-attachment-points.ket',
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 9);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1629,9 +1635,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Github ticket: #4530
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
-    await openFileAndAddToCanvasMacro(page, 'KET/part-chain-with-s-group.ket');
-    const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/part-chain-with-s-group.ket',
+    );
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 

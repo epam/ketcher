@@ -236,29 +236,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   return locator;
 }
 
-type GetAtomLocatorOptions = {
-  atomAlias?: string;
-  atomId?: string | number;
-};
-
-export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
-  const attributes: { [key: string]: string } = {};
-
-  attributes['data-testid'] = 'atom';
-
-  const { atomId, atomAlias } = options;
-  if (atomId) attributes['data-atomid'] = String(atomId);
-  if (atomAlias) attributes['data-atomalias'] = atomAlias;
-
-  const attributeSelectors = Object.entries(attributes)
-    .map(([key, value]) => `[${key}="${value}"]`)
-    .join('');
-
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
-}
-
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
   await waitForRender(page, async () => {
     await ContextMenu(page, monomer).click(

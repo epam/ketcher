@@ -37,7 +37,6 @@ import {
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -69,10 +68,12 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
+  AtomsSetting,
   BondsSetting,
   FontOption,
   GeneralSetting,
@@ -97,6 +98,7 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -501,11 +503,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).hover([
-      MicroAtomOption.QueryProperties,
-      QueryAtomOption.HCount,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
     await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
     await takeEditorScreenshot(page);
@@ -600,11 +603,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Red,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Red]);
     await takeEditorScreenshot(page);
   });
 
@@ -915,11 +919,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Green,
-    ]);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Green]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });
@@ -1179,8 +1182,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, getAbbreviationLocator(page, { name: '5hMedC' }));
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 13 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 

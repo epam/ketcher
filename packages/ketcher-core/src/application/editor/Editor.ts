@@ -207,7 +207,6 @@ export class CoreEditor {
     ketcherId,
     theme,
     canvas,
-    monomersLibraryUpdate,
     mode,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;

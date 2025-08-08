@@ -1,9 +1,17 @@
 $RDFILE 1
+<<<<<<< HEAD
 $DATM    08/05/25 15:34
 $RFMT
 $RXN V3000
 
  -INDIGO- 0805251534
+=======
+$DATM    08/08/25 00:29
+$RFMT
+$RXN V3000
+
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
 M  V30 COUNTS 1 2
 M  V30 BEGIN REACTANT
@@ -81,7 +89,11 @@ M  END
 $RFMT
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0805251534
+=======
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
 M  V30 COUNTS 3 2
 M  V30 BEGIN REACTANT
@@ -177,7 +189,11 @@ M  END
 $RFMT
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0805251534
+=======
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
 M  V30 COUNTS 6 1
 M  V30 BEGIN REACTANT
@@ -303,7 +319,11 @@ M  END
 $RFMT
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0805251534
+=======
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
 M  V30 COUNTS 2 2
 M  V30 BEGIN REACTANT

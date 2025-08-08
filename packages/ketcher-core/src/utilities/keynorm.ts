@@ -73,7 +73,7 @@ function symbolByEvent(event) {
 
 function normalizeKeyEvent(event, base = false) {
   const name = symbolByEvent(event);
-  const isChar = name.length === 1 && name !== ' ';
+  const isChar = name && name.length === 1 && name !== ' ';
 
   return isChar && !base
     ? modifiers(name, event, !isChar)
@@ -123,7 +123,7 @@ function lookup(map, event) {
   let name = symbolByEvent(event);
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
-  const isChar = name.length === 1 && name !== ' ';
+  const isChar = name && name.length === 1 && name !== ' ';
 
   let res = map[modifiers(name, event, !isChar)];
   let baseName;

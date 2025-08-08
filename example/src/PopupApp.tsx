@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Dialog } from '@mui/material';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
@@ -41,46 +41,48 @@ const PopupApp = () => {
   }, 500);
 
   return (
-    <Dialog
-      open={true}
-      fullScreen={false}
-      maxWidth="xl"
-      classes={{ paper: 'ketcher-dialog' }}
-    >
-      <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
-        }}
-        buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
+    <StrictMode>
+      <Dialog
+        open={true}
+        fullScreen={false}
+        maxWidth="xl"
+        classes={{ paper: 'ketcher-dialog' }}
+      >
+        <Editor
+          errorHandler={(message: string) => {
+            setHasError(true);
+            setErrorMessage(message.toString());
+          }}
+          buttons={hiddenButtonsConfig}
+          staticResourcesUrl={process.env.PUBLIC_URL}
+          structServiceProvider={structServiceProvider}
+          onInit={(ketcher: Ketcher) => {
+            window.ketcher = ketcher;
 
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
-          window.scrollTo(0, 0);
-        }}
-      />
-      {hasError && (
-        <InfoModal
-          message={errorMessage}
-          close={() => {
-            setHasError(false);
-
-            // Focus on editor after modal is closed
-            const cliparea: HTMLElement | null =
-              document.querySelector('.cliparea');
-            cliparea?.focus();
+            window.parent.postMessage(
+              {
+                eventType: 'init',
+              },
+              '*',
+            );
+            window.scrollTo(0, 0);
           }}
         />
-      )}
-    </Dialog>
+        {hasError && (
+          <InfoModal
+            message={errorMessage}
+            close={() => {
+              setHasError(false);
+
+              // Focus on editor after modal is closed
+              const cliparea: HTMLElement | null =
+                document.querySelector('.cliparea');
+              cliparea?.focus();
+            }}
+          />
+        )}
+      </Dialog>
+    </StrictMode>
   );
 };
 

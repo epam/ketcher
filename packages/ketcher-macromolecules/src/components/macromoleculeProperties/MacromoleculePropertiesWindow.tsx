@@ -787,9 +787,9 @@ export const MacromoleculePropertiesWindow = () => {
   useEffect(() => {
     if (
       selectEntitiesHandler &&
-      editor.events.selectEntities.hasHandler(selectEntitiesHandler)
+      editor?.events.selectEntities.hasHandler(selectEntitiesHandler)
     ) {
-      editor.events.selectEntities.remove(selectEntitiesHandler);
+      editor?.events.selectEntities.remove(selectEntitiesHandler);
     }
 
     selectEntitiesHandler = () => {

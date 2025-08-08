@@ -15,16 +15,21 @@ export const test = mergeTests(utils, pageObjects).extend<
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetSettingsValuesToDefault,
+      closeErrorAndInfoModals,
     },
     use,
   ) => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
-    await use();
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
+    await resetSettingsValuesToDefault(page);
+    await closeErrorAndInfoModals(page);
     await clearLocalStorage(page);
+    await use();
+    await closeErrorAndInfoModals(page);
   },
   initMoleculesCanvas: [
     async ({ createPage }, use) => {

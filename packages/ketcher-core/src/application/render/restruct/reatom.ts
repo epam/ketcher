@@ -488,7 +488,7 @@ class ReAtom extends ReObject {
         options.usageInMacromolecule ===
           UsageInMacromolecule.MonomerConnectionsModal ||
         (options.usageInMacromolecule === undefined && !sgroup);
-
+      // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
         this.a.rglabel !== null && this.a.rglabel !== '0';
 

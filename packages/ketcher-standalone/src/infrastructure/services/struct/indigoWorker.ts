@@ -35,6 +35,7 @@ import {
   IndigoStandalone,
   ExplicitHydrogensCommandData,
   CalculateMacromoleculePropertiesCommandData,
+  ExpandMonomersCommandData,
 } from './indigoWorker.types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -123,6 +124,27 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         },
         data.options,
         Command.Layout,
+      );
+      break;
+    }
+
+    case Command.Expand: {
+      const data: ExpandMonomersCommandData =
+        message.data as ExpandMonomersCommandData;
+      handle(
+        (indigo, indigoOptions) => {
+          console.log('payload', data);
+          const response = indigo.expand(
+            data.struct,
+            data.format,
+            indigoOptions,
+          );
+
+          console.log('response', { response: JSON.parse(response) });
+          return JSON.parse(response);
+        },
+        data.options,
+        Command.Expand,
       );
       break;
     }

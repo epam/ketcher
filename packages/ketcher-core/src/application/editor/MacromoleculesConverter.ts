@@ -42,6 +42,7 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { DrawingEntitySelectOperation } from 'application/editor/operations/drawingEntity';
 
 export class MacromoleculesConverter {
   public static convertMonomerToMonomerMicromolecule(
@@ -381,6 +382,12 @@ export class MacromoleculesConverter {
       monomerAdditionCommand.operations[0].monomer as BaseMonomer,
     );
 
+    if (monomerMicromolecule.selected) {
+      const monomer = monomerAdditionCommand.operations[0]
+        .monomer as BaseMonomer;
+      monomer.selected = true;
+      command.addOperation(new DrawingEntitySelectOperation(monomer));
+    }
     return command;
   }
 
@@ -716,6 +723,9 @@ export class MacromoleculesConverter {
         assert(firstMonomer);
         assert(secondMonomer);
 
+        const isFirstMonomerSelected = firstMonomer.selected;
+        const isSecondMonomerSelected = secondMonomer.selected;
+
         command.merge(
           drawingEntitiesManager.createPolymerBond(
             firstMonomer,
@@ -727,6 +737,13 @@ export class MacromoleculesConverter {
               : MACROMOLECULES_BOND_TYPES.SINGLE,
           ),
         );
+
+        if (isFirstMonomerSelected) {
+          firstMonomer.selected = true;
+        }
+        if (isSecondMonomerSelected) {
+          secondMonomer.selected = true;
+        }
       }
     });
 

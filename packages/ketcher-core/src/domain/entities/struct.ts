@@ -1437,6 +1437,20 @@ export class Struct {
         });
       }
 
+      const shiftValue = sGroup.monomer.monomerItem.transformation?.shift;
+      if (shiftValue) {
+        sGroup.atoms.forEach((atomId) => {
+          const atom = this.atoms.get(atomId);
+          if (!atom) {
+            return;
+          }
+
+          atom.pp = atom.pp.add(
+            new Vec2(shiftValue.x || 0, -(shiftValue.y || 0)),
+          );
+        });
+      }
+
       const flipValue = sGroup.monomer.monomerItem.transformation?.flip;
       if (flipValue) {
         sGroup.atoms.forEach((atomId) => {

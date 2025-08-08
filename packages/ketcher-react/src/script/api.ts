@@ -37,6 +37,7 @@ function createApi(
     info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),
+    expandMonomers: structService.expandMonomers.bind(structService),
     clean: structService.clean.bind(structService),
     aromatize: structService.aromatize.bind(structService),
     dearomatize: structService.dearomatize.bind(structService),

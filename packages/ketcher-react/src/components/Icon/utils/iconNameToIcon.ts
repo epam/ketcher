@@ -246,6 +246,7 @@ import MonomerAutochainIcon from '../../../assets/icons/files/monomer-autochain.
 import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
 import CheckFilledIcon from '../../../assets/icons/files/check-filled.svg';
 import WarningFilledIcon from '../../../assets/icons/files/warning-filled.svg';
+import ExpandMonomersIcon from '../../../assets/icons/files/expand-monomers.svg';
 
 export const iconNameToIcon = {
   α,
@@ -350,6 +351,7 @@ export const iconNameToIcon = {
   history: HistoryIcon,
   'image-frame': ImageFrameIcon,
   layout: LayoutIcon,
+  'expand-monomers': ExpandMonomersIcon,
   logo: LogoIcon,
   miew: MiewIcon,
   'macromolecules-mode': MacromoleculesMode,

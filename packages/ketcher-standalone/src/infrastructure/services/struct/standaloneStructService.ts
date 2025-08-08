@@ -27,6 +27,7 @@ import {
   CommandOptions,
   ConvertCommandData,
   DearomatizeCommandData,
+  ExpandMonomersCommandData,
   ExplicitHydrogensCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
@@ -69,6 +70,8 @@ import {
   pickStandardServerOptions,
   CalculateMacromoleculePropertiesData,
   CalculateMacromoleculePropertiesResult,
+  ExpandMonomersData,
+  ExpandMonomersResult,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -206,6 +209,7 @@ const messageTypeToEventMapping: {
   [Command.Info]: WorkerEvent.Info,
   [Command.Convert]: WorkerEvent.Convert,
   [Command.Layout]: WorkerEvent.Layout,
+  [Command.Expand]: WorkerEvent.Expand,
   [Command.Clean]: WorkerEvent.Clean,
   [Command.Aromatize]: WorkerEvent.Aromatize,
   [Command.Dearomatize]: WorkerEvent.Dearomatize,
@@ -445,6 +449,65 @@ class IndigoService implements StructService {
 
       this.EE.removeListener(WorkerEvent.Layout, action);
       this.EE.addListener(WorkerEvent.Layout, action);
+
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  expandMonomers(
+    data: ExpandMonomersData,
+    options?: StructServiceOptions,
+  ): Promise<ExpandMonomersResult> {
+    const { struct, output_format: outputFormat } = data;
+    const format = convertMimeTypeToOutputFormat(outputFormat);
+
+    return new Promise((resolve, reject) => {
+      const action = ({
+        data,
+      }: OutputMessageWrapper<{
+        struct: string;
+        format: string;
+        original_format: ChemicalMimeType;
+      }>) => {
+        const msg: OutputMessage<{
+          struct: string;
+          format: string;
+          original_format: ChemicalMimeType;
+        }> = data;
+        if (!msg.hasError) {
+          const { struct } = msg.payload;
+          const result: ExpandMonomersResult = {
+            struct,
+            format: ChemicalMimeType.KET,
+          };
+          console.log('response', result);
+          resolve(result);
+        } else {
+          reject(msg.error);
+        }
+      };
+      const monomerLibrary = JSON.stringify(
+        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      );
+      const commandOptions: CommandOptions = {
+        ...this.getStandardServerOptions(options),
+        'output-content-type': 'application/json',
+        monomerLibrary,
+      };
+
+      const commandData: ExpandMonomersCommandData = {
+        struct,
+        format,
+        options: commandOptions,
+      };
+
+      const inputMessage: InputMessage<ExpandMonomersCommandData> = {
+        type: Command.Expand,
+        data: commandData,
+      };
+
+      this.EE.removeListener(WorkerEvent.Expand, action);
+      this.EE.addListener(WorkerEvent.Expand, action);
 
       this.worker.postMessage(inputMessage);
     });

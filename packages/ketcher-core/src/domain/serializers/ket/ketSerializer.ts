@@ -1083,6 +1083,12 @@ export class KetSerializer implements Serializer<Struct> {
       selection,
       true,
     );
+    selection?.sgroups?.forEach((sgroupId) => {
+      const sgroup = populatedStruct.sgroups.get(sgroupId);
+      if (sgroup) {
+        sgroup.selected = true;
+      }
+    });
     MacromoleculesConverter.convertStructToDrawingEntities(
       populatedStruct,
       drawingEntitiesManager,

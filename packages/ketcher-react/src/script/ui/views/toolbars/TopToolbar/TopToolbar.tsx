@@ -56,6 +56,7 @@ export interface PanelProps {
   onZoomOut: VoidFunction;
   onSettingsOpen: VoidFunction;
   onLayout: VoidFunction;
+  onExpandMonomers: VoidFunction;
   onClean: VoidFunction;
   onAromatize: VoidFunction;
   onDearomatize: VoidFunction;
@@ -143,6 +144,7 @@ export const TopToolbar = ({
   onZoomOut,
   onSettingsOpen,
   onLayout,
+  onExpandMonomers,
   onClean,
   onAromatize,
   onDearomatize,
@@ -219,6 +221,7 @@ export const TopToolbar = ({
         />
         <ExternalFuncControls
           onLayout={onLayout}
+          onExpandMonomers={onExpandMonomers}
           onClean={onClean}
           onAromatize={onAromatize}
           onDearomatize={onDearomatize}

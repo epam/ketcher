@@ -91,6 +91,10 @@ export interface LayoutData extends WithStruct, WithOutputFormat {}
 
 export interface LayoutResult extends WithStruct, WithFormat {}
 
+export interface ExpandMonomersData extends WithStruct, WithOutputFormat {}
+
+export interface ExpandMonomersResult extends WithStruct, WithFormat {}
+
 export interface CleanData
   extends WithStruct,
     WithSelection,
@@ -185,6 +189,10 @@ export interface StructService {
   ) => Promise<ConvertResult>;
   layout: (
     data: LayoutData,
+    options?: StructServiceOptions,
+  ) => Promise<LayoutResult>;
+  expandMonomers: (
+    data: ExpandMonomersData,
     options?: StructServiceOptions,
   ) => Promise<LayoutResult>;
   clean: (

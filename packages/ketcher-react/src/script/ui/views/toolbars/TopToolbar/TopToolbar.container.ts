@@ -102,6 +102,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
     onSettingsOpen: () => dispatchAction('settings'),
     onLayout: () => dispatchAction('layout'),
+    onExpandMonomers: () => dispatchAction('expand-monomers'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),
     onDearomatize: () => dispatchAction('dearom'),

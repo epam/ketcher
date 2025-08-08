@@ -20,6 +20,7 @@ import { TopToolbarIconButton } from './TopToolbarIconButton';
 interface ExternalFuncProps {
   isCollapsed: boolean;
   onLayout: () => void;
+  onExpandMonomers: () => void;
   onClean: () => void;
   onAromatize: () => void;
   onDearomatize: () => void;
@@ -37,6 +38,7 @@ interface ExternalFuncProps {
 export const ExternalFuncControls = ({
   isCollapsed,
   onLayout,
+  onExpandMonomers,
   onClean,
   onAromatize,
   onDearomatize,
@@ -68,6 +70,12 @@ export const ExternalFuncControls = ({
       title: 'Layout',
       handler: onLayout,
       testId: 'Layout button',
+    },
+    {
+      name: 'expand-monomers',
+      title: 'Expand Monomers',
+      handler: onExpandMonomers,
+      testId: 'Expand Monomers button',
     },
     {
       name: 'clean',

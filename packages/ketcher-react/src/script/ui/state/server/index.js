@@ -182,13 +182,15 @@ function resetStereoFlagsPosition(struct) {
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall(editor, server, method, options, struct) {
+export function serverCall(editor, server, method, options, _struct) {
   const selection = editor.selection();
   let selectedAtoms = [];
   let selectedBonds = [];
+  let selectedSgroups = [];
   const aidMap = new Map();
   const bidMap = new Map();
-  const currentStruct = (struct || editor.struct()).clone(
+  const struct = _struct || editor.struct();
+  const currentStruct = struct.clone(
     null,
     null,
     false,
@@ -208,17 +210,32 @@ export function serverCall(editor, server, method, options, struct) {
     selectedBonds = (selection.bonds ? selection.bonds : expSel.bonds).map(
       (bid) => bidMap.get(bid),
     );
+    selectedAtoms.forEach((atomId) => {
+      const atom = currentStruct.atoms.get(atomId);
+      const sgroupId = atom.sgs.values().next().value;
+
+      if (typeof sgroupId === 'number' && !selectedSgroups.includes(sgroupId)) {
+        selectedSgroups.push(sgroupId);
+      }
+    });
   }
   if (method === 'layout') {
     resetStereoFlagsPosition(currentStruct);
   }
-
   const ketSerializer = new KetSerializer();
-  const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
-    ...selection,
-    atoms: selectedAtoms,
-    bonds: selectedBonds,
-  });
+  console.log(selectedSgroups);
+  const serializedStruct = ketSerializer.serialize(
+    currentStruct,
+    undefined,
+    {
+      ...selection,
+      atoms: selectedAtoms,
+      bonds: selectedBonds,
+      sgroups: selectedSgroups,
+    },
+    false,
+    true,
+  );
 
   return server.then(() =>
     server[method](

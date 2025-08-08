@@ -27,6 +27,15 @@ const config = {
     disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'layout'),
   },
+  'expand-monomers': {
+    shortcut: 'Mod+M',
+    title: 'Expand Monomers',
+    action: {
+      thunk: serverTransform('expandMonomers'),
+    },
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: (options) => isHidden(options, 'expandMonomers'),
+  },
   clean: {
     shortcut: 'Mod+Shift+l',
     title: 'Clean Up',

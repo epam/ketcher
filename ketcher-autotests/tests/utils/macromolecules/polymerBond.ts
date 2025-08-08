@@ -566,12 +566,7 @@ export async function selectRightConnectionPointAtSelectConnectionPointDialog(
   await rightMonomerLocator.click();
 }
 
-export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
-  const bondLocator = page
-    .getByTestId(KETCHER_CANVAS)
-    .locator(`g:nth-child(${bondIndex.toString()}) > path`)
-    .first();
-
+export async function clickOnBondByLocator(page: Page, bondLocator:Locator) {
   const boundingBox = await bondLocator.boundingBox();
 
   await bondLocator.click({ force: true });
@@ -585,6 +580,67 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
       boundingBox.y + boundingBox.height / 2 + 2,
     );
   }
+}
+
+export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
+  const bondLocator = page
+    .getByTestId(KETCHER_CANVAS)
+    .locator(`g:nth-child(${bondIndex.toString()}) > path`)
+    .first();
+
+  await clickOnBondByLocator(page, bondLocator);
+}
+
+export async function findAndClickAllCenterBonds(page: Page) {
+  const allClickedBonds: Locator[] = [];
+  
+  async function findAndClickNextCenterBond(): Promise<void> {
+    const bondElements = page
+      .getByTestId(KETCHER_CANVAS)
+      .locator('g[data-testid="bond"]');
+
+    const atomBondCount: { [key: string]: number } = {};
+    
+    // Step 1: Count bonds for each atom
+    const bondCount = await bondElements.count();
+    for (let i = 0; i < bondCount; i++) {
+      const bond = bondElements.nth(i);
+      const from = await bond.getAttribute('data-fromatomid');
+      const to = await bond.getAttribute('data-toatomid');
+      
+      if (from) {
+        atomBondCount[from] = (atomBondCount[from] || 0) + 1;
+      }
+      if (to) {
+        atomBondCount[to] = (atomBondCount[to] || 0) + 1;
+      }
+    }
+
+    // Step 2: Find atoms with exactly 4 bonds
+    const atomsWith4Bonds = Object.keys(atomBondCount).filter(atomId => atomBondCount[atomId] === 4);
+
+    // Step 3: Find first bond where both atoms are in the list
+    for (let i = 0; i < bondCount; i++) {
+      const bond = bondElements.nth(i);
+      const from = await bond.getAttribute('data-fromatomid');
+      const to = await bond.getAttribute('data-toatomid');
+      
+      if (from && to && atomsWith4Bonds.includes(from) && atomsWith4Bonds.includes(to)) {        
+        // Click on the found bond
+        await clickOnBondByLocator(page, bond);
+        allClickedBonds.push(bond);
+
+        // Wait a bit for the UI to update after the click
+        await page.waitForTimeout(100);
+        
+        // Recursively search for more center bonds
+        await findAndClickNextCenterBond();
+        return;
+      }
+    }
+  }
+  
+  await findAndClickNextCenterBond();
 }
 
 export function getBondLocator(

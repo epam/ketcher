@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css';
 
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
@@ -34,7 +34,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <StrictMode>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -68,7 +68,7 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

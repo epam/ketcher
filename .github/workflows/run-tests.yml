@@ -91,7 +91,7 @@ jobs:
           name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
-  merge-reports:
+  merge_reports:
     if: ${{ !cancelled() }}
     needs: [part]
     runs-on: ubuntu-latest

@@ -46,7 +46,7 @@ if (process.env.NUM_WORKERS) {
 }
 
 const config: PlaywrightTestConfig = {
-  testDir: './tests',
+  testDir: './tests/specs/API',
   snapshotPathTemplate:
     '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
 
@@ -56,7 +56,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   workers: numWorkers,
   reporter: [
-    ['html', { open: process.env.DOCKER ? 'never' : 'on-failure' }],
+    ['blob', { outputDir: './playwright-report' }],
     ['line'],
     ['json', { outputFile: 'results.json' }],
   ],

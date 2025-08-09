@@ -46,7 +46,7 @@ if (process.env.NUM_WORKERS) {
 }
 
 const config: PlaywrightTestConfig = {
-  testDir: './tests/specs/API',
+  testDir: './tests',
   snapshotPathTemplate:
     '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
 

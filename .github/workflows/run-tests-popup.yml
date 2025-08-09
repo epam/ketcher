@@ -93,7 +93,7 @@ jobs:
           retention-days: 5
   merge_reports:
     if: ${{ !cancelled() }}
-    needs: [part]
+    needs: [popup-part]
     runs-on: ubuntu-latest
     container: node:18.14-bullseye-slim
     steps:

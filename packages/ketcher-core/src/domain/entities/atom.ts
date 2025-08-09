@@ -229,7 +229,7 @@ export class Atom extends BaseMicromoleculeEntity {
     );
 
     this.valence = 0;
-    this.implicitH = attributes.implicitHCount || attributes.implicitH || 0; // implicitH is not an attribute
+    this.implicitH = attributes.implicitHCount ?? attributes.implicitH ?? 0; // implicitH is not an attribute
     this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2();
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,

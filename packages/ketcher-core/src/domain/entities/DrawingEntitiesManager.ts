@@ -177,7 +177,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    return position || new Vec2(0, 0, 0);
+    return position ?? new Vec2(0, 0, 0);
   }
 
   public get bottomLeftMonomerPosition(): Vec2 {

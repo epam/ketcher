@@ -100,7 +100,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
-  const n = index !== undefined ? index : 0;
+  const n = index ?? 0;
   await waitForRender(page, async () => {
     await ContextMenu(page, tailElement.nth(n)).click(
       MultiTailedArrowOption.RemoveTail,

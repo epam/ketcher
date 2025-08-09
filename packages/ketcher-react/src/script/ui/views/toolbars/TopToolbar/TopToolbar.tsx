@@ -257,7 +257,7 @@ export const TopToolbar = ({
         <Divider />
         {!hiddenButtons.includes('zoom-list') && (
           <ZoomControls
-            currentZoom={currentZoom || 1}
+            currentZoom={currentZoom ?? 1}
             onZoomIn={onZoomIn}
             onZoomOut={onZoomOut}
             onZoom={onZoom}

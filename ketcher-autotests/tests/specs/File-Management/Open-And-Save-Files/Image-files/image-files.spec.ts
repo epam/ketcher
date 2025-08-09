@@ -2041,7 +2041,7 @@ test.describe('Image files', () => {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
-          testCase.dropdownOption || MoleculesFileFormatType.MDLMolfileV2000,
+          testCase.dropdownOption ?? MoleculesFileFormatType.MDLMolfileV2000,
         );
       }
       await takeEditorScreenshot(page);

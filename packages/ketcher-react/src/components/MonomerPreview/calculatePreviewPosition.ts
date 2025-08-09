@@ -37,9 +37,9 @@ function calculateTop(
   const ketcherEditorRootBoundingClientRect =
     ketcherEditorRoot?.getBoundingClientRect();
   const relativeTargetTop =
-    target.top - (ketcherEditorRootBoundingClientRect?.top || 0);
+    target.top - (ketcherEditorRootBoundingClientRect?.top ?? 0);
   const relativeTargetBottom =
-    target.bottom - (ketcherEditorRootBoundingClientRect?.top || 0);
+    target.bottom - (ketcherEditorRootBoundingClientRect?.top ?? 0);
 
   const topPreviewPosition =
     relativeTargetTop - preview.gap - height - preview.topPadding;
@@ -48,8 +48,8 @@ function calculateTop(
   return relativeTargetTop > height + preview.gap + preview.topPadding
     ? topPreviewPosition
     : target.top + height >
-        (ketcherEditorRootBoundingClientRect?.height || 0) &&
-      target.top > (ketcherEditorRootBoundingClientRect?.height || 0) / 2
+        (ketcherEditorRootBoundingClientRect?.height ?? 0) &&
+      target.top > (ketcherEditorRootBoundingClientRect?.height ?? 0) / 2
     ? topPreviewPosition
     : bottomPreviewPosition;
 }
@@ -91,8 +91,8 @@ export function calculateAmbiguousMonomerPreviewLeft(initialLeft: number) {
     .node()
     ?.getBoundingClientRect();
   const PREVIEW_WIDTH = 70;
-  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
-  const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
+  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
+  const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left ?? 0;
 
   return initialLeft + PREVIEW_WIDTH / 2 > canvasWrapperRight
     ? canvasWrapperRight - PREVIEW_WIDTH
@@ -115,9 +115,9 @@ export const calculateBondPreviewPosition = (
   const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
     .node()
     ?.getBoundingClientRect();
-  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
-  const canvasWrapperTop = canvasWrapperBoundingClientRect?.top || 0;
-  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
+  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom ?? 0;
+  const canvasWrapperTop = canvasWrapperBoundingClientRect?.top ?? 0;
+  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
 
   assert(firstMonomerCoordinates);
   assert(secondMonomerCoordinates);

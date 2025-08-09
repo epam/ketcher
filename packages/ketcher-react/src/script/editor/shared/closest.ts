@@ -569,7 +569,7 @@ function findClosestItem(
     return res;
   }, null);
 
-  return priorityItem || closestItem;
+  return priorityItem ?? closestItem;
 }
 
 /**

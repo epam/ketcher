@@ -60,7 +60,7 @@ export function identifyStructFormat(
   const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m);
 
   if (match) {
-    const end = (match.index || 0) + match[0].length;
+    const end = (match.index ?? 0) + match[0].length; // Already using ??, no further changes needed for this line
     if (
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1

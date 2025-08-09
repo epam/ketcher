@@ -58,7 +58,7 @@ const StructRender = ({
 
   return (
     <Container
-      data-testid={testId || 'monomer-preview-micro'}
+      data-testid={testId ?? 'monomer-preview-micro'}
       ref={renderRef}
       className={className}
       fullsize={fullsize}

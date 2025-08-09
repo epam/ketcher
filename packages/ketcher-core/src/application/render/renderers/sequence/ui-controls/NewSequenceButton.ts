@@ -19,7 +19,7 @@ export class NewSequenceButton {
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
   constructor(private indexOfRowBefore: number) {
-    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    this.canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
   }
 
   public show() {
@@ -27,7 +27,7 @@ export class NewSequenceButton {
     const chain =
       SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =
-      chain.lastNode?.antisenseNode?.renderer ||
+      chain.lastNode?.antisenseNode?.renderer ??
       chain.lastNode?.senseNode?.renderer;
 
     if (!(lastNodeRendererInChain instanceof BaseSequenceItemRenderer)) {

@@ -1092,7 +1092,7 @@ class Editor implements KetcherEditor {
   }
 
   explicitSelected() {
-    const selection = this.selection() || {};
+    const selection = this.selection() ?? {};
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : [];
       return acc;
@@ -1105,7 +1105,7 @@ class Editor implements KetcherEditor {
       res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          res.atoms = res.atoms || [];
+          res.atoms = res.atoms ?? [];
           if (res.atoms.indexOf(bond.begin) < 0) {
             res.atoms.push(bond.begin);
           }
@@ -1125,7 +1125,7 @@ class Editor implements KetcherEditor {
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
-          res.bonds = res.bonds || [];
+          res.bonds = res.bonds ?? [];
           res.bonds.push(bid);
         }
       });

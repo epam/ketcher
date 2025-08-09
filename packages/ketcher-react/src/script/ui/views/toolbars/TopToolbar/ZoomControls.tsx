@@ -82,7 +82,7 @@ const ShortcutLabel = styled('span')`
 `;
 
 const getIntegerFromString = (zoomInput: string | undefined): number => {
-  const zoomNumber = parseInt(zoomInput || '');
+  const zoomNumber = parseInt(zoomInput ?? '');
   if (isNaN(zoomNumber)) {
     return 0;
   }
@@ -173,7 +173,7 @@ export const ZoomControls = ({
         onClose={onClose}
         anchorEl={containerRef.current}
         container={
-          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
           document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
         }
         anchorOrigin={{

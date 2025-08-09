@@ -51,7 +51,7 @@ export const GroupBlockWide = ({
           {groupNameToRnaEditorItemLabel[groupName]}
         </GroupName>
         <MonomerName empty={empty} selected={selected}>
-          {monomerName || 'Not selected'}
+          {monomerName ?? 'Not selected'}
         </MonomerName>
       </TextContainer>
     </GroupBlockContainer>

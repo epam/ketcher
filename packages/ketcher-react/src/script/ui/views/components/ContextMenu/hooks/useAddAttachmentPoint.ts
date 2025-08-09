@@ -63,9 +63,9 @@ const useAddAttachmentPoint = () => {
           ),
         );
       } else {
-        const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
+        const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() ?? [];
         const allPointsNumbers = sgroupAttachmentPoints
-          .map((point) => point.attachmentPointNumber || 0)
+          .map((point) => point.attachmentPointNumber ?? 0)
           .sort();
         let lastMinimalPointNumber =
           allPointsNumbers[allPointsNumbers.length - 1];

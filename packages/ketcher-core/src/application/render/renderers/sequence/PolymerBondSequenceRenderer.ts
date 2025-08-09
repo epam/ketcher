@@ -24,11 +24,11 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   private get firstMonomer() {
-    return this.firstNode?.monomer || this.polymerBond.firstMonomer;
+    return this.firstNode?.monomer ?? this.polymerBond.firstMonomer;
   }
 
   private get secondMonomer() {
-    return this.secondNode?.monomer || this.polymerBond.secondMonomer;
+    return this.secondNode?.monomer ?? this.polymerBond.secondMonomer;
   }
 
   private get areMonomersOnSameRow() {
@@ -118,25 +118,12 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     }
   }
 
-  private getBondPath() {
-    let path = '';
-    if (this.areMonomersOnSameRow) {
-      path = `M ${this.scaledPosition.startPosition.x + 6},
-      ${this.mainLineY.mainLineY1 + 5} 
-      L ${this.scaledPosition.startPosition.x + 6}, ${
-        this.mainLineY.mainLineY1
-      } 
-      L ${this.scaledPosition.endPosition.x + 6}, ${this.mainLineY.mainLineY2}
-      L ${this.scaledPosition.endPosition.x + 6}, ${
-        this.mainLineY.mainLineY2 + 5
-      }`;
-    } else {
-      path = `M ${this.scaledPosition.startPosition.x + 6}, ${
-        this.mainLineY.mainLineY1
-      } L ${this.scaledPosition.endPosition.x + 6}, ${
-        this.mainLineY.mainLineY2
-      }`;
-    }
+  private getBondPath(): string {
+    const { startPosition, endPosition } = this.scaledPosition;
+    const path = `M ${startPosition.x + 6}, ${this.mainLineY.mainLineY1}
+    L ${startPosition.x + 6}, ${this.mainLineY.mainLineY2}
+    L ${endPosition.x - 6}, ${this.mainLineY.mainLineY2}`;
+
     return path;
   }
 

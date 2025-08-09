@@ -151,7 +151,7 @@ export const DropDown = ({
         IconComponent={ChevronIcon}
         disabled={disabled}
         fullWidth
-        data-testid={testId || 'dropdown-select'}
+        data-testid={testId ?? 'dropdown-select'}
         MenuProps={{
           PaperProps: {
             style: { ...stylesForExpanded, ...customStylesForExpanded },

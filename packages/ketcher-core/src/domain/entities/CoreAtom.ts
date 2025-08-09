@@ -133,7 +133,7 @@ export class Atom extends DrawingEntity {
   }
 
   private get valenceWithoutHydrogen() {
-    const charge = this.properties.charge || 0;
+    const charge = this.properties.charge ?? 0;
     const label = this.label;
     const element = Elements.get(this.label);
     // if (!element) {
@@ -220,7 +220,7 @@ export class Atom extends DrawingEntity {
     const elementGroupNumber = element?.group;
     const connectionAmount = this.calculateConnections();
     const radicalAmount = this.radicalAmount;
-    const charge = this.properties.charge || 0;
+    const charge = this.properties.charge ?? 0;
     const absCharge = Math.abs(charge);
     let valence = connectionAmount;
     let hydrogenAmount = 0;

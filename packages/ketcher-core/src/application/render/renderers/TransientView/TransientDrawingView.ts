@@ -33,7 +33,7 @@ export class TransientDrawingView {
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
 
   constructor() {
-    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
     this.defaultLayer = canvas
       .append('g')
       .attr('class', 'transient-views-layer');

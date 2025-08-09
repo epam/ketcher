@@ -79,7 +79,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): number {
   }
 
   const v0 = xy0.scaled(1 / count);
-  return getSign(struct, bond, v0) || 1;
+  return getSign(struct, bond, v0) ?? 1;
 }
 
 export function getAngleFromEvent(event, ci, restruct) {
@@ -94,7 +94,7 @@ export function getAngleFromEvent(event, ci, restruct) {
     const neiId =
       atom && restruct.molecule.halfBonds.get(atom.neighbors[0])?.end;
     const nei: any =
-      (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
+      (neiId ?? neiId === 0) && restruct.molecule.atoms.get(neiId);
 
     angle = event.ctrlKey
       ? vectorUtils.calcAngle(nei?.pp, atom?.pp)
@@ -126,8 +126,8 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
-      bid: parseInt(tmpl.bid) || 0,
+      aid: parseInt(tmpl.aid) ?? sGroup?.getAttachmentAtomId() ?? 0,
+      bid: parseInt(tmpl.bid) ?? 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -146,7 +146,7 @@ class TemplateTool implements Tool {
 
     this.template.molecule = frag; // preloaded struct
     this.findItems = [];
-    this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)); // template center
+    this.template.xy0 = xy0.scaled(1 / (frag.atoms.size ?? 1)); // template center
 
     const atom = frag.atoms.get(this.template.aid);
     if (atom) {
@@ -189,10 +189,11 @@ class TemplateTool implements Tool {
   }
 
   private get isNeedToShowRemoveAbbreviationPopup(): boolean {
-    const targetId = this.findKeyOfRelatedGroupId(
-      this.closestItem?.id as number,
-    );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    const targetId = this.closestItem
+      ? this.findKeyOfRelatedGroupId(this.closestItem.id as number)
+      : undefined;
+    const functionalGroup =
+      targetId !== undefined ? this.functionalGroups.get(targetId) : undefined;
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -202,7 +203,7 @@ class TemplateTool implements Tool {
     const isTargetAtomOrBond =
       this.targetGroupsIds.length && !this.isModeFunctionalGroup;
 
-    return Boolean(isTargetExpanded || isTargetAtomOrBond);
+    return Boolean(isTargetExpanded ?? isTargetAtomOrBond);
   }
 
   private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
@@ -255,7 +256,7 @@ class TemplateTool implements Tool {
         (this.closestItem?.map === 'functionalGroups' ||
           this.closestItem?.map === 'sgroups') &&
         FunctionalGroup.isContractedFunctionalGroup(
-          this.closestItem.id,
+          this.closestItem?.id,
           this.functionalGroups,
         )
       ) {
@@ -291,7 +292,10 @@ class TemplateTool implements Tool {
 
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
-      const bond = this.struct.bonds.get(ci.id)!;
+      const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return;
+      }
 
       // calculate default template flip
       dragCtx.sign1 = getBondFlipSign(this.struct, bond);
@@ -494,7 +498,10 @@ class TemplateTool implements Tool {
       this.targetGroupsIds.length
     ) {
       const restruct = this.editor.render.ctab;
-      const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!;
+      const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
+      if (!functionalGroupToReplace) {
+        return true;
+      }
 
       if (
         this.isSaltOrSolvent &&

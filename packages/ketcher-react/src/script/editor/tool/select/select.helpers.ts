@@ -40,14 +40,14 @@ export function getSelectedBonds(selection, molecule) {
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
   return atomsIds.map((atomId) => {
     const atomOrReAtom = molecule.atoms.get(atomId);
-    return atomOrReAtom.a || atomOrReAtom;
+    return atomOrReAtom.a ?? atomOrReAtom;
   });
 }
 
 export function mapBondIdsToBonds(bondsIds: number[], molecule): Bond[] {
   return bondsIds.map((bondId) => {
     const bondOrReBond = molecule.bonds.get(bondId);
-    return bondOrReBond?.b || bondOrReBond;
+    return bondOrReBond?.b ?? bondOrReBond;
   });
 }
 

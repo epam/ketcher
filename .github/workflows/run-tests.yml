@@ -110,9 +110,13 @@ jobs:
           merge-multiple: true
       - name: Merge into HTML Report
         run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
+        
+      - name: List files after merge
+        run: ls -laR
+
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: html-report--attempt-${{ github.run_attempt }}
-          path: ketcher-autotests/playwright-report/
+          path: playwright-report/
           retention-days: 5

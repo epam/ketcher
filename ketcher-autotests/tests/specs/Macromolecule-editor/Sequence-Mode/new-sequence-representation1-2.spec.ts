@@ -1885,10 +1885,10 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         .getAttribute('data-symbol-id');
 
       const senseSymbol = await getSymbolLocator(page, {
-        symbolId: senseSymbolId || '',
+        symbolId: senseSymbolId ?? '',
       }).first();
       const antisenseSymbol = await getSymbolLocator(page, {
-        symbolId: antisenseSymbolId || '',
+        symbolId: antisenseSymbolId ?? '',
       }).first();
 
       const establishHydrogenBondsOption = page
@@ -2036,10 +2036,10 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         symbolId: antisenseSymbolId || '',
       }).first();
       const senseSymbolWithHBond = getSymbolLocator(page, {
-        symbolId: senseSymbolWithHBondId || '',
+        symbolId: senseSymbolWithHBondId ?? '',
       }).first();
       const antisenseSymbolWithHBond = getSymbolLocator(page, {
-        symbolId: antisenseSymbolWithHBondId || '',
+        symbolId: antisenseSymbolWithHBondId ?? '',
       }).first();
 
       const establishHydrogenBondsOption = page
@@ -2115,7 +2115,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .getAttribute('data-symbol-id');
 
     const senseSymbol = getSymbolLocator(page, {
-      symbolId: senseSymbolId || '',
+      symbolId: senseSymbolId ?? '',
     }).first();
 
     const establishHydrogenBondsOption = page
@@ -2158,7 +2158,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .getAttribute('data-symbol-id');
 
     const senseSymbol = getSymbolLocator(page, {
-      symbolId: senseSymbolId || '',
+      symbolId: senseSymbolId ?? '',
     }).first();
 
     const establishHydrogenBondsOption = page
@@ -2282,7 +2282,7 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM ?? '',
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -2303,7 +2303,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

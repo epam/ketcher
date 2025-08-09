@@ -74,8 +74,8 @@ export function paperPathFromSVGElement(element) {
     path = new paperjs.Path.Rectangle(
       new paperjs.Rectangle(x, y, width, height),
       new paperjs.Size(
-        parseFloat(element.getAttribute('rx') || '0'),
-        parseFloat(element.getAttribute('ry') || '0'),
+        parseFloat(element.getAttribute('rx') ?? '0'),
+        parseFloat(element.getAttribute('ry') ?? '0'),
       ),
     );
   } else if (tagName === 'path') {
@@ -130,16 +130,16 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SRU': {
-          let connectivity: string = sgroup.data.connectivity || 'eu';
+          let connectivity: string = sgroup.data.connectivity ?? 'eu';
           if (connectivity === 'ht') connectivity = '';
-          const subscript = sgroup.data.subscript || 'n';
+          const subscript = sgroup.data.subscript ?? 'n';
           SGroupdrawBracketsOptions.lowerIndexText = subscript;
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
           break;
         }
         case 'SUP': {
           SGroupdrawBracketsOptions.lowerIndexText =
-            sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class];
+            sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class];
           SGroupdrawBracketsOptions.upperIndexText = null;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
@@ -191,7 +191,7 @@ class ReSGroup extends ReObject {
       if (sGroup?.isContracted() && position) {
         const reSGroupAtom = render.ctab.atoms.get(atomId);
         const sGroupTextBoundingBox =
-          reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox;
+          reSGroupAtom?.visel.boundingBox ?? reSGroupAtom?.visel.oldBoundingBox;
         if (sGroupTextBoundingBox) {
           const { x, y } = Scale.modelToCanvas(position, render.options);
           const { p0, p1 } = sGroupTextBoundingBox;

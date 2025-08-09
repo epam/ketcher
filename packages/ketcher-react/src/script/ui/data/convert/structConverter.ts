@@ -40,15 +40,15 @@ export function couldBeSaved(
 
     const atomsHaveUnsupportedProperties = arrayOfAtoms.some(
       (atom) =>
-        atom.radical ||
-        atom.unsaturatedAtom ||
-        atom.exactChangeFlag ||
+        atom.radical ??
+        atom.unsaturatedAtom ??
+        atom.exactChangeFlag ??
         atom.invRet,
     );
     const bondsHaveUnsupportedProperties = arrayOfBonds.some(
       (bond) =>
-        bond.reactingCenterStatus ||
-        bond.type === Bond.PATTERN.TYPE.DATIVE ||
+        bond.reactingCenterStatus ??
+        bond.type === Bond.PATTERN.TYPE.DATIVE ??
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );
     if (bondsHaveUnsupportedProperties || atomsHaveUnsupportedProperties) {

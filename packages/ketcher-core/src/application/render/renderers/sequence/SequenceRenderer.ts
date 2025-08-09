@@ -529,7 +529,7 @@ export class SequenceRenderer {
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
         startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition || this.caretPosition)
+        nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
       ) {
         if (twoStrandedNode.senseNode?.monomer) {
           monomers.push(twoStrandedNode.senseNode?.monomer);
@@ -593,7 +593,7 @@ export class SequenceRenderer {
     return (
       this.nodesGroupedByRows.find((idexRow) =>
         idexRow.includes(currentEdittingNode),
-      ) || []
+      ) ?? []
     );
   }
 
@@ -639,7 +639,7 @@ export class SequenceRenderer {
     let newCaretPosition = this.caretPosition;
     const symbolsBeforeCaretInCurrentRow = currentNodeIndexInRow;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ??
       0;
 
     newCaretPosition -= symbolsBeforeCaretInCurrentRow;
@@ -663,7 +663,7 @@ export class SequenceRenderer {
 
     let newCaretPosition = this.caretPosition;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ??
       0;
     const symbolsAfterCaretInCurrentRow =
       this.currentChainRow.length - currentNodeIndexInRow;
@@ -680,7 +680,7 @@ export class SequenceRenderer {
   public static moveCaretForward() {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
-      this.nextCaretPosition || this.caretPosition,
+      this.nextCaretPosition ?? this.caretPosition,
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 

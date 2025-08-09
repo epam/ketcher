@@ -21,7 +21,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   const header = isAlternatives ? 'Alternatives' : 'Mixed';
   const aminoAcidFallback = monomer.label === 'X' ? 'Any amino acid' : null;
   const baseFallback = monomer.label === 'N' ? 'Any base' : null;
-  const fallback = aminoAcidFallback || baseFallback;
+  const fallback = aminoAcidFallback ?? baseFallback;
 
   const { monomers, options } = monomer;
 
@@ -57,7 +57,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
       if (isAlternatives) {
         return a.monomerName.localeCompare(b.monomerName);
       } else {
-        if (!a.ratio || !b.ratio) {
+        if (a.ratio == null || b.ratio == null) {
           return 0;
         }
         return b.ratio - a.ratio;
@@ -65,12 +65,12 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
     });
     if (!isAlternatives) {
       const overallRatio = sortedData.reduce(
-        (acc, item) => acc + (item.ratio || 1),
+        (acc, item) => acc + (item.ratio ?? 1),
         0,
       );
 
       sortedData.forEach((entry) => {
-        entry.ratio = Math.round(((entry.ratio || 1) / overallRatio) * 100);
+        entry.ratio = Math.round(((entry.ratio ?? 1) / overallRatio) * 100);
       });
     }
 

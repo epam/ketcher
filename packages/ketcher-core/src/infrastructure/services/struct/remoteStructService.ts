@@ -65,7 +65,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
         (err) => reject(err),
       );
     }
-    setTimeout(iterate, startTimeGap || 0);
+    setTimeout(iterate, startTimeGap ?? 0);
   });
 }
 
@@ -120,7 +120,7 @@ function indigoCall(
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
     const body = Object.assign({}, data);
-    body.options = Object.assign(body.options || {}, defaultOptions, options);
+    body.options = Object.assign(body.options ?? {}, defaultOptions, options);
     return request(
       method,
       baseUrl + url,
@@ -384,7 +384,7 @@ export class RemoteStructService implements StructService {
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
       {
-        'Content-Type': blob.type || 'application/octet-stream',
+        'Content-Type': blob.type ?? 'application/octet-stream',
       },
     );
     const status = request.bind(
@@ -397,8 +397,8 @@ export class RemoteStructService implements StructService {
         pollDeferred(
           status.bind(null, { id: data.upload_id }),
           (response: any) => {
-            if (response.state === 'FAILURE') throw response;
-            return response.state === 'SUCCESS';
+            if ((response?.state ?? '') === 'FAILURE') throw response;
+            return (response?.state ?? '') === 'SUCCESS';
           },
           500,
           300,
@@ -411,7 +411,7 @@ export class RemoteStructService implements StructService {
     data: string,
     options?: GenerateImageOptions,
   ): Promise<string> {
-    const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
 
     return indigoCall(
       'POST',

@@ -13,7 +13,7 @@ export function mergeFragmentsToStruct(
       fragment.bonds?.forEach((bond) =>
         struct.bonds.add(bondToStruct(bond, atomsOffset)),
       );
-      atomsOffset += fragment.atoms?.length || 0;
+      atomsOffset += fragment.atoms?.length ?? 0;
     });
   }
   return struct;

@@ -50,7 +50,7 @@ export class SideChainConnectionBondRendererUtility {
     );
     const maxYOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
-        const connectionYOffset = connection.yOffset || 0;
+        const connectionYOffset = connection.yOffset ?? 0;
         return max > connectionYOffset ? max : connectionYOffset;
       },
       0,
@@ -72,7 +72,7 @@ export class SideChainConnectionBondRendererUtility {
 
     if (horizontal) {
       endOfPathPart +=
-        -(connection.yOffset || 0) * 3 +
+        -(connection.yOffset ?? 0) * 3 +
         cos * -connection.xOffset * 3 +
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;

@@ -24,9 +24,9 @@ import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
 
-const getActionState = (state) => state.actionState || {};
+const getActionState = (state) => state.actionState ?? {};
 
-const selectCustomButtons = (state) => state?.options?.customButtons || [];
+const selectCustomButtons = (state) => state?.options?.customButtons ?? [];
 
 const disabledButtonsSelector = createSelector(
   [getActionState],
@@ -65,7 +65,7 @@ const mapStateToProps = (state: any) => {
     hiddenButtons: hiddenButtonsSelector(state),
     customButtons: selectCustomButtons(state),
     shortcuts,
-    status: state.actionState || {},
+    status: state.actionState ?? {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
     disableableButtons,

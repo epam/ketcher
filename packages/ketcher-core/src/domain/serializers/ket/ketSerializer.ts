@@ -362,7 +362,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
-    const attachmentPoints = template.attachmentPoints || [];
+    const attachmentPoints = template.attachmentPoints ?? [];
 
     return KetSerializer.fillStruct({
       root: {
@@ -406,7 +406,7 @@ export class KetSerializer implements Serializer<Struct> {
     template: IKetMonomerTemplate,
   ): MonomerItemType {
     const monomerLibraryItem = {
-      label: template.alias || template.id,
+      label: template.alias ?? template.id,
       struct: KetSerializer.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
@@ -429,7 +429,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     const { attachmentPointsList } =
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
-        template.attachmentPoints || [],
+        template.attachmentPoints ?? [],
       );
 
     template.attachmentPoints?.forEach(

@@ -47,8 +47,8 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvas: D3SvgElementSelection<SVGGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper =
-      ZoomTool.instance?.canvasWrapper || select(canvasSelector);
-    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+      ZoomTool.instance?.canvasWrapper ?? select(canvasSelector);
+    this.canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {
@@ -70,19 +70,19 @@ export abstract class BaseRenderer implements IBaseRenderer {
   }
 
   public get width() {
-    return this.rootBBox?.width || 0;
+    return this.rootBBox?.width ?? 0;
   }
 
   public get height() {
-    return this.rootBBox?.height || 0;
+    return this.rootBBox?.height ?? 0;
   }
 
   public get x() {
-    return this.rootBBox?.x || 0;
+    return this.rootBBox?.x ?? 0;
   }
 
   public get y() {
-    return this.rootBBox?.y || 0;
+    return this.rootBBox?.y ?? 0;
   }
 
   public get selectionPoints(): Vec2[] | undefined {

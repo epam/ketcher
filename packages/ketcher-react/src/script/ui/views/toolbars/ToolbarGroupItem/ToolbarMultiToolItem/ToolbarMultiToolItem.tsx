@@ -91,13 +91,13 @@ const ToolbarMultiToolItem = (props: Props) => {
   const currentStatus = status[currentId];
   // todo: #type find out real type, possible GetActionState is no acceptable here
   // and check this type convert is redundant
-  selected = selected || Boolean(currentStatus?.selected);
+  selected = selected ?? Boolean(currentStatus?.selected);
 
   const allInnerItemsHidden: boolean = options.every(
     (option) => status[option.id]?.hidden,
   );
 
-  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
+  const displayMultiToolItem = !(allInnerItemsHidden ?? currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool;
@@ -114,7 +114,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
     if (!currentId) {
       currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
+        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
         options[0].id;
     }
   }
@@ -148,7 +148,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
-        dataTestId={dataTestId || iconName}
+        dataTestId={dataTestId ?? iconName}
       />
       {!isOpen && !isDisabled && (
         <Icon

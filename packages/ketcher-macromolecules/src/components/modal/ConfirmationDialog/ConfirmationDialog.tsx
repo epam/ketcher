@@ -11,14 +11,14 @@ export const ConfirmationDialog = ({
   onClose,
 }: ConfirmationDialogProps) => {
   const handleConfirm = () => {
-    onConfirm!();
+    onConfirm?.();
     onClose();
   };
 
   return (
     <Modal
       isOpen={isModalOpen}
-      title={title || 'Confirm your action'}
+      title={title ?? 'Confirm your action'}
       onClose={onClose}
     >
       <Modal.Content>

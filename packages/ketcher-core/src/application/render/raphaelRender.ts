@@ -58,8 +58,8 @@ export class Render {
     this.clientArea = clientArea;
     this.paper = new Raphael(
       clientArea,
-      options.width || '100%',
-      options.height || '100%',
+      options.width ?? '100%',
+      options.height ?? '100%',
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
@@ -217,10 +217,10 @@ export class Render {
   update(force = false, viewSz: Vec2 | null = null) {
     // eslint-disable-line max-statements
     viewSz =
-      viewSz ||
+      viewSz ??
       new Vec2(
-        this.userOpts.width || this.clientArea.clientWidth || 100,
-        this.userOpts.height || this.clientArea.clientHeight || 100,
+        this.userOpts.width ?? this.clientArea.clientWidth ?? 100,
+        this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
     const changes = this.ctab.update(force);
@@ -229,17 +229,17 @@ export class Render {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset || new Vec2());
+        .translate(this.options.offset ?? new Vec2());
 
       if (this.options.downScale) {
         this.ctab.molecule.rescale();
       }
 
-      const isAutoScale = this.options.autoScale || this.options.downScale;
+      const isAutoScale = this.options.autoScale ?? this.options.downScale;
       if (!isAutoScale) {
         if (!this.oldCb) this.oldCb = new Box2Abs();
         this.scrollbar.update();
-        this.options.offset = this.options.offset || new Vec2();
+        this.options.offset = this.options.offset ?? new Vec2();
       } else {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
@@ -249,7 +249,7 @@ export class Render {
           throw new Error('View box too small for the given margin');
         }
         let rescale =
-          this.options.rescaleAmount ||
+          this.options.rescaleAmount ??
           Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 
         const isForceDownscale = this.options.downScale && rescale < 1;

@@ -40,10 +40,10 @@ export class AutochainPreviewView extends TransientView {
       );
     const monomerAutochainPreviewSize = {
       width: Number(
-        monomerAutochainSymbolElement?.getAttribute('data-actual-width') || 0,
+        monomerAutochainSymbolElement?.getAttribute('data-actual-width') ?? 0,
       ),
       height: Number(
-        monomerAutochainSymbolElement?.getAttribute('data-actual-height') || 0,
+        monomerAutochainSymbolElement?.getAttribute('data-actual-height') ?? 0,
       ),
     };
 
@@ -52,9 +52,9 @@ export class AutochainPreviewView extends TransientView {
       .attr('transform-origin', 'center')
       .attr(
         'transform',
-        `translate(${
-          scaledPosition.x - monomerAutochainPreviewSize.width / 2
-        }, ${scaledPosition.y - monomerAutochainPreviewSize.height / 2})`,
+        `translate(${`
+          ${scaledPosition.x - monomerAutochainPreviewSize.width / 2}
+        `}, ${scaledPosition.y - monomerAutochainPreviewSize.height / 2})`,
       )
       .append('use')
       .attr('href', monomerAutochainSymbolElementId)

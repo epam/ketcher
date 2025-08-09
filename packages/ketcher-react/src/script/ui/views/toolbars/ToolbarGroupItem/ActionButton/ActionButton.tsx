@@ -60,7 +60,7 @@ const ActionButton = (props: Props) => {
 
   const shortcut = shortcutStr(action?.shortcut);
   const disabled =
-    status.disabled ||
+    status.disabled ??
     (indigoVerification && disableableButtons.includes(name));
 
   const handleClick = () => {
@@ -71,7 +71,7 @@ const ActionButton = (props: Props) => {
 
   return (
     <button
-      data-testid={dataTestId || name}
+      data-testid={dataTestId ?? name}
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}

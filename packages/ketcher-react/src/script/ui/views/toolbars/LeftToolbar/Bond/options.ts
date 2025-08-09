@@ -41,7 +41,7 @@ const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen']);
 const groups = [bondCommon, bondStereo, bondQuery, bondSpecial];
 const groupOptions = groups.flat();
 const groupDescriptors = groups.reduce((accum, group, index) => {
-  const start = accum[index - 1]?.end || 0;
+  const start = accum[index - 1]?.end ?? 0;
 
   accum.push({
     start,

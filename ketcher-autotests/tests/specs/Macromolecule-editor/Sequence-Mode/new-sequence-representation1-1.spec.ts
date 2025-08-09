@@ -1546,7 +1546,7 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM ?? '',
         );
       }
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1563,7 +1563,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1762,7 +1762,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1815,7 +1815,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1928,7 +1928,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,

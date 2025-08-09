@@ -95,11 +95,10 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [part]
     runs-on: ubuntu-latest
+    container: node:18.14-bullseye-slim
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
       - name: Install dependencies
         run: npm ci
       - name: Download Playwright blob reports
@@ -110,13 +109,9 @@ jobs:
           merge-multiple: true
       - name: Merge into HTML Report
         run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
-        
-      - name: List files after merge
-        run: ls -laR
-
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: html-report--attempt-${{ github.run_attempt }}
+          name: html-report
           path: playwright-report/
           retention-days: 5

@@ -43,11 +43,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   public get width(): number {
-    return this.rootBBox?.width || 0;
+    return this.rootBBox?.width ?? 0;
   }
 
   public get height(): number {
-    return this.rootBBox?.height || 0;
+    return this.rootBBox?.height ?? 0;
   }
 
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {

@@ -477,7 +477,7 @@ class PolymerBond implements BaseTool {
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
-      ) || monomer?.getValidSourcePoint();
+      ) ?? monomer?.getValidSourcePoint();
 
     // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(

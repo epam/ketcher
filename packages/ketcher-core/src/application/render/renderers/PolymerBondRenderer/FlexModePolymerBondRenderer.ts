@@ -22,7 +22,7 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private editorEvents: typeof editorEvents;
+  private readonly editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;

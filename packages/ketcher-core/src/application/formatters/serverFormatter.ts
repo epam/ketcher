@@ -42,10 +42,10 @@ type LayoutPromise = (
 ) => Promise<LayoutResult>;
 
 export class ServerFormatter implements StructFormatter {
-  #structService: StructService;
-  #ketSerializer: KetSerializer;
-  #format: SupportedFormat;
-  #options?: StructServiceOptions;
+  readonly #structService: StructService;
+  readonly #ketSerializer: KetSerializer;
+  readonly #format: SupportedFormat;
+  readonly #options?: StructServiceOptions;
 
   constructor(
     structService: StructService,
@@ -79,12 +79,13 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (e: any) {
+    } catch (e: unknown) {
       let message;
-      if (e.message === 'Server is not compatible') {
+      if (e instanceof Error && e.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${e.message || e}`;
+        const details = e instanceof Error ? e.message : String(e);
+        message = `Convert error!\n${details}`;
       }
       KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
       throw new Error(message);
@@ -123,7 +124,7 @@ export class ServerFormatter implements StructFormatter {
     stringifiedStruct: string,
   ): Promise<Struct> {
     const data: ConvertData | LayoutData = {
-      struct: undefined as any,
+      struct: '',
       output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
     };
 
@@ -140,13 +141,14 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (e: any) {
-      if (e.message !== 'Server is not compatible') {
+    } catch (e: unknown) {
+      if (!(e instanceof Error) || e.message !== 'Server is not compatible') {
         KetcherLogger.error(
           'serverFormatter.ts::getStructureFromStringAsync',
           e,
         );
-        throw Error(`Convert error!\n${e.message || e}`);
+        const details = e instanceof Error ? e.message : String(e);
+        throw Error(`Convert error!\n${details}`);
       }
 
       const formatError =

@@ -181,15 +181,15 @@ export class CoreEditor {
   }
 
   public mode: BaseMode;
-  private previousModes: BaseMode[] = [];
+  private readonly previousModes: BaseMode[] = [];
   public sequenceTypeEnterMode = SequenceType.RNA;
-  private micromoleculesEditor: Editor;
+  private readonly micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
-  private cleanupsForDomEvents: Array<() => void> = [];
+  private readonly cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
     ketcherId,
@@ -241,13 +241,13 @@ export class CoreEditor {
     window.addEventListener('blur', this.handleWindowBlur);
   }
 
-  private handleVisibilityChange = (): void => {
+  private readonly handleVisibilityChange = (): void => {
     if (document.hidden) {
       this.cancelActiveDrag();
     }
   };
 
-  private handleWindowBlur = (): void => {
+  private readonly handleWindowBlur = (): void => {
     this.cancelActiveDrag();
   };
 

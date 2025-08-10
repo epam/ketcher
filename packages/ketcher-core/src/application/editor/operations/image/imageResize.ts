@@ -30,9 +30,9 @@ const moveBottomPositions: Array<ImageReferenceName> = [
 export class ImageResize extends BaseOperation {
   private previousPosition: Vec2 | null = null;
   constructor(
-    private id: number,
-    private position: Vec2,
-    private referencePositionName: ImageReferenceName,
+    private readonly id: number,
+    private readonly position: Vec2,
+    private readonly referencePositionName: ImageReferenceName,
   ) {
     super(OperationType.IMAGE_RESIZE);
   }

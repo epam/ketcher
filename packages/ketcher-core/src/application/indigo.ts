@@ -89,8 +89,8 @@ function convertStructToString(
 }
 
 export class Indigo {
-  #structService: StructService;
-  #ketSerializer: KetSerializer;
+  readonly #structService: StructService;
+  readonly #ketSerializer: KetSerializer;
 
   constructor(structService) {
     this.#structService = structService;

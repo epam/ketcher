@@ -49,10 +49,13 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
-  private history: EditorHistory;
-  private bondType: MACROMOLECULES_BOND_TYPES;
+  private readonly history: EditorHistory;
+  private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
-  constructor(private editor: CoreEditor, options: { toolName: ToolName }) {
+  constructor(
+    private readonly editor: CoreEditor,
+    options: { toolName: ToolName },
+  ) {
     this.editor = editor;
     this.history = new EditorHistory(this.editor);
     this.bondType =

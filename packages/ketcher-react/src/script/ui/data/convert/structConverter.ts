@@ -41,7 +41,7 @@ export function couldBeSaved(
     const atomsHaveUnsupportedProperties = arrayOfAtoms.some(
       (atom) =>
         atom.radical ??
-        atom.unsaturatedAtom ??
+        atom.unsaturatedAtom ||
         atom.exactChangeFlag ??
         atom.invRet,
     );

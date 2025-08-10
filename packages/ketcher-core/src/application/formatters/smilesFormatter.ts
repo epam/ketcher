@@ -59,6 +59,6 @@ export class SmilesFormatter implements StructFormatter {
   }
 
   static isContainsCoordinates(smiles: string) {
-    return /(\[|\().*(\]|\))/.test(smiles) || /\([\d.,;-]+\)/.test(smiles);
+    return /\([\d.,;-]+\)/.test(smiles);
   }
 }

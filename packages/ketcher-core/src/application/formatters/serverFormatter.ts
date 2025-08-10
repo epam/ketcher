@@ -124,7 +124,7 @@ export class ServerFormatter implements StructFormatter {
     stringifiedStruct: string,
   ): Promise<Struct> {
     const data: ConvertData | LayoutData = {
-      struct: '',
+      struct: undefined as any,
       output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
     };
 

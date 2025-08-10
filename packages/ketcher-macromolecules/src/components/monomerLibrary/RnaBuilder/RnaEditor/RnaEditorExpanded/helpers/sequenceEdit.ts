@@ -19,7 +19,7 @@ export const generateSequenceSelectionGroupNames = (
   for (let i = 0; i < labeledNucleotides.length; i++) {
     for (const item of ['sugarLabel', 'baseLabel', 'phosphateLabel']) {
       if (
-        labeledNucleotides[i]?.[item] ??
+        labeledNucleotides[i]?.[item] ||
         (!labeledNucleotides[i]?.[item] &&
           labeledNucleotides[i].type === Entities.Nucleoside &&
           !labeledNucleotides[i].isNucleosideConnectedAndSelectedWithPhosphate)

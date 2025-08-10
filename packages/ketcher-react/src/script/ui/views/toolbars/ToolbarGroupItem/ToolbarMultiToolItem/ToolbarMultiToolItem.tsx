@@ -97,7 +97,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     (option) => status[option.id]?.hidden,
   );
 
-  const displayMultiToolItem = !(allInnerItemsHidden ?? currentStatus?.hidden);
+  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool;

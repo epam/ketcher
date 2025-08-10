@@ -203,7 +203,7 @@ class TemplateTool implements Tool {
     const isTargetAtomOrBond =
       this.targetGroupsIds.length && !this.isModeFunctionalGroup;
 
-    return Boolean(isTargetExpanded ?? isTargetAtomOrBond);
+    return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
 
   private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {

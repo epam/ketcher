@@ -568,7 +568,7 @@
         "$ref": "monomerTemplate-Az___4-azidobutyric acid"
       },
       {
-        "$ref": "monomerTemplate-CY5___Sulfo-Cyanine 5"
+        "$ref": "monomerTemplate-SCY5___Sulfo-Cyanine 5"
       },
       {
         "$ref": "monomerTemplate-5TAMRA___5-Carboxytetramethylrhodamine"
@@ -43744,7 +43744,7 @@
       }
     ]
   },
-  "monomerTemplate-CY5___Sulfo-Cyanine 5": {
+  "monomerTemplate-SCY5___Sulfo-Cyanine 5": {
     "type": "monomerTemplate",
     "atoms": [
       {
@@ -44450,9 +44450,9 @@
     ],
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "CY5___Sulfo-Cyanine 5",
+    "id": "SCY5___Sulfo-Cyanine 5",
     "fullName": "Sulfo-Cyanine 5",
-    "alias": "CY5",
+    "alias": "SCY5",
     "attachmentPoints": [
       {
         "attachmentAtom": 42,
@@ -67266,7 +67266,7 @@
         "attachmentAtom": 25,
         "leavingGroup": {
           "atoms": [
-            26
+            36
           ]
         },
         "type": "right"
@@ -72352,9 +72352,9 @@
     ],
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "SS3___Dipropanoldisulfide",
-    "fullName": "Dipropanoldisulfide",
-    "alias": "SS3",
+    "id": "AzTAM___5-TAMRA Azide",
+    "fullName": "5-TAMRA Azide",
+    "alias": "AzTAM",
     "idtAliases": {
       "base": "5-TAMK",
       "modifications": {

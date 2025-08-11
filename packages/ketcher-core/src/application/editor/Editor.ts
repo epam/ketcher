@@ -205,7 +205,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode || new SequenceMode();
+    this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -297,7 +297,7 @@ export class CoreEditor {
 
       const newMonomerProps = newMonomer.props;
       const monomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-${
-        newMonomerProps.id || newMonomerProps.MonomerName
+        newMonomerProps.id ?? newMonomerProps.MonomerName
       }`;
 
       if (existingMonomerIndex !== -1) {
@@ -306,7 +306,7 @@ export class CoreEditor {
         const existingMonomerProps =
           this._monomersLibrary[existingMonomerIndex].props;
         const existingMonomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-
-          ${existingMonomerProps.id || existingMonomerProps.MonomerName}`;
+          ${existingMonomerProps.id ?? existingMonomerProps.MonomerName}`;
         // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -916,7 +916,7 @@ export class CoreEditor {
     return {
       modelChanges,
       firstMonomer: sugar,
-      lastMonomer: phosphate || sugar,
+      lastMonomer: phosphate ?? sugar,
     };
   }
 
@@ -1565,7 +1565,7 @@ export class CoreEditor {
     this.resetCanvasOffset();
     this.resetModeIfNeeded();
 
-    const struct = this.micromoleculesEditor?.struct() || new Struct();
+    const struct = this.micromoleculesEditor?.struct() ?? new Struct();
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(

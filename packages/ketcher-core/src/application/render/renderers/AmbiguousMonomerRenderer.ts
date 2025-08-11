@@ -56,7 +56,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr(
         'href',
-        this.monomerSymbolElementsIds.variant ||
+        this.monomerSymbolElementsIds.variant ??
           this.monomerSymbolElementsIds.body,
       )
       .attr('fill', '#fff')

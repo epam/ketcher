@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType, takeEditorScreenshot } from '..';
@@ -14,6 +14,8 @@ import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { page } from '@tests/specs/Structure-Creating-&-Editing/Bond-Tool/all-bonds.spec';
+import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 
 type BoundingBox = {
   width: number;
@@ -153,6 +155,23 @@ export function pressTab(page: Page, name = '') {
 export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   await page.mouse.move(x, y);
+}
+
+export async function dragTo(
+  page: Page,
+  element: Locator,
+  target: ClickTarget,
+) {
+  await element.hover();
+  await page.mouse.down();
+  if ('x' in target && 'y' in target) {
+    await page.mouse.move(target.x, target.y);
+  } else {
+    await target.hover();
+  }
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
 }
 
 export async function dragMouseTo(x: number, y: number, page: Page) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -164,12 +165,17 @@ export async function dragTo(
 ) {
   await element.hover();
   await page.mouse.down();
-  if ('x' in target && 'y' in target) {
-    await page.mouse.move(target.x, target.y);
-  } else {
-    await target.hover();
-  }
   await waitForRender(page, async () => {
+    if ('x' in target && 'y' in target) {
+      await page.mouse.move(target.x, target.y);
+    } else {
+      const box = await target.boundingBox();
+      if (box) {
+        const targetCenterX = box.x + box.width / 2;
+        const targetCenterY = box.y + box.height / 2;
+        await page.mouse.move(targetCenterX, targetCenterY);
+      }
+    }
     await page.mouse.up();
   });
 }

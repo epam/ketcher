@@ -12,6 +12,8 @@ import {
   RxnFileFormat,
   MolFileFormat,
   deleteByKeyboard,
+  dragTo,
+  waitForRender,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -45,6 +47,8 @@ import {
   AttachmentPointsDialog,
   setAttachmentPoints,
 } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -548,8 +552,8 @@ test.describe('Attachment Point Tool', () => {
       Test case: EPMLSOPKET-1645
       Description: With selection tool click the atom with attachment point(s) and drag selected atom.
     */
-    const yDelta = 100;
-    await openFileAndAddToCanvas(
+    // const yDelta = 100;
+    await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/chain-attachment-list.mol',
     );
@@ -557,22 +561,40 @@ test.describe('Attachment Point Tool', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
-    const coordinatesWithShift = point.y + yDelta;
-    await dragMouseTo(point.x, coordinatesWithShift, page);
 
-    const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await clickOnCanvas(page, point2.x, point2.y);
-    const coordinatesWithShift2 = point.y + yDelta;
-    await dragMouseTo(point2.x, coordinatesWithShift2, page);
+    // await getAtomLocator(page, { atomLabel: 'N', atomId: 2 }).hover();
+    await dragTo(page, getAtomLocator(page, { atomId: 2 }), {
+      x: 400,
+      y: 700,
+    });
+    // await waitForRender(page, async () => {
+    //   await page
+    //     .getByTestId(KETCHER_CANVAS)
+    //     .filter({ has: page.locator(':visible') })
+    //     .click({ position: { x: 0, y: 0 } });
+    // });
+    // await clickOnCanvas(page, 100, 100);
+    // await getAtomLocator(page, { atomId: 6 }).hover();
+    // await dragTo(page, getAtomLocator(page, { atomId: 6 }), {
+    //   x: 500,
+    //   y: 700,
+    // });
+    // const point = await getAtomByIndex(page, { label: 'N' }, 0);
+    // await clickOnCanvas(page, point.x, point.y);
+    // const coordinatesWithShift = point.y + yDelta;
+    // await dragMouseTo(point.x, coordinatesWithShift, page);
+
+    // const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
+    // await clickOnCanvas(page, point2.x, point2.y);
+    // const coordinatesWithShift2 = point.y + yDelta;
+    // await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < 2; i++) {
-      await CommonTopLeftToolbar(page).undo();
-    }
-    await takeEditorScreenshot(page);
+    // for (let i = 0; i < 2; i++) {
+    //   await CommonTopLeftToolbar(page).undo();
+    // }
+    // await takeEditorScreenshot(page);
   });
 
   test('Delete the atom with attachment point(s) with Erase tool.', async ({

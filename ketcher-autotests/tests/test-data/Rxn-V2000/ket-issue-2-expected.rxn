@@ -1,11 +1,19 @@
 $RXN
 
+<<<<<<< HEAD
  -INDIGO- 0805251534
+=======
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
   2  1
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08052515342D
+=======
+  -INDIGO-08082500292D
+>>>>>>> e27e68a6b (just commit everything)
 
   4  4  0  0  0  0  0  0  0  0999 V2000
    10.9967  -10.7770    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -19,7 +27,11 @@ $MOL
 M  END
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08052515342D
+=======
+  -INDIGO-08082500292D
+>>>>>>> e27e68a6b (just commit everything)
 
   3  3  0  0  0  0  0  0  0  0999 V2000
    13.3863  -10.7761    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -31,7 +43,11 @@ $MOL
 M  END
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08052515342D
+=======
+  -INDIGO-08082500292D
+>>>>>>> e27e68a6b (just commit everything)
 
   8  8  0  0  0  0  0  0  0  0999 V2000
    18.5786  -11.2330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0

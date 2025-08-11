@@ -1,6 +1,10 @@
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0805251534
+=======
+ -INDIGO- 0808250029
+>>>>>>> e27e68a6b (just commit everything)
 
 M  V30 COUNTS 1 1
 M  V30 BEGIN REACTANT

@@ -52,14 +52,21 @@ export const DragGhost = () => {
 
     canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
   }, [libraryItemDragData]);
-
   const dragOverCanvas =
     canvasBBoxRef.current &&
     libraryItemDragData &&
-    libraryItemDragData.position.x >= canvasBBoxRef.current.left &&
-    libraryItemDragData.position.x <= canvasBBoxRef.current.right &&
-    libraryItemDragData.position.y >= canvasBBoxRef.current.top &&
-    libraryItemDragData.position.y <= canvasBBoxRef.current.bottom;
+    libraryItemDragData.position.x +
+      (editor?.ketcherRootElementBoundingClientRect.left || 0) >=
+      canvasBBoxRef.current.left &&
+    libraryItemDragData.position.x +
+      (editor?.ketcherRootElementBoundingClientRect.left || 0) <=
+      canvasBBoxRef.current.right &&
+    libraryItemDragData.position.y +
+      (editor?.ketcherRootElementBoundingClientRect.top || 0) >=
+      canvasBBoxRef.current.top &&
+    libraryItemDragData.position.y +
+      (editor?.ketcherRootElementBoundingClientRect.top || 0) <=
+      canvasBBoxRef.current.bottom;
 
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;

@@ -138,6 +138,9 @@ interface IAutochainMonomerAddResult {
   lastMonomer: BaseMonomer;
 }
 
+const EditorClassName = 'Ketcher-polymer-editor-root';
+const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
+
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
@@ -158,6 +161,7 @@ export class CoreEditor {
   private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
+  public ketcherRootElement: HTMLDivElement | null;
   public drawnStructuresWrapperElement: SVGGElement;
   public canvasOffset: DOMRect = {
     width: 0,
@@ -165,6 +169,8 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  public ketcherRootElementBoundingClientRect: DOMRect | undefined;
 
   public nextAutochainPosition?: Vec2 = undefined;
 
@@ -202,6 +208,9 @@ export class CoreEditor {
     this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
+    this.ketcherRootElement = this.canvas?.closest<HTMLDivElement>(
+      KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+    );
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
@@ -223,6 +232,7 @@ export class CoreEditor {
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -234,6 +244,11 @@ export class CoreEditor {
 
   private resetCanvasOffset() {
     this.canvasOffset = this.canvas.getBoundingClientRect();
+  }
+
+  private resetKetcherRootElementOffset() {
+    this.ketcherRootElementBoundingClientRect =
+      this.ketcherRootElement?.getBoundingClientRect();
   }
 
   private initializeEventListeners(): void {
@@ -1563,6 +1578,7 @@ export class CoreEditor {
 
   public switchToMacromolecules() {
     this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
     this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() || new Struct();

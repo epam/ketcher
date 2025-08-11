@@ -1,5 +1,5 @@
 import 'ketcher-react/dist/index.css';
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
@@ -40,73 +40,75 @@ const DuoApp = () => {
   }
 
   return (
-    <div className="container">
-      <div className="box">
-        {/* The first editor instance */}
-        <Editor
-          errorHandler={(message: string) => {
-            setHasError(true);
-            setErrorMessage(message.toString());
-          }}
-          buttons={hiddenButtonsConfig}
-          staticResourcesUrl={process.env.PUBLIC_URL}
-          structServiceProvider={structServiceProvider1}
-          onInit={(ketcher: Ketcher) => {
-            window.ketcher = ketcher;
-            safePostMessage({
-              eventType: 'init',
-            });
-            window.scrollTo(0, 0);
-          }}
-        />
-        {hasError && (
-          <InfoModal
-            message={errorMessage}
-            close={() => {
-              setHasError(false);
-
-              // Focus on editor after modal is closed
-              const cliparea: HTMLElement | null =
-                document.querySelector('.cliparea');
-              cliparea?.focus();
+    <StrictMode>
+      <div className="container">
+        <div className="box">
+          {/* The first editor instance */}
+          <Editor
+            errorHandler={(message: string) => {
+              setHasError(true);
+              setErrorMessage(message.toString());
+            }}
+            buttons={hiddenButtonsConfig}
+            staticResourcesUrl={process.env.PUBLIC_URL}
+            structServiceProvider={structServiceProvider1}
+            onInit={(ketcher: Ketcher) => {
+              window.ketcher = ketcher;
+              safePostMessage({
+                eventType: 'init',
+              });
+              window.scrollTo(0, 0);
             }}
           />
-        )}{' '}
-      </div>
+          {hasError && (
+            <InfoModal
+              message={errorMessage}
+              close={() => {
+                setHasError(false);
 
-      <div className="box">
-        {/* The first editor instance */}
-        <Editor
-          errorHandler={(message: string) => {
-            setHasError(true);
-            setErrorMessage(message.toString());
-          }}
-          buttons={hiddenButtonsConfig}
-          staticResourcesUrl={process.env.PUBLIC_URL}
-          structServiceProvider={structServiceProvider2}
-          onInit={(ketcher: Ketcher) => {
-            window.ketcher = ketcher;
-            safePostMessage({
-              eventType: 'init',
-            });
-            window.scrollTo(0, 0);
-          }}
-        />
-        {hasError && (
-          <InfoModal
-            message={errorMessage}
-            close={() => {
-              setHasError(false);
+                // Focus on editor after modal is closed
+                const cliparea: HTMLElement | null =
+                  document.querySelector('.cliparea');
+                cliparea?.focus();
+              }}
+            />
+          )}
+        </div>
 
-              // Focus on editor after modal is closed
-              const cliparea: HTMLElement | null =
-                document.querySelector('.cliparea');
-              cliparea?.focus();
+        <div className="box">
+          {/* The second editor instance */}
+          <Editor
+            errorHandler={(message: string) => {
+              setHasError(true);
+              setErrorMessage(message.toString());
+            }}
+            buttons={hiddenButtonsConfig}
+            staticResourcesUrl={process.env.PUBLIC_URL}
+            structServiceProvider={structServiceProvider2}
+            onInit={(ketcher: Ketcher) => {
+              window.ketcher = ketcher;
+              safePostMessage({
+                eventType: 'init',
+              });
+              window.scrollTo(0, 0);
             }}
           />
-        )}{' '}
+          {hasError && (
+            <InfoModal
+              message={errorMessage}
+              close={() => {
+                setHasError(false);
+
+                // Focus on editor after modal is closed
+                const cliparea: HTMLElement | null =
+                  document.querySelector('.cliparea');
+                cliparea?.focus();
+              }}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </StrictMode>
   );
 };
 

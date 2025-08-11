@@ -229,7 +229,7 @@ export class Atom extends BaseMicromoleculeEntity {
     );
 
     this.valence = 0;
-    this.implicitH = attributes.implicitHCount || attributes.implicitH || 0; // implicitH is not an attribute
+    this.implicitH = attributes.implicitHCount ?? attributes.implicitH ?? 0; // implicitH is not an attribute
     this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2();
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
@@ -430,7 +430,7 @@ export class Atom extends BaseMicromoleculeEntity {
 
   calcValence(connectionCount: number): boolean {
     const label = this.label;
-    const charge = this.charge || 0;
+    const charge = this.charge ?? 0;
     if (this.isQuery() || this.attachmentPoints) {
       this.implicitH = 0;
       return true;
@@ -676,7 +676,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   calcValenceMinusHyd(conn: number): number {
-    const charge = this.charge || 0;
+    const charge = this.charge ?? 0;
     const label = this.label;
     const element = Elements.get(this.label);
     if (!element) {

@@ -43,8 +43,8 @@ export class ReinitializeModeOperation implements Operation {
 
 export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
-    private previousPosition: SequencePointer,
-    private nextPosition: SequencePointer,
+    private readonly previousPosition: SequencePointer,
+    private readonly nextPosition: SequencePointer,
   ) {
     this.execute();
   }

@@ -19,9 +19,9 @@ import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
 class ClearTool implements BaseTool {
-  private history: EditorHistory;
+  private readonly history: EditorHistory;
 
-  constructor(private editor: CoreEditor) {
+  constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
     const mode = editor.mode;

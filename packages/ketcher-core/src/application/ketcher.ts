@@ -36,6 +36,7 @@ import {
   runAsyncAction,
   SettingsManager,
   getSvgFromDrawnStructures,
+  KetcherLogger,
 } from 'utilities';
 import {
   deleteAllEntitiesOnCanvas,
@@ -70,10 +71,10 @@ export class Ketcher {
   _id: string;
   logging: LogSettings;
   structService: StructService;
-  #formatterFactory: FormatterFactory;
+  readonly #formatterFactory: FormatterFactory;
   #editor: Editor | null = null;
   _indigo: Indigo;
-  #eventBus: EventEmitter;
+  readonly #eventBus: EventEmitter;
   changeEvent: Subscription;
 
   get editor(): Editor {
@@ -454,7 +455,6 @@ export class Ketcher {
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
-
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     runAsyncAction<void>(async () => {
@@ -464,6 +464,7 @@ export class Ketcher {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
         macromoleculesEditor?.zoomToStructuresIfNeeded();
+        macromoleculesEditor.mode.initialize();
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
@@ -570,7 +571,10 @@ export class Ketcher {
 
   setMode(mode: SupportedModes) {
     const editor = CoreEditor.provideEditorInstance();
-    if (editor && mode) editor.events.selectMode.dispatch(ModeTypes[mode]);
+    if (editor && mode) {
+      editor.events.selectMode.dispatch(ModeTypes[mode]);
+      editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
+    }
   }
 
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
@@ -657,5 +661,29 @@ export class Ketcher {
     }
 
     editor.updateMonomersLibrary(rawMonomersData);
+  }
+
+  public switchToMacromoleculesMode() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (!editor) {
+      KetcherLogger.error('Editor instance is not available');
+
+      return;
+    }
+
+    editor.events.switchToMacromoleculesMode.dispatch();
+  }
+
+  public switchToMoleculesMode() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (!editor) {
+      KetcherLogger.error('Editor instance is not available');
+
+      return;
+    }
+
+    editor.events.switchToMoleculesMode.dispatch();
   }
 }

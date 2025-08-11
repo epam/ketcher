@@ -23,6 +23,7 @@ import {
   TextEditorDialog,
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -58,7 +59,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('TEST');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
-    await page.getByText('TEST').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).setText('TEST123');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -71,7 +72,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('TEST');
     await TextEditorDialog(page).apply();
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('TEST').click();
+    await getTextLabelLocator(page, { text: 'TEST' }).click();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -86,8 +87,7 @@ test.describe('Text tools test cases', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
-    await page.getByText('TEXT').hover();
-    await page.getByText('TEXT').click();
+    await getTextLabelLocator(page, { text: 'TEXT' }).click();
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -100,10 +100,10 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
-    await page.getByText('TEST').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await pressButton(page, 'Cancel');
-    await page.getByText('TEST').dblclick();
-    await page.getByRole('dialog').getByText('TEST').dblclick();
+    await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
+    await TextEditorDialog(page).selectAllText();
     await deleteByKeyboard(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -148,29 +148,27 @@ test.describe('Text tools test cases', () => {
     );
     await TextEditorDialog(page).apply();
 
-    await page.getByText('+++').dblclick();
+    await getTextLabelLocator(page, { text: '+++' }).dblclick();
     await TextEditorDialog(page).setText('123');
     await TextEditorDialog(page).cancel();
 
-    await page.getByText('+++').dblclick();
+    await getTextLabelLocator(page, { text: '+++' }).dblclick();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setText('Test');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await page
-      .getByText(
-        'Ketcher is a tool to draw molecular structures and chemical reactions',
-      )
-      .dblclick();
+    await getTextLabelLocator(page, {
+      text: 'Ketcher is a tool to draw molecular structures and chemical reactions',
+    }).dblclick();
+
     await TextEditorDialog(page).setText('123');
     await TextEditorDialog(page).cancel();
 
-    await page
-      .getByText(
-        'Ketcher is a tool to draw molecular structures and chemical reactions',
-      )
-      .dblclick();
+    await getTextLabelLocator(page, {
+      text: 'Ketcher is a tool to draw molecular structures and chemical reactions',
+    }).dblclick();
+
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setText('Super');
     await TextEditorDialog(page).apply();
@@ -186,8 +184,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
 
     await page.getByTestId('canvas').click({ position: { x: 100, y: 100 } });
-    const text2 = 'Ketcher is a coool tool';
-    await TextEditorDialog(page).setText(text2);
+    await TextEditorDialog(page).setText('Ketcher is a coool tool');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
@@ -195,8 +192,7 @@ test.describe('Text tools test cases', () => {
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('&&&').hover();
-    await page.getByText('&&&').click();
+    await getTextLabelLocator(page, { text: '&&&' }).dblclick();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -206,13 +202,13 @@ test.describe('Text tools test cases', () => {
   test('Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    const text2 = 'Ketcher is a cool tool';
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
-    await page.getByText(text2).hover();
-    await page.getByText(text2).click();
+    await getTextLabelLocator(page, {
+      text: 'Ketcher is a cool tool',
+    }).click();
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -249,16 +245,13 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2234
     // Verify if possible is to modify created ealier text object and moving it with use Selection Tool
     await addTextBoxToCanvas(page);
-    const text3 = 'Test123';
-    await TextEditorDialog(page).setText(text3);
+    await TextEditorDialog(page).setText('Test123');
     await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText(text3).hover();
-    await waitForRender(page, async () => {
-      await moveStructureToNewPosition(page);
-    });
+    await getTextLabelLocator(page, { text: 'Test123' }).click();
+    await moveStructureToNewPosition(page);
     await takeEditorScreenshot(page);
   });
 
@@ -266,19 +259,16 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Verify if possible is perform different manipulations with text objects using different tools (zoom)
-    const text4 = 'ABC123';
     await addTextBoxToCanvas(page);
-    await TextEditorDialog(page).setText(text4);
+    await TextEditorDialog(page).setText('ABC123');
     await TextEditorDialog(page).apply();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText(text4).click();
+    await getTextLabelLocator(page, { text: 'ABC123' }).click();
     await moveStructureToNewPosition(page);
     await ZoomInByKeyboard(page, { repeat: 2 });
-
     await takeEditorScreenshot(page);
-
     await ZoomOutByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
   });
@@ -300,9 +290,7 @@ test.describe('Text tools test cases', () => {
       SelectionToolType.Lasso,
     );
     await selectStructureWithSelectionTool(page);
-    await waitForRender(page, async () => {
-      await moveStructureToNewPosition(page);
-    });
+    await moveStructureToNewPosition(page);
     await takeEditorScreenshot(page);
   });
 });

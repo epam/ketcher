@@ -27,7 +27,7 @@ type ViewData<P> = {
 };
 
 export class TransientDrawingView {
-  private views: Map<string, ViewData<unknown>> = new Map();
+  private readonly views: Map<string, ViewData<unknown>> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;

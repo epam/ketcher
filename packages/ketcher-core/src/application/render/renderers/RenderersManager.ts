@@ -45,7 +45,7 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 
 export class RenderersManager {
   // FIXME: Specify the types.
-  private theme;
+  private readonly theme;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 

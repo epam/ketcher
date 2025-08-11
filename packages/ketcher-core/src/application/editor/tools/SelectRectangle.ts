@@ -61,11 +61,10 @@ class SelectRectangle implements BaseTool {
   private mousePositionAfterMove = new Vec2(0, 0, 0);
   private mousePositionBeforeMove = new Vec2(0, 0, 0);
   private canvasResizeObserver?: ResizeObserver;
-  private history: EditorHistory;
+  private readonly history: EditorHistory;
   private previousSelectedEntities: [number, DrawingEntity][] = [];
 
-  constructor(private editor: CoreEditor) {
-    this.editor = editor;
+  constructor(private readonly editor: CoreEditor) {
     this.history = new EditorHistory(this.editor);
     this.destroy();
     this.createBrush();

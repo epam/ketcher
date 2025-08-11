@@ -41,6 +41,6 @@ export const generateSequenceSelectionName = (
   const groupNames = generateSequenceSelectionGroupNames(labeledNucleoelements);
 
   return `${groupNames?.Sugars}(${groupNames?.Bases})${
-    groupNames?.Phosphates || ''
+    groupNames?.Phosphates ?? ''
   }`;
 };

@@ -24,7 +24,7 @@ export class MonomerAddOperation implements Operation {
   constructor(
     public addMonomerChangeModel: (monomer?: BaseMonomer) => BaseMonomer,
     public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
-    private callback?: () => void,
+    private readonly callback?: () => void,
   ) {
     this.monomer = this.addMonomerChangeModel();
   }

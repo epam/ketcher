@@ -20,8 +20,8 @@ import { BaseSequenceRenderer } from 'application/render/renderers/sequence/Base
 import { SequenceMode } from '../modes';
 
 class EraserTool implements BaseTool {
-  private history: EditorHistory;
-  constructor(private editor: CoreEditor) {
+  private readonly history: EditorHistory;
+  constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
     if (

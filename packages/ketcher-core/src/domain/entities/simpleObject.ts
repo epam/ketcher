@@ -47,7 +47,7 @@ export class SimpleObject extends BaseMicromoleculeEntity {
       }
     }
 
-    this.mode = attributes?.mode || SimpleObjectMode.line;
+    this.mode = attributes?.mode ?? SimpleObjectMode.line;
   }
 
   clone(): SimpleObject {

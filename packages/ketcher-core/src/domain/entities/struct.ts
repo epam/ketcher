@@ -145,7 +145,7 @@ export class Struct {
   isSingleGroup(): boolean {
     if (!this.sgroups.size || this.sgroups.size > 1) return false;
     const sgroup = this.sgroups.values().next().value; // get sgroup from map
-    return this.atoms.size === sgroup.atoms.length;
+    return sgroup !== undefined && this.atoms.size === sgroup.atoms.length;
   }
 
   clone(

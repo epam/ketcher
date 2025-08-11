@@ -56,16 +56,16 @@ export const DragGhost = () => {
     canvasBBoxRef.current &&
     libraryItemDragData &&
     libraryItemDragData.position.x +
-      (editor?.ketcherRootElementBoundingClientRect.left || 0) >=
+      (editor?.ketcherRootElementBoundingClientRect?.left || 0) >=
       canvasBBoxRef.current.left &&
     libraryItemDragData.position.x +
-      (editor?.ketcherRootElementBoundingClientRect.left || 0) <=
+      (editor?.ketcherRootElementBoundingClientRect?.left || 0) <=
       canvasBBoxRef.current.right &&
     libraryItemDragData.position.y +
-      (editor?.ketcherRootElementBoundingClientRect.top || 0) >=
+      (editor?.ketcherRootElementBoundingClientRect?.top || 0) >=
       canvasBBoxRef.current.top &&
     libraryItemDragData.position.y +
-      (editor?.ketcherRootElementBoundingClientRect.top || 0) <=
+      (editor?.ketcherRootElementBoundingClientRect?.top || 0) <=
       canvasBBoxRef.current.bottom;
 
   useLayoutEffect(() => {

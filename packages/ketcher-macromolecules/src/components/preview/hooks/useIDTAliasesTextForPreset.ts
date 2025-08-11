@@ -28,7 +28,8 @@ const useIDTAliasesTextForPreset = ({
 
       switch (position) {
         case PresetPosition.Library:
-          return `${endpoint5}, ${internal}`;
+          // In library view, show a single canonical code for MOE presets
+          return base;
         case PresetPosition.ChainStart:
           return endpoint5;
         case PresetPosition.ChainMiddle:

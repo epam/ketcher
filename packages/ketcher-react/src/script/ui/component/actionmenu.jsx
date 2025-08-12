@@ -164,7 +164,6 @@ function ActionMenu({ name, menu, className, role, ...props }) {
               aria-haspopup="menu"
               aria-expanded={item.id === props.opened}
               title="Open menu"
-              className={MENU_TOGGLE_CLASS}
             >
               <Icon name="dropdown" />
             </button>

@@ -932,7 +932,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
         .getByText(Peptides._1Nal.alias, { exact: true });
       await expandMonomer(page, peptide1Nal);
       await selectRingButton(page, RingButton.Cyclohexane);
-      await clickOnCanvas(page, 505, 400);
+      await clickOnCanvas(page, 213, 344);
       await takeEditorScreenshot(page);
     },
   );

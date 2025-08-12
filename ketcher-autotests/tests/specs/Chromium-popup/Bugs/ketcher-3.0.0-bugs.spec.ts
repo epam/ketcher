@@ -766,7 +766,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         page,
         'KET/Chromium-popup/Bugs/Entire element bounding box should be clickable, not only black dots.ket',
       );
-      await clickOnCanvas(page, 530, 380);
+      await clickOnCanvas(page, 238, 324);
       await takeEditorScreenshot(page);
     },
   );
@@ -1145,7 +1145,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         .getByText('A', { exact: true });
       await expandMonomer(page, baseA);
       await selectRingButton(page, RingButton.Cyclohexane);
-      await clickOnCanvas(page, 180, 180);
+      await clickOnCanvas(page, -112, 124);
       await takeEditorScreenshot(page);
     },
   );

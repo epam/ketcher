@@ -286,9 +286,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
        */
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await selectRingButton(page, RingButton.Benzene);
-      await clickOnCanvas(page, 400, 100);
-      await clickOnCanvas(page, 500, 200);
-      await clickOnCanvas(page, 600, 300);
+      await clickOnCanvas(page, 108, 44);
+      await clickOnCanvas(page, 208, 144);
+      await clickOnCanvas(page, 308, 244);
       await setSettingsOption(page, GeneralSetting.RotationStep, '20');
       for (let i = 0; i < 2; i++) {
         await CommonTopLeftToolbar(page).undo();
@@ -314,7 +314,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
        */
       await MacromoleculesTopToolbar(page).rna();
       await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAA');
-      await clickOnCanvas(page, 400, 400);
+      await clickOnCanvas(page, 108, 344);
       await getSymbolLocator(page, {
         symbolAlias: 'A',
         nodeIndexOverall: 11,

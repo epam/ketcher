@@ -138,8 +138,8 @@ interface IAutochainMonomerAddResult {
   lastMonomer: BaseMonomer;
 }
 
-const EditorClassName = 'Ketcher-polymer-editor-root';
-const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
+export const EditorClassName = 'Ketcher-polymer-editor-root';
+export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =

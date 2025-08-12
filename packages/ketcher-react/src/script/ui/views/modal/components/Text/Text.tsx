@@ -222,6 +222,4 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store: { modal: unknown }) => ({
-  formState: store.modal,
-}))(Text);
+export default connect((store) => ({ formState: (store as any).modal }))(Text);

@@ -303,7 +303,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
     xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
   });
 
-  template.aid = sgroup?.getAttachmentAtomId() || 0;
+  template.aid = sgroup?.getAttachmentAtomId() ?? 0;
   template.molecule = molecule;
   template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
 

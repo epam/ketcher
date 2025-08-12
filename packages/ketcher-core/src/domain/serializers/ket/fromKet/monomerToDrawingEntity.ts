@@ -18,10 +18,10 @@ import { monomerFactory } from 'application/editor';
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
     id: template.id,
-    Name: template.fullName || template.name || template.alias || template.id,
-    MonomerNaturalAnalogCode: template.naturalAnalogShort || '',
-    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog || '',
-    MonomerName: template.name || template.alias || template.id,
+    Name: template.fullName ?? template.name ?? template.alias ?? template.id,
+    MonomerNaturalAnalogCode: template.naturalAnalogShort ?? '',
+    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog ?? '',
+    MonomerName: template.name ?? template.alias ?? template.id,
     MonomerFullName: template.fullName,
     MonomerType: template.classHELM,
     MonomerClass: template.class,
@@ -49,7 +49,7 @@ export function monomerToDrawingEntity(
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: alias || id,
+      label: alias ?? id,
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),

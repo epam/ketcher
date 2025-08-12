@@ -46,7 +46,7 @@ class RnaPresetTool implements Tool {
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
   history: EditorHistory;
 
-  constructor(private editor: CoreEditor, preset: IRnaPreset) {
+  constructor(private readonly editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
       this.rnaBase = preset?.base;

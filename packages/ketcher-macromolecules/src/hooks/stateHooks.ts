@@ -28,6 +28,8 @@ import {
   DEFAULT_LAYOUT_MODE,
   HAS_CONTENT_LAYOUT_MODE,
   ketcherProvider,
+  KetcherLogger,
+  Ketcher,
 } from 'ketcher-core';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -35,15 +37,29 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useLayoutMode() {
   const ketcherId = useAppSelector(selectKetcherId);
-  const ketcher = ketcherProvider.getKetcher(ketcherId);
-  const isBlank = ketcher?.editor?.struct().isBlank();
-  const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
   const editor = useAppSelector(selectEditor);
   const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
+
+  let ketcher: Ketcher;
+
+  // TODO remove this try-catch and investigate why code execution comes here when ketcher instance is already removed
+  //  This can happen when open/close several times the editor in duo mode
+  try {
+    ketcher = ketcherProvider.getKetcher(ketcherId);
+  } catch (error) {
+    KetcherLogger.error(
+      `Failed to get ketcher instance with id ${ketcherId}`,
+      error,
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const isBlank = ketcher?.editor?.struct().isBlank();
+  const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     previousLayoutMode || fallbackMode,
   );
-
   const onLayoutModeChange = useCallback(
     (newLayoutMode: LayoutMode) => {
       setLayoutMode(newLayoutMode);

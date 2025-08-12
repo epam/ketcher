@@ -50,7 +50,7 @@ export class SettingsManager {
   static getSettings(): SavedSettings {
     try {
       return JSON.parse(
-        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
+        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) ?? '{}',
       );
     } catch (e) {
       KetcherLogger.error(
@@ -72,7 +72,7 @@ export class SettingsManager {
   static getOptions(): SavedOptions {
     try {
       const optionsFromLocalStorage = JSON.parse(
-        localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
+        localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) ?? '{}',
       );
 
       // In 2.25 default bondLength was set to 2.1 by mistake.
@@ -121,7 +121,7 @@ export class SettingsManager {
   static set editorLineLength(newEditorLineLength: Partial<EditorLineLength>) {
     const settings = this.getSettings();
     const previousEditorLineLength =
-      settings.editorLineLength || DefaultEditorLineLength;
+      settings.editorLineLength ?? DefaultEditorLineLength;
     const editorLineLength = {
       ...previousEditorLineLength,
       ...newEditorLineLength,

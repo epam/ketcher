@@ -1702,7 +1702,7 @@ test.describe('Image files', () => {
   test('Images of allowed format (SVG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2209
-     * Description: Images of allowed format (SVG) with elements saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * Description: Images of allowed format (SVG) saved to CDX files with correct coordinates of images, formats and sizes of files,
      * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
      */
     await openFileAndAddToCanvasAsNewProject(
@@ -2041,7 +2041,7 @@ test.describe('Image files', () => {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
-          testCase.dropdownOption || MoleculesFileFormatType.MDLMolfileV2000,
+          testCase.dropdownOption ?? MoleculesFileFormatType.MDLMolfileV2000,
         );
       }
       await takeEditorScreenshot(page);
@@ -3149,7 +3149,7 @@ test.describe('Image files', () => {
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2029
-     * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to PNG file
      * with the correct positions and layers after scaling actions of images.
      */
     const saveButton = SaveStructureDialog(page).saveButton;
@@ -3184,7 +3184,7 @@ test.describe('Image files', () => {
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2029
-     * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to SVG file
      * with the correct positions and layers after scaling actions of images.
      */
     const saveButton = SaveStructureDialog(page).saveButton;
@@ -3219,7 +3219,7 @@ test.describe('Image files', () => {
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2029
-     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to PNG file
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to PNG file
      * with the correct positions and layers after deleting actions of images.
      */
     const saveButton = SaveStructureDialog(page).saveButton;
@@ -3248,7 +3248,7 @@ test.describe('Image files', () => {
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2029
-     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to SVG file
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to SVG file
      * with the correct positions and layers after deleting actions of images.
      */
     const saveButton = SaveStructureDialog(page).saveButton;

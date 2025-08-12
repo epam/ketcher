@@ -150,6 +150,7 @@ test.describe('Erase Tool', () => {
     });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.Test_6_Ch).click();
     await takeEditorScreenshot(page);

@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.625,
-            "y": -1.5250000000000001
+            "x": 1.6500000000000001,
+            "y": -1.55
         },
         "alias": "AmMC6T",
         "templateId": "AmMC6T___Amino Modifier C6 dT"

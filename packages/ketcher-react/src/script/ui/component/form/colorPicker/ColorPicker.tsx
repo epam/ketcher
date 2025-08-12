@@ -24,7 +24,7 @@ import { Icon } from 'components';
 interface ColorPickerProps {
   value: string;
   name: string;
-  schema?: unknown;
+  schema: any;
   type?: string;
 }
 
@@ -67,11 +67,14 @@ const ColorPicker = (props: Props) => {
     };
   }, []);
 
-  const handleClick = throttle((e) => {
-    e.preventDefault();
-    setIsOpen((prev) => !prev);
-    setIsPaletteOpen(false);
-  }, 200);
+  const handleClick = useCallback(
+    throttle((e) => {
+      e.preventDefault();
+      setIsOpen((prev) => !prev);
+      setIsPaletteOpen(false);
+    }, 200),
+    [],
+  );
 
   const handlePaletteOpen = () => {
     setIsPaletteOpen(true);
@@ -90,6 +93,7 @@ const ColorPicker = (props: Props) => {
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
+      onClick={(e) => e.preventDefault()}
     >
       <div
         className={clsx({
@@ -97,15 +101,6 @@ const ColorPicker = (props: Props) => {
           [classes.selectedInput]: isOpen,
         })}
         onClick={handleClick}
-        role="button"
-        tabIndex={0}
-        aria-expanded={isOpen}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick(e);
-          }
-        }}
       >
         <div
           className={classes.colorPickerPreview}
@@ -137,6 +132,7 @@ const ColorPicker = (props: Props) => {
                 isPaletteOpen && classes.clicked,
               )}
               onClick={handlePaletteOpen}
+              autoFocus
               data-testid="color-picker-btn"
             />
             {presetColors.map((color) => (

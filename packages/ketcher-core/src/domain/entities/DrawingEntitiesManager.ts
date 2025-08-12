@@ -219,6 +219,10 @@ export class DrawingEntitiesManager {
     ];
   }
 
+  public get allEntitiesArray() {
+    return this.allEntities.map(([, drawingEntity]) => drawingEntity);
+  }
+
   public get hasDrawingEntities() {
     return this.allEntities.length !== 0;
   }
@@ -366,11 +370,18 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private selectDrawingEntitiesModelChange(drawingEntity: DrawingEntity) {
+    drawingEntity.turnOnSelection();
+  }
+
   public selectDrawingEntities(drawingEntities: DrawingEntity[]) {
     const command = this.unselectAllDrawingEntities();
     drawingEntities.forEach((drawingEntity: DrawingEntity) => {
       drawingEntity.turnOnSelection();
-      const operation = new DrawingEntitySelectOperation(drawingEntity);
+      const operation = new DrawingEntitySelectOperation(
+        drawingEntity,
+        this.selectDrawingEntitiesModelChange.bind(this, drawingEntity),
+      );
       command.addOperation(operation);
     });
     return command;

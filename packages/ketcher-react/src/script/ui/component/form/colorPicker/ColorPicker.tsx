@@ -93,14 +93,22 @@ const ColorPicker = (props: Props) => {
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
-      onClick={(e) => e.preventDefault()}
     >
       <div
         className={clsx({
           [classes.colorPickerInput]: true,
           [classes.selectedInput]: isOpen,
         })}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick(e);
+          }
+        }}
       >
         <div
           className={classes.colorPickerPreview}

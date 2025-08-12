@@ -116,14 +116,18 @@ Object {
             <div>
               <ul
                 class="tabs"
+                role="tablist"
                 tabindex="0"
               >
                 <li
                   class="tabs"
                 >
                   <a
+                    aria-selected="true"
                     class="active"
                     data-testid="Preview-tab"
+                    role="tab"
+                    tabindex="0"
                   >
                     Preview
                   </a>
@@ -523,14 +527,18 @@ Object {
           <div>
             <ul
               class="tabs"
+              role="tablist"
               tabindex="0"
             >
               <li
                 class="tabs"
               >
                 <a
+                  aria-selected="true"
                   class="active"
                   data-testid="Preview-tab"
+                  role="tab"
+                  tabindex="0"
                 >
                   Preview
                 </a>

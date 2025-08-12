@@ -30,7 +30,10 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
     />
   </svg>
   <div
+    aria-pressed="false"
     class="star "
+    role="button"
+    tabindex="0"
   >
     ★
   </div>
@@ -82,7 +85,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -116,7 +122,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -150,7 +159,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -184,7 +196,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -218,7 +233,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -268,7 +286,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -302,7 +323,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -336,7 +360,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -370,7 +397,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -404,7 +434,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -506,7 +539,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -540,7 +576,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -574,7 +613,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -608,7 +650,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -642,7 +687,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -687,7 +735,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -721,7 +772,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -755,7 +809,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -789,7 +846,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -823,7 +883,10 @@ Object {
             />
           </svg>
           <div
+            aria-pressed="false"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>

@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback, MouseEvent, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { AutochainIcon, Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
@@ -53,7 +53,11 @@ const MonomerItem = ({
     : (item as MonomerItemType);
 
   const addFavorite = useCallback(
-    (event: MouseEvent) => {
+    (
+      event:
+        | React.MouseEvent<HTMLDivElement>
+        | React.KeyboardEvent<HTMLDivElement>,
+    ) => {
       event.stopPropagation();
       dispatch(toggleMonomerFavorites(item));
     },
@@ -108,7 +112,7 @@ const MonomerItem = ({
             onDoubleClick={(e) => e.stopPropagation()}
           />
           <div
-            onClick={addFavorite}
+            onClick={(e) => addFavorite(e)}
             className={`star ${item.favorite ? 'visible' : ''}`}
             role="button"
             tabIndex={0}

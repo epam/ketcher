@@ -154,11 +154,21 @@ function ActionMenu({ name, menu, className, role, ...props }) {
           className={clsx(props.status[item], {
             opened: item.id === props.opened,
           })}
-          onClick={(ev) => openHandle(ev, props.onOpen)}
         >
           {showMenuOrButton(action, item, props.status[item], props)}
           {item.menu && props.opened && renderActiveMenuItem(item, props)}
-          {item.menu && <Icon name="dropdown" />}
+          {item.menu && (
+            <button
+              type="button"
+              onClick={(ev) => openHandle(ev, props.onOpen)}
+              aria-haspopup="menu"
+              aria-expanded={item.id === props.opened}
+              title="Open menu"
+              className="menu-toggle"
+            >
+              <Icon name="dropdown" />
+            </button>
+          )}
         </li>
       ))}
     </menu>

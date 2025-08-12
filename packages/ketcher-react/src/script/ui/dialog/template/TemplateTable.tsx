@@ -96,6 +96,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            role="button"
+            tabIndex={0}
+            aria-pressed={selected?.struct === tmpl.struct}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelect(tmpl);
+              }
+            }}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -120,7 +129,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               <button
                 data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
-                onClick={() => onDelete!(tmpl)}
+                onClick={() => onDelete && onDelete(tmpl)}
               >
                 <Icon name="delete" />
               </button>
@@ -132,7 +141,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onAttach!(tmpl);
+                    if (onAttach) onAttach(tmpl);
                   }}
                 >
                   <Icon name="edit" />

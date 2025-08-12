@@ -47,6 +47,14 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         onClick={selectClipboard}
         className={styles.dropContainer}
         data-testid="paste-from-clipboard-button"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectClipboard();
+          }
+        }}
       >
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />

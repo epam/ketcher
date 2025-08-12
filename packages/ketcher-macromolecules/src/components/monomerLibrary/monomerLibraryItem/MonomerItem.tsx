@@ -110,6 +110,15 @@ const MonomerItem = ({
           <div
             onClick={addFavorite}
             className={`star ${item.favorite ? 'visible' : ''}`}
+            role="button"
+            tabIndex={0}
+            aria-pressed={!!item.favorite}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                addFavorite(e as unknown as MouseEvent);
+              }
+            }}
           >
             {FavoriteStarSymbol}
           </div>

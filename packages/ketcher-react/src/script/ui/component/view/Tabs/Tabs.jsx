@@ -45,7 +45,7 @@ class Tabs extends Component {
     const componentProps = tabPanel?.props;
     return (
       <div>
-        <ul className={className} tabIndex={tabIndex}>
+        <ul className={className} tabIndex={tabIndex} role="tablist">
           <li className={classes.tabs}>
             {tabs.map((tabPanel, index) => (
               <a // eslint-disable-line
@@ -55,6 +55,15 @@ class Tabs extends Component {
                 })}
                 onClick={(ev) => this.changeTab(ev, index)}
                 data-testid={tabPanel.caption + '-tab'}
+                role="tab"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.changeTab(e, index);
+                  }
+                }}
+                aria-selected={this.state.tabIndex === index}
               >
                 {tabPanel.caption}
               </a>

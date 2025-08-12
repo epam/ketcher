@@ -16,9 +16,15 @@ export class DrawingEntityHoverOperation implements Operation {
 }
 
 export class DrawingEntitySelectOperation implements Operation {
-  constructor(private drawingEntity: DrawingEntity) {}
+  constructor(
+    private drawingEntity: DrawingEntity,
+    private selectDrawingEntitiesModelChange?: () => void,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
+    if (this.selectDrawingEntitiesModelChange) {
+      this.selectDrawingEntitiesModelChange();
+    }
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 

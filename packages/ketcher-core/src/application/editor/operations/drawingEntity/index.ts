@@ -21,10 +21,13 @@ export class DrawingEntitySelectOperation implements Operation {
     private selectDrawingEntitiesModelChange?: () => void,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     if (this.selectDrawingEntitiesModelChange) {
       this.selectDrawingEntitiesModelChange();
     }
+  }
+
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 

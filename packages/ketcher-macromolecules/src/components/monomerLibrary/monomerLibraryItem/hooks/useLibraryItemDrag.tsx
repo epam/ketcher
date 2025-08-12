@@ -31,7 +31,10 @@ export const useLibraryItemDrag = (
         const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
           item,
-          position: { x, y },
+          position: {
+            x: x - (editor.ketcherRootElementBoundingClientRect?.left || 0),
+            y: y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
+          },
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {

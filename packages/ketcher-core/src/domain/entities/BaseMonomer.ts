@@ -54,7 +54,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.monomerItem.expanded = monomerItem.expanded;
     this.recalculateAttachmentPoints();
     this.monomerItem.attachmentPoints =
-      this.monomerItem.attachmentPoints ||
+      this.monomerItem.attachmentPoints ??
       this.getMonomerDefinitionAttachmentPoints();
     this.chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
@@ -468,7 +468,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         calculatedAttachmentPointNumber = attachmentPointNumber;
       }
       const calculatedLabel =
-        attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
+        attachmentPoint.label ?? `R${calculatedAttachmentPointNumber}`;
       attachmentPointDictionary[calculatedLabel] = null;
       attachmentPointsList.push(calculatedLabel as AttachmentPointName);
     });
@@ -515,7 +515,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         type:
           this.attachmentPointNumberToType[
             superatomAttachmentPoint.attachmentPointNumber
-          ] || this.attachmentPointNumberToType.moreThanTwo,
+          ] ?? this.attachmentPointNumberToType.moreThanTwo,
       });
     });
     return monomerDefinitionAttachmentPoints;
@@ -596,12 +596,12 @@ export abstract class BaseMonomer extends DrawingEntity {
       this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
     const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
     const namesToCompareNaturalAnalog = [
-      ...([this.label] || []),
-      ...([this.monomerItem.props.MonomerName] || []),
+      this.label,
+      this.monomerItem.props.MonomerName,
     ];
     const naturalAnaloguesToCompare = [
-      ...([naturalAnalogThreeLettersCode] || []),
-      ...([naturalAnalogCode] || []),
+      ...(naturalAnalogThreeLettersCode ? [naturalAnalogThreeLettersCode] : []),
+      naturalAnalogCode,
     ];
 
     return namesToCompareNaturalAnalog.every(

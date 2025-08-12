@@ -65,12 +65,12 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
     });
     if (!isAlternatives) {
       const overallRatio = sortedData.reduce(
-        (acc, item) => acc + (item.ratio || 1),
+        (acc, item) => acc + (item.ratio ?? 1),
         0,
       );
 
       sortedData.forEach((entry) => {
-        entry.ratio = Math.round(((entry.ratio || 1) / overallRatio) * 100);
+        entry.ratio = Math.round(((entry.ratio ?? 1) / overallRatio) * 100);
       });
     }
 

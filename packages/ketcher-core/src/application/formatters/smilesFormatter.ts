@@ -22,11 +22,11 @@ import { ServerFormatter } from './serverFormatter';
 import { Struct } from 'domain/entities';
 
 export class SmilesFormatter implements StructFormatter {
-  #smiSerializer: SmiSerializer;
-  #structService: StructService;
-  #ketSerializer: KetSerializer;
-  #format: SupportedFormat;
-  #options?: StructServiceOptions;
+  readonly #smiSerializer: SmiSerializer;
+  readonly #structService: StructService;
+  readonly #ketSerializer: KetSerializer;
+  readonly #format: SupportedFormat;
+  readonly #options?: StructServiceOptions;
 
   constructor(
     smiSerializer: SmiSerializer,

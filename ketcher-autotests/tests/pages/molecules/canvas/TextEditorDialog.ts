@@ -80,6 +80,10 @@ export const TextEditorDialog = (page: Page) => {
       await locators.textEditor.click();
     },
 
+    async selectAllText() {
+      await locators.textEditor.selectText();
+    },
+
     async setText(text: string) {
       await locators.textEditor.fill(text);
     },

@@ -81,9 +81,9 @@ export class AtomRenderer extends BaseRenderer {
         .attr('cy', 0);
     } else {
       const labelBbox = this.textElement?.node()?.getBBox();
-      const labelX = labelBbox?.x || 0;
-      const labelWidth = labelBbox?.width || 8;
-      const labelHeight = labelBbox?.height || 8;
+      const labelX = labelBbox?.x ?? 0;
+      const labelWidth = labelBbox?.width ?? 8;
+      const labelHeight = labelBbox?.height ?? 8;
       const HOVER_PADDING = 4;
       const HOVER_RECTANGLE_RADIUS = 10;
 
@@ -146,7 +146,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
-    return this.atom.properties.alias || this.atom.label;
+    return this.atom.properties.alias ?? this.atom.label;
   }
 
   private get isAtomTerminal() {
@@ -166,7 +166,7 @@ export class AtomRenderer extends BaseRenderer {
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
     const isAtomTerminal = this.isAtomTerminal;
-    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
+    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
     const hasAlias = this.atom.hasAlias;

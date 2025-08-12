@@ -5,7 +5,7 @@ import { ReStruct } from 'application/render';
 import BaseOperation from 'application/editor/operations/base';
 
 export class MultitailArrowMove extends BaseOperation {
-  constructor(private id: number, private offset: Vec2) {
+  constructor(private readonly id: number, private readonly offset: Vec2) {
     super(OperationType.MULTITAIL_ARROW_MOVE);
   }
 

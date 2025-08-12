@@ -26,9 +26,9 @@ const BondPreview = ({ className }: Props) => {
     }
 
     return styled(Container)`
-      top: ${style?.top || ''};
-      left: ${style?.left || ''};
-      right: ${style?.right || ''};
+      top: ${style?.top ?? ''};
+      left: ${style?.left ?? ''};
+      right: ${style?.right ?? ''};
     `;
   }, [style]);
 

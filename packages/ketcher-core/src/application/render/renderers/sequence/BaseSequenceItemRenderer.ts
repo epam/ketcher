@@ -21,7 +21,7 @@ import { SettingsManager } from 'utilities';
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
-  private editorEvents: typeof editorEvents;
+  private readonly editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -34,17 +34,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public antisenseNodeRenderer?: this | undefined;
 
   constructor(
-    public node: SubChainNode | BackBoneSequenceNode,
-    private firstNodeInChainPosition: Vec2,
-    private monomerIndexInChain: number,
-    private isLastMonomerInChain: boolean,
-    private chain: Chain,
-    private nodeIndexOverall: number,
-    private editingNodeIndexOverall: number,
-    public monomerSize: { width: number; height: number },
-    public scaledMonomerPosition: Vec2,
-    private previousRowsWithAntisense = 0,
-    public twoStrandedNode: ITwoStrandedChainItem,
+    public readonly node: SubChainNode | BackBoneSequenceNode,
+    private readonly firstNodeInChainPosition: Vec2,
+    private readonly monomerIndexInChain: number,
+    private readonly isLastMonomerInChain: boolean,
+    private readonly chain: Chain,
+    private readonly nodeIndexOverall: number,
+    private readonly editingNodeIndexOverall: number,
+    public readonly monomerSize: { width: number; height: number },
+    public readonly scaledMonomerPosition: Vec2,
+    private readonly previousRowsWithAntisense = 0,
+    public readonly twoStrandedNode: ITwoStrandedChainItem,
   ) {
     super(node.monomer);
     this.editorEvents = editorEvents;

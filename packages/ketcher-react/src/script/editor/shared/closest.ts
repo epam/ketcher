@@ -143,7 +143,7 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
 
-  minDist = minDist || maxMinDist;
+  minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   restruct.visibleAtoms.forEach((atom, aid) => {
@@ -193,7 +193,7 @@ function findClosestBond(
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip && skip.map === 'bonds' ? skip.id : null;
 
-  minDist = minDist || maxMinDist;
+  minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   let minCDist = minDist;
@@ -327,7 +327,7 @@ function findClosestFrag(
   options,
 ) {
   minDist = Math.min(
-    minDist || SELECTION_DISTANCE_COEFFICIENT,
+    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
@@ -360,7 +360,7 @@ function findClosestFrag(
 
 function findClosestRGroup(restruct: ReStruct, pos: Vec2, skip, minDist) {
   minDist = Math.min(
-    minDist || SELECTION_DISTANCE_COEFFICIENT,
+    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
@@ -545,7 +545,7 @@ function findClosestItem(
   options,
 ): ClosestItemWithMap | null {
   // eslint-disable-line max-params
-  maps = maps || Object.keys(findMaps);
+  maps = maps ?? Object.keys(findMaps);
 
   let priorityItem = null;
 

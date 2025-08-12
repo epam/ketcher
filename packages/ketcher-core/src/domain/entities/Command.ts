@@ -30,7 +30,7 @@ export class Command {
       : [...this.operations];
 
     if (this.setUndoOperationByPriority) {
-      operations.sort((a, b) => (a.priority || 0) - (b.priority || 0));
+      operations.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
     }
 
     operations.forEach((operation) => operation.invert(renderersManagers));

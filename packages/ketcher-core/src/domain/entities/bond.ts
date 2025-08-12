@@ -120,7 +120,7 @@ export class Bond extends BaseMicromoleculeEntity {
     this.begin = attributes.begin;
     this.end = attributes.end;
     this.type = attributes.type;
-    this.xxx = attributes.xxx || '';
+    this.xxx = attributes.xxx ?? '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
     this.customQuery = null;
@@ -318,8 +318,8 @@ export class Bond extends BaseMicromoleculeEntity {
 
   getAttachedSGroups(struct: Struct) {
     const sGroupsWithBeginAtom =
-      struct.atoms.get(this.begin)?.sgs || new Pile();
-    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
+      struct.atoms.get(this.begin)?.sgs ?? new Pile();
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs ?? new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
 

@@ -24,19 +24,20 @@ import {
   AromaticsTemplate,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'My Template';
 
   await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill('My Template');
+  await TemplateEditDialog(page).setMoleculeName(inputText);
   if (shouldSave) {
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).save();
   }
 }
 
@@ -69,6 +70,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = ' name ';
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
@@ -79,9 +81,8 @@ test.describe('Click User Templates on canvas', () => {
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill(' name ');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openSection(
@@ -98,6 +99,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'to_delete';
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
@@ -108,9 +110,8 @@ test.describe('Click User Templates on canvas', () => {
 
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('to_delete');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openSection(
@@ -130,6 +131,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'simple_object_template';
 
     await openFileAndAddToCanvas(
       page,
@@ -137,9 +139,8 @@ test.describe('Click User Templates on canvas', () => {
     );
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('simple_object_template');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openSection(
@@ -149,13 +150,14 @@ test.describe('Click User Templates on canvas', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Create Template with with Reaction arrow', async ({ page }) => {
+  test('Create Template with Reaction arrow', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'reaction_arrow_template';
 
     await openFileAndAddToCanvas(
       page,
@@ -163,9 +165,8 @@ test.describe('Click User Templates on canvas', () => {
     );
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('reaction_arrow_template');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await BottomToolbar(page).StructureLibrary();
@@ -237,6 +238,7 @@ test.describe('Create and Save Templates', () => {
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'user_template_1';
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
@@ -247,9 +249,8 @@ test.describe('Create and Save Templates', () => {
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
     await IndigoFunctionsToolbar(page).cleanUp();
 
     await BottomToolbar(page).StructureLibrary();
@@ -354,6 +355,7 @@ test.describe('Templates field lenght validations', () => {
     */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'user_template_1';
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
@@ -363,14 +365,12 @@ test.describe('Templates field lenght validations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
     await CommonTopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
+    await TemplateEditDialog(page).setMoleculeName(inputText);
     await getEditorScreenshot(page);
   });
 

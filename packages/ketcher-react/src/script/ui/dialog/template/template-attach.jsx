@@ -331,7 +331,11 @@ class Attach extends Component {
                 onClick={() => this.props.onOk(this.onResult())}
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
-                data-testId="template-edit-button"
+                data-testid={
+                  this.mode === this.MODES.SAVE
+                    ? 'template-save-button'
+                    : 'template-edit-button'
+                }
               >
                 {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
               </SaveButton>

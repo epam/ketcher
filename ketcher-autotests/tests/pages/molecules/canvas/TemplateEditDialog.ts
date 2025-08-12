@@ -10,6 +10,7 @@ type TemplateEditDialogLocators = {
   selectedAttachmentPoints: Locator;
   cancelButton: Locator;
   editButton: Locator;
+  saveButton: Locator;
   canvas: Locator;
 };
 export const TemplateEditDialog = (page: Page) => {
@@ -20,6 +21,7 @@ export const TemplateEditDialog = (page: Page) => {
     selectedAttachmentPoints: page.getByTestId('attach-output'),
     cancelButton: page.getByTestId('template-cancel-button'),
     editButton: page.getByTestId('template-edit-button'),
+    saveButton: page.getByTestId('template-save-button'),
     canvas: page.getByTestId('canvas'),
   };
 
@@ -34,6 +36,11 @@ export const TemplateEditDialog = (page: Page) => {
         await locators.editButton.click({ force: true });
       });
     },
+    async save() {
+      await waitForRender(page, async () => {
+        await locators.saveButton.click({ force: true });
+      });
+    },
     async cancel() {
       await locators.cancelButton.click({ force: true });
     },
@@ -42,6 +49,12 @@ export const TemplateEditDialog = (page: Page) => {
     },
     async getMoleculeName(): Promise<string> {
       return await locators.moleculeNameInput.inputValue();
+    },
+    async clickMoleculeName() {
+      await locators.moleculeNameInput.click({ force: true });
+    },
+    async clickCanvas() {
+      await page.getByTestId('attach-dialog').getByTestId('canvas').click();
     },
   };
 };

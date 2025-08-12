@@ -3,7 +3,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
-  clickOnTheCanvas,
+  clickOnCanvas,
   clickOnAtom,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -239,10 +239,10 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickOnTheCanvas(page, 0, 1);
+    await clickOnCanvas(page, 0, 1, { fromCenter: true });
     const point = { x: -50, y: 0 };
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnTheCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { fromCenter: true });
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);

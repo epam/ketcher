@@ -14,7 +14,7 @@ import {
   takeEditorScreenshot,
   takePageScreenshot,
   waitForPageInit,
-  clickOnTheCanvas,
+  clickOnCanvas,
   zoomWithMouseWheel,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -477,7 +477,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { fromCenter: true });
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
@@ -521,7 +521,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { fromCenter: true });
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);

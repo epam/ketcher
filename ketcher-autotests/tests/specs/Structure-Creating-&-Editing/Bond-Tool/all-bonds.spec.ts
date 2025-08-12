@@ -7,7 +7,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  clickOnTheCanvas,
   openFileAndAddToCanvas,
   clickOnBond,
   takeLeftToolbarScreenshot,
@@ -277,7 +276,7 @@ test.describe(`Bond tool:`, () => {
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
         await CommonLeftToolbar(page).selectBondTool(bondType);
-        await clickOnTheCanvas(page, -200, 0);
+        await clickOnCanvas(page, -200, 0, { fromCenter: true });
         await clickInTheMiddleOfTheScreen(page);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).save();
@@ -286,7 +285,7 @@ test.describe(`Bond tool:`, () => {
       test(`${bondTypeName}: Open and edit`, async () => {
         await openFileAndAddToCanvas(page, fileName);
         await LeftToolbar(page).reactionPlusTool();
-        await clickOnTheCanvas(page, 200, 0);
+        await clickOnCanvas(page, 200, 0, { fromCenter: true });
       });
     });
 
@@ -475,7 +474,7 @@ test.describe('Bond Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnTheCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { fromCenter: true });
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
@@ -516,7 +515,7 @@ test.describe('Bond Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnTheCanvas(page, point1.x, point1.y);
+    await clickOnCanvas(page, point1.x, point1.y, { fromCenter: true });
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
@@ -560,7 +559,7 @@ test.describe('Bond Tool', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnTheCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { fromCenter: true });
     await dragMouseTo(x + 50, y, page);
     await takeEditorScreenshot(page);
     const point1 = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);

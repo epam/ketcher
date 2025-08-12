@@ -22,7 +22,6 @@ import {
   clickOnCanvas,
   openFile,
   pressButton,
-  clickOnTheCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -1372,13 +1371,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
-    await clickOnTheCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { fromCenter: true });
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );
-    await clickOnTheCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { fromCenter: true });
     await takeEditorScreenshot(page);
   });
 

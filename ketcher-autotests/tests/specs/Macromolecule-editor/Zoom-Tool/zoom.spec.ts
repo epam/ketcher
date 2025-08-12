@@ -10,7 +10,7 @@ import {
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
-  clickOnMiddleOfCanvas,
+  clickOnCanvas,
   zoomWithMouseWheel,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
@@ -238,7 +238,7 @@ test.describe('Zoom Tool', () => {
       page,
       'KET/peptides-connected-through-chem.ket',
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickOnCanvas(page, 0, 0, { fromCenter: true });
     await zoomWithMouseWheel(page, MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -330,7 +330,7 @@ test.describe('Zoom Tool', () => {
       page,
       `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickOnCanvas(page, 0, 0, { fromCenter: true });
     await dragMouseTo(100, 100, page);
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);

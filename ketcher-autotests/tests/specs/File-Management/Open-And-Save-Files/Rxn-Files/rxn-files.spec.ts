@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
-  clickOnTheCanvas,
   pressButton,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
@@ -86,7 +85,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await RGroupDialog(page).setRGroupLabels(RGroup.R7);
 
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    await clickOnCanvas(page, xOffsetFromCenter, 0, { fromCenter: true });
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
@@ -202,7 +201,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const xOffsetFromCenter = 50;
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    await clickOnCanvas(page, xOffsetFromCenter, 0, { fromCenter: true });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

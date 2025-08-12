@@ -116,7 +116,7 @@ const MonomerItem = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                addFavorite(e as unknown as MouseEvent);
+                addFavorite(e);
               }
             }}
           >

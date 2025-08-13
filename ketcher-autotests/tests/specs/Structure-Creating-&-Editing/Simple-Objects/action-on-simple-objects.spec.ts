@@ -34,6 +34,7 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -59,12 +60,12 @@ async function selectAndMoveSimpleObjects(page: Page) {
 
 async function saveToTemplates(page: Page) {
   const saveToTemplates = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'My New Template';
 
   await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplates.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill('My New Template');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await TemplateEditDialog(page).save();
 }
 
 test.describe('Action on simples objects', () => {

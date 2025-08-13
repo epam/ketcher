@@ -77,12 +77,19 @@ const wizardReducer = (
   switch (action.type) {
     case 'SetFieldValue': {
       const { fieldId, value } = action;
+
+      const values = {
+        ...state.values,
+        [fieldId]: value,
+      };
+
+      if (fieldId === 'type') {
+        values.naturalAnalogue = '';
+      }
+
       return {
         ...state,
-        values: {
-          ...state.values,
-          [fieldId]: value,
-        },
+        values,
         errors: {
           ...state.errors,
           [fieldId]: undefined,

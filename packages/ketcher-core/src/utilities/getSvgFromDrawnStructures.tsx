@@ -6,25 +6,26 @@ const ADDITIONAL_LEFT_MARGIN = 50;
 const DEFAULT_MARGIN = 10;
 
 type Margins = {
-  horizontal: number,
-  vertical: number
-}
+  horizontal: number;
+  vertical: number;
+};
 
 export const getSvgFromDrawnStructures = (
   canvas: SVGSVGElement,
   type: 'preview' | 'file',
   margins: Margins | number = {
     horizontal: DEFAULT_MARGIN,
-    vertical: DEFAULT_MARGIN
-  }
+    vertical: DEFAULT_MARGIN,
+  },
 ) => {
   // Convert number to Margins object to support backward compatibility
-  const marginValues: Margins = typeof margins === 'number' 
-    ? { horizontal: margins, vertical: margins }
-    : {
-      horizontal: DEFAULT_MARGIN + margins.horizontal,
-      vertical: DEFAULT_MARGIN + margins.vertical
-    };
+  const marginValues: Margins =
+    typeof margins === 'number'
+      ? { horizontal: margins, vertical: margins }
+      : {
+          horizontal: DEFAULT_MARGIN + margins.horizontal,
+          vertical: DEFAULT_MARGIN + margins.vertical,
+        };
 
   // Copy and clean up svg structures before previewing or saving
   let svgInnerHTML = canvas?.innerHTML || '';
@@ -59,10 +60,16 @@ export const getSvgFromDrawnStructures = (
     return;
   }
 
-  const viewBoxX = drawStructureClientRect.x - ADDITIONAL_LEFT_MARGIN - marginValues.horizontal;
-  const viewBoxY = drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
-  const viewBoxWidth = drawStructureClientRect.width + marginValues.horizontal * 2;
-  const viewBoxHeight = drawStructureClientRect.height + marginValues.vertical * 2;
+  const viewBoxX =
+    drawStructureClientRect.x -
+    ADDITIONAL_LEFT_MARGIN -
+    marginValues.horizontal;
+  const viewBoxY =
+    drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
+  const viewBoxWidth =
+    drawStructureClientRect.width + marginValues.horizontal * 2;
+  const viewBoxHeight =
+    drawStructureClientRect.height + marginValues.vertical * 2;
   const viewBox = `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`;
 
   if (type === 'preview')

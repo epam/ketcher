@@ -12,7 +12,7 @@ import {
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
 import { waitForRender } from '@utils/common';
-import { getCoordinatesOfTheMiddleOfTheScreen } from '@utils';
+import { getCoordinatesOfTheMiddleOfTheScreen, moveMouseAway } from '@utils';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -332,6 +332,7 @@ export const Library = (page: Page) => {
      */
     async addMonomersToFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
+        await moveMouseAway(page);
         await this.addMonomerToFavorites(monomer);
       }
     },

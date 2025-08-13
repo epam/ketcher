@@ -22,6 +22,7 @@ import {
   clickOnCanvas,
   openFile,
   pressButton,
+  delay,
 } from '@utils';
 import {
   copyAndPaste,
@@ -580,6 +581,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takePageScreenshot(page);
     await page.keyboard.press('Alt+C');
+    await delay(1);
     await takePageScreenshot(page);
   });
 

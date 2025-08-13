@@ -324,7 +324,7 @@ test.describe('Import-Saving .idt Files', () => {
     '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
     '+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C',
     'mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU',
-    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
+    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
   ];
 
   for (const fileName of fileNames1) {
@@ -491,7 +491,7 @@ test.describe('Import-Saving .idt Files', () => {
 
       mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
 
-      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
       `,
     );
     await takeEditorScreenshot(page);
@@ -519,7 +519,7 @@ test.describe('Import-Saving .idt Files', () => {
 
       mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
 
-      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
       `,
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -583,7 +583,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -761,7 +761,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/G*A*/iMe-dC2/T*A*T*A*/iMe-dC2/G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -783,9 +783,9 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -804,10 +804,10 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -820,12 +820,12 @@ test.describe('Import-Saving .idt Files', () => {
     await Library(page).switchToPeptidesTab();
     const x = 650;
     const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
       x,
@@ -839,7 +839,7 @@ test.describe('Import-Saving .idt Files', () => {
       MonomerAttachmentPoint.R1,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -853,12 +853,12 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
       x,
@@ -872,7 +872,7 @@ test.describe('Import-Saving .idt Files', () => {
       MonomerAttachmentPoint.R4,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -880,14 +880,14 @@ test.describe('Import-Saving .idt Files', () => {
   test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async () => {
     const x = 650;
     const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
       x,
@@ -923,13 +923,13 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
       x,
@@ -959,7 +959,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -978,7 +978,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
       x,
@@ -987,7 +987,7 @@ test.describe('Import-Saving .idt Files', () => {
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -1004,7 +1004,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
       x,
@@ -1014,7 +1014,7 @@ test.describe('Import-Saving .idt Files', () => {
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -1031,14 +1031,14 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
       x,
       y,
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).click();
+    await getMonomerLocator(page, Chem.iMe_dC2).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.up();
@@ -1065,7 +1065,7 @@ test.describe('Import-Saving .idt Files', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.IDT,
-        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(format.testId);
@@ -1086,7 +1086,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
 
     await verifyFileExport(
@@ -1127,7 +1127,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -1141,7 +1141,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await verifyFileExport(
       page,
@@ -1163,11 +1163,11 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Chem.iMe_dC).click();
+    await getMonomerLocator(page, Chem.iMe_dC2).click();
     await takeEditorScreenshot(page);
   });
 });

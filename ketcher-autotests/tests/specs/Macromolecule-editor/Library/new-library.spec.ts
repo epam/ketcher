@@ -599,7 +599,16 @@ for (const monomer of monomerToDrag) {
   });
 }
 
-for (const monomer of monomerToDrag) {
+const monomerToDrag2 = [
+  // Peptides.Cys_Bn,
+  Presets.MOE_A_P,
+  Sugars.FMOE,
+  Phosphates.bP,
+  Nucleotides.AmMC6T,
+  Chem.DOTA,
+];
+
+for (const monomer of monomerToDrag2) {
   test(`21.2 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Snake mode)`, async () => {
     /*
      *

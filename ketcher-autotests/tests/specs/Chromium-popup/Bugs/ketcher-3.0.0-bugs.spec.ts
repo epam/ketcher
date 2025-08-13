@@ -18,7 +18,6 @@ import {
   dragMouseTo,
   pressButton,
   moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
@@ -28,7 +27,7 @@ import {
   MolFileFormat,
   SequenceFileFormat,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { getAtomByIndex, selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -454,7 +453,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
-      await clickOnAtom(page, 'C', 0);
+      const atom = await getAtomByIndex(page, { label: 'C' }, 0);
+      await clickOnCanvas(page, atom.x - 292, atom.y - 56);
       await keyboardPressOnCanvas(page, 'O');
       await moveOnAtom(page, 'C', 1);
       await keyboardPressOnCanvas(page, 'N');

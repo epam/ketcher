@@ -44,6 +44,10 @@ export const SaveStructureDialog = (page: Page) => {
       await locators.fileFormatDropdownList.click();
       await delay(delayTime);
       await page.getByTestId(format).click({ force: true });
+      const loadingSpinner = page.getByTestId('loading-spinner');
+      if (await loadingSpinner.isVisible()) {
+        await loadingSpinner.waitFor({ state: 'hidden' });
+      }
     },
 
     async setFileName(fileName: string) {
@@ -69,11 +73,19 @@ export const SaveStructureDialog = (page: Page) => {
     },
 
     async switchToWarningsTab() {
+      const loadingSpinner = page.getByTestId('loading-spinner');
+      if (await loadingSpinner.isVisible()) {
+        await loadingSpinner.waitFor({ state: 'hidden' });
+      }
       await locators.warningsTab.click();
       await locators.warningTextarea.first().waitFor({ state: 'visible' });
     },
 
     async switchToPreviewTab() {
+      const loadingSpinner = page.getByTestId('loading-spinner');
+      if (await loadingSpinner.isVisible()) {
+        await loadingSpinner.waitFor({ state: 'hidden' });
+      }
       await locators.previewTab.click();
       await locators.saveStructureTextarea.waitFor({ state: 'visible' });
     },

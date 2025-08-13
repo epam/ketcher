@@ -11,6 +11,11 @@ export const safePostMessage = (
     const isInIframe = window.parent !== window;
     const hasOpener = window.opener !== null;
 
+    console.log('isInIframe', isInIframe);
+    console.log('hasOpener', hasOpener);
+    console.log('window.parent', window.parent);
+    console.log('window.opener', window.opener);
+
     if (isInIframe) {
       console.log('Iframe mode: sending message to parent window');
     } else if (hasOpener) {
@@ -53,6 +58,7 @@ export const safePostMessage = (
       parentOrigin = fallbackOrigin;
     }
 
+    console.log('parentOrigin', parentOrigin);
     const targetWindow = isInIframe ? window.parent : window.opener;
     if (targetWindow) {
       targetWindow.postMessage(message, parentOrigin);

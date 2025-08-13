@@ -18,7 +18,6 @@ import {
   deleteByKeyboard,
   keyboardPressOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -46,6 +45,9 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -418,12 +420,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
+
     await enableViewOnlyModeBySetOptions(page);
-    const point1 = await getAtomByIndex(page, { label: 'C' }, 1);
-    await ContextMenu(page, point1).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 

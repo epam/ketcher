@@ -8,8 +8,10 @@ import {
   MicroAtomOption,
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   addSingleMonomerToCanvas,
   BondType,
@@ -17,7 +19,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
@@ -110,8 +112,11 @@ test.describe('Connection rules for molecules with monomers: ', () => {
       page,
       'KET/molecule-connected-to-monomers.ket',
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 10);
-    await ContextMenu(page, point).click(MicroAtomOption.Delete);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 21 }),
+    ).click(MicroAtomOption.Delete);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);

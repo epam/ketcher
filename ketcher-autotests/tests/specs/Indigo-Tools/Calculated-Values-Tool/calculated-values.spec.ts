@@ -14,11 +14,13 @@ import {
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -819,8 +821,8 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -839,8 +841,8 @@ test.describe('Calculated Values Tools', () => {
     const errorMessage = page.getByTestId('info-modal-body');
 
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',

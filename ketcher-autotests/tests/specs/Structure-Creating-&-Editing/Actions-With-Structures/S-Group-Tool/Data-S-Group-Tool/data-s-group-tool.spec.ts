@@ -16,6 +16,7 @@ import {
   MolFileFormat,
   deleteByKeyboard,
   waitForRender,
+  moveMouseAway,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -287,6 +288,7 @@ test.describe('Data S-Group tool', () => {
       FieldValue: '8',
       PropertyLabelType: PropertyLabelType.Attached,
     });
+    await moveMouseAway(page);
     await waitForRender(page, async () => {
       await moveMouseToTheMiddleOfTheScreen(page);
     });

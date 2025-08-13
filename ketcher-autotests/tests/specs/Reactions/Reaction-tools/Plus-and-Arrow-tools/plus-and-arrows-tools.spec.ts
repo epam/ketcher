@@ -147,9 +147,13 @@ test.describe('Plus and Arrows tools ', () => {
     await dragMouseTo(x + 100, y + 100, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -836,7 +840,9 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -852,7 +858,9 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,

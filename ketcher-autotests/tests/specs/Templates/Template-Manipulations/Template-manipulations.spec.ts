@@ -287,7 +287,7 @@ test.describe('Template Manupulations', () => {
     const point = await getAtomByIndex(page, { label: 'S' }, 0);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await AttachmentPointsDialog(
       page,
     ).primaryAttachmentPointCheckbox.setChecked(true);
@@ -532,7 +532,9 @@ test.describe('Template Manupulations', () => {
     const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 });

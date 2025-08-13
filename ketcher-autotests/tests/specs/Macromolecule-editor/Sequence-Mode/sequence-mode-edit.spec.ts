@@ -128,7 +128,7 @@ test.describe('Sequence edit mode', () => {
     const y = 400;
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

@@ -935,7 +935,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       .getByTestId(KETCHER_CANVAS)
       .getByText('P', { exact: true });
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
-    await clickOnCanvas(page, 500, 500);
+    await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

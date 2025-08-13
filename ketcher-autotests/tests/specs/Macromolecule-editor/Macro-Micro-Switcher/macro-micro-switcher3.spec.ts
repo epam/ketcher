@@ -522,7 +522,7 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
 
@@ -552,7 +552,7 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
 
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
 
@@ -577,7 +577,7 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   await selectExpandedMonomer(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
   await takeEditorScreenshot(page);
 
@@ -609,7 +609,7 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   await selectExpandedMonomer(page);
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 
   test.fixme(
@@ -1093,7 +1093,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await performVerticalFlip(page);
 
@@ -1139,7 +1139,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await performVerticalFlip(page);
 
@@ -1186,7 +1186,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
@@ -1234,7 +1234,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
@@ -1527,7 +1527,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       );
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await performVerticalFlip(page);
       await rotationHandle.hover();
@@ -1585,7 +1585,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await ZoomOutByKeyboard(page);
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await performVerticalFlip(page);
       await rotationHandle.hover();

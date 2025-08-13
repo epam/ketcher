@@ -40,7 +40,9 @@ test.describe('Rectangle selection tool', () => {
 
   const selectionCoords = { x: 280, y: 200 };
   async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y);
+    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y, {
+      from: 'pageTopLeft',
+    });
   }
 
   test('Structure selection with rectangle selection tool', async ({

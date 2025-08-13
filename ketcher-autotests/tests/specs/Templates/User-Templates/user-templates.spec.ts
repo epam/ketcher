@@ -185,7 +185,9 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -196,7 +198,9 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 });

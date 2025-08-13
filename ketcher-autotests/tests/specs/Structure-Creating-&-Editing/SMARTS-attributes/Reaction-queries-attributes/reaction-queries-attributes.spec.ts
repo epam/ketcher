@@ -93,7 +93,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.QueryComponent,
     });

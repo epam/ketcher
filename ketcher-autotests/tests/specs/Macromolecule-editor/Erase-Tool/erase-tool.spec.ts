@@ -322,7 +322,7 @@ test.describe('Erase Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

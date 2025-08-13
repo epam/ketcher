@@ -160,7 +160,7 @@ export async function openImageAndAddToCanvas(
   await LeftToolbar(page).image();
 
   if (x !== undefined && y !== undefined) {
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }

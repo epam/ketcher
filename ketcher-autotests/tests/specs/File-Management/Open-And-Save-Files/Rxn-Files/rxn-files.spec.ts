@@ -101,7 +101,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await SaveStructureDialog(page).cancel();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
@@ -155,7 +155,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await pressButton(page, 'Cancel');
     await LeftToolbar(page).reactionPlusTool();
-    await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
+    await clickOnCanvas(
+      page,
+      xCoordinatesWithShiftHalf,
+      yCoordinatesWithShift,
+      { from: 'pageTopLeft' },
+    );
     const ySecondChain = yCoordinatesWithShift + yDelta50;
     await LeftToolbar(page).chain();
     await page.mouse.move(x, ySecondChain);
@@ -164,7 +169,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await pressButton(page, 'Cancel');
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
+    await clickOnCanvas(
+      page,
+      xCoordinatesWithShiftHalf,
+      yCoordinatesWithShift,
+      { from: 'pageTopLeft' },
+    );
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     const yArrowStart = y + yDelta20;
     const yArrowEnd = yArrowStart + yDelta20;

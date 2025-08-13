@@ -966,7 +966,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

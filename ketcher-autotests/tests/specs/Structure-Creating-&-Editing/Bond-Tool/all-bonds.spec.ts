@@ -134,7 +134,7 @@ test.describe(`Bond tool:`, () => {
       await CommonLeftToolbar(page).selectEraseTool();
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       const sizeAfterErase = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -144,7 +144,7 @@ test.describe(`Bond tool:`, () => {
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       const sizeWithRingAndBond = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -167,7 +167,7 @@ test.describe(`Bond tool:`, () => {
       await CommonLeftToolbar(page).selectBondTool(bondType);
 
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
@@ -178,12 +178,16 @@ test.describe(`Bond tool:`, () => {
       const doubleBond = await getTopBondByAttributes(page, {
         type: BondType.DOUBLE,
       });
-      await clickOnCanvas(page, doubleBond.x, doubleBond.y);
+      await clickOnCanvas(page, doubleBond.x, doubleBond.y, {
+        from: 'pageTopLeft',
+      });
 
       const singleBond = await getTopBondByAttributes(page, {
         type: BondType.SINGLE,
       });
-      await clickOnCanvas(page, singleBond.x, singleBond.y);
+      await clickOnCanvas(page, singleBond.x, singleBond.y, {
+        from: 'pageTopLeft',
+      });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     });
@@ -203,7 +207,7 @@ test.describe(`Bond tool:`, () => {
       await CommonLeftToolbar(page).selectBondTool(bondType);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       const chainSize = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -218,10 +222,10 @@ test.describe(`Bond tool:`, () => {
       expect(chainSizeAfterUndo).toEqual(chainSizeWithoutBondAfterUndo);
 
       point = await getAtomByIndex(page, { label: 'C' }, 1);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       point = await getAtomByIndex(page, { label: 'C' }, 3);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
       const editedChain = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;

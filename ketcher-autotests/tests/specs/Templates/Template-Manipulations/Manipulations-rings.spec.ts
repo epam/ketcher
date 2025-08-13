@@ -43,13 +43,13 @@ async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
   // Attaching Second Ring By Atom
   await BottomToolbar(page).clickRing(type);
   const point = await getAtomByIndex(page, { label: 'C' }, 2);
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 }
 
 async function mergeRingByBond(type: RingButton, page: Page) {
   await BottomToolbar(page).clickRing(type);
   const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {
@@ -79,7 +79,7 @@ async function deleteRightBondInRing(page: Page) {
   });
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
   await deleteByKeyboard(page);
 }
 

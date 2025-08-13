@@ -83,7 +83,7 @@ export async function clickOnCanvas(
   page: Page,
   x: number,
   y: number,
-  options?: {
+  options: {
     /**
      * Defaults to `left`.
      */
@@ -103,7 +103,7 @@ export async function clickOnCanvas(
      *      * Time to wait canvas event for for waitForRenderTimeOut.
      */
     from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
-  },
+  } = { from: 'canvasTopLeft' },
 ) {
   await waitForRender(
     page,
@@ -142,8 +142,11 @@ export async function clickOnCanvas(
         }
       };
 
-      const from = options?.from ?? 'pageTopLeft';
-      const position = await getRelativeAxisCenter(page, getCanvas(page), from);
+      const position = await getRelativeAxisCenter(
+        page,
+        getCanvas(page),
+        options.from ?? 'canvasTopLeft',
+      );
       console.log(`${position.x}:${position.y}`);
       await page.mouse.click(x + position.x, y + position.y, options);
     },

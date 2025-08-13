@@ -33,12 +33,16 @@ test.describe('Bonds plus atoms selection ', () => {
       );
 
       const point = await getBondByIndex(page, {}, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
       const atom1Point = await getAtomByIndex(page, {}, 0);
       const atom2Point = await getAtomByIndex(page, {}, 1);
       await page.keyboard.down('Shift');
-      await clickOnCanvas(page, atom1Point.x, atom1Point.y);
-      await clickOnCanvas(page, atom2Point.x, atom2Point.y);
+      await clickOnCanvas(page, atom1Point.x, atom1Point.y, {
+        from: 'pageTopLeft',
+      });
+      await clickOnCanvas(page, atom2Point.x, atom2Point.y, {
+        from: 'pageTopLeft',
+      });
       await takeEditorScreenshot(page);
     });
   }

@@ -45,7 +45,7 @@ test.describe('Lasso Selection tool', () => {
   }
 
   async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, xAxis, yAxis);
+    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
   }
 
   test('Selection of atom/bond/molecule', async ({ page }) => {
@@ -56,19 +56,27 @@ test.describe('Lasso Selection tool', () => {
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
-    await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+    await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     const bondPoint = await getBondByIndex(page, {}, 0);
     await page.mouse.move(bondPoint.x, bondPoint.y);
-    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, atomPoint.x, atomPoint.y);
-    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y, {
+      from: 'pageTopLeft',
+    });
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
     await clickCanvas(page);
@@ -195,7 +203,7 @@ test.describe('Lasso Selection tool', () => {
       { type: BondType.SINGLE_OR_AROMATIC },
       0,
     );
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const shiftCoords2 = { x: 5, y: 15 };
     await dragMouseTo(
       point.x - xDelta + shiftCoords2.x,
@@ -253,7 +261,9 @@ test.describe('Lasso Selection tool', () => {
       { type: BondType.SINGLE },
       bondIndex,
     );
-    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y, {
+      from: 'pageTopLeft',
+    });
     await dragMouseTo(
       bondPoint.x + shiftCoords.x,
       bondPoint.y + shiftCoords.y,
@@ -325,7 +335,7 @@ test.describe('Lasso Selection tool', () => {
     const yShift = 100;
     const xShift = 500;
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
-    await clickOnCanvas(page, xAxis, yAxis);
+    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );

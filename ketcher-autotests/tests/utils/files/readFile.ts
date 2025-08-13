@@ -5,7 +5,6 @@ import * as path from 'path';
 import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnTheCanvas,
   clickOnCanvas,
   MacroFileType,
   delay,
@@ -97,7 +96,9 @@ export async function openFileAndAddToCanvas(
     typeof xOffsetFromCenter === 'number' &&
     typeof yOffsetFromCenter === 'number'
   ) {
-    await clickOnTheCanvas(page, xOffsetFromCenter, yOffsetFromCenter);
+    await clickOnCanvas(page, xOffsetFromCenter, yOffsetFromCenter, {
+      from: 'pageCenter',
+    });
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }

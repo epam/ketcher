@@ -102,12 +102,50 @@ export async function clickOnCanvas(
     /**
      *      * Time to wait canvas event for for waitForRenderTimeOut.
      */
+    from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
   },
 ) {
   await waitForRender(
     page,
     async () => {
-      await page.mouse.click(x, y, options);
+      const getCanvas = (page: Page) =>
+        page
+          .getByTestId(KETCHER_CANVAS)
+          .filter({ has: page.locator(':visible') });
+      const getRelativeAxisCenter = async (
+        page: Page,
+        canvas: any,
+        fromCenter:
+          | 'pageTopLeft'
+          | 'pageCenter'
+          | 'canvasTopLeft'
+          | 'canvasCenter',
+      ) => {
+        switch (fromCenter) {
+          case 'pageTopLeft':
+            return { x: 0, y: 0 };
+          case 'pageCenter':
+            return await getCachedBodyCenter(page);
+          case 'canvasTopLeft': {
+            const canvasBox = (await canvas.boundingBox()) as BoundingBox;
+            return { x: canvasBox.x, y: canvasBox.y };
+          }
+          case 'canvasCenter': {
+            const canvasBox = (await canvas.boundingBox()) as BoundingBox;
+            return {
+              x: canvasBox.x + canvasBox.width / HALF_DIVIDER,
+              y: canvasBox.y + canvasBox.height / HALF_DIVIDER,
+            };
+          }
+          default:
+            throw new Error();
+        }
+      };
+
+      const from = options?.from ?? 'pageTopLeft';
+      const position = await getRelativeAxisCenter(page, getCanvas(page), from);
+      console.log(`${position.x}:${position.y}`);
+      await page.mouse.click(x + position.x, y + position.y, options);
     },
     options?.waitForRenderTimeOut,
   );
@@ -168,28 +206,6 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
   await dragMouseTo(coordinatesWithShift, y, page);
-}
-
-export async function clickOnTheCanvas(
-  page: Page,
-  xOffsetFromCenter: number,
-  yOffsetFromCenter: number,
-) {
-  const secondStructureCoordinates = await getCoordinatesOfTheMiddleOfTheScreen(
-    page,
-  );
-  await waitForRender(page, async () => {
-    await clickOnCanvas(
-      page,
-      secondStructureCoordinates.x + xOffsetFromCenter,
-      secondStructureCoordinates.y + yOffsetFromCenter,
-    );
-  });
-}
-
-export async function clickOnMiddleOfCanvas(page: Page) {
-  const middleOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await clickOnCanvas(page, middleOfCanvas.x, middleOfCanvas.y);
 }
 
 export async function clickByLink(page: Page, url: string) {

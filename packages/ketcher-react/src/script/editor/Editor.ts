@@ -1073,6 +1073,13 @@ class Editor implements KetcherEditor {
         break;
       }
 
+      case 'libraryUpdate': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .libraryUpdateEvent.add(handler);
+        break;
+      }
+
       default:
         this.event[eventName].add(handler);
     }

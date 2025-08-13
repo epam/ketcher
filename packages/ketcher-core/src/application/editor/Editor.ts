@@ -77,6 +77,7 @@ import {
   initHotKeys,
   KetcherLogger,
   keyNorm,
+  SettingsManager,
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
@@ -290,8 +291,12 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
-    persistentMonomersLibrary = monomersLibrary;
-    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+    const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
+    storedMonomerLibraryUpdates.forEach((update) =>
+      this.updateMonomersLibrary(update),
+    );
+    persistentMonomersLibrary = this._monomersLibrary;
+    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {

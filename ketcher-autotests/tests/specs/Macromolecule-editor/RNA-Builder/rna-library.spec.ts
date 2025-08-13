@@ -1,4 +1,7 @@
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  hideMonomerPreview,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
@@ -43,7 +46,6 @@ import {
   monomerLibraryTypeLocation,
   MonomerTypeLocation,
   RNASection,
-  RNASectionArea,
 } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -1417,15 +1419,6 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.collapse();
   });
 
-  async function scrollAccordionContentToTheTop(
-    page: Page,
-    contentLocator: string,
-  ) {
-    // Dirty hack
-    await page.getByTestId(contentLocator).click();
-    await page.keyboard.press('Home');
-  }
-
   test('Check that preview window disappears when a cursor moves off from RNA in library', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 21
@@ -1434,26 +1427,20 @@ test.describe('RNA Library', () => {
      *    Check that preview window disappears when a cursor moves off from RNA in library
      *    (phosphates, sugars, bases)
      */
-    await Library(page).openRNASection(RNASection.Sugars);
-    await scrollAccordionContentToTheTop(page, RNASectionArea.Sugars);
     await Library(page).hoverMonomer(Sugars._12ddR);
     await waitForMonomerPreview(page);
-    await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await hideMonomerPreview(page);
+    await takeMonomerLibraryScreenshot(page);
 
-    await Library(page).openRNASection(RNASection.Bases);
-    await scrollAccordionContentToTheTop(page, RNASectionArea.Bases);
     await Library(page).hoverMonomer(Bases._2imen2);
     await waitForMonomerPreview(page);
-    await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await hideMonomerPreview(page);
+    await takeMonomerLibraryScreenshot(page);
 
-    // await Library(page).openRNASection(RNASection.Phosphates);
-    // await scrollAccordionContentToTheTop(
-    //   page,
-    //   'rna-accordion-details-Phosphates',
-    // );
-    // await page.getByTestId('P___Phosphate').hover();
-    // await waitForMonomerPreview(page);
-    // await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await Library(page).hoverMonomer(Phosphates.P);
+    await waitForMonomerPreview(page);
+    await hideMonomerPreview(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('CHEM tab check at Library', async () => {

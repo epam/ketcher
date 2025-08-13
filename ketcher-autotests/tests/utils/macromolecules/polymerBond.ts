@@ -566,9 +566,7 @@ export async function selectRightConnectionPointAtSelectConnectionPointDialog(
   await rightMonomerLocator.click();
 }
 
-
 export async function clickOnBondByLocator(page: Page, bondLocator: Locator) {
-
   const boundingBox = await bondLocator.boundingBox();
 
   await bondLocator.click({ force: true });
@@ -635,7 +633,6 @@ export async function findAndClickAllCenterBonds(page: Page) {
         atomsWith4Bonds.includes(from) &&
         atomsWith4Bonds.includes(to)
       ) {
-
         // Click on the found bond
         await clickOnBondByLocator(page, bond);
         allClickedBonds.push(bond);

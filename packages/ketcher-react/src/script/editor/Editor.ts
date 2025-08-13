@@ -593,9 +593,13 @@ class Editor implements KetcherEditor {
         );
       });
 
-      this.singleBondsToOutsideOfSelection = bondsToOutside.filter(
-        (_, bond) => bond.type === Bond.PATTERN.TYPE.SINGLE,
-      );
+      if (
+        bondsToOutside.some((bond) => bond.type !== Bond.PATTERN.TYPE.SINGLE)
+      ) {
+        return false;
+      }
+
+      this.singleBondsToOutsideOfSelection = bondsToOutside;
 
       return (
         this.singleBondsToOutsideOfSelection.size > 0 &&

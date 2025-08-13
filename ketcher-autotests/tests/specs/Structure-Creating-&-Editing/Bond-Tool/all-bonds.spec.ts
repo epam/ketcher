@@ -107,8 +107,14 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
-      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
+      await clickOnCanvas(page, point.x, point.y, {
+        waitForRenderTimeOut: 0,
+        from: 'pageTopLeft',
+      });
+      await clickOnCanvas(page, point.x, point.y, {
+        waitForRenderTimeOut: 0,
+        from: 'pageTopLeft',
+      });
 
       const countBonds = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -123,7 +129,10 @@ test.describe(`Bond tool:`, () => {
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
+      await clickOnCanvas(page, point.x, point.y, {
+        waitForRenderTimeOut: 0,
+        from: 'pageTopLeft',
+      });
 
       const countBondsWithRing = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;

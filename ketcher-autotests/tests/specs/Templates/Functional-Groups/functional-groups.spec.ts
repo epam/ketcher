@@ -51,6 +51,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -62,12 +63,12 @@ const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'My Template';
 
   await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill('My Template');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await TemplateEditDialog(page).save();
 }
 
 test.describe('Functional Groups', () => {

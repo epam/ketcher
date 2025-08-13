@@ -64,6 +64,7 @@ import {
   TabSection,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -81,7 +82,7 @@ test.describe('Template Manupulations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await page.getByPlaceholder('template').click();
+    await TemplateEditDialog(page).clickMoleculeName();
     await takeEditorScreenshot(page);
   });
 });

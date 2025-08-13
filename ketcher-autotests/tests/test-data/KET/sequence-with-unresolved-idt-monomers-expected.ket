@@ -514,7 +514,7 @@
                 "$ref": "monomerTemplate-G___Guanine"
             },
             {
-                "$ref": "monomerTemplate-unknown_monomer_with_idt_alias_iMe-dC"
+                "$ref": "monomerTemplate-unknown_monomer_with_idt_alias_iMe-dC2"
             },
             {
                 "$ref": "monomerTemplate-dR___Deoxy-Ribose"
@@ -1668,11 +1668,11 @@
             "x": 8.9,
             "y": -7.575000000000001
         },
-        "alias": "iMe-dC",
-        "templateId": "unknown_monomer_with_idt_alias_iMe-dC",
+        "alias": "iMe-dC2",
+        "templateId": "unknown_monomer_with_idt_alias_iMe-dC2",
         "seqid": 5
     },
-    "monomerTemplate-unknown_monomer_with_idt_alias_iMe-dC": {
+    "monomerTemplate-unknown_monomer_with_idt_alias_iMe-dC2": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1739,9 +1739,9 @@
             }
         ],
         "class": "CHEM",
-        "id": "unknown_monomer_with_idt_alias_iMe-dC",
-        "fullName": "iMe-dC",
-        "alias": "iMe-dC",
+        "id": "unknown_monomer_with_idt_alias_iMe-dC2",
+        "fullName": "iMe-dC2",
+        "alias": "iMe-dC2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -1769,7 +1769,7 @@
             }
         ],
         "idtAliases": {
-            "base": "iMe-dC"
+            "base": "iMe-dC2"
         },
         "unresolved": true,
         "naturalAnalogShort": ""
@@ -2060,8 +2060,8 @@
             "x": 16.4,
             "y": -7.575000000000001
         },
-        "alias": "iMe-dC",
-        "templateId": "unknown_monomer_with_idt_alias_iMe-dC",
+        "alias": "iMe-dC2",
+        "templateId": "unknown_monomer_with_idt_alias_iMe-dC2",
         "seqid": 8
     },
     "monomer23": {
@@ -2377,8 +2377,8 @@
             "x": 29.9,
             "y": -7.575000000000001
         },
-        "alias": "iMe-dC",
-        "templateId": "unknown_monomer_with_idt_alias_iMe-dC",
+        "alias": "iMe-dC2",
+        "templateId": "unknown_monomer_with_idt_alias_iMe-dC2",
         "seqid": 13
     }
 }

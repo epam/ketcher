@@ -58,16 +58,15 @@ import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/Calculated
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'multi_tail_arrows_with_elements';
 
   await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page
-    .getByPlaceholder('template')
-    .fill('multi_tail_arrows_with_elements');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await TemplateEditDialog(page).save();
 }
 
 async function setupElementsAndModifyMultiTailArrow(page: Page) {

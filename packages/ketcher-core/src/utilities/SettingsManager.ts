@@ -37,6 +37,7 @@ interface SavedSettings {
   selectionTool?: any;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
+  monomerLibraryUpdates?: string[];
 }
 
 interface SavedOptions {
@@ -159,5 +160,27 @@ export class SettingsManager {
       ...options,
       ignoreChiralFlag,
     });
+  }
+
+  static get monomerLibraryUpdates() {
+    const { monomerLibraryUpdates } = this.getSettings();
+    return monomerLibraryUpdates || [];
+  }
+
+  static set monomerLibraryUpdates(monomerLibraryUpdates: string[]) {
+    const settings = this.getSettings();
+
+    this.saveSettings({
+      ...settings,
+      monomerLibraryUpdates,
+    });
+  }
+
+  static addMonomerLibraryUpdate(newUpdate: string) {
+    const updates = this.monomerLibraryUpdates;
+    if (!updates.includes(newUpdate)) {
+      updates.push(newUpdate);
+      this.monomerLibraryUpdates = updates;
+    }
   }
 }

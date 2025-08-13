@@ -76,6 +76,7 @@ export class Ketcher {
   _indigo: Indigo;
   #eventBus: EventEmitter;
   changeEvent: Subscription;
+  libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
     // we should assign editor exactly after ketcher creation
@@ -95,6 +96,7 @@ export class Ketcher {
     assert(formatterFactory != null);
     this._id = uniqueId();
     this.changeEvent = new Subscription();
+    this.libraryUpdateEvent = new Subscription();
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
     this._indigo = new Indigo(this.structService);
@@ -661,6 +663,12 @@ export class Ketcher {
     }
 
     editor.updateMonomersLibrary(rawMonomersData);
+    SettingsManager.addMonomerLibraryUpdate(
+      typeof rawMonomersData !== 'string'
+        ? JSON.stringify(rawMonomersData)
+        : rawMonomersData,
+    );
+    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 
   public switchToMacromoleculesMode() {

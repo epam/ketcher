@@ -921,7 +921,7 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await copyAndPaste(page);
-      await clickOnCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -957,7 +957,7 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await cutAndPaste(page);
-      await clickOnCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -1784,9 +1784,9 @@ test.describe('Cascade Reactions', () => {
                 : rdfFileExpectedV3000;
 
             await openFileAndAddToCanvas(page, rdfFile);
-            await clickOnCanvas(page, 500, 600);
+            await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
             await selectRingButton(page, RingButton.Benzene);
-            await clickOnCanvas(page, 200, 600);
+            await clickOnCanvas(page, 200, 600, { from: 'pageTopLeft' });
             await CommonLeftToolbar(page).selectAreaSelectionTool(
               SelectionToolType.Rectangle,
             );
@@ -1798,7 +1798,7 @@ test.describe('Cascade Reactions', () => {
             await CommonTopLeftToolbar(page).undo();
             await takeEditorScreenshot(page);
             await copyAndPaste(page);
-            await clickOnCanvas(page, 500, 200);
+            await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();
             await verifyFileExport(

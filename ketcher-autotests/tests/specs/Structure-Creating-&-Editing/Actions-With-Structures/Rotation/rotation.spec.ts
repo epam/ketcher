@@ -52,7 +52,7 @@ test.describe('Rotation', () => {
       page,
       COORDINATES_TO_PERFORM_ROTATION.x,
       COORDINATES_TO_PERFORM_ROTATION.y,
-      { button: 'right' },
+      { button: 'right', from: 'pageTopLeft' },
     );
 
     const screenAfterRotation = await takeEditorScreenshot(page);
@@ -335,7 +335,9 @@ test.describe('Rotation', () => {
     await addStructureAndSelect(page);
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
-    await clickOnCanvas(page, rotationHandleX, rotationHandleY);
+    await clickOnCanvas(page, rotationHandleX, rotationHandleY, {
+      from: 'pageTopLeft',
+    });
     const { x, y } = await getRotationHandleCoordinates(page);
     expect(x).toEqual(rotationHandleX);
     expect(y).toEqual(rotationHandleY);

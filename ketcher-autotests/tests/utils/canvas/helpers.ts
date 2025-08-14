@@ -50,7 +50,9 @@ export async function drawElementByTitle(
   const topBarHeight = await getTopToolBarHeight(page);
   await page.getByTitle(elementTitle, { exact: true }).click();
 
-  await clickOnCanvas(page, leftBarWidth + offsetX, topBarHeight + offsetY);
+  await clickOnCanvas(page, leftBarWidth + offsetX, topBarHeight + offsetY, {
+    from: 'pageTopLeft',
+  });
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {

@@ -89,7 +89,7 @@ test.describe('Erase Tool', () => {
       y: plusElement.pp.y * scale + topBarHeight,
     };
 
-    await clickOnCanvas(page, plusPnt.x, plusPnt.y);
+    await clickOnCanvas(page, plusPnt.x, plusPnt.y, { from: 'pageTopLeft' });
 
     const plusDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -126,7 +126,9 @@ test.describe('Erase Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
 
-    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y);
+    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
+      from: 'pageTopLeft',
+    });
 
     const arrowDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

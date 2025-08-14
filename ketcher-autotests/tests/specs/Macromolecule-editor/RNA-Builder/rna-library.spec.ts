@@ -71,7 +71,7 @@ async function drawThreeMonomers(page: Page) {
     x: x3,
     y: y3,
   });
-  await clickOnCanvas(page, x3, y3);
+  await clickOnCanvas(page, x3, y3, { from: 'pageTopLeft' });
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
@@ -1121,7 +1121,7 @@ test.describe('RNA Library', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
       await CommonLeftToolbar(page).selectEraseTool();
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1212,7 +1212,7 @@ test.describe('RNA Library', () => {
         y,
       });
       await page.keyboard.press('Escape');
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await moveMouseAway(page);
       await getMonomerLocator(page, monomer).hover();
       await waitForMonomerPreview(page);
@@ -1255,7 +1255,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).redo();
       await CommonLeftToolbar(page).selectEraseTool();
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
@@ -1331,7 +1331,9 @@ test.describe('RNA Library', () => {
     // Case 27 here. Dirty hack, can't believe I did it.
     const xCoordinate = 1241;
     const yCoordinate = 62;
-    await clickOnCanvas(page, xCoordinate, yCoordinate);
+    await clickOnCanvas(page, xCoordinate, yCoordinate, {
+      from: 'pageTopLeft',
+    });
 
     await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);

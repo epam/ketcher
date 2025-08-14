@@ -112,7 +112,7 @@ test.describe('Action on simples objects', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
-    await clickOnCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     await waitForRender(page, async () => {
       await dragMouseTo(point3.x, point3.y, page);
     });
@@ -149,13 +149,13 @@ test.describe('Action on simples objects', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await ZoomOutByKeyboard(page, { repeat: 5 });
     await copyAndPaste(page);
-    await clickOnCanvas(page, anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await CommonTopLeftToolbar(page).undo();
     }
     await cutAndPaste(page);
-    await clickOnCanvas(page, anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await CommonTopLeftToolbar(page).undo();

@@ -211,7 +211,9 @@ test.describe('Rectangle Selection Tool', () => {
     await page.keyboard.press('Escape');
 
     // Now Beta Alanine must be above Ethylthiocysteine
-    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
+    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -269,9 +271,9 @@ test.describe('Rectangle Selection Tool', () => {
     // Select monomers pointly by clicking Shift+LClick
     await page.keyboard.down('Shift');
 
-    await clickOnCanvas(page, 310, 310);
-    await clickOnCanvas(page, 410, 410);
-    await clickOnCanvas(page, 510, 360);
+    await clickOnCanvas(page, 310, 310, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 410, 410, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 510, 360, { from: 'pageTopLeft' });
 
     await page.keyboard.up('Shift');
 
@@ -406,7 +408,7 @@ test.describe('Rectangle Selection Tool', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

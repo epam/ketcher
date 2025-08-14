@@ -8,7 +8,6 @@ import {
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
-  clickOnTheCanvas,
   clickOnCanvas,
   MolFileFormat,
   deleteByKeyboard,
@@ -323,7 +322,7 @@ test.describe('Erase Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -447,7 +446,7 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, 600);
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
@@ -478,7 +477,7 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, 600);
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
@@ -509,7 +508,7 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, 600);
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
     await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
@@ -540,7 +539,7 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, 600);
-    await clickOnTheCanvas(page, 0, 0);
+    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
     await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);

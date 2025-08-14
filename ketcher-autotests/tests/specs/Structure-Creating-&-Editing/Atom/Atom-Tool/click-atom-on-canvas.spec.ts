@@ -121,7 +121,7 @@ test.describe('Click Atom on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

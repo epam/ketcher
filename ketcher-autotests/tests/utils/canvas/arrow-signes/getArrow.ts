@@ -36,7 +36,7 @@ export async function getArrowsByIndex(
 
 export async function clickOnArrow(page: Page, index: number) {
   const { x, y } = await getArrowsByIndex(page, index);
-  await clickOnCanvas(page, x, y);
+  await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 }
 
 export function getArrowLocator(page: Page, type: Arrows) {

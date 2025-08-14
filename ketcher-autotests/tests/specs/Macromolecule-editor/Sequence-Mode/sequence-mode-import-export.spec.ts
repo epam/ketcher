@@ -137,6 +137,7 @@ test.describe('Import/export sequence:', () => {
     await keyboardPressOnCanvas(page, 'Escape');
   });
 
+  //
   test('It is possible to paste from clipboard A, T, C, G, U for RNA open structure', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/4422 - Case 3.1 (RNA case)

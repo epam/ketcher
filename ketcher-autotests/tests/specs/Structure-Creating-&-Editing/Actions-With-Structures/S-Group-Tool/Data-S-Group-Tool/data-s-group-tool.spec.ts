@@ -144,7 +144,9 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 

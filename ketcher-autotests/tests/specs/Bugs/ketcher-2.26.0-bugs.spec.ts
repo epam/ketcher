@@ -920,7 +920,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       MicroBondOption.Highlight,
       HighlightOption.Green,
     ]);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1227,13 +1227,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 650);
+    await clickOnCanvas(page, 500, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 550);
+    await clickOnCanvas(page, 500, 550, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1636,7 +1636,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await closeErrorAndInfoModals(page);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200);
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

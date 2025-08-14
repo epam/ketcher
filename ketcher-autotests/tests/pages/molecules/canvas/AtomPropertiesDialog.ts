@@ -155,7 +155,7 @@ export const AtomPropertiesDialog = (page: Page) => {
       await ifNotNull(p => this.setQuerySpecificProperties(p), options.QuerySpecificProperties);
       await ifNotNull(p => this.setReactionFlagsProperties(p), options.ReactionFlags);
       await ifNotNull(p => this.setCustomQueryProperties(p), options.CustomQuery);
-      await this.pressApplyButton();
+      await this.apply();
     },
 
     // prettier-ignore
@@ -218,14 +218,19 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.closeWindowButton.click();
     },
 
-    async pressApplyButton() {
+    async editLabel() {
+      await this.expandQuerySpecific();
+      await locators.generalSection.editButton.click();
+    },
+
+    async apply() {
       await delay(0.2);
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });
     },
 
-    async pressCancelButton() {
+    async cancel() {
       await locators.cancelButton.click();
     },
 
@@ -390,6 +395,15 @@ export const AtomPropertiesDialog = (page: Page) => {
 
     async fillCustomQueryText(customQuery: string) {
       await locators.customQueryTextArea.fill(customQuery);
+    },
+
+    async expandGeneral() {
+      const generalSectionClasses =
+        await locators.generalSection.foldStateKeeper.getAttribute('class');
+      const isgeneralCollapsed = generalSectionClasses?.includes('hidden');
+      if (isgeneralCollapsed) {
+        await locators.generalSection.click();
+      }
     },
 
     async expandQuerySpecific() {

@@ -6,6 +6,7 @@ type ExtendedTableDialogLocators = {
   closeWindowButton: Locator;
   addButton: Locator;
   cancelButton: Locator;
+  extendedTableWindow: Locator;
 };
 
 export const ExtendedTableDialog = (page: Page) => {
@@ -16,6 +17,9 @@ export const ExtendedTableDialog = (page: Page) => {
     closeWindowButton: page.getByTestId('close-window-button'),
     addButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
+    extendedTableWindow: page
+      .getByTestId('extended-table-dialog')
+      .getByRole('dialog'),
   };
 
   return {

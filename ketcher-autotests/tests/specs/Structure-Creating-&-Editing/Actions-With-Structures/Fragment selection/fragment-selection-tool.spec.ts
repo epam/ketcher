@@ -128,7 +128,7 @@ test.describe('Fragment selection tool', () => {
       SelectionToolType.Fragment,
     );
     const point = await getRightAtomByAttributes(page, { label: 'N' });
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
   });

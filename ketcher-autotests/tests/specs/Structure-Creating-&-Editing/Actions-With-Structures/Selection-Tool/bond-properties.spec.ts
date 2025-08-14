@@ -530,7 +530,7 @@ test.describe('Bond Properties', () => {
     );
 
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, x + 150, y + 150);
+    await clickOnCanvas(page, x + 150, y + 150, { from: 'pageTopLeft' });
 
     await verifyFileExport(
       page,

@@ -238,7 +238,7 @@ test.describe('Checking if atoms are displayed correctly', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     const pixelsToMoveMouse = 100;
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Ti);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
     await takeEditorScreenshot(page);
   });

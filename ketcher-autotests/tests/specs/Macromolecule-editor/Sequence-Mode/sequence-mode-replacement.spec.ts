@@ -734,7 +734,7 @@ async function selectAndReplaceSymbolInEditMode(
     await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseToTheMiddleOfTheScreen(page);
-  await clickOnCanvas(page, 400, 400);
+  await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 }
 
 async function selectAndReplaceSymbolInEditModeWithError(

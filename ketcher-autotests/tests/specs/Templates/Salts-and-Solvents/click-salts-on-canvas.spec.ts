@@ -132,7 +132,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Sulfolane,
     );
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

@@ -323,9 +323,9 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-stereo-and-atoms.ket');
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getAtomByIndex(page, { label: 'O' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.keyboard.up('Shift');
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await ContextMenu(page, point).click(MicroAtomOption.Delete);
@@ -345,7 +345,9 @@ test.describe('Right-click menu', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await ContextMenu(page, point).open();
-    await clickOnCanvas(page, canvasClickX, canvasClickY);
+    await clickOnCanvas(page, canvasClickX, canvasClickY, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -404,11 +406,11 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.keyboard.up('Shift');
 
     point = await getAtomByIndex(page, { label: 'C' }, 1);
@@ -428,11 +430,11 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.keyboard.up('Shift');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
@@ -606,7 +608,7 @@ test.describe('Right-click menu', () => {
       MicroBondOption.Highlight,
       HighlightOption.Blue,
     ]);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     const point1 = await getAtomByIndex(page, { label: 'C' }, 0);
@@ -614,7 +616,7 @@ test.describe('Right-click menu', () => {
       MicroAtomOption.Highlight,
       HighlightOption.NoHighlight,
     ]);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -638,7 +640,7 @@ test.describe('Right-click menu', () => {
       MicroBondOption.Highlight,
       HighlightOption.Blue,
     ]);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

@@ -155,7 +155,7 @@ test.describe('Common connection rules: ', () => {
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
     // removing selections
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
 
     await monomerLocator.click();
     await CommonLeftToolbar(page).selectEraseTool();

@@ -6,16 +6,19 @@ import {
   clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
+  dragTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -121,19 +124,18 @@ test.describe('Rectangle selection tool', () => {
 
   test('Fusing atoms together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
-    const firstAtomNumber = 4;
-    const secondAtomNumber = 9;
+    const firstAtomNumber = 2;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnAtom(page, 'C', firstAtomNumber);
-    const atomPoint = await getAtomByIndex(
+    await dragTo(
       page,
-      { label: 'C' },
-      secondAtomNumber,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
     );
-    await dragMouseTo(atomPoint.x, atomPoint.y, page);
     await takeEditorScreenshot(page);
   });
 
@@ -161,9 +163,17 @@ test.describe('Rectangle selection tool', () => {
     async function selectReactionLeftPart() {
       const shift = 5;
       const emptySpace = { x: 100, y: 100 };
-      const mostRightAtom = await getAtomByIndex(page, { label: 'Br' }, 0);
+      const mostRightAtom = await getAtomLocator(page, { atomLabel: 'Br' })
+        .first()
+        .boundingBox();
       await page.mouse.move(emptySpace.x, emptySpace.y);
-      await dragMouseTo(mostRightAtom.x + shift, mostRightAtom.y + shift, page);
+      if (mostRightAtom) {
+        await dragMouseTo(
+          mostRightAtom.x + mostRightAtom.width + shift,
+          mostRightAtom.y + mostRightAtom.height + shift,
+          page,
+        );
+      }
     }
     const atomOnTheRightSide = 14;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');

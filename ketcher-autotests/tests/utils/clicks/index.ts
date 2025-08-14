@@ -15,7 +15,6 @@ import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { page } from '@tests/specs/Structure-Creating-&-Editing/Bond-Tool/all-bonds.spec';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 
 type BoundingBox = {

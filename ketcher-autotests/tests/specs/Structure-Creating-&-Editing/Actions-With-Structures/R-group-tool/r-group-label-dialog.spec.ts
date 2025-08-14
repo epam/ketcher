@@ -22,7 +22,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
   verifyFileExport,
@@ -40,6 +39,9 @@ import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPro
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -158,10 +160,8 @@ test.describe('R-Group Label Tool', () => {
     });
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    let point: { x: number; y: number };
-    // eslint-disable-next-line no-magic-numbers, prefer-const
-    point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomId: 2 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -226,8 +226,8 @@ test.describe('R-Group Label Tool', () => {
     await moveMouseAway(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomId: 5 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await moveMouseAway(page);

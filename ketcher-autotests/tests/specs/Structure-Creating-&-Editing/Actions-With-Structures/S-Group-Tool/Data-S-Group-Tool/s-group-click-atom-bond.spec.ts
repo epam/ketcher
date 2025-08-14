@@ -17,7 +17,6 @@ import {
   moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import {
@@ -40,6 +39,9 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -683,14 +685,22 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/LayoutCheck.ket',
     );
-    let point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await removeAbbreviation(page, point);
-    point = await getAtomByIndex(page, { label: 'C' }, 7);
-    await removeAbbreviation(page, point);
-    point = await getAtomByIndex(page, { label: 'C' }, 15);
-    await removeAbbreviation(page, point);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await removeAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    );
 
+    await removeAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 7 }),
+    );
     await takeEditorScreenshot(page);
+
+    await removeAbbreviation(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 15 }),
+    );
 
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).undo();

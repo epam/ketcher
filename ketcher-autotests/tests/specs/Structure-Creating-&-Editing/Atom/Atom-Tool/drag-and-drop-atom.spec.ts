@@ -43,7 +43,9 @@ test.describe('Drag and drop Atom on canvas', () => {
     const oxygenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -73,7 +75,9 @@ test.describe('Drag and drop Atom on canvas', () => {
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -101,7 +105,9 @@ test.describe('Drag and drop Atom on canvas', () => {
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -132,7 +138,9 @@ test.describe('Drag and drop Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -169,7 +177,9 @@ test.describe('Drag and drop Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

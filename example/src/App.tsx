@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
@@ -35,7 +35,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <StrictMode>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -69,7 +69,7 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

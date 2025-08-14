@@ -93,7 +93,7 @@ function filterBugsInTests(
       (monomerId !== undefined && item.MonomerId.includes(monomerId));
 
     return testNameMatch && sequenceIdMatch && replaceMonomerIdMatch;
-  }).flatMap((item) => item.BugsInTests || []);
+  }).flatMap((item) => item.BugsInTests ?? []);
 }
 
 function addAnnotation(message: string) {
@@ -361,7 +361,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      sequence.HELM || '',
+      sequence.HELM ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -381,7 +381,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -412,7 +412,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      sequence.HELM || '',
+      sequence.HELM ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -432,7 +432,7 @@ for (const sequence of sequencesForAddingDash) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

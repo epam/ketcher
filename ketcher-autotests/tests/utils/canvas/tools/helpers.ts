@@ -7,6 +7,7 @@ import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 export async function selectRectangleArea(
   page: Page,
@@ -70,10 +71,10 @@ export async function selectWithLasso(
 
 export async function saveToTemplates(page: Page, templateName: string) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = templateName;
 
   await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill(templateName);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await TemplateEditDialog(page).save();
 }

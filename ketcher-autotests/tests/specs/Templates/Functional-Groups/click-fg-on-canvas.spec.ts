@@ -126,7 +126,7 @@ test.describe('Click Functional Group on canvas', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ms,
     );
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

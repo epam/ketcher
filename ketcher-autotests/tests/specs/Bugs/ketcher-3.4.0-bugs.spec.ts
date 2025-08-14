@@ -22,7 +22,7 @@ import {
   clickOnCanvas,
   openFile,
   pressButton,
-  clickOnTheCanvas,
+  delay,
 } from '@utils';
 import {
   copyAndPaste,
@@ -581,6 +581,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takePageScreenshot(page);
     await page.keyboard.press('Alt+C');
+    await delay(1);
     await takePageScreenshot(page);
   });
 
@@ -965,7 +966,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1372,13 +1373,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
-    await clickOnTheCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );
-    await clickOnTheCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
   });
 

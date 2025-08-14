@@ -20,7 +20,7 @@ test.describe('Track Changes', () => {
 
     const addAtom = async (x: number, y: number) => {
       await atomToolbar.clickAtom(atomType);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     };
 
     const numberOfRows = 6;

@@ -83,7 +83,7 @@ export async function clickOnCanvas(
   page: Page,
   x: number,
   y: number,
-  options?: {
+  options: {
     /**
      * Defaults to `left`.
      */
@@ -102,12 +102,56 @@ export async function clickOnCanvas(
     /**
      *      * Time to wait canvas event for for waitForRenderTimeOut.
      */
-  },
+    from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
+  } = { from: 'canvasTopLeft' },
 ) {
   await waitForRender(
     page,
     async () => {
-      await page.mouse.click(x, y, options);
+      const getCanvas = (page: Page) =>
+        page
+          .getByTestId(KETCHER_CANVAS)
+          .filter({ has: page.locator(':visible') });
+      const getRelativeAxisCenter = async (
+        page: Page,
+        canvas: any,
+        fromCenter:
+          | 'pageTopLeft'
+          | 'pageCenter'
+          | 'canvasTopLeft'
+          | 'canvasCenter',
+      ) => {
+        switch (fromCenter) {
+          case 'pageTopLeft':
+            return { x: 0, y: 0 };
+          case 'pageCenter':
+            return await getCachedBodyCenter(page);
+          case 'canvasTopLeft': {
+            const canvasBox = (await canvas.boundingBox()) as BoundingBox;
+            return { x: canvasBox.x, y: canvasBox.y };
+          }
+          case 'canvasCenter': {
+            const canvasBox = (await canvas.boundingBox()) as BoundingBox;
+            return {
+              x: canvasBox.x + canvasBox.width / HALF_DIVIDER,
+              y: canvasBox.y + canvasBox.height / HALF_DIVIDER,
+            };
+          }
+          default:
+            throw new Error();
+        }
+      };
+
+      const relativeAxisCenter = await getRelativeAxisCenter(
+        page,
+        getCanvas(page),
+        options.from ?? 'canvasTopLeft',
+      );
+      await page.mouse.click(
+        relativeAxisCenter.x + x,
+        relativeAxisCenter.y + y,
+        options,
+      );
     },
     options?.waitForRenderTimeOut,
   );
@@ -170,28 +214,6 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   await dragMouseTo(coordinatesWithShift, y, page);
 }
 
-export async function clickOnTheCanvas(
-  page: Page,
-  xOffsetFromCenter: number,
-  yOffsetFromCenter: number,
-) {
-  const secondStructureCoordinates = await getCoordinatesOfTheMiddleOfTheScreen(
-    page,
-  );
-  await waitForRender(page, async () => {
-    await clickOnCanvas(
-      page,
-      secondStructureCoordinates.x + xOffsetFromCenter,
-      secondStructureCoordinates.y + yOffsetFromCenter,
-    );
-  });
-}
-
-export async function clickOnMiddleOfCanvas(page: Page) {
-  const middleOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await clickOnCanvas(page, middleOfCanvas.x, middleOfCanvas.y);
-}
-
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
 }
@@ -203,7 +225,10 @@ export async function clickOnBond(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
+  await clickOnCanvas(page, point.x, point.y, {
+    button: buttonSelect,
+    from: 'pageTopLeft',
+  });
 }
 
 export async function clickOnBondById(
@@ -212,7 +237,10 @@ export async function clickOnBondById(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondById(page, bondId);
-  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
+  await clickOnCanvas(page, point.x, point.y, {
+    button: buttonSelect,
+    from: 'pageTopLeft',
+  });
 }
 
 export async function clickOnAtom(
@@ -222,7 +250,10 @@ export async function clickOnAtom(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
+  await clickOnCanvas(page, point.x, point.y, {
+    button: buttonSelect,
+    from: 'pageTopLeft',
+  });
 }
 
 export async function clickOnAtomById(
@@ -231,7 +262,10 @@ export async function clickOnAtomById(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getAtomById(page, atomId);
-  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
+  await clickOnCanvas(page, point.x, point.y, {
+    button: buttonSelect,
+    from: 'pageTopLeft',
+  });
 }
 
 export async function doubleClickOnAtom(

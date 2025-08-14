@@ -328,7 +328,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -341,7 +343,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -359,7 +363,7 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -376,7 +380,7 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -558,12 +562,12 @@ test.describe('Attachment Point Tool', () => {
       SelectionToolType.Rectangle,
     );
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await clickOnCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
@@ -647,12 +651,12 @@ test.describe('Attachment Point Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await clickOnCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 

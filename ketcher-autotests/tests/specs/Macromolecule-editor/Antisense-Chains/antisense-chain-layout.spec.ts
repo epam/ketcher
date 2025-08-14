@@ -308,8 +308,8 @@ for (const leftMonomer of shortMonomerList) {
       // Test should be skipped if related bug exists
       test.fixme(
         leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
-        `That test fails because of ${leftMonomer.issueNumber || ''} ${
-          leftMonomer.issueNumber || ''
+        `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+          leftMonomer.issueNumber ?? ''
         } issue(s).`,
       );
 
@@ -883,8 +883,8 @@ for (const leftMonomer of shortMonomerList) {
         // Test should be skipped if related bug exists
         test.fixme(
           leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
-          `That test fails because of ${leftMonomer.issueNumber || ''} ${
-            leftMonomer.issueNumber || ''
+          `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+            leftMonomer.issueNumber ?? ''
           } issue(s).`,
         );
 

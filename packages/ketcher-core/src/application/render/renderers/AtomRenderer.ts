@@ -81,9 +81,9 @@ export class AtomRenderer extends BaseRenderer {
         .attr('cy', 0);
     } else {
       const labelBbox = this.textElement?.node()?.getBBox();
-      const labelX = labelBbox?.x || 0;
-      const labelWidth = labelBbox?.width || 8;
-      const labelHeight = labelBbox?.height || 8;
+      const labelX = labelBbox?.x ?? 0;
+      const labelWidth = labelBbox?.width ?? 8;
+      const labelHeight = labelBbox?.height ?? 8;
       const HOVER_PADDING = 4;
       const HOVER_RECTANGLE_RADIUS = 10;
 
@@ -95,6 +95,30 @@ export class AtomRenderer extends BaseRenderer {
         .attr('height', labelHeight + HOVER_PADDING * 2)
         .attr('rx', HOVER_RECTANGLE_RADIUS)
         .attr('ry', HOVER_RECTANGLE_RADIUS);
+    }
+  }
+
+  /**
+   * Updates the width and height of the SelectionContour
+   */
+  private updateSelectionContour() {
+    if (!this.rootElement || !this.textElement) return;
+
+    const labelBbox = this.textElement.node()?.getBBox();
+    if (!labelBbox) return;
+
+    const labelX = labelBbox.x || 0;
+    const labelWidth = labelBbox.width || 8;
+    const labelHeight = labelBbox.height || 8;
+    const HOVER_PADDING = 4;
+
+    const rect = this.rootElement.select('rect');
+    if (rect && rect.node()) {
+      rect
+        .attr('x', labelX - HOVER_PADDING)
+        .attr('y', -(labelHeight / 2 + HOVER_PADDING))
+        .attr('width', labelWidth + HOVER_PADDING * 2)
+        .attr('height', labelHeight + HOVER_PADDING * 2);
     }
   }
 
@@ -146,7 +170,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
-    return this.atom.properties.alias || this.atom.label;
+    return this.atom.properties.alias ?? this.atom.label;
   }
 
   private get isAtomTerminal() {
@@ -166,7 +190,7 @@ export class AtomRenderer extends BaseRenderer {
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
     const isAtomTerminal = this.isAtomTerminal;
-    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
+    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
     const hasAlias = this.atom.hasAlias;
@@ -309,6 +333,26 @@ export class AtomRenderer extends BaseRenderer {
       .attr('x', shouldHydrogenBeOnLeft ? 5 : hydrogenAmount > 0 ? -5 : 0);
 
     return textElement;
+  }
+
+  private removeLabel() {
+    if (!this.textElement) return;
+
+    this.textElement.remove();
+    this.textElement = undefined;
+  }
+
+  public redrawLabel() {
+    this.removeLabel();
+    this.textElement = this.appendLabel();
+    this.radicalElement?.remove();
+    this.radicalElement = undefined;
+    this.hoverElement?.remove();
+    this.hoverElement = undefined;
+    this.cipLabelElement?.remove();
+    this.cipLabelElement = undefined;
+    this.updateSelectionContour();
+    this.appendAtomProperties();
   }
 
   public appendSelection() {

@@ -1,11 +1,14 @@
 /* eslint-disable no-empty-pattern */
 /* eslint-disable @typescript-eslint/ban-types */
-import { test as base, Page } from '@playwright/test';
+import { test as base, Page, TestInfoError } from '@playwright/test';
 import { waitForPageInit } from '@utils';
 
 type CoreWorkerFixtures = {
   ketcher: {
     page?: Page;
+    testError?: TestInfoError;
+    testStatus?: 'passed' | 'failed' | 'timedOut' | 'skipped' | 'interrupted';
+    testTimeout?: number;
   };
   createPage: () => Promise<Page>;
   closePage: () => Promise<void>;
@@ -18,8 +21,8 @@ export const test = base.extend<{}, CoreWorkerFixtures>({
         const context = await browser.newContext();
         const page = await context.newPage();
         ketcher.page = page;
-        await waitForPageInit(ketcher.page);
-        return ketcher.page;
+        await waitForPageInit(page);
+        return page;
       });
       ketcher.page = undefined;
     },
@@ -29,10 +32,17 @@ export const test = base.extend<{}, CoreWorkerFixtures>({
   closePage: [
     async ({ browser, ketcher }, use) => {
       await use(async () => {
-        ketcher.page = undefined;
-        await Promise.all(browser.contexts().map((context) => context.close()));
+        await Promise.all(
+          browser.contexts().map((context) =>
+            context.close({
+              reason:
+                ketcher.testStatus === 'timedOut'
+                  ? `Test timeout of ${ketcher.testTimeout}ms exceeded.`
+                  : 'Test ended.',
+            }),
+          ),
+        );
       });
-      ketcher.page = undefined;
     },
     { scope: 'worker', auto: true },
   ],
@@ -44,7 +54,13 @@ export const test = base.extend<{}, CoreWorkerFixtures>({
     { scope: 'worker', auto: true },
   ],
 
-  page: async ({ ketcher }, use) => {
+  page: async ({ ketcher }, use, testInfo) => {
+    ketcher.testError = undefined;
+    ketcher.testStatus = undefined;
+    ketcher.testTimeout = undefined;
     await use(ketcher.page as Page);
+    ketcher.testError = testInfo.error;
+    ketcher.testStatus = testInfo.status;
+    ketcher.testTimeout = testInfo.timeout;
   },
 });

@@ -15,7 +15,7 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   F1: { alias: 'F1', testId: '' },
   fisL: { alias: 'fisL', testId: 'flsL___Lactone fluorescein' },
   fisQ: { alias: 'fisQ', testId: 'flsQ___P-quinoid fluorescein' },
-  iMe_dC: { alias: 'iMe-dC', testId: '' },
+  iMe_dC2: { alias: 'iMe-dC2', testId: '' },
   hxy: { alias: 'hxy', testId: 'hxy___5-hexyn-1-ol' },
   Mal: { alias: 'Mal', testId: 'Mal___Maleimide' },
   MCC: {

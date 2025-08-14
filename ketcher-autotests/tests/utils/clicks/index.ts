@@ -142,13 +142,16 @@ export async function clickOnCanvas(
         }
       };
 
-      const position = await getRelativeAxisCenter(
+      const relativeAxisCenter = await getRelativeAxisCenter(
         page,
         getCanvas(page),
         options.from ?? 'canvasTopLeft',
       );
-      console.log(`${position.x}:${position.y}`);
-      await page.mouse.click(x + position.x, y + position.y, options);
+      await page.mouse.click(
+        relativeAxisCenter.x + x,
+        relativeAxisCenter.y + y,
+        options,
+      );
     },
     options?.waitForRenderTimeOut,
   );

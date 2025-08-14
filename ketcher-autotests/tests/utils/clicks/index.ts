@@ -43,6 +43,28 @@ export async function getCachedBodyCenter(page: Page) {
   return cachedBodyCenter;
 }
 
+let cachedCanvasCenter: { x: number; y: number } | null = null;
+
+export async function getCachedCanvasCenter(page: Page) {
+  if (cachedCanvasCenter) return cachedCanvasCenter;
+
+  await page.waitForSelector(KETCHER_CANVAS, {
+    state: 'attached',
+    timeout: 10000,
+  });
+  const box = await page.locator(KETCHER_CANVAS).first().boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for canvas');
+  }
+
+  cachedCanvasCenter = {
+    x: box.x + box.width / HALF_DIVIDER,
+    y: box.y + box.height / HALF_DIVIDER,
+  };
+
+  return cachedCanvasCenter;
+}
+
 export async function clickAfterItemsToMergeInitialization(
   page: Page,
   x: number,
@@ -162,14 +184,12 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
-  const canvas = (await page
-    .getByTestId(KETCHER_CANVAS)
-    .filter({ has: page.locator(':visible') })
-    .boundingBox()) as BoundingBox;
-  return {
-    x: canvas.x + canvas.width / HALF_DIVIDER,
-    y: canvas.y + canvas.height / HALF_DIVIDER,
-  };
+  return await getCachedCanvasCenter(page);
+}
+
+export async function clickOnMiddleOfCanvas(page: Page) {
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await clickOnCanvas(page, x, y);
 }
 
 /* Usage: await pressButton(page, 'Add to Canvas')

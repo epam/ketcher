@@ -9,18 +9,30 @@ import {
   ExtendedTableDialog,
   selectExtendedTableElement,
 } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
-import { takeEditorScreenshot, takeElementScreenshot } from '@utils/canvas';
+import {
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  selectRedoByKeyboard,
+  selectUndoByKeyboard,
+  takeEditorScreenshot,
+  takeElementScreenshot,
+} from '@utils/canvas';
 import {
   clickOnMiddleOfCanvas,
   moveMouseAway,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
+  ZoomInByKeyboard,
+  ZoomOutByKeyboard,
 } from '@utils/index';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { AtomType } from '@tests/pages/constants/atomProperties/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -133,7 +145,10 @@ test(
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
-    const atomToReplace = await page.getByText('N', { exact: true }).first();
+    const atomToReplace = page
+      .getByText('N', { exact: true })
+      .locator(':scope:visible')
+      .first();
     await ContextMenu(page, atomToReplace).click(MicroAtomOption.Edit);
     await AtomPropertiesDialog(page).selectAtomType(AtomType.Special);
     await AtomPropertiesDialog(page).editLabel();
@@ -166,13 +181,150 @@ test(
 
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
-    const atomToReplace = page.getByText('N', { exact: true }).first();
-    await page.keyboard.press('Shift+8');
+    // Change to getAtomLocator later
+    const atomToReplace = page
+      .getByText('N', { exact: true })
+      .locator(':scope:visible')
+      .first();
     await waitForRender(page, async () => {
       await atomToReplace.click();
     });
-    await page.keyboard.press('Escape');
+    await page.keyboard.press('Shift+8');
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '7. Verify the star atom s behavior during undo/redo actions after adding or removing it from the canvas',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the star atom's behavior during undo/redo actions after adding or removing it from the canvas
+     * Case:
+     *      1. Add star atom to the canvas using Shift+8 hotkey
+     *      2. Validate that the star atom is present on the canvas
+     *      3. Perform undo action and validate that the star atom is removed from the canvas
+     *      4. Perform redo action and validate that the star atom is added back to the canvas
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await page.keyboard.press('Shift+8');
+    await clickOnMiddleOfCanvas(page);
+    // Change to getAtomLocator later
+    const starAtom = page
+      .getByText('*', { exact: true })
+      .locator(':scope:visible')
+      .first();
+    await expect(starAtom).toHaveCount(1);
+    await selectUndoByKeyboard(page);
+    await expect(starAtom).toHaveCount(0);
+    await selectRedoByKeyboard(page);
+    await expect(starAtom).toHaveCount(1);
+  },
+);
+
+test(
+  '8. Verify that the star atom is displayed correctly when zooming in and out on the canvas',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the star atom's behavior during undo/redo actions after adding or removing it from the canvas
+     * Case:
+     *      1. Add star atom to the canvas using Shift+8 hotkey
+     *      2. Zoom in on the canvas to 400% and take a screenshot
+     *      3. Zoom out on the canvas to 150% and take a screenshot
+     */
+    await page.keyboard.press('Shift+8');
+    await clickOnMiddleOfCanvas(page);
+    await moveMouseAway(page);
+    await page.keyboard.press('Escape');
+
+    await ZoomInByKeyboard(page, { repeat: 11 });
+    await takeEditorScreenshot(page);
+    await ZoomOutByKeyboard(page, { repeat: 6 });
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '9. Verify the copy-paste functionality for structures containing the star atom',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the star atom's behavior during undo/redo actions after adding or removing it from the canvas
+     * Case:
+     *      1. Add star atom to the canvas using Shift+8 hotkey
+     *      2. Zoom in on the canvas to 400% and take a screenshot
+     *      3. Zoom out on the canvas to 150% and take a screenshot
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await clickOnMiddleOfCanvas(page);
+    await selectAllStructuresOnCanvas(page);
+    await cutToClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
+
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '10. Verify deletion of the star atom from the canvas using the delete option',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify deletion of the star atom from the canvas using the delete option
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Select Erase tool from the left toolbar and click on the star atom
+     *      3. Take screenshot and validate that the star atom is deleted from the canvas
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await CommonLeftToolbar(page).selectEraseTool();
+    // Change to getAtomLocator later
+    const atomToDelete = page
+      .getByText('*', { exact: true })
+      .locator(':scope:visible')
+      .first();
+    await atomToDelete.click();
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '11. Verify deletion of the star atom from the canvas using the delete option',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify deletion of the star atom from the canvas using the delete option
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Press Clear canvas button
+     *      3. Take screenshot and validate that canvas is empty
+     *      4. Press Undo button
+     *      5. Take screenshot and validate that the star atom is restored on the canvas
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   },
 );

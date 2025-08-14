@@ -285,6 +285,7 @@ test.describe('Lasso Selection tool', () => {
       page,
       bondPoint.x + shiftCoords.x,
       bondPoint.y + shiftCoords.y,
+      { from: 'pageTopLeft' },
     );
     await dragMouseTo(
       centerPoint.x + randomCoords.x,

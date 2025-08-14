@@ -122,9 +122,15 @@ async function hoverOverArrowSpine(
     await page.mouse.move(x - 5, y);
 
     if (clickType === 'right') {
-      await clickOnCanvas(page, x - 5, y, { button: 'right' });
+      await clickOnCanvas(page, x - 5, y, {
+        button: 'right',
+        from: 'pageTopLeft',
+      });
     } else if (clickType === 'left') {
-      await clickOnCanvas(page, x - 5, y, { button: 'left' });
+      await clickOnCanvas(page, x - 5, y, {
+        button: 'left',
+        from: 'pageTopLeft',
+      });
     }
   }
 }
@@ -849,7 +855,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    clickOnCanvas(page, 300, 350);
+    await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

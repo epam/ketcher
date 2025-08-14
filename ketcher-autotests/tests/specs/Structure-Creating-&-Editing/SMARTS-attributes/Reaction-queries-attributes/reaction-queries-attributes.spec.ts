@@ -48,11 +48,11 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await resetCurrentTool(page);
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
-  await clickOnCanvas;
 
   await atomToolbar.clickAtom(Atom.Oxygen);
   await clickOnCanvas(page, x + shiftForOxygen, y, {
     button: 'left',
+    from: 'pageTopLeft',
   });
 }
 

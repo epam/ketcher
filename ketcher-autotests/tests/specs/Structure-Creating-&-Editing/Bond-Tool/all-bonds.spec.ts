@@ -356,6 +356,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
+          from: 'pageTopLeft',
         });
 
         await copyToClipboardByKeyboard(page);
@@ -385,12 +386,14 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
+          from: 'pageTopLeft',
         });
         await CommonTopLeftToolbar(page).undo();
 
         await selectRingButton(page, RingButton.Cyclohexane);
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
+          from: 'pageTopLeft',
         });
 
         await takeEditorScreenshot(page);

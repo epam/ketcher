@@ -52,7 +52,7 @@ test.describe('Rotation', () => {
       page,
       COORDINATES_TO_PERFORM_ROTATION.x,
       COORDINATES_TO_PERFORM_ROTATION.y,
-      { button: 'right' },
+      { button: 'right', from: 'pageTopLeft' },
     );
 
     const screenAfterRotation = await takeEditorScreenshot(page);

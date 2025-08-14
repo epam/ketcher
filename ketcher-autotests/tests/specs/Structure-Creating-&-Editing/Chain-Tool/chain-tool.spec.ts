@@ -53,7 +53,9 @@ test.describe('Chain Tool drawing', () => {
     await dragMouseTo(point.x, point.y + DELTA, page);
 
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
+    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
+      from: 'pageTopLeft',
+    });
 
     await LeftToolbar(page).chain();
     point = await getBottomAtomByAttributes(page, { label: 'C' });

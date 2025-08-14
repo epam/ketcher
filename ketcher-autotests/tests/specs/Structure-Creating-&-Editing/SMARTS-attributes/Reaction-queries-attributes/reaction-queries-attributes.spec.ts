@@ -113,7 +113,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);
-    await clickOnCanvas(page, x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -139,7 +139,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnCanvas(page, x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
     await page.keyboard.press('Escape');
 
     await LeftToolbar(page).selectReactionMappingTool(

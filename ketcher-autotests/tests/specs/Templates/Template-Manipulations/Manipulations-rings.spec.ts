@@ -65,7 +65,12 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
-  await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
+  await clickOnCanvas(
+    page,
+    point.x + selectionRange,
+    point.y + selectionRange,
+    { from: 'pageTopLeft' },
+  );
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);

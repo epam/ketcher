@@ -90,7 +90,9 @@ test.describe('Rectangle selection tool', () => {
       point.x - moveMouseCoordinatesX,
       point.y + moveMouseCoordinatesY,
     );
-    await clickOnCanvas(page, point.x, point.y + atomNumber);
+    await clickOnCanvas(page, point.x, point.y + atomNumber, {
+      from: 'pageTopLeft',
+    });
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 

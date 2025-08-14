@@ -127,8 +127,15 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x - shiftCoords.x, point.y + shiftCoords.y);
-    await clickOnCanvas(page, point.x, point.y + yShift);
+    await clickOnCanvas(
+      page,
+      point.x - shiftCoords.x,
+      point.y + shiftCoords.y,
+      { from: 'pageTopLeft' },
+    );
+    await clickOnCanvas(page, point.x, point.y + yShift, {
+      from: 'pageTopLeft',
+    });
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
@@ -182,7 +189,9 @@ test.describe('Lasso Selection tool', () => {
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, coordinates.x + xDelta, coordinates.y - yDelta);
+    await clickOnCanvas(page, coordinates.x + xDelta, coordinates.y - yDelta, {
+      from: 'pageTopLeft',
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );

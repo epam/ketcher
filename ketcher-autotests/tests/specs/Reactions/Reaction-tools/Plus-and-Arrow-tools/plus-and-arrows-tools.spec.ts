@@ -248,7 +248,9 @@ test.describe('Plus and Arrows tools ', () => {
         tag: ['@FlackyTest'],
       },
       async ({ page }) => {
-        await clickOnCanvas(page, point.x - 200, point.y + 15);
+        await clickOnCanvas(page, point.x - 200, point.y + 15, {
+          from: 'pageTopLeft',
+        });
         await selectRectangleArea(
           page,
           point.x - 200 - 20,
@@ -279,7 +281,9 @@ test.describe('Plus and Arrows tools ', () => {
       // Selection of plus sign doesn't happen and the rest of the scrips works wrong
       page,
     }) => {
-      await clickOnCanvas(page, point.x - 150, point.y - 10);
+      await clickOnCanvas(page, point.x - 150, point.y - 10, {
+        from: 'pageTopLeft',
+      });
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
 
@@ -290,7 +294,9 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await clickOnCanvas(page, point.x - 100, point.y - 100);
+      await clickOnCanvas(page, point.x - 100, point.y - 100, {
+        from: 'pageTopLeft',
+      });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
@@ -336,7 +342,7 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await clickOnCanvas(page, point.x + 60, point.y);
+      await clickOnCanvas(page, point.x + 60, point.y, { from: 'pageTopLeft' });
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
 
@@ -349,7 +355,9 @@ test.describe('Plus and Arrows tools ', () => {
         tag: ['@FlakyTest'],
       },
       async ({ page }) => {
-        await clickOnCanvas(page, point.x + 60, point.y);
+        await clickOnCanvas(page, point.x + 60, point.y, {
+          from: 'pageTopLeft',
+        });
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
@@ -361,7 +369,9 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await clickOnCanvas(page, point.x - 100, point.y - 100);
+      await clickOnCanvas(page, point.x - 100, point.y - 100, {
+        from: 'pageTopLeft',
+      });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
@@ -419,7 +429,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
+      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y, {
+        from: 'pageTopLeft',
+      });
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
@@ -440,7 +452,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
+      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y, {
+        from: 'pageTopLeft',
+      });
 
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);

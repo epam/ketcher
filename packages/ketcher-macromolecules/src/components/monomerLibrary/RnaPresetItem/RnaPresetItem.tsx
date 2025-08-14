@@ -82,6 +82,7 @@ const RnaPresetItem = ({
       ref={cardRef}
     >
       <AutochainIcon
+        dataTestId="monomer-autochain"
         className="autochain"
         name="monomer-autochain"
         onMouseOver={onAutochainIconMouseOver}

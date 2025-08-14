@@ -3,6 +3,7 @@ import { Monomer } from '@utils/types';
 import {
   FavoriteStarSymbol,
   LibraryTab,
+  MonomerAutochainTestId,
   monomerLibraryTypeLocation,
   MonomerTypeLocation,
   RNASection,
@@ -209,6 +210,33 @@ export const Library = (page: Page) => {
       }
 
       await getElement(monomer.testId).hover();
+    },
+
+    /** Locator of the arrow button (autochain) on the monomer card */
+    getMonomerAutochainButton(monomer: Monomer): Locator {
+      return page
+        .getByTestId(monomer.testId)
+        .getByTestId(MonomerAutochainTestId);
+    },
+
+    /** Hover over the arrow button on the monomer card */
+    async hoverMonomerAutochain(monomer: Monomer) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      await this.goToMonomerLocation(location);
+      await this.getMonomerAutochainButton(monomer).hover();
+    },
+
+    /** Click on the arrow button on the monomer card */
+    async clickMonomerAutochain(monomer: Monomer) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      await this.goToMonomerLocation(location);
+      await this.getMonomerAutochainButton(monomer).click();
     },
 
     async dragMonomerOnCanvas(

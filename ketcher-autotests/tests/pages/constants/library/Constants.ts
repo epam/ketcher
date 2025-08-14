@@ -1,6 +1,7 @@
 import { MonomerType } from '@utils/types';
 
 export const FavoriteStarSymbol = '★' as const;
+export const MonomerAutochainTestId = 'monomer-autochain' as const;
 
 export enum LibraryTab {
   Favorites = 'FAVORITES-TAB',

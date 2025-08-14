@@ -100,6 +100,7 @@ const MonomerItem = ({
       {!isDisabled && (
         <>
           <AutochainIcon
+            dataTestId="monomer-autochain"
             className="autochain"
             name="monomer-autochain"
             onMouseOver={onAutochainIconMouseOver}

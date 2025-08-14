@@ -3,7 +3,6 @@ import { Monomer } from '@utils/types';
 import {
   FavoriteStarSymbol,
   LibraryTab,
-  MonomerAutochainTestId,
   monomerLibraryTypeLocation,
   MonomerTypeLocation,
   RNASection,
@@ -214,9 +213,7 @@ export const Library = (page: Page) => {
 
     /** Locator of the arrow button (autochain) on the monomer card */
     getMonomerAutochainButton(monomer: Monomer): Locator {
-      return page
-        .getByTestId(monomer.testId)
-        .getByTestId(MonomerAutochainTestId);
+      return page.getByTestId(monomer.testId).locator('.autochain');
     },
 
     /** Hover over the arrow button on the monomer card */

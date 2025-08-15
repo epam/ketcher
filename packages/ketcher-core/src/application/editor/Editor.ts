@@ -35,6 +35,7 @@ import {
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
+  KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
 } from 'application/formatters';
@@ -371,10 +372,25 @@ export class CoreEditor {
     return this._monomersLibrary;
   }
 
-  public checkIfMonomerSymbolExists(symbol: string) {
-    return this._monomersLibrary.some(
-      (monomerItem) => monomerItem.label === symbol,
-    );
+  public checkIfMonomerSymbolClassPairExists(
+    symbol: string,
+    monomerClass: KetMonomerClass | undefined,
+  ) {
+    if (!monomerClass) {
+      return true;
+    }
+
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      const { props } = monomerItem;
+      return (
+        props.MonomerClass === monomerClass &&
+        (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
   }
 
   public get defaultRnaPresetsLibraryItems() {

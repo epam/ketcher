@@ -10,7 +10,7 @@ export const test = mergeTests(utils, pageObjects).extend<
 >({
   SequenceCanvas: async (
     {
-      page,
+      ketcher,
       CommonTopRightToolbar,
       CommonTopLeftToolbar,
       MacromoleculesTopToolbar,
@@ -20,6 +20,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     },
     use,
   ) => {
+    const page = ketcher.page as Page;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,

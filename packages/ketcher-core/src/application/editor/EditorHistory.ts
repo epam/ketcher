@@ -18,7 +18,6 @@ import { Command } from 'domain/entities/Command';
 import { CoreEditor } from './Editor';
 import assert from 'assert';
 import { ketcherProvider } from 'application/utils';
-import { notifyRenderComplete } from 'application/render';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -79,7 +78,9 @@ export class EditorHistory {
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.execute(this.editor.renderersContainer);
     this.historyPointer++;
-    notifyRenderComplete();
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
   }
 
   public get previousCommand() {

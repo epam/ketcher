@@ -1,7 +1,11 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
-import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
+import {
+  CoreEditor,
+  CREATE_MONOMER_TOOL_NAME,
+  KetMonomerClass,
+} from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { ChangeEvent, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
@@ -166,6 +170,16 @@ const validateInputs = (values: WizardValues) => {
         notifications.set('invalidSymbol', {
           type: 'error',
           message: notificationMessages.invalidSymbol,
+        });
+        return;
+      }
+
+      const editor = CoreEditor.provideEditorInstance();
+      if (editor.checkIfMonomerSymbolExists(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('symbolExists', {
+          type: 'error',
+          message: notificationMessages.symbolExists,
         });
       }
     }

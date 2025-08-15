@@ -48,6 +48,7 @@ import {
   setMonomerTemplatePrefix,
   getHELMClassByKetMonomerClass,
   genericsList,
+  fillNaturalAnalogueForPhosphateAndSugar,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -794,6 +795,10 @@ class Editor implements KetcherEditor {
     const monomerId = `${symbol}___${name}`;
     const monomerRef = setMonomerTemplatePrefix(monomerId);
     const monomerHELMClass = getHELMClassByKetMonomerClass(type);
+    const naturalAnalogueToUse = fillNaturalAnalogueForPhosphateAndSugar(
+      naturalAnalogue,
+      type,
+    );
 
     const monomerTemplate: IKetMonomerTemplate = {
       type: KetTemplateType.MONOMER_TEMPLATE,
@@ -802,7 +807,7 @@ class Editor implements KetcherEditor {
       classHELM: monomerHELMClass,
       alias: symbol,
       fullName: name,
-      naturalAnalogShort: naturalAnalogue,
+      naturalAnalogShort: naturalAnalogueToUse,
       // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
       atoms: ketMicromolecule.mol0.atoms,
       bonds: ketMicromolecule.mol0.bonds,

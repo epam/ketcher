@@ -21,6 +21,7 @@ import {
 import {
   clickOnMiddleOfCanvas,
   moveMouseAway,
+  openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
   ZoomInByKeyboard,
@@ -33,6 +34,10 @@ import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomProperti
 import { AtomType } from '@tests/pages/constants/atomProperties/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -211,6 +216,8 @@ test(
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await page.keyboard.press('Shift+8');
     await clickOnMiddleOfCanvas(page);
+    await page.keyboard.press('Escape');
+    await moveMouseAway(page);
     // Change to getAtomLocator later
     const starAtom = page
       .getByText('*', { exact: true })
@@ -304,12 +311,12 @@ test(
 );
 
 test(
-  '11. Verify deletion of the star atom from the canvas using the delete option',
+  '11. Verify clear canvas when star atom on canvas and then restore by undo',
   { tag: ['@chromium-popup'] },
   async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/5553
-     * Description: Verify deletion of the star atom from the canvas using the delete option
+     * Description: Verify clear canvas when star atom on canvas and then restore by undo
      * Case:
      *      1. Paste a structure with a star atom from the clipboard and open it as a new project
      *      2. Press Clear canvas button
@@ -325,6 +332,99 @@ test(
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '12. Verify export/import of structures containing the star atom in the KET format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the KET format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to KET file
+     *      3. Load exported KET file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'KET/Star-Atom/Export to ket-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Star-Atom/Export to ket-expected.ket',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '13. Verify export/import of structures containing the star atom in the CDX format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the CDX format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to CDX file
+     *      3. Load exported CDX file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'CDX/Star-Atom/Export to CDX-expected.cdx',
+      FileType.CDX,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDX/Star-Atom/Export to CDX-expected.cdx',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '14. Verify export/import of structures containing the star atom in the CDXML format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the CDXML format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to CDXML file
+     *      3. Load exported CDXML file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'CDXML/Star-Atom/Export to CDXML-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/Star-Atom/Export to CDXML-expected.cdxml',
+    );
     await takeEditorScreenshot(page);
   },
 );

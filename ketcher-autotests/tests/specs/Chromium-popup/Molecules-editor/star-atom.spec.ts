@@ -19,7 +19,9 @@ import {
   takeElementScreenshot,
 } from '@utils/canvas';
 import {
+  clickOnCanvas,
   clickOnMiddleOfCanvas,
+  dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
@@ -37,9 +39,13 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
-  verifyPNGExport,
-  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import {
+  performHorizontalFlip,
+  performVerticalFlip,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -670,24 +676,143 @@ test(
 );
 
 test(
-  '22. Verify the star atom remains visible and functional after switching between modes (e.g., molecules mode and macromolecules mode)',
+  '22. Verify the star atom remains visible and functional after switching between modes',
   { tag: ['@chromium-popup'] },
   async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/5553
-     * Description: Verify export/import of structures containing the star atom in the SVG format
+     * Description: Verify the star atom remains visible and functional after switching between modes
+     *              (e.g., molecules mode and macromolecules mode)
      * Case:
      *      1. Paste a structure with a star atom from the clipboard and open it as a new project
-     *      2. Validate export to SVG file
+     *      2. Switch to macromolecules mode - Sequesnce layout
+     *      3. Take a screenshot to validate the star atom is visible
+     *      4. Switch to macromolecules mode - Flex layout
+     *      5. Take a screenshot to validate the star atom is visible
+     *      6. Switch to macromolecules mode - Snake layout
+     *      7. Take a screenshot to validate the star atom is visible
      *
      * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    await pasteFromClipboardAndOpenAsNewProject(page, '* |$star_e$|');
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
     );
-    // Commeted out due to the issue with SVG export: https://github.com/epam/Indigo/issues/3079
-    // await verifySVGExport(page);
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '23. Verify the alignment of the star atom with various bond types when connected',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the alignment of the star atom with various bond types when connected
+     *              (e.g., single, double, triple bonds)
+     * Case:
+     *      1. Load reaction with star atom with various bond types when connected
+     *      2. Take a screenshot to validate layout
+     *
+     * Version 3.7
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Star-Atom/LayoutValidation.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('150');
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '24. Verify that the star atom retains its properties when the structure is rotated on the canvas',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify that the star atom retains its properties when the structure is rotated on the canvas
+     *              (e.g., single, double, triple bonds)
+     * Case:
+     *      1. Load reaction with star atom with various bond types when connected
+     *      2. Select all structures on the canvas
+     *      3. Hover over the rotation handle and drag it to rotate the structure
+     *      4. Take a screenshot to validate the star atom's properties are retained after rotation
+     *
+     * Version 3.7
+     */
+    const rotationHandle = page.getByTestId('rotation-handle');
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Star-Atom/LayoutValidation.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('150');
+    await selectAllStructuresOnCanvas(page);
+    await rotationHandle.hover();
+    await dragMouseTo(720, 300, page);
+    await clickOnCanvas(page, 720, 300);
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '25. Verify the behavior of the star atom when the structure is mirrored or flipped horizontally',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the behavior of the star atom when the structure is mirrored or flipped horizontally
+     * Case:
+     *      1. Load reaction with star atom with various bond types when connected
+     *      2. Select all structures on the canvas
+     *      3. Press Alt+h to perform a horizontal flip
+     *      4. Take a screenshot to validate the star atom's properties are retained after rotation
+     *
+     * Version 3.7
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Star-Atom/LayoutValidation.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('150');
+    await selectAllStructuresOnCanvas(page);
+    await performHorizontalFlip(page);
+    await clickOnCanvas(page, 720, 300);
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '26. Verify the behavior of the star atom when the structure is mirrored or flipped vertically',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify the behavior of the star atom when the structure is mirrored or flipped vertically
+     * Case:
+     *      1. Load reaction with star atom with various bond types when connected
+     *      2. Select all structures on the canvas
+     *      3. Press Alt+v to perform a vertical flip
+     *      4. Take a screenshot to validate the star atom's properties are retained after rotation
+     *
+     * Version 3.7
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Star-Atom/LayoutValidation.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('150');
+    await selectAllStructuresOnCanvas(page);
+    await performVerticalFlip(page);
+    await clickOnCanvas(page, 720, 300);
+    await takeEditorScreenshot(page);
   },
 );

@@ -356,6 +356,12 @@ export class CoreEditor {
     return this._monomersLibrary;
   }
 
+  public checkIfMonomerSymbolExists(symbol: string) {
+    return this._monomersLibrary.some(
+      (monomerItem) => monomerItem.label === symbol,
+    );
+  }
+
   public get defaultRnaPresetsLibraryItems() {
     const monomersLibraryJson = this.monomersLibraryParsedJson;
 

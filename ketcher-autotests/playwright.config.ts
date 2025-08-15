@@ -58,6 +58,7 @@ const config: PlaywrightTestConfig = {
   reporter: [
     ['blob', { outputDir: './playwright-report' }],
     ['line'],
+    ['html', { open: 'never' }],
     ['json', { outputFile: 'results.json' }],
   ],
   use: {

@@ -558,9 +558,7 @@ test.describe('Open and Save file', () => {
   });
 
   for (let i = 1; i < 9; i++) {
-    test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
-      page,
-    }) => {
+    test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async () => {
       /**
        * Test case: EPMLSOPKET-1893(1)
        * Description: Structures are rendered correctly

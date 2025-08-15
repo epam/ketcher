@@ -9,3 +9,5 @@ export const test = mergeTests(
   snakeCanvas,
   sequenceCanvas,
 );
+export { chromium, expect } from '@playwright/test';
+export type { Page, Locator } from '@playwright/test';

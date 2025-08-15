@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';

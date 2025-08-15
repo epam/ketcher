@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
 import { takeEditorScreenshot, clickByLink, waitForPageInit } from '@utils';

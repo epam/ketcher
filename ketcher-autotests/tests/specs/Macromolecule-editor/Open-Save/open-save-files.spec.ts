@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, expect, test } from '@playwright/test';
+import { Page, chromium, expect, test } from '@fixtures';
 import {
   waitForKetcherInit,
   openFileAndAddToCanvasAsNewProject,

@@ -1,5 +1,5 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,

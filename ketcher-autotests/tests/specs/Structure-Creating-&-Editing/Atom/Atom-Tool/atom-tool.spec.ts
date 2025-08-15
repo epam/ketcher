@@ -1,5 +1,5 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test, Page } from '@playwright/test';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,

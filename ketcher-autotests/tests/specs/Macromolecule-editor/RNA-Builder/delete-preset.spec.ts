@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { waitForKetcherInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
 import { Presets } from '@constants/monomers/Presets';

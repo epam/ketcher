@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,

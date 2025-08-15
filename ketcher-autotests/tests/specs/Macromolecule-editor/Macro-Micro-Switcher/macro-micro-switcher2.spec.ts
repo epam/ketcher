@@ -5,7 +5,7 @@ Tests below moved here from macro-micro-switcher since they are designed to be e
 and can't be executed in "clear canvas way"
 */
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { test, Page } from '@playwright/test';
+import { test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,

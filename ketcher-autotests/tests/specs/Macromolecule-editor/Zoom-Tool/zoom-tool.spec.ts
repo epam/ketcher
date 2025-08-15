@@ -1,5 +1,5 @@
 import { Peptides } from '@constants/monomers/Peptides';
-import { Locator, test, Page, chromium } from '@playwright/test';
+import { Locator, test, Page, chromium } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   takeEditorScreenshot,

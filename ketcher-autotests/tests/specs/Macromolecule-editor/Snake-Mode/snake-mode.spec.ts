@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,

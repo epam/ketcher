@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   doubleClickOnAtom,
   moveMouseAway,

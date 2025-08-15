@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Bases } from '@constants/monomers/Bases';
-import { Page, test, expect, Locator } from '@playwright/test';
+import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,

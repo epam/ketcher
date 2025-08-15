@@ -1,5 +1,5 @@
 import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';

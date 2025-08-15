@@ -4,7 +4,7 @@ import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
-import { chromium, expect, Page, test } from '@playwright/test';
+import { chromium, expect, Page, test } from '@fixtures';
 import {
   copyToClipboardByKeyboard,
   MacroFileType,

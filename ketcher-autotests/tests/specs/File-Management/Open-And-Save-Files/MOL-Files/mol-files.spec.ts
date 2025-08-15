@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { expect, Page } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   BondsSetting,
   MeasurementUnit,
@@ -539,9 +538,7 @@ test.describe('Open and Save file', () => {
     },
   );
 
-  test('V3000 mol file contains different Bond properties', async ({
-    page,
-  }) => {
+  test('V3000 mol file contains different Bond properties', async () => {
     /**
      * Test case: EPMLSOPKET-1853
      * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
@@ -561,9 +558,7 @@ test.describe('Open and Save file', () => {
   });
 
   for (let i = 1; i < 9; i++) {
-    test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
-      page,
-    }) => {
+    test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async () => {
       /**
        * Test case: EPMLSOPKET-1893(1)
        * Description: Structures are rendered correctly
@@ -579,9 +574,7 @@ test.describe('Open and Save file', () => {
     });
   }
 
-  test('Open/Save files for ferrocen-like structures 2/2 - save', async ({
-    page,
-  }) => {
+  test('Open/Save files for ferrocen-like structures 2/2 - save', async () => {
     /**
      * Test case: EPMLSOPKET-1893(2)
      * Description: Structures are rendered correctly.
@@ -596,9 +589,7 @@ test.describe('Open and Save file', () => {
     }
   });
 
-  test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async ({
-    page,
-  }) => {
+  test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async () => {
     /**
      * Test case: EPMLSOPKET-8914(2)
      * Description: Files opens.
@@ -612,9 +603,7 @@ test.describe('Open and Save file', () => {
     expect(isCorrectPadding).toEqual(true);
   });
 
-  test('The Bond length setting with px option is applied and it should be save to MOL v2000', async ({
-    page,
-  }) => {
+  test('The Bond length setting with px option is applied and it should be save to MOL v2000', async () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
   Description: Change bond length for Set ACS Settings
@@ -641,9 +630,7 @@ test.describe('Open and Save file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('The Bond length setting with cm option is applied and it should be save to MOL v3000', async ({
-    page,
-  }) => {
+  test('The Bond length setting with cm option is applied and it should be save to MOL v3000', async () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
   Description: Change bond length for Set ACS Settings
@@ -670,9 +657,7 @@ test.describe('Open and Save file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('The ACS setting is applied, click on layout and it should be save to MOL v2000', async ({
-    page,
-  }) => {
+  test('The ACS setting is applied, click on layout and it should be save to MOL v2000', async () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option Set ACS Settings and check saving to different format
@@ -695,9 +680,7 @@ test.describe('Open and Save file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('The ACS setting is applied, click on layout and it should be save to MOL v3000', async ({
-    page,
-  }) => {
+  test('The ACS setting is applied, click on layout and it should be save to MOL v3000', async () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option Set ACS Settings and check saving to different format

@@ -1,5 +1,5 @@
 export {};
-// import { test } from '@playwright/test';
+// import { test } from '@fixtures';
 // import { drawElementByTitle, waitForPageInit, clickOnCanvas, } from '@utils';
 // import {
 //   getRightBondByAttributes,

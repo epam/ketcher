@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@fixtures';
 import {
   moveMouseAway,
   openFileAndAddToCanvas,

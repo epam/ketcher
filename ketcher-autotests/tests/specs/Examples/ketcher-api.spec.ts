@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { molV2000 } from '@tests/test-data/JSON/molV2000-result';
 import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';

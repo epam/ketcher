@@ -37,6 +37,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -60,6 +62,8 @@ test(
      *      1. Open Extended table dialog
      *      2. Hover mouse over * star atom in the special nodes section
      *      3. Validate that the tooltip text reads: "Any atom, including hydrogen."
+     *
+     * Version 3.7
      */
     await RightToolbar(page).extendedTable();
     const starAtomButton = page.getByTestId(ExtendedTableButton.STAR);
@@ -82,6 +86,8 @@ test(
      * Case:
      *      1. Open Extended table dialog
      *      2. Take a screenshot of the extended table dialog to validate the UX
+     *
+     * Version 3.7
      */
     await RightToolbar(page).extendedTable();
     await takeElementScreenshot(
@@ -102,6 +108,8 @@ test(
      * Case:
      *      1. Add star atom to the canvas using the extended table dialog
      *      2. Take a canvas screenshot to validate it is added correctly
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await selectExtendedTableElement(page, ExtendedTableButton.STAR);
@@ -122,6 +130,8 @@ test(
      * Case:
      *      1. Add star atom to the canvas using Shift+8 hotkey
      *      2. Take a canvas screenshot to validate it is added correctly
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await page.keyboard.press('Shift+8');
@@ -147,6 +157,8 @@ test(
      *      5. In appeared Extended table dialog select "Star" atom
      *      6. Click "Add" button
      *      7. Take a canvas screenshot to validate the atom is replaced with star atom
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
@@ -182,8 +194,9 @@ test(
      *      5. In appeared Extended table dialog select "Star" atom
      *      6. Click "Add" button
      *      7. Take a canvas screenshot to validate the atom is replaced with star atom
+     *
+     * Version 3.7
      */
-
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CN=1');
     // Change to getAtomLocator later
@@ -212,6 +225,8 @@ test(
      *      2. Validate that the star atom is present on the canvas
      *      3. Perform undo action and validate that the star atom is removed from the canvas
      *      4. Perform redo action and validate that the star atom is added back to the canvas
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await page.keyboard.press('Shift+8');
@@ -242,6 +257,8 @@ test(
      *      1. Add star atom to the canvas using Shift+8 hotkey
      *      2. Zoom in on the canvas to 400% and take a screenshot
      *      3. Zoom out on the canvas to 150% and take a screenshot
+     *
+     * Version 3.7
      */
     await page.keyboard.press('Shift+8');
     await clickOnMiddleOfCanvas(page);
@@ -266,6 +283,8 @@ test(
      *      1. Add star atom to the canvas using Shift+8 hotkey
      *      2. Zoom in on the canvas to 400% and take a screenshot
      *      3. Zoom out on the canvas to 150% and take a screenshot
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -293,6 +312,8 @@ test(
      *      1. Paste a structure with a star atom from the clipboard and open it as a new project
      *      2. Select Erase tool from the left toolbar and click on the star atom
      *      3. Take screenshot and validate that the star atom is deleted from the canvas
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -323,6 +344,8 @@ test(
      *      3. Take screenshot and validate that canvas is empty
      *      4. Press Undo button
      *      5. Take screenshot and validate that the star atom is restored on the canvas
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -348,6 +371,8 @@ test(
      *      2. Validate export to KET file
      *      3. Load exported KET file as a new project
      *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -379,6 +404,8 @@ test(
      *      2. Validate export to CDX file
      *      3. Load exported CDX file as a new project
      *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -410,6 +437,8 @@ test(
      *      2. Validate export to CDXML file
      *      3. Load exported CDXML file as a new project
      *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await pasteFromClipboardAndOpenAsNewProject(
@@ -426,5 +455,239 @@ test(
       'CDXML/Star-Atom/Export to CDXML-expected.cdxml',
     );
     await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '15. Verify export/import of structures containing the star atom in the Mol v2000 format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the Mol v2000 format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to Mol v2000 file
+     *      3. Load exported Mol v2000 file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/Star-Atom/Export to Mol-expected.mol',
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/Star-Atom/Export to Mol-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '16. Verify export/import of structures containing the star atom in the Mol v3000 format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the Mol v3000 format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to Mol v3000 file
+     *      3. Load exported Mol v3000 file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Star-Atom/Export to Mol-expected.mol',
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Star-Atom/Export to Mol-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '17. Verify export/import of structures containing the star atom in the SMARTS format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the SMARTS format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to SMARTS file
+     *      3. Load exported SMARTS file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'SMARTS/Star-Atom/Export to SMARTS-expected.smarts',
+      FileType.SMARTS,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMARTS/Star-Atom/Export to SMARTS-expected.smarts',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '18. Verify export/import of structures containing the star atom in the SMILES format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the SMILES format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to SMILES file
+     *      3. Load exported SMILES file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'SMILES/Star-Atom/Export to SMILES-expected.smi',
+      FileType.SMILES,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMILES/Star-Atom/Export to SMILES-expected.smi',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '19. Verify export/import of structures containing the star atom in the Extended SMILES format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the Extended SMILES format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to Extended SMILES file
+     *      3. Load exported Extended SMILES file as a new project
+     *      4. Take a screenshot and validate that the star atom is displayed correctly
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    await verifyFileExport(
+      page,
+      'SMILES/Star-Atom/Export to Extended SMILES-expected.cxsmi',
+      FileType.ExtendedSMILES,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMILES/Star-Atom/Export to Extended SMILES-expected.cxsmi',
+    );
+    await takeEditorScreenshot(page);
+  },
+);
+
+test(
+  '20. Verify export/import of structures containing the star atom in the PNG format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the PNG format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to PNG file
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    // Commeted out due to the issue with PNG export: https://github.com/epam/Indigo/issues/3079
+    // await verifyPNGExport(page);
+  },
+);
+
+test(
+  '21. Verify export/import of structures containing the star atom in the SVG format',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the SVG format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to SVG file
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    // Commeted out due to the issue with SVG export: https://github.com/epam/Indigo/issues/3079
+    // await verifySVGExport(page);
+  },
+);
+
+test(
+  '22. Verify the star atom remains visible and functional after switching between modes (e.g., molecules mode and macromolecules mode)',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5553
+     * Description: Verify export/import of structures containing the star atom in the SVG format
+     * Case:
+     *      1. Paste a structure with a star atom from the clipboard and open it as a new project
+     *      2. Validate export to SVG file
+     *
+     * Version 3.7
+     */
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1=C*=CC=C1 |$;;star_e;;;$|',
+    );
+    // Commeted out due to the issue with SVG export: https://github.com/epam/Indigo/issues/3079
+    // await verifySVGExport(page);
   },
 );

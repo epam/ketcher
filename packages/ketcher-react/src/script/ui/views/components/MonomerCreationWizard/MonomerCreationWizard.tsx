@@ -168,7 +168,7 @@ const validateInputs = (values: WizardValues) => {
       }
 
       const editor = CoreEditor.provideEditorInstance();
-      if (editor.checkIfMonomerSymbolExists(value)) {
+      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
           type: 'error',
@@ -320,11 +320,12 @@ const MonomerCreationWizard = () => {
               title="Type"
               control={
                 <Select
-                  className={clsx(styles.input, errors.type && styles.error)}
+                  className={styles.input}
                   options={monomerTypeSelectOptions}
                   placeholder="Select monomer type"
                   value={type}
                   onChange={(value) => handleFieldChange('type', value)}
+                  error={errors.type}
                 />
               }
               required
@@ -363,12 +364,12 @@ const MonomerCreationWizard = () => {
               title="Natural analogue"
               control={
                 <NaturalAnaloguePicker
-                  className={clsx(errors.type && styles.error)}
                   monomerType={type}
                   value={naturalAnalogue}
                   onChange={(value) =>
                     handleFieldChange('naturalAnalogue', value)
                   }
+                  error={errors.naturalAnalogue}
                 />
               }
               disabled={!isNaturalAnalogueRequired(type)}

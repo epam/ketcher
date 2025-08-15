@@ -17,9 +17,14 @@
 import { CSSProperties, RefObject, useEffect, useState } from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
-type HookParams = [RefObject<HTMLDivElement>, boolean];
+type HookParams = [RefObject<HTMLDivElement>, boolean, boolean?, string?];
 
-function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
+function usePortalStyle([
+  ref,
+  isOpen,
+  isTop,
+  rootElementSelector,
+]: HookParams): [CSSProperties] {
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
@@ -28,17 +33,25 @@ function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
     }
 
     const editorRect = document
-      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      .querySelector(rootElementSelector || KETCHER_ROOT_NODE_CSS_SELECTOR)
       ?.getBoundingClientRect() || { top: 0, left: 0 };
     const menuItemRect = ref.current.getBoundingClientRect();
 
-    const top = menuItemRect.top - editorRect.top;
     const spaceBetween = 4;
+    const alignmentOffset = 2;
+    const top =
+      menuItemRect.top -
+      editorRect.top +
+      (isTop ? spaceBetween + menuItemRect.height : 0) -
+      (isTop ? 0 : alignmentOffset);
     const left =
-      menuItemRect.left - editorRect.left + menuItemRect.width + spaceBetween;
+      menuItemRect.left -
+      editorRect.left +
+      (isTop ? 0 : spaceBetween + menuItemRect.width) -
+      (isTop ? alignmentOffset : 0);
 
     setPortalStyle({ top: `${top}px`, left: `${left}px` });
-  }, [ref, isOpen]);
+  }, [ref, isOpen, isTop, rootElementSelector]);
 
   return [portalStyle];
 }

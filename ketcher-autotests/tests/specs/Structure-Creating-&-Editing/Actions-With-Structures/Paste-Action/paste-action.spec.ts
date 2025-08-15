@@ -46,10 +46,10 @@ test.describe('Paste Tool', () => {
     await drawBenzeneRing(page);
 
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, 400, 400);
+    await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);

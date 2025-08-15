@@ -209,6 +209,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
+        from: 'pageTopLeft',
       });
     }
 

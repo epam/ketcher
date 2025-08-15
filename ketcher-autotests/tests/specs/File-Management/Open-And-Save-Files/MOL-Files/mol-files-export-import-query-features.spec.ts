@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -14,14 +15,23 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+  // this empty function is needed
+});
+
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
-  test('1. Aromaticity: User can export and load back molecules with Aromaticity query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('1. Aromaticity: User can export and load back molecules with Aromaticity query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 1
         Description: User can export and load back molecules with "Aromaticity" query feature to Mol file. Feature values remain in place.
@@ -54,9 +64,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('2. Aromaticity: User can export and load back molecules with Aromaticity query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('2. Aromaticity: User can export and load back molecules with Aromaticity query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 2
         Description: User can export and load back molecules with "Aromaticity" query feature to Mol file. Feature values remain in place.
@@ -90,9 +98,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('3. Aromaticity: User can export and load back molecules with Aromaticity query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('3. Aromaticity: User can export and load back molecules with Aromaticity query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 3
         Description: User can export and load back molecules with "Aromaticity" query feature to RXN V2000 file. Feature values remain in place.
@@ -126,9 +132,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('4. Chirality: User can export and load back molecules with Chirality query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('4. Chirality: User can export and load back molecules with Chirality query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Chirality" query feature to Mol file. Feature values remain in place.
@@ -162,9 +166,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('5. Chirality: User can export and load back molecules with Chirality query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('5. Chirality: User can export and load back molecules with Chirality query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Chirality" query feature to Mol file. Feature values remain in place.
@@ -199,9 +201,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('6. Chirality: User can export and load back molecules with "Chirality" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('6. Chirality: User can export and load back molecules with "Chirality" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Chirality" query feature to RXN V2000 file. Feature values remain in place.
@@ -239,7 +239,7 @@ test.describe('Open Ketcher', () => {
   test(
     '7. Connectivity: User can export and load back molecules with Connectivity query feature to Mol file. Feature values remain in place.',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Connectivity" query feature to Mol file. Feature values remain in place.
@@ -278,7 +278,7 @@ test.describe('Open Ketcher', () => {
   test(
     '8. Connectivity: User can export and load back molecules with Connectivity query feature to SDF V2000 file. Feature values remain in place.',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Connectivity" query feature to Mol file. Feature values remain in place.
@@ -318,7 +318,7 @@ test.describe('Open Ketcher', () => {
   test(
     '9. Connectivity: User can export and load back molecules with "Connectivity" query feature to RXN V2000 file. Feature values remain in place.',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Connectivity" query feature to RXN V2000 file. Feature values remain in place.
@@ -355,9 +355,7 @@ test.describe('Open Ketcher', () => {
     },
   );
 
-  test('10. H count: User can export and load back molecules with H count query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('10. H count: User can export and load back molecules with H count query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "H count" query feature to Mol file. Feature values remain in place.
@@ -391,9 +389,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('11. H count: User can export and load back molecules with H count query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('11. H count: User can export and load back molecules with H count query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "H count" query feature to Mol file. Feature values remain in place.
@@ -427,9 +423,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('12. H count: User can export and load back molecules with "H count" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('12. H count: User can export and load back molecules with "H count" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "H count" query feature to RXN V2000 file. Feature values remain in place.
@@ -463,9 +457,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('13. Implicit H count: User can export and load back molecules with Implicit H count query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('13. Implicit H count: User can export and load back molecules with Implicit H count query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Implicit H count" query feature to Mol file. Feature values remain in place.
@@ -501,9 +493,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('14. Implicit H count: User can export and load back molecules with Implicit H count query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('14. Implicit H count: User can export and load back molecules with Implicit H count query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Implicit H count" query feature to Mol file. Feature values remain in place.
@@ -540,9 +530,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('15. Implicit H count: User can export and load back molecules with "Implicit H count" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('15. Implicit H count: User can export and load back molecules with "Implicit H count" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Implicit H count" query feature to RXN V2000 file. Feature values remain in place.
@@ -579,9 +567,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('16. Ring bond count: User can export and load back molecules with Ring bond count query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('16. Ring bond count: User can export and load back molecules with Ring bond count query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Ring bond count" query feature to Mol file. Feature values remain in place.
@@ -617,9 +603,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('17. Ring bond count: User can export and load back molecules with Ring bond count query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('17. Ring bond count: User can export and load back molecules with Ring bond count query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Ring bond count" query feature to Mol file. Feature values remain in place.
@@ -653,9 +637,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('18. Ring bond count: User can export and load back molecules with "Ring bond count" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('18. Ring bond count: User can export and load back molecules with "Ring bond count" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Ring bond count" query feature to RXN V2000 file. Feature values remain in place.
@@ -689,9 +671,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('19. Ring membership: User can export and load back molecules with Ring membership query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('19. Ring membership: User can export and load back molecules with Ring membership query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Ring membership" query feature to Mol file. Feature values remain in place.
@@ -726,9 +706,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('20. Ring membership: User can export and load back molecules with Ring membership query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('20. Ring membership: User can export and load back molecules with Ring membership query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Ring membership" query feature to Mol file. Feature values remain in place.
@@ -764,9 +742,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('21. Ring membership: User can export and load back molecules with "Ring membership" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('21. Ring membership: User can export and load back molecules with "Ring membership" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Ring membership" query feature to RXN V2000 file. Feature values remain in place.
@@ -802,9 +778,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('22. Ring size: User can export and load back molecules with Ring size query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('22. Ring size: User can export and load back molecules with Ring size query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Ring size" query feature to Mol file. Feature values remain in place.
@@ -839,9 +813,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('23. Ring size: User can export and load back molecules with Ring size query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('23. Ring size: User can export and load back molecules with Ring size query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Ring size" query feature to Mol file. Feature values remain in place.
@@ -877,9 +849,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('24. Ring size: User can export and load back molecules with "Ring size" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('24. Ring size: User can export and load back molecules with "Ring size" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Ring size" query feature to RXN V2000 file. Feature values remain in place.
@@ -915,9 +885,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('25. Substitution count: User can export and load back molecules with Substitution count query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('25. Substitution count: User can export and load back molecules with Substitution count query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Substitution count" query feature to Mol file. Feature values remain in place.
@@ -953,9 +921,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('26. Substitution count: User can export and load back molecules with Substitution count query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('26. Substitution count: User can export and load back molecules with Substitution count query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Substitution count" query feature to Mol file. Feature values remain in place.
@@ -991,9 +957,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('27. Substitution count: User can export and load back molecules with "Substitution count" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('27. Substitution count: User can export and load back molecules with "Substitution count" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Substitution count" query feature to RXN V2000 file. Feature values remain in place.
@@ -1029,9 +993,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('28. Unsaturated: User can export and load back molecules with Unsaturated query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('28. Unsaturated: User can export and load back molecules with Unsaturated query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Unsaturated" query feature to Mol file. Feature values remain in place.
@@ -1065,9 +1027,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('29. Unsaturated: User can export and load back molecules with Unsaturated query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('29. Unsaturated: User can export and load back molecules with Unsaturated query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Unsaturated" query feature to Mol file. Feature values remain in place.
@@ -1101,9 +1061,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('30. Unsaturated: User can export and load back molecules with "Unsaturated" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('30. Unsaturated: User can export and load back molecules with "Unsaturated" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Unsaturated" query feature to RXN V2000 file. Feature values remain in place.
@@ -1137,9 +1095,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('31. Custom: User can export and load back molecules with Custom query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('31. Custom: User can export and load back molecules with Custom query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Custom" query feature to Mol file. Feature values remain in place.
@@ -1174,9 +1130,7 @@ test.describe('Open Ketcher', () => {
         */
   });
 
-  test('32. Custom: User can export and load back molecules with Custom query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('32. Custom: User can export and load back molecules with Custom query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Custom" query feature to Mol file. Feature values remain in place.
@@ -1211,9 +1165,7 @@ test.describe('Open Ketcher', () => {
         */
   });
 
-  test('33. Custom: User can export and load back molecules with "Custom" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('33. Custom: User can export and load back molecules with "Custom" query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Custom" query feature to RXN V2000 file. Feature values remain in place.
@@ -1248,9 +1200,7 @@ test.describe('Open Ketcher', () => {
         */
   });
 
-  test('34. All Atom Query features together: User can export and load back molecules with query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('34. All Atom Query features together: User can export and load back molecules with query feature to Mol file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "All Atom Query features together" query feature to Mol file. Feature values remain in place.
@@ -1284,9 +1234,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('35. All Atom Query features together: User can export and load back molecules with query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('35. All Atom Query features together: User can export and load back molecules with query feature to SDF V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "All Atom Query features together" query feature to Mol file. Feature values remain in place.
@@ -1320,9 +1268,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('36. All Atom Query features together: User can export and load back molecules with query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
+  test('36. All Atom Query features together: User can export and load back molecules with query feature to RXN V2000 file. Feature values remain in place.', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "All Atom Query features together" query feature to RXN V2000 file. Feature values remain in place.

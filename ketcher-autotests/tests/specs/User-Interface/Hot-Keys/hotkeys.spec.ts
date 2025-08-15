@@ -529,7 +529,7 @@ test.describe('Hot keys', () => {
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, 400, 500);
+    await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

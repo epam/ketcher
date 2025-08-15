@@ -758,7 +758,7 @@ test(
     await selectAllStructuresOnCanvas(page);
     await rotationHandle.hover();
     await dragMouseTo(720, 300, page);
-    await clickOnCanvas(page, 720, 300);
+    await clickOnCanvas(page, 1, 1);
     await takeEditorScreenshot(page);
   },
 );
@@ -785,7 +785,7 @@ test(
     await CommonTopRightToolbar(page).setZoomInputValue('150');
     await selectAllStructuresOnCanvas(page);
     await performHorizontalFlip(page);
-    await clickOnCanvas(page, 720, 300);
+    await clickOnCanvas(page, 1, 1);
     await takeEditorScreenshot(page);
   },
 );
@@ -812,7 +812,7 @@ test(
     await CommonTopRightToolbar(page).setZoomInputValue('150');
     await selectAllStructuresOnCanvas(page);
     await performVerticalFlip(page);
-    await clickOnCanvas(page, 720, 300);
+    await clickOnCanvas(page, 1, 1);
     await takeEditorScreenshot(page);
   },
 );

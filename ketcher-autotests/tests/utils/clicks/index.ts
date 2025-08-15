@@ -43,28 +43,6 @@ export async function getCachedBodyCenter(page: Page) {
   return cachedBodyCenter;
 }
 
-let cachedCanvasCenter: { x: number; y: number } | null = null;
-
-export async function getCachedCanvasCenter(page: Page) {
-  if (cachedCanvasCenter) return cachedCanvasCenter;
-
-  await page.waitForSelector(KETCHER_CANVAS, {
-    state: 'attached',
-    timeout: 10000,
-  });
-  const box = await page.locator(KETCHER_CANVAS).first().boundingBox();
-  if (!box) {
-    throw new Error('Unable to get boundingBox for canvas');
-  }
-
-  cachedCanvasCenter = {
-    x: box.x + box.width / HALF_DIVIDER,
-    y: box.y + box.height / HALF_DIVIDER,
-  };
-
-  return cachedCanvasCenter;
-}
-
 export async function clickAfterItemsToMergeInitialization(
   page: Page,
   x: number,
@@ -184,7 +162,21 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
-  return await getCachedCanvasCenter(page);
+  const canvas = page
+    .getByTestId(KETCHER_CANVAS)
+    .filter({ has: page.locator(':visible') });
+  await canvas.waitFor({
+    state: 'attached',
+    timeout: 10000,
+  });
+  const box = await canvas.boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for canvas');
+  }
+  return {
+    x: box.width / HALF_DIVIDER,
+    y: box.height / HALF_DIVIDER,
+  };
 }
 
 export async function clickOnMiddleOfCanvas(page: Page) {

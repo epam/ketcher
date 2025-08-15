@@ -43,7 +43,10 @@ Object {
                 />
               </svg>
               <div
+                aria-pressed="false"
                 class="star "
+                role="button"
+                tabindex="0"
               >
                 ★
               </div>
@@ -92,7 +95,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -198,7 +204,10 @@ Object {
                 />
               </svg>
               <div
+                aria-pressed="false"
                 class="star "
+                role="button"
+                tabindex="0"
               >
                 ★
               </div>
@@ -247,7 +256,10 @@ Object {
               />
             </svg>
             <div
+              aria-pressed="false"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>

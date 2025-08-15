@@ -175,7 +175,18 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div className={classes.controlPanel} onClick={setFocusInEditor}>
+      <div
+        className={classes.controlPanel}
+        onClick={setFocusInEditor}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setFocusInEditor();
+          }
+        }}
+      >
         {buttons.map((button) => {
           return (
             <TextButton
@@ -211,4 +222,6 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store) => ({ formState: (store as any).modal }))(Text);
+export default connect((store: { modal: unknown }) => ({
+  formState: store.modal,
+}))(Text);

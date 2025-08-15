@@ -188,7 +188,7 @@ function FieldSet({
   ...rest
 }) {
   return (
-    <fieldset onClick={onSelect}>
+    <fieldset onChange={onSelect}>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>

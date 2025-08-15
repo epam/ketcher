@@ -600,7 +600,7 @@ for (const monomer of monomerToDrag) {
 }
 
 const monomerToDrag2 = [
-  // Peptides.Cys_Bn,
+  // Peptides.Cys_Bn, // unstable
   Presets.MOE_A_P,
   Sugars.FMOE,
   Phosphates.bP,
@@ -794,7 +794,16 @@ for (const monomer of monomerToDrag) {
   });
 }
 
-for (const monomer of monomerToDrag) {
+const monomerToDrag3 = [
+  Peptides.Cys_Bn,
+  Presets.MOE_A_P,
+  Sugars.FMOE,
+  Phosphates.bP,
+  Nucleotides.AmMC6T,
+  // Chem.DOTA, // unstable
+];
+
+for (const monomer of monomerToDrag3) {
   test(`24.1 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag (Flex mode)`, async () => {
     /*
      *

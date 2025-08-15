@@ -56,9 +56,9 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   workers: numWorkers,
   reporter: [
-    ['blob', { outputDir: './playwright-report' }],
+    ['blob', { outputDir: 'playwright-report/blob' }],
     ['line'],
-    ['html', { open: 'never' }],
+    ['html', { outputFolder: 'playwright-report/html', open: 'never' }],
     ['json', { outputFile: 'results.json' }],
   ],
   use: {

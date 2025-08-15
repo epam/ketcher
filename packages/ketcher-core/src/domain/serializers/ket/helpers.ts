@@ -59,6 +59,25 @@ export const getHELMClassByKetMonomerClass = (
   return MONOMER_CONST.RNA;
 };
 
+export const fillNaturalAnalogueForPhosphateAndSugar = (
+  naturalAnalogue: string,
+  monomerClass: KetMonomerClass,
+) => {
+  if (naturalAnalogue !== '') {
+    return naturalAnalogue;
+  }
+
+  if (monomerClass === KetMonomerClass.Sugar) {
+    return 'R';
+  }
+
+  if (monomerClass === KetMonomerClass.Phosphate) {
+    return 'P';
+  }
+
+  return naturalAnalogue;
+};
+
 const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
   const rotatedPosition = {
     x: position.x,

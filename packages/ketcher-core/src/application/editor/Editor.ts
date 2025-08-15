@@ -35,6 +35,7 @@ import {
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
+  KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
 } from 'application/formatters';
@@ -77,6 +78,7 @@ import {
   initHotKeys,
   KetcherLogger,
   keyNorm,
+  SettingsManager,
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
@@ -290,8 +292,12 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
-    persistentMonomersLibrary = monomersLibrary;
-    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+    const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
+    storedMonomerLibraryUpdates.forEach((update) =>
+      this.updateMonomersLibrary(update),
+    );
+    persistentMonomersLibrary = this._monomersLibrary;
+    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
@@ -364,6 +370,27 @@ export class CoreEditor {
 
   public get monomersLibrary() {
     return this._monomersLibrary;
+  }
+
+  public checkIfMonomerSymbolClassPairExists(
+    symbol: string,
+    monomerClass: KetMonomerClass | undefined,
+  ) {
+    if (!monomerClass) {
+      return true;
+    }
+
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      const { props } = monomerItem;
+      return (
+        props.MonomerClass === monomerClass &&
+        (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
   }
 
   public get defaultRnaPresetsLibraryItems() {

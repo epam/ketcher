@@ -30,6 +30,8 @@ import {
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
+import { WizardNotificationId } from '../MonomerCreationWizard/MonomerCreationWizard.types';
+import { MonomerCreationExternalNotificationAction } from '../MonomerCreationWizard/MonomerCreationWizard.constants';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { ketcherId } = useAppContext();
@@ -78,6 +80,18 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
 
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const editor = ketcher.editor as Editor;
+
+      if (editor.monomerCreationState !== null) {
+        window.dispatchEvent(
+          new CustomEvent<WizardNotificationId>(
+            MonomerCreationExternalNotificationAction,
+            {
+              detail: 'editingIsNotAllowed',
+            },
+          ),
+        );
+        return;
+      }
 
       if (editor.render.options.viewOnlyMode) {
         return;

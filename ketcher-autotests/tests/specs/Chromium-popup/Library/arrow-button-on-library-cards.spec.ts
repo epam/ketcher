@@ -8,6 +8,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page } from '@playwright/test';
 import {
+  openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -526,6 +527,165 @@ test.describe('Arrow button on Library cards', () => {
       });
       await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Chem.DOTA);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 14: Check that the placeholder have the shape of the monomer/preset that the card being hovered over represents (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: The placeholder have the shape of the monomer/preset that the card being hovered over represents (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Open Library
+       * 3. Check that the placeholder have the shape of the monomer/preset that the card being hovered over represents
+       * (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)
+       */
+      await Library(page).hoverMonomerAutochain(Presets.MOE_A_P);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToPeptidesTab();
+      await Library(page).hoverMonomerAutochain(Peptides._1Nal);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugars._25R],
+        [RNASection.Bases, Bases.baA],
+        [RNASection.Phosphates, Phosphates.bP],
+        [RNASection.Nucleotides, Nucleotides.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).hoverMonomerAutochain(monomer);
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).hoverMonomerAutochain(Chem._4FB);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 15: Check that in flex mode, if the canvas is not empty, and no selection is made, hovering over the arrow for any monomer/preset will show a placeholder to the right (requirement 5.1.) or bellow (requirement 5.3.) of the most recently added monomer on canvas (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: In flex mode, if the canvas is not empty, and no selection is made, hovering over the arrow for any monomer/preset
+       * will show a placeholder to the right (requirement 5.1.) or bellow (requirement 5.3.) of the most recently added monomer
+       * on canvas (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Open file with monomer
+       * 3. Check that in flex mode, if the canvas is not empty, and no selection is made,
+       * hovering over the arrow for any monomer/preset will show a placeholder to the right
+       * (requirement 5.1.) or bellow (requirement 5.3.) of the most recently added monomer on canvas
+       * (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)
+       */
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/rap.ket');
+      await Library(page).hoverMonomerAutochain(Presets.MOE_A_P);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToPeptidesTab();
+      await Library(page).hoverMonomerAutochain(Peptides._1Nal);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugars._25R],
+        [RNASection.Bases, Bases.baA],
+        [RNASection.Phosphates, Phosphates.bP],
+        [RNASection.Nucleotides, Nucleotides.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).hoverMonomerAutochain(monomer);
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).hoverMonomerAutochain(Chem._4FB);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 16: Check that in snake mode, if the canvas is not empty, and no selection is made, hovering over the arrow for any monomer/preset will show a placeholder in the beginning of the next free line (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)',
+    { tag: ['@chromium-popup'] },
+    async ({ SnakeCanvas: _ }) => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: In snake mode, if the canvas is not empty, and no selection is made, hovering over the arrow for any
+       * monomer/preset will show a placeholder in the beginning of the next free line
+       * (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs).
+       * Scenario:
+       * 1. Go to Macro - Snake mode
+       * 2. Open file with monomer
+       * 3. Check that in snake mode, if the canvas is not empty, and no selection is made,
+       * hovering over the arrow for any monomer/preset will show a placeholder in the beginning  of the next free line
+       * (Presets , Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs)
+       */
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/rap.ket');
+      await Library(page).hoverMonomerAutochain(Presets.MOE_A_P);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToPeptidesTab();
+      await Library(page).hoverMonomerAutochain(Peptides._1Nal);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugars._25R],
+        [RNASection.Bases, Bases.baA],
+        [RNASection.Phosphates, Phosphates.bP],
+        [RNASection.Nucleotides, Nucleotides.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).hoverMonomerAutochain(monomer);
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).hoverMonomerAutochain(Chem._4FB);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

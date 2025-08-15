@@ -47,7 +47,7 @@ export const CommonTopLeftToolbar = (page: Page) => {
           return;
         } catch {
           attempts++;
-          await clickOnCanvas(page, 0, 0);
+          await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
           await page.keyboard.press('Escape');
           if (await closeWindowXButton.isVisible()) {
             await closeWindowXButton.click();

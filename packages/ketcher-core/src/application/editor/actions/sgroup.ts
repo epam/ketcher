@@ -25,6 +25,8 @@ import {
   SGroupDataMove,
   SGroupDelete,
   SGroupRemoveFromHierarchy,
+  AtomDelete,
+  BondDelete,
 } from '../operations';
 import {
   BaseMonomer,
@@ -32,6 +34,7 @@ import {
   SGroup,
   SGroupAttachmentPoint,
   Vec2,
+  BondAttributes,
 } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
@@ -434,13 +437,13 @@ export function sGroupAttributeAction(id, attrs) {
   return action;
 }
 
-export function fromSgroupDeletion(restruct, id, needPerform = true) {
+export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   let action = new Action();
   const struct = restruct.molecule;
 
-  const sG = restruct.sgroups.get(id).item;
+  const sG = restruct.sgroups.get(id)?.item;
 
-  if (sG.type === 'SRU') {
+  if (sG?.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds();
 
     sG.neiAtoms.forEach((aid) => {
@@ -450,9 +453,16 @@ export function fromSgroupDeletion(restruct, id, needPerform = true) {
     });
   }
 
-  const sg = struct.sgroups.get(id) as SGroup;
+  const sg = struct.sgroups.get(id);
   const atoms = SGroup.getAtoms(struct, sg);
-  const attrs = sg.getAttrs();
+  const attrs = sg?.getAttrs();
+
+  // cache attachment points before any structural changes
+  const cachedAttachmentPoints = sg?.getAttachmentPoints().map((ap) => ({
+    atomId: ap.atomId,
+    leaveAtomId: ap.leaveAtomId,
+    attachmentPointNumber: ap.attachmentPointNumber,
+  }));
 
   action.addOp(new SGroupRemoveFromHierarchy(id));
 
@@ -460,11 +470,53 @@ export function fromSgroupDeletion(restruct, id, needPerform = true) {
     action.addOp(new SGroupAtomRemove(id, atom));
   });
 
-  sg.getAttachmentPoints().forEach((attachmentPoint) => {
+  sg?.getAttachmentPoints().forEach((attachmentPoint) => {
     action.addOp(new SGroupAttachmentPointRemove(id, attachmentPoint));
   });
 
   action.addOp(new SGroupDelete(id));
+
+  // After SGroup is deleted, resolve leaving groups on plain structure
+  if (sg instanceof MonomerMicromolecule) {
+    const monomerCaps = sg.monomer?.monomerItem?.props?.MonomerCaps || {};
+    cachedAttachmentPoints?.forEach((attachmentPoint) => {
+      const leaveAtomId = attachmentPoint.leaveAtomId;
+      const attachmentAtomId = attachmentPoint.atomId;
+
+      if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
+        const isOccupied = Array.from(struct.bonds.values()).some(
+          ({ begin: bondBegin, end: bondEnd }: BondAttributes) => {
+            const isAttached =
+              bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
+            if (!isAttached) return false;
+            const otherAtomId =
+              bondBegin === attachmentAtomId ? bondEnd : bondBegin;
+            if (otherAtomId === leaveAtomId) return false;
+            return !atoms.includes(otherAtomId);
+          },
+        );
+
+        if (isOccupied) {
+          struct.bonds.forEach(
+            (
+              { begin: bondBegin, end: bondEnd }: BondAttributes,
+              bondId: number,
+            ) => {
+              if (bondBegin === leaveAtomId || bondEnd === leaveAtomId) {
+                action.addOp(new BondDelete(bondId));
+              }
+            },
+          );
+          action.addOp(new AtomDelete(leaveAtomId));
+        } else {
+          const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
+          const newLabel = monomerCaps?.[apLabel] || 'H';
+          action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
+          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+        }
+      }
+    });
+  }
 
   action.mergeWith(sGroupAttributeAction(id, attrs));
 

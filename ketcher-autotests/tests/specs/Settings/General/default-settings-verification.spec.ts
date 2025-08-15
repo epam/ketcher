@@ -54,7 +54,7 @@ test.describe('General Settings', () => {
     );
     await drawBenzeneRing(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });

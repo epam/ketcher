@@ -688,9 +688,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
       await CommonLeftToolbar(page).selectEraseTool();
-      await clickOnCanvas(page, 570, 400);
-      await clickOnCanvas(page, 600, 360);
-      await clickOnCanvas(page, 600, 420);
+      await clickOnCanvas(page, 570, 400, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 600, 360, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 600, 420, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

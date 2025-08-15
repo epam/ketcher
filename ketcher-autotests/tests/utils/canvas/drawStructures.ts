@@ -37,6 +37,7 @@ export async function drawReactionWithTwoBenzeneRings(
     page,
     firstBenzineTopAtom.x,
     firstBenzineTopAtom.y - secondBenzeneRingOffset,
+    { from: 'pageTopLeft' },
   );
 }
 

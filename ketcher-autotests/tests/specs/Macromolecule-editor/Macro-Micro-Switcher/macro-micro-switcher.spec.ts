@@ -799,7 +799,9 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
-      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
@@ -825,7 +827,9 @@ test.describe('Macro-Micro-Switcher', () => {
         MacroFileType.MOLv3000,
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
       );
-      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
+      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
@@ -1068,7 +1072,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectRingButton(page, RingButton.Benzene);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1098,7 +1102,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1129,7 +1133,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1160,7 +1164,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1605,7 +1609,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, 645, 318);
+    await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

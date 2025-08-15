@@ -42,7 +42,7 @@ test.describe('Ignore Chiral Flag', () => {
     await clickInTheMiddleOfTheScreen(page);
     // await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +60,7 @@ test.describe('Ignore Chiral Flag', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, pointY, pointZ);
+    await clickOnCanvas(page, pointY, pointZ, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

@@ -7,7 +7,7 @@ import {
   KetMonomerClass,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useMemo, useReducer } from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -21,42 +21,19 @@ import {
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import {
-  MonomerTypeSelectItem,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
   WizardNotificationId,
-  WizardNotificationMessageMap,
   WizardState,
   WizardValues,
 } from './MonomerCreationWizard.types';
-
-const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
-  {
-    value: KetMonomerClass.AminoAcid,
-    label: 'Amino acid',
-    iconName: 'peptide',
-  },
-  { value: KetMonomerClass.Sugar, label: 'Sugar', iconName: 'sugar' },
-  { value: KetMonomerClass.Base, label: 'Base', iconName: 'base' },
-  {
-    value: KetMonomerClass.Phosphate,
-    label: 'Phosphate',
-    iconName: 'phosphate',
-  },
-  { value: KetMonomerClass.RNA, label: 'Nucleotide', iconName: 'nucleotide' },
-  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
-];
-
-const notificationMessages: WizardNotificationMessageMap = {
-  defaultAttachmentPoints:
-    'Attachment points are set by default with hydrogens as leaving groups.',
-  emptyMandatoryFields: 'Mandatory fields must be filled.',
-  invalidSymbol:
-    'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
-  symbolExists:
-    'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
-};
+import {
+  MonomerCreationExternalNotificationAction,
+  MonomerTypeSelectConfig,
+  NotificationMessages,
+  NotificationTypes,
+} from './MonomerCreationWizard.constants';
 
 const initialWizardState: WizardState = {
   values: {
@@ -69,7 +46,7 @@ const initialWizardState: WizardState = {
   notifications: new Map([
     [
       'defaultAttachmentPoints',
-      { type: 'info', message: notificationMessages.defaultAttachmentPoints },
+      { type: 'info', message: NotificationMessages.defaultAttachmentPoints },
     ],
   ]),
 };
@@ -121,6 +98,22 @@ const wizardReducer = (
       };
     }
 
+    case 'AddNotification': {
+      const notifications = new Map(state.notifications);
+      const { id } = action;
+      if (!notifications.has(id)) {
+        notifications.set(id, {
+          type: NotificationTypes[id],
+          message: NotificationMessages[id],
+        });
+      }
+
+      return {
+        ...state,
+        notifications,
+      };
+    }
+
     case 'ResetErrors': {
       return {
         ...state,
@@ -157,7 +150,7 @@ const validateInputs = (values: WizardValues) => {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
           type: 'error',
-          message: notificationMessages.emptyMandatoryFields,
+          message: NotificationMessages.emptyMandatoryFields,
         });
       }
       return;
@@ -169,7 +162,7 @@ const validateInputs = (values: WizardValues) => {
         errors[key as WizardFormFieldId] = true;
         notifications.set('invalidSymbol', {
           type: 'error',
-          message: notificationMessages.invalidSymbol,
+          message: NotificationMessages.invalidSymbol,
         });
         return;
       }
@@ -179,7 +172,7 @@ const validateInputs = (values: WizardValues) => {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
           type: 'error',
-          message: notificationMessages.symbolExists,
+          message: NotificationMessages.symbolExists,
         });
       }
     }
@@ -197,6 +190,28 @@ const MonomerCreationWizard = () => {
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
+
+  useEffect(() => {
+    const externalNotificationEventListener = (event: Event) => {
+      const notificationId = (event as CustomEvent<WizardNotificationId>)
+        .detail;
+      if (notificationId) {
+        wizardStateDispatch({ type: 'AddNotification', id: notificationId });
+      }
+    };
+
+    window.addEventListener(
+      MonomerCreationExternalNotificationAction,
+      externalNotificationEventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationExternalNotificationAction,
+        externalNotificationEventListener,
+      );
+    };
+  }, []);
 
   const handleFieldChange = (
     fieldId: WizardFormFieldId,

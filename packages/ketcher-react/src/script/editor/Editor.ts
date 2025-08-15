@@ -740,9 +740,14 @@ class Editor implements KetcherEditor {
       attachmentAtomIdToLeavingAtomId: attachmentPoints,
     };
 
+    console.log('original selection', this.originalSelection);
+    console.log('original struct', this._monomerCreationState.originalStruct);
+
     this.render.monomerCreationRenderState = {
       attachmentPoints,
     };
+
+    console.log('selected struct', selectedStruct);
 
     this.struct(selectedStruct);
   }

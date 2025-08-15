@@ -23,7 +23,7 @@
   &.info {
     background-color: #C3FFD7;
 
-    &Strip {
+    & .notificationStrip {
       background-color: #06A729;
     }
   }
@@ -31,14 +31,14 @@
   &.error {
     background-color: #FDE0DF;
 
-    &Strip {
+    .notificationStrip {
       background-color: @color-secondary-red;
     }
   }
 
   &Icon {
-    height: 18px;
-    width: 18px;
+    min-width: 18px;
+    min-height: 18px;
     color: @color-text-primary;
   }
 

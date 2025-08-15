@@ -336,7 +336,7 @@ const MonomerCreationWizard = () => {
                 <input
                   type="text"
                   className={clsx(styles.input, errors.symbol && styles.error)}
-                  placeholder="ex.: Azs980uX"
+                  placeholder="e.g. PEG-2"
                   value={symbol}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('symbol', event.target.value)
@@ -351,7 +351,7 @@ const MonomerCreationWizard = () => {
                 <input
                   type="text"
                   className={clsx(styles.input, errors.name && styles.error)}
-                  placeholder="ex.: 5-hydroxymethyl dC-12"
+                  placeholder="e.g. Diethylene Glycol"
                   value={name}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('name', event.target.value)

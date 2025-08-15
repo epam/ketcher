@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,

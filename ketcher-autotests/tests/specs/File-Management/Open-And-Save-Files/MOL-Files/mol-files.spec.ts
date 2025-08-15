@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { expect, Page } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   BondsSetting,
   MeasurementUnit,

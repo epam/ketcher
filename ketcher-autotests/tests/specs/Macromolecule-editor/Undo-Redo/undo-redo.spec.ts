@@ -4,7 +4,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Locator, test } from '@playwright/test';
+import { Locator, test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,

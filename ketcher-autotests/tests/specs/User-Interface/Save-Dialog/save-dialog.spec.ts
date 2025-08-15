@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';

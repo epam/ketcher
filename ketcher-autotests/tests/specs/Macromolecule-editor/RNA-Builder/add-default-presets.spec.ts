@@ -1,5 +1,5 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   moveMouseAway,
   takeEditorScreenshot,

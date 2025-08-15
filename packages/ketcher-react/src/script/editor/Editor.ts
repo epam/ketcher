@@ -47,6 +47,7 @@ import {
   IKetMonomerTemplate,
   setMonomerTemplatePrefix,
   getHELMClassByKetMonomerClass,
+  genericsList,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -577,6 +578,27 @@ class Editor implements KetcherEditor {
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
+
+      const selectionInvalid = selection.atoms.some((atomId) => {
+        const atom = this.render.ctab.molecule.atoms.get(atomId);
+        if (!atom) {
+          return false;
+        }
+
+        // Selection should not contain S-Groups, R-Groups or atoms from extended table
+        return (
+          atom.sgs.size > 0 ||
+          genericsList.includes(atom.label) ||
+          this.render.ctab.molecule.rgroups.some((rgroup) =>
+            rgroup.frags.has(atom.fragment),
+          )
+        );
+      });
+
+      if (selectionInvalid) {
+        return false;
+      }
+
       const isSelectionContinuous = Editor.isSelectionContinuous(
         selection,
         currentStruct,

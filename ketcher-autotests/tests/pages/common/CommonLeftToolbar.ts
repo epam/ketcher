@@ -100,8 +100,8 @@ export const CommonLeftToolbar = (page: Page) => {
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();
-          await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
-          await bondTypeButton.click();
+          await bondTypeButton.waitFor({ state: 'visible', timeout: 1500 });
+          await bondTypeButton.click({ force: true });
           return;
         } catch (error) {
           attempts++;

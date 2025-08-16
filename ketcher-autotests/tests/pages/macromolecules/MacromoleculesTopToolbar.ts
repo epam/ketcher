@@ -133,8 +133,13 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     },
 
     async selectLayoutModeTool(layoutMode: LayoutMode) {
+      const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
+
       await this.expandSwitchLayoutModeDropdown();
       await page.getByTestId(layoutMode).first().click();
+      await switchLayoutModeDropdown.waitFor({
+        state: 'hidden',
+      });
     },
 
     async rna() {

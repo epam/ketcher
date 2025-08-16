@@ -50,9 +50,9 @@ async function resizeRectangle(page: Page) {
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
   await dragMouseTo(point1.x, point1.y, page);
   await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
-  await await dragMouseTo(point3.x, point3.y, page);
+  await dragMouseTo(point3.x, point3.y, page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
-  await await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(point5.x, point5.y, page);
   await clickInTheMiddleOfTheScreen(page);
 }
 

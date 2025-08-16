@@ -39,14 +39,14 @@ export const EnhancedStereochemistry = (page: Page) => {
       await locators.closeWindowButton.click();
     },
 
-    async pressApplyButton() {
+    async apply() {
       await delay(0.2);
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });
     },
 
-    async pressCancelButton() {
+    async cancel() {
       await locators.cancelButton.click();
     },
 
@@ -99,5 +99,5 @@ export async function applyEnhancedStereochemistry(
       break;
   }
 
-  await EnhancedStereochemistry(page).pressApplyButton();
+  await EnhancedStereochemistry(page).apply();
 }

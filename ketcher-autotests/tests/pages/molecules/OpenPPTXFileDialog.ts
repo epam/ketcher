@@ -42,7 +42,7 @@ export const OpenPPTXFileDialog = (page: Page) => {
       });
     },
 
-    async pressCancelButton() {
+    async cancel() {
       await locators.cancelButton.click();
     },
 

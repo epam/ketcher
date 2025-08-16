@@ -47,6 +47,10 @@ export const RightToolbar = (page: Page) => {
     async periodicTable() {
       await locators.periodicTableButton.click();
     },
+
+    async extendedTable() {
+      await locators.extendedTableButton.click();
+    },
   };
 };
 

@@ -494,7 +494,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
         'KET/Chromium-popup/Bugs/Two nucleotides.ket',
       );
       await LeftToolbar(page).stereochemistry();
-      await EnhancedStereochemistry(page).pressApplyButton();
+      await EnhancedStereochemistry(page).apply();
       await takeEditorScreenshot(page);
     },
   );

@@ -255,7 +255,7 @@ test.describe('Right-click menu', () => {
       MicroAtomOption.EnhancedStereochemistry,
     );
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
-    await EnhancedStereochemistry(page).pressApplyButton();
+    await EnhancedStereochemistry(page).apply();
 
     await takeEditorScreenshot(page);
 

@@ -56,7 +56,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await clickOnAtom(page, 'C', 1);
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewOrGroup();
-    await EnhancedStereochemistry(page).pressCancelButton();
+    await EnhancedStereochemistry(page).cancel();
 
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
@@ -224,7 +224,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await clickOnAtom(page, 'C', 1);
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
-    await EnhancedStereochemistry(page).pressCancelButton();
+    await EnhancedStereochemistry(page).cancel();
 
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,

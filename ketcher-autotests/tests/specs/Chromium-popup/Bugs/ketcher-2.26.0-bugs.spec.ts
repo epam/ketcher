@@ -36,7 +36,6 @@ import {
   RdfFileFormat,
   MolFileFormat,
   ZoomOutByKeyboard,
-  getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { delay, selectAllStructuresOnCanvas } from '@utils/canvas';
@@ -2110,10 +2109,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
         enableFlexMode: true,
       });
-      const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(
-        page,
-      );
-      await Library(page).dragMonomerOnCanvas(Sugars.R, centerOfTheCanvas);
+      await Library(page).dragMonomerOnCanvas(Sugars.R, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.IDT,

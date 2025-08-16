@@ -162,14 +162,26 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
-  const canvas = (await page
+  const canvas = page
     .getByTestId(KETCHER_CANVAS)
-    .filter({ has: page.locator(':visible') })
-    .boundingBox()) as BoundingBox;
+    .filter({ has: page.locator(':visible') });
+  await canvas.waitFor({
+    state: 'attached',
+    timeout: 10000,
+  });
+  const box = await canvas.boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for canvas');
+  }
   return {
-    x: canvas.x + canvas.width / HALF_DIVIDER,
-    y: canvas.y + canvas.height / HALF_DIVIDER,
+    x: box.width / HALF_DIVIDER,
+    y: box.height / HALF_DIVIDER,
   };
+}
+
+export async function clickOnMiddleOfCanvas(page: Page) {
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await clickOnCanvas(page, x, y);
 }
 
 /* Usage: await pressButton(page, 'Add to Canvas')

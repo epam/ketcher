@@ -83,13 +83,21 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --project=chromium --grep-invert @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium --grep-invert @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --update-snapshots
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
         with:
           name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
+          retention-days: 5
+      - name: Upload tests soluttion
+      - uses: actions/upload-artifact@v4
+        # run even if previous steps fails
+        if: always()
+        with:
+          name: tests-${{ matrix.shardIndex }}
+          path: ketcher-autotests/
           retention-days: 5
   merge_reports:
     if: ${{ !cancelled() }}

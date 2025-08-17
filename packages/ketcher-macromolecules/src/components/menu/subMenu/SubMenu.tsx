@@ -118,7 +118,7 @@ const SubMenu = ({
         createPortal(
           <OptionsItemsCollapse
             in={open}
-            timeout="auto"
+            timeout={0}
             style={{ ...portalStyle }}
             unmountOnExit
             onClick={hideCollapse}

@@ -14,7 +14,6 @@ import {
   takeEditorScreenshot,
   takePageScreenshot,
   waitForPageInit,
-  clickOnCanvas,
   zoomWithMouseWheel,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -198,26 +197,17 @@ test.describe('Undo-Redo tests', () => {
 
     test.slow();
 
-    const addMonomers = async (x: number, y: number) => {
-      await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
-        x,
-        y,
-      });
-    };
-
     const numberOfRows = 6;
     const numberOfColumns = 8;
     const step = 100;
-    const coordinates = [];
 
     for (let row = 0; row < numberOfRows; row++) {
       for (let column = 0; column < numberOfColumns; column++) {
-        coordinates.push({ x: column * step, y: row * step });
+        await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+          x: (column + 1) * step,
+          y: (row + 1) * step,
+        });
       }
-    }
-
-    for (const { x, y } of coordinates) {
-      await addMonomers(x, y);
     }
 
     const maxUndoHistorySize = 32;
@@ -241,26 +231,17 @@ test.describe('Undo-Redo tests', () => {
 
     test.slow();
 
-    const addMonomers = async (x: number, y: number) => {
-      await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
-        x,
-        y,
-      });
-    };
-
     const numberOfRows = 6;
     const numberOfColumns = 8;
     const step = 100;
-    const coordinates = [];
 
     for (let row = 0; row < numberOfRows; row++) {
       for (let column = 0; column < numberOfColumns; column++) {
-        coordinates.push({ x: column * step, y: row * step });
+        await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
+          x: (column + 1) * step,
+          y: (row + 1) * step,
+        });
       }
-    }
-
-    for (const { x, y } of coordinates) {
-      await addMonomers(x, y);
     }
 
     const maxUndoHistorySize = 32;
@@ -466,8 +447,8 @@ test.describe('Undo-Redo tests', () => {
     */
     await Library(page).switchToRNATab();
     await Library(page).dragMonomerOnCanvas(Peptides.X, {
-      x: -10,
-      y: -10,
+      x: 0,
+      y: 0,
       fromCenter: true,
     });
 
@@ -477,7 +458,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
+    await getMonomerLocator(page, Peptides.X).click();
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
@@ -510,8 +491,8 @@ test.describe('Undo-Redo tests', () => {
     */
     await Library(page).switchToRNATab();
     await Library(page).dragMonomerOnCanvas(Bases.DNA_N, {
-      x: -10,
-      y: -10,
+      x: 0,
+      y: 0,
       fromCenter: true,
     });
 
@@ -521,7 +502,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
+    await getMonomerLocator(page, Bases.DNA_N).click();
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);

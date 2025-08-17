@@ -34,6 +34,7 @@ import { createPortal } from 'react-dom';
 
 type SubMenuProps = {
   vertical?: boolean;
+  autoSize?: boolean;
   disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
   testId?: string;
@@ -45,6 +46,7 @@ type SubMenuProps = {
 const SubMenu = ({
   children,
   vertical = false,
+  autoSize = false,
   disabled = false,
   needOpenByMenuItemClick = false,
   testId,
@@ -126,6 +128,7 @@ const SubMenu = ({
             <ClickAwayListener onClickAway={hideCollapse}>
               <OptionsContainer
                 isVertical={vertical}
+                isAutoSize={autoSize}
                 islayoutModeButton={layoutModeButton}
                 data-testid="multi-tool-dropdown"
               >

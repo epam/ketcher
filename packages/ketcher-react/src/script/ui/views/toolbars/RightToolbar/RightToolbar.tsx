@@ -125,8 +125,8 @@ const RightToolbar = (props: Props) => {
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollForward={scrollUp}
-          scrollBack={scrollDown}
+          scrollForward={scrollDown}
+          scrollBack={scrollUp}
         />
       )}
     </div>

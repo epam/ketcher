@@ -139,6 +139,7 @@ export function TopMenuComponent() {
           }
           needOpenByMenuItemClick={needOpenByMenuItemClick}
           vertical={true}
+          autoSize={true}
           layoutModeButton={true}
           generalTitle="Create Antisense Strand"
           testId="Create Antisense Strand"

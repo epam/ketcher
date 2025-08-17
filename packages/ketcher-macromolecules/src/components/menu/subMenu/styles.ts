@@ -54,8 +54,10 @@ export const OptionsContainer = styled.div<OptionsContainerProps>`
   z-index: 1;
   background-color: white;
   padding: 2px;
-  width: ${({ isVertical }) => (isVertical ? '38px' : 'auto')};
-  height: ${({ isVertical }) => (isVertical ? 'auto' : '38px')};
+  width: ${({ isVertical, isAutoSize }) =>
+    isVertical && !isAutoSize ? '38px' : 'auto'};
+  height: ${({ isVertical, isAutoSize }) =>
+    isVertical || isAutoSize ? 'auto' : '38px'};
 `;
 
 export const OptionsItemsCollapse = styled(Collapse)`

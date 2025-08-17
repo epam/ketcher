@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 4.125,
-            "y": -4.025
+            "x": 5.375,
+            "y": -5.375
         },
         "alias": "Cys_Bn",
         "templateId": "Cys_Bn___S-benzylcysteine"

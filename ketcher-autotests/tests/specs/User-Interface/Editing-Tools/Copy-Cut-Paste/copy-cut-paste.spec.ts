@@ -180,7 +180,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
     await screenshotBetweenUndoRedo(page);

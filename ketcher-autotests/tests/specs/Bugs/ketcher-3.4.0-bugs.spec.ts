@@ -22,7 +22,6 @@ import {
   clickOnCanvas,
   openFile,
   pressButton,
-  clickOnTheCanvas,
   delay,
 } from '@utils';
 import {

@@ -12,7 +12,8 @@ import {
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
 import { waitForRender } from '@utils/common';
-import { getCoordinatesOfTheMiddleOfTheScreen, moveMouseAway } from '@utils';
+import { getCoordinatesOfTheMiddleOfTheCanvas, moveMouseAway } from '@utils';
+import { KETCHER_CANVAS } from '../constants/canvas/Constants';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;

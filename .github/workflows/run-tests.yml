@@ -88,12 +88,6 @@ jobs:
         # run even if previous steps fails
         if: always()
         with:
-          name: pw-report-${{ matrix.shardIndex }}
-          path: ketcher-autotests/playwright-report/
-          retention-days: 5
-        # run even if previous steps fails
-      - uses: actions/upload-artifact@v4
-        with:
           name: tests-${{ matrix.shardIndex }}
           path: ketcher-autotests/
           retention-days: 5

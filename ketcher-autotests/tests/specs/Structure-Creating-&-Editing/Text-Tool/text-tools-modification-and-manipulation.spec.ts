@@ -142,7 +142,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText(
       'Ketcher is a tool to draw molecular structures and chemical reactions',
     );

@@ -71,10 +71,10 @@ export class Ketcher {
   _id: string;
   logging: LogSettings;
   structService: StructService;
-  #formatterFactory: FormatterFactory;
+  readonly #formatterFactory: FormatterFactory;
   #editor: Editor | null = null;
   _indigo: Indigo;
-  #eventBus: EventEmitter;
+  readonly #eventBus: EventEmitter;
   changeEvent: Subscription;
 
   get editor(): Editor {

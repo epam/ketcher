@@ -85,7 +85,7 @@ test.describe('Mapping Tools', () => {
       ReactionMappingType.ReactionMapping,
     );
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await dragMouseTo(x, y, page);
   });
@@ -101,7 +101,7 @@ test.describe('Mapping Tools', () => {
       ReactionMappingType.ReactionMapping,
     );
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

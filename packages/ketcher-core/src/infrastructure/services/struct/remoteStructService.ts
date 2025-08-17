@@ -65,7 +65,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
         (err) => reject(err),
       );
     }
-    setTimeout(iterate, startTimeGap || 0);
+    setTimeout(iterate, startTimeGap ?? 0);
   });
 }
 
@@ -384,7 +384,7 @@ export class RemoteStructService implements StructService {
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
       {
-        'Content-Type': blob.type || 'application/octet-stream',
+        'Content-Type': blob.type ?? 'application/octet-stream',
       },
     );
     const status = request.bind(
@@ -411,7 +411,7 @@ export class RemoteStructService implements StructService {
     data: string,
     options?: GenerateImageOptions,
   ): Promise<string> {
-    const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const outputFormat: OutputFormatType = options?.outputFormat ?? 'png';
 
     return indigoCall(
       'POST',

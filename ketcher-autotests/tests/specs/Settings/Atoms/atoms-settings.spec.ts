@@ -66,7 +66,7 @@ test.describe('Atom Settings', () => {
     const pointX = 250;
     const pointY = 250;
     await selectExtendedTableElements(page, 'D');
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await selectExtendedTableElements(page, 'T');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -127,7 +127,7 @@ test.describe('Atom Settings', () => {
       QueryAtomOption.RingSize,
       RingSizeOption.Eight,
     ]);
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

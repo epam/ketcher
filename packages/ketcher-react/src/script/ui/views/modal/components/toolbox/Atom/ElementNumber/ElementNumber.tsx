@@ -25,7 +25,7 @@ type Props = ElementNumberProps;
 
 const ElementNumber = (props: Props) => {
   const { label } = props;
-  const value = Elements.get(capitalize(label))?.number || '';
+  const value = Elements.get(capitalize(label))?.number ?? '';
 
   return (
     <label>

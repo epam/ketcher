@@ -16,6 +16,7 @@ import {
   MolFileFormat,
   deleteByKeyboard,
   waitForRender,
+  moveMouseAway,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
@@ -143,7 +144,9 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -287,6 +290,7 @@ test.describe('Data S-Group tool', () => {
       FieldValue: '8',
       PropertyLabelType: PropertyLabelType.Attached,
     });
+    await moveMouseAway(page);
     await waitForRender(page, async () => {
       await moveMouseToTheMiddleOfTheScreen(page);
     });

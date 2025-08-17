@@ -362,7 +362,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
-    const attachmentPoints = template.attachmentPoints || [];
+    const attachmentPoints = template.attachmentPoints ?? [];
 
     return KetSerializer.fillStruct({
       root: {
@@ -406,7 +406,7 @@ export class KetSerializer implements Serializer<Struct> {
     template: IKetMonomerTemplate,
   ): MonomerItemType {
     const monomerLibraryItem = {
-      label: template.alias || template.id,
+      label: template.alias ?? template.id,
       struct: KetSerializer.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
@@ -562,7 +562,7 @@ export class KetSerializer implements Serializer<Struct> {
           const firstMonomer = drawingEntitiesManager.monomers.get(
             Number(
               monomerIdsMap[
-                connection.endpoint1.monomerId ||
+                connection.endpoint1.monomerId ??
                   connection.endpoint1.moleculeId
               ],
             ),
@@ -570,7 +570,7 @@ export class KetSerializer implements Serializer<Struct> {
           const secondMonomer = drawingEntitiesManager.monomers.get(
             Number(
               monomerIdsMap[
-                connection.endpoint2.monomerId ||
+                connection.endpoint2.monomerId ??
                   connection.endpoint2.moleculeId
               ],
             ),
@@ -587,7 +587,7 @@ export class KetSerializer implements Serializer<Struct> {
               secondMonomer.monomerItem.props.isMicromoleculeFragment)
           ) {
             const atomId = Number(
-              connection.endpoint1.atomId || connection.endpoint2.atomId,
+              connection.endpoint1.atomId ?? connection.endpoint2.atomId,
             );
 
             const atom = MacromoleculesConverter.findAtomByMicromoleculeAtomId(
@@ -598,7 +598,7 @@ export class KetSerializer implements Serializer<Struct> {
                 : secondMonomer,
             );
             const attachmentPointName =
-              connection.endpoint1.attachmentPointId ||
+              connection.endpoint1.attachmentPointId ??
               connection.endpoint2.attachmentPointId;
 
             if (!atom || !attachmentPointName) {
@@ -720,7 +720,7 @@ export class KetSerializer implements Serializer<Struct> {
         this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
       ).mol0,
       type: 'monomerTemplate',
-      class: monomer.monomerItem.props.MonomerClass || monomerClass,
+      class: monomer.monomerItem.props.MonomerClass ?? monomerClass,
       classHELM: monomer.monomerItem.props.MonomerType,
       id: templateId,
       fullName: monomer.monomerItem.props.Name,
@@ -841,7 +841,7 @@ export class KetSerializer implements Serializer<Struct> {
               '',
             );
         } else {
-          templateId = monomerItem.props.id || getMonomerUniqueKey(monomerItem);
+          templateId = monomerItem.props.id ?? getMonomerUniqueKey(monomerItem);
         }
 
         const { seqId, expanded, transformation } = monomerItem;

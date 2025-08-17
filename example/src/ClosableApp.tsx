@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
@@ -37,7 +37,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <StrictMode>
       {!isVisisible ? (
         <>
           <button onClick={() => setIsVisisible(true)}>Show empty</button>
@@ -137,7 +137,7 @@ M  END
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

@@ -45,10 +45,10 @@ const ContextMenu: React.FC = () => {
       KETCHER_ROOT_NODE_CSS_SELECTOR,
     );
     const ketcherRootElementRect = ketcherRootElement?.getBoundingClientRect();
-    const ketcherEditorWidth = ketcherRootElementRect?.width || 0;
-    const ketcherEditorHeight = ketcherRootElementRect?.height || 0;
-    const ketcherEditorLeft = ketcherRootElementRect?.left || 0;
-    const ketcherEditorTop = ketcherRootElementRect?.top || 0;
+    const ketcherEditorWidth = ketcherRootElementRect?.width ?? 0;
+    const ketcherEditorHeight = ketcherRootElementRect?.height ?? 0;
+    const ketcherEditorLeft = ketcherRootElementRect?.left ?? 0;
+    const ketcherEditorTop = ketcherRootElementRect?.top ?? 0;
 
     if (rect.right - ketcherEditorLeft > ketcherEditorWidth) {
       submenuElement.style.left = 'auto';

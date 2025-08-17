@@ -1,9 +1,5 @@
 import { test } from '@playwright/test';
-import {
-  moveMouseToTheMiddleOfTheScreen,
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 import {
   hideMonomerPreview,
   waitForMonomerPreview,
@@ -13,7 +9,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { get } from 'http';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 /* 

@@ -91,10 +91,9 @@ jobs:
           name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
-      - name: Upload tests soluttion
-      - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
+      - uses: actions/upload-artifact@v4
         with:
           name: tests-${{ matrix.shardIndex }}
           path: ketcher-autotests/

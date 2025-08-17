@@ -2,7 +2,6 @@
 /* eslint-disable max-len */
 import { Page, expect, test } from '@playwright/test';
 import {
-  delay,
   MacroFileType,
   takeEditorScreenshot,
   takeElementScreenshot,

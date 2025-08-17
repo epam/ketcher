@@ -2,11 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  resetZoomLevelToDefault,
-  getCoordinatesOfTheMiddleOfTheScreen,
-} from '@utils';
+import { takeEditorScreenshot, resetZoomLevelToDefault } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -59,8 +55,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
         LayoutMode.Flex,
       );
 
-      const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await Library(page).dragMonomerOnCanvas(Presets.A, centerPoint);
+      await Library(page).dragMonomerOnCanvas(Presets.A, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
     },

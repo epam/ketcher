@@ -45,6 +45,15 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
               onClick={handleAccordionChange(label)}
               className={classes.accordionSummaryWrapper}
               data-testid={`${label}-accordion`}
+              role="button"
+              tabIndex={0}
+              aria-expanded={shouldGroupBeRended}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleAccordionChange(label)();
+                }
+              }}
             >
               <div className={classes.accordionSummary}>
                 <Icon

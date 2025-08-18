@@ -87,7 +87,18 @@ const FileDrop = ({
   ) as React.CSSProperties;
 
   return (
-    <div {...getRootProps({ style })} onClick={open}>
+    <div
+      {...getRootProps({ style })}
+      onClick={open}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      }}
+    >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
       {disabled ? (

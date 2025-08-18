@@ -7,7 +7,10 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
     data-testid="color-picker-field"
   >
     <div
+      aria-expanded="false"
       class="colorPickerInput"
+      role="button"
+      tabindex="0"
     >
       <div
         class="colorPickerPreview"

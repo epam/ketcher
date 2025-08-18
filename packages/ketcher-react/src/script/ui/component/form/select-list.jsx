@@ -38,6 +38,15 @@ function SelectList({
             (opt === value ? `${classes.selected} ` : '') +
             (isSplitIndex(index, splitIndexes) ? ` ${classes.split}` : '')
           }
+          role="option"
+          tabIndex={0}
+          aria-selected={opt === value}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onSelect(opt, index);
+            }
+          }}
         >
           {schema.enumNames ? schema.enumNames[index] : opt}
         </li>

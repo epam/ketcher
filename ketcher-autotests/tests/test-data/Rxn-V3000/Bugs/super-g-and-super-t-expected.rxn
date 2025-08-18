@@ -1,6 +1,10 @@
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0806251418
+=======
+ -INDIGO- 0817251115
+>>>>>>> origin
 
 M  V30 COUNTS 1 2
 M  V30 BEGIN REACTANT

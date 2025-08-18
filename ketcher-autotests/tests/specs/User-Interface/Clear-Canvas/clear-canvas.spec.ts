@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';

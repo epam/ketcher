@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
   takeEditorScreenshot,

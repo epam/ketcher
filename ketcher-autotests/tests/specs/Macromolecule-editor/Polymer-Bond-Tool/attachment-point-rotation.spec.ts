@@ -1,5 +1,5 @@
 import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,

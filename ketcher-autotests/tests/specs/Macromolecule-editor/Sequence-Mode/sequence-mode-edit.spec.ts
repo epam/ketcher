@@ -7,7 +7,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,

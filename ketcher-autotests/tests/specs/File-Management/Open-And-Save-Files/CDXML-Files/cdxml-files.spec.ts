@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Page } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,

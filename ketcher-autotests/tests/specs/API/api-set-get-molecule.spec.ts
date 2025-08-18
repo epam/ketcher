@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { test } from '@fixtures';
-import { expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@fixtures';
 import { StereochemistrySetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';

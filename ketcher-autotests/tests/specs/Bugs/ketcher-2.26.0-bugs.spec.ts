@@ -2,8 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, expect } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,

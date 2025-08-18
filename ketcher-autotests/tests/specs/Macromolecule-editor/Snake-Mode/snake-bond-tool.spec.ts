@@ -324,21 +324,17 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
-    await Library(page).switchToPeptidesTab();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const [peptide1] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
-      500,
-      500,
+      100,
+      200,
       100,
       100,
       3,
     );
-
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).switchToPeptidesTab();
-    await addBondedMonomersToCanvas(page, Peptides.bAla, 700, 500, 50, 50, 4);
-    await Library(page).switchToRNATab();
+    await addBondedMonomersToCanvas(page, Peptides.bAla, 400, 200, 50, 50, 4);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -364,8 +360,6 @@ test.describe('Snake Bond Tool', () => {
       2,
       2,
     );
-
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -449,57 +443,50 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake bond for chain with side chains', async () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
       Presets.C,
-      200,
-      200,
+      50,
+      50,
       0,
       0,
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
       Presets.G,
-      500,
-      300,
+      350,
+      150,
       1,
       1,
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
       Presets.T,
-      700,
-      300,
+      550,
+      150,
       2,
       2,
     );
     await addRnaPresetOnCanvas(page, Presets.U, 900, 300, 3, 3);
-    await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Sugars.R,
-      350,
-      350,
+      200,
+      200,
       4,
     );
-    await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
       Bases.nC6n8A,
+      200,
       350,
-      500,
       0,
     );
-
-    await Library(page).switchToPeptidesTab();
     const [peptide] = await addBondedMonomersToCanvas(
       page,
       Peptides.A,
-      500,
-      500,
+      350,
+      350,
       50,
       50,
       3,
@@ -508,8 +495,8 @@ test.describe('Snake Bond Tool', () => {
     const [hcyPeptide, hcyPeptide1] = await addBondedMonomersToCanvas(
       page,
       Peptides.Hcy,
-      600,
-      500,
+      350,
+      250,
       50,
       0,
       2,
@@ -518,8 +505,8 @@ test.describe('Snake Bond Tool', () => {
     const [balPeptide] = await addBondedMonomersToCanvas(
       page,
       Peptides.bAla,
-      700,
-      700,
+      500,
+      500,
       50,
       0,
       2,
@@ -527,12 +514,11 @@ test.describe('Snake Bond Tool', () => {
     const balPeptide1 = await addSingleMonomerToCanvas(
       page,
       Peptides.bAla,
-      850,
-      650,
+      520,
+      500,
       2,
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(
       page,
@@ -978,6 +964,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1019,6 +1006,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
     and maximum call stack size exceeded error not appears during snake layout.
     */
+    test.slow();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(

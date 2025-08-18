@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -25,10 +25,16 @@ import {
   VisibleItem,
 } from './styles';
 import { EmptyFunction } from 'helpers';
-import { IconName } from 'ketcher-react';
+import {
+  IconName,
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  usePortalStyle,
+} from 'ketcher-react';
+import { createPortal } from 'react-dom';
 
 type SubMenuProps = {
   vertical?: boolean;
+  autoSize?: boolean;
   disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
   testId?: string;
@@ -40,6 +46,7 @@ type SubMenuProps = {
 const SubMenu = ({
   children,
   vertical = false,
+  autoSize = false,
   disabled = false,
   needOpenByMenuItemClick = false,
   testId,
@@ -47,8 +54,15 @@ const SubMenu = ({
   generalTitle,
   activeItem,
 }: React.PropsWithChildren<SubMenuProps>) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
+  const [portalStyle] = usePortalStyle([
+    ref,
+    open,
+    vertical,
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  ]);
 
   const handleDropDownClick = () => {
     if (disabled) return;
@@ -77,8 +91,11 @@ const SubMenu = ({
   );
   const visibleItemTestId = visibleItem?.props.testId;
   const visibleItemTitle = generalTitle ?? visibleItem?.props.title;
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  );
   return (
-    <RootContainer data-testid={testId}>
+    <RootContainer data-testid={testId} ref={ref}>
       <VisibleItem>
         <MenuItem
           disabled={disabled}
@@ -99,22 +116,28 @@ const SubMenu = ({
           />
         )}
       </VisibleItem>
-      <OptionsItemsCollapse
-        in={open}
-        timeout="auto"
-        unmountOnExit
-        onClick={hideCollapse}
-      >
-        <ClickAwayListener onClickAway={hideCollapse}>
-          <OptionsContainer
-            isVertical={vertical}
-            islayoutModeButton={layoutModeButton}
-            data-testid="multi-tool-dropdown"
+      {ketcherEditorRootElement &&
+        createPortal(
+          <OptionsItemsCollapse
+            in={open}
+            timeout={0}
+            style={{ ...portalStyle }}
+            unmountOnExit
+            onClick={hideCollapse}
           >
-            {subComponents.map((component) => component)}
-          </OptionsContainer>
-        </ClickAwayListener>
-      </OptionsItemsCollapse>
+            <ClickAwayListener onClickAway={hideCollapse}>
+              <OptionsContainer
+                isVertical={vertical}
+                isAutoSize={autoSize}
+                islayoutModeButton={layoutModeButton}
+                data-testid="multi-tool-dropdown"
+              >
+                {subComponents.map((component) => component)}
+              </OptionsContainer>
+            </ClickAwayListener>
+          </OptionsItemsCollapse>,
+          ketcherEditorRootElement,
+        )}
     </RootContainer>
   );
 };

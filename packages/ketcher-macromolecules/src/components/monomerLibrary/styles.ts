@@ -18,6 +18,7 @@ import styled from '@emotion/styled';
 import { Input, Icon } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
+export const MONOMER_HIDE_LIBRARY_BUTTON_WIDTH = '100px';
 
 export const MonomerLibraryContainer = styled.div`
   width: ${MONOMER_LIBRARY_WIDTH};

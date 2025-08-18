@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
@@ -24,7 +24,7 @@ async function shiftStructure(page: Page) {
   const toShiftToCoordinates = 400;
 
   await selectRectangleArea(page, startX, startY, endX, endY);
-  const alanine = getMonomerLocator(page, Peptides.A).first();
+  const alanine = getMonomerLocator(page, Peptide.A).first();
   await alanine.hover();
   await dragMouseTo(toShiftToCoordinates, toShiftToCoordinates, page);
 }

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, chromium, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -31,8 +31,8 @@ import {
   selectLeftConnectionPointAtSelectConnectionPointDialog,
   selectRightConnectionPointAtSelectConnectionPointDialog,
 } from '@utils/macromolecules/polymerBond';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Bases } from '@constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -182,28 +182,28 @@ test.describe('Common connection rules: ', () => {
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterAwayTo(page, Peptides.LysiPr, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Peptide.LysiPr, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterAwayTo(page, Sugars._12ddR, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Sugar._12ddR, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterAwayTo(page, Phosphates.P, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Phosphate.P, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterAwayTo(page, Bases.c7io7n, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Base.c7io7n, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -232,28 +232,28 @@ test.describe('Common connection rules: ', () => {
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterTo(page, Peptides.LysiPr, Peptides.Hcy);
+    await dragBondFromMonomerCenterTo(page, Peptide.LysiPr, Peptide.Hcy);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterTo(page, Sugars._12ddR, Sugars.nC62r);
+    await dragBondFromMonomerCenterTo(page, Sugar._12ddR, Sugar.nC62r);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterTo(page, Phosphates.P, Phosphates.mn);
+    await dragBondFromMonomerCenterTo(page, Phosphate.P, Phosphate.mn);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterTo(page, Bases.c7io7n, Bases.nC6n5U);
+    await dragBondFromMonomerCenterTo(page, Base.c7io7n, Base.nC6n5U);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -282,22 +282,22 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
     // CHEM
-    await hoverMouseOverMonomerNTymes(page, Peptides.Hcy, 10);
+    await hoverMouseOverMonomerNTymes(page, Peptide.Hcy, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Sugar
-    await hoverMouseOverMonomerNTymes(page, Sugars.nC62r, 10);
+    await hoverMouseOverMonomerNTymes(page, Sugar.nC62r, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Phosphate
-    await hoverMouseOverMonomerNTymes(page, Phosphates.mn, 10);
+    await hoverMouseOverMonomerNTymes(page, Phosphate.mn, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Base
-    await hoverMouseOverMonomerNTymes(page, Bases.nC6n5U, 10);
+    await hoverMouseOverMonomerNTymes(page, Base.nC6n5U, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -397,7 +397,7 @@ test.describe('Common connection rules: ', () => {
     await bondTwoMonomersByCenterToCenterByNames(
       page,
       Chem.Test_6_Ch,
-      Phosphates.Test_6_Ph,
+      Phosphate.Test_6_Ph,
     );
     // Case 8-9
     await page.getByTitle('expand window').click();
@@ -465,7 +465,7 @@ test.describe('Common connection rules: ', () => {
       MacroFileType.MOLv3000,
     );
 
-    await hoverMouseOverMonomer(page, Peptides.C);
+    await hoverMouseOverMonomer(page, Peptide.C);
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -515,7 +515,7 @@ test.describe('Common connection rules: ', () => {
     await bondTwoMonomersByCenterToCenterByNames(
       page,
       Chem.Test_6_Ch,
-      Phosphates.Test_6_Ph,
+      Phosphate.Test_6_Ph,
     );
 
     const connectionPoints = [

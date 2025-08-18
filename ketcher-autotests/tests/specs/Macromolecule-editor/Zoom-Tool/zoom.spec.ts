@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -140,7 +140,7 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
     );
 
-    await getMonomerLocator(page, Peptides.DTrp2M).hover();
+    await getMonomerLocator(page, Peptide.DTrp2M).hover();
     await waitForMonomerPreview(page);
     await zoomWithMouseScrollAndTakeScreenshot(page);
   });
@@ -275,19 +275,19 @@ test.describe('Zoom Tool', () => {
     const y = 350;
     const x1 = 650;
     const y1 = 150;
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await ZoomInByKeyboard(page, { repeat: 3 });
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x,
       y,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await ZoomOutByKeyboard(page, { repeat: 5 });
-    await Library(page).dragMonomerOnCanvas(Peptides.meD, {
+    await Library(page).dragMonomerOnCanvas(Peptide.meD, {
       x: x1,
       y: y1,
     });
@@ -303,12 +303,12 @@ test.describe('Zoom Tool', () => {
     */
     const x = 800;
     const y = 350;
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x,
       y,
     });

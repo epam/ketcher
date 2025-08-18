@@ -1,6 +1,6 @@
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { expect, test } from '@fixtures';
 import {
   addPeptideOnCanvas,
@@ -31,21 +31,21 @@ test.describe('Peptide library testing', () => {
 
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
-    await Library(page).hoverMonomer(Peptides.A);
+    await Library(page).hoverMonomer(Peptide.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
   test('Placing betaAlanine on canvas', async ({ page }) => {
     // placing molecule on canvas and molecule selected state check
-    await addPeptideOnCanvas(page, Peptides.bAla);
+    await addPeptideOnCanvas(page, Peptide.bAla);
     await takeEditorScreenshot(page);
   });
 
   test('add molecule in favourites', async ({ page }) => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
-    await Library(page).addMonomerToFavorites(Peptides.A);
+    await Library(page).addMonomerToFavorites(Peptide.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -68,9 +68,9 @@ test.describe('Peptide library testing', () => {
     The test is currently not functioning correctly as the bug has not been fixed https://github.com/epam/ketcher/issues/3963
     */
     await Library(page).addMonomersToFavorites([
-      Peptides.dA,
-      Peptides.Edc,
-      Presets.A,
+      Peptide.dA,
+      Peptide.Edc,
+      Preset.A,
       Chem.A6OH,
     ]);
 
@@ -78,12 +78,12 @@ test.describe('Peptide library testing', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomersFromFavorites([
-      Peptides.dA,
-      Peptides.Edc,
+      Peptide.dA,
+      Peptide.Edc,
       Chem.A6OH,
     ]);
 
-    await Library(page).removeMonomerFromFavorites(Presets.A);
+    await Library(page).removeMonomerFromFavorites(Preset.A);
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -96,11 +96,11 @@ test.describe('Peptide library testing', () => {
     Description: Peptide is getting removed from favourites when clicking star sign again in Peptide tab section.
     */
 
-    await Library(page).addMonomersToFavorites([Peptides.dA, Peptides.Edc]);
+    await Library(page).addMonomersToFavorites([Peptide.dA, Peptide.Edc]);
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
 
-    await Library(page).removeMonomerFromFavorites(Peptides.Edc, false);
+    await Library(page).removeMonomerFromFavorites(Peptide.Edc, false);
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -112,13 +112,13 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Erase tool is selected.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.dA, {
+    await Library(page).dragMonomerOnCanvas(Peptide.dA, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.dA).hover();
+    await getMonomerLocator(page, Peptide.dA).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -130,13 +130,13 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Bond tool is selected.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Peptides.Edc).hover();
+    await getMonomerLocator(page, Peptide.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -148,7 +148,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Selection tool is selected.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -156,7 +156,7 @@ test.describe('Peptide library testing', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await getMonomerLocator(page, Peptides.Edc).hover();
+    await getMonomerLocator(page, Peptide.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -228,7 +228,7 @@ test.describe('Peptide library testing', () => {
       page,
       'KET/stuck-peptides-not-connected.ket',
     );
-    await getMonomerLocator(page, Peptides.Nal).click();
+    await getMonomerLocator(page, Peptide.Nal).click();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page);
   });
@@ -244,7 +244,7 @@ test.describe('Peptide library testing', () => {
     const x = 200;
     const y = 200;
     await openFileAndAddToCanvasMacro(page, 'KET/stuck-peptides-connected.ket');
-    await getMonomerLocator(page, Peptides.Nal).click();
+    await getMonomerLocator(page, Peptide.Nal).click();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -253,7 +253,7 @@ test.describe('Peptide library testing', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
-    await getMonomerLocator(page, Peptides.Nal).hover();
+    await getMonomerLocator(page, Peptide.Nal).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

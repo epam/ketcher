@@ -26,7 +26,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   FileType,
   verifyFileExport,
@@ -51,7 +51,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -532,10 +532,10 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides._1Nal).click();
-    await getMonomerLocator(page, Peptides.A).click();
-    await getMonomerLocator(page, Peptides.D).first().click();
-    await getMonomerLocator(page, Peptides.C).first().click();
+    await getMonomerLocator(page, Peptide._1Nal).click();
+    await getMonomerLocator(page, Peptide.A).click();
+    await getMonomerLocator(page, Peptide.D).first().click();
+    await getMonomerLocator(page, Peptide.C).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

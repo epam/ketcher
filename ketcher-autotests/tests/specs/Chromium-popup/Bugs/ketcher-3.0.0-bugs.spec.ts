@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -73,7 +73,7 @@ import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 let page: Page;
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -258,7 +258,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         nodeIndexOverall: 4,
       }).click();
       await page.keyboard.up('Shift');
-      await Library(page).selectMonomer(Peptides.C);
+      await Library(page).selectMonomer(Peptide.C);
       await pressButton(page, 'Yes');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -291,7 +291,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         'RNA1{R(A)P}$$$$V2.0',
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-      const baseLocator = getMonomerLocator(page, Bases.A).first();
+      const baseLocator = getMonomerLocator(page, Base.A).first();
       await baseLocator.hover({ force: true });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -359,7 +359,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         MacroFileType.HELM,
         'RNA1{R(A)P}$$$$V2.0',
       );
-      await addMonomerToCenterOfCanvas(page, Presets.A);
+      await addMonomerToCenterOfCanvas(page, Preset.A);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -386,7 +386,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await addMonomerToCenterOfCanvas(page, Presets.T);
+      await addMonomerToCenterOfCanvas(page, Preset.T);
       await selectAllStructuresOnCanvas(page);
       await copyToClipboardByKeyboard(page);
       await CommonTopLeftToolbar(page).clearCanvas();
@@ -506,7 +506,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         enableFlexMode: false,
         goToPeptides: false,
       });
-      await Library(page).selectMonomer(Peptides.A);
+      await Library(page).selectMonomer(Peptide.A);
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -1013,7 +1013,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)P}$$$$V2.0',
       );
       await selectAllStructuresOnCanvas(page);
-      const baseDNAN = getMonomerLocator(page, Bases.DNA_N).first();
+      const baseDNAN = getMonomerLocator(page, Base.DNA_N).first();
       await ContextMenu(page, baseDNAN).click(
         MonomerOption.CreateAntisenseRNAStrand,
       );
@@ -1046,11 +1046,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       );
       await Library(page).switchToRNATab();
       await Library(page).selectMonomers([
-        Presets.A,
-        Presets.U,
-        Presets.C,
-        Presets.A,
-        Presets.U,
+        Preset.A,
+        Preset.U,
+        Preset.C,
+        Preset.A,
+        Preset.U,
       ]);
       await takeEditorScreenshot(page);
     },
@@ -1073,8 +1073,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
        * 5. Take a screenshot
        */
       await Library(page).switchToRNATab();
-      await expect(page.getByTestId(Presets.MOE_A_P.testId)).toBeInViewport();
-      await Library(page).selectMonomer(Presets.MOE_A_P);
+      await expect(page.getByTestId(Preset.MOE_A_P.testId)).toBeInViewport();
+      await Library(page).selectMonomer(Preset.MOE_A_P);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await verifyFileExport(
         page,
@@ -1136,7 +1136,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
         enableFlexMode: false,
         goToPeptides: false,
       });
-      await Library(page).selectMonomer(Bases.A);
+      await Library(page).selectMonomer(Base.A);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await selectAllStructuresOnCanvas(page);
       const baseA = page

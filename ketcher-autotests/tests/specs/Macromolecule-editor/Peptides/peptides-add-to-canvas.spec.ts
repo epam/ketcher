@@ -1,8 +1,5 @@
 import { test } from '@fixtures';
-import {
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
 import {
   hideMonomerPreview,

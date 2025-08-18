@@ -2,10 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
-import {
-  takeEditorScreenshot,
-  resetZoomLevelToDefault,
-} from '@utils';
+import { takeEditorScreenshot, resetZoomLevelToDefault } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

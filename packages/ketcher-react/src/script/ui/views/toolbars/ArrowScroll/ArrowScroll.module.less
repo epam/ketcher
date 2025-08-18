@@ -19,8 +19,14 @@
   min-height: 32px;
   width: 36px;
   display: flex;
-  flex-direction: column;
   background: @color-background-primary;
+}
+
+.scroll.leftRight {
+}
+
+.scroll.upDown {
+  flex-direction: column;
 }
 
 .button {
@@ -29,6 +35,24 @@
   border: none;
   background: transparent;
   font-size: 15px !important;
+  cursor: pointer;
+  user-select: none;
+}
+
+.button.down,
+.button.up {
+  height: 50%;
+  width: 100%;
+}
+
+.button.left,
+.button.right {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .down {
@@ -39,4 +63,14 @@
 .up {
   position: absolute;
   top: 0;
+}
+
+.left {
+  position: absolute;
+  left: 0;
+}
+
+.right {
+  position: absolute;
+  right: 0;
 }

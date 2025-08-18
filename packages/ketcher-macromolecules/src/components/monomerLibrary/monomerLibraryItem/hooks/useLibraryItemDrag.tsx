@@ -11,11 +11,7 @@ export const useLibraryItemDrag = (
   const editor = useSelector(selectEditor);
 
   useEffect(() => {
-    if (
-      !editor ||
-      editor.mode.modeName === 'sequence-layout-mode' ||
-      !itemRef.current
-    ) {
+    if (!editor || !itemRef.current) {
       return;
     }
 
@@ -31,10 +27,7 @@ export const useLibraryItemDrag = (
         const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
           item,
-          position: {
-            x: x - (editor.ketcherRootElementBoundingClientRect?.left || 0),
-            y: y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
-          },
+          position: { x, y },
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {

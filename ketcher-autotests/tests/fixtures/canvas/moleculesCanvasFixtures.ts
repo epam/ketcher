@@ -10,7 +10,7 @@ export const test = mergeTests(utils, pageObjects).extend<
 >({
   MoleculesCanvas: async (
     {
-      page,
+      ketcher,
       CommonTopLeftToolbar,
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
@@ -20,6 +20,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     },
     use,
   ) => {
+    const page = ketcher.page as Page;
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);

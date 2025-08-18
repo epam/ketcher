@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test, Page } from '@playwright/test';
+import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,

@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   MonomerType,

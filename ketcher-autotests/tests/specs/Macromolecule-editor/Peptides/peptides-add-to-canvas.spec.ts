@@ -1,5 +1,6 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';
+
 import {
   hideMonomerPreview,
   waitForMonomerPreview,

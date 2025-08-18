@@ -1,5 +1,5 @@
 import { Chem } from '@constants/monomers/Chem';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   pressButton,

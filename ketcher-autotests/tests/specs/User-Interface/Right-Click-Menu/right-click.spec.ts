@@ -1,6 +1,6 @@
 /* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   pressButton,
   takeEditorScreenshot,

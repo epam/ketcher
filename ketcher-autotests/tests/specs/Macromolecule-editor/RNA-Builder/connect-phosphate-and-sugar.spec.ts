@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
 import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';

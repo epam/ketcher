@@ -1,7 +1,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import {
   addPeptideOnCanvas,
   dragMouseTo,

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page, expect } from '@playwright/test';
+import { test, Page, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,

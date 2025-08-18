@@ -75,7 +75,9 @@ const Right = styled(BaseLeftRightStyle)``;
 const StyledTopInnerDiv = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100vw;
+  // cqw is used to ensure that the width is calculated based on the container(ketcher root) width, allowing for proper scrolling behavior
+  // with 100% width scrollbar does not work properly for some reason
+  width: 100cqw;
 `;
 
 const StyledTop = styled.div<{ shortened?: boolean }>(
@@ -93,6 +95,18 @@ const StyledTop = styled.div<{ shortened?: boolean }>(
     overflowX: 'hidden',
   }),
 );
+
+const StyledArrowScrollWrapper = styled.div`
+  width: 42px;
+  height: 36px;
+  display: flex;
+  position: relative;
+  right: 0;
+  cursor: pointer;
+  background: white;
+  box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
+  border-radius: 4px;
+`;
 
 const Bottom = styled.div`
   &:not(:empty) {
@@ -129,12 +143,13 @@ const Top = (
   const { children, ...otherProps } = props;
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
 
-  const scrollRight = () => {
-    console.log(scrollRef.current);
+  const scrollRight = (e: Event) => {
+    e.stopPropagation();
     scrollRef.current.scrollLeft += 30;
   };
 
-  const scrollLeft = () => {
+  const scrollLeft = (e: Event) => {
+    e.stopPropagation();
     scrollRef.current.scrollLeft -= 30;
   };
 
@@ -146,17 +161,7 @@ const Top = (
         <span ref={endRef}></span>
       </StyledTop>
       {!startInView || !endInView ? (
-        <div
-          style={{
-            width: '42px',
-            height: '36px',
-            display: 'flex',
-            position: 'relative',
-            right: '0',
-            cursor: 'pointer',
-            background: 'white',
-          }}
-        >
+        <StyledArrowScrollWrapper>
           <ArrowScroll
             startInView={startInView}
             endInView={endInView}
@@ -164,7 +169,7 @@ const Top = (
             scrollForward={scrollRight}
             isLeftRight
           />
-        </div>
+        </StyledArrowScrollWrapper>
       ) : null}
     </div>
   );

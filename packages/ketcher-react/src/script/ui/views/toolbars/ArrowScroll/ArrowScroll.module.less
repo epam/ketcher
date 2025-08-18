@@ -19,8 +19,14 @@
   min-height: 32px;
   width: 36px;
   display: flex;
-  flex-direction: column;
   background: @color-background-primary;
+}
+
+.scroll.leftRight {
+}
+
+.scroll.upDown {
+  flex-direction: column;
 }
 
 .button {
@@ -43,6 +49,10 @@
 .button.right {
   height: 100%;
   width: 50%;
+  display: flex;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .down {

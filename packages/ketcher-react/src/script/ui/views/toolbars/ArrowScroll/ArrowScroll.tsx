@@ -52,12 +52,17 @@ const ArrowScroll = ({
   }, [endInView]);
 
   return (
-    <div className={classes.scroll}>
+    <div
+      className={[
+        classes.scroll,
+        isLeftRight ? classes.leftRight : classes.upDown,
+      ].join(' ')}
+    >
       {endInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollForward()}
+          onClick={scrollForward}
           onMouseUp={() => setScrollDown(false)}
           onMouseDown={() => setScrollDown(true)}
           className={clsx(
@@ -65,14 +70,14 @@ const ArrowScroll = ({
             isLeftRight ? classes.right : classes.down,
           )}
         >
-          {isLeftRight ? '▶' : '▼'}
+          {isLeftRight ? '►' : '▼'}
         </button>
       )}
       {startInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollBack()}
+          onClick={scrollBack}
           onMouseUp={() => setScrollUp(false)}
           onMouseDown={() => setScrollUp(true)}
           className={clsx(
@@ -80,7 +85,7 @@ const ArrowScroll = ({
             isLeftRight ? classes.left : classes.up,
           )}
         >
-          {isLeftRight ? '◀' : '▲'}
+          {isLeftRight ? '◄' : '▲'}
         </button>
       )}
     </div>

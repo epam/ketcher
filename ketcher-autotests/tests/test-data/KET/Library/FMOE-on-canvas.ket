@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 4.125,
-            "y": -4.025
+            "x": 5.375,
+            "y": -5.375
         },
         "alias": "FMOE",
         "templateId": "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose"

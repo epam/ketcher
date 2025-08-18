@@ -23,7 +23,7 @@ import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectIsSequenceMode } from 'state/common';
 
 const MonomerItem = ({
   item,
@@ -36,6 +36,7 @@ const MonomerItem = ({
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
+  const isSequenceMode = useAppSelector(selectIsSequenceMode);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -99,14 +100,16 @@ const MonomerItem = ({
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
         <>
-          <AutochainIcon
-            className="autochain"
-            name="monomer-autochain"
-            onMouseOver={onAutochainIconMouseOver}
-            onMouseOut={onAutochainIconMouseOut}
-            onClick={onAutochainIconClick}
-            onDoubleClick={(e) => e.stopPropagation()}
-          />
+          {!isSequenceMode && (
+            <AutochainIcon
+              className="autochain"
+              name="monomer-autochain"
+              onMouseOver={onAutochainIconMouseOver}
+              onMouseOut={onAutochainIconMouseOut}
+              onClick={onAutochainIconClick}
+              onDoubleClick={(e) => e.stopPropagation()}
+            />
+          )}
           <div
             onClick={addFavorite}
             className={`star ${item.favorite ? 'visible' : ''}`}

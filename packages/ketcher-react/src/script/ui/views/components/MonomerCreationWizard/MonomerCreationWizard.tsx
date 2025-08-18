@@ -1,9 +1,13 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
-import { CREATE_MONOMER_TOOL_NAME, KetMonomerClass } from 'ketcher-core';
+import {
+  CoreEditor,
+  CREATE_MONOMER_TOOL_NAME,
+  KetMonomerClass,
+} from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useMemo, useReducer } from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -17,42 +21,19 @@ import {
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import {
-  MonomerTypeSelectItem,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
   WizardNotificationId,
-  WizardNotificationMessageMap,
   WizardState,
   WizardValues,
 } from './MonomerCreationWizard.types';
-
-const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
-  {
-    value: KetMonomerClass.AminoAcid,
-    label: 'Amino acid',
-    iconName: 'peptide',
-  },
-  { value: KetMonomerClass.Sugar, label: 'Sugar', iconName: 'sugar' },
-  { value: KetMonomerClass.Base, label: 'Base', iconName: 'base' },
-  {
-    value: KetMonomerClass.Phosphate,
-    label: 'Phosphate',
-    iconName: 'phosphate',
-  },
-  { value: KetMonomerClass.RNA, label: 'Nucleotide', iconName: 'nucleotide' },
-  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
-];
-
-const notificationMessages: WizardNotificationMessageMap = {
-  defaultAttachmentPoints:
-    'Attachment points are set by default with hydrogens as leaving groups.',
-  emptyMandatoryFields: 'Mandatory fields must be filled.',
-  invalidSymbol:
-    'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
-  symbolExists:
-    'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
-};
+import {
+  MonomerCreationExternalNotificationAction,
+  MonomerTypeSelectConfig,
+  NotificationMessages,
+  NotificationTypes,
+} from './MonomerCreationWizard.constants';
 
 const initialWizardState: WizardState = {
   values: {
@@ -65,7 +46,7 @@ const initialWizardState: WizardState = {
   notifications: new Map([
     [
       'defaultAttachmentPoints',
-      { type: 'info', message: notificationMessages.defaultAttachmentPoints },
+      { type: 'info', message: NotificationMessages.defaultAttachmentPoints },
     ],
   ]),
 };
@@ -77,12 +58,19 @@ const wizardReducer = (
   switch (action.type) {
     case 'SetFieldValue': {
       const { fieldId, value } = action;
+
+      const values = {
+        ...state.values,
+        [fieldId]: value,
+      };
+
+      if (fieldId === 'type') {
+        values.naturalAnalogue = '';
+      }
+
       return {
         ...state,
-        values: {
-          ...state.values,
-          [fieldId]: value,
-        },
+        values,
         errors: {
           ...state.errors,
           [fieldId]: undefined,
@@ -107,6 +95,22 @@ const wizardReducer = (
           ...state.notifications,
           ...action.notifications,
         ]),
+      };
+    }
+
+    case 'AddNotification': {
+      const notifications = new Map(state.notifications);
+      const { id } = action;
+      if (!notifications.has(id)) {
+        notifications.set(id, {
+          type: NotificationTypes[id],
+          message: NotificationMessages[id],
+        });
+      }
+
+      return {
+        ...state,
+        notifications,
       };
     }
 
@@ -146,7 +150,7 @@ const validateInputs = (values: WizardValues) => {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
           type: 'error',
-          message: notificationMessages.emptyMandatoryFields,
+          message: NotificationMessages.emptyMandatoryFields,
         });
       }
       return;
@@ -158,7 +162,17 @@ const validateInputs = (values: WizardValues) => {
         errors[key as WizardFormFieldId] = true;
         notifications.set('invalidSymbol', {
           type: 'error',
-          message: notificationMessages.invalidSymbol,
+          message: NotificationMessages.invalidSymbol,
+        });
+        return;
+      }
+
+      const editor = CoreEditor.provideEditorInstance();
+      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('symbolExists', {
+          type: 'error',
+          message: NotificationMessages.symbolExists,
         });
       }
     }
@@ -176,6 +190,28 @@ const MonomerCreationWizard = () => {
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
+
+  useEffect(() => {
+    const externalNotificationEventListener = (event: Event) => {
+      const notificationId = (event as CustomEvent<WizardNotificationId>)
+        .detail;
+      if (notificationId) {
+        wizardStateDispatch({ type: 'AddNotification', id: notificationId });
+      }
+    };
+
+    window.addEventListener(
+      MonomerCreationExternalNotificationAction,
+      externalNotificationEventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationExternalNotificationAction,
+        externalNotificationEventListener,
+      );
+    };
+  }, []);
 
   const handleFieldChange = (
     fieldId: WizardFormFieldId,
@@ -284,11 +320,12 @@ const MonomerCreationWizard = () => {
               title="Type"
               control={
                 <Select
-                  className={clsx(styles.input, errors.type && styles.error)}
+                  className={styles.input}
                   options={monomerTypeSelectOptions}
                   placeholder="Select monomer type"
                   value={type}
                   onChange={(value) => handleFieldChange('type', value)}
+                  error={errors.type}
                 />
               }
               required
@@ -299,7 +336,7 @@ const MonomerCreationWizard = () => {
                 <input
                   type="text"
                   className={clsx(styles.input, errors.symbol && styles.error)}
-                  placeholder="ex.: Azs980uX"
+                  placeholder="e.g. PEG-2"
                   value={symbol}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('symbol', event.target.value)
@@ -314,7 +351,7 @@ const MonomerCreationWizard = () => {
                 <input
                   type="text"
                   className={clsx(styles.input, errors.name && styles.error)}
-                  placeholder="ex.: 5-hydroxymethyl dC-12"
+                  placeholder="e.g. Diethylene Glycol"
                   value={name}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('name', event.target.value)
@@ -327,12 +364,12 @@ const MonomerCreationWizard = () => {
               title="Natural analogue"
               control={
                 <NaturalAnaloguePicker
-                  className={clsx(errors.type && styles.error)}
                   monomerType={type}
                   value={naturalAnalogue}
                   onChange={(value) =>
                     handleFieldChange('naturalAnalogue', value)
                   }
+                  error={errors.naturalAnalogue}
                 />
               }
               disabled={!isNaturalAnalogueRequired(type)}

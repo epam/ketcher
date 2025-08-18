@@ -18,7 +18,11 @@ export const useLibraryItemDrag = (
     const itemElement = select(itemRef.current);
 
     const dragBehavior = drag<HTMLElement, unknown>()
-      .on('start', null)
+      .on('start', () => {
+        // In sequence layout we do not allow DnD; cancel visual drag early
+        editor.isLibraryItemDragCancelled =
+          editor.mode.modeName === 'sequence-layout-mode';
+      })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
@@ -62,5 +66,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, editor?.mode.modeName, item, itemRef]);
+  }, [editor, item, itemRef]);
 };

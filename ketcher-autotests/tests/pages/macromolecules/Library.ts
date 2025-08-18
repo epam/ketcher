@@ -12,7 +12,8 @@ import {
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
 import { waitForRender } from '@utils/common';
-import { getCoordinatesOfTheMiddleOfTheScreen, moveMouseAway } from '@utils';
+import { getCoordinatesOfTheMiddleOfTheCanvas, moveMouseAway } from '@utils';
+import { KETCHER_CANVAS } from '../constants/canvas/Constants';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -241,14 +242,21 @@ export const Library = (page: Page) => {
       coordinates: { x: number; y: number; fromCenter?: boolean },
       selectOnFavoritesTab = false,
     ) {
-      let x = coordinates.x;
-      let y = coordinates.y;
+      const canvas = await page
+        .getByTestId(KETCHER_CANVAS)
+        .filter({ has: page.locator(':visible') })
+        .boundingBox();
+      if (!canvas) {
+        throw new Error('Unable to get boundingBox for canvas');
+      }
+      let x = canvas.x + coordinates.x;
+      let y = canvas.y + coordinates.y;
 
       if (coordinates.fromCenter) {
-        const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheScreen(page);
+        const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
 
-        x = centerOfCanvas.x + coordinates.x;
-        y = centerOfCanvas.y + coordinates.y;
+        x = x + centerOfCanvas.x;
+        y = y + centerOfCanvas.y;
       }
 
       await this.hoverMonomer(monomer, selectOnFavoritesTab);

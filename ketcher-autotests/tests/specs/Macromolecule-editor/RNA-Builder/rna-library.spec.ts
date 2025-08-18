@@ -1,5 +1,5 @@
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
@@ -19,6 +19,7 @@ import {
   clickOnCanvas,
   MonomerType,
   Monomer,
+  clickOnMiddleOfCanvas,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
@@ -1108,7 +1109,7 @@ test.describe('RNA Library', () => {
 
       await page.keyboard.press('Escape');
       await Library(page).openRNASection(RNASection.Nucleotides);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickOnMiddleOfCanvas(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1240,12 +1241,12 @@ test.describe('RNA Library', () => {
       const x = 200;
       const y = 200;
       await Library(page).dragMonomerOnCanvas(monomer, {
-        x: -10,
-        y: -10,
+        x: 0,
+        y: 0,
         fromCenter: true,
       });
       await page.keyboard.press('Escape');
-      await clickInTheMiddleOfTheScreen(page);
+      await clickOnMiddleOfCanvas(page);
       await dragMouseTo(x, y, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

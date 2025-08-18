@@ -1,6 +1,6 @@
 /* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -255,7 +255,7 @@ test.describe('Right-click menu', () => {
       MicroAtomOption.EnhancedStereochemistry,
     );
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
-    await EnhancedStereochemistry(page).pressApplyButton();
+    await EnhancedStereochemistry(page).apply();
 
     await takeEditorScreenshot(page);
 

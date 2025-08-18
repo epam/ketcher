@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import {

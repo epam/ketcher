@@ -1,5 +1,5 @@
 import { Presets } from '@constants/monomers/Presets';
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {

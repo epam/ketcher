@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -29,7 +29,7 @@ test.describe('Erase Tool', () => {
       'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
 
-    await await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).selectEraseTool();
   });
 
   test('Erase atom and bond', async ({ page }) => {

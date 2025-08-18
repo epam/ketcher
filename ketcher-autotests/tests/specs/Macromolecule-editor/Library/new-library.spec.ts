@@ -1,8 +1,7 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test } from '@fixtures';
 import {
-  delay,
   MacroFileType,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -815,9 +814,28 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
 
+    let monomerBoundingBox;
+    if (Object.values(Presets).includes(monomer)) {
+      monomerBoundingBox = await getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).boundingBox();
+    } else {
+      monomerBoundingBox = await getMonomerLocator(page, monomer).boundingBox();
+    }
+
+    if (!monomerBoundingBox) throw new Error('Monomer element not found');
+
     await page.mouse.down();
-    await page.mouse.move(111, 111);
-    if (monomerToDrag[4] === monomer) await page.mouse.move(109, 109);
+    await page.mouse.move(
+      monomerBoundingBox?.x + 11,
+      monomerBoundingBox?.y + 11,
+    );
+    if (monomerToDrag[4] === monomer) {
+      await page.mouse.move(
+        monomerBoundingBox?.x + 9,
+        monomerBoundingBox?.y + 9,
+      );
+    }
     await waitForRender(page);
 
     await takeEditorScreenshot(page, {
@@ -850,11 +868,30 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
 
-    await page.mouse.down();
-    await page.mouse.move(111, 111);
-    if (monomerToDrag[4] === monomer) await page.mouse.move(109, 109);
-    await delay(0.1);
+    let monomerBoundingBox;
+    if (Object.values(Presets).includes(monomer)) {
+      monomerBoundingBox = await getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).boundingBox();
+    } else {
+      monomerBoundingBox = await getMonomerLocator(page, monomer).boundingBox();
+    }
 
+    if (!monomerBoundingBox) throw new Error('Monomer element not found');
+
+    await page.mouse.down();
+    await page.mouse.move(
+      monomerBoundingBox?.x + 11,
+      monomerBoundingBox?.y + 11,
+    );
+    if (monomerToDrag[4] === monomer) {
+      await page.mouse.move(
+        monomerBoundingBox?.x + 9,
+        monomerBoundingBox?.y + 9,
+      );
+    }
+
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

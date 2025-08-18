@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,

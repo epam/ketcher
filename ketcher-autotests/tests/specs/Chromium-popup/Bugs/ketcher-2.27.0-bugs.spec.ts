@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -494,7 +494,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
         'KET/Chromium-popup/Bugs/Two nucleotides.ket',
       );
       await LeftToolbar(page).stereochemistry();
-      await EnhancedStereochemistry(page).pressApplyButton();
+      await EnhancedStereochemistry(page).apply();
       await takeEditorScreenshot(page);
     },
   );

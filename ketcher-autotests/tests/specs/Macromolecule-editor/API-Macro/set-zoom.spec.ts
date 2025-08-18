@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,

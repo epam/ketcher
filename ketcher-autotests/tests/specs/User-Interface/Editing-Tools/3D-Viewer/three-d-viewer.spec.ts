@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -45,7 +45,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, 20);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressCancelButton();
+      await MiewDialog(page).cancel();
     });
     await takeEditorScreenshot(page);
   });
@@ -61,7 +61,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressCancelButton();
+      await MiewDialog(page).cancel();
     });
     await takeEditorScreenshot(page);
   });
@@ -78,7 +78,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressCancelButton();
+      await MiewDialog(page).cancel();
     });
     await takeEditorScreenshot(page);
   });
@@ -98,7 +98,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressCancelButton();
+      await MiewDialog(page).cancel();
     });
     await takeEditorScreenshot(page);
   });
@@ -162,7 +162,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressApplyButton();
+      await MiewDialog(page).apply();
     });
 
     // Get the structure data after making changes
@@ -184,7 +184,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, 80);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressApplyButton();
+      await MiewDialog(page).apply();
     });
 
     // Get the structure data after making changes
@@ -205,7 +205,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, 75);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressApplyButton();
+      await MiewDialog(page).apply();
     });
 
     // Get the structure data after making changes
@@ -229,7 +229,7 @@ test.describe('3D Viewer', () => {
     await open3DViewer(page);
     await dragMouseAndMoveTo(page, -90);
     await waitForRender(page, async () => {
-      await MiewDialog(page).pressApplyButton();
+      await MiewDialog(page).apply();
     });
 
     // Get the structure data after making changes

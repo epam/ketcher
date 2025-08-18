@@ -2,7 +2,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,

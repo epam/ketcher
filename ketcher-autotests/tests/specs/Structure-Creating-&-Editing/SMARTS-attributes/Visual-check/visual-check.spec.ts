@@ -9,7 +9,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
@@ -27,6 +26,7 @@ import {
   SubstitutionCount,
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');
@@ -122,7 +122,10 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Test case: https://github.com/epam/ketcher/issues/3327
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: {
         Valence: Valence.Eight,
@@ -133,9 +136,9 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
         Connectivity: Connectivity.Six,
       },
     });
-    await waitForRender(page, async () => {
+    if (point) {
       await page.mouse.move(point.x, point.y);
-    });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -158,12 +161,16 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
       'V',
       'Fe',
     ];
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
     await setListOfAtoms(page, atomLabels);
     await pressButton(page, 'Apply');
-    await waitForRender(page, async () => {
-      await page.mouse.move(point.x, point.y);
-    });
+    if (point) {
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x, point.y);
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -175,7 +182,9 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
     const atomLabels = ['Rb', 'Sm'];
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
     await setListOfAtoms(page, atomLabels);
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
@@ -185,9 +194,11 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
         RingSize: RingSize.Six,
       },
     });
-    await waitForRender(page, async () => {
-      await page.mouse.move(point.x, point.y);
-    });
+    if (point) {
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x, point.y);
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -235,11 +246,15 @@ test.describe('Checking if atoms are displayed correctly', () => {
     Test case: https://github.com/epam/ketcher/issues/3362
     Description: when you replace an atom with the selected one, no additional symbols should appear next to it.
     */
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
     const pixelsToMoveMouse = 100;
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Ti);
-    await clickOnCanvas(page, point.x, point.y);
-    await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
+    if (point) {
+      await clickOnCanvas(page, point.x, point.y);
+      await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
+    }
     await takeEditorScreenshot(page);
   });
 });

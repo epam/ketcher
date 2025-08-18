@@ -29,7 +29,6 @@ import {
   MolFileFormat,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -64,6 +63,7 @@ import {
   TabSection,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -285,10 +285,9 @@ test.describe('Template Manupulations', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    const point = await getAtomByIndex(page, { label: 'S' }, 0);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnCanvas(page, point.x, point.y);
+    await getAtomLocator(page, { atomLabel: 'S', atomId: 0 }).click();
     await AttachmentPointsDialog(
       page,
     ).primaryAttachmentPointCheckbox.setChecked(true);
@@ -298,7 +297,10 @@ test.describe('Template Manupulations', () => {
       SelectionToolType.Rectangle,
     );
 
-    await ContextMenu(page, point).click(MicroAtomOption.Edit);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'S', atomId: 0 }),
+    ).click(MicroAtomOption.Edit);
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
     await page.getByTestId('OK').click();

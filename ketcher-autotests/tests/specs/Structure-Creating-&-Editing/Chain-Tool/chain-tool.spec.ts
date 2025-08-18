@@ -6,7 +6,6 @@ import {
   getBottomAtomByAttributes,
   getRightAtomByAttributes,
 } from '@utils/canvas/atoms';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {
@@ -19,6 +18,9 @@ import { waitForPageInit } from '@utils/common';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -73,8 +75,8 @@ test.describe('Chain Tool drawing', () => {
     Description: Drawing the chain on the canvas, selecting and changing atoms
     */
 
-    point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.move(point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).hover();
     await keyboardPressOnCanvas(page, 'o');
     await takeEditorScreenshot(page);
   });

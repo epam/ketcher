@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { expect, test } from '@playwright/test';
+import { test } from '@fixtures';
+import { expect, Page } from '@playwright/test';
 import {
   AtomsSetting,
   StereochemistrySetting,

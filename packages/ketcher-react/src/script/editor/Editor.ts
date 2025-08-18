@@ -575,7 +575,7 @@ class Editor implements KetcherEditor {
       return true;
     }
 
-    const selection: Selection = this.explicitSelected();
+    const selection: Selection = this.explicitSelected(false);
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
@@ -1129,7 +1129,7 @@ class Editor implements KetcherEditor {
     return closest.merge(this.render.ctab, srcItems, maps, this.render.options);
   }
 
-  explicitSelected() {
+  explicitSelected(autoSelectBonds = true) {
     const selection = this.selection() || {};
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : [];
@@ -1156,7 +1156,7 @@ class Editor implements KetcherEditor {
     }
 
     // "auto-select" the bonds with both atoms selected
-    if (res.atoms && res.bonds) {
+    if (autoSelectBonds && res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
           res.bonds.indexOf(bid) < 0 &&

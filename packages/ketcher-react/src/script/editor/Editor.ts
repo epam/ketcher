@@ -49,6 +49,7 @@ import {
   getHELMClassByKetMonomerClass,
   genericsList,
   fillNaturalAnalogueForPhosphateAndSugar,
+  normalizeMonomerAtomsPositions,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -809,7 +810,7 @@ class Editor implements KetcherEditor {
       fullName: name,
       naturalAnalogShort: naturalAnalogueToUse,
       // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
-      atoms: ketMicromolecule.mol0.atoms,
+      atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
       root: {

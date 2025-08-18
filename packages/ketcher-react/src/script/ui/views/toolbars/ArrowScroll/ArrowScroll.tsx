@@ -53,10 +53,10 @@ const ArrowScroll = ({
 
   return (
     <div
-      className={[
+      className={clsx(
         classes.scroll,
         isLeftRight ? classes.leftRight : classes.upDown,
-      ].join(' ')}
+      )}
     >
       {endInView ? (
         <></>

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -423,20 +423,15 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1937
      * Description: Open and Save file - InChi string for Sgroup
      */
-    const warningsTab = SaveStructureDialog(page).warningsTab;
-    const warningTextarea = SaveStructureDialog(page).warningTextarea;
+    const saveStructureDialog = SaveStructureDialog(page);
 
     await openFileAndAddToCanvas(page, 'KET/chain-with-s-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.InChI,
-    );
-    await warningsTab.click();
+    await saveStructureDialog.chooseFileFormat(MoleculesFileFormatType.InChI);
 
-    const warningText = await warningTextarea.evaluate(
-      (node) => node.textContent,
-    );
-    expect(warningText).toEqual(
+    await saveStructureDialog.switchToWarningsTab();
+
+    await expect(saveStructureDialog.warningTextarea).toContainText(
       'In InChI the structure will be saved without S-groups',
     );
   });

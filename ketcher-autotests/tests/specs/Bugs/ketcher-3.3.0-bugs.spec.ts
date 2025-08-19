@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -28,7 +28,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { Phosphates } from '@constants/monomers/Phosphates';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
@@ -106,13 +106,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Check name for sugar in the library for fR
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).dragMonomerOnCanvas(Sugars.fR, {
+    await Library(page).dragMonomerOnCanvas(Sugar.fR, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await keyboardPressOnCanvas(page, 'Escape');
-    await getMonomerLocator(page, Sugars.fR).first().hover();
+    await getMonomerLocator(page, Sugar.fR).first().hover();
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takeEditorScreenshot(page);
@@ -130,8 +130,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Without clicking again, hover over another monomer in the library
      */
     await Library(page).openRNASection(RNASection.Sugars);
-    await Library(page).selectMonomer(Sugars._5R6Sm5);
-    await Library(page).hoverMonomer(Sugars.ALmecl);
+    await Library(page).selectMonomer(Sugar._5R6Sm5);
+    await Library(page).hoverMonomer(Sugar.ALmecl);
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takeMonomerLibraryScreenshot(page);
@@ -150,7 +150,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 5. Observe that a tooltip appears after monomer stops moving, even though mouse button remains pressed
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).dragMonomerOnCanvas(Peptides._2Nal, {
+    await Library(page).dragMonomerOnCanvas(Peptide._2Nal, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -161,7 +161,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Peptides._2Nal).click();
+    await getMonomerLocator(page, Peptide._2Nal).click();
     await page.mouse.down();
     await page.mouse.move(300, 400);
     // Screenshot suppression is not used on purpose, as it’s required for the test
@@ -178,14 +178,14 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Put any monomer on the canvas click on it and move mouse away
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).dragMonomerOnCanvas(Peptides.meC, {
+    await Library(page).dragMonomerOnCanvas(Peptide.meC, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await clickInTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'Escape');
-    await getMonomerLocator(page, Peptides.meC).click();
+    await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -228,12 +228,12 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Go to Library - RNA tab
      * 3. Select h456UR and e6A monomers
      */
-    await Library(page).selectMonomer(Bases.h456UR);
+    await Library(page).selectMonomer(Base.h456UR);
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takePageScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
-    await Library(page).selectMonomer(Bases.e6A);
+    await Library(page).selectMonomer(Base.e6A);
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takePageScreenshot(page);
@@ -259,7 +259,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Peptides.D).click();
+    await getMonomerLocator(page, Peptide.D).click();
     await page.mouse.down();
     await page.mouse.move(630, 340);
     await takeEditorScreenshot(page, {
@@ -283,9 +283,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
-      Sugars.UNA,
-      Bases.V,
-      Phosphates.Test_6_Ph,
+      Sugar.UNA,
+      Base.V,
+      Phosphate.Test_6_Ph,
     ]);
     await takeMonomerLibraryScreenshot(page);
     await Library(page).rnaBuilder.selectSugarSlot();
@@ -583,7 +583,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await modifyInRnaBuilder(page, symbolLocator);
     await Library(page).rnaBuilder.selectBaseSlot();
-    await Library(page).selectMonomer(Bases.V);
+    await Library(page).selectMonomer(Base.V);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -660,7 +660,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    const sugarR = getMonomerLocator(page, Sugars.R).first();
+    const sugarR = getMonomerLocator(page, Sugar.R).first();
     await createRNAAntisenseChain(page, sugarR);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -766,7 +766,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
 
     await modifyInRnaBuilder(page, symbolLocator);
     await Library(page).rnaBuilder.selectBaseSlot();
-    await Library(page).selectMonomer(Bases.DNA_N);
+    await Library(page).selectMonomer(Base.DNA_N);
     await Library(page).rnaBuilder.save();
     await verifyHELMExport(page, 'RNA1{r(A)p.r(A,C,G,T)p.r(A)}$$$$V2.0');
   });
@@ -784,7 +784,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 5. Draw cyclohexane and compare the bond length and angle
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).dragMonomerOnCanvas(Peptides._1Nal, {
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -799,10 +799,10 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await selectAllStructuresOnCanvas(page);
     const peptide1Nal = page
       .getByTestId(KETCHER_CANVAS)
-      .getByText(Peptides._1Nal.alias, { exact: true });
+      .getByText(Peptide._1Nal.alias, { exact: true });
     await expandMonomer(page, peptide1Nal);
     await selectRingButton(page, RingButton.Cyclohexane);
-    await clickOnCanvas(page, 505, 400);
+    await clickOnCanvas(page, 505, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

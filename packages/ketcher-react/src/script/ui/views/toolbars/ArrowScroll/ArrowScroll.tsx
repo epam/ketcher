@@ -22,20 +22,22 @@ import { useInterval } from '../../../../../hooks';
 interface ArrowScrollProps {
   startInView: boolean;
   endInView: boolean;
-  scrollUp: any;
-  scrollDown: any;
+  scrollForward: any;
+  scrollBack: any;
+  isLeftRight?: boolean;
 }
 
 const ArrowScroll = ({
   startInView,
   endInView,
-  scrollUp,
-  scrollDown,
+  scrollForward,
+  scrollBack,
+  isLeftRight,
 }: ArrowScrollProps) => {
   const [isScrollDown, setScrollDown] = useState(false);
   const [isScrollUp, setScrollUp] = useState(false);
-  useInterval(scrollDown, isScrollDown ? 100 : null);
-  useInterval(scrollUp, isScrollUp ? 100 : null);
+  useInterval(scrollBack, isScrollDown ? 100 : null);
+  useInterval(scrollForward, isScrollUp ? 100 : null);
 
   useEffect(() => {
     return () => {
@@ -50,29 +52,40 @@ const ArrowScroll = ({
   }, [endInView]);
 
   return (
-    <div className={classes.scroll}>
+    <div
+      className={clsx(
+        classes.scroll,
+        isLeftRight ? classes.leftRight : classes.upDown,
+      )}
+    >
       {endInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollDown()}
+          onClick={scrollForward}
           onMouseUp={() => setScrollDown(false)}
           onMouseDown={() => setScrollDown(true)}
-          className={clsx(classes.button, classes.down)}
+          className={clsx(
+            classes.button,
+            isLeftRight ? classes.right : classes.down,
+          )}
         >
-          ▼
+          {isLeftRight ? '►' : '▼'}
         </button>
       )}
       {startInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollUp()}
+          onClick={scrollBack}
           onMouseUp={() => setScrollUp(false)}
           onMouseDown={() => setScrollUp(true)}
-          className={clsx(classes.button, classes.up)}
+          className={clsx(
+            classes.button,
+            isLeftRight ? classes.left : classes.up,
+          )}
         >
-          ▲
+          {isLeftRight ? '◄' : '▲'}
         </button>
       )}
     </div>

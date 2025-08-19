@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -91,7 +91,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getMonomerLocator(page, Peptides.A).click();
+    await getMonomerLocator(page, Peptide.A).click();
     await page.mouse.down();
     await page.mouse.move(600, 400);
     await takeEditorScreenshot(page, {
@@ -345,10 +345,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    const phosphateP = getMonomerLocator(page, Phosphates.P).first();
-    const sugarR = getMonomerLocator(page, Sugars.R).nth(1);
-    const phosphatebP = getMonomerLocator(page, Phosphates.bP).first();
-    const baseA = getMonomerLocator(page, Bases.A).nth(1);
+    const phosphateP = getMonomerLocator(page, Phosphate.P).first();
+    const sugarR = getMonomerLocator(page, Sugar.R).nth(1);
+    const phosphatebP = getMonomerLocator(page, Phosphate.bP).first();
+    const baseA = getMonomerLocator(page, Base.A).nth(1);
 
     await page.keyboard.down('Shift');
     await phosphateP.click();
@@ -511,7 +511,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Sugars.R).first().click();
+    await getMonomerLocator(page, Sugar.R).first().click();
     await page.mouse.down();
     const coords = [
       [750, 250],
@@ -935,7 +935,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       .getByTestId(KETCHER_CANVAS)
       .getByText('P', { exact: true });
     await ContextMenu(page, symbolP).click(MonomerOnMicroOption.ExpandMonomers);
-    await clickOnCanvas(page, 500, 500);
+    await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

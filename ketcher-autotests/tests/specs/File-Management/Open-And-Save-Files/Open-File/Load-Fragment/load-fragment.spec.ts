@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -209,6 +209,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
+        from: 'pageTopLeft',
       });
     }
 

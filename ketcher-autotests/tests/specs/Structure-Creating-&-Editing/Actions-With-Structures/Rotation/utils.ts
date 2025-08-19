@@ -86,7 +86,9 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
 }
 
 export async function resetSelection(page: Page) {
-  await clickOnCanvas(page, EMPTY_SPACE_X, EMPTY_SPACE_Y);
+  await clickOnCanvas(page, EMPTY_SPACE_X, EMPTY_SPACE_Y, {
+    from: 'pageTopLeft',
+  });
 }
 
 export async function addStructureAndSelect(

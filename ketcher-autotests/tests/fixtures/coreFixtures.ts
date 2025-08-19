@@ -3,6 +3,10 @@
 import { test as base, Page, TestInfoError } from '@playwright/test';
 import { waitForPageInit } from '@utils';
 
+type CoreTestFixtures = {
+  ketcherTestInfo: object;
+};
+
 type CoreWorkerFixtures = {
   ketcher: {
     page?: Page;
@@ -14,7 +18,7 @@ type CoreWorkerFixtures = {
   closePage: () => Promise<void>;
 };
 
-export const test = base.extend<{}, CoreWorkerFixtures>({
+export const test = base.extend<CoreTestFixtures, CoreWorkerFixtures>({
   createPage: [
     async ({ browser, ketcher }, use) => {
       await use(async () => {
@@ -54,13 +58,16 @@ export const test = base.extend<{}, CoreWorkerFixtures>({
     { scope: 'worker', auto: true },
   ],
 
-  page: async ({ ketcher }, use, testInfo) => {
-    ketcher.testError = undefined;
-    ketcher.testStatus = undefined;
-    ketcher.testTimeout = undefined;
-    await use(ketcher.page as Page);
-    ketcher.testError = testInfo.error;
-    ketcher.testStatus = testInfo.status;
-    ketcher.testTimeout = testInfo.timeout;
-  },
+  ketcherTestInfo: [
+    async ({ ketcher }, use, testInfo) => {
+      ketcher.testError = undefined;
+      ketcher.testStatus = undefined;
+      ketcher.testTimeout = undefined;
+      await use({});
+      ketcher.testError = testInfo.error;
+      ketcher.testStatus = testInfo.status;
+      ketcher.testTimeout = testInfo.timeout;
+    },
+    { scope: 'test', auto: true },
+  ],
 });

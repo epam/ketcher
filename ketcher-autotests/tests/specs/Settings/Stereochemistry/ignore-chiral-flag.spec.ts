@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -42,7 +42,7 @@ test.describe('Ignore Chiral Flag', () => {
     await clickInTheMiddleOfTheScreen(page);
     // await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +60,7 @@ test.describe('Ignore Chiral Flag', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, pointY, pointZ);
+    await clickOnCanvas(page, pointY, pointZ, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

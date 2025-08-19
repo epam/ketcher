@@ -47,6 +47,8 @@ import {
   IKetMonomerTemplate,
   setMonomerTemplatePrefix,
   getHELMClassByKetMonomerClass,
+  genericsList,
+  fillNaturalAnalogueForPhosphateAndSugar,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -577,6 +579,27 @@ class Editor implements KetcherEditor {
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
+
+      const selectionInvalid = selection.atoms.some((atomId) => {
+        const atom = this.render.ctab.molecule.atoms.get(atomId);
+        if (!atom) {
+          return false;
+        }
+
+        // Selection should not contain S-Groups, R-Groups or atoms from extended table
+        return (
+          atom.sgs.size > 0 ||
+          genericsList.includes(atom.label) ||
+          this.render.ctab.molecule.rgroups.some((rgroup) =>
+            rgroup.frags.has(atom.fragment),
+          )
+        );
+      });
+
+      if (selectionInvalid) {
+        return false;
+      }
+
       const isSelectionContinuous = Editor.isSelectionContinuous(
         selection,
         currentStruct,
@@ -593,9 +616,13 @@ class Editor implements KetcherEditor {
         );
       });
 
-      this.singleBondsToOutsideOfSelection = bondsToOutside.filter(
-        (_, bond) => bond.type === Bond.PATTERN.TYPE.SINGLE,
-      );
+      if (
+        bondsToOutside.some((bond) => bond.type !== Bond.PATTERN.TYPE.SINGLE)
+      ) {
+        return false;
+      }
+
+      this.singleBondsToOutsideOfSelection = bondsToOutside;
 
       return (
         this.singleBondsToOutsideOfSelection.size > 0 &&
@@ -768,6 +795,10 @@ class Editor implements KetcherEditor {
     const monomerId = `${symbol}___${name}`;
     const monomerRef = setMonomerTemplatePrefix(monomerId);
     const monomerHELMClass = getHELMClassByKetMonomerClass(type);
+    const naturalAnalogueToUse = fillNaturalAnalogueForPhosphateAndSugar(
+      naturalAnalogue,
+      type,
+    );
 
     const monomerTemplate: IKetMonomerTemplate = {
       type: KetTemplateType.MONOMER_TEMPLATE,
@@ -776,7 +807,7 @@ class Editor implements KetcherEditor {
       classHELM: monomerHELMClass,
       alias: symbol,
       fullName: name,
-      naturalAnalogShort: naturalAnalogue,
+      naturalAnalogShort: naturalAnalogueToUse,
       // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
       atoms: ketMicromolecule.mol0.atoms,
       bonds: ketMicromolecule.mol0.bonds,
@@ -1066,6 +1097,13 @@ class Editor implements KetcherEditor {
         ketcherProvider
           .getKetcher(this.ketcherId)
           .changeEvent.add(subscribeFuncWrapper);
+        break;
+      }
+
+      case 'libraryUpdate': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .libraryUpdateEvent.add(handler);
         break;
       }
 

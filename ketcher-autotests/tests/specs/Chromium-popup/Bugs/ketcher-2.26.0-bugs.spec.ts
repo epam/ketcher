@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -36,7 +36,6 @@ import {
   RdfFileFormat,
   MolFileFormat,
   ZoomOutByKeyboard,
-  getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { delay, selectAllStructuresOnCanvas } from '@utils/canvas';
@@ -64,9 +63,9 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
@@ -385,7 +384,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6947
        * Bug: https://github.com/epam/ketcher/issues/5634
-       * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+       * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
        * Scenario:
        * 1. Go to Macro - Snake mode
        * 2. Load from file
@@ -805,19 +804,19 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       );
       await CommonTopRightToolbar(page).setZoomInputValue('75');
       await resetCurrentTool(page);
-      await getMonomerLocator(page, Peptides.Cys_Bn).hover();
+      await getMonomerLocator(page, Peptide.Cys_Bn).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
 
-      const _25mo3rSugars = getMonomerLocator(page, Sugars._25mo3r);
-      await _25mo3rSugars.hover();
+      const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
+      await _25mo3rSugar.hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
 
-      const mspPhosphates = getMonomerLocator(page, Phosphates.msp);
-      await mspPhosphates.hover();
+      const mspPhosphate = getMonomerLocator(page, Phosphate.msp);
+      await mspPhosphate.hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -1085,7 +1084,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         page,
         getAtomLocator(page, { atomLabel: 'N', atomId: 0 }),
       ).click([MicroBondOption.Highlight, HighlightOption.Green]);
-      await clickOnCanvas(page, 100, 100);
+      await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
     },
   );
@@ -1445,13 +1444,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await selectAllStructuresOnCanvas(page);
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
-      await clickOnCanvas(page, 500, 650);
+      await clickOnCanvas(page, 500, 650, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
       await pasteFromClipboardByKeyboard(page);
-      await clickOnCanvas(page, 500, 550);
+      await clickOnCanvas(page, 500, 550, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
     },
   );
@@ -1942,7 +1941,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await closeErrorAndInfoModals(page);
       await pasteFromClipboardByKeyboard(page);
       await moveMouseAway(page);
-      await clickOnCanvas(page, 300, 200);
+      await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
     },
   );
@@ -2113,10 +2112,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
         enableFlexMode: true,
       });
-      const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(
-        page,
-      );
-      await Library(page).dragMonomerOnCanvas(Sugars.R, centerOfTheCanvas);
+      await Library(page).dragMonomerOnCanvas(Sugar.R, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.IDT,

@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -26,7 +26,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   FileType,
   verifyFileExport,
@@ -51,7 +51,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -425,7 +425,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
     );
     await LeftToolbar(page).stereochemistry();
-    await EnhancedStereochemistry(page).pressApplyButton();
+    await EnhancedStereochemistry(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -532,10 +532,10 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides._1Nal).click();
-    await getMonomerLocator(page, Peptides.A).click();
-    await getMonomerLocator(page, Peptides.D).first().click();
-    await getMonomerLocator(page, Peptides.C).first().click();
+    await getMonomerLocator(page, Peptide._1Nal).click();
+    await getMonomerLocator(page, Peptide.A).click();
+    await getMonomerLocator(page, Peptide.D).first().click();
+    await getMonomerLocator(page, Peptide.C).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -590,9 +590,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, 570, 400);
-    await clickOnCanvas(page, 600, 360);
-    await clickOnCanvas(page, 600, 420);
+    await clickOnCanvas(page, 570, 400, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 360, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 420, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

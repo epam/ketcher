@@ -2630,10 +2630,16 @@ export class DrawingEntitiesManager {
   private deleteBondChangeModel(bond: Bond) {
     this.bonds.delete(bond.id);
 
+    const firstAtom = bond.firstAtom;
+    const secondAtom = bond.secondAtom;
+    [firstAtom, secondAtom].forEach((atom) => {
+      atom.deleteBond(bond.id);
+    });
+
     return bond;
   }
 
-  private deleteBond(bond: Bond) {
+  private deleteBond(bond: Bond, needToDeleteDisconnectedAtoms = true) {
     const command = new Command();
 
     command.addOperation(
@@ -2652,6 +2658,25 @@ export class DrawingEntitiesManager {
       ),
     );
 
+    const firstAtom = bond.firstAtom;
+    const secondAtom = bond.secondAtom;
+    [firstAtom, secondAtom].forEach((atom) => {
+      atom.deleteBond(bond.id);
+
+      if (
+        !needToDeleteDisconnectedAtoms ||
+        !atom.bonds.every((atomBond) => atomBond instanceof MonomerToAtomBond)
+      ) {
+        return;
+      }
+
+      this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+        if (monomerToAtomBond.atom !== atom || monomerToAtomBond.selected) {
+          return;
+        }
+        command.merge(this.deleteAtom(atom, true));
+      });
+    });
     return command;
   }
 

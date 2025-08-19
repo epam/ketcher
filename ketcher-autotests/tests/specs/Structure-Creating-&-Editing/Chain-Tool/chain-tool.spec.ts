@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
@@ -55,7 +55,9 @@ test.describe('Chain Tool drawing', () => {
     await dragMouseTo(point.x, point.y + DELTA, page);
 
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
+    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
+      from: 'pageTopLeft',
+    });
 
     await LeftToolbar(page).chain();
     point = await getBottomAtomByAttributes(page, { label: 'C' });
@@ -88,12 +90,12 @@ test.describe('Chain Tool drawing', () => {
     */
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
     const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
     expect(doubleBond.type).toEqual(BondType.DOUBLE);
 
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
     expect(tripleBond.type).toEqual(BondType.TRIPLE);
     await takeEditorScreenshot(page);

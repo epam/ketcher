@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  clickOnTheCanvas,
+  clickOnCanvas,
   applyAutoMapMode,
   waitForPageInit,
   clickOnAtom,
@@ -53,12 +53,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await expect(reactionAutoMappingButton).toBeDisabled();
     await LeftToolbar(page).reactionPlusTool();
 
-    await clickOnTheCanvas(page, point1.x, point1.y);
+    await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
 
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-    await clickOnTheCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageCenter' });
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );

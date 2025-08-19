@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page, expect } from '@playwright/test';
+import { test, Page, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -55,7 +55,7 @@ async function mergeRingByBond(type: RingButton, page: Page) {
     await BottomToolbar(page).clickRing(type);
   });
   const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {
@@ -80,7 +80,12 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
-  await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
+  await clickOnCanvas(
+    page,
+    point.x + selectionRange,
+    point.y + selectionRange,
+    { from: 'pageTopLeft' },
+  );
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);
@@ -94,7 +99,7 @@ async function deleteRightBondInRing(page: Page) {
   });
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
   await deleteByKeyboard(page);
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -16,9 +16,9 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Bases } from '@constants/monomers/Bases';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Base } from '@tests/pages/constants/monomers/Bases';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -56,7 +56,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await Library(page).selectMonomer(Sugars._25R);
+    await Library(page).selectMonomer(Sugar._25R);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, {
       hideMonomerPreview: true,
@@ -86,7 +86,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see uploaded nucleotide (nucleoside + phosphate) data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     // Update Sugar and Phosphate
-    await Library(page).selectMonomers([Sugars._25R, Phosphates.bP]);
+    await Library(page).selectMonomers([Sugar._25R, Phosphate.bP]);
     // should see updated sugar and phosphate, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.save();
@@ -110,7 +110,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see uploaded data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     // Update Sugar and Phosphate
-    await Library(page).selectMonomers([Sugars._25R, Phosphates.bP]);
+    await Library(page).selectMonomers([Sugar._25R, Phosphate.bP]);
     // should see updated sugar and phosphate of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.save();
@@ -123,7 +123,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
     await symbolT.click();
     await modifyInRnaBuilder(page, symbolT);
-    await Library(page).selectMonomer(Sugars._25R);
+    await Library(page).selectMonomer(Sugar._25R);
     await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
@@ -147,7 +147,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await modifyInRnaBuilder(page, symbolT);
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await Library(page).selectMonomers([Sugars._25R, Phosphates.bP]);
+    await Library(page).selectMonomers([Sugar._25R, Phosphate.bP]);
     // should see updated sugar and phosphate, and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.save();
@@ -248,11 +248,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
-    await Library(page).selectMonomers([
-      Sugars._3A6,
-      Bases.dabA,
-      Phosphates.sP_,
-    ]);
+    await Library(page).selectMonomers([Sugar._3A6, Base.dabA, Phosphate.sP_]);
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -268,11 +264,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await getSymbolLocator(page, { symbolAlias: 'p' }).first().click();
     await page.keyboard.up('Shift');
     await modifyInRnaBuilder(page, symbolG);
-    await Library(page).selectMonomers([
-      Sugars._3A6,
-      Bases.dabA,
-      Phosphates.sP_,
-    ]);
+    await Library(page).selectMonomers([Sugar._3A6, Base.dabA, Phosphate.sP_]);
     await moveMouseAway(page);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page);
@@ -303,7 +295,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
-    await Library(page).selectMonomer(Phosphates.sP_);
+    await Library(page).selectMonomer(Phosphate.sP_);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -328,7 +320,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await page.keyboard.up('Shift');
     await modifyInRnaBuilder(page, symbolG);
     await takeRNABuilderScreenshot(page);
-    await Library(page).selectMonomer(Phosphates.sP_);
+    await Library(page).selectMonomer(Phosphate.sP_);
     await Library(page).rnaBuilder.save();
     await page.getByText('Yes').click();
     await takeEditorScreenshot(page);

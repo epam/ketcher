@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -10,7 +10,7 @@ import {
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
-  clickOnMiddleOfCanvas,
+  clickOnCanvas,
   zoomWithMouseWheel,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
@@ -140,7 +140,7 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
     );
 
-    await getMonomerLocator(page, Peptides.DTrp2M).hover();
+    await getMonomerLocator(page, Peptide.DTrp2M).hover();
     await waitForMonomerPreview(page);
     await zoomWithMouseScrollAndTakeScreenshot(page);
   });
@@ -238,7 +238,7 @@ test.describe('Zoom Tool', () => {
       page,
       'KET/peptides-connected-through-chem.ket',
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
     await zoomWithMouseWheel(page, MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -275,19 +275,19 @@ test.describe('Zoom Tool', () => {
     const y = 350;
     const x1 = 650;
     const y1 = 150;
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await ZoomInByKeyboard(page, { repeat: 3 });
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x,
       y,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await ZoomOutByKeyboard(page, { repeat: 5 });
-    await Library(page).dragMonomerOnCanvas(Peptides.meD, {
+    await Library(page).dragMonomerOnCanvas(Peptide.meD, {
       x: x1,
       y: y1,
     });
@@ -303,12 +303,12 @@ test.describe('Zoom Tool', () => {
     */
     const x = 800;
     const y = 350;
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x,
       y,
     });
@@ -330,7 +330,7 @@ test.describe('Zoom Tool', () => {
       page,
       `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
     await dragMouseTo(100, 100, page);
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
@@ -185,11 +185,11 @@ test.describe('Calculated Values Tools', () => {
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 4);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.keyboard.up('Shift');
 
     await IndigoFunctionsToolbar(page).calculatedValues();
@@ -739,7 +739,7 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -762,7 +762,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V3000/a-query-unsaturated.mol',
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -782,7 +782,7 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',
@@ -802,7 +802,7 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(errorMessage).toHaveText(
       'Cannot calculate properties for structures with query features!',

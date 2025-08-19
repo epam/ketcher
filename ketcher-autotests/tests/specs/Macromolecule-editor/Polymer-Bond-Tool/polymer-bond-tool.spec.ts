@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { test, expect, Page } from '@playwright/test';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { test, expect, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
@@ -82,28 +82,28 @@ test('Create bond between two peptides', async () => {
   await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     400,
     400,
     1,
   );
   const peptide3 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     500,
     500,
     2,
   );
   const peptide4 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     500,
     200,
     3,
@@ -177,14 +177,14 @@ test('Select monomers and pass a bond', async () => {
   await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     400,
     400,
     1,
@@ -209,12 +209,12 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+  await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
     x: 0,
     y: 0,
     fromCenter: true,
   });
-  await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+  await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
     x,
     y,
   });
@@ -234,12 +234,12 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
-  await Library(page).dragMonomerOnCanvas(Presets.MOE_A_P, {
+  await Library(page).dragMonomerOnCanvas(Preset.MOE_A_P, {
     x: 0,
     y: 0,
     fromCenter: true,
   });
-  await Library(page).dragMonomerOnCanvas(Presets.dR_U_P, {
+  await Library(page).dragMonomerOnCanvas(Preset.dR_U_P, {
     x,
     y,
   });
@@ -566,7 +566,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded.
     */
   const bondLine = getBondLocator(page, {}).nth(1);
-  await Library(page).dragMonomerOnCanvas(Presets.MOE_A_P, {
+  await Library(page).dragMonomerOnCanvas(Preset.MOE_A_P, {
     x: 0,
     y: 0,
     fromCenter: true,
@@ -656,7 +656,7 @@ test('Verify behaviour when a non-bond is right-clicked', async () => {
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await ContextMenu(page, getMonomerLocator(page, Peptides.Phe4Me)).open();
+  await ContextMenu(page, getMonomerLocator(page, Peptide.Phe4Me)).open();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
@@ -675,8 +675,8 @@ test('Edit long bonds connections by Edit attachment point menu', async () => {
     6. Click on Reconnect
     7. Take screenshot
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -713,8 +713,8 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
     6. Perform Redo action
     7. Take screenshot
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -748,8 +748,8 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
     6. Perform Redo action
     7. Take screenshot
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -815,8 +815,8 @@ connectionVariants.forEach(({ from, to }) => {
     */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
-    const firstMonomer = getMonomerLocator(page, Peptides.C);
-    const secondMonomer = getMonomerLocator(page, Peptides.dC);
+    const firstMonomer = getMonomerLocator(page, Peptide.C);
+    const secondMonomer = getMonomerLocator(page, Peptide.dC);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/five-peptides-connected-by-r2-r1.ket',
@@ -861,8 +861,8 @@ connectionVariants2.forEach(({ from, to }) => {
       5. Take another screenshot
     */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    const firstMonomer = getMonomerLocator(page, Peptides.C);
-    const secondMonomer = getMonomerLocator(page, Peptides.dC);
+    const firstMonomer = getMonomerLocator(page, Peptide.C);
+    const secondMonomer = getMonomerLocator(page, Peptide.dC);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/five-peptides-connected-by-r2-r1.ket',
@@ -899,8 +899,8 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     5. Take screenshot
     */
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -938,8 +938,8 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     4. Open saved MOL V3000
     5. Take screenshot
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -979,10 +979,10 @@ test('Connection R3-R3 not overlap each other when connected on one structure', 
     We have a bug https://github.com/epam/ketcher/issues/6459
     After fix we should update snapshot.
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
-  const fourthMonomer = getMonomerLocator(page, Peptides.meC);
-  const fifthMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.Hcy);
+  const fourthMonomer = getMonomerLocator(page, Peptide.meC);
+  const fifthMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -1025,7 +1025,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   const coords = [
     [600, 350],
@@ -1061,7 +1061,7 @@ test('Check that magnetic areas (radial rays) exist only for monomers connected 
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   const coords = [
     [600, 350],
@@ -1097,7 +1097,7 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   const coords = [
@@ -1132,7 +1132,7 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   const coords = [
     [100, 150],
@@ -1166,7 +1166,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   const coords = [
     [520, 350],
@@ -1204,7 +1204,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection (horizontal le
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.mouse.move(650, 380);
   await takeEditorScreenshot(page, {
@@ -1212,7 +1212,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection (horizontal le
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.mouse.move(380, 380);
   await takeEditorScreenshot(page, {
@@ -1220,7 +1220,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection (horizontal le
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.mouse.move(480, 360);
   await takeEditorScreenshot(page, {
@@ -1248,7 +1248,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection (horizontal leng
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.mouse.move(530, 220);
   await takeEditorScreenshot(page, {
@@ -1256,7 +1256,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection (horizontal leng
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.mouse.move(500, 560);
   await takeEditorScreenshot(page, {
@@ -1264,7 +1264,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection (horizontal leng
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.mouse.move(500, 440);
   await takeEditorScreenshot(page, {
@@ -1292,7 +1292,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.mouse.move(635, 370);
   await takeEditorScreenshot(page, {
@@ -1300,7 +1300,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.mouse.move(420, 370);
   await takeEditorScreenshot(page, {
@@ -1308,7 +1308,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.mouse.move(485, 395);
   await takeEditorScreenshot(page, {
@@ -1336,7 +1336,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.mouse.move(530, 220);
   await takeEditorScreenshot(page, {
@@ -1344,7 +1344,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.mouse.move(500, 560);
   await takeEditorScreenshot(page, {
@@ -1352,7 +1352,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.mouse.move(500, 440);
   await takeEditorScreenshot(page, {
@@ -1378,7 +1378,7 @@ test('Check that if the user holds down CRTL (⌘/Command for MacOS) while movin
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(650, 380);
@@ -1388,7 +1388,7 @@ test('Check that if the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await page.mouse.up();
   await page.keyboard.up('Control');
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(380, 380);
@@ -1398,7 +1398,7 @@ test('Check that if the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await page.mouse.up();
   await page.keyboard.up('Control');
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(480, 360);
@@ -1425,7 +1425,7 @@ test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Co
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await getMonomerLocator(page, Peptides.meE).click();
+  await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(530, 220);
@@ -1435,7 +1435,7 @@ test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Co
   });
   await page.mouse.up();
   await page.keyboard.up('Control');
-  await getMonomerLocator(page, Peptides._2Nal).click();
+  await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(500, 560);
@@ -1445,7 +1445,7 @@ test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Co
   });
   await page.mouse.up();
   await page.keyboard.up('Control');
-  await getMonomerLocator(page, Peptides.Hhs).click();
+  await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
   await page.keyboard.down('Control');
   await page.mouse.move(500, 440);
@@ -1467,9 +1467,9 @@ test('Long bond not turns into a direct bond when moving the second monomer', as
     We have a bug https://github.com/epam/ketcher/issues/6458
     After fix we should update snapshot.
     */
-  const firstMonomer = getMonomerLocator(page, Peptides.C);
-  const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
-  const fifthMonomer = getMonomerLocator(page, Peptides.dC);
+  const firstMonomer = getMonomerLocator(page, Peptide.C);
+  const secondMonomer = getMonomerLocator(page, Peptide.Hcy);
+  const fifthMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',

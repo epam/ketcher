@@ -1,5 +1,5 @@
 import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -121,7 +121,7 @@ test.describe('Click Atom on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   BondType,
   clickOnAtom,
@@ -43,7 +43,9 @@ test.describe('Rectangle selection tool', () => {
 
   const selectionCoords = { x: 280, y: 200 };
   async function clickCanvas(page: Page) {
-    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y);
+    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y, {
+      from: 'pageTopLeft',
+    });
   }
 
   test('Structure selection with rectangle selection tool', async ({
@@ -91,7 +93,9 @@ test.describe('Rectangle selection tool', () => {
       point.x - moveMouseCoordinatesX,
       point.y + moveMouseCoordinatesY,
     );
-    await clickOnCanvas(page, point.x, point.y + atomNumber);
+    await clickOnCanvas(page, point.x, point.y + atomNumber, {
+      from: 'pageTopLeft',
+    });
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 

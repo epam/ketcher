@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {

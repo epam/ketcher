@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import {
   waitForPageInit,
   takePageScreenshot,
@@ -207,7 +207,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await MoleculesTopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takePageScreenshot(page);
   });
 
@@ -225,7 +225,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await MoleculesTopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

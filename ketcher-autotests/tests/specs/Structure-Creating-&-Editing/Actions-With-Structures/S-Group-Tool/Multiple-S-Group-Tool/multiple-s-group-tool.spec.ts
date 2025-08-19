@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -193,7 +193,9 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -127,7 +127,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -144,7 +144,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -161,7 +161,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -178,7 +180,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -269,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -287,7 +291,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -305,7 +309,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await copyToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -325,7 +329,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
 
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -341,7 +345,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -362,9 +366,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x2, y2);
+    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -380,7 +384,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -402,7 +406,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -445,7 +449,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -463,7 +467,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -484,7 +488,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
@@ -504,7 +508,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -525,7 +529,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -543,7 +547,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -564,7 +568,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -582,7 +588,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -601,7 +607,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -619,7 +627,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -637,7 +645,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -658,12 +668,16 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await openFileAndAddToCanvas(page, 'Rxn-V2000/allenes.rxn');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -683,7 +697,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -705,7 +719,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -725,7 +741,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -746,7 +762,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -767,7 +785,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -787,7 +805,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -804,7 +824,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -822,7 +842,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -842,7 +862,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -857,7 +877,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -875,7 +895,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -898,7 +920,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -920,7 +942,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -944,7 +968,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -968,7 +992,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -1010,7 +1036,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -1031,7 +1059,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1051,7 +1079,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -1074,7 +1104,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1097,7 +1127,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'S', anyAtom);
     await takeEditorScreenshot(page);

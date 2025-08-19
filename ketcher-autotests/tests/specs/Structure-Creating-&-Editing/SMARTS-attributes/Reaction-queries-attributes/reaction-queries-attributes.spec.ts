@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -50,11 +50,11 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await resetCurrentTool(page);
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
-  await clickOnCanvas;
 
   await atomToolbar.clickAtom(Atom.Oxygen);
   await clickOnCanvas(page, x + shiftForOxygen, y, {
     button: 'left',
+    from: 'pageTopLeft',
   });
 }
 
@@ -95,7 +95,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.QueryComponent,
     });
@@ -115,7 +115,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);
-    await clickOnCanvas(page, x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -141,7 +141,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnCanvas(page, x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
     await page.keyboard.press('Escape');
 
     await LeftToolbar(page).selectReactionMappingTool(

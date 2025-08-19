@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -16,7 +16,6 @@ import {
   moveOnBond,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
-  clickOnTheCanvas,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -64,6 +63,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -81,7 +81,7 @@ test.describe('Template Manupulations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await page.getByPlaceholder('template').click();
+    await TemplateEditDialog(page).clickMoleculeName();
     await takeEditorScreenshot(page);
   });
 });
@@ -372,13 +372,13 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
-    await clickOnTheCanvas(page, 1, 1);
+    await clickOnCanvas(page, 1, 1, { from: 'pageCenter' });
     await selectRingButton(page, RingButton.Cyclooctane);
     // eslint-disable-next-line no-magic-numbers
-    await clickOnTheCanvas(page, 1, -4);
+    await clickOnCanvas(page, 1, -4, { from: 'pageCenter' });
     await takePageScreenshot(page);
     await LeftToolbar(page).selectArrowTool();
-    await clickOnTheCanvas(page, 1, 0);
+    await clickOnCanvas(page, 1, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
     await zoomSelector.click();
     await takeEditorScreenshot(page);
@@ -535,7 +535,9 @@ test.describe('Template Manupulations', () => {
     const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -617,7 +619,7 @@ test.describe('Open Ketcher', () => {
     const xOffsetFromCenter = 40;
     await BottomToolbar(page).Benzene();
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
     await BottomToolbar(page).Cyclopentadiene();
     const point = await getRightAtomByAttributes(page, { label: 'C' });
@@ -642,7 +644,7 @@ test.describe('Open Ketcher', () => {
       AromaticsTemplate.Azulene,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
@@ -662,7 +664,7 @@ test.describe('Open Ketcher', () => {
     */
       const xOffsetFromCenter = 40;
       await selectRingButton(page, RingButton.Benzene);
-      await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+      await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
@@ -671,7 +673,7 @@ test.describe('Open Ketcher', () => {
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
-      await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+      await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
       await selectRingButton(page, RingButton.Benzene);
@@ -694,7 +696,7 @@ test.describe('Open Ketcher', () => {
       AromaticsTemplate.Naphtalene,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

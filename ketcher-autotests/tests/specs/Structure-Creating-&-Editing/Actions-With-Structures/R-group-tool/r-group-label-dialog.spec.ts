@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -57,7 +57,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +81,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -96,7 +96,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels([RGroup.R4, RGroup.R5, RGroup.R6]);
     await takeEditorScreenshot(page);
   });
@@ -111,7 +111,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await CommonLeftToolbar(page).selectEraseTool();
@@ -131,7 +131,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await page.getByText('R5').click();
@@ -152,7 +152,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.MultipleGroup,
@@ -176,7 +176,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await selectAllStructuresOnCanvas(page);
@@ -196,7 +196,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await page.getByText('R5').click();
@@ -221,7 +221,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await moveMouseAway(page);
 
@@ -245,7 +245,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await ZoomOutByKeyboard(page, { repeat: 5 });
@@ -265,7 +265,7 @@ test.describe('R-Group Label Tool', () => {
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -359,7 +359,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -372,7 +372,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

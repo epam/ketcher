@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -126,7 +126,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

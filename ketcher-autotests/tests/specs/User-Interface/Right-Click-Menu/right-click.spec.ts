@@ -1,6 +1,6 @@
 /* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -282,7 +282,7 @@ test.describe('Right-click menu', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
     ).click(MicroAtomOption.EnhancedStereochemistry);
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
-    await EnhancedStereochemistry(page).pressApplyButton();
+    await EnhancedStereochemistry(page).apply();
 
     await takeEditorScreenshot(page);
 
@@ -467,11 +467,11 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.keyboard.up('Shift');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);

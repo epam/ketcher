@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -148,7 +148,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await AtomPropertiesDialog(page).fillLabel('Na');
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -195,7 +195,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'N', 0);
 
     await AtomPropertiesDialog(page).fillLabel('J%');
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -352,7 +352,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await AtomPropertiesDialog(page).fillAlias('abc123TesREasd!@');
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -406,11 +406,11 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
 
     await doubleClickOnAtom(page, 'N', 0);
     await takeEditorScreenshot(page);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
 
     await doubleClickOnAtom(page, 'O', 0);
     await takeEditorScreenshot(page);
@@ -588,7 +588,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).fillIsotope('18');
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -735,7 +735,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).selectValence(Valence.Three);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -811,7 +811,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).selectRadical(Radical.Monoradical);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -953,7 +953,7 @@ test.describe('Atom Properties', () => {
     await AtomPropertiesDialog(page).selectRingBondCount(
       RingBondCount.As_Drawn,
     );
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -1149,7 +1149,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).selectHCount(HCount.Zero);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -1245,7 +1245,7 @@ test.describe('Atom Properties', () => {
     await AtomPropertiesDialog(page).selectSubstitutionCount(
       SubstitutionCount.Zero,
     );
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -1340,7 +1340,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).setUnsaturatedCheckbox(true);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -1467,7 +1467,9 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1525,7 +1527,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await AtomPropertiesDialog(page).expandReactionFlags();
     await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
-    await AtomPropertiesDialog(page).pressCancelButton();
+    await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -1544,7 +1546,7 @@ test.describe('Atom Properties', () => {
     await AtomPropertiesDialog(page).expandReactionFlags();
     await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
     await AtomPropertiesDialog(page).setExactChangeCheckbox(true);
-    await AtomPropertiesDialog(page).pressApplyButton();
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 

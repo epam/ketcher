@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -22,7 +22,7 @@ import {
   clickOnCanvas,
   openFile,
   pressButton,
-  clickOnTheCanvas,
+  delay,
 } from '@utils';
 import {
   copyAndPaste,
@@ -47,7 +47,7 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { Presets } from '@constants/monomers/Presets';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
@@ -205,7 +205,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Presets.U);
+    await Library(page).selectMonomer(Preset.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -372,8 +372,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Peptides.O);
-    await Library(page).selectMonomer(Peptides.K);
+    await Library(page).selectMonomer(Peptide.O);
+    await Library(page).selectMonomer(Peptide.K);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -581,6 +581,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takePageScreenshot(page);
     await page.keyboard.press('Alt+C');
+    await delay(1);
     await takePageScreenshot(page);
   });
 
@@ -675,10 +676,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await Library(page).selectMonomer(Peptides.X);
-    await Library(page).selectMonomer(Peptides.B);
-    await Library(page).selectMonomer(Peptides.J);
-    await Library(page).selectMonomer(Peptides.Z);
+    await Library(page).selectMonomer(Peptide.X);
+    await Library(page).selectMonomer(Peptide.B);
+    await Library(page).selectMonomer(Peptide.J);
+    await Library(page).selectMonomer(Peptide.Z);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -965,7 +966,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1372,13 +1373,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
-    await clickOnTheCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );
-    await clickOnTheCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
   });
 

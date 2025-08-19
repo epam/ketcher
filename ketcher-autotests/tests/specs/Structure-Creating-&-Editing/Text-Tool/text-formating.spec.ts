@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -155,7 +155,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('TEXT001');
     await TextEditorDialog(page).apply();
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

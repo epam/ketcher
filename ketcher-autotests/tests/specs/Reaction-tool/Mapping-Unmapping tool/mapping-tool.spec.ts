@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -103,7 +103,7 @@ test.describe('Mapping Tools', () => {
       ReactionMappingType.ReactionMapping,
     );
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

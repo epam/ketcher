@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -17,7 +17,7 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,
-  clickOnMicroBondByIndex,
+  findAndClickAllCenterBonds,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
@@ -141,14 +141,8 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   await takeEditorScreenshot(page);
 
   await CommonLeftToolbar(page).selectEraseTool();
-  // removing single bond
-  await clickOnMicroBondByIndex(page, 41);
-  // removing double bond
-  await clickOnMicroBondByIndex(page, 47);
-  // removing single up bond
-  await clickOnMicroBondByIndex(page, 53);
-  // removing single down bond
-  await clickOnMicroBondByIndex(page, 53);
+
+  await findAndClickAllCenterBonds(page);
 
   await takeEditorScreenshot(page);
 });

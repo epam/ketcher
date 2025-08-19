@@ -13,6 +13,7 @@ type LeftToolbarLocators = {
   chargeMinusButton: Locator;
   sGroupButton: Locator;
   rGroupToolsButton: Locator;
+  createMonomerButton: Locator;
   reactionPlusToolButton: Locator;
   arrowToolsButton: Locator;
   reactionMappingToolsButton: Locator;
@@ -29,6 +30,7 @@ export const LeftToolbar = (page: Page) => {
     chargeMinusButton: page.getByTestId('charge-minus'),
     sGroupButton: page.getByTestId('sgroup'),
     rGroupToolsButton: page.getByTestId('rgroup-drop-down-button'),
+    createMonomerButton: page.getByTestId('create-monomer'),
     reactionPlusToolButton: page.getByTestId('reaction-plus'),
     arrowToolsButton: page.getByTestId('arrows-drop-down-button'),
     reactionMappingToolsButton: page.getByTestId(
@@ -83,6 +85,10 @@ export const LeftToolbar = (page: Page) => {
     async selectRGroupTool(rGroupType: RGroupType = RGroupType.RGroupLabel) {
       await this.expandRGroupToolsDropdown();
       await page.getByTestId(rGroupType).first().click();
+    },
+
+    async createMonomer() {
+      await locators.createMonomer.click();
     },
 
     async reactionPlusTool() {

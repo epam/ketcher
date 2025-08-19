@@ -17,7 +17,10 @@ import {
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
-import { KetMonomerClass } from 'application/formatters';
+import {
+  KetMonomerClass,
+  KetMonomerTemplateAtom,
+} from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { IRnaPreset } from 'application/editor';
 
@@ -405,4 +408,44 @@ export const isHelmCompatible = (
       ),
     )
     .every((monomer) => Boolean(monomer?.props.aliasHELM));
+};
+
+export const normalizeMonomerAtomsPositions = (
+  atoms: KetMonomerTemplateAtom[],
+) => {
+  const bbox = {
+    x: 99999,
+    y: -99999,
+    x2: -9999,
+    y2: 9999,
+  };
+
+  atoms.forEach((atom) => {
+    if (atom.location[0] < bbox.x) {
+      bbox.x = atom.location[0];
+    }
+    if (atom.location[0] > bbox.x2) {
+      bbox.x2 = atom.location[0];
+    }
+    if (atom.location[1] > bbox.y) {
+      bbox.y = atom.location[1];
+    }
+    if (atom.location[1] < bbox.y2) {
+      bbox.y2 = atom.location[1];
+    }
+  });
+
+  const center = {
+    x: (bbox.x2 - bbox.x) / 2,
+    y: (bbox.y2 - bbox.y) / 2,
+  };
+
+  return atoms.map((atom) => ({
+    ...atom,
+    location: [
+      Number((atom.location[0] - bbox.x - center.x).toFixed(3)),
+      Number((atom.location[1] - bbox.y - center.y).toFixed(3)),
+      atom.location[2],
+    ] as [number, number, number],
+  }));
 };

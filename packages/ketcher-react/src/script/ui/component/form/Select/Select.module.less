@@ -102,12 +102,23 @@
     }
   }
 
+  :global(.MuiOutlinedInput-root.Mui-disabled .MuiSelect-select) {
+    &:hover {
+      border: 1px solid @color-border-input;
+    }
+  }
+
   :global(.Mui-focused .MuiSelect-select) {
     border-color: @color-primary;
   }
 
   :global(.MuiOutlinedInput-notchedOutline) {
     border: none;
+  }
+
+  :global(.Mui-error .MuiSelect-select) {
+    background-color: #FDE0DF;
+    border: 1px solid @color-secondary-red;
   }
 
   :global(.MuiSelect-icon) {

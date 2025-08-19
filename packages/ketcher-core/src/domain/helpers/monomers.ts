@@ -281,6 +281,27 @@ export const isLibraryItemRnaPreset = (
   return 'sugar' in item;
 };
 
+export const libraryItemHasR1AttachmentPoint = (
+  libraryItem: MonomerOrAmbiguousType | IRnaPreset,
+  attachmentPointName: AttachmentPointName = AttachmentPointName.R1,
+) => {
+  // Rely on MonomerCaps field is not the best approach,
+  // but for indeterminate library items it is universal and easy.
+  if (isLibraryItemRnaPreset(libraryItem)) {
+    return Boolean(
+      libraryItem.sugar?.props?.MonomerCaps?.[attachmentPointName],
+    );
+  } else if (isAmbiguousMonomerLibraryItem(libraryItem)) {
+    return libraryItem.monomers.every((monomer) =>
+      monomer.isAttachmentPointExistAndFree(
+        AttachmentPointName[attachmentPointName],
+      ),
+    );
+  } else {
+    return libraryItem.props.MonomerCaps?.[attachmentPointName];
+  }
+};
+
 export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,
 ): monomer is Peptide | AmbiguousMonomer {

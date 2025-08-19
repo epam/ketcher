@@ -713,7 +713,7 @@ export class CoreEditor {
     );
   }
 
-  private getDataForAutochain() {
+  public getDataForAutochain() {
     const selectedMonomersWithFreeR2 =
       this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
         return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
@@ -737,6 +737,7 @@ export class CoreEditor {
     return {
       selectedMonomerToConnect,
       newMonomerPosition,
+      selectedMonomersWithFreeR2,
     };
   }
 

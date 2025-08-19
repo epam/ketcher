@@ -53,7 +53,7 @@ export const Card = styled.div<{
   &:hover {
     outline: 1px solid #b4b9d6;
     > .star,
-    > .autochain {
+    .autochain {
       visibility: visible;
       opacity: 1;
     }
@@ -143,25 +143,24 @@ export const CardTitle = styled.span`
   font-size: 12px;
 `;
 
-export const AutochainIcon = styled(Icon)({
-  color: '#cad3dd',
-  strokeWidth: '0',
+export const AutochainIcon = styled(Icon)`
+  color: #cad3dd;
+  stroke-width: 0;
+  opacity: 0;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+  width: 13px;
+
+  &:active {
+    transform: scale(1.2);
+  }
+  &:hover {
+    color: #333333;
+  }
+`;
+
+export const AutochainIconWrapper = styled('div')({
   position: 'absolute',
   top: '12px',
   left: '4px',
-  opacity: 0,
-  transition: '0.2s ease',
-  flexShrink: 0,
-  '&.visible': {
-    color: '#333333',
-    visibility: 'visible',
-    opacity: 1,
-  },
-  '&:active': {
-    transform: 'scale(1.2)',
-  },
-  '&:hover': {
-    color: '#333333',
-  },
-  width: '13px',
 });

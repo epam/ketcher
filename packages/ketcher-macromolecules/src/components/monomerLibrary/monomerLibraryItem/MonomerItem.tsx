@@ -15,15 +15,44 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback, MouseEvent, useRef } from 'react';
+import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
-import { AutochainIcon, Card, CardTitle, NumberCircle } from './styles';
+import {
+  AutochainIcon,
+  AutochainIconWrapper,
+  Card,
+  CardTitle,
+  NumberCircle,
+} from './styles';
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
-import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import {
+  CoreEditor,
+  isAmbiguousMonomerLibraryItem,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import { selectEditor, selectIsSequenceMode } from 'state/common';
+import Tooltip from '@mui/material/Tooltip';
+
+export const cardMouseOverHandler = (
+  editor: CoreEditor,
+  monomerOrAmbiguousItem: MonomerOrAmbiguousType,
+  setAutochainErrorMessage: (message: string) => void,
+) => {
+  setAutochainErrorMessage('');
+
+  const { selectedMonomersWithFreeR2 } = editor.getDataForAutochain();
+  const selectedMonomers = editor.drawingEntitiesManager.selectedMonomers;
+
+  if (selectedMonomersWithFreeR2.length > 1) {
+    setAutochainErrorMessage(
+      'Select a monomer or a chain that has one R2 available.',
+    );
+  }
+};
 
 const MonomerItem = ({
   item,
@@ -37,6 +66,9 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const [autochainErrorMessage, setAutochainErrorMessage] = useState<
+    string | null
+  >(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -64,14 +96,37 @@ const MonomerItem = ({
   const onAutochainIconClick = useCallback(
     (event) => {
       event.stopPropagation();
+
+      if (autochainErrorMessage) {
+        return;
+      }
+
       editor?.events.autochain.dispatch(item);
     },
+    [editor, autochainErrorMessage, item],
+  );
+
+  const onMouseOver = useCallback(
+    () =>
+      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage),
     [editor, item],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
+    // if (selectedMonomers.length === 1 && item.) {
+    //   setAutochainErrorMessage(
+    //     'Select a monomer or a chain that has one R2 available.',
+    //   );
+    //
+    //   return;
+    // }
+
+    if (autochainErrorMessage) {
+      return;
+    }
+
     editor?.events.previewAutochain.dispatch(item);
-  }, [editor, item]);
+  }, [autochainErrorMessage, editor, item]);
 
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(item);
@@ -88,6 +143,7 @@ const MonomerItem = ({
       item={monomerItem}
       isVariantMonomer={item.isAmbiguous}
       code={colorCode}
+      onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       onDoubleClick={(e) => {
@@ -101,6 +157,8 @@ const MonomerItem = ({
       {!isDisabled && (
         <>
           {!isSequenceMode && (
+            <Tooltip title={autochainErrorMessage}>
+              <AutochainIconWrapper>
             <AutochainIcon
               className="autochain"
               name="monomer-autochain"
@@ -109,6 +167,8 @@ const MonomerItem = ({
               onClick={onAutochainIconClick}
               onDoubleClick={(e) => e.stopPropagation()}
             />
+              </AutochainIconWrapper>
+            </Tooltip>
           )}
           <div
             onClick={addFavorite}

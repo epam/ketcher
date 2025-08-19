@@ -59,7 +59,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await page.getByText('TEST').dblclick();
-    await TextEditorDialog(page).setText('TEST123');
+    await TextEditorDialog(page).addText('TEST123');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });

@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
@@ -73,7 +73,7 @@ test.describe('Zoom Tool', () => {
     // First monomer at the center of the screen
     peptide = await addSingleMonomerToCanvas(
       page,
-      Peptides.C,
+      Peptide.C,
       peptideCoordinates.x,
       peptideCoordinates.y,
       0,
@@ -84,7 +84,7 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out monomer with menu buttons', async () => {
     const zoomInCount = 4;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -93,7 +93,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await CommonTopRightToolbar(page).resetZoom();
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -103,7 +103,7 @@ test.describe('Zoom Tool', () => {
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -128,7 +128,7 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out attachment points with menu buttons', async () => {
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -175,7 +175,7 @@ test.describe('Zoom Tool', () => {
     const bondCoordinates = { x: 450, y: 450 };
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -232,7 +232,7 @@ test.describe('Zoom Tool', () => {
     const selectionEnd = { x: 400, y: 400 };
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await Library(page).dragMonomerOnCanvas(Peptides.C, {
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
       x: 0,
       y: 0,
       fromCenter: true,

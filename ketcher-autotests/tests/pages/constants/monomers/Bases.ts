@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Bases = createMonomerGroup(MonomerType.Base, {
+export const Base = createMonomerGroup(MonomerType.Base, {
   A: { alias: 'A', testId: 'A___Adenine' },
   _2imen2: {
     alias: '2imen2',
@@ -13,6 +13,7 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
   },
   _5meC: { alias: '5meC', testId: '5meC___5-methylcytosine' },
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' },
+  C: { alias: 'C', testId: 'C___Cytosine' },
   cpmA: {
     alias: 'cpmA',
     testId: 'cpmA___N6-cyclopropylmethyladenine',
@@ -32,6 +33,7 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
     alias: 'dabA',
     testId: 'dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine',
   },
+  G: { alias: 'G', testId: 'G___Guanine' },
   oC64m5: {
     alias: 'oC64m5',
     testId: 'oC64m5___4-Hexan-6-ol-5-methylcytosine',
@@ -98,4 +100,4 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
   },
 });
 
-export type BasesType = typeof Bases;
+export type BasesType = typeof Base;

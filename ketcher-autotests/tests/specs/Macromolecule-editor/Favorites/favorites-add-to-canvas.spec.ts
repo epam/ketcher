@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -11,9 +11,9 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-  await Library(page).addMonomerToFavorites(Peptides.A);
+  await Library(page).addMonomerToFavorites(Peptide.A);
   await Library(page).dragMonomerOnCanvas(
-    Peptides.A,
+    Peptide.A,
     {
       x: 0,
       y: 0,

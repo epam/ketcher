@@ -8,7 +8,7 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { Presets } from '@constants/monomers/Presets';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
@@ -55,7 +55,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
         LayoutMode.Flex,
       );
 
-      await Library(page).dragMonomerOnCanvas(Presets.A, {
+      await Library(page).dragMonomerOnCanvas(Preset.A, {
         x: 0,
         y: 0,
         fromCenter: true,

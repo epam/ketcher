@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
+import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
@@ -1824,8 +1824,8 @@ async function setupSenseAndAntiSenseSequences(
     await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
-  const senseBase = getMonomerLocator(page, Bases.c7io7n).first();
-  const antisenseBase = getMonomerLocator(page, Bases.c7io7n).nth(1);
+  const senseBase = getMonomerLocator(page, Base.c7io7n).first();
+  const antisenseBase = getMonomerLocator(page, Base.c7io7n).nth(1);
 
   await bondTwoMonomers(
     page,

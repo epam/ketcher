@@ -453,12 +453,11 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     });
   }
 
-  const sg = struct.sgroups.get(id);
-  const atoms = SGroup.getAtoms(struct, sg);
-  const attrs = sg?.getAttrs();
+  const atoms = SGroup.getAtoms(struct, sG);
+  const attrs = sG?.getAttrs();
 
   // cache attachment points before any structural changes
-  const cachedAttachmentPoints = sg?.getAttachmentPoints().map((ap) => ({
+  const cachedAttachmentPoints = sG?.getAttachmentPoints().map((ap) => ({
     atomId: ap.atomId,
     leaveAtomId: ap.leaveAtomId,
     attachmentPointNumber: ap.attachmentPointNumber,
@@ -470,15 +469,15 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     action.addOp(new SGroupAtomRemove(id, atom));
   });
 
-  sg?.getAttachmentPoints().forEach((attachmentPoint) => {
+  sG?.getAttachmentPoints().forEach((attachmentPoint) => {
     action.addOp(new SGroupAttachmentPointRemove(id, attachmentPoint));
   });
 
   action.addOp(new SGroupDelete(id));
 
   // After SGroup is deleted, resolve leaving groups on plain structure
-  if (sg instanceof MonomerMicromolecule) {
-    const monomerCaps = sg.monomer?.monomerItem?.props?.MonomerCaps || {};
+  if (sG instanceof MonomerMicromolecule) {
+    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps || {};
     cachedAttachmentPoints?.forEach((attachmentPoint) => {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;

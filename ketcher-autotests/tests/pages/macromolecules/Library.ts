@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { Monomer } from '@utils/types';
+import { Monomer, PresetType } from '@utils/types';
 import {
   FavoriteStarSymbol,
   LibraryTab,
@@ -118,7 +118,7 @@ export const Library = (page: Page) => {
       }
     },
 
-    async clickOnMonomer(monomer: Monomer) {
+    async clickOnMonomer(monomer: Monomer | PresetType) {
       await getElement(monomer.testId).click();
     },
 
@@ -170,7 +170,10 @@ export const Library = (page: Page) => {
      * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+    async selectMonomer(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ) {
       const location = monomer.monomerType
         ? monomerLibraryTypeLocation[monomer.monomerType]
         : rnaTabPresetsSection;
@@ -198,7 +201,10 @@ export const Library = (page: Page) => {
      * Hovers a monomer by navigating to the corresponding tab and clicking on the monomer.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async hoverMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
+    async hoverMonomer(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ) {
       const location = monomer.monomerType
         ? monomerLibraryTypeLocation[monomer.monomerType]
         : rnaTabPresetsSection;
@@ -238,7 +244,7 @@ export const Library = (page: Page) => {
     },
 
     async dragMonomerOnCanvas(
-      monomer: Monomer,
+      monomer: Monomer | PresetType,
       coordinates: { x: number; y: number; fromCenter?: boolean },
       selectOnFavoritesTab = false,
     ) {
@@ -301,7 +307,7 @@ export const Library = (page: Page) => {
      * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async addMonomerToFavorites(monomer: Monomer) {
+    async addMonomerToFavorites(monomer: Monomer | PresetType) {
       const location = monomer.monomerType
         ? monomerLibraryTypeLocation[monomer.monomerType]
         : rnaTabPresetsSection;
@@ -323,7 +329,7 @@ export const Library = (page: Page) => {
      * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
      */
     async removeMonomerFromFavorites(
-      monomer: Monomer,
+      monomer: Monomer | PresetType,
       removeFromFavoritesTab = true,
     ) {
       if (removeFromFavoritesTab) {

@@ -24,12 +24,35 @@ test(
      *
      * Case:
      *      1. Open Molecules canvas
-     *      2. Hover mouse over * star atom in the special nodes section
-     *      3. Validate that a monomer creation wizard button visible
+     *      2. Validate that a monomer creation wizard button visible
      *
      * Version 3.7
      */
     const createMonomerButton = LeftToolbar(page).createMonomerButton;
     await expect(createMonomerButton).toBeVisible();
+  },
+);
+
+test(
+  '2. Check that tooltip appears on hovering to wizard button',
+  { tag: ['@chromium-popup'] },
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that tooltip appears on hovering to wizard button
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Hover mouse over monomer creation wizard button
+     *      3. Validate that a tooltip appears
+     *
+     * Version 3.7
+     */
+    const createMonomerButton = LeftToolbar(page).createMonomerButton;
+    await createMonomerButton.hover();
+    await expect(createMonomerButton).toHaveAttribute(
+      'title',
+      'Create a monomer (Ctrl+M)',
+    );
   },
 );

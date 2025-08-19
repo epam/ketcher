@@ -316,7 +316,7 @@ function Editor({
     <>
       <Layout>
         <Layout.Top
-          shortened={isMonomerLibraryHidden}
+          shortened={!isMonomerLibraryHidden}
           data-testid="top-toolbar"
         >
           <TopMenuComponent />

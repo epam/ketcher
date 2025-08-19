@@ -5,7 +5,7 @@ import {
   hideMonomerPreview,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -23,7 +23,7 @@ test.describe('Peptide', () => {
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: -10,
       y: -10,
       fromCenter: true,
@@ -37,13 +37,13 @@ test.describe('Peptide', () => {
     Test case: #2869 - Preview of monomer structures on canvas
     Description: Add monomer preview on canvas
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Peptides.A).hover();
+    await getMonomerLocator(page, Peptide.A).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

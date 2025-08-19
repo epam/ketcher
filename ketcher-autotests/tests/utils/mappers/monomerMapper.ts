@@ -1,19 +1,19 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Monomer, MonomerType } from '@utils/types';
 
 const monomersByMonomerTypes: Partial<
   Record<MonomerType, Record<string, Monomer>>
 > = {
-  [MonomerType.Base]: Bases,
-  [MonomerType.Sugar]: Sugars,
-  [MonomerType.Peptide]: Peptides,
-  [MonomerType.Phosphate]: Phosphates,
-  [MonomerType.UnsplitNucleotide]: Nucleotides,
+  [MonomerType.Base]: Base,
+  [MonomerType.Sugar]: Sugar,
+  [MonomerType.Peptide]: Peptide,
+  [MonomerType.Phosphate]: Phosphate,
+  [MonomerType.UnsplitNucleotide]: Nucleotide,
   [MonomerType.CHEM]: Chem,
 };
 

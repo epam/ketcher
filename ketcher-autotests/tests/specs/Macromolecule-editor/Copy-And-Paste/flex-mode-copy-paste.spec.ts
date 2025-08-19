@@ -1,4 +1,4 @@
-import { Chem } from '@constants/monomers/Chem';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,

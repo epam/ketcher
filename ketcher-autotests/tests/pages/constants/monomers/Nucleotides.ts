@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Nucleotides = createMonomerGroup(MonomerType.Nucleotide, {
+export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
   _2_damdA: {
     alias: '2-damdA',
     testId: '2-damdA___2,6-Diaminopurine',
@@ -26,4 +26,4 @@ export const Nucleotides = createMonomerGroup(MonomerType.Nucleotide, {
   _5NitInd: { alias: '5NitInd', testId: '5NitInd___5-Nitroindole' },
 });
 
-export type NucleotidesType = typeof Nucleotides;
+export type NucleotidesType = typeof Nucleotide;

@@ -737,7 +737,7 @@ class Editor implements KetcherEditor {
     });
 
     this._monomerCreationState = {
-      originalStruct: currentStruct.clone(),
+      originalStruct: currentStruct,
       attachmentAtomIdToLeavingAtomId: attachmentPoints,
     };
 

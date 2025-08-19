@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { test, expect, Page } from '@fixtures';
 import {
   moveMouseAway,
@@ -151,7 +151,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -161,7 +161,7 @@ test.describe('Import-Saving .ket Files', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
     await resetZoomLevelToDefault(page);
-    await getMonomerLocator(page, Peptides.bAla).hover();
+    await getMonomerLocator(page, Peptide.bAla).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -197,7 +197,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     await resetZoomLevelToDefault(page);
-    await Library(page).dragMonomerOnCanvas(Sugars._25R, {
+    await Library(page).dragMonomerOnCanvas(Sugar._25R, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -210,7 +210,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.D_2Nal, {
+    await Library(page).dragMonomerOnCanvas(Peptide.D_2Nal, {
       x: 0,
       y: 0,
       fromCenter: true,

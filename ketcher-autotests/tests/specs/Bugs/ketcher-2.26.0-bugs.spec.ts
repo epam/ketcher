@@ -61,9 +61,9 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
@@ -686,13 +686,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await resetCurrentTool(page);
-    await getMonomerLocator(page, Peptides.Cys_Bn).hover();
+    await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Sugars._25mo3r).hover();
+    await getMonomerLocator(page, Sugar._25mo3r).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Phosphates.msp).hover();
+    await getMonomerLocator(page, Phosphate.msp).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -1765,7 +1765,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to IDT
      * 4. Take screenshot
      */
-    await Library(page).dragMonomerOnCanvas(Sugars.R, {
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
       x: 0,
       y: 0,
       fromCenter: true,

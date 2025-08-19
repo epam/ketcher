@@ -19,7 +19,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
@@ -73,7 +73,7 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
   const copyOption = page.getByTestId(MonomerOption.Copy);
   const pasteOption = page.getByTestId(MonomerOption.Paste);
   const deleteOption = page.getByTestId(MonomerOption.Delete);
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -124,9 +124,9 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
   const copyOption = page.getByTestId(MonomerOption.Copy);
   const pasteOption = page.getByTestId(MonomerOption.Paste);
   const deleteOption = page.getByTestId(MonomerOption.Delete);
-  const peptideC = getMonomerLocator(page, Peptides.C);
-  const peptideD = getMonomerLocator(page, Peptides.D);
-  const peptideE = getMonomerLocator(page, Peptides.E);
+  const peptideC = getMonomerLocator(page, Peptide.C);
+  const peptideD = getMonomerLocator(page, Peptide.D);
+  const peptideE = getMonomerLocator(page, Peptide.E);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -302,7 +302,7 @@ test(`5. Verify context menu in Snake and Flex modes when right-clicking a bond 
    * Version 3.6
    * IMPORTANT: Screenshot is wrong because of the bug: https://github.com/epam/ketcher/issues/7395
    */
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -394,7 +394,7 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
    *
    * Version 3.6
    */
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
   const canvas = page.getByTestId(KETCHER_CANVAS).first();
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -440,7 +440,7 @@ test(`8. Verify Undo/Redo after using Delete from right-click menu`, async () =>
    *
    * Version 3.6
    */
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -484,7 +484,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
    *
    * Version 3.6
    */
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -522,7 +522,7 @@ test(`10. Verify that context menu works correctly on canvas after panning`, asy
    *
    * Version 3.6
    */
-  const peptideA = getMonomerLocator(page, Peptides.A);
+  const peptideA = getMonomerLocator(page, Peptide.A);
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(

@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
@@ -24,7 +24,7 @@ test.describe('Check attachment point hover', () => {
     const coordinatesStart = { x: 300, y: 300 };
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       coordinatesStart.x,
       coordinatesStart.y,
       0,
@@ -32,7 +32,7 @@ test.describe('Check attachment point hover', () => {
     const coordinatesEnd = { x: 400, y: 400 };
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       coordinatesEnd.x,
       coordinatesEnd.y,
       1,

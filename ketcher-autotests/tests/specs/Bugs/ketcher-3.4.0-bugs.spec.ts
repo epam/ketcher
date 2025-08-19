@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -47,7 +47,7 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { Presets } from '@constants/monomers/Presets';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
@@ -205,7 +205,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Presets.U);
+    await Library(page).selectMonomer(Preset.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -372,8 +372,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Peptides.O);
-    await Library(page).selectMonomer(Peptides.K);
+    await Library(page).selectMonomer(Peptide.O);
+    await Library(page).selectMonomer(Peptide.K);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -676,10 +676,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await Library(page).selectMonomer(Peptides.X);
-    await Library(page).selectMonomer(Peptides.B);
-    await Library(page).selectMonomer(Peptides.J);
-    await Library(page).selectMonomer(Peptides.Z);
+    await Library(page).selectMonomer(Peptide.X);
+    await Library(page).selectMonomer(Peptide.B);
+    await Library(page).selectMonomer(Peptide.J);
+    await Library(page).selectMonomer(Peptide.Z);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

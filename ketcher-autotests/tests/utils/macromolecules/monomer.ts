@@ -178,13 +178,13 @@ export enum MonomerAttachmentPoint {
  *   await expect(locator).toHaveScreenshot();
  *
  * test('should take a screenshot of the monomer from Bases', async ({ page }) => {
- *  const locator = getMonomerLocator(page, Bases.A);
+ *  const locator = getMonomerLocator(page, Base.A);
  *  await expect(locator).toHaveScreenshot();
  * });
  *
  * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
  *   const locator = getMonomerLocator(page, {
- *     ...Sugars.fR,
+ *     ...Sugar.fR,
  *     rValues: [true, true, true],
  *   });
  *   await expect(locator).toHaveScreenshot();

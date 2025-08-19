@@ -1,6 +1,6 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -30,7 +30,7 @@ test.describe('Macromolecules custom presets', () => {
   });
 
   test('Add new preset and duplicate it', async ({ page }) => {
-    await Library(page).selectMonomers([Sugars._25R, Bases.baA, Phosphates.bP]);
+    await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
     await moveMouseToTheMiddleOfTheScreen(page);
     await Library(page).rnaBuilder.addToPresets();
 
@@ -38,7 +38,7 @@ test.describe('Macromolecules custom presets', () => {
 
     await Library(page).rnaBuilder.duplicateAndEdit();
 
-    await Library(page).selectMonomers([Sugars._12ddR, Bases.A, Phosphates.P]);
+    await Library(page).selectMonomers([Sugar._12ddR, Base.A, Phosphate.P]);
     await Library(page).rnaBuilder.save();
 
     await takeMonomerLibraryScreenshot(page);
@@ -66,7 +66,7 @@ test.describe('Macromolecules custom presets', () => {
     // Press Enter on input
     await page.press('[placeholder="Name your structure"]', 'Enter');
 
-    await Library(page).selectMonomers([Sugars._25R, Bases.baA]);
+    await Library(page).selectMonomers([Sugar._25R, Base.baA]);
 
     // Click on <button> "Add to Presets"
     await Library(page).rnaBuilder.addToPresets();

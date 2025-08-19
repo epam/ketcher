@@ -53,6 +53,10 @@ export const monomerLibraryTypeLocation: Record<
   [MonomerType.Peptide]: {
     libraryTab: LibraryTab.Peptides,
   },
+  [MonomerType.Preset]: {
+    libraryTab: LibraryTab.RNA,
+    rnaSection: RNASection.Presets,
+  },
   [MonomerType.Sugar]: {
     libraryTab: LibraryTab.RNA,
     rnaSection: RNASection.Sugars,

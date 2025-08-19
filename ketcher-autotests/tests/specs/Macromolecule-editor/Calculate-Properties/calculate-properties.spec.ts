@@ -24,9 +24,9 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { Chem } from '@constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import {
@@ -965,7 +965,7 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Peptides.A);
+    await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
@@ -987,7 +987,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple RNA/DNA structure
      * 3. Open the "Calculate Properties" window
      */
-    await Library(page).selectMonomer(Presets.A);
+    await Library(page).selectMonomer(Preset.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
       page,
@@ -1233,7 +1233,7 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await Library(page).selectMonomer(Peptides.A);
+    await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),

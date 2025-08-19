@@ -4,6 +4,7 @@ import { Presets } from '@constants/monomers/Presets';
 import { expect, test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
+  clickOnCanvas,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -117,6 +118,8 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
+    // eslint-disable-next-line no-magic-numbers
+    await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.dA).hover();
     await waitForMonomerPreview(page);
@@ -173,6 +176,8 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
+    // eslint-disable-next-line no-magic-numbers
+    await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await waitForMonomerPreview(page);

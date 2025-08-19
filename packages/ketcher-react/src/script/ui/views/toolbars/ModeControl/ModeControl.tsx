@@ -18,6 +18,10 @@ import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
+import {
+  KETCHER_ROOT_NODE_CSS_SELECTOR,
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+} from 'src/constants';
 
 interface IStyledIconProps {
   expanded?: boolean;
@@ -159,6 +163,11 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const title = isPolymerEditor
     ? 'Switch to Ketcher mode'
     : 'Switch to Macromolecule mode';
+  const ketcherEditorRootElement = document.querySelector(
+    isPolymerEditor
+      ? KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR
+      : KETCHER_ROOT_NODE_CSS_SELECTOR,
+  );
 
   return (
     <ElementAndDropdown title={title}>
@@ -184,6 +193,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
         open={isExpanded}
         onClose={onClose}
         anchorEl={btnRef.current}
+        container={ketcherEditorRootElement}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickOnCanvas,
   deleteByKeyboard,
@@ -48,7 +48,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, offset, offset);
+    await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -62,7 +62,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, offset, offset);
+    await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

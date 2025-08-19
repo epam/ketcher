@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test, expect } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test, expect } from '@fixtures';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -128,7 +128,7 @@ test.describe('Sequence edit mode', () => {
     const y = 400;
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -340,10 +340,10 @@ test.describe('Sequence edit mode', () => {
     */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
-    await getMonomerLocator(page, Peptides.A).hover();
+    await getMonomerLocator(page, Peptide.A).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Peptides.Aad).hover();
+    await getMonomerLocator(page, Peptide.Aad).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -378,7 +378,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Peptides.A);
+    await Library(page).selectMonomer(Peptide.A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -390,7 +390,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Sugars._25d3r);
+    await Library(page).selectMonomer(Sugar._25d3r);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -402,7 +402,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Bases.c7A);
+    await Library(page).selectMonomer(Base.c7A);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -414,7 +414,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Phosphates.ibun);
+    await Library(page).selectMonomer(Phosphate.ibun);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -426,7 +426,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Nucleotides.Super_T);
+    await Library(page).selectMonomer(Nucleotide.Super_T);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -477,7 +477,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await Library(page).hoverMonomer(Presets.dR_U_P);
+    await Library(page).hoverMonomer(Preset.dR_U_P);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -1021,7 +1021,7 @@ test.describe('Sequence edit mode', () => {
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await hoverMouseOverMonomer(page, Sugars.R, 11);
+    await hoverMouseOverMonomer(page, Sugar.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1053,7 +1053,7 @@ test.describe('Sequence edit mode', () => {
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await hoverMouseOverMonomer(page, Sugars.dR, 11);
+    await hoverMouseOverMonomer(page, Sugar.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

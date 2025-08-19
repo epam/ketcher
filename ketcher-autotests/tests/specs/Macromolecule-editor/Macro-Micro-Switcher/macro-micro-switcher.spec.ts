@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, expect, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, expect, test } from '@fixtures';
 import {
   FILE_TEST_DATA,
   MolFileFormat,
@@ -416,12 +416,12 @@ test.describe('Macro-Micro-Switcher', () => {
     */
 
     await Library(page).addMonomersToFavorites([
-      Peptides.bAla,
-      Peptides.Phe4Me,
-      Peptides.meM,
-      Sugars._25R,
-      Bases.baA,
-      Phosphates.bP,
+      Peptide.bAla,
+      Peptide.Phe4Me,
+      Peptide.meM,
+      Sugar._25R,
+      Base.baA,
+      Phosphate.bP,
       Chem.Test_6_Ch,
     ]);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -468,7 +468,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -488,7 +488,7 @@ test.describe('Macro-Micro-Switcher', () => {
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -542,7 +542,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
     */
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await Library(page).selectMonomer(Peptides.bAla);
+      await Library(page).selectMonomer(Peptide.bAla);
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -571,7 +571,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).selectMonomer(Peptides.bAla);
+    await Library(page).selectMonomer(Peptide.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -799,7 +799,9 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
-      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
@@ -825,7 +827,9 @@ test.describe('Macro-Micro-Switcher', () => {
         MacroFileType.MOLv3000,
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
       );
-      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
+      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
@@ -1068,7 +1072,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectRingButton(page, RingButton.Benzene);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1098,7 +1102,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1129,7 +1133,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1160,7 +1164,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1178,7 +1182,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1186,7 +1190,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1194,7 +1198,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1274,7 +1278,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData2 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1282,7 +1286,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1290,7 +1294,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.moen,
+      monomer: Phosphate.moen,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1367,7 +1371,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData3 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1375,7 +1379,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1383,7 +1387,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1466,7 +1470,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData4 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1474,7 +1478,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1482,7 +1486,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1605,7 +1609,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
     await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, 645, 318);
+    await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

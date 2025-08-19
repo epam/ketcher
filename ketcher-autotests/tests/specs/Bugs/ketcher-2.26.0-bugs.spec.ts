@@ -2,8 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, expect } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -62,9 +61,9 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
@@ -687,13 +686,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await resetCurrentTool(page);
-    await getMonomerLocator(page, Peptides.Cys_Bn).hover();
+    await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Sugars._25mo3r).hover();
+    await getMonomerLocator(page, Sugar._25mo3r).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Phosphates.msp).hover();
+    await getMonomerLocator(page, Phosphate.msp).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -920,7 +919,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       MicroBondOption.Highlight,
       HighlightOption.Green,
     ]);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1227,13 +1226,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 650);
+    await clickOnCanvas(page, 500, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 550);
+    await clickOnCanvas(page, 500, 550, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1636,7 +1635,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await closeErrorAndInfoModals(page);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200);
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1766,7 +1765,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to IDT
      * 4. Take screenshot
      */
-    await Library(page).dragMonomerOnCanvas(Sugars.R, {
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
       x: 0,
       y: 0,
       fromCenter: true,

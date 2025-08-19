@@ -108,7 +108,7 @@ jobs:
           pattern: pw-report-*
           merge-multiple: true
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
+        run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report/blob
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:

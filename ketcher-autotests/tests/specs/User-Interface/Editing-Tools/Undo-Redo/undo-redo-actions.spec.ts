@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -502,7 +502,7 @@ test.describe('Undo/Redo Actions', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -521,7 +521,7 @@ test.describe('Undo/Redo Actions', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -589,7 +589,9 @@ test.describe('Undo/Redo Actions', () => {
       { primary: true, secondary: true },
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -606,7 +608,9 @@ test.describe('Undo/Redo Actions', () => {
       { primary: true, secondary: true },
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -674,7 +678,7 @@ test.describe('Undo/Redo Actions', () => {
     });
     await LeftToolbar(page).chain();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
     for (let i = 0; i < 2; i++) {

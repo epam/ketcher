@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -35,14 +35,14 @@ import {
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -116,7 +116,7 @@ const monomers: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.A,
+    monomerLocatorOptions: Peptide.A,
     unsplitNucleotide: false,
   },
   {
@@ -126,7 +126,7 @@ const monomers: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.X,
+    monomerLocatorOptions: Peptide.X,
     unsplitNucleotide: false,
   },
   {
@@ -159,7 +159,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Sugars.R,
+    monomerLocatorOptions: Sugar.R,
     unsplitNucleotide: false,
   },
   {
@@ -192,7 +192,7 @@ const monomers: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -202,7 +202,7 @@ const monomers: IMonomer[] = [
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -212,7 +212,7 @@ const monomers: IMonomer[] = [
       'KET/Antisense-Chains/10. Ambiguous RNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -222,7 +222,7 @@ const monomers: IMonomer[] = [
       'KET/Antisense-Chains/11. Ambiguous Base M (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     unsplitNucleotide: false,
   },
   {
@@ -267,7 +267,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Phosphates.P,
+    monomerLocatorOptions: Phosphate.P,
     unsplitNucleotide: false,
   },
   {
@@ -301,7 +301,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6840',
     unsplitNucleotide: true,
@@ -369,7 +369,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -379,7 +379,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -391,7 +391,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -403,7 +403,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A,C,G,T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -413,7 +413,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A,C,G,U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6149',
     unsplitNucleotide: false,
@@ -425,7 +425,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A,C)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     unsplitNucleotide: false,
   },
   {
@@ -478,7 +478,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -488,7 +488,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6090',
     unsplitNucleotide: false,
@@ -500,7 +500,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{r(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6090',
     unsplitNucleotide: false,
@@ -512,7 +512,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -524,7 +524,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -537,7 +537,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -549,7 +549,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -562,7 +562,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -575,7 +575,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -588,7 +588,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -600,7 +600,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -613,7 +613,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -625,7 +625,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -638,7 +638,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -651,7 +651,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -664,7 +664,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -676,7 +676,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -689,7 +689,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -701,7 +701,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -714,7 +714,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -727,7 +727,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -740,7 +740,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -752,7 +752,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -765,7 +765,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -777,7 +777,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -790,7 +790,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -803,7 +803,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -1179,7 +1179,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -1222,7 +1222,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -1265,7 +1265,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -1308,7 +1308,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -1368,7 +1368,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1381,7 +1381,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1462,7 +1462,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1475,7 +1475,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1556,7 +1556,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1569,7 +1569,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1650,7 +1650,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1663,7 +1663,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1761,7 +1761,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1808,7 +1808,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1855,7 +1855,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1902,7 +1902,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1915,7 +1915,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -1958,7 +1958,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2001,7 +2001,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2044,7 +2044,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2104,7 +2104,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2117,7 +2117,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2197,7 +2197,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2210,7 +2210,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2291,7 +2291,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2304,7 +2304,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2385,7 +2385,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2398,7 +2398,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2496,7 +2496,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2542,7 +2542,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2588,7 +2588,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2633,7 +2633,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2690,7 +2690,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.A,
+    monomerLocatorOptions: Peptide.A,
     unsplitNucleotide: false,
   },
   {
@@ -2700,7 +2700,7 @@ const shortMonomerList: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.X,
+    monomerLocatorOptions: Peptide.X,
     unsplitNucleotide: false,
   },
   {
@@ -2709,7 +2709,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Sugars.R,
+    monomerLocatorOptions: Sugar.R,
     unsplitNucleotide: false,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/3061',
@@ -2720,7 +2720,7 @@ const shortMonomerList: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -2730,7 +2730,7 @@ const shortMonomerList: IMonomer[] = [
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -2739,7 +2739,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Phosphates.P,
+    monomerLocatorOptions: Phosphate.P,
     unsplitNucleotide: false,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/3061',
@@ -2750,7 +2750,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6735',
@@ -2782,7 +2782,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -2791,7 +2791,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -2801,7 +2801,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{r(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -2812,7 +2812,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2823,7 +2823,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2834,7 +2834,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2845,7 +2845,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
@@ -2938,7 +2938,7 @@ const chainWithAllTypeOfConnections: IMonomer = {
     'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.A,
+  monomerLocatorOptions: Base.A,
   unsplitNucleotide: false,
 };
 
@@ -3083,7 +3083,7 @@ const chainOfNucleosidesWithAllTypesOfSugar: IMonomer[] = [
       'RNA97,RNA98,1:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
@@ -3136,7 +3136,7 @@ const chainOfAllTypesModifiedMonomers: IMonomer = {
     'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.A,
+  monomerLocatorOptions: Base.A,
   unsplitNucleotide: false,
 };
 
@@ -3187,7 +3187,7 @@ const chainOfNucleotidesAndPeptides: IMonomer = {
     'RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.U,
+  monomerLocatorOptions: Base.U,
   unsplitNucleotide: false,
 };
 
@@ -3383,7 +3383,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await createAntisenseStrandOption.click();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const sugarRs = getMonomerLocator(page, Sugars.R);
+  const sugarRs = getMonomerLocator(page, Sugar.R);
 
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,

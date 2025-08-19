@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';

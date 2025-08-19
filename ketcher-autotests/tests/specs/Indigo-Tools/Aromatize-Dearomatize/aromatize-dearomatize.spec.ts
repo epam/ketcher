@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -135,7 +135,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
@@ -153,7 +155,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });

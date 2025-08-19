@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -116,7 +116,9 @@ test.describe('Sequence mode selection for edit mode', () => {
     await takeEditorScreenshot(page);
 
     const blankAreaAxis = { x: 200, y: 200 };
-    await clickOnCanvas(page, blankAreaAxis.x, blankAreaAxis.y);
+    await clickOnCanvas(page, blankAreaAxis.x, blankAreaAxis.y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -252,7 +254,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

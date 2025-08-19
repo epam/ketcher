@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   pressButton,
@@ -326,7 +326,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -445,7 +445,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectRingButton(page, RingButton.Benzene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
     });
@@ -454,7 +454,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectRingButton(page, RingButton.Cyclopentadiene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -612,13 +612,17 @@ test.describe('Templates - Functional Group Tools2', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CPh3,
     );
-    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -651,12 +655,24 @@ test.describe('Templates - Functional Group Tools2', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ac,
     );
-    await clickOnCanvas(page, COORDS_CLICK.x2, COORDS_CLICK.y2);
-    await clickOnCanvas(page, COORDS_CLICK.x3, COORDS_CLICK.y3);
-    await clickOnCanvas(page, COORDS_CLICK.x1, COORDS_CLICK.y1);
-    await clickOnCanvas(page, COORDS_CLICK.x4, COORDS_CLICK.y4);
-    await clickOnCanvas(page, COORDS_CLICK.x5, COORDS_CLICK.y5);
-    await clickOnCanvas(page, COORDS_CLICK.x6, COORDS_CLICK.y6);
+    await clickOnCanvas(page, COORDS_CLICK.x2, COORDS_CLICK.y2, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, COORDS_CLICK.x3, COORDS_CLICK.y3, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, COORDS_CLICK.x1, COORDS_CLICK.y1, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, COORDS_CLICK.x4, COORDS_CLICK.y4, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, COORDS_CLICK.x5, COORDS_CLICK.y5, {
+      from: 'pageTopLeft',
+    });
+    await clickOnCanvas(page, COORDS_CLICK.x6, COORDS_CLICK.y6, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -840,14 +856,18 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
-    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -885,14 +905,18 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CCl3,
     );
-    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.C2H5,
     );
-    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
+      from: 'pageTopLeft',
+    });
     await resetCurrentTool(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -924,7 +948,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

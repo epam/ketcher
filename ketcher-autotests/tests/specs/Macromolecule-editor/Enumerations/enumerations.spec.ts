@@ -1,7 +1,7 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -96,7 +96,7 @@ test.describe('Enumerations', () => {
       SelectionToolType.Rectangle,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Bases.baA).click();
+    await getMonomerLocator(page, Base.baA).click();
     await takeEditorScreenshot(page);
   });
 
@@ -110,7 +110,7 @@ test.describe('Enumerations', () => {
       SelectionToolType.Rectangle,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Bases.baA).click();
+    await getMonomerLocator(page, Base.baA).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
@@ -127,7 +127,7 @@ test.describe('Enumerations', () => {
       'KET/peptides-connected-with-bonds.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.Tml).click();
+    await getMonomerLocator(page, Peptide.Tml).click();
     await takeEditorScreenshot(page);
   });
 
@@ -144,9 +144,9 @@ test.describe('Enumerations', () => {
       'KET/three-peptide-chains-connected-through-chems.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.Tml).click();
-    await getMonomerLocator(page, Peptides.His1Me).click();
-    await getMonomerLocator(page, Peptides.D_Hyp).click();
+    await getMonomerLocator(page, Peptide.Tml).click();
+    await getMonomerLocator(page, Peptide.His1Me).click();
+    await getMonomerLocator(page, Peptide.D_Hyp).click();
     await takeEditorScreenshot(page);
   });
 
@@ -161,7 +161,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Sugars._25R).click();
+    await getMonomerLocator(page, Sugar._25R).click();
     await takeEditorScreenshot(page);
   });
 
@@ -176,7 +176,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Sugars._3A6).click();
+    await getMonomerLocator(page, Sugar._3A6).click();
     await takeEditorScreenshot(page);
   });
 
@@ -194,7 +194,7 @@ test.describe('Enumerations', () => {
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Sugars._5A6).click();
+    await getMonomerLocator(page, Sugar._5A6).click();
     await takeEditorScreenshot(page);
   });
 
@@ -211,9 +211,9 @@ test.describe('Enumerations', () => {
       'KET/three-peptide-chains-connected-through-chems.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.Tml).click();
-    await getMonomerLocator(page, Peptides.His1Me).click();
-    await getMonomerLocator(page, Peptides.D_Hyp).click();
+    await getMonomerLocator(page, Peptide.Tml).click();
+    await getMonomerLocator(page, Peptide.His1Me).click();
+    await getMonomerLocator(page, Peptide.D_Hyp).click();
 
     const pressCount = 3;
     for (let i = 0; i < pressCount; i++) {
@@ -235,8 +235,8 @@ test.describe('Enumerations', () => {
       'KET/intersected-monomers-chains.ket',
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.Hcy).click();
-    await getMonomerLocator(page, Peptides.meC).click();
+    await getMonomerLocator(page, Peptide.Hcy).click();
+    await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page);
     const pressCount = 2;
     for (let i = 0; i < pressCount; i++) {

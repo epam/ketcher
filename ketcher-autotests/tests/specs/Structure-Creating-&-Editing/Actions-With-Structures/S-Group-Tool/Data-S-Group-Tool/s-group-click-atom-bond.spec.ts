@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -67,7 +67,7 @@ test.describe('S-Group Properties', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).typeDropdown.click();
 
     await expect(page.getByTestId(TypeOption.Data)).toContainText('Data');
@@ -1020,7 +1020,7 @@ test.describe('S-Group Properties', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.Superatom,
       Name: 'Test',
@@ -1042,7 +1042,7 @@ test.describe('S-Group Properties', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).setFieldNameValue(testName);
     await SGroupPropertiesDialog(page).setFieldValueValue(testValue);
     await moveMouseAway(page);
@@ -1057,7 +1057,7 @@ test.describe('S-Group Properties', () => {
 
     await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

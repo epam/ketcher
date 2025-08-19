@@ -36,5 +36,5 @@ export async function getPlusesByIndex(
 
 export async function clickOnPlus(page: Page, index: number) {
   const { x, y } = await getPlusesByIndex(page, index);
-  await clickOnCanvas(page, x, y);
+  await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 }

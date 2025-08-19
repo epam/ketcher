@@ -1,5 +1,5 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test, Page } from '@playwright/test';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -287,7 +287,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -305,7 +305,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -324,7 +324,9 @@ test.describe('Atom Tool', () => {
     const bromineCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Bromine);
-    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
+    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

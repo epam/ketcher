@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -99,7 +99,9 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_Y = 380;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await LeftToolbar(page).sGroup();
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
     await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -200,7 +202,9 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_Y = 600;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 

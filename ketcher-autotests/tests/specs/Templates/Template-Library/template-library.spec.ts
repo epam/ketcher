@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
@@ -49,14 +49,14 @@ test.describe('Templates - Template Library', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
     );
-    await clickOnCanvas(page, x - offsetX, y);
+    await clickOnCanvas(page, x - offsetX, y, { from: 'pageTopLeft' });
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
     );
-    await clickOnCanvas(page, x + offsetX, y);
+    await clickOnCanvas(page, x + offsetX, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

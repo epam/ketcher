@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test, Page } from '@playwright/test';
+import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -47,7 +47,7 @@ import {
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -55,7 +55,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -151,7 +151,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -171,7 +171,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -373,7 +373,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectEraseTool();
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 
     await takeEditorScreenshot(page);
 
@@ -425,7 +425,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -825,7 +825,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -852,7 +852,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -882,7 +882,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -976,7 +976,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1041,7 +1041,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await addMonomerToCenterOfCanvas(page, Peptides.A);
+    await addMonomerToCenterOfCanvas(page, Peptide.A);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {

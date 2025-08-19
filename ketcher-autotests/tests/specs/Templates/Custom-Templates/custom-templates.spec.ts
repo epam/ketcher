@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
-  clickOnTheCanvas,
+  clickOnCanvas,
   clickOnAtom,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -238,10 +238,10 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickOnTheCanvas(page, 0, 1);
+    await clickOnCanvas(page, 0, 1, { from: 'pageCenter' });
     const point = { x: -50, y: 0 };
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnTheCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);

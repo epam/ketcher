@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -57,12 +58,23 @@ async function selectExtendedTableElements(page: Page, element: string) {
   await page.getByRole('button', { name: 'Add', exact: true }).click();
 }
 
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+  // this empty function is needed
+});
+
 test.describe('Attachment Point Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
-  test('Attachment point dialog', async ({ page }) => {
+  test('Attachment point dialog', async () => {
     /*
     Test case: EPMLSOPKET-1625
     Description: The Attachment Points dialog box is opened.
@@ -73,7 +85,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Able to check any check-mark', async ({ page }) => {
+  test('Able to check any check-mark', async () => {
     /*
     Test case: EPMLSOPKET-1626
     Description: Check-mark are checked.
@@ -90,7 +102,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rendering of Attachment points', async ({ page }) => {
+  test('Rendering of Attachment points', async () => {
     /*
     Test case: EPMLSOPKET-1627
     Description: All four Attachment points added to atoms of chain.
@@ -116,7 +128,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo actions', async ({ page }) => {
+  test('Undo/Redo actions', async () => {
     /*
     Test case: EPMLSOPKET-1628
     Description: All four Attachment points added to atoms of chain.
@@ -152,7 +164,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click cancel in dialog window', async ({ page }) => {
+  test('Click cancel in dialog window', async () => {
     /*
     Test case: EPMLSOPKET-1629
     Description: Nothing is changed, the attachment points don't appear.
@@ -175,7 +187,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click not on atom', async ({ page }) => {
+  test('Click not on atom', async () => {
     /*
     Test case: EPMLSOPKET-1630
     Description: The Attachment Point dialog box is not opened.
@@ -192,7 +204,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Modify attachment point', async ({ page }) => {
+  test('Modify attachment point', async () => {
     /*
     Test case: EPMLSOPKET-1631
     Description: Primary attachment point is created on the selected atom.
@@ -222,7 +234,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Remove attachment points', async ({ page }) => {
+  test('Remove attachment points', async () => {
     /*
     Test case: EPMLSOPKET-1632
     Description: User is able to remove the attachment points.
@@ -248,7 +260,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Modify atom with Attchment point (add atom)', async ({ page }) => {
+  test('Modify atom with Attchment point (add atom)', async () => {
     /*
     Test case: EPMLSOPKET-1644
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
@@ -267,9 +279,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Modify atom with Attchment point (add Not List atom, Any Atom, Group Generics)', async ({
-    page,
-  }) => {
+  test('Modify atom with Attchment point (add Not List atom, Any Atom, Group Generics)', async () => {
     /*
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
@@ -293,7 +303,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Create reaction with Attachment point', async ({ page }) => {
+  test('Create reaction with Attachment point', async () => {
     /*
     Test case: EPMLSOPKET-1647
     Description: Attachment points are created correctly if the reaction arrow 
@@ -320,7 +330,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Paste actions', async ({ page }) => {
+  test('Copy/Paste actions', async () => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -328,12 +338,14 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Cut/Paste actions', async ({ page }) => {
+  test('Cut/Paste actions', async () => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -341,13 +353,15 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+      from: 'pageTopLeft',
+    });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Paste reaction with Attachment point', async ({ page }) => {
+  test('Copy/Paste reaction with Attachment point', async () => {
     /*
     Test case: EPMLSOPKET-1646
     Description: Pasted structures are displayed with the correct attachment points.
@@ -359,11 +373,11 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Cut/Paste reaction with Attachment point', async ({ page }) => {
+  test('Cut/Paste reaction with Attachment point', async () => {
     /*
     Test case: EPMLSOPKET-1646
     Description: Pasted structures are displayed with the correct attachment points.
@@ -376,13 +390,13 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.mol file', async ({ page }) => {
+  test('Save as *.mol file', async () => {
     /*
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file
@@ -398,7 +412,7 @@ test.describe('Attachment Point Tool', () => {
     );
   });
 
-  test('Click and Save as *.mol file', async ({ page }) => {
+  test('Click and Save as *.mol file', async () => {
     /*
     Test case: EPMLSOPKET-1747
     Description: Click the 'Save As' button, and click the 'Save' button.
@@ -415,7 +429,7 @@ test.describe('Attachment Point Tool', () => {
     );
   });
 
-  test('Save as *.mol file V3000', async ({ page }) => {
+  test('Save as *.mol file V3000', async () => {
     /*
      * Test case: EPMLSOPKET-1651
      * Description: Structure with attachment points saved as .mol file V3000
@@ -430,7 +444,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.rxn file', async ({ page }) => {
+  test('Save as *.rxn file', async () => {
     /*
     Test case: EPMLSOPKET-1652
     Description: Structure with attachment points saved as .rxn file
@@ -449,7 +463,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click and Save as *.rxn file', async ({ page }) => {
+  test('Click and Save as *.rxn file', async () => {
     /*
     Test case: EPMLSOPKET-1748
     Description: Click the 'Save As' button and click the 'Save' button.
@@ -469,7 +483,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.rxn file V3000', async ({ page }) => {
+  test('Save as *.rxn file V3000', async () => {
     /*
      * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
      * Test case: EPMLSOPKET-1652
@@ -485,7 +499,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.smi file', async ({ page }) => {
+  test('Save as *.smi file', async () => {
     /*
     Test case: EPMLSOPKET-1653
     Description: Structure with attachment points saved as .smi file
@@ -499,7 +513,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click and Save as *.smi file', async ({ page }) => {
+  test('Click and Save as *.smi file', async () => {
     /*
     Test case: EPMLSOPKET-1749
     Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
@@ -518,7 +532,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate structure with attachment points', async ({ page }) => {
+  test('Rotate structure with attachment points', async () => {
     /*
     Test case: EPMLSOPKET-1670
     Description: Structure with attachment points is rotated correctly. Structure rotated 90 degrees counterclockwise.
@@ -543,7 +557,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Drag atoms consist attachment points', async ({ page }) => {
+  test('Drag atoms consist attachment points', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: With selection tool click the atom with attachment point(s) and drag selected atom.
@@ -558,12 +572,12 @@ test.describe('Attachment Point Tool', () => {
       SelectionToolType.Rectangle,
     );
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await clickOnCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
@@ -575,9 +589,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Delete the atom with attachment point(s) with Erase tool.', async ({
-    page,
-  }) => {
+  test('Delete the atom with attachment point(s) with Erase tool.', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: With erase tool click the atom with attachment point(s) and delete selected atom.
@@ -600,9 +612,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Delete the atom with attachment point(s) with hotkey.', async ({
-    page,
-  }) => {
+  test('Delete the atom with attachment point(s) with hotkey.', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: Hotkey click the atom with attachment point(s) delete selected atom.
@@ -630,9 +640,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select any Atom from Atom Palette, press the atom with attachment point and drag.', async ({
-    page,
-  }) => {
+  test('Select any Atom from Atom Palette, press the atom with attachment point and drag.', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: New bond is created, the attachment point isn't removed.
@@ -647,12 +655,12 @@ test.describe('Attachment Point Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await clickOnCanvas(page, point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
@@ -664,9 +672,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('With any Bond tool click the atom with attachment point(s.', async ({
-    page,
-  }) => {
+  test('With any Bond tool click the atom with attachment point(s.', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: New bond is created, the attachment point isn't removed.
@@ -689,9 +695,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select any Template, press the atom with attachment point and drag.', async ({
-    page,
-  }) => {
+  test('Select any Template, press the atom with attachment point and drag.', async () => {
     /*
       Test case: EPMLSOPKET-1645
       Description: The template is sprouted from the selected atom, the attachment point(s) isn't changed or removed.
@@ -722,9 +726,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async ({
-    page,
-  }) => {
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async () => {
     /*
     Test case: EPMLSOPKET-15516, EPMLSOPKET-15517, EPMLSOPKET-15522
     Description: Openeded structures are displayed with the correct attachment points.
@@ -736,9 +738,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async ({
-    page,
-  }) => {
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async () => {
     /*
     Test case: EPMLSOPKET-15516, EPMLSOPKET-15518
     Description: Openeded structure are displayed with the correct attachment points.
@@ -750,9 +750,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that changing primary attachment points to secondary updates the visualization', async ({
-    page,
-  }) => {
+  test('Verify that changing primary attachment points to secondary updates the visualization', async () => {
     /*
     Test case: EPMLSOPKET-15519
     Description: Visualization updates accordingly, displaying 
@@ -773,9 +771,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that changing secondary attachment points to primary updates the visualization', async ({
-    page,
-  }) => {
+  test('Verify that changing secondary attachment points to primary updates the visualization', async () => {
     /*
     Test case: EPMLSOPKET-15520
     Description: visualization updates accordingly, 
@@ -796,9 +792,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that removing all attachment points updates the visualization', async ({
-    page,
-  }) => {
+  test('Verify that removing all attachment points updates the visualization', async () => {
     /*
     Test case: EPMLSOPKET-15521
     Description:  Visualization no longer displays any 
@@ -825,9 +819,7 @@ test.describe('Attachment Point Tool', () => {
     await waitForPageInit(page);
   });
 
-  test('Clean Up and Layout distorted chain with attachment points', async ({
-    page,
-  }) => {
+  test('Clean Up and Layout distorted chain with attachment points', async () => {
     /*
     Test case: EPMLSOPKET-1654
     Description: The structures are cleaned correctly without attachment point(s) loss.

@@ -25,7 +25,7 @@ import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
 import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
 import { AutochainIcon } from 'components/monomerLibrary/monomerLibraryItem/styles';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectIsSequenceMode } from 'state/common';
 
 const RnaPresetItem = ({
   preset,
@@ -37,6 +37,7 @@ const RnaPresetItem = ({
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
+  const isSequenceMode = useAppSelector(selectIsSequenceMode);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -81,14 +82,16 @@ const RnaPresetItem = ({
       data-rna-preset-item-name={preset.name}
       ref={cardRef}
     >
-      <AutochainIcon
-        className="autochain"
-        name="monomer-autochain"
-        onMouseOver={onAutochainIconMouseOver}
-        onMouseOut={onAutochainIconMouseOut}
-        onClick={onAutochainIconClick}
-        onDoubleClick={(e) => e.stopPropagation()}
-      />
+      {!isSequenceMode && (
+        <AutochainIcon
+          className="autochain"
+          name="monomer-autochain"
+          onMouseOver={onAutochainIconMouseOver}
+          onMouseOut={onAutochainIconMouseOut}
+          onClick={onAutochainIconClick}
+          onDoubleClick={(e) => e.stopPropagation()}
+        />
+      )}
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"

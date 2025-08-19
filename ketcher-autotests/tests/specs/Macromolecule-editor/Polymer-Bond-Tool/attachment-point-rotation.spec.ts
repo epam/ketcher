@@ -1,5 +1,5 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,
@@ -31,28 +31,28 @@ test.describe('Check attachment point rotation', () => {
     // Get 4 peptides locators
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       500,
       200,
       3,
@@ -94,14 +94,14 @@ test.describe('Check attachment point rotation', () => {
     // Get 4 peptides locators
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       400,
       400,
       1,

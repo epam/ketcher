@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 import { applyEnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import {

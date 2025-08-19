@@ -15,12 +15,22 @@ export enum MonomerType {
   Nucleotide = 'RNA',
   // Atom is for compatibility
   Atom = 'atom',
+  Preset = 'Preset',
 }
 
 export interface Monomer {
   alias: string;
   testId: string;
   monomerType: MonomerType;
+}
+
+export interface PresetType {
+  alias: string;
+  testId: string;
+  monomerType: MonomerType;
+  sugar: Monomer;
+  base?: Monomer;
+  phosphate?: Monomer;
 }
 
 export enum SequenceModeType {

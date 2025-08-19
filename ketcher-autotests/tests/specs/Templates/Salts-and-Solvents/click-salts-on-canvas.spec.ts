@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -132,7 +132,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Sulfolane,
     );
-    await clickOnCanvas(page, coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

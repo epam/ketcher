@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectIsSequenceMode } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 
@@ -9,13 +9,10 @@ export const useLibraryItemDrag = (
   itemRef: RefObject<HTMLElement>,
 ) => {
   const editor = useSelector(selectEditor);
+  const isSequenceMode = useSelector(selectIsSequenceMode);
 
   useEffect(() => {
-    if (
-      !editor ||
-      editor.mode.modeName === 'sequence-layout-mode' ||
-      !itemRef.current
-    ) {
+    if (!editor || isSequenceMode || !itemRef.current) {
       return;
     }
 
@@ -69,5 +66,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, editor?.mode.modeName, item, itemRef]);
+  }, [editor, isSequenceMode, item, itemRef]);
 };

@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Sugars = createMonomerGroup(MonomerType.Sugar, {
+export const Sugar = createMonomerGroup(MonomerType.Sugar, {
   R: { alias: 'R', testId: 'R___Ribose' },
   dR: { alias: 'dR', testId: 'dR___Deoxy-Ribose' },
   fR: { alias: 'fR', testId: "fR___2'-Fluoro-Ribose" },
@@ -44,6 +44,10 @@ export const Sugars = createMonomerGroup(MonomerType.Sugar, {
     alias: '25mo3r',
     testId: '25mo3r___3-O-Methylribose (2,5 connectivity)',
   },
+  MOE: {
+    alias: 'MOE',
+    testId: "MOE___2'-O-Methoxyethyl ribose",
+  },
   nC62r: {
     alias: 'nC62r',
     testId: 'nC62r___2-O-(6-aminohexyl)ribose',
@@ -54,4 +58,4 @@ export const Sugars = createMonomerGroup(MonomerType.Sugar, {
   },
 });
 
-export type SugarsType = typeof Sugars;
+export type SugarsType = typeof Sugar;

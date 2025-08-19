@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Peptides = createMonomerGroup(MonomerType.Peptide, {
+export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   A: { alias: 'A', testId: 'A___Alanine' },
   Aad: { alias: 'Aad', testId: 'Aad___L-2-aminoadipic acid' },
   Ala_al: {
@@ -99,4 +99,4 @@ export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   Z: { alias: 'Z', testId: '_E___Glutamic acid_Q___Glutamine' },
 });
 
-export type PeptidesType = typeof Peptides;
+export type PeptidesType = typeof Peptide;

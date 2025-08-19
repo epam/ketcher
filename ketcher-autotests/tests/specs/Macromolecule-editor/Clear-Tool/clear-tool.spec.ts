@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { test, expect } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
@@ -34,28 +34,28 @@ test.describe('Clear Canvas Tool', () => {
     // Create 4 peptides on canvas
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       500,
       200,
       3,

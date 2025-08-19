@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
@@ -9,8 +10,8 @@ import {
   waitForRender,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,
@@ -66,14 +67,21 @@ export async function selectPartOfChain(page: Page) {
 
 export async function selectPartOfStructure(page: Page, shift = 5) {
   const coordinatesToStartSelection = 70;
-  const rightMostAtom = await getAtomByIndex(page, { label: 'P' }, 0);
-  const bottomMostAtom = await getAtomByIndex(page, { label: 'S' }, 0);
+  const rightMostAtom = getAtomLocator(page, { atomLabel: 'P' });
+  const bottomMostAtom = getAtomLocator(page, { atomLabel: 'S' });
+  const rightAtom = await rightMostAtom.boundingBox();
+  const bottomAtom = await bottomMostAtom.boundingBox();
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,
   );
   await page.mouse.down();
-  await page.mouse.move(rightMostAtom.x + shift, bottomMostAtom.y + shift);
+  if (rightAtom && bottomAtom) {
+    await page.mouse.move(
+      rightAtom.x + shift + rightAtom.width / 2,
+      bottomAtom.y + shift + bottomAtom.height / 2,
+    );
+  }
   await page.mouse.up();
 }
 
@@ -113,16 +121,24 @@ export async function performVerticalFlip(page: Page) {
 export async function selectChain(page: Page, withBond = false) {
   const smallShift = 30;
   const shiftForBond = 20;
-  const leftMostAtom = await getAtomByIndex(page, { label: 'S' }, 0);
-  const rightMostAtom = await getAtomByIndex(page, { label: 'P' }, 0);
-  await page.mouse.move(
-    withBond ? leftMostAtom.x - shiftForBond : leftMostAtom.x,
-    leftMostAtom.y - smallShift,
-  );
+  const leftMostAtom = getAtomLocator(page, { atomLabel: 'S' });
+  const rightMostAtom = getAtomLocator(page, { atomLabel: 'P' });
+  const leftAtom = await leftMostAtom.boundingBox();
+  const rightAtom = await rightMostAtom.boundingBox();
+  if (leftAtom) {
+    await page.mouse.move(
+      withBond
+        ? leftAtom.x - shiftForBond + leftAtom.width / 2
+        : leftAtom.x + leftAtom.width / 2,
+      leftAtom.y - smallShift + leftAtom.height / 2,
+    );
+  }
   await page.mouse.down();
-  await page.mouse.move(
-    rightMostAtom.x + smallShift,
-    rightMostAtom.y + smallShift,
-  );
+  if (rightAtom) {
+    await page.mouse.move(
+      rightAtom.x + smallShift + rightAtom.width / 2,
+      rightAtom.y + smallShift + rightAtom.height / 2,
+    );
+  }
   await page.mouse.up();
 }

@@ -20,7 +20,6 @@ import {
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -812,8 +811,10 @@ test.describe('Templates - Functional Group Tools3', () => {
     await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await removeAbbreviation(page, point);
+    await removeAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CCl3' }),
+    );
     await takeEditorScreenshot(page);
   });
 

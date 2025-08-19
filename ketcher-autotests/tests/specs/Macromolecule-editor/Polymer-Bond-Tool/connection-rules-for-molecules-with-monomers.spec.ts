@@ -20,7 +20,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   getMonomerLocator,
@@ -41,11 +40,27 @@ test.describe('Connection rules for molecules with monomers: ', () => {
      *  Description: Allow connection of molecule with monomer
      */
     await drawBenzeneRing(page);
-    await addSuperatomAttachmentPoint(page, 'C', 0);
-    await addSuperatomAttachmentPoint(page, 'C', 1);
-    await addSuperatomAttachmentPoint(page, 'C', 1);
-    await addSuperatomAttachmentPoint(page, 'C', 2);
-    await addSuperatomAttachmentPoint(page, 'C', 3);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click(MicroAtomOption.AddAttachmentPoint);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).click(MicroAtomOption.AddAttachmentPoint);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).click(MicroAtomOption.AddAttachmentPoint);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+    ).click(MicroAtomOption.AddAttachmentPoint);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 5 }),
+    ).click(MicroAtomOption.AddAttachmentPoint);
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

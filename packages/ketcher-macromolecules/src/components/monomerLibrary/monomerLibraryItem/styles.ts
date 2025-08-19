@@ -143,7 +143,7 @@ export const CardTitle = styled.span`
   font-size: 12px;
 `;
 
-export const AutochainIcon = styled(Icon)`
+export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
   color: #cad3dd;
   stroke-width: 0;
   opacity: 0;
@@ -155,7 +155,7 @@ export const AutochainIcon = styled(Icon)`
     transform: scale(1.2);
   }
   &:hover {
-    color: #333333;
+    color: ${({ disabled }) => (disabled ? '#cad3dd' : '#333333')};
   }
 `;
 

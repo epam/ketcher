@@ -64,6 +64,7 @@ test.describe('Lasso Selection tool', () => {
     if (atomPoint) {
       await page.mouse.move(atomPoint.x, atomPoint.y);
       await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     }
     await takeEditorScreenshot(page);
     await clickCanvas(page);
@@ -78,9 +79,13 @@ test.describe('Lasso Selection tool', () => {
 
     await page.keyboard.down('Shift');
     if (atomPoint) {
-      await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+      await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
+        from: 'pageTopLeft',
+      });
     }
-    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y, {
+      from: 'pageTopLeft',
+    });
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
     await clickCanvas(page);

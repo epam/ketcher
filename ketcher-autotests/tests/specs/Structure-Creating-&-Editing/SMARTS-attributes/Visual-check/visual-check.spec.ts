@@ -3,6 +3,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   doubleClickOnAtom,
+  keyboardPressOnCanvas,
   pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
@@ -246,15 +247,8 @@ test.describe('Checking if atoms are displayed correctly', () => {
     Test case: https://github.com/epam/ketcher/issues/3362
     Description: when you replace an atom with the selected one, no additional symbols should appear next to it.
     */
-    const point = await getAtomLocator(page, { atomLabel: 'C' })
-      .first()
-      .boundingBox();
-    const pixelsToMoveMouse = 100;
+    await getAtomLocator(page, { atomId: 0 }).click();
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Ti);
-    if (point) {
-      await clickOnCanvas(page, point.x, point.y);
-      await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
-    }
     await takeEditorScreenshot(page);
   });
 });

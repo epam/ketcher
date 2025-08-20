@@ -635,7 +635,7 @@ test.describe('Functional Groups', () => {
       .first()
       .boundingBox();
     if (point) {
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     }
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(

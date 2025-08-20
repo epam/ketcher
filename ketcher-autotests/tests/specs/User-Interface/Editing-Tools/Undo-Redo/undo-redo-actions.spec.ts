@@ -22,6 +22,7 @@ import {
   selectRedoByKeyboard,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
+  dragTo,
 } from '@utils';
 import {
   copyAndPaste,
@@ -666,7 +667,7 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-2960
     Description: Undo/Redo action should work correctly
     */
-    const yDelta = 300;
+    // const yDelta = 300;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -679,15 +680,14 @@ test.describe('Undo/Redo Actions', () => {
     });
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await LeftToolbar(page).chain();
-    const point = await getAtomLocator(page, {
-      atomLabel: 'C',
-      atomId: 2,
-    }).boundingBox();
-    if (point) {
-      await clickOnCanvas(page, point.x, point.y);
-      const coordinatesWithShift = point.y + yDelta;
-      await dragMouseTo(point.x, coordinatesWithShift, page);
-    }
+    await dragTo(
+      page,
+      getAtomLocator(page, {
+        atomLabel: 'C',
+        atomId: 2,
+      }),
+      { x: 600, y: 500 },
+    );
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
     }

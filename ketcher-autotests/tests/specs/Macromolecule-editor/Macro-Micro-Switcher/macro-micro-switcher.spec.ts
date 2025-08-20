@@ -1027,42 +1027,42 @@ test.describe('Macro-Micro-Switcher', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/long-chain.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await waitForRender(page, async () => {
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 6 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 14 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 16 }),
       ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 17 }),
@@ -1083,7 +1083,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await waitForRender(page, async () => {
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
@@ -1106,7 +1106,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click();
     await waitForRender(page, async () => {
-      await page.keyboard.press('Escape');
+      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),

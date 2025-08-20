@@ -63,7 +63,6 @@ const config: PlaywrightTestConfig = {
   ],
   use: {
     actionTimeout: 0,
-    viewport: { width: 1920, height: 1080 },
     screenshot: 'only-on-failure',
     trace: isCI ? 'off' : 'on-first-retry',
   },
@@ -72,6 +71,7 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 720 },
         baseURL: baseURLFullScale(),
         launchOptions: { headless: true },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
@@ -82,6 +82,7 @@ const config: PlaywrightTestConfig = {
       name: 'chromium-popup',
       use: {
         ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 720 },
         baseURL: baseURLPopup(),
         launchOptions: { headless: true },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },

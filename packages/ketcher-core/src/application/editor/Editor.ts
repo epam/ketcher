@@ -105,6 +105,7 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import { D3SvgElementSelection } from 'application/render/types';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -138,6 +139,7 @@ interface IAutochainMonomerAddResult {
   modelChanges: Command;
   firstMonomer: BaseMonomer;
   lastMonomer: BaseMonomer;
+  drawingEntities: DrawingEntity[];
 }
 
 export const EditorClassName = 'Ketcher-polymer-editor-root';
@@ -667,6 +669,7 @@ export class CoreEditor {
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
+        const modelChanges = new Command();
         const history = new EditorHistory(this);
         const { x, y } = position;
 
@@ -697,8 +700,16 @@ export class CoreEditor {
           return;
         }
 
-        history.update(monomersAddResult.modelChanges);
-        this.renderersContainer.update(monomersAddResult.modelChanges);
+        modelChanges.merge(monomersAddResult.modelChanges);
+
+        modelChanges.merge(
+          this.drawingEntitiesManager.selectDrawingEntities(
+            monomersAddResult.drawingEntities,
+          ),
+        );
+
+        history.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
         this.calculateAndStoreNextAutochainPosition(
           monomersAddResult.lastMonomer,
         );
@@ -713,7 +724,7 @@ export class CoreEditor {
     );
   }
 
-  private getDataForAutochain() {
+  public getDataForAutochain() {
     const selectedMonomersWithFreeR2 =
       this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
         return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
@@ -737,6 +748,7 @@ export class CoreEditor {
     return {
       selectedMonomerToConnect,
       newMonomerPosition,
+      selectedMonomersWithFreeR2,
     };
   }
 
@@ -775,6 +787,8 @@ export class CoreEditor {
       isLibraryItemRnaPreset(monomerOrRnaItem),
     );
 
+    const canvasWasEmptyBeforeAutochain =
+      this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
     const history = new EditorHistory(this);
     const { selectedMonomerToConnect, newMonomerPosition } =
@@ -830,6 +844,14 @@ export class CoreEditor {
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
+    }
+
+    if (canvasWasEmptyBeforeAutochain) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.selectDrawingEntities(
+          monomersAddResult.drawingEntities,
+        ),
+      );
     }
 
     this.renderersContainer.update(modelChanges);
@@ -959,6 +981,15 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: sugar,
       lastMonomer: phosphate ?? sugar,
+      drawingEntities: [
+        ...monomers,
+        ...(sugar.attachmentPointsToBonds.R2
+          ? [sugar.attachmentPointsToBonds.R2]
+          : []),
+        ...(sugar.attachmentPointsToBonds.R3
+          ? [sugar.attachmentPointsToBonds.R3]
+          : []),
+      ],
     };
   }
 
@@ -980,6 +1011,7 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: monomer,
       lastMonomer: monomer,
+      drawingEntities: [monomer],
     };
   }
 
@@ -1002,6 +1034,7 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: monomer,
       lastMonomer: monomer,
+      drawingEntities: [monomer],
     };
   }
 

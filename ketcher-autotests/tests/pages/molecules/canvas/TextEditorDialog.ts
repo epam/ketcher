@@ -88,6 +88,10 @@ export const TextEditorDialog = (page: Page) => {
       await locators.textEditor.fill(text);
     },
 
+    async addText(text: string) {
+      await locators.textEditor.pressSequentially(text);
+    },
+
     async selectFontSize(fontSize: number) {
       const numberToSelect = page.getByTestId(`${fontSize}-option`);
 

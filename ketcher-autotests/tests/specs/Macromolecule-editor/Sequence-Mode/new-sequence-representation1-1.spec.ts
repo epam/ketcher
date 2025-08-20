@@ -1466,7 +1466,11 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
 
 async function exitFromEditMode(page: Page) {
   await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
-  await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
+  await Promise.all(
+    (
+      await page.getByTestId('sequence-start-arrow').all()
+    ).map((startArrow) => startArrow.waitFor({ state: 'hidden' })),
+  );
 }
 
 async function turnIntoEditModeAndPlaceCursorToThePosition(

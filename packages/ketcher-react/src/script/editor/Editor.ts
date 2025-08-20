@@ -737,7 +737,7 @@ class Editor implements KetcherEditor {
     });
 
     this._monomerCreationState = {
-      originalStruct: currentStruct.clone(),
+      originalStruct: currentStruct,
       attachmentAtomIdToLeavingAtomId: attachmentPoints,
     };
 
@@ -851,22 +851,43 @@ class Editor implements KetcherEditor {
 
     this.closeMonomerCreationWizard();
 
+    const sGroupAttachmentPoints =
+      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+        monomer,
+        this.atomIdsMap,
+      );
+
+    this.singleBondsToOutsideOfSelection.forEach((bond) => {
+      const attachmentPointToBond = sGroupAttachmentPoints.find((point) => {
+        return point.atomId === bond.begin || point.atomId === bond.end;
+      });
+
+      if (attachmentPointToBond) {
+        bond.beginSuperatomAttachmentPointNumber =
+          attachmentPointToBond.attachmentPointNumber;
+      }
+    });
+
     const action = fromSgroupAddition(
       this.render.ctab,
       SGroup.TYPES.SUP,
       this.originalSelection.atoms,
       { expanded: true },
       this.render.ctab.molecule.sgroups.newId(),
-      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
-        monomer,
-        this.atomIdsMap,
-      ),
+      sGroupAttachmentPoints,
       monomer.position,
       true,
       monomer.monomerItem.props.MonomerName,
       null,
       monomer,
     );
+
+    this.originalSelection.atoms?.forEach((atomId) => {
+      const atom = this.render.ctab.molecule.atoms.get(atomId);
+      if (atom) {
+        atom.fragment = -1;
+      }
+    });
 
     this.update(action);
   }

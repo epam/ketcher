@@ -69,6 +69,7 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
+      testIgnore: '**/Chromium-popup/**/*.ts',
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
@@ -80,6 +81,7 @@ const config: PlaywrightTestConfig = {
     {
       // former chromium-ReactMUI857x648
       name: 'chromium-popup',
+      testMatch: '**/Chromium-popup/**/*.ts',
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },

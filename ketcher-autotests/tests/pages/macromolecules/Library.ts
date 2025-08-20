@@ -230,7 +230,14 @@ export const Library = (page: Page) => {
         : rnaTabPresetsSection;
 
       await this.goToMonomerLocation(location);
-      await this.getMonomerAutochainButton(monomer).hover();
+
+      const card = page.getByTestId(monomer.testId);
+      await card.scrollIntoViewIfNeeded();
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.hover();
     },
 
     /** Click on the arrow button on the monomer card */
@@ -240,7 +247,14 @@ export const Library = (page: Page) => {
         : rnaTabPresetsSection;
 
       await this.goToMonomerLocation(location);
-      await this.getMonomerAutochainButton(monomer).click();
+
+      const card = page.getByTestId(monomer.testId);
+      await card.scrollIntoViewIfNeeded();
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.click();
     },
 
     async dragMonomerOnCanvas(

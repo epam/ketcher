@@ -332,7 +332,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Presets).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Presets)
@@ -342,7 +342,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Preset.MOE_5meC_P);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -361,7 +360,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Peptides).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Peptides)
@@ -372,7 +371,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Peptide.Cys_Bn);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -391,7 +389,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Sugars).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Sugars)
@@ -402,7 +400,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Sugar._25d3r);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -421,7 +418,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Bases).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Bases)
@@ -433,7 +430,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Base.nC6n2G);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -452,7 +448,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Phosphates).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Phosphates)
@@ -464,7 +460,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Phosphate.moen);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -483,7 +478,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Nucleotides).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Nucleotides)
@@ -495,7 +490,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Nucleotide.Super_G);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -514,7 +508,7 @@ test.describe('Arrow button on Library cards', () => {
        * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Chems).
        * Scenario:
-       * 1. Go to Macro - Snake mode
+       * 1. Go to Macro - Flex mode
        * 2. Open Library
        * 3. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
        * when hovering over the arrow for a monomer that has R1, a ghost/placeholder appear to the right of the monomer with R2 on canvas (Chems)
@@ -525,7 +519,6 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectAllStructuresOnCanvas(page);
       await Library(page).hoverMonomerAutochain(Chem.DOTA);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,

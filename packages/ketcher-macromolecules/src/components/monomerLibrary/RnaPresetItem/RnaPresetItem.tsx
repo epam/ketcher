@@ -31,6 +31,7 @@ import {
 import { selectEditor, selectIsSequenceMode } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
+import { AUTOCHAIN_ELEMENT_CLASSNAME } from 'components/monomerLibrary/monomerLibraryItem';
 
 const RnaPresetItem = ({
   preset,
@@ -109,7 +110,7 @@ const RnaPresetItem = ({
         <Tooltip title={autochainErrorMessage}>
           <AutochainIconWrapper>
             <AutochainIcon
-              className="autochain"
+              className={AUTOCHAIN_ELEMENT_CLASSNAME}
               name="monomer-autochain"
               disabled={Boolean(autochainErrorMessage)}
               onMouseOver={onAutochainIconMouseOver}

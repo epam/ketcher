@@ -32,6 +32,7 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
 } from 'ketcher-react';
+import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 const MonomerGroup = ({
   items,
@@ -87,6 +88,11 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
+
+    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+      return;
+    }
+
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     let style: PreviewStyle;
     let previewType: PreviewType;

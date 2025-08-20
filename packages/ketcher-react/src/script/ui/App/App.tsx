@@ -64,8 +64,12 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer();
+    // TODO suppressed after upgrade to react 19. Need to fix
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     dispatch(initFGTemplates());
+    // TODO suppressed after upgrade to react 19. Need to fix
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     dispatch(initSaltsAndSolventsTemplates());
 
@@ -107,7 +111,12 @@ const App = (props: Props) => {
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
-        <AppClipArea />
+        {
+          // TODO suppressed after upgrade to react 19. Need to fix
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          <AppClipArea />
+        }
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
       </div>

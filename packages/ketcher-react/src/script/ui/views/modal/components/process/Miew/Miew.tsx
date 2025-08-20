@@ -121,7 +121,7 @@ const MiewDialog = ({
   miewTheme = 'light',
   ...prop
 }: Props) => {
-  const miewRef = useRef<MiewAsType>();
+  const miewRef = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(

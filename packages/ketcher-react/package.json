@@ -48,7 +48,7 @@
   "dependencies": {
     "@babel/runtime": "^7.26.10",
     "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/material": "^5.18.0",
     "ajv": "^8.10.0",
     "cfb": "^1.2.2",

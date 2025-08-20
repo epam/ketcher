@@ -17,7 +17,11 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => {
       hidden={value !== index}
       id={index.toString()}
     >
-      {value === index && <Box className={styles.tabPanelBox}>{children}</Box>}
+      {value === index && (
+        <Box className={styles.tabPanelBox}>
+          <>{children}</>
+        </Box>
+      )}
     </div>
   );
 };

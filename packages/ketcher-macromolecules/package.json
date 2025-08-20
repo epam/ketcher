@@ -61,6 +61,7 @@
     "lodash": "^4.17.21",
     "react-contexify": "^6.0.0",
     "react-dropzone": "^11.7.1",
+    "react-intersection-observer": "^9.16.0",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-saga": "^1.1.3"

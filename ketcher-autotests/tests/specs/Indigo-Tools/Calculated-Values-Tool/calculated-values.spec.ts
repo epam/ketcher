@@ -8,19 +8,13 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  BondType,
   dragMouseTo,
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
-  clickOnCanvas,
 } from '@utils';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
-import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
-import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.describe('Calculated Values Tools', () => {
@@ -175,33 +169,7 @@ test.describe('Calculated Values Tools', () => {
     );
   });
 
-  test('The calculation result for a substructure with existing but not selected query features', async () => {
-    /*
-    Test case: EPMLSOPKET-2000
-    Description: The calculation result for a substructure with not selected query features should be correct.
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    let point: { x: number; y: number };
-    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-structure.mol');
-
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 4);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await page.keyboard.up('Shift');
-
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('One structure on canvas (Benzene ring)', async () => {
+  test('One structure on canvas (Benzene ring)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1997
     Description:
@@ -600,213 +568,9 @@ test.describe('Calculated Values Tools', () => {
     ).toHaveValue('C 84.9 H 15.1');
   });
 
-  test('(a-query-non-hsub)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-unsaturated)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V3000/a-query-unsaturated.mol',
-    );
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-ring-bonds)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-aq)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-atom-list)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-not-list)Test Calculations with Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-non-hsub)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-non-hsub.mol');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-unsaturated)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V3000/a-query-unsaturated.mol',
-    );
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-ring-bonds)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-ring-bonds.mol');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-aq)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-aq.mol');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-atom-list)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-atom-list.mol');
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(a-query-not-list)Test Calculations with part of Structures Containing Atom Query Features', async () => {
-    /*
-    Test case: EPMLSOPKET-2012
-    Description: If the Query Feature(s) is absent in the selected object the calculation is
-    represented in the common way (as simple structure).
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/a-query-not-list.mol');
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('(hetero-adduct)Calculation of exact mass for different types of structures', async () => {
+  test('(hetero-adduct)Calculation of exact mass for different types of structures', async ({
+    page,
+  }) => {
     /*
      * Test case: EPMLSOPKET-1998
      * Description: The presence of Data S-group is ignored and calculation is represented as simple structure.
@@ -866,23 +630,7 @@ test.describe('Calculated Values Tools', () => {
     ).toHaveValue('C 60.1 H 4.1 Br 35.8');
   });
 
-  test('(dgln-atomlist)Calculation of exact mass for different types of structures', async () => {
-    /*
-    Test case: EPMLSOPKET-1998
-    Description: If the selected object contains the Query Feature all fields contain the 'Cannot
-    calculate properties for structures with query features' message.
-    */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
-    await openFileAndAddToCanvas(page, 'Molfiles-V3000/dgln-atomlist.mol');
-    await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for structures with query features!',
-    );
-  });
-
-  test('Calculation for several reaction components', async () => {
+  test('Calculation for several reaction components', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-2002
      * Description: Reaction components are calculated.

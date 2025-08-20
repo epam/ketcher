@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
@@ -149,6 +149,7 @@ interface ModeProps {
 export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const ketcherEditorRootElementRef = useRef<HTMLElement | null>(null);
 
   const onClose = () => {
     setIsExpanded(false);
@@ -163,11 +164,14 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const title = isPolymerEditor
     ? 'Switch to Ketcher mode'
     : 'Switch to Macromolecule mode';
-  const ketcherEditorRootElement = document.querySelector(
-    isPolymerEditor
-      ? KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR
-      : KETCHER_ROOT_NODE_CSS_SELECTOR,
-  );
+
+  useEffect(() => {
+    ketcherEditorRootElementRef.current = document.querySelector(
+      isPolymerEditor
+        ? KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR
+        : KETCHER_ROOT_NODE_CSS_SELECTOR,
+    );
+  }, [isPolymerEditor]);
 
   return (
     <ElementAndDropdown title={title}>
@@ -193,7 +197,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
         open={isExpanded}
         onClose={onClose}
         anchorEl={btnRef.current}
-        container={ketcherEditorRootElement}
+        container={ketcherEditorRootElementRef.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

@@ -249,11 +249,10 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     },
   );
 
-  test.fail(
+  test(
     'Case 7: Name for h456UR and e6A monomers are correct',
     { tag: ['@chromium-popup'] },
     async () => {
-      // Works wrong in popup mode because of the bug: https://github.com/epam/ketcher/issues/7512
       /*
        * Test case: https://github.com/epam/ketcher/issues/6937
        * Bug: https://github.com/epam/ketcher/issues/5648

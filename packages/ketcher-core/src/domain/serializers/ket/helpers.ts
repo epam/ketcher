@@ -18,7 +18,7 @@ import { Axis, Axises, Struct, Vec2 } from 'domain/entities';
 import { cloneDeep, cloneDeepWith } from 'lodash';
 import { EditorSelection } from 'application/editor';
 import { KetMonomerClass, MonomerTransformation } from 'application/formatters';
-import { MONOMER_CONST } from 'domain/constants';
+import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -57,6 +57,25 @@ export const getHELMClassByKetMonomerClass = (
   }
 
   return MONOMER_CONST.RNA;
+};
+
+export const fillNaturalAnalogueForPhosphateAndSugar = (
+  naturalAnalogue: string,
+  monomerClass: KetMonomerClass,
+) => {
+  if (naturalAnalogue !== '') {
+    return naturalAnalogue;
+  }
+
+  if (monomerClass === KetMonomerClass.Sugar) {
+    return RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
+  }
+
+  if (monomerClass === KetMonomerClass.Phosphate) {
+    return RNA_DNA_NON_MODIFIED_PART.PHOSPHATE;
+  }
+
+  return naturalAnalogue;
 };
 
 const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {

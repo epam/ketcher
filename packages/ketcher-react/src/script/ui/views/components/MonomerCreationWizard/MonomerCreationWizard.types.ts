@@ -23,7 +23,13 @@ export type WizardNotificationId =
   | 'defaultAttachmentPoints'
   | 'emptyMandatoryFields'
   | 'invalidSymbol'
-  | 'symbolExists';
+  | 'symbolExists'
+  | 'editingIsNotAllowed';
+
+export type WizardNotificationTypeMap = Record<
+  WizardNotificationId,
+  WizardNotificationType
+>;
 
 export type WizardNotificationMessageMap = Record<WizardNotificationId, string>;
 
@@ -56,6 +62,10 @@ export type WizardAction =
   | {
       type: 'SetNotifications';
       notifications: WizardNotifications;
+    }
+  | {
+      type: 'AddNotification';
+      id: WizardNotificationId;
     }
   | {
       type: 'RemoveNotification';

@@ -13,6 +13,7 @@ interface ChipGridSelectProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  error?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -69,6 +70,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   value,
   onChange,
   className,
+  error,
 }) => {
   const disabled = !isNaturalAnalogueRequired(monomerType);
 
@@ -122,6 +124,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
       disabled={disabled}
+      error={error}
     >
       {options.map((option) => (
         <MenuItem

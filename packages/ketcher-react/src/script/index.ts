@@ -69,3 +69,6 @@ async function buildKetcherAsync({
 }
 
 export default buildKetcherAsync;
+
+export * from './ui/views/toolbars/ArrowScroll';
+export * from './ui/views/toolbars/ToolbarGroupItem/ToolbarMultiToolItem/usePortalStyle';

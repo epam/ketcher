@@ -1,9 +1,7 @@
 import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
   doubleClickOnAtom,
-  keyboardPressOnCanvas,
   pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,

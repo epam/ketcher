@@ -60,7 +60,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
-    await TextEditorDialog(page).setText('TEST123');
+    await TextEditorDialog(page).addText('TEST123');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
@@ -149,12 +149,11 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
 
     await getTextLabelLocator(page, { text: '+++' }).dblclick();
-    await TextEditorDialog(page).setText('123');
+    await TextEditorDialog(page).addText('123');
     await TextEditorDialog(page).cancel();
 
     await getTextLabelLocator(page, { text: '+++' }).dblclick();
-    await selectAllStructuresOnCanvas(page);
-    await TextEditorDialog(page).setText('Test');
+    await TextEditorDialog(page).addText('Test');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
@@ -162,15 +161,14 @@ test.describe('Text tools test cases', () => {
       text: 'Ketcher is a tool to draw molecular structures and chemical reactions',
     }).dblclick();
 
-    await TextEditorDialog(page).setText('123');
+    await TextEditorDialog(page).addText('123');
     await TextEditorDialog(page).cancel();
 
     await getTextLabelLocator(page, {
       text: 'Ketcher is a tool to draw molecular structures and chemical reactions',
     }).dblclick();
 
-    await selectAllStructuresOnCanvas(page);
-    await TextEditorDialog(page).setText('Super');
+    await TextEditorDialog(page).addText('Super');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });

@@ -833,15 +833,9 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(
-      monomerBoundingBox?.x + 11,
-      monomerBoundingBox?.y + 11,
+      monomerBoundingBox?.x - 10,
+      monomerBoundingBox?.y - 10,
     );
-    if (monomerToDrag[4] === monomer) {
-      await page.mouse.move(
-        monomerBoundingBox?.x + 9,
-        monomerBoundingBox?.y + 9,
-      );
-    }
     await waitForRender(page);
 
     await takeEditorScreenshot(page, {
@@ -889,16 +883,9 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(
-      monomerBoundingBox?.x + 11,
-      monomerBoundingBox?.y + 11,
+      monomerBoundingBox?.x - 10,
+      monomerBoundingBox?.y - 10,
     );
-    if (monomerToDrag[4] === monomer) {
-      await page.mouse.move(
-        monomerBoundingBox?.x + 9,
-        monomerBoundingBox?.y + 9,
-      );
-    }
-
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

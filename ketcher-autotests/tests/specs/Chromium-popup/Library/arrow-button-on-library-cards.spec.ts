@@ -6,7 +6,6 @@ import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
   openFileAndAddToCanvasAsNewProject,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePresetsScreenshot,

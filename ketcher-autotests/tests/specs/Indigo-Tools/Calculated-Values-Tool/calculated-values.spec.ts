@@ -7,15 +7,11 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  BondType,
   dragMouseTo,
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
-  clickOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';

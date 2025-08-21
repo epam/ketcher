@@ -260,6 +260,7 @@ test.describe(`Bond tool:`, () => {
       });
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
       await takeEditorScreenshot(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
       await CommonTopLeftToolbar(page).clearCanvas();
     });
 

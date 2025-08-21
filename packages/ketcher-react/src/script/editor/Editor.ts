@@ -72,6 +72,7 @@ import {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
+import assert from 'assert';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -576,7 +577,7 @@ class Editor implements KetcherEditor {
       return true;
     }
 
-    const selection: Selection = this.explicitSelected(false);
+    const selection = this.selection();
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
@@ -683,10 +684,13 @@ class Editor implements KetcherEditor {
 
   openMonomerCreationWizard() {
     const currentStruct = this.render.ctab.molecule;
-    const selection: Selection = this.explicitSelected();
+    const selection = this.selection();
+
+    assert(selection);
+
     this.originalSelection = selection;
     const selectionAtoms = new Set(selection.atoms);
-    const selectedStruct = this.structSelected();
+    const selectedStruct = this.structSelected(selection);
 
     this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
 
@@ -1194,9 +1198,9 @@ class Editor implements KetcherEditor {
     return res;
   }
 
-  structSelected() {
+  structSelected(existingSelection?: Selection): Struct {
     const struct = this.render.ctab.molecule;
-    const selection = this.explicitSelected();
+    const selection = existingSelection ?? this.explicitSelected();
     const dst = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),

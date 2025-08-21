@@ -153,6 +153,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
       await takeEditorScreenshot(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
       await CommonTopLeftToolbar(page).clearCanvas();
     });
 

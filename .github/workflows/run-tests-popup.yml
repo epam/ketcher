@@ -88,8 +88,8 @@ jobs:
         # run even if previous steps fails
         if: always()
         with:
-          name: tests-${{ matrix.shardIndex }}
-          path: ketcher-autotests/
+          name: pw-report-popup-${{ matrix.shardIndex }}
+          path: ketcher-autotests/playwright-report/
           retention-days: 5
   merge_reports:
     if: ${{ !cancelled() }}

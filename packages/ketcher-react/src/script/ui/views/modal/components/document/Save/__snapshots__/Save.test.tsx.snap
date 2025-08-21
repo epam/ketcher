@@ -29,7 +29,7 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
@@ -76,7 +76,7 @@ Object {
                     data-testid="file-format-list"
                   >
                     <div
-                      aria-controls=":r0:"
+                      aria-controls="«r0»"
                       aria-expanded="true"
                       aria-haspopup="listbox"
                       class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -93,14 +93,14 @@ Object {
                       value="mol"
                     />
                     <icon-chevron.svg
-                      classname="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
+                      class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
                     />
                     <fieldset
                       aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                     >
                       <legend
-                        class="css-ihdtdm"
+                        class="css-1whs34k-MuiNotchedOutlined-root"
                       >
                         <span
                           class="notranslate"
@@ -144,7 +144,7 @@ Object {
                     title="Copy to clipboard"
                   >
                     <icon-copy.svg
-                      classname="css-2ntgcm"
+                      class="css-2ntgcm"
                     />
                   </button>
                 </div>
@@ -196,12 +196,12 @@ Object {
       />
       <div
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper MuiMenu-paper MuiMenu-paper css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper"
-        style="opacity: 1; transform: scale(1, 1); min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
+        style="opacity: 1; transform: none; min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
         tabindex="-1"
       >
         <ul
           class="MuiList-root MuiList-padding MuiMenu-list css-6hp17o-MuiList-root-MuiMenu-list"
-          id=":r0:"
+          id="«r0»"
           role="listbox"
           tabindex="-1"
         >
@@ -436,7 +436,7 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
@@ -483,7 +483,7 @@ Object {
                   data-testid="file-format-list"
                 >
                   <div
-                    aria-controls=":r0:"
+                    aria-controls="«r0»"
                     aria-expanded="true"
                     aria-haspopup="listbox"
                     class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -500,14 +500,14 @@ Object {
                     value="mol"
                   />
                   <icon-chevron.svg
-                    classname="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
+                    class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
                   />
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-ihdtdm"
+                      class="css-1whs34k-MuiNotchedOutlined-root"
                     >
                       <span
                         class="notranslate"
@@ -551,7 +551,7 @@ Object {
                   title="Copy to clipboard"
                 >
                   <icon-copy.svg
-                    classname="css-2ntgcm"
+                    class="css-2ntgcm"
                   />
                 </button>
               </div>

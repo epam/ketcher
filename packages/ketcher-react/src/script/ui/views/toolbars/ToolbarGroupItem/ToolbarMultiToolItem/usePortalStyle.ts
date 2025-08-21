@@ -17,7 +17,12 @@
 import { CSSProperties, RefObject, useEffect, useState } from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
-type HookParams = [RefObject<HTMLDivElement | null>, boolean, boolean?, string?];
+type HookParams = [
+  RefObject<HTMLDivElement | null>,
+  boolean,
+  boolean?,
+  string?,
+];
 
 function usePortalStyle([
   ref,

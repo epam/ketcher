@@ -291,6 +291,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await Library(page).rnaBuilder.selectSugarSlot();
     await takeMonomerLibraryScreenshot(page);
     await Library(page).rnaBuilder.selectBaseSlot();
+    // fixed failing on ci by introducing wait
+    await page.waitForTimeout(1000);
     await takeMonomerLibraryScreenshot(page);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await takeMonomerLibraryScreenshot(page);

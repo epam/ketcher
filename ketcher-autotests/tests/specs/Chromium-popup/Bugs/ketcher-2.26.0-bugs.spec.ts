@@ -713,13 +713,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
 
-      const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
-      await _25mo3rSugar.hover();
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
-      await moveMouseAway(page);
-    },
-  );
+    const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
+    await _25mo3rSugar.hover();
+    await waitForMonomerPreview(page);
+    await takeEditorScreenshot(page);
+    await moveMouseAway(page);
+  });
 
   test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async () => {
     /*

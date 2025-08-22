@@ -8,9 +8,9 @@ import {
   moveMouseAway,
   takeEditorScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { BondType } from '@utils/canvas/types';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   getBondByIndex,
   getLeftBondByAttributes,
@@ -24,6 +24,9 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];
@@ -36,32 +39,44 @@ async function checkTooltip(type: RingButton, page: Page) {
 }
 
 async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
-  await BottomToolbar(page).clickRing(type);
+  await waitForRender(page, async () => {
+    await BottomToolbar(page).clickRing(type);
+  });
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);
 
   // Attaching Second Ring By Atom
   await BottomToolbar(page).clickRing(type);
-  const point = await getAtomByIndex(page, { label: 'C' }, 2);
-  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+  await getAtomLocator(page, { atomLabel: 'C' }).first().click();
 }
 
 async function mergeRingByBond(type: RingButton, page: Page) {
-  await BottomToolbar(page).clickRing(type);
+  await waitForRender(page, async () => {
+    await BottomToolbar(page).clickRing(type);
+  });
   const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {
-  await BottomToolbar(page).clickRing(type);
-  let point = await getAtomByIndex(page, { label: 'C' }, 2);
-  const selectionRange = point.x / 4;
-  await clickOnCanvas(
-    page,
-    selectionRange + selectionRange,
-    selectionRange + selectionRange,
-  );
-  point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+  await waitForRender(page, async () => {
+    await BottomToolbar(page).clickRing(type);
+  });
+  const pointAtom = await getAtomLocator(page, { atomLabel: 'C' })
+    .first()
+    .boundingBox();
+  if (!pointAtom) {
+    throw new Error('Unable to get boundingBox for canvas');
+  }
+  const selectionRange = pointAtom.x / 4;
+  if (selectionRange) {
+    await clickOnCanvas(
+      page,
+      selectionRange + selectionRange,
+      selectionRange + selectionRange,
+    );
+  }
+  let point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -128,6 +143,7 @@ test.describe('Templates – Rings manipulations', () => {
 
   Object.entries(RingButton).forEach(([key, value]) => {
     test(`Ring: ${key}`, async ({ page }) => {
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
       await BottomToolbar(page).clickRing(value);
       await manipulateRingsByName(value, page);
       await moveMouseAway(page);

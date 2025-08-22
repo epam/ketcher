@@ -15,7 +15,6 @@ import {
   waitForRender,
   keyboardPressOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -32,6 +31,9 @@ import {
   PropertyLabelType,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,9 +47,12 @@ test.describe('Selection tools', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 

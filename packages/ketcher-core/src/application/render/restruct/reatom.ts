@@ -805,6 +805,69 @@ class ReAtom extends ReObject {
         true,
       );
     }
+
+    if (label?.path) {
+      label?.path.node?.setAttribute('data-testid', 'atom');
+      label?.path.node?.setAttribute(
+        'data-atom-id',
+        restruct.molecule.atoms.keyOf(this.a ?? ''),
+      );
+      label?.path.node?.setAttribute('data-atom-type', getAtomType(this.a));
+      label?.path.node?.setAttribute('data-atomLabel', this.a.label ?? '');
+      label?.path.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomIsotopeAtomicMass',
+        this.a.isotope ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomValence', this.a.valence ?? '');
+      label?.path.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomRingBondCount',
+        this.a.ringBondCount ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomSubstitutionCount',
+        this.a.substitutionCount ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomUnsaturated',
+        this.a.unsaturatedAtom ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomAromaticity',
+        this.a.queryProperties.aromaticity ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomImplicitHCount',
+        this.a.implicitHCount ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomRingMembership',
+        this.a.queryProperties.ringMembership ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomRingSize',
+        this.a.queryProperties.ringSize ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomConnectivity',
+        this.a.queryProperties.connectivity ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomChirality',
+        this.a.queryProperties.chirality ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomExactChange',
+        this.a.exactChangeFlag ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomCustomQuery',
+        this.a.queryProperties.customQuery ?? '',
+      );
+    }
   }
 
   getLargestSectorFromNeighbors(struct: Struct): {

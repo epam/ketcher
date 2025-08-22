@@ -41,11 +41,23 @@ export function LeftMenuComponent() {
           title={`Hand Tool (${hotkeysShortcuts.hand})`}
           testId="hand"
         />
-        <Menu.Item
-          itemId="select-rectangle"
-          title={`Select Rectangle  (${hotkeysShortcuts.exit})`}
-          testId="select-rectangle"
-        />
+        <Menu.Group>
+          <Menu.Submenu
+            testId="select-drop-down-button"
+            needOpenByMenuItemClick={false}
+          >
+            <Menu.Item
+              itemId="select-rectangle"
+              title={`Select Rectangle (${hotkeysShortcuts.exit})`}
+              testId="select-rectangle"
+            />
+            <Menu.Item
+              itemId="select-lasso"
+              title={`Lasso selection (${hotkeysShortcuts.exit})`}
+              testId="select-lasso"
+            />
+          </Menu.Submenu>
+        </Menu.Group>
         <Menu.Item
           itemId="erase"
           title={`Erase (${hotkeysShortcuts.erase})`}

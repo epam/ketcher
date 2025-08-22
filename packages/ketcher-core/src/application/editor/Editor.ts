@@ -92,7 +92,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import {
   getAminoAcidsToModify,

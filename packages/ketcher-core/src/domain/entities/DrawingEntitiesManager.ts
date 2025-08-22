@@ -702,6 +702,7 @@ export class DrawingEntitiesManager {
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
+
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
       if (
@@ -716,6 +717,52 @@ export class DrawingEntitiesManager {
         isValueChanged = drawingEntity.selectIfLocatedInRectangle(
           rectangleTopLeftPoint,
           rectangleBottomRightPoint,
+          !!isPreviousSelected,
+          shiftKey,
+        );
+      }
+      if (isValueChanged) {
+        const selectionCommand =
+          this.createDrawingEntitySelectionCommand(drawingEntity);
+
+        command.merge(selectionCommand);
+      }
+    });
+    return command;
+  }
+
+  public selectIfLocatedInPolygon(
+    polygonPoints: Vec2[],
+    previousSelectedEntities: [number, DrawingEntity][],
+    shiftKey = false,
+  ) {
+    const command = new Command();
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (
+        drawingEntity instanceof Chem &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      const isPreviousSelected = previousSelectedEntities.find(
+        ([, entity]) => entity === drawingEntity,
+      );
+
+      let isValueChanged;
+      const editor = CoreEditor.provideEditorInstance();
+      if (
+        editor.mode instanceof SequenceMode &&
+        drawingEntity instanceof PolymerBond
+      ) {
+        isValueChanged = this.checkBondSelectionForSequenceMode(
+          drawingEntity,
+          isValueChanged,
+        );
+      } else {
+        isValueChanged = drawingEntity.selectIfLocatedInPolygon(
+          polygonPoints,
           !!isPreviousSelected,
           shiftKey,
         );

@@ -16,7 +16,6 @@ import {
   RxnFileFormat,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
@@ -69,6 +68,9 @@ import {
   SubstitutionCount,
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1661,10 +1663,14 @@ test.describe('Atom Properties', () => {
       QueryAtomOption.Connectivity,
     ];
 
-    const anyAtom = 2;
+    // const anyAtom = 2;
     await drawBenzeneRing(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, anyAtom);
-    await ContextMenu(page, point).hover(MicroAtomOption.QueryProperties);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).hover();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+    ).hover(MicroAtomOption.QueryProperties);
 
     for (const option of optionsToClick) {
       await page.getByTestId(option).first().click();
@@ -1680,7 +1686,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18034
       Description: All Ring bond count options added to Benzene structure.
     */
-    const atomIndices = [2, 4, 5];
+    const atomIndices = [2, 1, 3];
     const optionIndices = [
       RingBondCountOption.AsDrawn,
       RingBondCountOption.Three,
@@ -1688,10 +1694,16 @@ test.describe('Atom Properties', () => {
     ];
 
     await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
-      await ContextMenu(page, point).click([
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: atomIndices[i],
+        }),
+      ).click([
         MicroAtomOption.QueryProperties,
         QueryAtomOption.RingBondCount,
         optionIndices[i],
@@ -1707,7 +1719,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18035
       Description: All H count options added to Benzene structure.
     */
-    const atomIndices = [2, 4, 5];
+    const atomIndices = [2, 1, 3];
     const optionIndices = [
       HCountOption.Zero,
       HCountOption.Three,
@@ -1715,10 +1727,20 @@ test.describe('Atom Properties', () => {
     ];
 
     await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
-      await ContextMenu(page, point).click([
+      await getAtomLocator(page, {
+        atomLabel: 'C',
+        atomId: atomIndices[i],
+      }).hover();
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: atomIndices[i],
+        }),
+      ).click([
         MicroAtomOption.QueryProperties,
         QueryAtomOption.HCount,
         optionIndices[i],
@@ -1734,7 +1756,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18036
       Description: All Substitution count options added to Benzene structure.
     */
-    const atomIndices = [2, 4, 5];
+    const atomIndices = [2, 1, 3];
     const optionIndices = [
       SubstitutionCountOption.AsDrawn,
       SubstitutionCountOption.Two,
@@ -1742,10 +1764,16 @@ test.describe('Atom Properties', () => {
     ];
 
     await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
-      await ContextMenu(page, point).click([
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: atomIndices[i],
+        }),
+      ).click([
         MicroAtomOption.QueryProperties,
         QueryAtomOption.SubstitutionCount,
         optionIndices[i],
@@ -1761,17 +1789,23 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18070
       Description: All Unsaturated options added to Benzene structure.
     */
-    const atomIndices = [2, 4];
+    const atomIndices = [2, 1];
     const selectedOption = [
       UnsaturatedOption.Unsaturated,
       UnsaturatedOption.Saturated,
     ];
 
     await openFileAndAddToCanvas(page, 'KET/benzene-unsaturated.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
-      await ContextMenu(page, point).click([
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: atomIndices[i],
+        }),
+      ).click([
         MicroAtomOption.QueryProperties,
         QueryAtomOption.Unsaturated,
         selectedOption[i],
@@ -1789,7 +1823,7 @@ test.describe('Atom Properties', () => {
       Description: All Implicit H count options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      const atomIndices = [2, 4, 5];
+      const atomIndices = [2, 1, 3];
       const optionIndices = [
         ImplicitHCountOption.Zero,
         ImplicitHCountOption.Three,
@@ -1797,14 +1831,16 @@ test.describe('Atom Properties', () => {
       ];
 
       await drawBenzeneRing(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        const point = await getAtomByIndex(
+        await ContextMenu(
           page,
-          { label: 'C' },
-          atomIndices[i],
-        );
-        await ContextMenu(page, point).click([
+          getAtomLocator(page, {
+            atomLabel: 'C',
+            atomId: atomIndices[i],
+          }),
+        ).click([
           MicroAtomOption.QueryProperties,
           QueryAtomOption.ImplicitHCount,
           optionIndices[i],
@@ -1821,17 +1857,23 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18068
       Description: All Aromaticity options added to Benzene structure.
     */
-    const atomIndices = [2, 4];
+    const atomIndices = [2, 1];
     const selectedOption = [
       AromaticityOption.Aromatic,
       AromaticityOption.Aliphatic,
     ];
 
     await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, atomIndices[i]);
-      await ContextMenu(page, point).click([
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: atomIndices[i],
+        }),
+      ).click([
         MicroAtomOption.QueryProperties,
         QueryAtomOption.Aromaticity,
         selectedOption[i],
@@ -1849,7 +1891,7 @@ test.describe('Atom Properties', () => {
       Description: All Ring membership options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      const atomIndices = [2, 4, 5];
+      const atomIndices = [2, 1, 3];
       const optionIndices = [
         RingMembershipOption.Zero,
         RingMembershipOption.Three,
@@ -1857,14 +1899,16 @@ test.describe('Atom Properties', () => {
       ];
 
       await drawBenzeneRing(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        const point = await getAtomByIndex(
+        await ContextMenu(
           page,
-          { label: 'C' },
-          atomIndices[i],
-        );
-        await ContextMenu(page, point).click([
+          getAtomLocator(page, {
+            atomLabel: 'C',
+            atomId: atomIndices[i],
+          }),
+        ).click([
           MicroAtomOption.QueryProperties,
           QueryAtomOption.RingMembership,
           optionIndices[i],
@@ -1883,7 +1927,7 @@ test.describe('Atom Properties', () => {
       Description: All Ring size options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-      const atomIndices = [2, 4, 5];
+      const atomIndices = [2, 1, 3];
       const optionIndices = [
         RingSizeOption.Zero,
         RingSizeOption.Three,
@@ -1891,14 +1935,16 @@ test.describe('Atom Properties', () => {
       ];
 
       await drawBenzeneRing(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        const point = await getAtomByIndex(
+        await ContextMenu(
           page,
-          { label: 'C' },
-          atomIndices[i],
-        );
-        await ContextMenu(page, point).click([
+          getAtomLocator(page, {
+            atomLabel: 'C',
+            atomId: atomIndices[i],
+          }),
+        ).click([
           MicroAtomOption.QueryProperties,
           QueryAtomOption.RingSize,
           optionIndices[i],
@@ -1918,7 +1964,7 @@ test.describe('Atom Properties', () => {
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
       // eslint-disable-next-line no-magic-numbers
-      const atomIndices = [2, 4, 5];
+      const atomIndices = [2, 1, 3];
       // eslint-disable-next-line no-magic-numbers
       const optionIndices = [
         ConnectivityOption.Zero,
@@ -1927,14 +1973,16 @@ test.describe('Atom Properties', () => {
       ];
 
       await drawBenzeneRing(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
       for (let i = 0; i < atomIndices.length; i++) {
-        const point = await getAtomByIndex(
+        await ContextMenu(
           page,
-          { label: 'C' },
-          atomIndices[i],
-        );
-        await ContextMenu(page, point).click([
+          getAtomLocator(page, {
+            atomLabel: 'C',
+            atomId: atomIndices[i],
+          }),
+        ).click([
           MicroAtomOption.QueryProperties,
           QueryAtomOption.Connectivity,
           optionIndices[i],
@@ -1985,10 +2033,16 @@ test.describe('Atom Properties', () => {
     ];
 
     await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     for (let i = 0; i < optionIndex.length; i++) {
-      const point = await getAtomByIndex(page, { label: 'C' }, i);
-      await ContextMenu(page, point).click(optionIndex[i]);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, {
+          atomLabel: 'C',
+          atomId: i,
+        }),
+      ).click(optionIndex[i]);
     }
     await takeEditorScreenshot(page);
   });

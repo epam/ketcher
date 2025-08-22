@@ -23,7 +23,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -52,7 +51,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
-let point: { x: number; y: number };
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -607,9 +606,13 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    point = await getAtomByIndex(page, { label: 'S' }, 0);
-    await page.mouse.move(point.x, point.y);
-    await keyboardPressOnCanvas(page, 'n');
+    const point = await getAtomLocator(page, { atomLabel: 'S' })
+      .first()
+      .boundingBox();
+    if (point) {
+      await page.mouse.move(point.x, point.y);
+      await keyboardPressOnCanvas(page, 'n');
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -628,8 +631,12 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CN,
     );
-    point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    if (point) {
+      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    }
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ms,

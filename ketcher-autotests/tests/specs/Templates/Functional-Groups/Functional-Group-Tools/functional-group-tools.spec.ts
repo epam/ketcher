@@ -20,7 +20,6 @@ import {
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -50,6 +49,11 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 
 // const X_DELTA = 300;
 
@@ -323,10 +327,10 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -437,24 +441,23 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: EDIT ABBREVIATION window appears after click by Template on expanded FG.
     After click Remove abbreviation in modal window user can add Template to structure.
    */
-    let point: { x: number; y: number };
+    // let point: { x: number; y: number };
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await selectRingButton(page, RingButton.Benzene);
-    point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click(SuperatomOption.RemoveAbbreviation);
 
     await takeEditorScreenshot(page);
 
     await selectRingButton(page, RingButton.Cyclopentadiene);
-    point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -824,8 +827,10 @@ test.describe('Templates - Functional Group Tools3', () => {
     await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await removeAbbreviation(page, point);
+    await removeAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CCl3' }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -1003,7 +1008,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Can attach cutted Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
-    test.fail();
     const anyAtom = 4;
     await openFileAndAddToCanvas(
       page,

@@ -8,7 +8,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Bonds plus atoms selection ', () => {
@@ -31,18 +31,11 @@ test.describe('Bonds plus atoms selection ', () => {
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
       );
-
+      await page.keyboard.down('Shift');
       const point = await getBondByIndex(page, {}, 0);
       await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-      const atom1Point = await getAtomByIndex(page, {}, 0);
-      const atom2Point = await getAtomByIndex(page, {}, 1);
-      await page.keyboard.down('Shift');
-      await clickOnCanvas(page, atom1Point.x, atom1Point.y, {
-        from: 'pageTopLeft',
-      });
-      await clickOnCanvas(page, atom2Point.x, atom2Point.y, {
-        from: 'pageTopLeft',
-      });
+      await getAtomLocator(page, { atomId: 0 }).click();
+      await getAtomLocator(page, { atomId: 1 }).click();
       await takeEditorScreenshot(page);
     });
   }

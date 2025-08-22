@@ -32,12 +32,7 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroFileType } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  addSuperatomAttachmentPoint,
-  removeSuperatomAttachmentPoint,
-} from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
@@ -82,7 +77,10 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { setSettingsOptions } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  setSettingsOption,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   AtomsSetting,
   BondsSetting,
@@ -91,6 +89,7 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
+  MicroAtomOption,
   MonomerOnMicroOption,
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
@@ -108,6 +107,7 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const topLeftCorner = {
   x: -325,
@@ -135,7 +135,7 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   }
 }
 
-let page: Page;
+export let page: Page;
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
@@ -983,12 +983,32 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: Attachment points can be added/removed via context menu.
     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await addSuperatomAttachmentPoint(page, 'C', 1);
-    await addSuperatomAttachmentPoint(page, 'C', 2);
-    await addSuperatomAttachmentPoint(page, 'C', 3);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 5 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+    });
     await takeEditorScreenshot(page);
-    await removeSuperatomAttachmentPoint(page, 'C', 2);
+    await page.keyboard.press('Escape');
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+    ).click(MicroAtomOption.RemoveAttachmentPoint);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -1003,15 +1023,51 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
     */
     // await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol', page);
-    await openFileAndAddToCanvas(page, 'KET/long-chain.ket');
-    await addSuperatomAttachmentPoint(page, 'C', 4);
-    await addSuperatomAttachmentPoint(page, 'C', 6);
-    await addSuperatomAttachmentPoint(page, 'C', 8);
-    await addSuperatomAttachmentPoint(page, 'C', 10);
-    await addSuperatomAttachmentPoint(page, 'C', 12);
-    await addSuperatomAttachmentPoint(page, 'C', 14);
-    await addSuperatomAttachmentPoint(page, 'C', 16);
-    await addSuperatomAttachmentPoint(page, 'C', 17);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/long-chain.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await waitForRender(page, async () => {
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 6 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 14 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 16 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 17 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1020,12 +1076,19 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
-    await openFileAndAddToCanvas(
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-eight-attachment-points.ket',
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 9);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await waitForRender(page, async () => {
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
+      ).open();
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1034,13 +1097,21 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
-    await openFileAndAddToCanvas(
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-eight-attachment-points.ket',
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click();
-    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await waitForRender(page, async () => {
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+      ).click(MicroAtomOption.AddAttachmentPoint);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1633,9 +1704,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Github ticket: #4530
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
-    await openFileAndAddToCanvasMacro(page, 'KET/part-chain-with-s-group.ket');
-    const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/part-chain-with-s-group.ket',
+    );
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -2158,7 +2235,9 @@ test.describe('Macro-Micro-Switcher', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-    await addSuperatomAttachmentPoint(page, 'O', 0);
+    await ContextMenu(page, getAtomLocator(page, { atomLabel: 'O' })).click(
+      MicroAtomOption.AddAttachmentPoint,
+    );
     await takeEditorScreenshot(page);
   });
 

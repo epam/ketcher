@@ -208,6 +208,8 @@ If there are two attachment points on an R-Group member, there must be two corre
 
 <img src=images/25_2_attachment_points_view_of_two_attachments.png width = "150"/>
 
+Note: The “Add attachment point” item has been removed only from the micromolecules (small molecules) context menu. The R‑Group Attachment Point Tool remains available and should be used for R‑Group members in Markush structures.
+
 ### R-Group Logic
 
 **Ketcher** enables one to add logic when using R-Groups. To access the R-Group logic:

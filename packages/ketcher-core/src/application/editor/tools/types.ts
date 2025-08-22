@@ -7,6 +7,7 @@ export enum ToolName {
   erase = 'erase',
   clear = 'clear',
   hand = 'hand',
+  selectLasso ='select-lasso',
 }
 
 export enum MACROMOLECULES_BOND_TYPES {

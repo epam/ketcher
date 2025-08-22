@@ -49,6 +49,7 @@ import {
   getHELMClassByKetMonomerClass,
   genericsList,
   fillNaturalAnalogueForPhosphateAndSugar,
+  normalizeMonomerAtomsPositions,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -575,7 +576,7 @@ class Editor implements KetcherEditor {
       return true;
     }
 
-    const selection: Selection = this.explicitSelected();
+    const selection: Selection = this.explicitSelected(false);
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
@@ -736,7 +737,7 @@ class Editor implements KetcherEditor {
     });
 
     this._monomerCreationState = {
-      originalStruct: currentStruct.clone(),
+      originalStruct: currentStruct,
       attachmentAtomIdToLeavingAtomId: attachmentPoints,
     };
 
@@ -809,7 +810,7 @@ class Editor implements KetcherEditor {
       fullName: name,
       naturalAnalogShort: naturalAnalogueToUse,
       // TODO: Normalize atoms positions to avoid incorrect positioning upon expand/collapse
-      atoms: ketMicromolecule.mol0.atoms,
+      atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
       root: {
@@ -850,22 +851,43 @@ class Editor implements KetcherEditor {
 
     this.closeMonomerCreationWizard();
 
+    const sGroupAttachmentPoints =
+      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+        monomer,
+        this.atomIdsMap,
+      );
+
+    this.singleBondsToOutsideOfSelection.forEach((bond) => {
+      const attachmentPointToBond = sGroupAttachmentPoints.find((point) => {
+        return point.atomId === bond.begin || point.atomId === bond.end;
+      });
+
+      if (attachmentPointToBond) {
+        bond.beginSuperatomAttachmentPointNumber =
+          attachmentPointToBond.attachmentPointNumber;
+      }
+    });
+
     const action = fromSgroupAddition(
       this.render.ctab,
       SGroup.TYPES.SUP,
       this.originalSelection.atoms,
       { expanded: true },
       this.render.ctab.molecule.sgroups.newId(),
-      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
-        monomer,
-        this.atomIdsMap,
-      ),
+      sGroupAttachmentPoints,
       monomer.position,
       true,
       monomer.monomerItem.props.MonomerName,
       null,
       monomer,
     );
+
+    this.originalSelection.atoms?.forEach((atomId) => {
+      const atom = this.render.ctab.molecule.atoms.get(atomId);
+      if (atom) {
+        atom.fragment = -1;
+      }
+    });
 
     this.update(action);
   }
@@ -1129,7 +1151,7 @@ class Editor implements KetcherEditor {
     return closest.merge(this.render.ctab, srcItems, maps, this.render.options);
   }
 
-  explicitSelected() {
+  explicitSelected(autoSelectBonds = true) {
     const selection = this.selection() || {};
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : [];
@@ -1156,7 +1178,7 @@ class Editor implements KetcherEditor {
     }
 
     // "auto-select" the bonds with both atoms selected
-    if (res.atoms && res.bonds) {
+    if (autoSelectBonds && res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
           res.bonds.indexOf(bid) < 0 &&

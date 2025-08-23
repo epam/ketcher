@@ -158,9 +158,7 @@ Parameters: `monomersData: string | JSON` – monomers description in KET format
 
 You can hide specific toolbar buttons by passing a `buttons` configuration object to the editor. Each key is a button (action) name, and the value contains `{ hidden: true }` to hide it.
 
-Usage:
-- React Editor: pass `buttons` prop.
-- Builder API: pass the `buttons` object to `appendUiAsync`.
+Usage: pass `buttons` prop to the React `Editor` component.
 
 Minimal config example: `{ clear: { hidden: true }, arom: { hidden: true } }`.
 See `example/src/App.tsx` for a working usage in context.

@@ -166,7 +166,7 @@ Minimal config example: `{ clear: { hidden: true }, arom: { hidden: true } }`.
 See `example/src/App.tsx` for a working usage in context.
 
 Notes:
-- Button names correspond to action keys used by Ketcher (for example: `clear`, `arom`, `dearom`, `layout`, `clean`, etc.). To discover more names, see action definitions in `packages/ketcher-react/src/script/ui/action/`.
+- Button names correspond to action keys used by Ketcher (for example: `clear`, `arom`, `dearom`, `layout`, `clean`, etc.). To discover more names, see action definitions in `packages/ketcher-react/src/script/builders/ketcher/ButtonName.ts`.
 - The editor reads `options.buttons[buttonName].hidden` to decide visibility; unknown names are ignored.
 
 ## Settings

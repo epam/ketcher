@@ -161,7 +161,7 @@ const RulerScale = ({
 
   return (
     <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale">
-      {svgChildren}
+      <>{svgChildren}</>
     </svg>
   );
 };

@@ -62,7 +62,9 @@ const MonomerOverview = ({
           isExpanded={expanded}
         />
       )}
-      <AttachmentPointList>{attachmentPoints}</AttachmentPointList>
+      <AttachmentPointList>
+        <>{attachmentPoints}</>
+      </AttachmentPointList>
     </>
   );
 };

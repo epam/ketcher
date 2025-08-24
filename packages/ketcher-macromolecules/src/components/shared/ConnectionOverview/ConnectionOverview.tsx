@@ -27,13 +27,15 @@ const ConnectionOverview = ({
 
   return (
     <AttachmentPointsRow>
-      <MonomerName isExpanded={expanded}>{firstMonomerName}</MonomerName>
-      {firstMonomerOverview}
-      <span />
-      <ConnectionSymbol />
-      <span />
-      <MonomerName isExpanded={expanded}>{secondMonomerName}</MonomerName>
-      {secondMonomerOverview}
+      <>
+        <MonomerName isExpanded={expanded}>{firstMonomerName}</MonomerName>
+        {firstMonomerOverview}
+        <span />
+        <ConnectionSymbol />
+        <span />
+        <MonomerName isExpanded={expanded}>{secondMonomerName}</MonomerName>
+        {secondMonomerOverview}
+      </>
     </AttachmentPointsRow>
   );
 };

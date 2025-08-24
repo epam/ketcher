@@ -10,7 +10,7 @@ type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useAtomStereo = () => {
   const { ketcherId } = useAppContext();
-  const stereoAtomIdsRef = useRef<number[] | undefined>();
+  const stereoAtomIdsRef = useRef<number[] | undefined>(undefined);
 
   const handler = useCallback(
     async ({ props }: Params) => {

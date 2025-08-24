@@ -1,7 +1,6 @@
-import { Middleware } from 'redux';
 import { MonomerCreationActions } from '../actions/monomerCreation';
 
-const monomerCreationMiddleware: Middleware = (store) => (next) => (action) => {
+const monomerCreationMiddleware = (store) => (next) => (action) => {
   const state = store.getState();
   if (!state || !state.editor) {
     return next(action);

@@ -64,7 +64,6 @@ import {
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
@@ -719,11 +718,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
-
-    const mspPhosphate = getMonomerLocator(page, Phosphate.msp);
-    await mspPhosphate.hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async () => {

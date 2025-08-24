@@ -43,6 +43,7 @@
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
@@ -67,11 +68,14 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "minimatch": "^9.0.3",
     "nth-check": "^2.1.1"
   },
   "dependencies": {
-    "@playwright/test": "^1.54.2"
+    "@playwright/test": "^1.54.2",
+    "minimatch": "^10.0.3",
+    "playwright": "^1.54.2",
+    "playwright-core": "^1.54.2",
+    "serve-handler": "^6.1.6"
   },
   "stylelint": {
     "overrides": [

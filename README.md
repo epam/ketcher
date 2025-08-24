@@ -154,6 +154,21 @@ Parameters:
 `updateMonomersLibrary(monomersData: string | JSON): void` – given the monomers data, perform upsert operation for the built-in monomers library in the macromolecules editor. Might be invoked only when macromolecules editor is turned on. Update (replace) operation is performed for the particular monomer if its alias and class are matching with the existing one. Otherwise, insert operation is performed.
 Parameters: `monomersData: string | JSON` – monomers description in KET format being formatted as either JSON notation or this JSON being stringified to be more concise.
 
+### Hiding toolbar buttons
+
+You can hide specific toolbar buttons by passing a `buttons` configuration object to the editor. Each key is a button (action) name, and the value contains `{ hidden: true }` to hide it.
+
+Usage:
+- React Editor: pass `buttons` prop.
+- Builder API: pass the `buttons` object to `appendUiAsync`.
+
+Minimal config example: `{ clear: { hidden: true }, arom: { hidden: true } }`.
+See `example/src/App.tsx` for a working usage in context.
+
+Notes:
+- Button names correspond to action keys used by Ketcher (for example: `clear`, `arom`, `dearom`, `layout`, `clean`, etc.). To discover more names, see action definitions in `packages/ketcher-react/src/script/ui/action/`.
+- The editor reads `options.buttons[buttonName].hidden` to decide visibility; unknown names are ignored.
+
 ## Settings
 
 You can add extra configuration in editor.setSettings

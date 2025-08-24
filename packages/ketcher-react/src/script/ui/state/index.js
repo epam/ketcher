@@ -28,7 +28,7 @@ import { logger } from 'redux-logger';
 import modalReducer from './modal';
 import { pick } from 'lodash/fp';
 import requestReducer from './request';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import toolbarReducer from './toolbar';
 import floatingToolsReducer from './floatingTools';
 import monomerCreationMiddleware from './editor/middlewares/monomerCreation';

@@ -25,13 +25,17 @@ declare module '*.svg' {
 }
 
 declare global {
-  export interface Element {
+  interface Element {
     __data__?: BaseRenderer;
   }
 
-  export interface EventTarget {
+  interface EventTarget {
     __data__?: BaseRenderer;
   }
+}
+
+interface EventTarget {
+  __data__?: BaseRenderer;
 }
 
 interface Document {

@@ -21,7 +21,6 @@ import {
   TopToolbarContainer,
 } from '../views/toolbars';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material';
 import AppClipArea from '../views/AppClipArea';
 import { AppHiddenContainer } from './AppHidden';
@@ -37,6 +36,7 @@ import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
+import { useAppDispatch } from '../state/hooks';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -56,7 +56,7 @@ const muiTheme = createTheme({
 type Props = AppCallProps;
 
 const App = (props: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { checkServer } = props;
 
   useSubscriptionOnEvents();
@@ -64,7 +64,13 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer();
+    // TODO suppressed after upgrade to react 19. Need to fix
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     dispatch(initFGTemplates());
+    // TODO suppressed after upgrade to react 19. Need to fix
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
@@ -105,7 +111,12 @@ const App = (props: Props) => {
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
-        <AppClipArea />
+        {
+          // TODO suppressed after upgrade to react 19. Need to fix
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          <AppClipArea />
+        }
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
       </div>

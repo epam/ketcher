@@ -528,33 +528,27 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  test(
-    'The 3D view works for micromolecules when there are macromolecules on the canvas',
-    {
-      tag: ['@IncorrectResultBecauseOfBug'],
-    },
-    async () => {
-      /* 
+  test('The 3D view works for micromolecules when there are macromolecules on the canvas', async () => {
+    /* 
     Test case: Macro-Micro-Switcher/#4203
     Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
-    After closing the ticket, should update the screenshots.
-
     */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await Library(page).selectMonomer(Peptide.bAla);
-      await clickInTheMiddleOfTheScreen(page);
-      await moveMouseAway(page);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRingButton(page, RingButton.Benzene);
-      await clickInTheMiddleOfTheScreen(page);
-      await IndigoFunctionsToolbar(page).ThreeDViewer();
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page, {
-        maxDiffPixelRatio: 0.05,
-      });
-    },
-  );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await selectRingButton(page, RingButton.Benzene);
+    await clickInTheMiddleOfTheScreen(page);
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixelRatio: 0.05,
+    });
+  });
 
   test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async () => {
     /* 

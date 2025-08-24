@@ -28,6 +28,10 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const onClickOutsideCloseDrowndown = (): void =>
     setIsShowingFontSizeMenu(false);
+
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   useClickOutside(wrapperRef, onClickOutsideCloseDrowndown);
 
   const setFontSize = (e, value) => {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, RefObject } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 
@@ -184,7 +184,7 @@ export const ZoomControls = ({
         <DropDownContent>
           <ZoomInput
             onZoomSubmit={onZoomSubmit}
-            inputRef={inputRef}
+            inputRef={inputRef as RefObject<HTMLInputElement>}
             currentZoom={currentZoom}
             shortcuts={shortcuts}
           />

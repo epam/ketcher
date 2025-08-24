@@ -24,7 +24,7 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
@@ -91,7 +91,7 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
@@ -222,7 +222,7 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
@@ -266,7 +266,7 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>

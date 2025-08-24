@@ -1,4 +1,2 @@
-export interface EditorProps {}
-
-declare function Editor(props: EditorProps): JSX.Element;
+declare function Editor(props: object): JSX.Element;
 export default Editor;

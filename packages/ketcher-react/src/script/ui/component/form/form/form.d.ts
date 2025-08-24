@@ -31,7 +31,7 @@ export interface FieldWithModalProps extends FieldProps {
   autoFocus?: boolean;
 }
 
-export interface SelectOneOfProps extends FieldProps {}
+export type SelectOneOfProps = FieldProps;
 
 export interface CustomQueryFieldProps extends FieldProps {
   name: string;

@@ -42,6 +42,7 @@ test.describe('Macromolecules custom presets', () => {
 
     await Library(page).selectMonomers([Sugar._12ddR, Base.A, Phosphate.P]);
     await Library(page).rnaBuilder.save();
+    await Library(page).hoverMonomer(Preset.MyRNA);
 
     await takeMonomerLibraryScreenshot(page);
   });

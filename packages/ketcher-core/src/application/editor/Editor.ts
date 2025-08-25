@@ -94,6 +94,7 @@ import { TransientDrawingView } from 'application/render/renderers/TransientView
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
+import { UniversalHotkeysManager } from './universalHotkeys';
 import {
   getAminoAcidsToModify,
   isAmbiguousMonomerLibraryItem,
@@ -198,6 +199,7 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
+  public universalHotkeysManager: UniversalHotkeysManager | undefined;
 
   constructor({
     ketcherId,
@@ -237,6 +239,12 @@ export class CoreEditor {
     this.resetKetcherRootElementOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
+    try {
+      this.universalHotkeysManager = new UniversalHotkeysManager(this);
+      this.universalHotkeysManager.setup();
+    } catch (error) {
+      console.error('Error creating UniversalHotkeysManager:', error);
+    }
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
@@ -1669,6 +1677,7 @@ export class CoreEditor {
 
   public destroy() {
     this.unsubscribeEvents();
+    this.universalHotkeysManager?.cleanup();
     editor = undefined;
   }
 }

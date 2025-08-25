@@ -296,4 +296,12 @@ export const hotkeysConfiguration = {
       editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
     },
   },
+  help: {
+    shortcut: ['?', '/', 'Mod+/'],
+    handler: (_editor: CoreEditor) => {
+      const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
+      const helpUrl = `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`;
+      window.open(helpUrl, '_blank')?.focus?.();
+    },
+  },
 };

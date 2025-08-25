@@ -11,15 +11,18 @@ import {
   waitForRender,
   clickOnCanvas,
   deleteByKeyboard,
+  dragTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -54,11 +57,15 @@ test.describe('Lasso Selection tool', () => {
      * Description: Hover and selection of atom/bond/molecule
      */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.move(atomPoint.x, atomPoint.y);
-    await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
-      from: 'pageTopLeft',
-    });
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    const atomPoint = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    if (atomPoint) {
+      await page.mouse.move(atomPoint.x, atomPoint.y);
+      await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
+    }
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
@@ -71,9 +78,11 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
-      from: 'pageTopLeft',
-    });
+    if (atomPoint) {
+      await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
+        from: 'pageTopLeft',
+      });
+    }
     await clickOnCanvas(page, bondPoint.x, bondPoint.y, {
       from: 'pageTopLeft',
     });
@@ -166,14 +175,18 @@ test.describe('Lasso Selection tool', () => {
      * Description: Atoms are fused.
      */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
-    const aimAtomIndex = 7;
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, aimAtomIndex);
-    await dragMouseTo(atomPoint.x, atomPoint.y, page);
+    // const aimAtomIndex = 7;
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -249,17 +262,22 @@ test.describe('Lasso Selection tool', () => {
     const shiftCoords = { x: 70, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
 
     await clickOnAtom(page, 'C', 0);
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
-    await dragMouseTo(
-      atomPoint.x - randomCoords.x,
-      atomPoint.y - randomCoords.y,
-      page,
-    );
+    const atomPoint = await getAtomLocator(page, { atomLabel: 'C', atomId: 0 })
+      .first()
+      .boundingBox();
+    if (atomPoint) {
+      await dragMouseTo(
+        atomPoint.x - randomCoords.x,
+        atomPoint.y - randomCoords.y,
+        page,
+      );
+    }
 
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();

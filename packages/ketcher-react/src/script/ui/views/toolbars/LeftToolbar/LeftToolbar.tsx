@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, useRef } from 'react';
+import { FC, RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
@@ -55,10 +55,10 @@ type Props = LeftToolbarProps & LeftToolbarCallProps;
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   type ItemProps = {
     id: ToolbarItemVariant;
@@ -69,10 +69,18 @@ const LeftToolbar = (props: Props) => {
     ToolbarGroupItem({ id, options, dataTestId, ...rest });
 
   const scrollUp = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
   };
 
   const scrollDown = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
   };
 
@@ -198,7 +206,7 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
       </div>
-      {height && scrollRef?.current?.scrollHeight > height && (
+      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}

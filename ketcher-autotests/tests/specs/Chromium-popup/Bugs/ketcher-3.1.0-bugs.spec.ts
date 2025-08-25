@@ -19,7 +19,6 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';
 import {
   modifyInRnaBuilder,
@@ -38,7 +37,10 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  AtomsSetting,
+  GeneralSetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -46,6 +48,7 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -156,36 +159,43 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 5: Adding attachment point to microstructure already connected to monomer - causes problems when switch to Macro mode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6602
-     * Bug: https://github.com/epam/ketcher/issues/5696
-     * Description: Implemented a check for monomer connections when adding attachment points.
-     * Disabled the "Add Attachment Point" button if a molecule is connected to a monomer..
-     * Scenario:
-     * 1. Go to Micromolecules mode
-     * 2. Load from file
-     * 3. Try add attachment point to the atom
-     * 4. Switch to Macro mode
-     * 5. Take a screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Chromium-popup/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
-    );
-    const point = await getAtomByIndex(page, { label: 'C' }, 4);
-    await ContextMenu(page, point).open();
-    await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
+  test(
+    'Case 5: Adding attachment point to microstructure already connected to monomer - causes problems when switch to Macro mode',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6602
+       * Bug: https://github.com/epam/ketcher/issues/5696
+       * Description: Implemented a check for monomer connections when adding attachment points.
+       * Disabled the "Add Attachment Point" button if a molecule is connected to a monomer..
+       * Scenario:
+       * 1. Go to Micromolecules mode
+       * 2. Load from file
+       * 3. Try add attachment point to the atom
+       * 4. Switch to Macro mode
+       * 5. Take a screenshot
+       */
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Chromium-popup/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
+      );
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
+      ).open();
+      await takeEditorScreenshot(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+        enableFlexMode: true,
+        goToPeptides: false,
+      });
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
 
   test('Case 6: Create Antisense Strand option is disabled even if antisensless base present in chain selection', async () => {
     /*

@@ -121,9 +121,13 @@ const FooterContent = ({ data, tab }) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
-  if (tab === TemplateTabs.SaltsAndSolvents) {
-    return clickToAddToCanvas;
-  }
+  const filename =
+    tab === TemplateTabs.TemplateLibrary
+      ? 'ketcher-tmpls.sdf'
+      : tab === TemplateTabs.FunctionalGroupLibrary
+      ? 'ketcher-fg-tmpls.sdf'
+      : 'ketcher-salts-solvents.sdf';
+
   return (
     <div
       style={{
@@ -138,11 +142,7 @@ const FooterContent = ({ data, tab }) => {
         data={data}
         className={classes.saveButton}
         testId="save-to-sdf-button"
-        filename={
-          tab === TemplateTabs.TemplateLibrary
-            ? 'ketcher-tmpls.sdf'
-            : 'ketcher-fg-tmpls.sdf'
-        }
+        filename={filename}
       >
         Save to SDF
       </SaveButton>

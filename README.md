@@ -156,16 +156,16 @@ Parameters: `monomersData: string | JSON` – monomers description in KET format
 
 ### Hiding toolbar buttons
 
-You can hide specific toolbar buttons by passing a `buttons` configuration object to the editor. Each key is a button (action) name, and the value contains `{ hidden: true }` to hide it.
+Ketcher supports hiding toolbar buttons. Set the `buttons` configuration on the `Editor` component and include only items to hide:
 
-Usage: pass `buttons` prop to the React `Editor` component.
-
-Minimal config example: `{ clear: { hidden: true }, arom: { hidden: true } }`.
-See `example/src/App.tsx` for a working usage in context.
+```jsx
+<Editor buttons={{ clear: { hidden: true } }} />
+```
 
 Notes:
 - Button names correspond to action keys used by Ketcher (for example: `clear`, `arom`, `dearom`, `layout`, `clean`, etc.). To discover more names, see action definitions in `packages/ketcher-react/src/script/builders/ketcher/ButtonName.ts`.
 - The editor reads `options.buttons[buttonName].hidden` to decide visibility; unknown names are ignored.
+- See `example/src/App.tsx` for usage in context.
 
 ## Settings
 

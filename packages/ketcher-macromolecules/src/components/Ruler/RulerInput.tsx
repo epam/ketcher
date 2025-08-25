@@ -23,6 +23,9 @@ const RulerInput = ({
 }: Props) => {
   const ref = useRef<HTMLInputElement>(null);
 
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   useTranslateAlongXAxis(ref, offsetX);
 
   const stringifiedLineLengthValue = lineLengthValue.toString();

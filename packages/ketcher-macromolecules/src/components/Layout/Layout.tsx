@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { MutableRefObject, useRef } from 'react';
+import React, { RefObject, useRef } from 'react';
 import styled from '@emotion/styled';
 import { MONOMER_HIDE_LIBRARY_BUTTON_WIDTH } from 'components/monomerLibrary/styles';
 import { useInView } from 'react-intersection-observer';
@@ -141,15 +141,25 @@ const Top = (
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
   const { children, ...otherProps } = props;
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollRight = (e: Event) => {
     e.stopPropagation();
+
+    if (!scrollRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollLeft += 30;
   };
 
   const scrollLeft = (e: Event) => {
     e.stopPropagation();
+
+    if (!scrollRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollLeft -= 30;
   };
 
@@ -157,7 +167,9 @@ const Top = (
     <div style={{ display: 'flex', position: 'relative' }}>
       <StyledTop {...otherProps} ref={scrollRef}>
         <span ref={startRef}></span>
-        <StyledTopInnerDiv>{children}</StyledTopInnerDiv>
+        <StyledTopInnerDiv>
+          <>{children}</>
+        </StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
       {!startInView || !endInView ? (

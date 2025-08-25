@@ -23,7 +23,6 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
 import { resetCurrentTool } from '@utils/canvas/tools';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, MolFileFormat } from '@utils/formats';
@@ -53,6 +52,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -372,9 +372,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectEraseTool();
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 2 }).click();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

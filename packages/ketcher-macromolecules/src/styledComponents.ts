@@ -9,6 +9,9 @@ export const TopMenuRightWrapper = styled.div(() => ({
   alignItems: 'center',
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const TogglerComponentWrapper = styled.div(() => ({
   background: '',
   '&.toggler-component-wrapper--disabled': {

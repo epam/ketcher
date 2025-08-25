@@ -15,7 +15,14 @@
  ***************************************************************************/
 
 import { Provider } from 'react-redux';
-import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  PointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  RefObject,
+} from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -150,7 +157,7 @@ function EditorContainer({
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <RootSizeProvider
-          rootRef={rootElRef}
+          rootRef={rootElRef as RefObject<HTMLDivElement>}
           isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>

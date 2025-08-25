@@ -59,8 +59,8 @@ interface Props {
 }
 
 export const AbbreviationLookup = ({ options }: Props) => {
-  const inputRef = useRef<HTMLInputElement | null>();
-  const autocompleteRef = useRef<HTMLInputElement | null>();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useDispatch();
 

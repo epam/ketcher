@@ -153,7 +153,6 @@ test.describe('Import/export sequence:', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
-    await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

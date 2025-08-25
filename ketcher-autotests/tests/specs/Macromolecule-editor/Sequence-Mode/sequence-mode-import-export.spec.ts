@@ -9,7 +9,6 @@ import {
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,

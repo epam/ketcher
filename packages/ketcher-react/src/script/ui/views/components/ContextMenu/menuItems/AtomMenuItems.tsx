@@ -20,7 +20,6 @@ import {
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
-import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';
 import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
@@ -100,7 +99,6 @@ const atomPropertiesForSubMenu: {
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
-  const [handleAddAttachmentPoint] = useAddAttachmentPoint();
   const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
@@ -149,9 +147,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const sgroup = isNumber(selectedAtomId)
     ? struct.getGroupFromAtomId(selectedAtomId)
     : undefined;
-  const atomInSgroupWithLabel = sgroup && !sgroup?.isSuperatomWithoutLabel;
   const attachmentPoints = sgroup?.getAttachmentPoints() || [];
-  const maxAttachmentPointsAmount = attachmentPoints.length >= 8;
   const isAtomSuperatomAttachmentPoint = Atom.isSuperatomAttachmentAtom(
     struct,
     selectedAtomId,
@@ -183,22 +179,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       color: color === '' ? 'transparent' : color,
     });
   };
-
-  const isAddAttachmentPointDisabled =
-    !onlyOneAtomSelected ||
-    (() => {
-      if (!isNumber(selectedAtomId)) return true;
-
-      const connectedComponents = struct.findConnectedComponent(selectedAtomId);
-      for (const connectedAtomId of connectedComponents) {
-        const connectedGroup = struct.getGroupFromAtomId(connectedAtomId);
-        if (connectedGroup?.isMonomer) {
-          return true;
-        }
-      }
-
-      return false;
-    })();
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
@@ -265,19 +245,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           );
         })}
       </Submenu>
-      {onlyOneAtomSelected &&
-        !atomInSgroupWithLabel &&
-        !maxAttachmentPointsAmount &&
-        !isAtomSuperatomLeavingGroup && (
-          <Item
-            {...props}
-            data-testid="Add attachment point-option"
-            onClick={handleAddAttachmentPoint}
-            disabled={isAddAttachmentPointDisabled}
-          >
-            Add attachment point
-          </Item>
-        )}
+
       <HighlightMenu onHighlight={highlightAtomWithColor} />
       {isAtomSuperatomAttachmentPoint &&
         atomFreeAttachmentPoints.length > 0 && (

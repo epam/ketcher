@@ -6,8 +6,10 @@ import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
   openFileAndAddToCanvasAsNewProject,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
+  takePageScreenshot,
   takePresetsScreenshot,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -19,12 +21,16 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 let page: Page;
 
 test.describe('Arrow button on Library cards', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
+  });
+  test.afterEach(async () => {
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -679,6 +685,81 @@ test.describe('Arrow button on Library cards', () => {
       await Library(page).switchToCHEMTab();
       await Library(page).hoverMonomerAutochain(Chem._4FB);
       await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 17: Check that if within a selection there is one and only one monomer with a free (unoccupied) R2, when hovering over the arrow for a monomer/preset that does not have R1, a tooltip should appear',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: If within a selection there is one and only one monomer with a free (unoccupied) R2,
+       * when hovering over the arrow for a monomer/preset that does not have R1, a tooltip should appear.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer with free R2 to canvas
+       * 3. Open Library
+       * 4. Check that if within a selection there is one and only one monomer with a free (unoccupied) R2,
+       * when hovering over the arrow for a monomer/preset that does not have R1, a tooltip should appear
+       */
+      await Library(page).switchToPeptidesTab();
+      await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      await Library(page).hoverMonomerAutochain(Peptide.Ac_);
+      await takePageScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 18: Check that if within a selection there are multiple monomers with a free R2, when hovering over the arrow for a monomer/preset, a tooltip appear',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: If within a selection there are multiple monomers with a free R2, when hovering over the arrow for a monomer/preset, a tooltip appear.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Select all added monomers
+       * 4. Hover monomer in Library
+       * 5. Check that if within a selection there are multiple monomers with a free R2,
+       * when hovering over the arrow for a monomer/preset, a tooltip appear
+       */
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await selectAllStructuresOnCanvas(page);
+      await Library(page).switchToPeptidesTab();
+      await Library(page).hoverMonomerAutochain(Peptide._1Nal);
+      await takePageScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugar._25R],
+        [RNASection.Bases, Base.baA],
+        [RNASection.Phosphates, Phosphate.bP],
+        [RNASection.Nucleotides, Nucleotide.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).hoverMonomerAutochain(monomer);
+        await takePageScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).hoverMonomerAutochain(Chem._4FB);
+      await takePageScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });

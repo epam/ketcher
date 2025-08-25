@@ -169,7 +169,19 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     const index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
     const groupLength = group !== null ? group.length : 1;
-    const newIndex = (index + 1) % groupLength;
+    let newIndex = (index + 1) % groupLength;
+    if (group.includes('create-monomer')) {
+      const createMonomerIndex = group.indexOf('create-monomer');
+      const copyMolIndex = group.indexOf('copy-mol');
+      if (
+        createMonomerIndex !== -1 &&
+        !actionState['create-monomer']?.disabled
+      ) {
+        newIndex = createMonomerIndex;
+      } else if (copyMolIndex !== -1) {
+        newIndex = copyMolIndex;
+      }
+    }
 
     const actName = group[newIndex];
     if (

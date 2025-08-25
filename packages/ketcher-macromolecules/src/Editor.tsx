@@ -94,7 +94,6 @@ import {
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
-import { useMacromoleculesHotkeys } from './hooks/useMacromoleculesHotkeys';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
@@ -215,7 +214,6 @@ function Editor({
   }, [dispatch]);
 
   useSetRnaPresets();
-  useMacromoleculesHotkeys();
 
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {

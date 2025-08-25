@@ -126,6 +126,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       await switcher.click();
       const macroOption = page.getByTestId(Mode.Macromolecules);
       await macroOption.waitFor({ state: 'visible' });
+      await macroOption.click({ trial: true, timeout: 5000 });
       await macroOption.click();
       await MacromoleculesTopToolbar(
         page,

@@ -149,6 +149,12 @@ type RnaPresetAdditionParams = {
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
 };
 
+interface MonomerConnectedToSelection {
+  monomerFromSelection: BaseMonomer;
+  monomerConnectedToSelection: BaseMonomer;
+  bond: PolymerBond;
+}
+
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
@@ -204,6 +210,37 @@ export class DrawingEntitiesManager {
 
   public get selectedMonomers() {
     return this.monomersArray.filter((monomer) => monomer.selected);
+  }
+
+  public get externalConnectionsToSelection() {
+    const connectedMonomers: MonomerConnectedToSelection[] = [];
+
+    this.selectedMonomers.forEach((monomer) => {
+      monomer.polymerBonds.forEach((bond) => {
+        if (!bond.secondMonomer) {
+          return;
+        }
+
+        if (bond.firstMonomer === monomer && !bond.secondMonomer.selected) {
+          connectedMonomers.push({
+            monomerFromSelection: monomer,
+            monomerConnectedToSelection: bond.secondMonomer,
+            bond,
+          });
+        } else if (
+          bond.secondMonomer === monomer &&
+          !bond.firstMonomer.selected
+        ) {
+          connectedMonomers.push({
+            monomerFromSelection: monomer,
+            monomerConnectedToSelection: bond.firstMonomer,
+            bond,
+          });
+        }
+      });
+    });
+
+    return connectedMonomers;
   }
 
   public get allEntities() {

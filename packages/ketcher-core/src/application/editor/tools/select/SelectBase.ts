@@ -39,6 +39,7 @@ import { EraserTool } from 'application/editor/tools/Erase';
 
 type EmptySnapResult = {
   snapPosition: null;
+  connectionLength: number;
 };
 
 type SnapResult = {
@@ -50,6 +51,7 @@ type SnapResult = {
   showDistanceSnapping: boolean;
   alignment: MonomersAlignment | undefined;
   alignedMonomers: BaseMonomer[] | undefined;
+  connectionLength: number;
 };
 
 abstract class SelectBase implements BaseTool {
@@ -574,85 +576,92 @@ abstract class SelectBase implements BaseTool {
   }
 
   private tryToSnap(event: MouseEvent): EmptySnapResult | SnapResult {
+    let snapPosition: Vec2 | undefined;
     const emptyResult: EmptySnapResult = {
       snapPosition: null,
+      connectionLength: Infinity,
     };
 
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
-
-    const selectedEntities =
-      this.editor.drawingEntitiesManager.selectedEntitiesArr;
     const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+    const externalConnectionsToSelection =
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection;
 
-    if (
-      modKeyPressed ||
-      selectedEntities.length > 1 ||
-      !(selectedEntities[0] instanceof BaseMonomer)
-    ) {
+    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
 
-    const selectedMonomer = selectedEntities[0] as BaseMonomer;
-    const shortestMonomerBond = selectedMonomer.polymerBondsSortedByLength[0];
+    const snappingOptions = externalConnectionsToSelection.map(
+      ({ monomerFromSelection, monomerConnectedToSelection, bond }) => {
+        const selectedMonomer = monomerFromSelection;
+        const connectedMonomer = monomerConnectedToSelection;
+        const connectionLength = Vec2.diff(
+          monomerFromSelection.position,
+          monomerConnectedToSelection.position,
+        ).length();
 
-    if (!shortestMonomerBond) {
-      return emptyResult;
-    }
+        if (!connectedMonomer) {
+          return emptyResult;
+        }
 
-    const connectedMonomer =
-      shortestMonomerBond.getAnotherMonomer(selectedMonomer);
-    if (!connectedMonomer) {
-      return emptyResult;
-    }
+        const cursorPositionInAngstroms = Coordinates.canvasToModel(
+          this.editor.lastCursorPositionOfCanvas,
+        );
 
-    const cursorPositionInAngstroms = Coordinates.canvasToModel(
-      this.editor.lastCursorPositionOfCanvas,
-    );
+        const {
+          distanceSnapPosition,
+          snapDistance,
+          alignment,
+          alignedMonomers,
+        } = SelectBase.calculateDistanceSnap(
+          cursorPositionInAngstroms,
+          selectedMonomer,
+          connectedMonomer,
+        );
 
-    const { distanceSnapPosition, snapDistance, alignment, alignedMonomers } =
-      SelectBase.calculateDistanceSnap(
-        cursorPositionInAngstroms,
-        selectedMonomer,
-        connectedMonomer,
-      );
+        const { angleSnapPosition, snappedAngleRad } =
+          SelectBase.calculateAngleSnap(
+            cursorPositionInAngstroms,
+            connectedMonomer.position,
+            this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
+            snapDistance,
+          );
 
-    const { angleSnapPosition, snappedAngleRad } =
-      SelectBase.calculateAngleSnap(
-        cursorPositionInAngstroms,
-        connectedMonomer.position,
-        this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
-        snapDistance,
-      );
+        const { bondLengthSnapPosition } =
+          SelectBase.calculateBondLengthSnap(
+            cursorPositionInAngstroms,
+            connectedMonomer.position,
+            snappedAngleRad,
+          );
 
-    const { bondLengthSnapPosition } = SelectBase.calculateBondLengthSnap(
-      cursorPositionInAngstroms,
-      connectedMonomer.position,
-      snappedAngleRad,
-    );
+        if (bondLengthSnapPosition) {
+          snapPosition = bondLengthSnapPosition;
+        } else if (angleSnapPosition) {
+          snapPosition = angleSnapPosition;
+        } else if (distanceSnapPosition) {
+          snapPosition = distanceSnapPosition;
+        }
 
-    let snapPosition: Vec2 | undefined;
-    if (bondLengthSnapPosition) {
-      snapPosition = bondLengthSnapPosition;
-    } else if (angleSnapPosition) {
-      snapPosition = angleSnapPosition;
-    } else if (distanceSnapPosition) {
-      snapPosition = distanceSnapPosition;
-    }
+        if (!snapPosition) {
+          return emptyResult;
+        }
 
-    if (snapPosition) {
-      const distanceToSnapPosition = Vec2.diff(
-        cursorPositionInAngstroms,
-        snapPosition,
-      ).length();
+        const distanceToSnapPosition = Vec2.diff(
+          cursorPositionInAngstroms,
+          snapPosition,
+        ).length();
 
-      const thresholdValue =
-        Boolean(distanceSnapPosition) && Boolean(angleSnapPosition)
-          ? HalfMonomerSize + 0.1
-          : HalfMonomerSize;
+        const thresholdValue =
+          Boolean(distanceSnapPosition) && Boolean(angleSnapPosition)
+            ? HalfMonomerSize + 0.1
+            : HalfMonomerSize;
 
-      if (distanceToSnapPosition < thresholdValue) {
+        if (distanceToSnapPosition >= thresholdValue) {
+          return emptyResult;
+        }
+
         const showAngleSnapping = Boolean(angleSnapPosition);
         const showBondLengthSnapping = Boolean(bondLengthSnapPosition);
         const showDistanceSnapping =
@@ -661,17 +670,22 @@ abstract class SelectBase implements BaseTool {
         return {
           snapPosition: snapPosition.sub(selectedMonomer.position),
           showAngleSnapping,
-          bond: shortestMonomerBond,
+          bond,
           connectedMonomer,
           showBondLengthSnapping,
           showDistanceSnapping,
           alignment,
           alignedMonomers,
+          connectionLength,
         };
-      }
-    }
+      },
+    );
 
-    return emptyResult;
+    snappingOptions.sort((a, b) => {
+      return a.connectionLength - b.connectionLength;
+    });
+
+    return snappingOptions[0] || emptyResult;
   }
 
   mousemove(event: MouseEvent) {

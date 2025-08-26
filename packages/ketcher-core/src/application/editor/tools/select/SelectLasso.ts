@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { Coordinates, CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
 import { Vec2 } from 'domain/entities';
 
@@ -46,8 +46,8 @@ export class SelectLasso extends SelectBase {
       return;
 
     requestAnimationFrame(() => {
-      const path = this.selectionViewParams.path.map((p) =>
-        Coordinates.viewToCanvas(new Vec2(p[0], p[1])),
+      const path = this.selectionViewParams.path.map(
+        (p) => new Vec2(p[0], p[1]),
       );
       const modelChanges =
         this.editor.drawingEntitiesManager.selectIfLocatedInPolygon(

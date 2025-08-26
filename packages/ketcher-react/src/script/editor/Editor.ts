@@ -588,11 +588,11 @@ class Editor implements KetcherEditor {
           return false;
         }
 
-        // Selection should not contain S-Groups, R-Groups or atoms from extended table
+        // Selection should not contain S-Groups, R-Groups (except for terminal R-groups) or atoms from extended table
         return (
           atom.sgs.size > 0 ||
-          atom.rglabel !== null ||
           atom.attachmentPoints !== null ||
+          (atom.rglabel !== null && atom.neighbors.length > 1) ||
           this.render.ctab.molecule.rgroups.some((rgroup) =>
             rgroup.frags.has(atom.fragment),
           ) ||
@@ -612,6 +612,15 @@ class Editor implements KetcherEditor {
         return false;
       }
 
+      const terminalRGroups = selection.atoms.filter((atomId) => {
+        const atom = currentStruct.atoms.get(atomId);
+        return (
+          atom !== undefined &&
+          atom.rglabel !== null &&
+          atom.neighbors.length === 1
+        );
+      });
+
       const selectionAtoms = new Set(selection.atoms);
       const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
         return (
@@ -620,23 +629,31 @@ class Editor implements KetcherEditor {
         );
       });
 
-      // Only simple single bonds are allowed to outside of selection
-      if (
-        bondsToOutside.some(
-          (bond) =>
-            bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-            bond.stereo !== Bond.PATTERN.STEREO.NONE,
-        )
-      ) {
+      const potentialLeavingAtoms: number[] = [];
+      bondsToOutside.forEach((bond) => {
+        if (
+          bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+          bond.stereo !== Bond.PATTERN.STEREO.NONE
+        ) {
+          return;
+        }
+
+        if (selectionAtoms.has(bond.begin)) {
+          potentialLeavingAtoms.push(bond.end);
+        } else {
+          potentialLeavingAtoms.push(bond.begin);
+        }
+      });
+
+      const totalPotentialLeavingAtoms =
+        terminalRGroups.length + potentialLeavingAtoms.length;
+      if (totalPotentialLeavingAtoms > 8) {
         return false;
       }
 
       this.singleBondsToOutsideOfSelection = bondsToOutside;
 
-      return (
-        this.singleBondsToOutsideOfSelection.size > 0 &&
-        this.singleBondsToOutsideOfSelection.size <= 8
-      );
+      return terminalRGroups.length > 0 || potentialLeavingAtoms.length > 0;
     }
 
     return false;

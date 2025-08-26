@@ -89,7 +89,6 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
-  MicroAtomOption,
   MonomerOnMicroOption,
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';

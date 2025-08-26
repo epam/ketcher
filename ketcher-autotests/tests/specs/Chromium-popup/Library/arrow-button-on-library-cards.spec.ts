@@ -764,4 +764,31 @@ test.describe('Arrow button on Library cards', () => {
       });
     },
   );
+
+  test(
+    'Case 19: Check that in flex mode, if a new monomer/preset will be added (fully or partially) horizontally outside of the viewport, the canvas scroll horizontally to the right',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: In flex mode, if a new monomer/preset will be added (fully or partially) horizontally outside
+       * of the viewport,and the left-most point of the chain to whom it will be added is in viewport, but not aligned
+       * to the left, after the addition, the canvas scroll horizontally to align the left-most point of the chain
+       * the left border of the viewport if the newly added monomer is entirely in the viewport with a buffer of 7,5Å to the right.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomers to canvas until the right-most point of the last added monomer is outside of the viewport
+       * 3. Take a screenshot of the canvas
+       */
+      await Library(page).switchToPeptidesTab();
+      for (let i = 0; i < 10; i++) {
+        await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
 });

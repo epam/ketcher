@@ -1,0 +1,112 @@
+name: Run Playwright Test with 1.55 playwright
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+  pull_request:
+    branches:
+      - master
+      - 'release/**'
+  workflow_dispatch:
+
+env:
+  # Warnings breaks build on CI
+  # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://127.0.0.1:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
+  USE_SEPARATE_INDIGO_WASM: true
+jobs:
+  build_ketcher:
+    runs-on: ubuntu-latest
+    container: node:18.14-bullseye-slim
+    steps:
+      - name: Install dependencies
+        run: apt-get update -y && apt-get install -y git
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Git safe
+        run: git config --global --add safe.directory '*'
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ketcher-dist-micro
+          path: example/dist
+
+  part:
+    timeout-minutes: 120
+    runs-on: self-hosted-a
+    needs: build_ketcher
+    container: mcr.microsoft.com/playwright:v1.55.0-jammy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install dependencies
+        run: npm ci
+      - name: Create folder for dist
+        run: mkdir -p example/dist
+      - name: Download compiled ketcher
+        uses: actions/download-artifact@v4
+        with:
+          name: ketcher-dist-micro
+          path: example/dist/
+      - name: Create env file
+        run: |
+          cat > ketcher-autotests/.env << EOF
+          DOCKER=true
+          KETCHER_URL=$KETCHER_URL
+          MODE=$MODE
+          IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
+          CI_ENVIRONMENT=$CI_ENVIRONMENT
+          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          EOF
+      - name: Run tests
+        run: |
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
+          cd ketcher-autotests/
+          npm i
+          npx playwright install chromium
+          npx playwright test --project=chromium --grep 'Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements'
+      - uses: actions/upload-artifact@v4
+        # run even if previous steps fails
+        if: always()
+        with:
+          name: pw-report-${{ matrix.shardIndex }}
+          path: ketcher-autotests/playwright-report/
+          retention-days: 5
+  merge_reports:
+    if: ${{ !cancelled() }}
+    needs: [part]
+    runs-on: ubuntu-latest
+    container: node:18.14-bullseye-slim
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Download Playwright blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: ketcher-autotests/playwright-report/
+          pattern: pw-report-*
+          merge-multiple: true
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report/blob
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: playwright-report/
+          retention-days: 5

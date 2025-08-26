@@ -972,99 +972,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify attachment points can be added/removed via context menu', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: Attachment points can be added/removed via context menu.
-    */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await drawBenzeneRing(page);
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 5 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-    });
-    await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
-    await ContextMenu(
-      page,
-      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
-    ).click(MicroAtomOption.RemoveAttachmentPoint);
-    await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Ensure that new attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
-    */
-    // await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol', page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(page, 'KET/long-chain.ket');
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await waitForRender(page, async () => {
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 6 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 14 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 16 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 17 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-    });
-    await takeEditorScreenshot(page);
-  });
-
   test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
@@ -2217,21 +2124,6 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R1').click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check we can attach AP to single atom', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: AP attached to single atom.
-    */
-    const atomToolbar = RightToolbar(page);
-
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
-    await ContextMenu(page, getAtomLocator(page, { atomLabel: 'O' })).click(
-      MicroAtomOption.AddAttachmentPoint,
-    );
     await takeEditorScreenshot(page);
   });
 

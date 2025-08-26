@@ -374,6 +374,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 6. Take a screenshot
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
     await waitForMonomerPreview(page);

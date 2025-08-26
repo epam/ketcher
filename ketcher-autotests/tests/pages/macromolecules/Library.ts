@@ -232,7 +232,6 @@ export const Library = (page: Page) => {
       await this.goToMonomerLocation(location);
 
       const card = page.getByTestId(monomer.testId);
-      await card.scrollIntoViewIfNeeded();
       await card.hover();
 
       const btn = this.getMonomerAutochainButton(monomer);
@@ -249,7 +248,6 @@ export const Library = (page: Page) => {
       await this.goToMonomerLocation(location);
 
       const card = page.getByTestId(monomer.testId);
-      await card.scrollIntoViewIfNeeded();
       await card.hover();
 
       const btn = this.getMonomerAutochainButton(monomer);

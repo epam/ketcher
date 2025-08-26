@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@fixtures';
+import { expect, Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -11,7 +12,6 @@ import {
   pressButton,
   dragMouseTo,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
   keyboardPressOnCanvas,
 } from '@utils';
@@ -36,11 +36,16 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Selection tools', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Selection is not reset when using context menu', async ({ page }) => {
+  test('Selection is not reset when using context menu', async () => {
     /*
     Test case: EPMLSOPKET-8925
     Description: Selection is not reset. User can use right-click menu in order to perform actions.
@@ -56,9 +61,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Using rounded rectangles for selection of bonds and atom labels', async ({
-    page,
-  }) => {
+  test('Using rounded rectangles for selection of bonds and atom labels', async () => {
     /*
     Test case: EPMLSOPKET-12975
     Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3")
@@ -69,7 +72,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Pressing atoms hotkey when atoms are selected', async ({ page }) => {
+  test('Pressing atoms hotkey when atoms are selected', async () => {
     /*
     Test case: EPMLSOPKET-12979
     Description: Selected atoms are replaces with those assigned to the hotkey.
@@ -81,7 +84,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Hovering of selected Atom', async ({ page }) => {
+  test('Hovering of selected Atom', async () => {
     /*
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Atom becomes lighter than the rest of the structure.
@@ -93,7 +96,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Hovering of selected Bond', async ({ page }) => {
+  test('Hovering of selected Bond', async () => {
     /*
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Bond becomes lighter than the rest of the structure.
@@ -105,9 +108,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify flipping horizontally with multiple disconnected structures selected', async ({
-    page,
-  }) => {
+  test('Verify flipping horizontally with multiple disconnected structures selected', async () => {
     /*
     Test case: EPMLSOPKET-15508
     Description: All selected structures are flipped horizontally based on the selection box origin.
@@ -118,9 +119,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify flipping vertically with multiple disconnected structures selected', async ({
-    page,
-  }) => {
+  test('Verify flipping vertically with multiple disconnected structures selected', async () => {
     /*
     Test case: EPMLSOPKET-15509
     Description: All selected structures are flipped horizontally based on the selection box origin.
@@ -131,7 +130,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify deletion of selected structures', async ({ page }) => {
+  test('Verify deletion of selected structures', async () => {
     /*
     Test case: EPMLSOPKET-15510
     Description: All selected structures are deleted from the canvas.
@@ -142,9 +141,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async ({
-    page,
-  }) => {
+  test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -164,7 +161,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -189,7 +186,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -214,7 +211,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -234,9 +231,7 @@ test.describe('Selection tools', () => {
     },
   );
 
-  test('(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -255,9 +250,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -276,9 +269,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -297,9 +288,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -318,9 +307,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Field value text when placed on a structure becomes hard to access', async ({
-    page,
-  }) => {
+  test('Field value text when placed on a structure becomes hard to access', async () => {
     /*
     Test case: EPMLSOPKET-12974
     Description: User can easily select 'Field value' text and move to desired location.
@@ -354,13 +341,16 @@ test.describe('Selection tools', () => {
 });
 
 test.describe('Selection tools', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Selection tools is not change when user press ESC button', async ({
-    page,
-  }) => {
+  test('Selection tools is not change when user press ESC button', async () => {
     /*
     Test case: EPMLSOPKET-10074
     Description: If user presses esc, then last chosen selected tool must be
@@ -375,9 +365,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Verify removal of current flip and rotation buttons in the left toolbar', async ({
-    page,
-  }) => {
+  test('Verify removal of current flip and rotation buttons in the left toolbar', async () => {
     /*
     Test case: EPMLSOPKET-15511
     Description: The flip and rotation buttons are no longer present in the left toolbar.
@@ -385,9 +373,7 @@ test.describe('Selection tools', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Down', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Down', async () => {
     /*
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
@@ -405,9 +391,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Up', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Up', async () => {
     /*
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
@@ -425,9 +409,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Right', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Right', async () => {
     /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
@@ -445,9 +427,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Left', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Left', async () => {
     /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
@@ -465,7 +445,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Move structure over the border of the canvas', async ({ page }) => {
+  test('Move structure over the border of the canvas', async () => {
     /*
     Test case: EPMLSOPKET-10068
     Description: The canvas should automatically expand in the direction the structure is being moved.
@@ -484,7 +464,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Selection Drop-down list', async ({ page }) => {
+  test('Selection Drop-down list', async () => {
     /*
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.
@@ -493,7 +473,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Selection when hovering atom and bond', async ({ page }) => {
+  test('Selection when hovering atom and bond', async () => {
     /*
     Test case: EPMLSOPKET-16944
     Description: When mouse hover on Benzene ring atom or bond, selection appears.
@@ -508,7 +488,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection for several templates', async ({ page }) => {
+  test('Selection for several templates', async () => {
     /*
     Test case: EPMLSOPKET-16945
     Description: All structures selected on the canvas are highlighted in green.
@@ -521,7 +501,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection for chain structure', async ({ page }) => {
+  test('Selection for chain structure', async () => {
     /*
     Test case: EPMLSOPKET-17668
     Description: All chain structures selected on the canvas are highlighted in green.
@@ -531,9 +511,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async ({
-    page,
-  }) => {
+  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async () => {
     /*
     Test case: EPMLSOPKET-18046
     Description: Shift+Tab switch selection tools after pressing ESC button.
@@ -547,9 +525,7 @@ test.describe('Selection tools', () => {
     }
   });
 
-  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async ({
-    page,
-  }) => {
+  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async () => {
     /*
     Test case: EPMLSOPKET-18047
     Description: Shift+Tab switch selection tools after selecting Lasso.

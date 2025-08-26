@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  waitForPageInit,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   ZoomInByKeyboard,
@@ -44,11 +44,16 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('S-Group Properties', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Checking S-Group drop-down types', async ({ page }) => {
+  test('Checking S-Group drop-down types', async () => {
     /*
      * Test case: EPMLSOPKET-1502
      * Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
@@ -88,9 +93,11 @@ test.describe('S-Group Properties', () => {
     await expect(
       page.getByTestId(TypeOption.NucleotideComponent),
     ).toContainText('Nucleotide Component');
+    // required to unlock screen and find locator for close button
+    await page.keyboard.press('Escape');
   });
 
-  test('Checking Nucleotide Component drop-down options', async ({ page }) => {
+  test('Checking Nucleotide Component drop-down options', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that after selecting 'Nucleotide Component', a Component dropdown appears with
@@ -120,9 +127,11 @@ test.describe('S-Group Properties', () => {
     await expect(page.getByTestId(ComponentOption.Phosphate)).toContainText(
       'Phosphate',
     );
+    // required to unlock screen and find locator for close button
+    await page.keyboard.press('Escape');
   });
 
-  test('Checking Sugar type S-Group creation', async ({ page }) => {
+  test('Checking Sugar type S-Group creation', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that after selecting Sugar Nucleotide conponent and clicking Save, the S-group is applied to the selected structure
@@ -146,7 +155,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking Base type S-Group creation', async ({ page }) => {
+  test('Checking Base type S-Group creation', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that after selecting Base Nucleotide conponent and clicking Save, the S-group is applied to the selected structure
@@ -170,7 +179,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking Phosphate type S-Group creation', async ({ page }) => {
+  test('Checking Phosphate type S-Group creation', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that after selecting Phosphate Nucleotide conponent and clicking Save, the S-group is applied to the selected structure
@@ -194,9 +203,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking Sugar, Base and Phosphate type S-Group on Macromolecules cavas', async ({
-    page,
-  }) => {
+  test('Checking Sugar, Base and Phosphate type S-Group on Macromolecules cavas', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: 1. Check that in macromolecules mode, these structures appear as any other superatom
@@ -233,9 +240,7 @@ test.describe('S-Group Properties', () => {
     });
   });
 
-  test('Checking export to KET of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to KET of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that marked structures are saved correctly to KET format (only the structure
@@ -264,9 +269,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to MOL v2000 of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to MOL v2000 of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to MOL v2000 format (only the structure
@@ -296,9 +299,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to MOL v3000 of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to MOL v3000 of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to MOL v3000 format (only the structure
@@ -328,9 +329,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that on import from MOL, Indigo convert the structure appropriately to KET', async ({
-    page,
-  }) => {
+  test('Check that on import from MOL, Indigo convert the structure appropriately to KET', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on import from MOL, Indigo convert the structure appropriately to KET
@@ -358,9 +357,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to CML of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to CML of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CML format (only the structure
@@ -390,9 +387,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to PNG of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to PNG of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to PNG format (only the structure
@@ -418,9 +413,7 @@ test.describe('S-Group Properties', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Checking export to SVG of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to SVG of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to PNG format (only the structure
@@ -446,9 +439,7 @@ test.describe('S-Group Properties', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Checking export to CDXML of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to CDXML of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CDXML format (only the structure
@@ -478,9 +469,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to CDX of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to CDX of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Verify that marked structures are saved correctly to CDX format (only the structure
@@ -510,9 +499,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to HELM of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to HELM of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on export to HELM the superatom S-group treated as a small molecule (current behavior)
@@ -536,9 +523,7 @@ test.describe('S-Group Properties', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
-  test('Checking export to SMARTS of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to SMARTS of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on export to SMARTS the superatom S-group treated as a small molecule (current behavior)
@@ -568,9 +553,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to SMILES of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to SMILES of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on export to SMILES the superatom S-group treated as a small molecule (current behavior)
@@ -600,9 +583,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to Extended SMILES of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to Extended SMILES of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on export to Extended SMILES the superatom S-group treated as a small molecule (current behavior)
@@ -632,9 +613,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking export to InChI of Sugar, Base and Phosphate type S-Group ', async ({
-    page,
-  }) => {
+  test('Checking export to InChI of Sugar, Base and Phosphate type S-Group ', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7428
      * Description: Check that on export to InChI the superatom S-group treated as a small molecule (current behavior)
@@ -664,9 +643,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Checking Sugar, Base and Phosphate type S-Group Undo/Redo removal', async ({
-    page,
-  }) => {
+  test('Checking Sugar, Base and Phosphate type S-Group Undo/Redo removal', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that undo and redo work after applying or removing nucleotide component S-group
@@ -715,9 +692,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that Delete removes the entire S-group and then it can be restored by Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that Delete removes the entire S-group and then it can be restored by Undo/Redo', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that Delete removes the entire S-group and then it can be restored by Undo/Redo
@@ -747,9 +722,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check switching to Macro mode and back to Micro for structure with added Nucleotides components', async ({
-    page,
-  }) => {
+  test('Check switching to Macro mode and back to Micro for structure with added Nucleotides components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: 1. Check switching to Macro mode and back to Micro for structure with added Nucleotides components
@@ -771,9 +744,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed in mode', async ({
-    page,
-  }) => {
+  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed in mode', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
@@ -800,9 +771,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed out mode', async ({
-    page,
-  }) => {
+  test('Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed out mode', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify appearance of Base, Sugar, and Phosphate on canvas in zoomed mode
@@ -829,9 +798,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that multiple components can be marked in one structure', async ({
-    page,
-  }) => {
+  test('Verify that multiple components can be marked in one structure', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify that multiple components can be marked in one structure (e.g. base + sugar + phosphate)
@@ -872,9 +839,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify aromatize/dearomatize indigo functions for nucleotide components', async ({
-    page,
-  }) => {
+  test('Verify aromatize/dearomatize indigo functions for nucleotide components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify aromatize/dearomatize indigo functions for nucleotide components
@@ -897,9 +862,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Layout indigo function for nucleotide components', async ({
-    page,
-  }) => {
+  test('Verify Layout indigo function for nucleotide components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify Layout indigo function for nucleotide components
@@ -940,9 +903,7 @@ test.describe('S-Group Properties', () => {
   //   await takeEditorScreenshot(page);
   // });
 
-  test('Verify Calculate CIP indigo function for nucleotide components', async ({
-    page,
-  }) => {
+  test('Verify Calculate CIP indigo function for nucleotide components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify Calculate CIP indigo function for nucleotide components
@@ -961,9 +922,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Calculate Values indigo function for nucleotide components', async ({
-    page,
-  }) => {
+  test('Verify Calculate Values indigo function for nucleotide components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify Calculate Values indigo function for nucleotide components
@@ -995,9 +954,7 @@ test.describe('S-Group Properties', () => {
     await CalculatedValuesDialog(page).close();
   });
 
-  test('Verify Add/Remove explicit hydrogens indigo function for nucleotide components', async ({
-    page,
-  }) => {
+  test('Verify Add/Remove explicit hydrogens indigo function for nucleotide components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7401
      * Description: Verify Add/Remove explicit hydrogens function for nucleotide components
@@ -1020,7 +977,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('A superatom named `Test` is created', async ({ page }) => {
+  test('A superatom named `Test` is created', async () => {
     /*
       Test case: EPMLSOPKET-1537
       Description: A superatom named `Test` is created. Atom enclosed in brackets.
@@ -1038,9 +995,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('An atom is created with the name `Test` and the value 8', async ({
-    page,
-  }) => {
+  test('An atom is created with the name `Test` and the value 8', async () => {
     /*
       Test case: EPMLSOPKET-1542
       Description: An atom is created with the name `Test` and the value 8
@@ -1061,7 +1016,7 @@ test.describe('S-Group Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('A query component  is created', async ({ page }) => {
+  test('A query component  is created', async () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 

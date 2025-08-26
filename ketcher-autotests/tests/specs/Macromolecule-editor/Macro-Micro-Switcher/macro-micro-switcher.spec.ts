@@ -833,26 +833,30 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test('Make full screen mode in micro mode and switch to macro mode.', async () => {
-    /* 
+  // https://github.com/epam/ketcher/issues/7553
+  test.fail(
+    'Make full screen mode in micro mode and switch to macro mode.',
+    async () => {
+      /* 
     Test case: Macro-Micro-Switcher
     Description:  Full screen mode is not reset
     */
 
-    await openFileAndAddToCanvas(
-      page,
-      'KET/two-benzene-and-plus.ket',
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await page
-      .getByTestId('fullscreen-mode-button')
-      .filter({ has: page.locator(':visible') })
-      .click();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await takePageScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        page,
+        'KET/two-benzene-and-plus.ket',
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await page
+        .getByTestId('fullscreen-mode-button')
+        .filter({ has: page.locator(':visible') })
+        .click();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await Library(page).switchToRNATab();
+      await takePageScreenshot(page);
+    },
+  );
 
   test.skip(
     'Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line',

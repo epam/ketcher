@@ -9,7 +9,6 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   takePresetsScreenshot,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -710,7 +709,7 @@ test.describe('Arrow button on Library cards', () => {
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await Library(page).hoverMonomerAutochain(Peptide.Ac_);
-      await takePageScreenshot(page, {
+      await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -737,7 +736,7 @@ test.describe('Arrow button on Library cards', () => {
       await selectAllStructuresOnCanvas(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).hoverMonomerAutochain(Peptide._1Nal);
-      await takePageScreenshot(page, {
+      await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -752,14 +751,14 @@ test.describe('Arrow button on Library cards', () => {
       for (const [section, monomer] of rnaTests) {
         await Library(page).openRNASection(section);
         await Library(page).hoverMonomerAutochain(monomer);
-        await takePageScreenshot(page, {
+        await takeMonomerLibraryScreenshot(page, {
           hideMonomerPreview: true,
           hideMacromoleculeEditorScrollBars: true,
         });
       }
       await Library(page).switchToCHEMTab();
       await Library(page).hoverMonomerAutochain(Chem._4FB);
-      await takePageScreenshot(page, {
+      await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });

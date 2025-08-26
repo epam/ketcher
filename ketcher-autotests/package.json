@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "pix1": "npx playwright test --project=chromium --grep 'Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements'",
+    "doc_pix1": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --grep 'Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements'",
+    "upd_doc_pix1": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --update-snapshots --grep 'Add to canvas different elements, turn on view only mode, verify that all editing tools are disabled in toolbars for elements'",
     "report": "npx playwright show-report playwright-report/html",
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",

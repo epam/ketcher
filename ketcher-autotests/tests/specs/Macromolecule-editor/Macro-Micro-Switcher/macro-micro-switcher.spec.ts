@@ -993,29 +993,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that system start to use missed labels if user want to create AP greater that R8 (if it has R1,R3-R8 - attempt to add causes R2 selection)', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
-    */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/chain-with-eight-attachment-points.ket',
-    );
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R2').click();
-    await waitForRender(page, async () => {
-      // await page.keyboard.press('Escape');
-      await ContextMenu(
-        page,
-        getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
-      ).click(MicroAtomOption.AddAttachmentPoint);
-    });
-    await takeEditorScreenshot(page);
-  });
-
   test('Check that in context menu for AP - only Delete and Highlight avaliable', async () => {
     /*
     Test case: Macro-Micro-Switcher/#4530

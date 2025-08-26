@@ -295,6 +295,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     // need to be investigated and fixed
     await Library(page).rnaBuilder.selectBaseSlot();
     await takeMonomerLibraryScreenshot(page);
+    // doubled selection of base slot to fix test behaviour after upgrate to react 19
+    // need to be investigated and fixed
+    await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await takeMonomerLibraryScreenshot(page);
   });

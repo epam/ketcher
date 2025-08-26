@@ -47,7 +47,7 @@ jobs:
     timeout-minutes: 120
     runs-on: self-hosted-a
     needs: build_ketcher
-    container: mcr.microsoft.com/playwright:v1.54.2-jammy
+    container: mcr.microsoft.com/playwright:v1.55.0-jammy
     strategy:
       fail-fast: false
       matrix:

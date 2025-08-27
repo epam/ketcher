@@ -591,10 +591,12 @@ class Editor implements KetcherEditor {
         // Selection should not contain S-Groups, R-Groups or atoms from extended table
         return (
           atom.sgs.size > 0 ||
-          genericsList.includes(atom.label) ||
+          atom.rglabel !== null ||
+          atom.attachmentPoints !== null ||
           this.render.ctab.molecule.rgroups.some((rgroup) =>
             rgroup.frags.has(atom.fragment),
-          )
+          ) ||
+          genericsList.includes(atom.label)
         );
       });
 
@@ -618,8 +620,13 @@ class Editor implements KetcherEditor {
         );
       });
 
+      // Only simple single bonds are allowed to outside of selection
       if (
-        bondsToOutside.some((bond) => bond.type !== Bond.PATTERN.TYPE.SINGLE)
+        bondsToOutside.some(
+          (bond) =>
+            bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+            bond.stereo !== Bond.PATTERN.STEREO.NONE,
+        )
       ) {
         return false;
       }

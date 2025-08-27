@@ -14,7 +14,6 @@ import {
   takeLeftToolbarScreenshot,
   waitForRender,
   keyboardPressOnCanvas,
-  clickOnMiddleOfCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

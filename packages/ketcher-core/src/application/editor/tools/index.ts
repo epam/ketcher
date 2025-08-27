@@ -22,13 +22,15 @@ import { EraserTool } from 'application/editor/tools/Erase';
 import { ClearTool } from 'application/editor/tools/Clear';
 import { HandTool } from 'application/editor/tools/Hand';
 import { ToolName } from 'application/editor/tools/types';
-import { SelectLasso } from "application/editor/tools/select/SelectLasso";
+import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
+import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
   [ToolName.preset]: RnaPresetTool,
   [ToolName.selectRectangle]: SelectRectangle,
   [ToolName.selectLasso]: SelectLasso,
+  [ToolName.selectFragment]: SelectFragment,
   [ToolName.bondSingle]: PolymerBond,
   [ToolName.bondHydrogen]: PolymerBond,
   [ToolName.erase]: EraserTool,

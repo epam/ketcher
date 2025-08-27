@@ -58,19 +58,19 @@ class SelectRectangle extends SelectBase {
       return;
     requestAnimationFrame(() => {
       const topLeftX = Math.min(
-        this.mousePositionBeforeMove.x,
+        this.selectionStartPosition.x,
         this.editor.lastCursorPosition.x,
       );
       const topLeftY = Math.min(
-        this.mousePositionBeforeMove.y,
+        this.selectionStartPosition.y,
         this.editor.lastCursorPosition.y,
       );
       const bottomRightX = Math.max(
-        this.mousePositionBeforeMove.x,
+        this.selectionStartPosition.x,
         this.editor.lastCursorPosition.x,
       );
       const bottomRightY = Math.max(
-        this.mousePositionBeforeMove.y,
+        this.selectionStartPosition.y,
         this.editor.lastCursorPosition.y,
       );
       const topLeftPoint = Coordinates.viewToCanvas(

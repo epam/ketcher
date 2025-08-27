@@ -54,8 +54,18 @@ export class SelectionView extends TransientView {
         .datum(path)
         .attr('d', line)
         .attr('fill', '#E1E5EA')
+        .attr('fill-opacity', 0.5)
         .attr('stroke', '#B4B9D6')
         .attr('style', 'pointer-events: none');
+      if (path.length > 1) {
+        const linePoints = [path[0], path[path.length - 1]];
+        transientLayer
+          .append('path')
+          .datum(linePoints)
+          .attr('d', line)
+          .attr('stroke', '#B4B9D6')
+          .attr('style', 'pointer-events: none');
+      }
     }
   }
 

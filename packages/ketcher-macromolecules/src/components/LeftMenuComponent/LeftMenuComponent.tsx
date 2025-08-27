@@ -56,6 +56,11 @@ export function LeftMenuComponent() {
               title={`Lasso selection (${hotkeysShortcuts.exit})`}
               testId="select-lasso"
             />
+            <Menu.Item
+              itemId="select-fragment"
+              title={`Fragment selection (${hotkeysShortcuts.exit})`}
+              testId="select-fragment"
+            />
           </Menu.Submenu>
         </Menu.Group>
         <Menu.Item

@@ -54,6 +54,7 @@ type SnapResult = {
 abstract class SelectBase implements BaseTool {
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
+  protected selectionStartPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   protected mode: 'moving' | 'selecting' | 'standby' = 'standby';
   private canvasResizeObserver?: ResizeObserver;
@@ -82,6 +83,7 @@ abstract class SelectBase implements BaseTool {
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
+    this.selectionStartPosition = this.editor.lastCursorPosition;
 
     const modelChanges = new Command();
 
@@ -99,20 +101,8 @@ abstract class SelectBase implements BaseTool {
         return;
       }
 
-      const drawingEntitiesToSelect: DrawingEntity[] = [];
+      const drawingEntitiesToSelect = this.getDrawingEntitiesToSelect(renderer);
       const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
-
-      if (renderer instanceof BaseSequenceItemRenderer) {
-        const twoStrandedNode = renderer.twoStrandedNode;
-        if (twoStrandedNode.senseNode) {
-          drawingEntitiesToSelect.push(twoStrandedNode.senseNode.monomer);
-        }
-        if (twoStrandedNode.antisenseNode) {
-          drawingEntitiesToSelect.push(twoStrandedNode.antisenseNode.monomer);
-        }
-      } else {
-        drawingEntitiesToSelect.push(renderer.drawingEntity);
-      }
 
       if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
         this.startMoveIfNeeded(renderer as BaseRenderer);
@@ -174,6 +164,24 @@ abstract class SelectBase implements BaseTool {
     }
 
     this.editor.renderersContainer.update(modelChanges);
+  }
+
+  protected getDrawingEntitiesToSelect(
+    renderer: BaseRenderer,
+  ): DrawingEntity[] {
+    const drawingEntitiesToSelect: DrawingEntity[] = [];
+    if (renderer instanceof BaseSequenceItemRenderer) {
+      const twoStrandedNode = renderer.twoStrandedNode;
+      if (twoStrandedNode.senseNode) {
+        drawingEntitiesToSelect.push(twoStrandedNode.senseNode.monomer);
+      }
+      if (twoStrandedNode.antisenseNode) {
+        drawingEntitiesToSelect.push(twoStrandedNode.antisenseNode.monomer);
+      }
+    } else {
+      drawingEntitiesToSelect.push(renderer.drawingEntity);
+    }
+    return drawingEntitiesToSelect;
   }
 
   protected onSelectionStart() {

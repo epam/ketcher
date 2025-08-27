@@ -88,7 +88,7 @@ export const LeftToolbar = (page: Page) => {
     },
 
     async createMonomer() {
-      await locators.createMonomer.click();
+      await locators.createMonomerButton.click();
     },
 
     async reactionPlusTool() {

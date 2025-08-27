@@ -5,10 +5,21 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { clickOnCanvas } from '@utils/index';
+import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -284,5 +295,205 @@ for (const nonEligableMolecule of nonEligableMolecules) {
       nonEligableMolecule.BondIDsToExclude,
     );
     await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
+  });
+}
+
+test(`4. Check that when user clicks on the "Create monomer" button the structure is loaded in the monomer creation wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that when user clicks on the "Create monomer" button the structure
+   *              is loaded in the monomer creation wizard with blank properties
+   *              (no monomer type, name, symbol, etc.) and with default attachment points.
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create monomer" button
+   *      5. Take screenshot to validate initial wizard state
+   *
+   * Version 3.7
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await deselectAtomsAndBonds(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test.fail(
+  `5. Check that the toolbar icons are disabled/enabled when the monomer creation wizard is active`,
+  async () => {
+    // Bug: https://github.com/epam/ketcher/issues/7581
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that the toolbar icons are disabled/enabled when the monomer creation wizard is active
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Press "Create monomer" button
+     *      5. Validate that the toolbar icons are disabled/enabled
+     *
+     * Version 3.7
+     */
+
+    const commonTopLeftToolbar = CommonTopLeftToolbar(page);
+    const indigoFunctionsToolbar = IndigoFunctionsToolbar(page);
+    const commonTopRightToolbar = CommonTopRightToolbar(page);
+    const topRightToolbar = TopRightToolbar(page);
+    const rightToolbar = RightToolbar(page);
+    const bottomToolbar = BottomToolbar(page);
+
+    const commonLeftToolbar = CommonLeftToolbar(page);
+    const leftToolbar = LeftToolbar(page);
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await clickOnCanvas(page, 0, 0);
+    await selectAllStructuresOnCanvas(page);
+    await deselectAtomsAndBonds(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    await leftToolbar.createMonomer();
+
+    await Promise.all([
+      expect(commonTopLeftToolbar.clearCanvasButton).toBeDisabled(),
+      expect(commonTopLeftToolbar.openButton).toBeDisabled(),
+      expect(commonTopLeftToolbar.saveButton).toBeDisabled(),
+      expect(commonTopLeftToolbar.undoButton).toBeEnabled(),
+      expect(commonTopLeftToolbar.redoButton).toBeEnabled(),
+      expect(indigoFunctionsToolbar.aromatizeButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.dearomatizeButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.layoutButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.cleanUpButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.calculateCIPButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.checkStructureButton).toBeDisabled(),
+      expect(indigoFunctionsToolbar.calculatedValuesButton).toBeDisabled(),
+      expect(
+        indigoFunctionsToolbar.addRemoveExplicitHydrogensButton,
+      ).toBeDisabled(),
+      expect(indigoFunctionsToolbar.ThreeDViewerButton).toBeDisabled(),
+      expect(commonTopRightToolbar.ketcherModeSwitcherCombobox).toBeDisabled(),
+      expect(commonTopRightToolbar.fullScreenButton).toBeEnabled(),
+      expect(commonTopRightToolbar.helpButton).toBeDisabled(),
+      expect(commonTopRightToolbar.aboutButton).toBeDisabled(),
+      expect(commonTopRightToolbar.zoomSelector).toBeEnabled(),
+      expect(topRightToolbar.settingsButton).toBeDisabled(),
+
+      expect(rightToolbar.hydrogenButton).toBeDisabled(),
+      expect(rightToolbar.carbonButton).toBeDisabled(),
+      expect(rightToolbar.nitrogenButton).toBeDisabled(),
+      expect(rightToolbar.oxygenButton).toBeDisabled(),
+      expect(rightToolbar.sulfurButton).toBeDisabled(),
+      expect(rightToolbar.phosphorusButton).toBeDisabled(),
+      expect(rightToolbar.fluorineButton).toBeDisabled(),
+      expect(rightToolbar.chlorineButton).toBeDisabled(),
+      expect(rightToolbar.bromineButton).toBeDisabled(),
+      expect(rightToolbar.iodineButton).toBeDisabled(),
+      expect(rightToolbar.periodicTableButton).toBeDisabled(),
+      expect(rightToolbar.anyAtomButton).toBeDisabled(),
+      expect(rightToolbar.extendedTableButton).toBeDisabled(),
+
+      expect(commonLeftToolbar.handToolButton).toBeEnabled(),
+      expect(commonLeftToolbar.areaSelectionDropdownButton).toBeEnabled(),
+      expect(leftToolbar.chainButton).toBeDisabled(),
+      expect(leftToolbar.stereochemistryButton).toBeDisabled(),
+      expect(leftToolbar.chargePlusButton).toBeDisabled(),
+      expect(leftToolbar.chargeMinusButton).toBeDisabled(),
+      expect(leftToolbar.sGroupButton).toBeDisabled(),
+      expect(leftToolbar.rGroupToolsButton).toBeDisabled(),
+      expect(leftToolbar.createMonomerButton).toBeDisabled(),
+      expect(leftToolbar.reactionPlusToolButton).toBeDisabled(),
+      expect(leftToolbar.arrowToolsButton).toBeDisabled(),
+      expect(leftToolbar.reactionMappingToolsButton).toBeDisabled(),
+      expect(leftToolbar.shapeToolsButton).toBeDisabled(),
+      expect(leftToolbar.addTextButton).toBeDisabled(),
+      expect(leftToolbar.addImageButton).toBeDisabled(),
+
+      expect(bottomToolbar.benzeneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclopentadieneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclohexaneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclopentaneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclopropaneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclobutaneButton).toBeDisabled(),
+      expect(bottomToolbar.cycloheptaneButton).toBeDisabled(),
+      expect(bottomToolbar.cyclooctaneButton).toBeDisabled(),
+      expect(bottomToolbar.structureLibraryButton).toBeDisabled(),
+    ]);
+    await CreateMonomerDialog(page).discard();
+  },
+);
+
+const eightAttachmentPointsMolecules: IMoleculesForMonomerCreation[] = [
+  {
+    testDescription:
+      '1. Eight attachment points molecule attached to two atoms',
+    MoleculeSMARTS: 'Br(Br(C)(C)(C)C)(C)(C)(C)C',
+    AtomIDsToExclude: ['2', '3', '4', '5', '6', '7', '8', '9'],
+  },
+  {
+    testDescription:
+      '2. Eight attachment points molecule attached to eight atoms',
+    MoleculeSMARTS: 'CBrBr(C)Br(C)Br(C)Br(C)Br(C)Br(C)BrC',
+    AtomIDsToExclude: ['0', '3', '5', '7', '9', '11', '13', '15'],
+  },
+];
+
+for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
+  test(`6. Check that ${eightAttachmentPointsMolecule.testDescription} has correct leaving groups and bonds`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: 1. Check that the default attachment points is attachment atom is the atom
+     *                 within the selected structure that has a simple single bond with the
+     *                 non-selected part of the structure
+     *              2. Check that the default attachment points is the leaving group atom (a hydrogen)
+     *                 is added by default at the end of the bond connecting the attachment atom and
+     *                 the non-selected part of the structure
+     *              3. Check that leaving group atoms are marked (see mockups), until the user confirms
+     *                 (clicks OK) on the warning message in the error/warning area at the bottom for
+     *                 the wizard: "Attachment points are set by default with hydrogens as leaving groups
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Press "Create Monomer" button
+     *      5. Take a screenshot of the canvas validate leaving groups and bonds
+     *
+     * Version 3.7
+     */
+    const notificationMessage = page.getByText(
+      'Attachment points are set by default with hydrogens as leaving groups.',
+    );
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eightAttachmentPointsMolecule.MoleculeSMARTS,
+    );
+    await clickOnCanvas(page, 0, 0);
+    await selectAllStructuresOnCanvas(page);
+    await deselectAtomsAndBonds(
+      page,
+      eightAttachmentPointsMolecule.AtomIDsToExclude,
+      eightAttachmentPointsMolecule.BondIDsToExclude,
+    );
+    await LeftToolbar(page).createMonomer();
+    await takeEditorScreenshot(page);
+    expect(await notificationMessage.count()).toBeGreaterThan(0);
+    await CreateMonomerDialog(page).discard();
   });
 }

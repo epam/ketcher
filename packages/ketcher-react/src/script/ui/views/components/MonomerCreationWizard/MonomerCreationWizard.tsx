@@ -578,10 +578,18 @@ const MonomerCreationWizard = () => {
           )}
 
         <div className={styles.buttonsContainer}>
-          <button className={styles.buttonDiscard} onClick={handleDiscard}>
+          <button
+            className={styles.buttonDiscard}
+            onClick={handleDiscard}
+            data-testid="discard-button"
+          >
             Discard
           </button>
-          <button className={styles.buttonSubmit} onClick={handleSubmit}>
+          <button
+            className={styles.buttonSubmit}
+            onClick={handleSubmit}
+            data-testid="submit-button"
+          >
             Submit
           </button>
         </div>

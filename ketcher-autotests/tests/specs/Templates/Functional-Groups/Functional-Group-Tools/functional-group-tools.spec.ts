@@ -8,7 +8,6 @@ import {
   dragMouseTo,
   takeEditorScreenshot,
   clickOnAtom,
-  waitForPageInit,
   moveOnAtom,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -19,7 +18,6 @@ import {
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

@@ -118,9 +118,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await waitForRender(page, async () => {
-      await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
-    });
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -534,9 +532,7 @@ test.describe('Atom Tool', () => {
     ];
 
     for (const elementName of elementNames) {
-      await waitForRender(page, async () => {
-        await selectElementFromPeriodicTable(page, elementName);
-      });
+      await selectElementFromPeriodicTable(page, elementName);
     }
 
     await takeRightToolbarScreenshot(page);
@@ -579,6 +575,7 @@ test.describe('Atom Tool', () => {
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
         await clickAtomShortcut(page, labelKey);
+        await resetCurrentTool(page);
         await CommonLeftToolbar(page).selectAreaSelectionTool();
         await takeEditorScreenshot(page);
       });

@@ -29,7 +29,8 @@ import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 
 export type MonomerCreationRenderState = {
-  attachmentPoints: Map<number, number>;
+  assignedAttachmentPoints: Map<number, number>;
+  potentialAttachmentPoints: Map<number, number>;
 } | null;
 
 export class Render {

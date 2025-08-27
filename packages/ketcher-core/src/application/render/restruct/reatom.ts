@@ -577,14 +577,14 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationRenderState) {
-      const { attachmentPoints } = render.monomerCreationRenderState;
+      const { assignedAttachmentPoints } = render.monomerCreationRenderState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const attachmentAtoms = Array.from(attachmentPoints.keys());
-        const leavingGroups = Array.from(attachmentPoints.values());
+        const attachmentAtoms = Array.from(assignedAttachmentPoints.keys());
+        const leavingGroups = Array.from(assignedAttachmentPoints.values());
 
         let style: RenderOptionStyles | undefined;
         if (attachmentAtoms.includes(aid)) {

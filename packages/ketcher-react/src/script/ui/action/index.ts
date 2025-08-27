@@ -173,7 +173,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'copy-image'),
   },
   'copy-mol': {
-    shortcut: 'Mod+m',
+    shortcut: 'Mod+Shift+m',
     enabledInViewOnly: true,
     title: 'Copy as MOL',
     action: () => {

@@ -5,8 +5,13 @@
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
+  MacroFileType,
+  MolFileFormat,
   openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  readFileContent,
   selectAllStructuresOnCanvas,
+  SequenceFileFormat,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePresetsScreenshot,
@@ -21,6 +26,18 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import {
+  FileType,
+  verifyFileExport,
+  verifyHELMExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
 
@@ -785,6 +802,396 @@ test.describe('Arrow button on Library cards', () => {
       for (let i = 0; i < 10; i++) {
         await Library(page).clickMonomerAutochain(Peptide._1Nal);
       }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 20: Check addition monomer by arrow button and switch to micro mode and back to macro',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After switching to Micro mode and back to Macro mode monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Switch to Micro mode
+       * 4. Switch back to Macro mode
+       * 5. Check that monomer is on canvas
+       */
+      await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await Library(page).switchToPeptidesTab();
+      await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugar._25R],
+        [RNASection.Bases, Base.baA],
+        [RNASection.Phosphates, Phosphate.bP],
+        [RNASection.Nucleotides, Nucleotide.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).clickMonomerAutochain(monomer);
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).clickMonomerAutochain(Chem._4FB);
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await takeEditorScreenshot(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 21: Check saving and opening monomers added by arrow button (KET)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as KET file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as KET file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await Library(page).switchToPeptidesTab();
+      await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugar._25R],
+        [RNASection.Bases, Base.baA],
+        [RNASection.Phosphates, Phosphate.bP],
+        [RNASection.Nucleotides, Nucleotide.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).clickMonomerAutochain(monomer);
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).clickMonomerAutochain(Chem._4FB);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'KET/monomers-added-by-arrow-button-expected.ket',
+        FileType.KET,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/monomers-added-by-arrow-button-expected.ket',
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 22: Check saving and opening monomers added by arrow button (MOL V3000)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as MOL V3000 file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as MOL V3000 file file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await Library(page).switchToPeptidesTab();
+      await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      await Library(page).switchToRNATab();
+      const rnaTests = [
+        [RNASection.Sugars, Sugar._25R],
+        [RNASection.Bases, Base.baA],
+        [RNASection.Phosphates, Phosphate.bP],
+        [RNASection.Nucleotides, Nucleotide.Super_G],
+      ] as const;
+
+      for (const [section, monomer] of rnaTests) {
+        await Library(page).openRNASection(section);
+        await Library(page).clickMonomerAutochain(monomer);
+      }
+      await Library(page).switchToCHEMTab();
+      await Library(page).clickMonomerAutochain(Chem._4FB);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/monomers-added-by-arrow-button-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/monomers-added-by-arrow-button-expected.mol',
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 23: Check saving and opening monomers added by arrow button (Sequence 1-letter-code)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as Sequence 1-letter-code file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as Sequence 1-letter-code file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      await Library(page).switchToPeptidesTab();
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'Sequence/monomers-added-by-arrow-button-expected.seq',
+        FileType.SEQ,
+        SequenceFileFormat.oneLetter,
+      );
+      const fileContent = await readFileContent(
+        'Sequence/monomers-added-by-arrow-button-expected.seq',
+      );
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        [
+          MacroFileType.Sequence,
+          [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
+        ],
+        fileContent,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 24: Check saving and opening monomers added by arrow button (Sequence 3-letter-code)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as Sequence 3-letter-code file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as Sequence 3-letter-code file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      await Library(page).switchToPeptidesTab();
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Peptide.Cys_Bn);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'Sequence/peptides-added-by-arrow-button-expected.seq',
+        FileType.SEQ,
+        SequenceFileFormat.threeLetter,
+      );
+      const fileContent = await readFileContent(
+        'Sequence/peptides-added-by-arrow-button-expected.seq',
+      );
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        [
+          MacroFileType.Sequence,
+          [SequenceMonomerType.Peptide, PeptideLetterCodeType.threeLetterCode],
+        ],
+        fileContent,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 25: Check saving and opening monomers added by arrow button (FASTA)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as FASTA file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as FASTA file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'FASTA/monomers-added-by-arrow-button-expected.fasta',
+        FileType.FASTA,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'FASTA/monomers-added-by-arrow-button-expected.fasta',
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 26: Check saving and opening monomers added by arrow button (IDT)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as IDT file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as IDT file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_G_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyFileExport(
+        page,
+        'IDT/monomers-added-by-arrow-button-expected.idt',
+        FileType.IDT,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'IDT/monomers-added-by-arrow-button-expected.idt',
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 27: Check saving and opening monomers added by arrow button (HELM)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as HELM file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as HELM file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_T_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await verifyHELMExport(
+        page,
+        `RNA1{[moe](T)p.[moe](T)p.[moe](T)p}$$$$V2.0`,
+      );
+    },
+  );
+
+  test(
+    'Case 28: Check saving and opening monomers added by arrow button (SVG Document)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: When click on arrow symbol monomer appears on canvas for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library (Flex mode).
+       * After saving the structure as SVG Document file and opening it again monomer remains on canvas.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Save the structure as SVG Document file
+       * 4. Open saved file
+       * 5. Check that monomer is on canvas
+       * For now we have bug https://github.com/epam/ketcher/issues/7509
+       * After fixing we need to update screenshot
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_T_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

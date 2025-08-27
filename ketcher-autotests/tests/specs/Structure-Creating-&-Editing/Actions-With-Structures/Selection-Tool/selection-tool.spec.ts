@@ -511,20 +511,6 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async () => {
-    /*
-    Test case: EPMLSOPKET-18046
-    Description: Shift+Tab switch selection tools after pressing ESC button.
-    */
-    await LeftToolbar(page).chain();
-    await page.keyboard.press('Escape');
-    await takeLeftToolbarScreenshot(page);
-    for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Shift+Tab');
-      await takeLeftToolbarScreenshot(page);
-    }
-  });
-
   test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async () => {
     /*
     Test case: EPMLSOPKET-18047

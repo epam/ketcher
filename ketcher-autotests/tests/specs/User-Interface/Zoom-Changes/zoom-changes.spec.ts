@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   takeTopToolbarScreenshot,
@@ -9,6 +10,7 @@ import {
   ZoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -54,6 +56,7 @@ test.describe('Zoom changes', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await clickOnCanvas(page, 100, 100);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -80,6 +83,7 @@ test.describe('Zoom changes', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await clickOnCanvas(page, 100, 100);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -157,13 +161,15 @@ test.describe('Zoom changes', () => {
     await zoomSelector.click();
     await zoomInButton.click();
     await checkZoomLevel(page, '110%');
+    await zoomSelector.click({ force: true, delay: 100 });
+    await zoomInButton.waitFor({ state: 'detached' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);

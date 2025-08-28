@@ -10,7 +10,7 @@ interface Atom {
 }
 
 export async function mapTwoAtoms(page: Page, atom1: Atom, atom2: Atom) {
-  CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionMapping,
   );

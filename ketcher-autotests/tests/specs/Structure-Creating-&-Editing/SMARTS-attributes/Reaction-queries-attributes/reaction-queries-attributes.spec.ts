@@ -38,15 +38,15 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
-  CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
   await dragMouseTo(x - shiftForHydrogen, y, page);
-  CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
-  CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
 

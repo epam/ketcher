@@ -51,7 +51,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(x, y, page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -83,7 +83,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -113,7 +113,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -146,7 +146,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -185,7 +185,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

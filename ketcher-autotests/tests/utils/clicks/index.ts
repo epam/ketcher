@@ -350,7 +350,7 @@ export async function applyAutoMapMode(
   mode: string,
   withScreenshot = true,
 ) {
-  CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionAutoMapping,
   );

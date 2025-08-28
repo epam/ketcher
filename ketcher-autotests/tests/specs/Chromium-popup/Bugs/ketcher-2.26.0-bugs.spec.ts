@@ -706,7 +706,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

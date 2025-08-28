@@ -146,7 +146,7 @@ test.describe('Open Ketcher', () => {
       { label: 'C', index: atomIndex },
       { primary: true },
     );
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText('R8').click();

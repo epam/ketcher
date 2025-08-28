@@ -700,7 +700,7 @@ test.describe('Attachment Point Tool', () => {
       x: 670,
       y: 450,
     });
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
 
     await takeEditorScreenshot(page);

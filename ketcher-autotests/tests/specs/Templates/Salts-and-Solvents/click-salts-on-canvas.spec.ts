@@ -41,7 +41,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Glycerol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +61,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Isobutanol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +81,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.TButanol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -104,7 +104,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -133,7 +133,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Sulfolane,
     );
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

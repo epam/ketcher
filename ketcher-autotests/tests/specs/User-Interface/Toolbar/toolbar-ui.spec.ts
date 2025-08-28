@@ -60,7 +60,7 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,

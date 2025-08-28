@@ -152,7 +152,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -186,7 +186,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -574,7 +574,7 @@ test.describe('Atom Tool', () => {
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
         await clickAtomShortcut(page, labelKey);
-        CommonLeftToolbar(page).selectAreaSelectionTool();
+        await CommonLeftToolbar(page).selectAreaSelectionTool();
         await CommonLeftToolbar(page).selectAreaSelectionTool();
         await takeEditorScreenshot(page);
       });

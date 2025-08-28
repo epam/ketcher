@@ -177,7 +177,7 @@ test.describe('Template Manupulations', () => {
     */
     await selectRingButton(page, RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

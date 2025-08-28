@@ -132,7 +132,7 @@ test.describe('Right-click menu', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', 1);
     });
-    CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

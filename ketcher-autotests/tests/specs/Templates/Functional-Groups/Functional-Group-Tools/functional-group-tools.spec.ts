@@ -420,8 +420,6 @@ test.describe('Templates - Functional Group Tools2', () => {
     await CommonTopLeftToolbar(page).undo();
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
     await CommonLeftToolbar(page).selectEraseTool();
-
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await openFileAndAddToCanvas(
@@ -430,7 +428,6 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

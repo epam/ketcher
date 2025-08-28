@@ -35,6 +35,7 @@ import {
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
+import { EraserTool } from 'application/editor/tools/Erase';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -85,90 +86,40 @@ abstract class SelectBase implements BaseTool {
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
     this.selectionStartPosition = this.editor.lastCursorPosition;
 
-    const modelChanges = new Command();
-
     if (event.target === this.editor.canvas) {
       if (!event.shiftKey) {
+        const modelChanges = new Command();
         modelChanges.merge(
           this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
         );
+        SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+        this.editor.renderersContainer.update(modelChanges);
       }
       this.onSelectionStart();
     } else {
       const renderer = event.target?.__data__;
 
-      if (!renderer) {
+      if (!renderer || !(renderer instanceof BaseRenderer)) {
+        const modelChanges = new Command();
+        modelChanges.merge(
+          this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+        );
+        SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+        this.editor.renderersContainer.update(modelChanges);
         return;
       }
 
-      const drawingEntitiesToSelect = this.getDrawingEntitiesToSelect(renderer);
-      const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
-
-      if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
-        this.startMoveIfNeeded(renderer as BaseRenderer);
-        if (renderer.drawingEntity.selected) {
-          return;
-        }
-        modelChanges.merge(
-          this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
-        );
-        SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-        const { command: selectModelChanges } =
-          this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
-            drawingEntitiesToSelect,
-          );
-        modelChanges.merge(selectModelChanges);
-      } else if (renderer instanceof BaseRenderer && event.shiftKey) {
-        if (renderer.drawingEntity.selected) {
-          return;
-        }
-        const drawingEntities: DrawingEntity[] = [
-          ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
-          ...drawingEntitiesToSelect,
-        ];
-        const { command: selectModelChanges } =
-          this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
-            drawingEntities,
-          );
-        modelChanges.merge(selectModelChanges);
-      } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
-        let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
-          .map((node) => {
-            if (node instanceof Nucleoside || node instanceof Nucleotide) {
-              return node.monomers;
-            } else {
-              return node.monomer;
-            }
-          })
-          .flat();
-        drawingEntities.forEach((entity) => entity.turnOnSelection());
-        const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
-          (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
-        );
-        drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
-        modelChanges.merge(
-          this.editor.drawingEntitiesManager.selectDrawingEntities(
-            drawingEntities,
-          ),
-        );
-      } else {
-        modelChanges.merge(
-          this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
-        );
-        SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
-      }
-
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.hideAllMonomersHoverAndAttachmentPoints(),
-      );
+      const modKey = isMacOs ? event.metaKey : event.ctrlKey;
+      this.mousedownEntity(renderer, event.shiftKey, modKey);
     }
-
-    this.editor.renderersContainer.update(modelChanges);
   }
 
-  protected getDrawingEntitiesToSelect(
+  protected mousedownEntity(
     renderer: BaseRenderer,
-  ): DrawingEntity[] {
+    shiftKey = false,
+    modKey = false,
+  ): void {
+    const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
     if (renderer instanceof BaseSequenceItemRenderer) {
       const twoStrandedNode = renderer.twoStrandedNode;
@@ -181,7 +132,61 @@ abstract class SelectBase implements BaseTool {
     } else {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
-    return drawingEntitiesToSelect;
+
+    if (!shiftKey && !modKey) {
+      this.startMoveIfNeeded(renderer as BaseRenderer);
+      if (renderer.drawingEntity.selected) {
+        return;
+      }
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+          drawingEntitiesToSelect,
+        );
+      modelChanges.merge(selectModelChanges);
+    } else if (shiftKey) {
+      if (renderer.drawingEntity.selected) {
+        return;
+      }
+      const drawingEntities: DrawingEntity[] = [
+        ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
+        ...drawingEntitiesToSelect,
+      ];
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+          drawingEntities,
+        );
+      modelChanges.merge(selectModelChanges);
+    } else if (renderer instanceof BaseSequenceItemRenderer && modKey) {
+      let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
+        .map((node) => {
+          if (node instanceof Nucleoside || node instanceof Nucleotide) {
+            return node.monomers;
+          } else {
+            return node.monomer;
+          }
+        })
+        .flat();
+      drawingEntities.forEach((entity) => entity.turnOnSelection());
+      const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
+        (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
+      );
+      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities(
+          drawingEntities,
+        ),
+      );
+    }
+
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.hideAllMonomersHoverAndAttachmentPoints(),
+    );
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   protected onSelectionStart() {
@@ -839,11 +844,13 @@ abstract class SelectBase implements BaseTool {
   destroy() {
     this.canvasResizeObserver?.disconnect();
 
-    const modelChanges =
-      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+    if (!(this.editor.selectedTool instanceof EraserTool)) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
 
-    this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.update(modelChanges);
+    }
   }
 
   public stopMovement() {

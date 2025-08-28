@@ -169,6 +169,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Take screenshot
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bugs/Benzene ring.ket',

@@ -837,7 +837,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, FILE_TEST_DATA.macromol),
+      async () => await setMolecule(page, await FILE_TEST_DATA.macromol),
     );
     await takeEditorScreenshot(page);
   });

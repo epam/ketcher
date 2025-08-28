@@ -111,7 +111,7 @@ test.describe('Reagents CDXML format', () => {
     // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
+      await FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

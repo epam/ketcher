@@ -53,7 +53,7 @@ test.describe('Reagents CDX format', () => {
       */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCdx,
+      await FILE_TEST_DATA.reagentsBelowAndAboveArrowCdx,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

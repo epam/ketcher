@@ -19,7 +19,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { resetCurrentTool } from '@utils/canvas/tools';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -133,7 +132,7 @@ test.describe('Right-click menu', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', 1);
     });
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

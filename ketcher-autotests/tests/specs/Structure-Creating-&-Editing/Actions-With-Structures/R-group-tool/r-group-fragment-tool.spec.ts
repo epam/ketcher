@@ -10,7 +10,6 @@ import {
   MolFileFormat,
   deleteByKeyboard,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -147,7 +146,7 @@ test.describe('Open Ketcher', () => {
       { label: 'C', index: atomIndex },
       { primary: true },
     );
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText('R8').click();

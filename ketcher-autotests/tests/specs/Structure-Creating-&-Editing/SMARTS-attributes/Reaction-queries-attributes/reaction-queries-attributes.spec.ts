@@ -12,7 +12,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -39,15 +38,15 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
-  await resetCurrentTool(page);
+  CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
   await dragMouseTo(x - shiftForHydrogen, y, page);
-  await resetCurrentTool(page);
+  CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
-  await resetCurrentTool(page);
+  CommonLeftToolbar(page).selectAreaSelectionTool();
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
 

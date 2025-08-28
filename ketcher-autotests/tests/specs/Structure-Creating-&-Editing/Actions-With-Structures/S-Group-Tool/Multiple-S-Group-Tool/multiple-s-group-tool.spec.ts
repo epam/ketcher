@@ -12,7 +12,6 @@ import {
   clickOnCanvas,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -118,7 +117,7 @@ test.describe('Multiple S-Group tool', () => {
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).setRepeatCountValue('99');
     await SGroupPropertiesDialog(page).apply();
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -132,7 +131,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -179,7 +178,7 @@ test.describe('Multiple S-Group tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

@@ -1,5 +1,6 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -17,7 +18,6 @@ import {
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 test.describe('Click Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,7 +36,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -57,7 +57,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -76,7 +76,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -98,7 +98,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Iodine);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -122,7 +122,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

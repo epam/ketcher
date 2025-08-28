@@ -27,7 +27,6 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -178,7 +177,7 @@ test.describe('Template Manupulations', () => {
     */
     await selectRingButton(page, RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

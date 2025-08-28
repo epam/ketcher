@@ -14,7 +14,6 @@ import {
   dragMouseAndMoveTo,
   clickOnMiddleOfCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
@@ -22,6 +21,7 @@ import {
   SaltsAndSolventsTabItems,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Click and drag Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +60,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -82,7 +82,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -127,7 +127,7 @@ test.describe('Click and drag Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -168,7 +168,7 @@ test.describe('Click and drag Atom on canvas', () => {
         );
       }
     }
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

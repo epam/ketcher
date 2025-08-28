@@ -10,8 +10,8 @@ import {
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('Charge tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -42,7 +42,7 @@ test.describe('Charge tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

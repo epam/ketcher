@@ -21,7 +21,6 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -153,7 +152,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -187,7 +186,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -575,7 +574,7 @@ test.describe('Atom Tool', () => {
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
         await clickAtomShortcut(page, labelKey);
-        await resetCurrentTool(page);
+        CommonLeftToolbar(page).selectAreaSelectionTool();
         await CommonLeftToolbar(page).selectAreaSelectionTool();
         await takeEditorScreenshot(page);
       });

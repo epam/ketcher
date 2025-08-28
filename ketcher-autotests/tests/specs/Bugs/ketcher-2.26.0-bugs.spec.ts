@@ -34,7 +34,6 @@ import {
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -689,7 +688,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Bond tooltip preview placed wrong in on edge cases.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

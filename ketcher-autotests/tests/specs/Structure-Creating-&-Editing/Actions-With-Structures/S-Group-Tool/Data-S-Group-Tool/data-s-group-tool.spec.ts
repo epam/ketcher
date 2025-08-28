@@ -18,7 +18,6 @@ import {
   waitForRender,
   moveMouseAway,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -327,7 +326,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -358,7 +357,7 @@ test.describe('Data S-Group tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

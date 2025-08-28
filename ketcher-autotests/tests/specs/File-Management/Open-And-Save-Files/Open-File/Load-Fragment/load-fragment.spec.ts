@@ -17,7 +17,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
 import {
   FileType,
   verifyFileExport,
@@ -182,7 +181,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     async function addAndMovePlusSymbol() {
       await LeftToolbar(page).reactionPlusTool();
       await clickInTheMiddleOfTheScreen(page);
-      await resetCurrentTool(page);
+      CommonLeftToolbar(page).selectAreaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(x - shiftForReactionPlus, y, page);
@@ -200,7 +199,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     async function addArrowSymbol() {
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
       await clickInTheMiddleOfTheScreen(page);
-      await resetCurrentTool(page);
+      CommonLeftToolbar(page).selectAreaSelectionTool();
     }
 
     async function addSecondHydrogen() {

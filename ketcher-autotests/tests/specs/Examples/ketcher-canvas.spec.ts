@@ -7,7 +7,6 @@ import {
   waitForPageInit,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -27,7 +26,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 100);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -37,7 +36,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
 
     await clickOnAtom(page, 'C', 2);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -49,7 +48,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
 
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +59,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
 
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

@@ -14,7 +14,6 @@ import {
   deleteByKeyboard,
   dragTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -701,7 +700,7 @@ test.describe('Attachment Point Tool', () => {
       x: 670,
       y: 450,
     });
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
 
     await takeEditorScreenshot(page);

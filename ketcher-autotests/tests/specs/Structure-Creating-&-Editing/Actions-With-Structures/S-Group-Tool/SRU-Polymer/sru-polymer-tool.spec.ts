@@ -13,7 +13,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -171,7 +170,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -215,7 +214,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await selectRingButton(page, RingButton.Benzene);
     await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
@@ -233,7 +232,7 @@ test.describe('SRU Polymer tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R12);
-    await resetCurrentTool(page);
+    CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

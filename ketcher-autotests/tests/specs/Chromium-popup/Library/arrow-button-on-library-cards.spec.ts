@@ -38,6 +38,12 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  getMonomerLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -1191,6 +1197,372 @@ test.describe('Arrow button on Library cards', () => {
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 29: Check Undo/Redo after addition monomers by arrow button',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Undo/Redo works after addition monomers by arrow button.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Click Undo button
+       * 4. Click Redo button
+       * 5. Check that after clicking Undo button last added monomer is removed from canvas
+       * 6. Check that after clicking Redo button last added monomer is added to canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_T_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      for (let i = 0; i < 2; i++) {
+        await CommonTopLeftToolbar(page).undo();
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      for (let i = 0; i < 2; i++) {
+        await CommonTopLeftToolbar(page).redo();
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 29: Check Erase after addition monomers by arrow button',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Erase works after addition monomers by arrow button.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Select Erase tool and delete last added monomer
+       * 4. Check that after deleting last added monomer it is removed from canvas
+       * 5. Click Undo button
+       * 6. Check that after clicking Undo button last deleted monomer is added to canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonLeftToolbar(page).selectEraseTool();
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 30: Check zoom in and zoom out for monomers added by arrow button',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Erase works after addition monomers by arrow button.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Zoom out
+       * 4. Zoom in
+       * 5. Check that after zooming out structure becomes smaller
+       * 6. Check that after zooming in structure becomes bigger
+       */
+      const numberOfPressZoomOut = 5;
+      const numberOfPressZoomIn = 5;
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.dR_U_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 31: Check that added monomers by arrow button can be connected to monomers by using attachment points (Presets)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Presets).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Preset to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Presets)
+       */
+      const firstMonomer = getMonomerLocator(page, Phosphate.P);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Preset.dR_U_P);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 32: Check that added monomers by arrow button can be connected to monomers by using attachment points (Peptides)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Peptides).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Peptide to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Peptides)
+       */
+      const firstMonomer = getMonomerLocator(page, Peptide._1Nal);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 33: Check that added monomers by arrow button can be connected to monomers by using attachment points (Sugars)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Sugars).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Sugar to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Sugars)
+       */
+      const firstMonomer = getMonomerLocator(page, Sugar._25R);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Sugar._25R);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 34: Check that added monomers by arrow button can be connected to monomers by using attachment points (Bases)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Bases).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Base to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Bases)
+       */
+      const firstMonomer = getMonomerLocator(page, Base.baA);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Base.baA);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R1,
+        MonomerAttachmentPoint.R2,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 35: Check that added monomers by arrow button can be connected to monomers by using attachment points (Phosphates)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Phosphates).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Phosphate to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Phosphates)
+       */
+      const firstMonomer = getMonomerLocator(page, Phosphate.Test_6_Ph);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Phosphate.Test_6_Ph);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 36: Check that added monomers by arrow button can be connected to monomers by using attachment points (Nucleotides)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (Nucleotides).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add Nucleotide to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (Nucleotides)
+       */
+      const firstMonomer = getMonomerLocator(page, Nucleotide.Super_G);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Nucleotide.Super_G);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 37: Check that added monomers by arrow button can be connected to monomers by using attachment points (CHEMs)',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Added monomers by arrow button can be connected to monomers by using attachment points (CHEMs).
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add multiple monomers with free R2 to canvas
+       * 3. Add CHEM to canvas by using arrow button
+       * 4. Check that added monomers by arrow button can be connected to monomers by using attachment points (CHEMs)
+       */
+      const firstMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
+      const secondMonomer = getMonomerLocator(page, Peptide.A).first();
+      await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
+      await Library(page).clickMonomerAutochain(Chem.Test_6_Ch);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        MonomerAttachmentPoint.R2,
+        MonomerAttachmentPoint.R1,
       );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,

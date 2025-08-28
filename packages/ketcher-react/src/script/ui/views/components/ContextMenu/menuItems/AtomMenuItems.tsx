@@ -20,10 +20,9 @@ import {
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
-import { isNumber } from 'lodash';
-import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
+import useMakeLeavingGroupAtomMenuItem from '../hooks/useMakeLeavingGroupAtomMenuItem';
 
 const {
   ringBondCount,
@@ -99,7 +98,6 @@ const atomPropertiesForSubMenu: {
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
-  const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const { ketcherId } = useAppContext();
@@ -144,32 +142,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
-  const sgroup = isNumber(selectedAtomId)
-    ? struct.getGroupFromAtomId(selectedAtomId)
-    : undefined;
-  const attachmentPoints = sgroup?.getAttachmentPoints() || [];
-  const isAtomSuperatomAttachmentPoint = Atom.isSuperatomAttachmentAtom(
-    struct,
-    selectedAtomId,
-  );
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
   );
-  const atomExternalConnections = isNumber(selectedAtomId)
-    ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
-    : undefined;
-  const atomFreeAttachmentPoints = attachmentPoints?.filter(
-    (attachmentPoint) =>
-      attachmentPoint.atomId === selectedAtomId &&
-      !atomExternalConnections?.some(
-        (bond) =>
-          bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber ||
-          bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber,
-      ),
-  );
+
   const highlightAtomWithColor = (color: string) => {
     const atomIds = props.propsFromTrigger?.atomIds || [];
     editor.highlights.create({
@@ -179,6 +156,12 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       color: color === '' ? 'transparent' : color,
     });
   };
+
+  const MakeLeavingGroupAtomMenuItem = useMakeLeavingGroupAtomMenuItem({
+    props,
+    selectedAtomId,
+    editor,
+  });
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
@@ -192,6 +175,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
+  const disableForMonomerCreation = editor.isMonomerCreationWizardActive;
+
   return (
     <>
       <Item
@@ -202,6 +187,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
+        disabled={disableForMonomerCreation}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
@@ -223,6 +209,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label="Query properties"
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
+        disabled={disableForMonomerCreation}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
@@ -240,23 +227,13 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
                 onClick={(value: AtomAllAttributeValue) =>
                   updateAtomProperty(key, value)
                 }
-              ></ButtonGroup>
+              />
             </Submenu>
           );
         })}
       </Submenu>
-
+      {MakeLeavingGroupAtomMenuItem}
       <HighlightMenu onHighlight={highlightAtomWithColor} />
-      {isAtomSuperatomAttachmentPoint &&
-        atomFreeAttachmentPoints.length > 0 && (
-          <Item
-            {...props}
-            data-testid="Remove attachment point-option"
-            onClick={handleRemoveAttachmentPoint}
-          >
-            Remove attachment point
-          </Item>
-        )}
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>

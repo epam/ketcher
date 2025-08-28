@@ -282,7 +282,7 @@ const MonomerCreationWizard = () => {
     return null;
   }
 
-  const { attachmentAtomIdToLeavingAtomId } = monomerCreationState;
+  const { assignedAttachmentPoints } = monomerCreationState;
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -382,7 +382,7 @@ const MonomerCreationWizard = () => {
           <div className={styles.attributesFields}>
             <p className={styles.attachmentPointsTitle}>Attachment points</p>
             <div className={styles.attachmentPoints}>
-              {[...attachmentAtomIdToLeavingAtomId.entries()].map(
+              {[...assignedAttachmentPoints.entries()].map(
                 ([attachmentAtomId, leavingAtomId], index) => (
                   <div
                     className={styles.attachmentPoint}

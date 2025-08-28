@@ -982,7 +982,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `Mod+x`              | Cut                |
 | `Mod+c`              | Copy               |
 | `Mod+Shift+f`        | Copy Image         |
-| `Mod+m`              | Copy as MOL        |
+| `Mod+Shift+m`        | Copy as MOL        |
 | `Mod+Shift+k`        | Copy as KET        |
 | `Mod+v`              | Paste              |
 | `Mod+a`              | Select All         |
@@ -1027,7 +1027,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `4`                  | Aromatic Bond                                                                      |
 | `0`                  | Any Bond                                                                           |
 | `Alt+t`              | Add text                                                                           |
-| `Crtl+M` | Open the _Monomer Creation Wizard_ |
+| `Mod+M`              | Open the _Monomer Creation Wizard_                                                 |
 
 **Atoms**
 | Shortcut  | Action                                 |

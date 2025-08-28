@@ -1146,7 +1146,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
     List of buttons and coincidental tooltips is displayed:
-    Copy as MOL (Ctrl+M);
+    Copy as MOL (Ctrl+Shift+M);
     Copy as KET (Ctrl+Shift+K);
     Copy Image (Ctrl+Shift+F)
     Object is created.

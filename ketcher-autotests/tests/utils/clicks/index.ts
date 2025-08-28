@@ -4,7 +4,6 @@ import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType, takeEditorScreenshot } from '..';
-import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
 import { selectButtonById } from '../canvas/tools/helpers';
 import { AtomLabelType } from './types';
 import {
@@ -17,6 +16,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type BoundingBox = {
   width: number;
@@ -350,7 +350,7 @@ export async function applyAutoMapMode(
   mode: string,
   withScreenshot = true,
 ) {
-  await resetCurrentTool(page);
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionAutoMapping,
   );

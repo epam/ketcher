@@ -6,10 +6,6 @@ class CreateMonomerTool implements Tool {
     this.editor.openMonomerCreationWizard();
   }
 
-  cancel() {
-    this.editor.closeMonomerCreationWizard();
-  }
-
   mousemove() {
     // No action needed on mouse move for this tool
   }

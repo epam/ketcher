@@ -146,8 +146,8 @@ class StructEditor extends Component {
     );
   }
 
-  componentDidUpdate(props) {
-    setupEditor(this.editor, props, this.props);
+  componentDidUpdate(prevProps) {
+    setupEditor(this.editor, this.props, prevProps);
   }
 
   componentDidMount() {

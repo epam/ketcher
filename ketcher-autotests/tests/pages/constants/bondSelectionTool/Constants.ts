@@ -24,3 +24,20 @@ export enum MacroBondDataIds {
   Single = 'covalent',
   Hydrogen = 'hydrogen',
 }
+
+export enum MicroBondDataIds {
+  Single = '1',
+  Double = '2',
+  Triple = '3',
+  Any = '8',
+  Aromatic = '',
+  SingleDouble = '5',
+  SingleAromatic = '',
+  DoubleAromatic = '',
+  Dative = '9',
+  Hydrogen = '10',
+  SingleUp = '1',
+  SingleDown = '1',
+  SingleUpDown = '1',
+  DoubleCisTrans = '2',
+}

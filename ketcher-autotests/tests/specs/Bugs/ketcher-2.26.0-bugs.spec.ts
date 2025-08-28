@@ -98,6 +98,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -240,7 +241,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = getBondLocator(page, {
+      bondType: MicroBondDataIds.SingleDown,
+    }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });

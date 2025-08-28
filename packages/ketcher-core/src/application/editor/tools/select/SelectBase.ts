@@ -36,6 +36,7 @@ import {
   StandardBondLength,
 } from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -289,6 +290,34 @@ abstract class SelectBase implements BaseTool {
       connectedPosition.y + StandardBondLength * -Math.sin(angle),
     );
     return { bondLengthSnapPosition };
+  }
+
+  static calculateGroupCenterSnapPosition(
+    selectedEntities: BaseMonomer[],
+    connectedMonomers: BaseMonomer[],
+    movementDelta: Vec2,
+  ) {
+    const connectedMonomersBbox =
+      DrawingEntitiesManager.getStructureBbox(connectedMonomers);
+    const selectedEntitiesBbox =
+      DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    const selectedEntitiesCenter = new Vec2(
+      selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
+      selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
+    );
+    const selectedEntitiesCenterWithMovementDelta =
+      selectedEntitiesCenter.add(movementDelta);
+    const connectedMonomersCenter = new Vec2(
+      connectedMonomersBbox.left + connectedMonomersBbox.width / 2,
+      connectedMonomersBbox.top + connectedMonomersBbox.height / 2,
+    );
+
+    return selectedEntitiesCenterWithMovementDelta.x <
+      connectedMonomersCenter.x + HalfMonomerSize &&
+      selectedEntitiesCenterWithMovementDelta.x >
+        connectedMonomersCenter.x - HalfMonomerSize
+      ? Vec2.diff(connectedMonomersCenter, selectedEntitiesCenter)
+      : null;
   }
 
   static determineAlignment(
@@ -692,6 +721,24 @@ abstract class SelectBase implements BaseTool {
         };
       },
     );
+
+    if (externalConnectionsToSelection.length === 2) {
+      const groupCenterSnapPosition =
+        SelectRectangle.calculateGroupCenterSnapPosition(
+          this.editor.drawingEntitiesManager.selectedMonomers,
+          externalConnectionsToSelection.map(
+            ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
+          ),
+          movementDelta,
+        );
+
+      if (groupCenterSnapPosition) {
+        snappingOptions.push({
+          snapPosition: groupCenterSnapPosition,
+          connectionLength: 0,
+        } as SnapResult);
+      }
+    }
 
     snappingOptions.sort((a, b) => {
       return a.connectionLength - b.connectionLength;

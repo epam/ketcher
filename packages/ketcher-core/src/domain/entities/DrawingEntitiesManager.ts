@@ -216,8 +216,11 @@ export class DrawingEntitiesManager {
     const connectedMonomers: MonomerConnectedToSelection[] = [];
 
     this.selectedMonomers.forEach((monomer) => {
-      monomer.polymerBonds.forEach((bond) => {
-        if (!bond.secondMonomer) {
+      monomer.bonds.forEach((bond) => {
+        if (
+          !(bond instanceof PolymerBond || bond instanceof HydrogenBond) ||
+          !bond.secondMonomer
+        ) {
           return;
         }
 

@@ -315,7 +315,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { keys: 'Control+c', action: 'Copy' },
     { keys: 'Control+Shift+f', action: 'Copy Image' },
     { keys: 'Control+Shift+k', action: 'Copy as KET' },
-    { keys: 'Control+m', action: 'Copy as MOL' },
+    { keys: 'Control+Shift+m', action: 'Copy as MOL' },
     { keys: 'Control+o', action: 'Open' },
     { keys: 'Control+s', action: 'Save As' },
     { keys: 'Control+a', action: 'Select All' },

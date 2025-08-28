@@ -72,6 +72,7 @@ import {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
+import assert from 'assert';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -576,7 +577,7 @@ class Editor implements KetcherEditor {
       return true;
     }
 
-    const selection: Selection = this.explicitSelected(false);
+    const selection = this.selection();
 
     if (selection && selection.atoms?.length && selection.bonds?.length) {
       const currentStruct = this.render.ctab.molecule;
@@ -590,10 +591,12 @@ class Editor implements KetcherEditor {
         // Selection should not contain S-Groups, R-Groups or atoms from extended table
         return (
           atom.sgs.size > 0 ||
-          genericsList.includes(atom.label) ||
+          atom.rglabel !== null ||
+          atom.attachmentPoints !== null ||
           this.render.ctab.molecule.rgroups.some((rgroup) =>
             rgroup.frags.has(atom.fragment),
-          )
+          ) ||
+          genericsList.includes(atom.label)
         );
       });
 
@@ -617,8 +620,13 @@ class Editor implements KetcherEditor {
         );
       });
 
+      // Only simple single bonds are allowed to outside of selection
       if (
-        bondsToOutside.some((bond) => bond.type !== Bond.PATTERN.TYPE.SINGLE)
+        bondsToOutside.some(
+          (bond) =>
+            bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+            bond.stereo !== Bond.PATTERN.STEREO.NONE,
+        )
       ) {
         return false;
       }
@@ -683,10 +691,13 @@ class Editor implements KetcherEditor {
 
   openMonomerCreationWizard() {
     const currentStruct = this.render.ctab.molecule;
-    const selection: Selection = this.explicitSelected();
+    const selection = this.selection();
+
+    assert(selection);
+
     this.originalSelection = selection;
     const selectionAtoms = new Set(selection.atoms);
-    const selectedStruct = this.structSelected();
+    const selectedStruct = this.structSelected(selection);
 
     this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
 
@@ -1194,9 +1205,9 @@ class Editor implements KetcherEditor {
     return res;
   }
 
-  structSelected() {
+  structSelected(existingSelection?: Selection): Struct {
     const struct = this.render.ctab.molecule;
-    const selection = this.explicitSelected();
+    const selection = existingSelection ?? this.explicitSelected();
     const dst = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),

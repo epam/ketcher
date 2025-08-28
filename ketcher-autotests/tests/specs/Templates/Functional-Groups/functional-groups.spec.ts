@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
@@ -8,7 +9,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   pressTab,
   FILE_TEST_DATA,
-  waitForPageInit,
   clickOnAtom,
   moveOnAtom,
   clickOnCanvas,
@@ -17,7 +17,6 @@ import {
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -71,13 +70,16 @@ async function saveToTemplates(page: Page) {
 }
 
 test.describe('Functional Groups', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Open from V2000 file with expanded functional group', async ({
-    page,
-  }) => {
+  test('Open from V2000 file with expanded functional group', async () => {
     /*
     Test case: EPMLSOPKET-2890
     Description: Functional Group contract and remove abbreviation
@@ -97,9 +99,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open from V2000 file with contracted functional group', async ({
-    page,
-  }) => {
+  test('Open from V2000 file with contracted functional group', async () => {
     /*
     Test case: EPMLSOPKET-2891
     Description: Functional Group expand and remove abbreviation
@@ -118,7 +118,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open functional group from library', async ({ page }) => {
+  test('Open functional group from library', async () => {
     /*
     Test case: EPMLSOPKET-2895
     Description: Contracted functional group is on the canvas. FG added on canvas near cursor.
@@ -128,11 +128,11 @@ test.describe('Functional Groups', () => {
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Paste action with expanded functional group', async ({ page }) => {
+  test('Copy/Paste action with expanded functional group', async () => {
     /*
     Test case: EPMLSOPKET-2897
     Description: Functional group is copied and pasted as expanded.
@@ -148,7 +148,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut/Paste action with expanded functional group', async ({ page }) => {
+  test('Cut/Paste action with expanded functional group', async () => {
     /*
     Test case: EPMLSOPKET-2897
     Description: Functional group is cut and pasted as expanded.
@@ -162,9 +162,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Paste action with contracted functional group', async ({
-    page,
-  }) => {
+  test('Copy/Paste action with contracted functional group', async () => {
     /*
     Test case: EPMLSOPKET-2898
     Description: Functional group is copied and pasted as expanded.
@@ -180,9 +178,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut/Paste action with contracted functional group', async ({
-    page,
-  }) => {
+  test('Cut/Paste action with contracted functional group', async () => {
     /*
     Test case: EPMLSOPKET-2898
     Description: Functional group is cut and pasted as expanded.
@@ -196,7 +192,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Attach functional group to the molecule', async ({ page }) => {
+  test('Attach functional group to the molecule', async () => {
     /*
     Test case: EPMLSOPKET-2916
     Description: Contracted FG is connected to the structure.
@@ -207,11 +203,11 @@ test.describe('Functional Groups', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Save functional groups to Custom Templates', async ({ page }) => {
+  test('Save functional groups to Custom Templates', async () => {
     /*
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
@@ -227,19 +223,22 @@ test.describe('Functional Groups', () => {
     );
     await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Functional Groups', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Open from V3000 file with contracted and expanded functional groups', async ({
-    page,
-  }) => {
+  test('Open from V3000 file with contracted and expanded functional groups', async () => {
     /*
     Test case: EPMLSOPKET-2893
     Description: Contracted and Expanded functional groups are displayed on the canvas.
@@ -251,9 +250,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open from .ket file with contracted and expanded functional groups', async ({
-    page,
-  }) => {
+  test('Open from .ket file with contracted and expanded functional groups', async () => {
     /*
     Test case: EPMLSOPKET-2894
     Description: Contracted and Expanded functional groups are displayed on the canvas.
@@ -262,9 +259,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Paste from Clipboard with contracted and expanded functional groups', async ({
-    page,
-  }) => {
+  test('Paste from Clipboard with contracted and expanded functional groups', async () => {
     /*
     Test case: EPMLSOPKET-2892
     Description: Contracted and Expanded functional groups are displayed on the canvas.
@@ -277,7 +272,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Highlight Functional Group with Selection tool', async ({ page }) => {
+  test('Highlight Functional Group with Selection tool', async () => {
     /*
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
@@ -294,7 +289,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Bond to expanded Functional Group', async ({ page }) => {
+  test('Add Bond to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5236
     Description: When Adding 'Bond' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -308,7 +303,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Atom to expanded Functional Group', async ({ page }) => {
+  test('Add Atom to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5238
     Description: When Adding 'Atom' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -324,7 +319,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Chain to expanded Functional Group', async ({ page }) => {
+  test('Add Chain to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5237
     Description: When Adding 'Chain' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -338,7 +333,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Template to expanded Functional Group', async ({ page }) => {
+  test('Add Template to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5239
     Description: When Adding 'Template' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -352,7 +347,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Charge Plus to expanded Functional Group', async ({ page }) => {
+  test('Add Charge Plus to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5240
     Description: When Adding 'Charge Plus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -366,7 +361,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Charge Minus to expanded Functional Group', async ({ page }) => {
+  test('Add Charge Minus to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5241
     Description: When Adding 'Charge Minus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -380,7 +375,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Erase to expanded Functional Group', async ({ page }) => {
+  test('Add Erase to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5242
     Description: When Adding 'Erase' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -394,7 +389,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click S-Group tool to expanded Functional Group', async ({ page }) => {
+  test('Click S-Group tool to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-3937
     Description: When click 'S-Group tool to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -408,9 +403,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click S-Group tool to contracted Functional Group', async ({
-    page,
-  }) => {
+  test('Click S-Group tool to contracted Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-13009
     Description: When click 'S-Group tool to contracted Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -424,9 +417,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add R-Group Label Tool to expanded Functional Group', async ({
-    page,
-  }) => {
+  test('Add R-Group Label Tool to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5244
     Description: When Adding 'R-Group Label Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -440,9 +431,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add R-Group Fragment Tool to expanded Functional Group', async ({
-    page,
-  }) => {
+  test('Add R-Group Fragment Tool to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5244
     Description: When Adding 'R-Group Fragment Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -456,9 +445,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Attachment Point Tool to expanded Functional Group', async ({
-    page,
-  }) => {
+  test('Add Attachment Point Tool to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-5244
     Description: When Adding 'Attachment Point Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -472,9 +459,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Ordinary elements should not show explicit valences (SO3H)', async ({
-    page,
-  }) => {
+  test('Ordinary elements should not show explicit valences (SO3H)', async () => {
     /*
     Test case: EPMLSOPKET-8915
     Description: Ordinary elements should not show explicit valences for 'S'.
@@ -490,9 +475,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Ordinary elements should not show explicit valences (PO4H2)', async ({
-    page,
-  }) => {
+  test('Ordinary elements should not show explicit valences (PO4H2)', async () => {
     /*
     Test case: EPMLSOPKET-8915
     Description: Ordinary elements should not show explicit valences for 'P'.
@@ -508,9 +491,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection highlight is displayed correctly for functional groups with longer names', async ({
-    page,
-  }) => {
+  test('Selection highlight is displayed correctly for functional groups with longer names', async () => {
     /*
     Test case: EPMLSOPKET-8916
     Description: Selection highlight all abbreviation.
@@ -528,9 +509,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection highlight is displayed correctly for salts and solvents with longer names', async ({
-    page,
-  }) => {
+  test('Selection highlight is displayed correctly for salts and solvents with longer names', async () => {
     /*
     Test case: EPMLSOPKET-13010
     Description: Selection highlight all abbreviation.
@@ -548,9 +527,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection highlight appears immediately after hover over text', async ({
-    page,
-  }) => {
+  test('Selection highlight appears immediately after hover over text', async () => {
     /*
     Test case: EPMLSOPKET-8920
     Description: Selection highlight appears immediately after hover over text.
@@ -573,7 +550,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Atom by hotkey to expanded Functional Group', async ({ page }) => {
+  test('Add Atom by hotkey to expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
@@ -587,9 +564,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Atom by hotkey to expanded Salts and Solvents', async ({
-    page,
-  }) => {
+  test('Add Atom by hotkey to expanded Salts and Solvents', async () => {
     /*
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Salts and Solvents system display 'Edit Abbreviation' pop-up window.
@@ -616,9 +591,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Functional Group abbreviation to FG connected to terminal atoms of structure', async ({
-    page,
-  }) => {
+  test('Add Functional Group abbreviation to FG connected to terminal atoms of structure', async () => {
     /*
     Test case: EPMLSOPKET-10112
     Description: With each addition of FG to FG connected to terminal atoms of structure,
@@ -642,13 +615,11 @@ test.describe('Functional Groups', () => {
       FunctionalGroupsTabItems.Ms,
     );
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Hotkey (Del) can delete Functional Groups abbreviation', async ({
-    page,
-  }) => {
+  test('Hotkey (Del) can delete Functional Groups abbreviation', async () => {
     /*
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Functional Groups abbreviation.
@@ -664,13 +635,11 @@ test.describe('Functional Groups', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await deleteByKeyboard(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Hotkey (Del) can delete Salts and Solvents abbreviation', async ({
-    page,
-  }) => {
+  test('Hotkey (Del) can delete Salts and Solvents abbreviation', async () => {
     /*
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Salts and Solvents abbreviation.
@@ -686,13 +655,11 @@ test.describe('Functional Groups', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await deleteByKeyboard(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Hotkey for Atom can replace Functional Groups abbreviation', async ({
-    page,
-  }) => {
+  test('Hotkey for Atom can replace Functional Groups abbreviation', async () => {
     /*
     Test case: EPMLSOPKET-11845
     Description: Hotkey for Atom (e.g. N) replace Functional Group abbreviation.
@@ -708,13 +675,11 @@ test.describe('Functional Groups', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'n');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Hotkey for Atom can replace Salts and Solvents abbreviation', async ({
-    page,
-  }) => {
+  test('Hotkey for Atom can replace Salts and Solvents abbreviation', async () => {
     /*
     Test case: EPMLSOPKET-11845
     Description: Hotkey for Atom (e.g. N) replace Salts and Solvents abbreviation.
@@ -729,13 +694,11 @@ test.describe('Functional Groups', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await keyboardPressOnCanvas(page, 'o');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Select Functional Group by hovering one of the atom of structure and press hotkey', async ({
-    page,
-  }) => {
+  test('Select Functional Group by hovering one of the atom of structure and press hotkey', async () => {
     /*
     Test case: EPMLSOPKET-11849
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
@@ -746,11 +709,11 @@ test.describe('Functional Groups', () => {
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Contract unknown superatom', async ({ page }) => {
+  test('Expand/Contract unknown superatom', async () => {
     /*
     Test case: EPMLSOPKET-11851
     Description: Unknown superatom expand and contract.
@@ -765,9 +728,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that expanded Functional Groups not overlap each other', async ({
-    page,
-  }) => {
+  test('Check that expanded Functional Groups not overlap each other', async () => {
     /*
       Test case: EPMLSOPKET-12977
       Description: Expanded Functional Groups not overlap each other
@@ -789,9 +750,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add a custom structure to a canvas with an expanded functional group and contract it', async ({
-    page,
-  }) => {
+  test('Add a custom structure to a canvas with an expanded functional group and contract it', async () => {
     /*
     Test case: EPMLSOPKET-12978
     Description: Functional Group contract and remove abbreviation
@@ -806,9 +765,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('After expand a Functional Group hotkeys for atoms not stop working', async ({
-    page,
-  }) => {
+  test('After expand a Functional Group hotkeys for atoms not stop working', async () => {
     /*
     Test case: EPMLSOPKET-12988
     Description: After pressing hotkey 'N' it can be placed on canvas.
@@ -822,7 +779,7 @@ test.describe('Functional Groups', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await expandAbbreviation(
       page,
       getAbbreviationLocator(page, { name: 'Boc' }),

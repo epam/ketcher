@@ -35,7 +35,6 @@ test.describe('Flex mode copy&paste', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await copyToClipboardByKeyboard(page);
 
-    await takeEditorScreenshot(page);
     await page.mouse.move(200, 300);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

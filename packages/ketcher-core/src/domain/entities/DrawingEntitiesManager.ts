@@ -3625,6 +3625,11 @@ export class DrawingEntitiesManager {
 
       if (current instanceof BaseMonomer) {
         queue.push(...current.hydrogenBonds, ...current.bonds);
+      } else if (current instanceof HydrogenBond) {
+        queue.push(
+          current.firstEndEntity,
+          ...(current.secondEndEntity ? [current.secondEndEntity] : []),
+        );
       } else if (current instanceof PolymerBond) {
         queue.push(current.firstMonomer);
         if (current.secondMonomer) queue.push(current.secondMonomer);

@@ -7,7 +7,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -177,13 +176,22 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {

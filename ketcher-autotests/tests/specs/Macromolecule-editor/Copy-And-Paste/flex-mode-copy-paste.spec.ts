@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { test } from '@fixtures';
 import {
@@ -34,12 +35,13 @@ test.describe('Flex mode copy&paste', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await copyToClipboardByKeyboard(page);
 
-    await page.mouse.move(-startX, 0);
-    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
+    await page.mouse.move(100, 100);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Copy & paste selection with Shift + Click and undo', async ({

@@ -55,8 +55,10 @@ async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
 }
 
 test.describe('Checking bond attributes in SMARTS format', () => {
-  test.beforeEach(async ({ page }) => {
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     const numberOfBond = 2;
+    page = await initMoleculesCanvas();
     await drawStructureAndDoubleClickOnBond(
       page,
       BondType.SINGLE,
@@ -66,7 +68,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   // Tests for bond type:
 
-  test('Setting bond type - single (aliphatic))', async ({ page }) => {
+  test('Setting bond type - single (aliphatic))', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -75,7 +77,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - single up', async ({ page }) => {
+  test('Setting bond type - single up', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -84,7 +86,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - single down', async ({ page }) => {
+  test('Setting bond type - single down', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -93,7 +95,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - single up/down', async ({ page }) => {
+  test('Setting bond type - single up/down', async () => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
      */
@@ -105,7 +107,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - double', async ({ page }) => {
+  test('Setting bond type - double', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -114,7 +116,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - double cis/trans', async ({ page }) => {
+  test('Setting bond type - double cis/trans', async () => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
      */
@@ -126,7 +128,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - triple', async ({ page }) => {
+  test('Setting bond type - triple', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -135,7 +137,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - aromatic', async ({ page }) => {
+  test('Setting bond type - aromatic', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -144,7 +146,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - any', async ({ page }) => {
+  test('Setting bond type - any', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -153,7 +155,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - hydrogen', async ({ page }) => {
+  test('Setting bond type - hydrogen', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -163,7 +165,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     await checkSmartsWarnings(page);
   });
 
-  test('Setting bond type - single/double', async ({ page }) => {
+  test('Setting bond type - single/double', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -172,7 +174,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - single/aromatic', async ({ page }) => {
+  test('Setting bond type - single/aromatic', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -181,7 +183,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - double/aromatic', async ({ page }) => {
+  test('Setting bond type - double/aromatic', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -190,7 +192,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond type - dative', async ({ page }) => {
+  test('Setting bond type - dative', async () => {
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -202,7 +204,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   // Tests for bond topology:
 
-  test('Setting bond topology - ring', async ({ page }) => {
+  test('Setting bond topology - ring', async () => {
     await setAndCheckBondProperties(
       page,
       setBondTopology,
@@ -211,7 +213,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting bond topology - chain', async ({ page }) => {
+  test('Setting bond topology - chain', async () => {
     await setAndCheckBondProperties(
       page,
       setBondTopology,
@@ -220,7 +222,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting reacting center', async ({ page }) => {
+  test('Setting reacting center', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: setting reacting center option should have no impact on SMARTS output but warning should be displayed
@@ -236,7 +238,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   // Custom query for bond
 
-  test('Setting custom query - any OR double', async ({ page }) => {
+  test('Setting custom query - any OR double', async () => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
      */
@@ -248,9 +250,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting custom query - directional bond "up or unspecified"', async ({
-    page,
-  }) => {
+  test('Setting custom query - directional bond "up or unspecified"', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/1281
      * Description: "or unspecified"("?") quantifier should be supported
@@ -265,8 +265,10 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 });
 
 test.describe('Checking converting bond attributes to custom query', () => {
-  test.beforeEach(async ({ page }) => {
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     const numberOfBond = 2;
+    page = await initMoleculesCanvas();
     await drawStructureAndDoubleClickOnBond(
       page,
       BondType.SINGLE,
@@ -274,9 +276,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     );
   });
 
-  test('Converting Topology = "Either" and Type = "Single" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3372
      * Description: If topology = "Either" then customQuery should be empty e.g. Type=Single, Topology=Either => customQuery=-
@@ -288,9 +288,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Converting Topology = "Ring" and Type = "Double" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Topology = "Ring" and Type = "Double" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3372
      * Description: If topology = "Ring" then customQuery should be @, e.g. Type=Double, Topology=Ring=>customQuery==;@
@@ -301,9 +299,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
-  test('Converting Topology = "Chain" and Type = "Triple" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Topology = "Chain" and Type = "Triple" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3372
      * Description: If topology = "Chain" then customQuery should be !@, e.g. Type=Triple, Topology=Chain=>customQuery=#;!@
@@ -314,9 +310,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
-  test('Converting Type = "Aromatic" and Reacting Center = "Center" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Type = "Aromatic" and Reacting Center = "Center" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: aromatic bond should be converted to custom query as: :
@@ -328,9 +322,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
-  test('Converting Type = "Any" and Reacting Center = "Made/broken" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Type = "Any" and Reacting Center = "Made/broken" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: any bond should be converted to custom query as: ~
@@ -342,9 +334,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
-  test('Converting Type = "Single up" and Reacting Center = "Order changes" to custom query', async ({
-    page,
-  }) => {
+  test('Converting Type = "Single up" and Reacting Center = "Order changes" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: Single up bond should be converted to custom query as: /
@@ -356,7 +346,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
-  test('Converting Type = "Single down" to custom query', async ({ page }) => {
+  test('Converting Type = "Single down" to custom query', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: Single down bond should be converted to custom query as: \
@@ -368,8 +358,10 @@ test.describe('Checking converting bond attributes to custom query', () => {
 });
 
 test.describe('Checking saving attributes to .ket file', () => {
-  test.beforeEach(async ({ page }) => {
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     const numberOfBond = 2;
+    page = await initMoleculesCanvas();
     await drawStructureAndDoubleClickOnBond(
       page,
       BondType.SINGLE,
@@ -377,9 +369,7 @@ test.describe('Checking saving attributes to .ket file', () => {
     );
   });
 
-  test('Save *.ket file with custom query for bond attribute', async ({
-    page,
-  }) => {
+  test('Save *.ket file with custom query for bond attribute', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: In KET format customQuery should be saved into the bond object without other properties

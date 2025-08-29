@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -14,7 +15,6 @@ import {
   waitForPageInit,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 // const SHIFT = 50;
 
@@ -38,7 +38,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -58,7 +58,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.AceticAcid,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -80,7 +80,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.PropionicAcid,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -98,13 +98,13 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Isobutanol,
     );
     await dragMouseAndMoveTo(page, -50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -126,13 +126,13 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.AceticAcid,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

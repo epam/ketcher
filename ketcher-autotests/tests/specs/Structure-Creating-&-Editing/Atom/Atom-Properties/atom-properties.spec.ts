@@ -15,7 +15,6 @@ import {
   MolFileFormat,
   RxnFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
@@ -286,7 +285,7 @@ test.describe('Atom Properties', () => {
 
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await selectAllStructuresOnCanvas(page);
 
@@ -1531,7 +1530,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1547,7 +1546,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1559,7 +1558,7 @@ test.describe('Atom Properties', () => {
     */
     await selectElementFromExtendedTable(page, 'G', 'Add');
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });

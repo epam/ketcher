@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable prettier/prettier */
-import { test } from '@fixtures';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -7,7 +8,6 @@ import {
   pressButton,
   clickOnAtom,
   moveOnAtom,
-  waitForPageInit,
   openFileAndAddToCanvas,
   addCyclopentadieneRingWithTwoAtoms,
   clickOnBond,
@@ -27,7 +27,6 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -65,12 +64,18 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
-test.describe('Template Manupulations', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
 
-  test('Template palette', async ({ page }) => {
+test.describe('Template Manupulations', () => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Template palette', async () => {
     /*
     Test case: 1666
     Description: Look at the bottom of the application.
@@ -87,11 +92,15 @@ test.describe('Template Manupulations', () => {
 });
 
 test.describe('Template Manupulations', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('1-2) Fuse atom-to-atom', async ({ page }) => {
+  test('1-2) Fuse atom-to-atom', async () => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
@@ -106,7 +115,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('3) Fuse atom-to-atom: drag atom slightly', async ({ page }) => {
+  test('3) Fuse atom-to-atom: drag atom slightly', async () => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
@@ -121,9 +130,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('5) Fuse atom-to-atom: click and drag atom to fuse atom-to-atom', async ({
-    page,
-  }) => {
+  test('5) Fuse atom-to-atom: click and drag atom to fuse atom-to-atom', async () => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Put the cursor on any other structure atom, press, and drag. 
@@ -136,9 +143,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Fuse atom-to-atom: click and drag atom to extend bonds', async ({
-    page,
-  }) => {
+  test('Fuse atom-to-atom: click and drag atom to extend bonds', async () => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
@@ -152,7 +157,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Fuse bond-to-bond', async ({ page }) => {
+  test('Fuse bond-to-bond', async () => {
     /*
     Test case: 1676
     Description:
@@ -171,14 +176,14 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Place template on the Canvas', async ({ page }) => {
+  test('Place template on the Canvas', async () => {
     /*
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
     await selectRingButton(page, RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -187,7 +192,7 @@ test.describe('Template Manupulations', () => {
     {
       tag: ['@FlakyTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: 1733
     Description:
@@ -203,7 +208,7 @@ test.describe('Template Manupulations', () => {
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Fragment,
       );
-      await page.getByTestId('canvas').getByText('F').first().click();
+      await getAtomLocator(page, { atomLabel: 'F' }).click();
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await selectAllStructuresOnCanvas(page);
@@ -213,7 +218,7 @@ test.describe('Template Manupulations', () => {
     },
   );
 
-  test('Templates - Manipulations with Bond Tool', async ({ page }) => {
+  test('Templates - Manipulations with Bond Tool', async () => {
     /*
     Test case: 1734
     Description:
@@ -248,7 +253,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Templates - Manipulations with Erase Tool', async ({ page }) => {
+  test('Templates - Manipulations with Erase Tool', async () => {
     /*
     Test case: 1735
     Description:
@@ -261,21 +266,21 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByTestId('canvas').getByText('S').first().click();
+    await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByTestId('canvas').getByText('S').first().click();
+    await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
     await takeEditorScreenshot(page);
   });
 
-  test('Templates - Atom symbol editing', async ({ page }) => {
+  test('Templates - Atom symbol editing', async () => {
     /*
     Test case: 1736
     Description:
@@ -307,7 +312,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo action', async ({ page }) => {
+  test('Undo/Redo action', async () => {
     /*
     Test case: 1737
     Description: Edit the structures in any way.
@@ -334,7 +339,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate/Flip the template structure', async ({ page }) => {
+  test('Rotate/Flip the template structure', async () => {
     /*
     Test case: 1745
     Description: Choose the 'Rotate Tool', select the structure and rotate it.
@@ -354,9 +359,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Templates - Zoom action for the template structure', async ({
-    page,
-  }) => {
+  test('Templates - Zoom action for the template structure', async () => {
     /*
     Test case: 1746
     Description:
@@ -384,7 +387,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.mol file', async ({ page }) => {
+  test('Save as *.mol file', async () => {
     /*
     Test case: 1747
     Description: Click the 'Save As' button, and click the 'Save' button.
@@ -400,7 +403,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.rxn file', async ({ page }) => {
+  test('Save as *.rxn file', async () => {
     /*
     Test case: 1748
     Description: Click the 'Save As' button and click the 'Save' button.
@@ -416,9 +419,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('If connect to a single bond with two atoms then replace double bond by single bond for the fusion', async ({
-    page,
-  }) => {
+  test('If connect to a single bond with two atoms then replace double bond by single bond for the fusion', async () => {
     /*
     Test case: EPMLSOPKET-15504
     Add cyclopentadiene ring on canvas
@@ -430,9 +431,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Double cyclopentadiene ring - If connect to a double bond with two atom then cyclopentadiene rotate rand use double bond for the fusion', async ({
-    page,
-  }) => {
+  test('Double cyclopentadiene ring - If connect to a double bond with two atom then cyclopentadiene rotate rand use double bond for the fusion', async () => {
     /*
     Test case: EPMLSOPKET-15505
     Add Benzene ring on canvas
@@ -444,9 +443,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Double cyclopentadiene ring-if connect to a single bond with two atoms-but one atom is connected with a single bond and another with a double bond', async ({
-    page,
-  }) => {
+  test('Double cyclopentadiene ring-if connect to a single bond with two atoms-but one atom is connected with a single bond and another with a double bond', async () => {
     /*
     Test case: EPMLSOPKET-15506
     Add Cyclohexane ring on canvas and add double bond on it and atom
@@ -463,9 +460,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Double cyclopentadiene ring - if all bonds are single', async ({
-    page,
-  }) => {
+  test('Double cyclopentadiene ring - if all bonds are single', async () => {
     /*
     Test case: EPMLSOPKET-15507
     Add Cyclohexane ring on canvas and add on it an atom
@@ -480,7 +475,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding the template to the existing structure', async ({ page }) => {
+  test('Adding the template to the existing structure', async () => {
     /*
     Test case: EPMLSOPKET-4735
     Click on the Cyclopentadiene atom in the existing structure to add the same template.
@@ -499,9 +494,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Inappropriate structure is not generated when drawing fused aromatic rings', async ({
-    page,
-  }) => {
+  test('Inappropriate structure is not generated when drawing fused aromatic rings', async () => {
     /*
     Test case: EPMLSOPKET-4738
     Description:
@@ -513,9 +506,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Templates - Edit abbreviation window appear when user trying to add structure to a functional group or salt', async ({
-    page,
-  }) => {
+  test('Templates - Edit abbreviation window appear when user trying to add structure to a functional group or salt', async () => {
     /*
     Test case: EPMLSOPKET-12985
     Description:
@@ -543,13 +534,15 @@ test.describe('Template Manupulations', () => {
 });
 
 test.describe('Open Ketcher', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('The different templates are attached to the atoms of existing benzene-1', async ({
-    page,
-  }) => {
+  test('The different templates are attached to the atoms of existing benzene-1', async () => {
     /*
     Test case: EPMLSOPKET-1669/1
     Description:
@@ -570,9 +563,7 @@ test.describe('Open Ketcher', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  test('The different templates are attached to the atoms of existing benzene-2', async ({
-    page,
-  }) => {
+  test('The different templates are attached to the atoms of existing benzene-2', async () => {
     /*
     Test case: EPMLSOPKET-1669/2
     Description:
@@ -593,9 +584,7 @@ test.describe('Open Ketcher', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  test('The different templates are attached to the atoms of existing benzene-3', async ({
-    page,
-  }) => {
+  test('The different templates are attached to the atoms of existing benzene-3', async () => {
     /*
     Test case: EPMLSOPKET-1669/3
     Description:
@@ -608,9 +597,7 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
   });
 
-  test('Templates - The full preview of the Template from the Templates toolbar, following mouse cursor', async ({
-    page,
-  }) => {
+  test('Templates - The full preview of the Template from the Templates toolbar, following mouse cursor', async () => {
     /*
     Test case: EPMLSOPKET-18050
     Description:
@@ -627,9 +614,7 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
   });
 
-  test('Templates - The full preview of the Template from the Template library, following mouse cursor', async ({
-    page,
-  }) => {
+  test('Templates - The full preview of the Template from the Template library, following mouse cursor', async () => {
     /*
     Test case: EPMLSOPKET-18051
     Description:
@@ -656,7 +641,7 @@ test.describe('Open Ketcher', () => {
     {
       tag: ['@FlakyTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-18052
     Description:
@@ -681,9 +666,7 @@ test.describe('Open Ketcher', () => {
     },
   );
 
-  test('Templates - The preview of how the Template from the Template library will be merged, using Paste tool', async ({
-    page,
-  }) => {
+  test('Templates - The preview of how the Template from the Template library will be merged, using Paste tool', async () => {
     /*
     Test case: EPMLSOPKET-18053
     Description:
@@ -712,9 +695,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Templates - Merging the Template from the Templates toolbar and the Template from the Template library', async ({
-    page,
-  }) => {
+  test('Templates - Merging the Template from the Templates toolbar and the Template from the Template library', async () => {
     /*
     Test case: EPMLSOPKET-18054
     Description:

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   takeTopToolbarScreenshot,
@@ -9,8 +10,8 @@ import {
   ZoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
+  clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
@@ -25,6 +26,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
@@ -53,7 +55,8 @@ test.describe('Zoom changes', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await clickOnCanvas(page, 100, 100);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -79,7 +82,8 @@ test.describe('Zoom changes', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await clickOnCanvas(page, 100, 100);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -102,7 +106,7 @@ test.describe('Zoom changes', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await expandAbbreviation(
       page,
@@ -127,7 +131,7 @@ test.describe('Zoom changes', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await expandAbbreviation(
       page,
@@ -152,18 +156,20 @@ test.describe('Zoom changes', () => {
       AromaticsTemplate.Azulene,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await zoomSelector.click();
     await zoomInButton.click();
     await checkZoomLevel(page, '110%');
+    await zoomSelector.click({ force: true, delay: 100 });
+    await zoomInButton.waitFor({ state: 'detached' });
 
-    await resetCurrentTool(page);
+    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    await resetCurrentTool(page);
+    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
@@ -180,7 +186,7 @@ test.describe('Zoom changes', () => {
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await ZoomInByKeyboard(page);
     await zoomSelector.click();
@@ -197,7 +203,7 @@ test.describe('Zoom changes', () => {
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
 
     await drawBenzeneRing(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await ZoomOutByKeyboard(page);
     await zoomSelector.click();

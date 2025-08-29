@@ -728,7 +728,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       async () =>
         await setMolecule(
           page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
+          await FILE_TEST_DATA.moleculeWithSpecificCoordinates,
           { x: 10, y: 10 },
         ),
     );
@@ -738,7 +738,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       async () =>
         await setMolecule(
           page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
+          await FILE_TEST_DATA.moleculeWithSpecificCoordinates,
           { x: 10, y: 10 },
         ),
     );

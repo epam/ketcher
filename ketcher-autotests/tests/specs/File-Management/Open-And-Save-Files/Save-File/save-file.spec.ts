@@ -249,7 +249,7 @@ test.describe('Open/Save/Paste files', () => {
       */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+      await FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

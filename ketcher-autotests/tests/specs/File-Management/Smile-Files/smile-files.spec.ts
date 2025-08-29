@@ -508,7 +508,6 @@ test.describe('SMILES files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to extended SMILE and loaded back
     */
-    test.fail();
     // function await getExtendedSmiles but get JSON instead cxsmi file
     // after fixing need to update the screenshot
 

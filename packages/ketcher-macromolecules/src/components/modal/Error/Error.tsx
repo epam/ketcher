@@ -19,10 +19,16 @@ export const ErrorModal = () => {
   return (
     <Modal isOpen={isModalOpen} title={errorTitle} onClose={onClose}>
       <Modal.Content>
-        <ErrorTextWrapper>{errorMessage}</ErrorTextWrapper>
+        <ErrorTextWrapper data-testid="info-modal-body">
+          {errorMessage}
+        </ErrorTextWrapper>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton label="Close" clickHandler={onClose} />
+        <ActionButton
+          label="Close"
+          clickHandler={onClose}
+          data-testId="info-modal-close"
+        />
       </Modal.Footer>
     </Modal>
   );

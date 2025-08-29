@@ -7,7 +7,7 @@ export enum MonomerType {
   CHEM = 'CHEM-option',
 }
 
-export enum NaturalAnalogue {
+export enum AminoAcidNaturalAnalogue {
   A = 'natural-analogue-picker-option-A',
   C = 'natural-analogue-picker-option-C',
   D = 'natural-analogue-picker-option-D',
@@ -31,4 +31,13 @@ export enum NaturalAnalogue {
   W = 'natural-analogue-picker-option-W',
   X = 'natural-analogue-picker-option-X',
   Y = 'natural-analogue-picker-option-Y',
+}
+
+export enum NucleotideNaturalAnalogue {
+  A = 'natural-analogue-picker-option-A',
+  C = 'natural-analogue-picker-option-C',
+  G = 'natural-analogue-picker-option-G',
+  T = 'natural-analogue-picker-option-T',
+  U = 'natural-analogue-picker-option-U',
+  X = 'natural-analogue-picker-option-X',
 }

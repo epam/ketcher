@@ -8,11 +8,15 @@ import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
+  takeElementScreenshot,
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { clickOnCanvas } from '@utils/index';
-import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { clickOnCanvas, dragTo, waitForMonomerPreview } from '@utils/index';
+import {
+  createMonomer,
+  CreateMonomerDialog,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -20,6 +24,12 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import {
+  AminoAcidNaturalAnalogue,
+  MonomerType,
+  NucleotideNaturalAnalogue,
+} from '@tests/pages/constants/createMonomerDialog/Constants';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -78,11 +88,13 @@ interface IMoleculesForMonomerCreation {
   pageReloadNeeded?: boolean;
 }
 
-async function deselectAtomsAndBonds(
+async function prepareMoleculeForMonomerCreation(
   page: Page,
   AtomIDsToExclude?: string[],
   BondIDsToExclude?: string[],
 ) {
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
   await page.keyboard.down('Shift');
   if (AtomIDsToExclude) {
     for (const atomId of AtomIDsToExclude) {
@@ -140,9 +152,7 @@ for (const eligableMolecule of eligableMolecules) {
       page,
       eligableMolecule.MoleculeSMARTS,
     );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    await deselectAtomsAndBonds(
+    await prepareMoleculeForMonomerCreation(
       page,
       eligableMolecule.AtomIDsToExclude,
       eligableMolecule.BondIDsToExclude,
@@ -287,9 +297,7 @@ for (const nonEligableMolecule of nonEligableMolecules) {
       page,
       nonEligableMolecule.MoleculeSMARTS,
     );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    await deselectAtomsAndBonds(
+    await prepareMoleculeForMonomerCreation(
       page,
       nonEligableMolecule.AtomIDsToExclude,
       nonEligableMolecule.BondIDsToExclude,
@@ -318,9 +326,7 @@ test(`4. Check that when user clicks on the "Create monomer" button the structur
     page,
     eligableMolecules[0].MoleculeSMARTS,
   );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await deselectAtomsAndBonds(
+  await prepareMoleculeForMonomerCreation(
     page,
     eligableMolecules[0].AtomIDsToExclude,
     eligableMolecules[0].BondIDsToExclude,
@@ -363,9 +369,7 @@ test.fail(
       page,
       eligableMolecules[0].MoleculeSMARTS,
     );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    await deselectAtomsAndBonds(
+    await prepareMoleculeForMonomerCreation(
       page,
       eligableMolecules[0].AtomIDsToExclude,
       eligableMolecules[0].BondIDsToExclude,
@@ -484,9 +488,7 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
       page,
       eightAttachmentPointsMolecule.MoleculeSMARTS,
     );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    await deselectAtomsAndBonds(
+    await prepareMoleculeForMonomerCreation(
       page,
       eightAttachmentPointsMolecule.AtomIDsToExclude,
       eightAttachmentPointsMolecule.BondIDsToExclude,
@@ -497,3 +499,667 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
     await CreateMonomerDialog(page).discard();
   });
 }
+
+test(`7. Check than monomer Type field is blank when open it first time`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check than monomer Type field is blank when open it first time
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Check than monomer Type field is blank when open it first time
+   *
+   * Version 3.7
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`8. Check options from the drop-down menu Type`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check options from the drop-down menu Type
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Check options from the drop-down menu Type are in place
+   *
+   * Version 3.7
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await CreateMonomerDialog(page).typeCombobox.click();
+  await Promise.all([
+    expect(page.getByTestId(MonomerType.AminoAcid)).toContainText('Amino acid'),
+    expect(page.getByTestId(MonomerType.Sugar)).toContainText('Sugar'),
+    expect(page.getByTestId(MonomerType.Base)).toContainText('Base'),
+    expect(page.getByTestId(MonomerType.Phosphate)).toContainText('Phosphate'),
+    expect(page.getByTestId(MonomerType.Nucleotide)).toContainText(
+      'Nucleotide',
+    ),
+    expect(page.getByTestId(MonomerType.CHEM)).toContainText('CHEM'),
+  ]);
+  await page.getByTestId(MonomerType.AminoAcid).click();
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`9. Check that if the monomer type is not selected error message occures`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the monomer type is not selected, and the user clicks on Save/Finish in the wizard,
+   *              an error message appears in the error/warning area: "Mandatory fields must be filled.",
+   *              and the type drop-down is highlighted
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      4.1 Validate that Type drop-down is not filled
+   *      5. Press Submit button
+   *      6. Verify that the error message is displayed
+   *      7. Take screenshot to validate that Type drop-down is highlighted
+   *
+   * Version 3.7
+   */
+  const errorMessage = page.getByText('Mandatory fields must be filled.');
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await CreateMonomerDialog(page).submit();
+  expect(await errorMessage.count()).toBeGreaterThan(0);
+  await takeElementScreenshot(page, CreateMonomerDialog(page).typeCombobox);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`10. Check that if the monomer name is not entered error message occures`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Verify that the "Monomer name" field is present in the monomer creation wizard
+   *              2. Check that if no name is entered, and the user clicks on Save/Finish in the wizard, an error
+   *                 message appears in the error/warning area: "Mandatory fields must be filled.", and the name
+   *                 input field is highlighted
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Select Type - Amino acid
+   *      6 Validate that Name edit box is not filled
+   *      7. Press Submit button
+   *      8. Verify that the error message is displayed
+   *      9. Take screenshot to validate that Name drop-down is highlighted
+   *
+   * Version 3.7
+   */
+  const errorMessage = page.getByText('Mandatory fields must be filled.');
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
+  await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
+  await CreateMonomerDialog(page).submit();
+  expect(await errorMessage.count()).toBeGreaterThan(0);
+  await takeElementScreenshot(page, CreateMonomerDialog(page).nameEditbox);
+  await CreateMonomerDialog(page).discard();
+});
+
+const eligableNames = [
+  // Bug: https://github.com/epam/ketcher/issues/7745
+  {
+    description: '1. Longest Name',
+    value:
+      "N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2',3'-O-(methoxymetylene)-octadecakis(2-chlorophenyl)ester. 5'-[2-(dibromomethyl)benzoate]",
+  },
+  { description: '2. Shortest Name', value: 's' },
+  {
+    description: '3. Name of special symbols',
+    value: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+  },
+  {
+    description: '4. Name of with spaces',
+    value: '1 2  3   4    5     6       End',
+  },
+];
+
+for (const eligableName of eligableNames) {
+  test(`11. Create monomer with ${eligableName.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Entering a valid monomer name allows saving
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with eligable name
+     *      5. Switch to Macromolecules editor
+     *      6. Hover mouse over created monomer
+     *      7. Validate monomer preview contains ${eligableName.value}
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    await createMonomer(page, {
+      type: MonomerType.CHEM,
+      symbol: 'Temp',
+      name: eligableName.value,
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    const monomer = getMonomerLocator(page, {
+      monomerAlias: 'Temp',
+    });
+    await dragTo(page, monomer, { x: 450, y: 250 });
+    await monomer.hover({ force: true });
+    await waitForMonomerPreview(page);
+    await expect(page.getByTestId('preview-tooltip-title')).toContainText(
+      eligableName.value,
+    );
+  });
+}
+
+const nonEligableNames = [
+  {
+    description: '1. Spaces only',
+    value: '   ',
+    errorMessage: 'Mandatory fields must be filled.',
+  },
+];
+
+for (const nonEligableName of nonEligableNames) {
+  test(`12. Create monomer with ${nonEligableName.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Entering a invalid monomer name causes an error
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Try to create monomer with non-eligible name
+     *      5. Validate error message is shown
+     *
+     * Version 3.7
+     */
+    const errorMessage = page.getByText(nonEligableName.errorMessage);
+    const createMonomerDialog = CreateMonomerDialog(page);
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    await LeftToolbar(page).createMonomer();
+    await createMonomerDialog.selectType(MonomerType.CHEM);
+    await createMonomerDialog.setSymbol('Temp');
+    await createMonomerDialog.setName(nonEligableName.value);
+    await createMonomerDialog.submit();
+    expect(await errorMessage.count()).toBeGreaterThan(0);
+    await CreateMonomerDialog(page).discard();
+  });
+}
+
+const eligableSymbols = [
+  {
+    description: '1. Longest Symbol (uppercase and lowercase letters, numbers)',
+    value:
+      'LongestSymbolabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
+  },
+  { description: '2. Shortest Symbol', value: 's' },
+  {
+    description: '3. Symbol of special characters',
+    value: '-_*',
+  },
+  {
+    description: '4. Symbol with all allowed characters',
+    value: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_*',
+  },
+];
+
+for (const eligableSymbol of eligableSymbols) {
+  test(`13. Create monomer with ${eligableSymbol.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Entering a valid monomer name allows saving
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with eligable symbol value
+     *      5. Switch to Macromolecules editor
+     *      7. Validate that monomer with ${eligableSymbol.value} present on the canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    await createMonomer(page, {
+      type: MonomerType.CHEM,
+      symbol: eligableSymbol.value,
+      name: 'Temp',
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    const monomer = getMonomerLocator(page, {
+      monomerAlias: eligableSymbol.value,
+    });
+    expect(await monomer.count()).toEqual(1);
+  });
+}
+
+const nonEligableSymbols = [
+  {
+    description: '1. Spaces only',
+    symbol: '   ',
+    type: MonomerType.CHEM,
+    errorMessage: 'Mandatory fields must be filled.',
+  },
+  {
+    description: '2. Incorrect characters',
+    symbol: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+    type: MonomerType.CHEM,
+    errorMessage:
+      'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  },
+  {
+    description: '3. Non-unique for one HELM class (Peptides-Amino acids)',
+    symbol: '1Nal',
+    type: MonomerType.AminoAcid,
+    naturalAnalogue: AminoAcidNaturalAnalogue.C,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '4. Non-unique for one HELM class (RNA-Sugars)',
+    symbol: '12ddR',
+    type: MonomerType.Sugar,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '5. Non-unique for one HELM class (RNA-Bases)',
+    symbol: '2imen2',
+    type: MonomerType.Base,
+    naturalAnalogue: NucleotideNaturalAnalogue.C,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '6. Non-unique for one HELM class (RNA-Phosphates)',
+    symbol: 'AmC12',
+    type: MonomerType.Phosphate,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '7. Non-unique for one HELM class (RNA-Nucleotides)',
+    symbol: '3Puro',
+    type: MonomerType.Nucleotide,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '8. Non-unique for one HELM class (RNA-CHEM)',
+    symbol: '2-Bio',
+    type: MonomerType.CHEM,
+    errorMessage:
+      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  },
+  {
+    description: '9. No symbol entered',
+    symbol: '',
+    type: MonomerType.CHEM,
+    errorMessage: 'Mandatory fields must be filled.',
+  },
+];
+
+for (const nonEligableSymbol of nonEligableSymbols) {
+  test(`14. Create monomer with ${nonEligableSymbol.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Entering a invalid monomer symbol causes an error
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Try to create monomer with non-eligible name
+     *      5. Validate error message is shown
+     *
+     * Version 3.7
+     */
+    const errorMessage = page.getByText(nonEligableSymbol.errorMessage);
+    const createMonomerDialog = CreateMonomerDialog(page);
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    await LeftToolbar(page).createMonomer();
+    await createMonomerDialog.selectType(nonEligableSymbol.type);
+    await createMonomerDialog.setSymbol(nonEligableSymbol.symbol);
+    await createMonomerDialog.setName('Temp');
+    if (nonEligableSymbol.naturalAnalogue) {
+      await createMonomerDialog.selectNaturalAnalogue(
+        nonEligableSymbol.naturalAnalogue,
+      );
+    }
+    await createMonomerDialog.submit();
+    expect(await errorMessage.count()).toBeGreaterThan(0);
+    await CreateMonomerDialog(page).discard();
+  });
+}
+
+test(`15. Check that when selected amino acids in wizard Monomer natural analogue field is mandatory for it`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Check that when selected amino acids in wizard Monomer natural analogue field is mandatory for it
+   *              2. Check that if no natural analogue is chosen, and the user clicks on Save/Finish in the wizard,
+   *                 an error message appears in the error/warning area
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Amino acid type and no natural analogue
+   *      5. Validate error message is shown
+   *      6. Take screenshot to validate that Natural analogue drop-down is highlighted
+   *
+   * Version 3.7
+   */
+  const errorMessage = page.getByText('Mandatory fields must be filled.');
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.AminoAcid);
+  await createMonomerDialog.setSymbol('AminoAcid');
+  await createMonomerDialog.setName('Temp');
+
+  await createMonomerDialog.submit();
+  expect(await errorMessage.count()).toBeGreaterThan(0);
+  await takeElementScreenshot(
+    page,
+    CreateMonomerDialog(page).naturalAnalogueCombobox,
+  );
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`16. Check that when selected Base in wizard Monomer natural analogue field is mandatory for it`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Check that when selected Base in wizard Monomer natural analogue field is mandatory for it
+   *              2. Check that if no natural analogue is chosen, and the user clicks on Save/Finish in the wizard,
+   *                 an error message appears in the error/warning area
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Base type and no natural analogue
+   *      5. Validate error message is shown
+   *      6. Take screenshot to validate that Natural analogue drop-down is highlighted
+   *
+   * Version 3.7
+   */
+  const errorMessage = page.getByText('Mandatory fields must be filled.');
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Base);
+  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setName('Temp');
+
+  await createMonomerDialog.submit();
+  expect(await errorMessage.count()).toBeGreaterThan(0);
+  await takeElementScreenshot(
+    page,
+    CreateMonomerDialog(page).naturalAnalogueCombobox,
+  );
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue field is mandatory for it`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Check that when selected Nucleotide in wizard Monomer natural analogue field is mandatory for it
+   *              2. Check that if no natural analogue is chosen, and the user clicks on Save/Finish in the wizard,
+   *                 an error message appears in the error/warning area
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Nucleotide type and no natural analogue
+   *      5. Validate error message is shown
+   *      6. Take screenshot to validate that Natural analogue drop-down is highlighted
+   *
+   * Version 3.7
+   */
+  const errorMessage = page.getByText('Mandatory fields must be filled.');
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.setSymbol('Nucleotide');
+  await createMonomerDialog.setName('Temp');
+
+  await createMonomerDialog.submit();
+  expect(await errorMessage.count()).toBeGreaterThan(0);
+  await takeElementScreenshot(
+    page,
+    CreateMonomerDialog(page).naturalAnalogueCombobox,
+  );
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`18. Check drop-down grid for Natural analogue for Amino acid`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check drop-down grid for Natural analogue for Amino acid
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Amino acid type
+   *      5. Click on Natural analogue
+   *      6. Validate drop-down grid is displayed
+   *
+   * Version 3.7
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.AminoAcid);
+  await createMonomerDialog.setSymbol('AminoAcid');
+  await createMonomerDialog.setName('Temp');
+  await createMonomerDialog.naturalAnalogueCombobox.click();
+  await Promise.all(
+    Object.values(AminoAcidNaturalAnalogue).map((testId) =>
+      expect(page.getByTestId(testId)).toBeVisible(),
+    ),
+  );
+  await createMonomerDialog.naturalAnalogueCombobox.click({ force: true });
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`19. Check drop-down grid for Natural analogue for Base`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check drop-down grid for Natural analogue for Base
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Base type
+   *      5. Click on Natural analogue
+   *      6. Validate drop-down grid is displayed
+   *
+   * Version 3.7
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Base);
+  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setName('Temp');
+  await createMonomerDialog.naturalAnalogueCombobox.click();
+  await Promise.all(
+    Object.values(NucleotideNaturalAnalogue).map((testId) =>
+      expect(page.getByTestId(testId)).toBeVisible(),
+    ),
+  );
+  await createMonomerDialog.naturalAnalogueCombobox.click({ force: true });
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check drop-down grid for Natural analogue for Nucleotide
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Nucleotide type
+   *      5. Click on Natural analogue
+   *      6. Validate drop-down grid is displayed
+   *
+   * Version 3.7
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setName('Temp');
+  await createMonomerDialog.naturalAnalogueCombobox.click();
+  await Promise.all(
+    Object.values(NucleotideNaturalAnalogue).map((testId) =>
+      expect(page.getByTestId(testId)).toBeVisible(),
+    ),
+  );
+  await createMonomerDialog.naturalAnalogueCombobox.click({ force: true });
+  await CreateMonomerDialog(page).discard();
+});

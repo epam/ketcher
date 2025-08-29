@@ -1,10 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
+  AminoAcidNaturalAnalogue,
   MonomerType,
-  NaturalAnalogue,
+  NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
+import { LeftToolbar } from '../LeftToolbar';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
@@ -41,7 +43,9 @@ export const CreateMonomerDialog = (page: Page) => {
       await locators.nameEditbox.fill(value);
     },
 
-    async selectNaturalAnalogue(option: NaturalAnalogue) {
+    async selectNaturalAnalogue(
+      option: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue,
+    ) {
       await locators.naturalAnalogueCombobox.click();
       await page.getByTestId(option).click();
     },
@@ -57,5 +61,25 @@ export const CreateMonomerDialog = (page: Page) => {
     },
   };
 };
+
+export async function createMonomer(
+  page: Page,
+  options: {
+    type: MonomerType;
+    symbol: string;
+    name: string;
+    naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
+  },
+) {
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(options.type);
+  await createMonomerDialog.setSymbol(options.symbol);
+  await createMonomerDialog.setName(options.name);
+  if (options.naturalAnalogue) {
+    await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
+  }
+  await createMonomerDialog.submit();
+}
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

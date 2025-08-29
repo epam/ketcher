@@ -61,7 +61,7 @@ export async function closeOpenStructure(page: Page) {
 }
 
 export async function closeErrorAndInfoModals(page: Page) {
-  const closeButton = page.getByRole('button', { name: 'Close' }).first();
+  const closeButton = page.getByTestId('info-modal-close');
   if (await closeButton.isVisible()) {
     await closeButton.click();
   }

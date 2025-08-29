@@ -292,6 +292,24 @@ abstract class SelectBase implements BaseTool {
     return { bondLengthSnapPosition };
   }
 
+  static needApplyGroupCenterSnapForOneAxis(
+    pointToCheck: number,
+    snappingPoint: number,
+    threshold: number,
+    pointToCheckOnAnotherAxis: number,
+    snappingPointOnAnotherAxis: number,
+    thresholdOnAnotherAxis,
+  ) {
+    return (
+      pointToCheck < snappingPoint + threshold &&
+      pointToCheck > snappingPoint - threshold &&
+      pointToCheckOnAnotherAxis <
+        snappingPointOnAnotherAxis + thresholdOnAnotherAxis &&
+      pointToCheckOnAnotherAxis >
+        snappingPointOnAnotherAxis - thresholdOnAnotherAxis
+    );
+  }
+
   static calculateGroupCenterSnapPosition(
     selectedEntities: BaseMonomer[],
     connectedMonomers: BaseMonomer[],
@@ -312,10 +330,22 @@ abstract class SelectBase implements BaseTool {
       connectedMonomersBbox.top + connectedMonomersBbox.height / 2,
     );
 
-    return selectedEntitiesCenterWithMovementDelta.x <
-      connectedMonomersCenter.x + HalfMonomerSize &&
-      selectedEntitiesCenterWithMovementDelta.x >
-        connectedMonomersCenter.x - HalfMonomerSize
+    return SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+      selectedEntitiesCenterWithMovementDelta.x,
+      connectedMonomersCenter.x,
+      HalfMonomerSize,
+      selectedEntitiesCenterWithMovementDelta.y,
+      connectedMonomersCenter.y,
+      HalfMonomerSize * 2,
+    ) ||
+      SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+        selectedEntitiesCenterWithMovementDelta.y,
+        connectedMonomersCenter.y,
+        HalfMonomerSize,
+        selectedEntitiesCenterWithMovementDelta.x,
+        connectedMonomersCenter.x,
+        HalfMonomerSize * 2,
+      )
       ? Vec2.diff(connectedMonomersCenter, selectedEntitiesCenter)
       : null;
   }
@@ -722,7 +752,7 @@ abstract class SelectBase implements BaseTool {
       },
     );
 
-    if (externalConnectionsToSelection.length === 2) {
+    if (externalConnectionsToSelection.length >= 2) {
       const groupCenterSnapPosition =
         SelectRectangle.calculateGroupCenterSnapPosition(
           this.editor.drawingEntitiesManager.selectedMonomers,

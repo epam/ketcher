@@ -2,6 +2,8 @@ export enum ToolName {
   monomer = 'monomer',
   preset = 'preset',
   selectRectangle = 'select-rectangle',
+  selectLasso = 'select-lasso',
+  selectFragment = 'select-fragment',
   bondSingle = 'bond-single',
   bondHydrogen = 'bond-hydrogen',
   erase = 'erase',

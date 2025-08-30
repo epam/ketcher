@@ -186,6 +186,13 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'selectEntities',
 ];
 
+const selectTools = [
+  ToolName.selectRectangle,
+  ToolName.selectLasso,
+  ToolName.selectFragment,
+];
+let currentSelectToolIdx = 0;
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -206,9 +213,18 @@ export const hotkeysConfiguration = {
     },
   },
   exit: {
-    shortcut: ['Shift+Tab', 'Escape'],
+    shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
+      currentSelectToolIdx = 0;
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.cancelLibraryItemDrag();
+    },
+  },
+  switchSelectTool: {
+    shortcut: ['Shift+Tab'],
+    handler: (editor: CoreEditor) => {
+      currentSelectToolIdx = (currentSelectToolIdx + 1) % selectTools.length;
+      editor.events.selectTool.dispatch([selectTools[currentSelectToolIdx]]);
       editor.cancelLibraryItemDrag();
     },
   },

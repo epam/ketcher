@@ -702,6 +702,7 @@ export class DrawingEntitiesManager {
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
+
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
       if (
@@ -716,6 +717,52 @@ export class DrawingEntitiesManager {
         isValueChanged = drawingEntity.selectIfLocatedInRectangle(
           rectangleTopLeftPoint,
           rectangleBottomRightPoint,
+          !!isPreviousSelected,
+          shiftKey,
+        );
+      }
+      if (isValueChanged) {
+        const selectionCommand =
+          this.createDrawingEntitySelectionCommand(drawingEntity);
+
+        command.merge(selectionCommand);
+      }
+    });
+    return command;
+  }
+
+  public selectIfLocatedInPolygon(
+    polygonPoints: Vec2[],
+    previousSelectedEntities: [number, DrawingEntity][],
+    shiftKey = false,
+  ) {
+    const command = new Command();
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (
+        drawingEntity instanceof Chem &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      const isPreviousSelected = previousSelectedEntities.find(
+        ([, entity]) => entity === drawingEntity,
+      );
+
+      let isValueChanged;
+      const editor = CoreEditor.provideEditorInstance();
+      if (
+        editor.mode instanceof SequenceMode &&
+        drawingEntity instanceof PolymerBond
+      ) {
+        isValueChanged = this.checkBondSelectionForSequenceMode(
+          drawingEntity,
+          isValueChanged,
+        );
+      } else {
+        isValueChanged = drawingEntity.selectIfLocatedInPolygon(
+          polygonPoints,
           !!isPreviousSelected,
           shiftKey,
         );
@@ -1142,6 +1189,19 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public intendToSelectAllConnectedDrawingEntities(startEntity: DrawingEntity) {
+    const command = new Command();
+    this.visitAllConnectedEntities(startEntity, (drawingEntity) => {
+      drawingEntity.turnOnHover();
+
+      const operation = new DrawingEntityHoverOperation(drawingEntity);
+
+      command.addOperation(operation);
+    });
+
+    return command;
+  }
+
   public cancelIntentionToSelectDrawingEntity(drawingEntity: DrawingEntity) {
     const command = new Command();
 
@@ -1150,6 +1210,22 @@ export class DrawingEntitiesManager {
     const operation = new DrawingEntityHoverOperation(drawingEntity);
 
     command.addOperation(operation);
+
+    return command;
+  }
+
+  public cancelIntentionToSelectAllConnectedDrawingEntities(
+    startEntity: DrawingEntity,
+  ) {
+    const command = new Command();
+
+    this.visitAllConnectedEntities(startEntity, (drawingEntity) => {
+      drawingEntity.turnOffHover();
+
+      const operation = new DrawingEntityHoverOperation(drawingEntity);
+
+      command.addOperation(operation);
+    });
 
     return command;
   }
@@ -3520,5 +3596,50 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
 
     return command;
+  }
+
+  public selectAllConnectedEntities(startEntity: DrawingEntity) {
+    const command = new Command();
+    const process = (entity: DrawingEntity) => {
+      entity.selected = true;
+      command.merge(this.createDrawingEntitySelectionCommand(entity));
+    };
+
+    this.visitAllConnectedEntities(startEntity, process);
+    return command;
+  }
+
+  private visitAllConnectedEntities(
+    startEntity: DrawingEntity,
+    process: (entity: DrawingEntity) => void,
+  ): void {
+    const queue = [startEntity];
+    const visited = new Set<number>();
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+
+      if (!current || visited.has(current.id)) continue;
+      process(current);
+      visited.add(current.id);
+
+      if (current instanceof BaseMonomer) {
+        queue.push(...current.hydrogenBonds, ...current.bonds);
+      } else if (current instanceof HydrogenBond) {
+        queue.push(
+          current.firstEndEntity,
+          ...(current.secondEndEntity ? [current.secondEndEntity] : []),
+        );
+      } else if (current instanceof PolymerBond) {
+        queue.push(current.firstMonomer);
+        if (current.secondMonomer) queue.push(current.secondMonomer);
+      } else if (current instanceof MonomerToAtomBond) {
+        queue.push(current.monomer, current.atom);
+      } else if (current instanceof Bond) {
+        queue.push(current.firstAtom, current.secondAtom);
+      } else if (current instanceof Atom) {
+        queue.push(...current.bonds);
+      }
+    }
   }
 }

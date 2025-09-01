@@ -8,6 +8,10 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     alias: 'Ala-al',
     testId: 'Ala-al___(2S)-2-aminopropanal',
   },
+  AminoAcid: {
+    alias: 'AminoAcid',
+    testId: 'AminoAcid___Amino Acid Test monomer',
+  },
   _1Nal: { alias: '1Nal', testId: '1Nal___3-(1-naphthyl)-alanine' },
   _2Nal: { alias: '2Nal', testId: '2Nal___3-(2-naphthyl)-alanine' },
   _NHBn: {

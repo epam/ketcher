@@ -15,6 +15,10 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: 'AmMC6T',
     testId: 'AmMC6T___Amino Modifier C6 dT',
   },
+  Nucleotide: {
+    alias: 'Nucleotide',
+    testId: 'Nucleotide___Nucleotide Test monomer',
+  },
   Super_T: {
     alias: 'Super-T',
     testId: 'Super-T___5-hydroxybutynl-2’-deoxyuridine',

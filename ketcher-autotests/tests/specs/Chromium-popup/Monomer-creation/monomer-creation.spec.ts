@@ -30,7 +30,15 @@ import {
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { rnaDnaNaturalAnalogues } from 'ketcher-core';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -1211,12 +1219,14 @@ const monomersToCreate = [
     symbol: 'AminoAcid',
     name: 'Amino Acid Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    libraryCard: Peptide.AminoAcid,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
     symbol: 'Sugar',
     name: 'Sugar Test monomer',
+    libraryCard: Sugar.Sugar,
   },
   {
     description: '3. Base',
@@ -1224,12 +1234,14 @@ const monomersToCreate = [
     symbol: 'Base',
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
+    libraryCard: Base.Base,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
     symbol: 'Phosphate',
     name: 'Phosphate Test monomer',
+    libraryCard: Phosphate.Phosphate,
   },
   {
     description: '5. Nucleotide',
@@ -1237,6 +1249,14 @@ const monomersToCreate = [
     symbol: 'Nucleotide',
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
+    libraryCard: Nucleotide.Nucleotide,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM',
+    name: 'CHEM Test monomer',
+    libraryCard: Chem.CHEM,
   },
 ];
 
@@ -1270,20 +1290,11 @@ for (const monomerToCreate of monomersToCreate) {
       eligableMolecules[0].AtomIDsToExclude,
       eligableMolecules[0].BondIDsToExclude,
     );
-    if (monomerToCreate.naturalAnalogue) {
-      await createMonomer(page, {
-        type: monomerToCreate.type,
-        symbol: monomerToCreate.symbol,
-        name: monomerToCreate.name,
-        naturalAnalogue: monomerToCreate.naturalAnalogue,
-      });
-    } else {
-      await createMonomer(page, {
-        type: monomerToCreate.type,
-        symbol: monomerToCreate.symbol,
-        name: monomerToCreate.name,
-      });
-    }
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomer = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.symbol,
@@ -1337,3 +1348,141 @@ test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, a
   const monomer = getMonomerLocator(page, {});
   expect(await monomer.count()).toEqual(0);
 });
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`24. Check that created ${monomerToCreate.description} monomer can be selected and added on canvas via arrow button`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created monomer can be selected and added on canvas
+     *              (Amino acid, Peptide, Sugar, Base, Phosphate, Nucleotide, CHEM)
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macromolecules editor
+     *      6. Clear the canvas
+     *      7. Find monomer in the Library and press arrow button on its card
+     *      8. Validate that monomer appeared on the canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await Library(page).clickMonomerAutochain(monomerToCreate.libraryCard);
+
+    const monomer = getMonomerLocator(page, {
+      monomerAlias: monomerToCreate.symbol,
+    });
+    expect(await monomer.count()).toEqual(1);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`24. Check that created ${monomerToCreate.description} monomer can be selected and added on canvas via drag and drop`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created monomer can be drag and dropped on canvas
+     *              (Amino acid, Peptide, Sugar, Base, Phosphate, Nucleotide, CHEM)
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macromolecules editor
+     *      6. Clear the canvas
+     *      7. Find monomer in the Library and drag and drop it on canvas
+     *      8. Validate that monomer appeared on the canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+
+    const monomer = getMonomerLocator(page, {
+      monomerAlias: monomerToCreate.symbol,
+    });
+    expect(await monomer.count()).toEqual(1);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`25. Check that created ${monomerToCreate.description} monomer can be contracted and expanded on canvas`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created monomer can be contracted and expanded on canvas
+     *              (Amino acid, Peptide, Sugar, Base, Phosphate, Nucleotide, CHEM)
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Contract created monomer
+     *      6. Validate it appeared on the canvas
+     *      7. Expand created monomer and click on its atom
+     *      8. Take screenshot to validate monomer got expanded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
+
+    const monomerOnMicro = getAbbreviationLocator(page, {
+      name: monomerToCreate.symbol,
+    });
+    expect(await monomerOnMicro.count()).toEqual(1);
+
+    await expandMonomer(page, monomerOnMicro);
+    await getAtomLocator(page, { atomId: 2 }).click();
+    await takeEditorScreenshot(page);
+  });
+}

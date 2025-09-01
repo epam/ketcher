@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import {
+  CoreEditor,
+  EditorHistory,
+  SelectRectangle,
+} from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
@@ -743,12 +747,11 @@ abstract class SelectBase implements BaseTool {
             snapDistance,
           );
 
-        const { bondLengthSnapPosition } =
-          SelectBase.calculateBondLengthSnap(
-            selectedMonomer.position,
-            connectedMonomer.position,
-            snappedAngleRad,
-          );
+        const { bondLengthSnapPosition } = SelectBase.calculateBondLengthSnap(
+          selectedMonomer.position,
+          connectedMonomer.position,
+          snappedAngleRad,
+        );
 
         if (bondLengthSnapPosition) {
           snapPosition = bondLengthSnapPosition;

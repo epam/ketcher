@@ -4,7 +4,10 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
+import {
+  openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardAndOpenAsNewProject,
+} from '@utils/files/readFile';
 import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
@@ -12,7 +15,12 @@ import {
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { clickOnCanvas, dragTo, waitForMonomerPreview } from '@utils/index';
+import {
+  clickOnCanvas,
+  dragTo,
+  MolFileFormat,
+  waitForMonomerPreview,
+} from '@utils/index';
 import {
   createMonomer,
   CreateMonomerDialog,
@@ -39,6 +47,10 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -1483,6 +1495,140 @@ for (const monomerToCreate of monomersToCreate) {
 
     await expandMonomer(page, monomerOnMicro);
     await getAtomLocator(page, { atomId: 2 }).click();
+    await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`26. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to KET and validate the result
+     *      6. Load saved monomer from KET as New Project
+     *      7. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifyFileExport(
+      page,
+      `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.ket`,
+    );
+    await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`27. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to MOL V2000 and validate the result
+     *      6. Load saved monomer from MOL V2000 as New Project
+     *      7. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.mol`,
+      FileType.MOL,
+      MolFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `Molfiles-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.mol`,
+    );
+    await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`28. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to MOL V3000 and validate the result
+     *      6. Load saved monomer from MOL V3000 as New Project
+     *      7. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.mol`,
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `Molfiles-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.mol`,
+    );
     await takeEditorScreenshot(page);
   });
 }

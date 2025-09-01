@@ -804,9 +804,13 @@ abstract class SelectBase implements BaseTool {
       },
     );
 
-    if (externalConnectionsToSelection.length >= 2) {
-      const selectedMonomers =
-        this.editor.drawingEntitiesManager.selectedMonomers;
+    const selectedMonomers =
+      this.editor.drawingEntitiesManager.selectedMonomers;
+
+    if (
+      externalConnectionsToSelection.length >= 2 &&
+      selectedMonomers.length >= 2
+    ) {
       const connectedMonomers = externalConnectionsToSelection.map(
         ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
       );
@@ -886,6 +890,11 @@ abstract class SelectBase implements BaseTool {
     const snapResult = this.tryToSnap(event, movementDelta);
     const { snapPosition } = snapResult;
 
+    this.editor.transientDrawingView.hideBondSnap();
+    this.editor.transientDrawingView.hideAngleSnap();
+    this.editor.transientDrawingView.hideDistanceSnap();
+    this.editor.transientDrawingView.hideGroupCenterSnap();
+
     if (snapPosition) {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
@@ -910,25 +919,24 @@ abstract class SelectBase implements BaseTool {
           alignedMonomers,
         } = snapResult;
 
-        showAngleSnapping
-          ? this.editor.transientDrawingView.showAngleSnap({
-              connectedMonomer,
-              polymerBond: bond,
-              isBondLengthSnapped: showBondLengthSnapping,
-            })
-          : this.editor.transientDrawingView.hideAngleSnap();
+        if (showAngleSnapping) {
+          this.editor.transientDrawingView.showAngleSnap({
+            connectedMonomer,
+            polymerBond: bond,
+            isBondLengthSnapped: showBondLengthSnapping,
+          });
+        }
 
-        showBondLengthSnapping
-          ? this.editor.transientDrawingView.showBondSnap(bond)
-          : this.editor.transientDrawingView.hideBondSnap();
+        if (showBondLengthSnapping) {
+          this.editor.transientDrawingView.showBondSnap(bond);
+        }
 
-        showDistanceSnapping
-          ? this.editor.transientDrawingView.showDistanceSnap({
-              alignment,
-              alignedMonomers,
-            })
-          : this.editor.transientDrawingView.hideDistanceSnap();
-        this.editor.transientDrawingView.hideGroupCenterSnap();
+        if (showDistanceSnapping) {
+          this.editor.transientDrawingView.showDistanceSnap({
+            alignment,
+            alignedMonomers,
+          });
+        }
       }
     } else {
       modelChanges.merge(
@@ -936,11 +944,6 @@ abstract class SelectBase implements BaseTool {
           movementDelta,
         ),
       );
-
-      this.editor.transientDrawingView.hideBondSnap();
-      this.editor.transientDrawingView.hideAngleSnap();
-      this.editor.transientDrawingView.hideDistanceSnap();
-      this.editor.transientDrawingView.hideGroupCenterSnap();
     }
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;

@@ -93,7 +93,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await getMonomerLocator(page, Peptide.A).click();
     await page.mouse.down();
-    await page.mouse.move(600, 400);
+    await page.mouse.move(600, 400, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -514,7 +514,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     ];
     for (let i = 0; i < coords.length; i++) {
       const [x, y] = coords[i];
-      await page.mouse.move(x, y);
+      await page.mouse.move(x, y, { steps: 10 });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

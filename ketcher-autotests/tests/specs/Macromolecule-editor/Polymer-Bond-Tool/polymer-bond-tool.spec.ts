@@ -1031,12 +1031,12 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     [600, 350],
     [587, 300],
     [465, 250],
-    [410, 280],
+    [410, 270],
     [410, 380],
   ];
   for (let i = 0; i < coords.length; i++) {
     const [x, y] = coords[i];
-    await page.mouse.move(x, y);
+    await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1067,12 +1067,12 @@ test('Check that magnetic areas (radial rays) exist only for monomers connected 
     [600, 350],
     [587, 300],
     [465, 250],
-    [410, 280],
+    [410, 270],
     [410, 380],
   ];
   for (let i = 0; i < coords.length; i++) {
     const [x, y] = coords[i];
-    await page.mouse.move(x, y);
+    await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1140,7 +1140,7 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
   ];
   for (let i = 0; i < coords.length; i++) {
     const [x, y] = coords[i];
-    await page.mouse.move(x, y);
+    await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1177,7 +1177,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
   ];
   for (let i = 0; i < coords.length; i++) {
     const [x, y] = coords[i];
-    await page.mouse.move(x, y);
+    await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1222,7 +1222,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection (horizontal le
   await page.mouse.up();
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.mouse.move(480, 360);
+  await page.mouse.move(480, 360, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1258,7 +1258,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection (horizontal leng
   await page.mouse.up();
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.mouse.move(500, 560);
+  await page.mouse.move(500, 560, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1266,7 +1266,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection (horizontal leng
   await page.mouse.up();
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.mouse.move(500, 440);
+  await page.mouse.move(500, 440, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1294,7 +1294,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.mouse.move(635, 370);
+  await page.mouse.move(655, 365, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1302,7 +1302,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
   await page.mouse.up();
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.mouse.move(420, 370);
+  await page.mouse.move(380, 365, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1310,7 +1310,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
   await page.mouse.up();
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.mouse.move(485, 395);
+  await page.mouse.move(475, 385, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1338,7 +1338,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.mouse.move(530, 220);
+  await page.mouse.move(530, 220, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1346,7 +1346,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
   await page.mouse.up();
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.mouse.move(500, 560);
+  await page.mouse.move(500, 560, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1354,7 +1354,7 @@ test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bond
   await page.mouse.up();
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.mouse.move(500, 440);
+  await page.mouse.move(500, 440, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

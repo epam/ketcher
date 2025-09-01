@@ -2,6 +2,7 @@ import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor';
+import { MonomerSize } from 'domain/constants';
 
 export type GroupCenterSnapViewParams = {
   isVertical: boolean;
@@ -31,19 +32,27 @@ export class GroupCentersnapView extends TransientView {
       .attr('fill', 'darkgreen')
       .attr('stroke-width', 0);
 
-    if (isVertical) {
+    if (
+      (isVertical &&
+        Math.abs(monomerPair[0].position.y - monomerPair[1].position.y) >
+          MonomerSize * 2) ||
+      Math.abs(monomerPair[0].position.x - monomerPair[1].position.x) <
+        MonomerSize * 2
+    ) {
       const rightMonomerPosition =
-        monomerPair[0].position.y > monomerPair[1].position.y
+        monomerPair[0].position.x > monomerPair[1].position.x
           ? monomerPair[0].position
           : monomerPair[1].position;
       const rightMonomerPositionInPixels =
         Coordinates.modelToCanvas(rightMonomerPosition);
+      const mostRightPointX =
+        Math.abs(rightMonomerPositionInPixels.x) + LINE_LENGTH;
 
       transientLayer
         .append('line')
         .attr('x1', snapPositionInPixels.x)
         .attr('y1', snapPositionInPixels.y)
-        .attr('x2', rightMonomerPositionInPixels.x + LINE_LENGTH)
+        .attr('x2', mostRightPointX)
         .attr('y2', snapPositionInPixels.y)
         .attr('stroke', 'darkgreen')
         .attr('stroke-width', 0.5)
@@ -58,7 +67,7 @@ export class GroupCentersnapView extends TransientView {
           .append('line')
           .attr('x1', monomerPositionInPixels.x)
           .attr('y1', monomerPositionInPixels.y)
-          .attr('x2', rightMonomerPositionInPixels.x + LINE_LENGTH)
+          .attr('x2', mostRightPointX)
           .attr('y2', monomerPositionInPixels.y)
           .attr('stroke', '#365CFF')
           .attr('stroke-width', 0.5)
@@ -66,9 +75,9 @@ export class GroupCentersnapView extends TransientView {
 
         transientLayer
           .append('line')
-          .attr('x1', rightMonomerPositionInPixels.x + LINE_LENGTH)
+          .attr('x1', mostRightPointX)
           .attr('y1', monomerPositionInPixels.y)
-          .attr('x2', rightMonomerPositionInPixels.x + LINE_LENGTH)
+          .attr('x2', mostRightPointX)
           .attr('y2', snapPositionInPixels.y)
           .attr('stroke', '#365CFF')
           .attr('stroke-width', 0.5)

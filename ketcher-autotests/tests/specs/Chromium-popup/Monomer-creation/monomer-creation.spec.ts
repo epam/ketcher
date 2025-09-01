@@ -30,6 +30,7 @@ import {
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { rnaDnaNaturalAnalogues } from 'ketcher-core';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -1162,4 +1163,177 @@ test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () =>
   );
   await createMonomerDialog.naturalAnalogueCombobox.click({ force: true });
   await CreateMonomerDialog(page).discard();
+});
+
+test(`21. Check that if the user changes the monomer type after they've set a natural analogue, the natural analogue field is reset to blank`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the user changes the monomer type after they've
+   *              set a natural analogue, the natural analogue field is reset to blank
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Nucleotide type, valid Symbol and Name and "A" natural analogue
+   *      5. Change type to Base
+   *      6. Validate natural analogue drop-down grid is empty (contains 'Select an analogue')
+   *
+   * Version 3.7
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setName('Temp');
+  await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
+  await createMonomerDialog.selectType(MonomerType.Base);
+  await expect(CreateMonomerDialog(page).naturalAnalogueCombobox).toContainText(
+    'Select an analogue',
+  );
+  await CreateMonomerDialog(page).discard();
+});
+
+const monomersToCreate = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid',
+    name: 'Amino Acid Test monomer',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar',
+    name: 'Sugar Test monomer',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base',
+    name: 'Base Test monomer',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate',
+    name: 'Phosphate Test monomer',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide',
+    name: 'Nucleotide Test monomer',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+];
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`22. Create monomer with ${monomerToCreate.description}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that when the user saves the monomer, the wizard is exited
+     *              (and all appropriate tollbar icons enabled), that monomer is added
+     *              to the library in the appropriate place with all attributes defined
+     *              by the user, and it appears on canvas as an expanded monomer
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with some attributes
+     *      5. Switch to Macromolecules editor
+     *      6. Validate that monomer with ${monomerToCreate.symbol} present on the canvas
+     *      7. Hover mouse over monomer and wait for preview tooltip
+     *      8. Validate that preview tooltip displays correct monomer ${monomerToCreate.name}
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+    if (monomerToCreate.naturalAnalogue) {
+      await createMonomer(page, {
+        type: monomerToCreate.type,
+        symbol: monomerToCreate.symbol,
+        name: monomerToCreate.name,
+        naturalAnalogue: monomerToCreate.naturalAnalogue,
+      });
+    } else {
+      await createMonomer(page, {
+        type: monomerToCreate.type,
+        symbol: monomerToCreate.symbol,
+        name: monomerToCreate.name,
+      });
+    }
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    const monomer = getMonomerLocator(page, {
+      monomerAlias: monomerToCreate.symbol,
+    });
+    expect(await monomer.count()).toEqual(1);
+
+    await dragTo(page, monomer, { x: 450, y: 250 });
+    await monomer.hover({ force: true });
+    await waitForMonomerPreview(page);
+    await expect(page.getByTestId('preview-tooltip-title')).toContainText(
+      monomerToCreate.name,
+    );
+  });
+}
+
+test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, and no monomer is saved`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the user selects Discard/Cancel, the wizard is exited, and no monomer is saved
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Try to create monomer with Nucleotide type, valid Symbol and Name and "A" natural analogue
+   *      5. Press Discard button
+   *      6. Switch to Macromolecules editor
+   *      7. Validate that no monomer is present on the canvas
+   *
+   * Version 3.7
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    eligableMolecules[0].MoleculeSMARTS,
+  );
+  await prepareMoleculeForMonomerCreation(
+    page,
+    eligableMolecules[0].AtomIDsToExclude,
+    eligableMolecules[0].BondIDsToExclude,
+  );
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.setSymbol('Nucleotide');
+  await createMonomerDialog.setName('Temp');
+  await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
+  await CreateMonomerDialog(page).discard();
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  const monomer = getMonomerLocator(page, {});
+  expect(await monomer.count()).toEqual(0);
 });

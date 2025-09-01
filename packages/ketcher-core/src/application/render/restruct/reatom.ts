@@ -595,104 +595,113 @@ class ReAtom extends ReObject {
             stroke: '#f8dc8f',
             'stroke-width': '2px',
           };
-
-          // Add R-number label for leaving group atoms
-          const attachmentIndex = Array.from(
-            assignedAttachmentPoints.entries(),
-          ).findIndex(([, leavingAtomId]) => leavingAtomId === aid);
-
-          if (attachmentIndex !== -1) {
-            const rNumber = attachmentIndex + 1;
-            const rLabel = `R${rNumber}`;
-
-            // Calculate label position near the atom
-            const direction = this.bisectLargestSector(struct);
-            let labelDistance = 15; // Base distance from atom center
-
-            // Adjust distance if atom has a label to avoid overlap
-            if (this.showLabel) {
-              for (let i = 0; i < this.visel.exts.length; ++i) {
-                labelDistance = Math.max(
-                  labelDistance,
-                  util.shiftRayBox(
-                    ps,
-                    direction,
-                    this.visel.exts[i].translate(ps),
-                  ) + 5,
-                );
-              }
-            }
-
-            const labelPos = ps.addScaled(direction, labelDistance);
-
-            // Create clickable R-label
-            const rLabelElement = render.paper
-              .text(labelPos.x, labelPos.y, rLabel)
-              .attr({
-                font: options.font,
-                'font-size': options.fontszsubInPx,
-                fill: '#4da3f8',
-                'font-weight': 'bold',
-                cursor: 'pointer',
-              });
-
-            // Add background circle for better visibility and click area
-            const labelBBox = rLabelElement.getBBox();
-            const bgRadius =
-              Math.max(labelBBox.width, labelBBox.height) / 2 + 3;
-            const background = render.paper
-              .circle(labelPos.x, labelPos.y, bgRadius)
-              .attr({
-                fill: '#fff',
-                stroke: '#4da3f8',
-                'stroke-width': '1px',
-                cursor: 'pointer',
-              });
-
-            // Create a group for the label and background
-            const labelGroup = render.paper.set();
-            labelGroup.push(background, rLabelElement);
-
-            // Store click handler data
-            const clickData = {
-              atomId: aid,
-              attachmentIndex,
-              rNumber,
-              labelGroup,
-            };
-
-            // Add click event handler
-            labelGroup.click((event: any) => {
-              event.stopPropagation();
-              window.dispatchEvent(
-                new CustomEvent('rLabelClick', {
-                  detail: clickData,
-                }),
-              );
-            });
-
-            // Store the label element for cleanup
-            if (!render.monomerCreationRenderState.rNumberLabels) {
-              render.monomerCreationRenderState.rNumberLabels = new Map();
-            }
-            render.monomerCreationRenderState.rNumberLabels.set(
-              aid,
-              labelGroup,
-            );
-
-            restruct.addReObjectPath(
-              LayerMap.data,
-              this.visel,
-              labelGroup,
-              ps,
-              true,
-            );
-          }
         }
 
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        const attachmentIndex = Array.from(
+          assignedAttachmentPoints.entries(),
+        ).findIndex(([, leavingAtomId]) => leavingAtomId === aid);
+
+        if (attachmentIndex !== -1) {
+          const rNumber = attachmentIndex + 1;
+          const rLabel = `R${rNumber}`;
+
+          const direction = this.bisectLargestSector(struct);
+          let labelDistance = 20;
+          for (let i = 0; i < this.visel.exts.length; ++i) {
+            labelDistance = Math.max(
+              labelDistance,
+              util.shiftRayBox(
+                ps,
+                direction,
+                this.visel.exts[i].translate(ps),
+              ) + 5,
+            );
+          }
+          const labelPos = ps.addScaled(direction, labelDistance);
+
+          const isClicked =
+            render.monomerCreationRenderState.clickedRLabelAtomId === aid;
+
+          // Create clickable R-label with proper styling states
+          const rLabelElement = render.paper
+            .text(labelPos.x, labelPos.y, rLabel)
+            .attr({
+              font: options.font,
+              'font-size': options.fontszsubInPx,
+              fill: isClicked ? '#ffffff' : '#333333',
+              'font-weight': '700',
+              cursor: 'pointer',
+            });
+
+          // Add background circle
+          const labelBBox = rLabelElement.getBBox();
+          const bgRadius = Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
+          const background = render.paper
+            .circle(labelPos.x, labelPos.y, bgRadius)
+            .attr({
+              fill: '#167782', // Clicked/hovered background color
+              stroke: 'none',
+              cursor: 'pointer',
+              opacity: isClicked ? 1 : 0, // Show background if clicked
+            });
+
+          // Create a group for the label and background
+          const labelGroup = render.paper.set();
+          labelGroup.push(background, rLabelElement);
+
+          // Add hover handlers
+          labelGroup.hover(
+            // Mouse enter
+            () => {
+              if (!isClicked) {
+                background.attr({ opacity: 1 });
+                rLabelElement.attr({ fill: '#ffffff' });
+              }
+            },
+            // Mouse leave
+            () => {
+              if (!isClicked) {
+                background.attr({ opacity: 0 });
+                rLabelElement.attr({ fill: '#333333' });
+              }
+            },
+          );
+
+          // Store click handler data
+          const clickData = {
+            atomId: aid,
+            attachmentIndex,
+            rNumber,
+            labelGroup,
+          };
+
+          labelGroup.click((event: any) => {
+            event.stopPropagation();
+
+            render.monomerCreationRenderState.clickedRLabelAtomId = aid;
+
+            background.attr({ opacity: 1 });
+            rLabelElement.attr({ fill: '#ffffff' });
+
+            window.dispatchEvent(
+              new CustomEvent('rLabelClick', {
+                detail: clickData,
+              }),
+            );
+          });
+
+          restruct.addReObjectPath(
+            LayerMap.data,
+            this.visel,
+            labelGroup,
+            ps,
+            true,
+          );
         }
       }
     }

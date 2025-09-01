@@ -2,6 +2,8 @@ import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { Editor } from 'src/script/editor';
 import assert from 'assert';
 import { Item } from 'react-contexify';
+import { Icon } from '../../../../../../components';
+import styles from '../ContextMenu.module.less';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;
@@ -23,19 +25,15 @@ const useMakeLeavingGroupAtomMenuItem = ({
 
   assert(editor.monomerCreationState);
 
-  const { assignedAttachmentPoints, potentialAttachmentPoints } =
-    editor.monomerCreationState;
+  const { assignedAttachmentPoints } = editor.monomerCreationState;
 
   const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
 
-  const isMakeLeavingGroupAtomVisible =
-    selectedAtomInMonomerCreationWizard &&
-    Array.from(potentialAttachmentPoints.values()).includes(selectedAtomId);
+  const attachmentPointIsAssigned = Array.from(
+    assignedAttachmentPoints.values(),
+  ).includes(selectedAtomId);
 
-  const isMakeLeavingGroupAtomDisabled =
-    selectedAtomInMonomerCreationWizard &&
-    (attachmentPointsLimitReached ||
-      Array.from(assignedAttachmentPoints.values()).includes(selectedAtomId));
+  const isMakeLeavingGroupAtomDisabled = attachmentPointsLimitReached;
 
   const handleMakeLeavingGroupAtomClick = () => {
     assert(selectedAtomId !== undefined);
@@ -43,16 +41,27 @@ const useMakeLeavingGroupAtomMenuItem = ({
     editor.assignLeavingGroupAtom(selectedAtomId);
   };
 
-  return isMakeLeavingGroupAtomVisible ? (
+  return attachmentPointIsAssigned ? (
+    <>
+      <Item>
+        <Icon name="editMenu" className={styles.icon} />
+        Edit connection point
+      </Item>
+      <Item>
+        <Icon name="deleteMenu" className={styles.icon} />
+        Remove assignment
+      </Item>
+    </>
+  ) : (
     <Item
       {...props}
-      data-testid="Make a leaving group atom"
+      data-testid="Assign as leaving group"
       onClick={handleMakeLeavingGroupAtomClick}
       disabled={isMakeLeavingGroupAtomDisabled}
     >
-      Make a leaving group atom
+      Assign as leaving group
     </Item>
-  ) : null;
+  );
 };
 
 export default useMakeLeavingGroupAtomMenuItem;

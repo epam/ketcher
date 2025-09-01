@@ -31,7 +31,7 @@ import { notifyRenderComplete } from './notifyRenderComplete';
 export type MonomerCreationRenderState = {
   assignedAttachmentPoints: Map<number, number>;
   potentialAttachmentPoints: Map<number, number>;
-  rNumberLabels?: Map<number, any>; // Maps attachment atom ID to rendered R-number label element
+  clickedRLabelAtomId: number | null;
 } | null;
 
 export class Render {

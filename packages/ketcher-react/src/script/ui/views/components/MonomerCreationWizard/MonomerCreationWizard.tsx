@@ -15,12 +15,14 @@ import NaturalAnaloguePicker, {
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import {
+  closeAttachmentPointEditDialog,
   closeMonomerCreationWizard,
+  reassignAttachmentPoint,
   submitMonomerCreation,
 } from '../../../state/editor/actions/monomerCreation';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
-import RLabelEditPopup from '../RLabelEditPopup/RLabelEditPopup';
+import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
   WizardAction,
   WizardFormFieldId,
@@ -35,6 +37,7 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
+import { closeModal } from 'ketcher-macromolecules/src/state/modal';
 
 const initialWizardState: WizardState = {
   values: {
@@ -285,21 +288,15 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
-    setRLabelPopup(null); // Clear popup when wizard resets
+    setRLabelPopup(null);
   };
 
-  // Handle R-label popup actions
   const handleRLabelReassign = (atomId: number, newRNumber: number) => {
-    const editor = CoreEditor.provideEditorInstance();
-    editor.reassignAttachmentPoint(atomId, newRNumber);
-  };
-
-  const handleRLabelDelete = (atomId: number) => {
-    const editor = CoreEditor.provideEditorInstance();
-    editor.removeAttachmentPoint(atomId);
+    reduxDispatch(reassignAttachmentPoint(atomId, newRNumber));
   };
 
   const handleRLabelPopupClose = () => {
+    reduxDispatch(closeAttachmentPointEditDialog());
     setRLabelPopup(null);
   };
 
@@ -456,13 +453,12 @@ const MonomerCreationWizard = () => {
         </div>
 
         {rLabelPopup && (
-          <RLabelEditPopup
+          <AttachmentPointEditPopup
             atomId={rLabelPopup.atomId}
             currentRNumber={rLabelPopup.currentRNumber}
             maxRNumber={assignedAttachmentPoints.size}
             position={rLabelPopup.position}
             onReassign={handleRLabelReassign}
-            onDelete={handleRLabelDelete}
             onClose={handleRLabelPopupClose}
           />
         )}

@@ -175,7 +175,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
-  const disableForMonomerCreation = editor.isMonomerCreationWizardActive;
+  if (MakeLeavingGroupAtomMenuItem !== null) {
+    return MakeLeavingGroupAtomMenuItem;
+  }
 
   return (
     <>
@@ -187,7 +189,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
-        disabled={disableForMonomerCreation}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
@@ -209,7 +210,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         label="Query properties"
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
-        disabled={disableForMonomerCreation}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
@@ -232,7 +232,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
           );
         })}
       </Submenu>
-      {MakeLeavingGroupAtomMenuItem}
       <HighlightMenu onHighlight={highlightAtomWithColor} />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />

@@ -1091,16 +1091,6 @@ class Editor implements KetcherEditor {
       atomId,
     );
 
-    // Remove the R-label if it exists
-    if (this.render.monomerCreationRenderState!.rNumberLabels) {
-      const labelGroup =
-        this.render.monomerCreationRenderState!.rNumberLabels.get(atomId);
-      if (labelGroup) {
-        labelGroup.remove();
-        this.render.monomerCreationRenderState!.rNumberLabels.delete(atomId);
-      }
-    }
-
     this.render.update(true);
   }
 

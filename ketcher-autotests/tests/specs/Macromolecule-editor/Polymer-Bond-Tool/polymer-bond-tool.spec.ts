@@ -1294,7 +1294,7 @@ test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bo
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.mouse.move(655, 365, { steps: 10 });
+  await page.mouse.move(650, 360, { steps: 10 });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

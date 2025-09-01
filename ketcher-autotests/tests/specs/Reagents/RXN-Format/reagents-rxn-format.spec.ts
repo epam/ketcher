@@ -146,7 +146,7 @@ test.describe('Reagents RXN format', () => {
       */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+      await FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
@@ -161,7 +161,7 @@ test.describe('Reagents RXN format', () => {
       */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
+      await FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

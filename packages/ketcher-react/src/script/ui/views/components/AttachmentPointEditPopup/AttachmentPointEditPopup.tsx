@@ -24,8 +24,8 @@ const attachmentPointNameOptions = Array.from({ length: 8 }).map((_, i) => ({
 
 const attachmentPointAtomOptions: Array<Option> = [
   { value: 'H', label: 'H' },
-  { value: 'OH', label: 'OH' },
-  { value: 'NH2', label: 'NH2' },
+  { value: 'O', label: 'OH' },
+  { value: 'N', label: 'NH2' },
   { value: 'Cl', label: 'Cl' },
   { value: 'F', label: 'F' },
 ];
@@ -41,9 +41,44 @@ const AttachmentPointEditPopup = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const popup = popupRef.current;
-      if (popup && !popup.contains(event.target as Node)) {
-        onClose();
+      const target = event.target as Node;
+
+      if (!popup || popup.contains(target)) {
+        return; // Click is inside the popup
       }
+
+      // Check if the click is on a MUI Select dropdown or its options
+      // MUI Select typically uses classes like 'MuiPaper-root', 'MuiList-root', 'MuiMenuItem-root'
+      const clickedElement = event.target as Element;
+
+      // Check if click is on MUI Select dropdown elements
+      if (
+        clickedElement.closest &&
+        (clickedElement.closest('[role="listbox"]') ||
+          clickedElement.closest('[role="option"]') ||
+          clickedElement.closest('.MuiPaper-root') ||
+          clickedElement.closest('.MuiList-root') ||
+          clickedElement.closest('.MuiMenuItem-root') ||
+          clickedElement.closest('.MuiSelect-root') ||
+          clickedElement.closest('[data-testid*="select"]'))
+      ) {
+        return;
+      }
+
+      // // Check if any select is currently open by looking for open dropdowns
+      // const openDropdowns = document.querySelectorAll(
+      //   '[role="listbox"], .MuiPaper-root[role="presentation"]',
+      // );
+      // if (openDropdowns.length > 0) {
+      //   // There's an open dropdown, check if the click is related to it
+      //   for (const dropdown of openDropdowns) {
+      //     if (dropdown.contains(target)) {
+      //       return; // Click is inside an open dropdown
+      //     }
+      //   }
+      // }
+
+      onClose();
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -101,12 +136,12 @@ const AttachmentPointEditPopup = ({
         <Select
           className={styles.select}
           options={attachmentPointNameOptions}
-          value={currentNameOption?.label}
+          value={currentNameOption?.value}
           onChange={(value) => handleNameChange(value)}
         />
         <Select
           options={attachmentPointAtomOptions}
-          value={currentAtomOption?.label}
+          value={currentAtomOption?.value}
           onChange={(value) => handleAtomChange(value)}
         />
       </div>

@@ -577,8 +577,8 @@ class ReAtom extends ReObject {
       }
     }
 
-    if (render.monomerCreationRenderState) {
-      const { assignedAttachmentPoints } = render.monomerCreationRenderState;
+    if (render.monomerCreationState) {
+      const { assignedAttachmentPoints } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -626,7 +626,7 @@ class ReAtom extends ReObject {
           const labelPos = ps.addScaled(direction, labelDistance);
 
           const isClicked =
-            render.monomerCreationRenderState.clickedRLabelAtomId === aid;
+            render.monomerCreationState.clickedRLabelAtomId === aid;
 
           // Create clickable R-label with proper styling states
           const rLabelElement = render.paper
@@ -684,7 +684,7 @@ class ReAtom extends ReObject {
 
             event.stopPropagation();
 
-            render.monomerCreationRenderState.clickedRLabelAtomId = aid;
+            render.monomerCreationState.clickedRLabelAtomId = aid;
 
             background.attr({ opacity: 1 });
             rLabelElement.attr({ fill: '#ffffff' });

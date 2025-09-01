@@ -28,10 +28,11 @@ import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 
-export type MonomerCreationRenderState = {
+export type MonomerCreationState = {
+  // Attachment atom id to leaving atom id
   assignedAttachmentPoints: Map<number, number>;
   potentialAttachmentPoints: Map<number, number>;
-  clickedRLabelAtomId: number | null;
+  clickedRLabelAtomId?: number;
 } | null;
 
 export class Render {
@@ -48,7 +49,7 @@ export class Render {
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationRenderState: MonomerCreationRenderState = null;
+  private _monomerCreationState: MonomerCreationState = null;
 
   constructor(
     clientArea: HTMLElement,
@@ -272,11 +273,11 @@ export class Render {
     }
   }
 
-  get monomerCreationRenderState() {
-    return this._monomerCreationRenderState;
+  get monomerCreationState() {
+    return this._monomerCreationState;
   }
 
-  set monomerCreationRenderState(state: MonomerCreationRenderState) {
-    this._monomerCreationRenderState = state;
+  set monomerCreationState(state: MonomerCreationState) {
+    this._monomerCreationState = state;
   }
 }

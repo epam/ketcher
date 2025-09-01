@@ -1006,6 +1006,104 @@ class Editor implements KetcherEditor {
     this.update(action);
   }
 
+  reassignAttachmentPoint(atomId: number, newRNumber: number) {
+    if (!this._monomerCreationState) {
+      return;
+    }
+
+    const { assignedAttachmentPoints } = this._monomerCreationState;
+
+    // Find the attachment point entry for this atom
+    const attachmentPointEntries = Array.from(
+      assignedAttachmentPoints.entries(),
+    );
+    const currentEntryIndex = attachmentPointEntries.findIndex(
+      ([, leavingAtomId]) => leavingAtomId === atomId,
+    );
+
+    if (currentEntryIndex === -1) {
+      return;
+    }
+
+    const [attachmentAtomId, leavingAtomId] =
+      attachmentPointEntries[currentEntryIndex];
+    const newIndex = newRNumber - 1;
+
+    // Check if the new position is already occupied
+    if (
+      newIndex < attachmentPointEntries.length &&
+      newIndex !== currentEntryIndex
+    ) {
+      const targetEntry = attachmentPointEntries[newIndex];
+      // Swap the entries
+      attachmentPointEntries[currentEntryIndex] = targetEntry;
+      attachmentPointEntries[newIndex] = [attachmentAtomId, leavingAtomId];
+
+      // Recreate the Map with the new order
+      const newAssignedAttachmentPoints = new Map();
+      attachmentPointEntries.forEach(([attachmentAtomId, leavingAtomId]) => {
+        newAssignedAttachmentPoints.set(attachmentAtomId, leavingAtomId);
+      });
+
+      this._monomerCreationState.assignedAttachmentPoints =
+        newAssignedAttachmentPoints;
+      this.render.monomerCreationRenderState!.assignedAttachmentPoints =
+        newAssignedAttachmentPoints;
+    }
+
+    this.render.update(true);
+  }
+
+  removeAttachmentPoint(atomId: number) {
+    if (!this._monomerCreationState) {
+      return;
+    }
+
+    const { assignedAttachmentPoints, potentialAttachmentPoints } =
+      this._monomerCreationState;
+
+    // Find the attachment point entry for this atom
+    let attachmentAtomIdToRemove: number | undefined;
+    for (const [
+      attachmentAtomId,
+      leavingAtomId,
+    ] of assignedAttachmentPoints.entries()) {
+      if (leavingAtomId === atomId) {
+        attachmentAtomIdToRemove = attachmentAtomId;
+        break;
+      }
+    }
+
+    if (attachmentAtomIdToRemove === undefined) {
+      return;
+    }
+
+    // Remove from assigned and add back to potential
+    assignedAttachmentPoints.delete(attachmentAtomIdToRemove);
+    potentialAttachmentPoints.set(attachmentAtomIdToRemove, atomId);
+
+    // Update render state
+    this.render.monomerCreationRenderState!.assignedAttachmentPoints.delete(
+      attachmentAtomIdToRemove,
+    );
+    this.render.monomerCreationRenderState!.potentialAttachmentPoints.set(
+      attachmentAtomIdToRemove,
+      atomId,
+    );
+
+    // Remove the R-label if it exists
+    if (this.render.monomerCreationRenderState!.rNumberLabels) {
+      const labelGroup =
+        this.render.monomerCreationRenderState!.rNumberLabels.get(atomId);
+      if (labelGroup) {
+        labelGroup.remove();
+        this.render.monomerCreationRenderState!.rNumberLabels.delete(atomId);
+      }
+    }
+
+    this.render.update(true);
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection; // eslint-disable-line

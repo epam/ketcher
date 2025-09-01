@@ -7,7 +7,7 @@ import {
   KetMonomerClass,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useEffect, useMemo, useReducer } from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -20,6 +20,7 @@ import {
 } from '../../../state/editor/actions/monomerCreation';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
+import RLabelEditPopup from '../RLabelEditPopup/RLabelEditPopup';
 import {
   WizardAction,
   WizardFormFieldId,
@@ -188,6 +189,13 @@ const MonomerCreationWizard = () => {
     initialWizardState,
   );
 
+  // R-label popup state
+  const [rLabelPopup, setRLabelPopup] = useState<{
+    atomId: number;
+    currentRNumber: number;
+    position: { x: number; y: number };
+  } | null>(null);
+
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
 
@@ -210,6 +218,35 @@ const MonomerCreationWizard = () => {
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
       );
+    };
+  }, []);
+
+  useEffect(() => {
+    const rLabelClickEventListener = (event: CustomEvent) => {
+      const clickData = event.detail;
+      const { atomId, rNumber, labelGroup } = clickData;
+
+      // Get the position of the label on screen
+      // const labelBBox = labelGroup.getBBox();
+      // const canvasRect = event.target.getBoundingClientRect();
+
+      // Convert canvas coordinates to screen coordinates
+      // const position = {
+      //   x: canvasRect.left + labelBBox.x + labelBBox.width / 2,
+      //   y: canvasRect.top + labelBBox.y - 10, // Show popup slightly above the label
+      // };
+
+      setRLabelPopup({
+        atomId,
+        currentRNumber: rNumber,
+        // position,
+      });
+    };
+
+    window.addEventListener('rLabelClick', rLabelClickEventListener);
+
+    return () => {
+      window.removeEventListener('rLabelClick', rLabelClickEventListener);
     };
   }, []);
 
@@ -248,6 +285,22 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
+    setRLabelPopup(null); // Clear popup when wizard resets
+  };
+
+  // Handle R-label popup actions
+  const handleRLabelReassign = (atomId: number, newRNumber: number) => {
+    const editor = CoreEditor.provideEditorInstance();
+    editor.reassignAttachmentPoint(atomId, newRNumber);
+  };
+
+  const handleRLabelDelete = (atomId: number) => {
+    const editor = CoreEditor.provideEditorInstance();
+    editor.removeAttachmentPoint(atomId);
+  };
+
+  const handleRLabelPopupClose = () => {
+    setRLabelPopup(null);
   };
 
   const handleDiscard = () => {
@@ -401,6 +454,18 @@ const MonomerCreationWizard = () => {
             </div>
           </div>
         </div>
+
+        {rLabelPopup && (
+          <RLabelEditPopup
+            atomId={rLabelPopup.atomId}
+            currentRNumber={rLabelPopup.currentRNumber}
+            maxRNumber={assignedAttachmentPoints.size}
+            position={rLabelPopup.position}
+            onReassign={handleRLabelReassign}
+            onDelete={handleRLabelDelete}
+            onClose={handleRLabelPopupClose}
+          />
+        )}
 
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>

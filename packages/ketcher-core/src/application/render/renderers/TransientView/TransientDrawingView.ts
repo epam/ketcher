@@ -17,6 +17,7 @@ import {
 } from './LineLengthHighlightView';
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
 import { MonomerItemType } from 'domain/types';
+import { SelectionView, SelectionViewParams } from './SelectionView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -168,6 +169,17 @@ export class TransientDrawingView {
 
   public hideAutochainPreview() {
     this.removeView(AutochainPreviewView.viewName);
+  }
+
+  public showSelection(params: SelectionViewParams) {
+    this.addView(SelectionView.viewName, {
+      show: SelectionView.show,
+      params,
+    });
+  }
+
+  public hideSelection() {
+    this.removeView(SelectionView.viewName);
   }
 
   public clear() {

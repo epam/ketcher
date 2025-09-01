@@ -49,6 +49,7 @@ import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import { Coordinates } from 'application/editor';
 
 interface ElemAttr {
   text: string;
@@ -672,15 +673,15 @@ class ReAtom extends ReObject {
             },
           );
 
-          // Store click handler data
-          const clickData = {
-            atomId: aid,
-            attachmentIndex,
-            rNumber,
-            labelGroup,
-          };
-
           labelGroup.click((event: any) => {
+            // Store click handler data
+            const clickData = {
+              atomId: aid,
+              atomLabel: this.a.label,
+              rNumber,
+              position: Coordinates.modelToView(this.a.pp),
+            };
+
             event.stopPropagation();
 
             render.monomerCreationRenderState.clickedRLabelAtomId = aid;

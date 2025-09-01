@@ -4,6 +4,9 @@ import Editor from '../Editor';
 class CreateMonomerTool implements Tool {
   constructor(private editor: Editor) {
     this.editor.openMonomerCreationWizard();
+    setTimeout(() => {
+      this.editor.tool('select');
+    }, 0);
   }
 
   mousemove() {

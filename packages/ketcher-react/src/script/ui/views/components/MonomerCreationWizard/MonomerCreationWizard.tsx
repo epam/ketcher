@@ -2,8 +2,10 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import {
+  AttachmentPointName,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
+  ketcherProvider,
   KetMonomerClass,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -12,18 +14,13 @@ import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
-import {
-  closeAttachmentPointEditDialog,
-  closeMonomerCreationWizard,
-  reassignAttachmentPoint,
-  submitMonomerCreation,
-} from '../../../state/editor/actions/monomerCreation';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
+  AttachmentPointEditPopupData,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
@@ -37,7 +34,10 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
-import { closeModal } from 'ketcher-macromolecules/src/state/modal';
+import { useAppContext } from '../../../../../hooks';
+import Editor from '../../../../editor';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
+import { createPortal } from 'react-dom';
 
 const initialWizardState: WizardState = {
   values: {
@@ -186,18 +186,17 @@ const validateInputs = (values: WizardValues) => {
 };
 
 const MonomerCreationWizard = () => {
-  const reduxDispatch = useDispatch();
+  const { ketcherId } = useAppContext();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const editor = ketcher.editor as Editor;
+
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
     initialWizardState,
   );
 
-  // R-label popup state
-  const [rLabelPopup, setRLabelPopup] = useState<{
-    atomId: number;
-    currentRNumber: number;
-    position: { x: number; y: number };
-  } | null>(null);
+  const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
+    useState<AttachmentPointEditPopupData | null>(null);
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
@@ -225,24 +224,15 @@ const MonomerCreationWizard = () => {
   }, []);
 
   useEffect(() => {
-    const rLabelClickEventListener = (event: CustomEvent) => {
-      const clickData = event.detail;
-      const { atomId, rNumber, labelGroup } = clickData;
+    const rLabelClickEventListener = (event: Event) => {
+      const clickData = (event as CustomEvent).detail;
+      const { atomId, atomLabel, rNumber, position } = clickData;
 
-      // Get the position of the label on screen
-      // const labelBBox = labelGroup.getBBox();
-      // const canvasRect = event.target.getBoundingClientRect();
-
-      // Convert canvas coordinates to screen coordinates
-      // const position = {
-      //   x: canvasRect.left + labelBBox.x + labelBBox.width / 2,
-      //   y: canvasRect.top + labelBBox.y - 10, // Show popup slightly above the label
-      // };
-
-      setRLabelPopup({
+      setAttachmentPointEditPopupData({
         atomId,
-        currentRNumber: rNumber,
-        // position,
+        atomLabel,
+        attachmentPointName: `R${rNumber}` as AttachmentPointName,
+        position,
       });
     };
 
@@ -288,20 +278,29 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
-    setRLabelPopup(null);
+    setAttachmentPointEditPopupData(null);
   };
 
-  const handleRLabelReassign = (atomId: number, newRNumber: number) => {
-    reduxDispatch(reassignAttachmentPoint(atomId, newRNumber));
+  const handleAttachmentPointNameChange = (
+    atomId: number,
+    attachmentPointName: AttachmentPointName,
+  ) => {
+    editor.reassignAttachmentPoint(atomId, attachmentPointName);
   };
 
-  const handleRLabelPopupClose = () => {
-    reduxDispatch(closeAttachmentPointEditDialog());
-    setRLabelPopup(null);
+  const handleAttachmentPointAtomChange = (
+    atomId: number,
+    atomLabel: string,
+  ) => {
+    editor.reassignAttachmentPointAtom(atomId, atomLabel);
+  };
+
+  const handleAttachmentPointEditPopupClose = () => {
+    setAttachmentPointEditPopupData(null);
   };
 
   const handleDiscard = () => {
-    reduxDispatch(closeMonomerCreationWizard());
+    editor.closeMonomerCreationWizard();
     resetWizard();
   };
 
@@ -315,14 +314,13 @@ const MonomerCreationWizard = () => {
       return;
     }
 
-    reduxDispatch(
-      submitMonomerCreation({
-        type,
-        symbol,
-        name,
-        naturalAnalogue,
-      }),
-    );
+    editor.saveNewMonomer({
+      type,
+      symbol,
+      name,
+      naturalAnalogue,
+    });
+
     resetWizard();
   };
 
@@ -333,6 +331,10 @@ const MonomerCreationWizard = () => {
   }
 
   const { assignedAttachmentPoints } = monomerCreationState;
+
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  );
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -452,16 +454,16 @@ const MonomerCreationWizard = () => {
           </div>
         </div>
 
-        {rLabelPopup && (
-          <AttachmentPointEditPopup
-            atomId={rLabelPopup.atomId}
-            currentRNumber={rLabelPopup.currentRNumber}
-            maxRNumber={assignedAttachmentPoints.size}
-            position={rLabelPopup.position}
-            onReassign={handleRLabelReassign}
-            onClose={handleRLabelPopupClose}
-          />
-        )}
+        {ketcherEditorRootElement &&
+          createPortal(
+            <AttachmentPointEditPopup
+              data={attachmentPointEditPopupData}
+              onNameChange={handleAttachmentPointNameChange}
+              onAtomChange={handleAttachmentPointAtomChange}
+              onClose={handleAttachmentPointEditPopupClose}
+            />,
+            ketcherEditorRootElement,
+          )}
 
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>

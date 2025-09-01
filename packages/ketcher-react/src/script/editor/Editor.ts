@@ -50,6 +50,7 @@ import {
   genericsList,
   fillNaturalAnalogueForPhosphateAndSugar,
   normalizeMonomerAtomsPositions,
+  AttachmentPointName,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -835,6 +836,12 @@ class Editor implements KetcherEditor {
 
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
+    const leavingAtom = this.render.ctab.molecule.atoms.get(leavingAtomId);
+
+    assert(leavingAtom);
+
+    leavingAtom.label = 'H';
+
     const updatedAssignedAttachmentPoints = new Map(
       this.monomerCreationState.assignedAttachmentPoints,
     );
@@ -1006,7 +1013,12 @@ class Editor implements KetcherEditor {
     this.update(action);
   }
 
-  reassignAttachmentPoint(atomId: number, newRNumber: number) {
+  reassignAttachmentPointAtom(atomId: number, atomLabel: string) {}
+
+  reassignAttachmentPoint(
+    atomId: number,
+    attachmentPointName: AttachmentPointName,
+  ) {
     if (!this._monomerCreationState) {
       return;
     }
@@ -1055,9 +1067,8 @@ class Editor implements KetcherEditor {
   }
 
   removeAttachmentPoint(atomId: number) {
-    if (!this._monomerCreationState) {
-      return;
-    }
+    assert(this._monomerCreationState);
+    assert(this.render.monomerCreationRenderState);
 
     const { assignedAttachmentPoints, potentialAttachmentPoints } =
       this._monomerCreationState;
@@ -1083,10 +1094,10 @@ class Editor implements KetcherEditor {
     potentialAttachmentPoints.set(attachmentAtomIdToRemove, atomId);
 
     // Update render state
-    this.render.monomerCreationRenderState!.assignedAttachmentPoints.delete(
+    this.render.monomerCreationRenderState.assignedAttachmentPoints.delete(
       attachmentAtomIdToRemove,
     );
-    this.render.monomerCreationRenderState!.potentialAttachmentPoints.set(
+    this.render.monomerCreationRenderState.potentialAttachmentPoints.set(
       attachmentAtomIdToRemove,
       atomId,
     );

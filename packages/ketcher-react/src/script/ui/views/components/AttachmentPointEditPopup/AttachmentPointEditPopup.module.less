@@ -2,7 +2,7 @@
 
 .popup {
   position: absolute;
-  min-width: 132px;
+  width: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -15,108 +15,17 @@
 
 .title {
   margin: 0;
-  color: #333;
+  font-weight: 400;
+  font-size: 12px;
+  color: @color-text-primary;
 }
 
-.closeButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+.selectsWrapper {
+  width: 116px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    background: #e9ecef;
-  }
-  
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-.content {
-  padding: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
   gap: 8px;
-}
-
-.label {
-  font-weight: 500;
-  color: #555;
-  font-size: 13px;
 }
 
 .select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  font-size: 14px;
-  cursor: pointer;
-  
-  &:focus {
-    outline: none;
-    border-color: #4da3f8;
-    box-shadow: 0 0 0 2px rgba(77, 163, 248, 0.2);
-  }
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border-top: 1px solid #e0e0e0;
-  gap: 8px;
-}
-
-.deleteButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  
-  &:hover {
-    background: #c82333;
-  }
-  
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-}
-
-.applyButton {
-  padding: 8px 16px;
-  background: #4da3f8;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  
-  &:hover:not(:disabled) {
-    background: #3a8fe0;
-  }
-  
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
+  width: 50%;
 }

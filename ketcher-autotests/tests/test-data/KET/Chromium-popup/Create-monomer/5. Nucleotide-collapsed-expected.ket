@@ -1,0 +1,121 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            },
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer0",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "moleculeId": "mol0",
+                    "atomId": "0"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Nucleotide___Nucleotide Test monomer"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    8.279096881136981,
+                    -7.415995561015587,
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 9.585937657883004,
+            "y": 6.368750002448907,
+            "z": 0
+        }
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 9.152924783493198,
+            "y": -7.618750016125615
+        },
+        "alias": "Nucleotide",
+        "templateId": "Nucleotide___Nucleotide Test monomer",
+        "expanded": false
+    },
+    "monomerTemplate-Nucleotide___Nucleotide Test monomer": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.866,
+                    0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            }
+        ],
+        "class": "RNA",
+        "classHELM": "RNA",
+        "id": "Nucleotide___Nucleotide Test monomer",
+        "fullName": "Nucleotide Test monomer",
+        "alias": "Nucleotide",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    }
+}

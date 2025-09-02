@@ -51,6 +51,8 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -1769,5 +1771,71 @@ for (const monomerToCreate of monomersToCreate) {
       `CML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cml`,
     );
     await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`32. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to SVG in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved SVG in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to SVG and validate the result
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifySVGExport(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`33. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to PNG in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved PNG in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Save it to PNG and validate the result
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifyPNGExport(page);
   });
 }

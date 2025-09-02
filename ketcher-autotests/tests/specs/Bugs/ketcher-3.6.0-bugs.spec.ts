@@ -488,7 +488,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'PEPTIDE1{C}$$$V2.0',
+      'PEPTIDE1{C}$$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
@@ -514,7 +514,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'PEPTIDE1{C}$$$V2.0',
+      'PEPTIDE1{C}$$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(

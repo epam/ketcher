@@ -1,7 +1,5 @@
 import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
-import { AttachmentPointName } from 'domain/types';
-import { Vec2 } from 'domain/entities';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass;
@@ -79,10 +77,3 @@ export type WizardAction =
   | {
       type: 'ResetErrors';
     };
-
-export type AttachmentPointEditPopupData = {
-  atomId: number;
-  atomLabel: string;
-  attachmentPointName: AttachmentPointName;
-  position: Vec2;
-};

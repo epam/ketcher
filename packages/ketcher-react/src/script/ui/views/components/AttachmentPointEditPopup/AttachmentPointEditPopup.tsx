@@ -2,16 +2,16 @@ import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { AttachmentPointName } from 'domain/types';
 import Select, { Option } from '../../../component/form/Select';
-import { AttachmentPointEditPopupData } from '../MonomerCreationWizard/MonomerCreationWizard.types';
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
+import { AttachmentPointClickData } from 'ketcher-core';
 
 type Props = {
-  data: AttachmentPointEditPopupData | null;
+  data: AttachmentPointClickData | null;
   onNameChange: (
-    atomId: number,
-    attachmentPointName: AttachmentPointName,
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
   ) => void;
   onAtomChange: (atomId: number, atomLabel: string) => void;
   onClose: VoidFunction;
@@ -104,7 +104,7 @@ const AttachmentPointEditPopup = ({
 
   const handleNameChange = (value: string) => {
     if (value !== attachmentPointName) {
-      onNameChange(atomId, value as AttachmentPointName);
+      onNameChange(attachmentPointName, value as AttachmentPointName);
     }
 
     onClose();

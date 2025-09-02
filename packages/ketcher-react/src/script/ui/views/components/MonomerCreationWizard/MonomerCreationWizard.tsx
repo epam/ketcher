@@ -2,11 +2,13 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import {
+  AttachmentPointClickData,
   AttachmentPointName,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   ketcherProvider,
   KetMonomerClass,
+  MonomerCreationAttachmentPointClickEvent,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
@@ -20,7 +22,6 @@ import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
-  AttachmentPointEditPopupData,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
@@ -38,6 +39,8 @@ import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
+import assert from 'assert';
+import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
 
 const initialWizardState: WizardState = {
   values: {
@@ -196,7 +199,7 @@ const MonomerCreationWizard = () => {
   );
 
   const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
-    useState<AttachmentPointEditPopupData | null>(null);
+    useState<AttachmentPointClickData | null>(null);
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
@@ -224,22 +227,28 @@ const MonomerCreationWizard = () => {
   }, []);
 
   useEffect(() => {
-    const rLabelClickEventListener = (event: Event) => {
-      const clickData = (event as CustomEvent).detail;
-      const { atomId, atomLabel, rNumber, position } = clickData;
+    const attachmentPointClickHandler = (event: Event) => {
+      const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
+      const { atomId, atomLabel, attachmentPointName, position } = clickData;
 
       setAttachmentPointEditPopupData({
         atomId,
         atomLabel,
-        attachmentPointName: `R${rNumber}` as AttachmentPointName,
+        attachmentPointName,
         position,
       });
     };
 
-    window.addEventListener('rLabelClick', rLabelClickEventListener);
+    window.addEventListener(
+      MonomerCreationAttachmentPointClickEvent,
+      attachmentPointClickHandler,
+    );
 
     return () => {
-      window.removeEventListener('rLabelClick', rLabelClickEventListener);
+      window.removeEventListener(
+        MonomerCreationAttachmentPointClickEvent,
+        attachmentPointClickHandler,
+      );
     };
   }, []);
 
@@ -282,10 +291,10 @@ const MonomerCreationWizard = () => {
   };
 
   const handleAttachmentPointNameChange = (
-    atomId: number,
-    attachmentPointName: AttachmentPointName,
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(atomId, attachmentPointName);
+    editor.reassignAttachmentPoint(currentName, newName);
   };
 
   const handleAttachmentPointAtomChange = (
@@ -331,6 +340,18 @@ const MonomerCreationWizard = () => {
   }
 
   const { assignedAttachmentPoints } = monomerCreationState;
+  const attachmentPointsData = Array.from(
+    assignedAttachmentPoints.entries(),
+  ).map(([attachmentPointName, [, leavingAtomId]]) => {
+    const atom = editor.struct().atoms.get(leavingAtomId);
+
+    assert(atom);
+
+    return {
+      name: attachmentPointName,
+      atomLabel: atom.label,
+    };
+  });
 
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_ROOT_NODE_CSS_SELECTOR,
@@ -434,22 +455,9 @@ const MonomerCreationWizard = () => {
           <div className={styles.attributesFields}>
             <p className={styles.attachmentPointsTitle}>Attachment points</p>
             <div className={styles.attachmentPoints}>
-              {[...assignedAttachmentPoints.entries()].map(
-                ([attachmentAtomId, leavingAtomId], index) => (
-                  <div
-                    className={styles.attachmentPoint}
-                    key={`${attachmentAtomId}-${leavingAtomId}`}
-                  >
-                    <p className={styles.attachmentPointText}>
-                      <span className={styles.attachmentPointIndex}>
-                        R{index + 1}
-                      </span>
-                      &nbsp;(H)
-                    </p>
-                    <Icon name="close" className={styles.attachmentPointIcon} />
-                  </div>
-                ),
-              )}
+              {attachmentPointsData.map(({ name, atomLabel }) => (
+                <AttachmentPoint name={name} atomLabel={atomLabel} key={name} />
+              ))}
             </div>
           </div>
         </div>

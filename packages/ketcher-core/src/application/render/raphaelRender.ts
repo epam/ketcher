@@ -27,12 +27,12 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
+import { AttachmentPointName } from 'domain/types';
 
 export type MonomerCreationState = {
-  // Attachment atom id to leaving atom id
-  assignedAttachmentPoints: Map<number, number>;
+  // R-label mapping to [attachment atom id, leaving atom id]
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   potentialAttachmentPoints: Map<number, number>;
-  clickedRLabelAtomId?: number;
 } | null;
 
 export class Render {

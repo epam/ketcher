@@ -1,3 +1,8 @@
+import {
+  AttachmentPointClickData,
+  Coordinates,
+  MonomerCreationAttachmentPointClickEvent,
+} from 'ketcher-core';
 import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { Editor } from 'src/script/editor';
 import assert from 'assert';
@@ -32,9 +37,15 @@ const useMakeLeavingGroupAtomMenuItem = ({
     potentialAttachmentPoints.values(),
   ).includes(selectedAtomId);
 
-  const isAtomAssignedAttachmentPoint = Array.from(
-    assignedAttachmentPoints.values(),
-  ).includes(selectedAtomId);
+  const attachmentPointName = Array.from(assignedAttachmentPoints.keys()).find(
+    (key) => {
+      const atomsPair = assignedAttachmentPoints.get(key);
+      assert(atomsPair);
+      return atomsPair.includes(selectedAtomId);
+    },
+  );
+
+  const isAtomAssignedAttachmentPoint = Boolean(attachmentPointName);
 
   if (!isAtomPotentialAttachmentPoint && !isAtomAssignedAttachmentPoint) {
     return null;
@@ -48,26 +59,63 @@ const useMakeLeavingGroupAtomMenuItem = ({
     editor.assignLeavingGroupAtom(selectedAtomId);
   };
 
+  const handleEditClick = () => {
+    const atom = editor.struct().atoms.get(selectedAtomId);
+
+    assert(atom);
+    assert(attachmentPointName);
+
+    const attachmentPointEditData: AttachmentPointClickData = {
+      atomId: selectedAtomId,
+      atomLabel: atom.label,
+      attachmentPointName,
+      position: Coordinates.modelToView(atom.pp),
+    };
+
+    window.dispatchEvent(
+      new CustomEvent<AttachmentPointClickData>(
+        MonomerCreationAttachmentPointClickEvent,
+        {
+          detail: attachmentPointEditData,
+        },
+      ),
+    );
+  };
+
+  const handleRemoveClick = () => {
+    assert(attachmentPointName);
+
+    editor.removeAttachmentPoint(attachmentPointName);
+  };
+
   return isAtomAssignedAttachmentPoint ? (
     <>
       <Item>
-        <Icon name="editMenu" className={styles.icon} />
+        <Icon
+          name="editMenu"
+          className={styles.icon}
+          onClick={handleEditClick}
+        />
         Edit connection point
       </Item>
       <Item>
-        <Icon name="deleteMenu" className={styles.icon} />
+        <Icon
+          name="deleteMenu"
+          className={styles.icon}
+          onClick={handleRemoveClick}
+        />
         Remove assignment
       </Item>
     </>
   ) : (
     <Item
       {...props}
-      data-testid="Assign as leaving group"
+      data-testid="Assign as a leaving group"
       onClick={handleMakeLeavingGroupAtomClick}
       disabled={attachmentPointsLimitReached}
     >
       <Icon name="leavingGroup" className={styles.icon} />
-      Assign as leaving group
+      Assign as a leaving group
     </Item>
   );
 };

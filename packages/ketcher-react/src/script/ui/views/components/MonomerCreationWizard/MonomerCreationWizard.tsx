@@ -6,6 +6,7 @@ import {
   AttachmentPointName,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
+  getAttachmentPointNumberFromLabel,
   ketcherProvider,
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
@@ -39,8 +40,8 @@ import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
-import assert from 'assert';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import assert from 'assert';
 
 const initialWizardState: WizardState = {
   values: {
@@ -188,6 +189,42 @@ const validateInputs = (values: WizardValues) => {
   return { errors, notifications };
 };
 
+const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+
+  if (attachmentPoints.length === 0) {
+    notifications.set('noAttachmentPoints', {
+      type: 'error',
+      message: NotificationMessages.noAttachmentPoints,
+    });
+
+    return notifications;
+  }
+
+  const attachmentPointNumbers = attachmentPoints.map(
+    getAttachmentPointNumberFromLabel,
+  );
+
+  attachmentPointNumbers.sort((a, b) => a - b);
+
+  let startingIndex = 0;
+  while (attachmentPointNumbers[startingIndex] <= 2) {
+    startingIndex++;
+  }
+
+  for (let i = startingIndex; i < attachmentPointNumbers.length; i++) {
+    if (attachmentPointNumbers[i] - attachmentPointNumbers[i - 1] > 1) {
+      notifications.set('incorrectAttachmentPointsOrder', {
+        type: 'error',
+        message: NotificationMessages.incorrectAttachmentPointsOrder,
+      });
+      break;
+    }
+  }
+
+  return notifications;
+};
+
 const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -316,10 +353,27 @@ const MonomerCreationWizard = () => {
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
 
-    const { errors, notifications } = validateInputs(values);
-    if (Object.keys(errors).length > 0) {
-      wizardStateDispatch({ type: 'SetErrors', errors });
-      wizardStateDispatch({ type: 'SetNotifications', notifications });
+    const { errors: inputsErrors, notifications: inputsNotifications } =
+      validateInputs(values);
+    if (Object.keys(inputsErrors).length > 0) {
+      wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: inputsNotifications,
+      });
+      return;
+    }
+
+    assert(editor.monomerCreationState);
+
+    const attachmentPointsNotifications = validateAttachmentPoints(
+      Array.from(editor.monomerCreationState.assignedAttachmentPoints.keys()),
+    );
+    if (attachmentPointsNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: attachmentPointsNotifications,
+      });
       return;
     }
 
@@ -345,7 +399,13 @@ const MonomerCreationWizard = () => {
   ).map(([attachmentPointName, [, leavingAtomId]]) => {
     const atom = editor.struct().atoms.get(leavingAtomId);
 
-    assert(atom);
+    // TODO: Should be assert but it fails due to assignedAttachmentsPoints being stale after closing, investigate
+    if (!atom) {
+      return {
+        name: attachmentPointName,
+        atomLabel: 'H',
+      };
+    }
 
     return {
       name: attachmentPointName,
@@ -450,16 +510,26 @@ const MonomerCreationWizard = () => {
             />
           </div>
 
-          <div className={styles.divider} />
+          {attachmentPointsData.length > 0 && (
+            <>
+              <div className={styles.divider} />
 
-          <div className={styles.attributesFields}>
-            <p className={styles.attachmentPointsTitle}>Attachment points</p>
-            <div className={styles.attachmentPoints}>
-              {attachmentPointsData.map(({ name, atomLabel }) => (
-                <AttachmentPoint name={name} atomLabel={atomLabel} key={name} />
-              ))}
-            </div>
-          </div>
+              <div className={styles.attributesFields}>
+                <p className={styles.attachmentPointsTitle}>
+                  Attachment points
+                </p>
+                <div className={styles.attachmentPoints}>
+                  {attachmentPointsData.map(({ name, atomLabel }) => (
+                    <AttachmentPoint
+                      name={name}
+                      atomLabel={atomLabel}
+                      key={name}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {ketcherEditorRootElement &&

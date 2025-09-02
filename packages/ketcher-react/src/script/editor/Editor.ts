@@ -328,7 +328,7 @@ class Editor implements KetcherEditor {
   ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
 
-    this.update(action);
+    this.update(action, this.isMonomerCreationWizardActive);
 
     if (needToCenterStruct) {
       this.centerStruct();
@@ -765,7 +765,7 @@ class Editor implements KetcherEditor {
     }
 
     this.render.monomerCreationRenderState = null;
-    this.struct(this._monomerCreationState.originalStruct);
+    this.struct(this._monomerCreationState.originalStruct, false);
     this._monomerCreationState = null;
 
     this.tool('select');

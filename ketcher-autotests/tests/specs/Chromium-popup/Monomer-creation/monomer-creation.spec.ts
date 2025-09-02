@@ -1986,9 +1986,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to MOL V2000 and validate the result
-     *      6. Load saved monomer from MOL V2000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to MOL V2000 and validate the result
+     *      7. Load saved monomer from MOL V2000 as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2032,9 +2033,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to MOL V3000 and validate the result
-     *      6. Load saved monomer from MOL V3000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to MOL V3000 and validate the result
+     *      7. Load saved monomer from MOL V3000 as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2078,9 +2080,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to SDF V2000 and validate the result
-     *      6. Load saved monomer from SDF V2000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to SDF V2000 and validate the result
+     *      7. Load saved monomer from SDF V2000 as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2124,9 +2127,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to SDF V3000 and validate the result
-     *      6. Load saved monomer from SDF V3000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to SDF V3000 and validate the result
+     *      7. Load saved monomer from SDF V3000 as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2170,9 +2174,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to CML and validate the result
-     *      6. Load saved monomer from CML as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to CML and validate the result
+     *      7. Load saved monomer from CML as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2214,7 +2219,8 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to SVG and validate the result
+     *      5. Collapse it
+     *      6. Save it to SVG and validate the result
      *
      * Version 3.7
      */
@@ -2247,7 +2253,8 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to PNG and validate the result
+     *      5. Collapse it
+     *      6. Save it to PNG and validate the result
      *
      * Version 3.7
      */
@@ -2281,9 +2288,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to CDXML and validate the result
-     *      6. Load saved monomer from CDXML as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to CDXML and validate the result
+     *      7. Load saved monomer from CDXML as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */
@@ -2326,9 +2334,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Save it to CDX and validate the result
-     *      6. Load saved monomer from CDX as New Project
-     *      7. Take screenshot to validate monomer got loaded
+     *      5. Collapse it
+     *      6. Save it to CDX and validate the result
+     *      7. Load saved monomer from CDX as New Project
+     *      8. Take screenshot to validate monomer got loaded
      *
      * Version 3.7
      */

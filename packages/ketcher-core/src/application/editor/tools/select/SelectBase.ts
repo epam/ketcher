@@ -266,14 +266,16 @@ abstract class SelectBase implements BaseTool {
       Vec2.diff(monomerPositionPlusCursorDelta, angleSnapPosition).length() <
       HalfMonomerSize;
 
-    return isAngleSnapped
-      ? {
-          angleSnapPosition,
-          snappedAngleRad,
-        }
-      : {
-          angleSnapPosition: null,
-        };
+    if (!isAngleSnapped) {
+      return {
+        angleSnapPosition: null,
+      };
+    }
+
+    return {
+      angleSnapPosition,
+      snappedAngleRad,
+    };
   }
 
   static calculateBondLengthSnap(
@@ -890,10 +892,7 @@ abstract class SelectBase implements BaseTool {
     const snapResult = this.tryToSnap(event, movementDelta);
     const { snapPosition } = snapResult;
 
-    this.editor.transientDrawingView.hideBondSnap();
-    this.editor.transientDrawingView.hideAngleSnap();
-    this.editor.transientDrawingView.hideDistanceSnap();
-    this.editor.transientDrawingView.hideGroupCenterSnap();
+    this.editor.transientDrawingView.clear();
 
     if (snapPosition) {
       modelChanges.merge(

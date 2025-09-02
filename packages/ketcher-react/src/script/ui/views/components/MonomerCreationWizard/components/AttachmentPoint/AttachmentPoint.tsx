@@ -1,4 +1,4 @@
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName } from 'ketcher-core';
 import styles from './AttachmentPoint.module.less';
 
 type Props = {

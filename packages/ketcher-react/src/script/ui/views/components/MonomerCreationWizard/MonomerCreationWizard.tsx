@@ -396,7 +396,11 @@ const MonomerCreationWizard = () => {
   const { assignedAttachmentPoints } = monomerCreationState;
   const attachmentPointsData = Array.from(
     assignedAttachmentPoints.entries(),
-  ).map(([attachmentPointName, [, leavingAtomId]]) => {
+  ).map((entry) => {
+    const [attachmentPointName, [, leavingAtomId]] = entry as [
+      AttachmentPointName,
+      [number, number],
+    ];
     const atom = editor.struct().atoms.get(leavingAtomId);
 
     // TODO: Should be assert but it fails due to assignedAttachmentsPoints being stale after closing, investigate

@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointClickData, AttachmentPointName } from 'ketcher-core';
 import Select, { Option } from '../../../component/form/Select';
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { AttachmentPointClickData } from 'ketcher-core';
 
 type Props = {
   data: AttachmentPointClickData | null;
@@ -44,7 +43,7 @@ const AttachmentPointEditPopup = ({
       const target = event.target as Node;
 
       if (!popup || popup.contains(target)) {
-        return; // Click is inside the popup
+        return;
       }
 
       // Check if the click is on a MUI Select dropdown or its options
@@ -64,19 +63,6 @@ const AttachmentPointEditPopup = ({
       ) {
         return;
       }
-
-      // // Check if any select is currently open by looking for open dropdowns
-      // const openDropdowns = document.querySelectorAll(
-      //   '[role="listbox"], .MuiPaper-root[role="presentation"]',
-      // );
-      // if (openDropdowns.length > 0) {
-      //   // There's an open dropdown, check if the click is related to it
-      //   for (const dropdown of openDropdowns) {
-      //     if (dropdown.contains(target)) {
-      //       return; // Click is inside an open dropdown
-      //     }
-      //   }
-      // }
 
       onClose();
     };

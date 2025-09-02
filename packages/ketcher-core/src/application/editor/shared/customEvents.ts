@@ -1,4 +1,5 @@
 import { Vec2 } from 'domain/entities';
+import { AttachmentPointName } from 'domain/types';
 
 export const MonomerCreationAttachmentPointClickEvent =
   'MonomerCreationAttachmentPointClick';
@@ -6,6 +7,6 @@ export const MonomerCreationAttachmentPointClickEvent =
 export type AttachmentPointClickData = {
   atomId: number;
   atomLabel: string;
-  attachmentPointName: string;
+  attachmentPointName: AttachmentPointName;
   position: Vec2;
 };

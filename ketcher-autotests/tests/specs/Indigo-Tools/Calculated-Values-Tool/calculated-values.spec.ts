@@ -169,7 +169,7 @@ test.describe('Calculated Values Tools', () => {
     );
   });
 
-  test('One structure on canvas (Benzene ring)', async ({ page }) => {
+  test('One structure on canvas (Benzene ring)', async () => {
     /*
     Test case: EPMLSOPKET-1997
     Description:
@@ -630,7 +630,7 @@ test.describe('Calculated Values Tools', () => {
     ).toHaveValue('C 60.1 H 4.1 Br 35.8');
   });
 
-  test('Calculation for several reaction components', async ({ page }) => {
+  test('Calculation for several reaction components', async () => {
     /*
      * Test case: EPMLSOPKET-2002
      * Description: Reaction components are calculated.

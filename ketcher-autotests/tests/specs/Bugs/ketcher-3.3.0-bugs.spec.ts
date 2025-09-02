@@ -16,6 +16,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
@@ -259,9 +260,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await getMonomerLocator(page, Peptide.A).click();
+    await dragMouseTo(500, 350, page);
+    await getMonomerLocator(page, Peptide.C).click();
+    await dragMouseTo(600, 350, page);
     await getMonomerLocator(page, Peptide.D).click();
     await page.mouse.down();
-    await page.mouse.move(630, 340);
+    await page.mouse.move(700, 350, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

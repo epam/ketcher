@@ -568,9 +568,7 @@ test.describe('Calculated Values Tools', () => {
     ).toHaveValue('C 84.9 H 15.1');
   });
 
-  test('(hetero-adduct)Calculation of exact mass for different types of structures', async ({
-    page,
-  }) => {
+  test('(hetero-adduct)Calculation of exact mass for different types of structures', async () => {
     /*
      * Test case: EPMLSOPKET-1998
      * Description: The presence of Data S-group is ignored and calculation is represented as simple structure.

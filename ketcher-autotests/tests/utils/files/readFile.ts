@@ -347,6 +347,9 @@ export async function saveToFile(filename: string, data: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   if (process.env.GENERATE_DATA === 'true') {
+    await fs.promises.mkdir(path.dirname(resolvedFilePath), {
+      recursive: true,
+    });
     return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
 }

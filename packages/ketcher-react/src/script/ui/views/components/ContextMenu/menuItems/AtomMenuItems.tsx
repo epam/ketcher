@@ -179,6 +179,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     return MakeLeavingGroupAtomMenuItem;
   }
 
+  const disabled = editor.isMonomerCreationWizardActive;
+
   return (
     <>
       <Item
@@ -189,6 +191,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
+        disabled={disabled}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
@@ -205,35 +208,42 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       >
         Enhanced stereochemistry...
       </Item>
-      <Submenu
+      {!disabled && (
+        <Submenu
+          {...props}
+          label="Query properties"
+          data-testid="Query properties-option"
+          style={{ overflow: 'visible' }}
+        >
+          {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
+            return (
+              <Submenu
+                {...props}
+                label={title}
+                data-testid={`${title}-option`}
+                key={key}
+                className={styles.sameGroup}
+              >
+                <ButtonGroup<AtomAllAttributeValue>
+                  buttons={buttons}
+                  defaultValue={getPropertyValue(key)}
+                  title={title}
+                  onClick={(value: AtomAllAttributeValue) =>
+                    updateAtomProperty(key, value)
+                  }
+                />
+              </Submenu>
+            );
+          })}
+        </Submenu>
+      )}
+      {!disabled && <HighlightMenu onHighlight={highlightAtomWithColor} />}
+      <Item
         {...props}
-        label="Query properties"
-        data-testid="Query properties-option"
-        style={{ overflow: 'visible' }}
+        data-testid="Delete-option"
+        onClick={handleDelete}
+        disabled={disabled}
       >
-        {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
-          return (
-            <Submenu
-              {...props}
-              label={title}
-              data-testid={`${title}-option`}
-              key={key}
-              className={styles.sameGroup}
-            >
-              <ButtonGroup<AtomAllAttributeValue>
-                buttons={buttons}
-                defaultValue={getPropertyValue(key)}
-                title={title}
-                onClick={(value: AtomAllAttributeValue) =>
-                  updateAtomProperty(key, value)
-                }
-              />
-            </Submenu>
-          );
-        })}
-      </Submenu>
-      <HighlightMenu onHighlight={highlightAtomWithColor} />
-      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>

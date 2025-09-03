@@ -305,7 +305,7 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
     testDescription:
       '20. Chemical structure contain any atoms from the extended table',
     MoleculeSMARTS: 'C(*CC)C',
-    AtomIDsToExclude: ['0'],
+    AtomIDsToExclude: ['3'],
   },
   {
     testDescription: '21. Selected chemical structure not continuous',

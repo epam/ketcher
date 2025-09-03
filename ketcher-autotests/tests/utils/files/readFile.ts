@@ -296,6 +296,19 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   await PasteFromClipboardDialog(page).addToCanvas({ errorMessageExpected });
 }
 
+export async function pasteFromClipboardAndOpenAsNewProjectMacro(
+  page: Page,
+  structureFormat: StructureFormat,
+  fillStructure: string,
+  errorMessageExpected = false,
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
+  await PasteFromClipboardDialog(page).openAsNew({ errorMessageExpected });
+}
+
 export async function receiveMolFileComparisonData(
   page: Page,
   metaDataIndexes: number[],

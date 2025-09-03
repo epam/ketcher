@@ -7,7 +7,9 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils/files/readFile';
 import {
   MacroFileType,
@@ -54,6 +56,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -1142,6 +1145,7 @@ const monomersToCreate = [
     name: 'Amino Acid Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     libraryCard: Peptide.AminoAcid,
+    helm: 'PEPTIDE1{[AminoAcid]}$$$$V2.0',
   },
   {
     description: '2. Sugar',
@@ -1149,6 +1153,7 @@ const monomersToCreate = [
     symbol: 'Sugar',
     name: 'Sugar Test monomer',
     libraryCard: Sugar.Sugar,
+    helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
   {
     description: '3. Base',
@@ -1164,6 +1169,7 @@ const monomersToCreate = [
     symbol: 'Phosphate',
     name: 'Phosphate Test monomer',
     libraryCard: Phosphate.Phosphate,
+    helm: 'RNA1{[Phosphate]}$$$$V2.0',
   },
   {
     description: '5. Nucleotide',
@@ -1172,6 +1178,7 @@ const monomersToCreate = [
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     libraryCard: Nucleotide.Nucleotide,
+    helm: 'RNA1{[Nucleotide]}$$$$V2.0',
   },
   {
     description: '6. CHEM',
@@ -1179,6 +1186,7 @@ const monomersToCreate = [
     symbol: 'CHEM',
     name: 'CHEM Test monomer',
     libraryCard: Chem.CHEM,
+    helm: 'CHEM1{[CHEM]}$$$$V2.0',
   },
 ];
 
@@ -2390,9 +2398,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Switch to Macro mode
-     *      6. Save it to IDT
-     *      7. Validate the error message shown on the screen: Convert error! Sequence saver: Cannot save...
+     *      5. Select and delete atom outside monomer
+     *      6. Switch to Macro mode
+     *      7. Save it to IDT
+     *      8. Validate the error message shown on the screen: Convert error! Sequence saver: Cannot save...
      *
      * Version 3.7
      */
@@ -2443,5 +2452,48 @@ for (const monomerToCreate of monomersToCreate) {
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifySVGExport(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`53. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Select and delete atom outside monomer
+     *      6. Switch to Macro mode
+     *      7. Verify export to HELM
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    if (monomerToCreate.helm) {
+      await verifyHELMExport(page, monomerToCreate.helm);
+
+      await pasteFromClipboardAndOpenAsNewProjectMacro(
+        page,
+        MacroFileType.HELM,
+        monomerToCreate.helm,
+      );
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+        hideMonomerPreview: true,
+      });
+    }
   });
 }

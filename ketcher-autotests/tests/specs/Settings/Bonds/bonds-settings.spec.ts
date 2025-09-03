@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   BondsSetting,
   MeasurementUnit,
   SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import {
-  resetSettingsValuesToDefault,
   setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
@@ -15,29 +15,27 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 
-test('Verify Bonds setting menu', async ({ page }) => {
-  await waitForPageInit(page);
-  await TopRightToolbar(page).Settings();
-  await SettingsDialog(page).openSection(SettingsSection.General);
-  await SettingsDialog(page).openSection(SettingsSection.Bonds);
-  await takeEditorScreenshot(page);
-});
-
+let page: Page;
 test.describe('Bonds Settings', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Verify Bonds setting menu', async () => {
+    await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Bonds);
+    await takeEditorScreenshot(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetSettingsValuesToDefault(page);
-  });
-
-  test('Verify Bond length setting and entering a value with up to 1 decimal places in px option', async ({
-    page,
-  }) => {
+  test('Verify Bond length setting and entering a value with up to 1 decimal places in px option', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -54,9 +52,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in pt option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -73,9 +69,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in cm option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -92,9 +86,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in inch option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -111,9 +103,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in px option in Bond length', async ({
-    page,
-  }) => {
+  test('Verify the whole value in px option in Bond length', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -130,9 +120,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in pt option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -149,9 +137,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in cm option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -168,9 +154,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in inch option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -187,9 +171,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond length setting and entering a value with up to 2 decimal places in px option', async ({
-    page,
-  }) => {
+  test('Verify Bond length setting and entering a value with up to 2 decimal places in px option', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -207,9 +189,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in pt option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -227,9 +207,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in cm option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -247,9 +225,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in inch option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -267,7 +243,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in px option in Bond length', async ({ page }) => {
+  test('Verify 1000 value in px option in Bond length', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -284,7 +260,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in pt option in Bond length', async ({ page }) => {
+  test('Verify 1000 value in pt option in Bond length', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -301,7 +277,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in cm option in Bond length', async ({ page }) => {
+  test('Verify 1000 value in cm option in Bond length', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -318,7 +294,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in inch option in Bond length', async ({ page }) => {
+  test('Verify 1000 value in inch option in Bond length', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -335,9 +311,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places px in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places px in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -359,9 +333,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places cm in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places cm in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -383,9 +355,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places pt in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places pt in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -407,9 +377,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places inch in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places inch in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -431,9 +399,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in px option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify the whole number in px option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering thw whole values 
@@ -455,9 +421,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in cm option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify the whole number in cm option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -479,9 +443,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in pt option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify the whole number in pt option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -503,9 +465,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in inch option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify the whole number in inch option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -527,9 +487,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places px in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places px in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -552,9 +510,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places cm in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places cm in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -577,9 +533,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places pt in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places pt in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
@@ -601,9 +555,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places inch in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places inch in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -626,9 +578,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places px in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places px in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -650,9 +600,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places cm in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places cm in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -674,9 +622,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places pt in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places pt in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -698,9 +644,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places inch in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places inch in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place
@@ -722,9 +666,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in px option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify the whole number in px option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -746,9 +688,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in cm option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify the whole number in cm option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -770,9 +710,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in pt option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify the whole number in pt option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -794,9 +732,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole number in inch option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify the whole number in inch option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering the whole values
@@ -818,9 +754,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places px in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places px in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -843,9 +777,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places cm in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places cm in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -868,9 +800,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places pt in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places pt in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -893,9 +823,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places inch in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places inch in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: require a number input should allow entering values with one decimal place, 
@@ -918,9 +846,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Hash spacing setting and entering a value with up to 1 decimal places in px option', async ({
-    page,
-  }) => {
+  test('Verify Hash spacing setting and entering a value with up to 1 decimal places in px option', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -940,9 +866,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in pt option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -962,9 +886,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in cm option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -984,9 +906,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 1 decimal places in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 1 decimal places in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1006,9 +926,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in px option in Hash spacing', async ({
-    page,
-  }) => {
+  test('Verify the whole value in px option in Hash spacing', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1028,9 +946,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in pt option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1050,9 +966,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in cm option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1072,9 +986,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify the whole value in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1094,9 +1006,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Hash spacing setting and entering a value with up to 2 decimal places in px option', async ({
-    page,
-  }) => {
+  test('Verify Hash spacing setting and entering a value with up to 2 decimal places in px option', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1117,9 +1027,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in pt option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1140,9 +1048,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in cm option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1163,9 +1069,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify a value with up to 2 decimal places in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a value with up to 2 decimal places in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1186,9 +1090,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify 1000 value in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1209,9 +1111,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in px option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify 1000 value in px option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1232,9 +1132,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in cm option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify 1000 value in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1255,9 +1153,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in pt option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify 1000 value in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1278,7 +1174,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond spacing setting', async ({ page }) => {
+  test('Verify Bond spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -1300,9 +1196,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond spacing entering the whole number more than default', async ({
-    page,
-  }) => {
+  test('Verify Bond spacing entering the whole number more than default', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -1315,9 +1209,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond spacing entering the whole number less than default', async ({
-    page,
-  }) => {
+  test('Verify Bond spacing entering the whole number less than default', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -1330,7 +1222,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond spacing entering 100 value', async ({ page }) => {
+  test('Verify Bond spacing entering 100 value', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -1345,13 +1237,15 @@ test.describe('Bonds Settings', () => {
 });
 
 test.describe('Negative cases for Bonds Settings', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Verify negative value in px option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify negative value in px option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1370,9 +1264,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value in pt option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1391,9 +1283,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value in cm option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1412,9 +1302,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value in inch option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1433,7 +1321,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in px option Bond length setting', async ({ page }) => {
+  test('Verify 0 in px option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1452,7 +1340,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in pt option Bond length setting', async ({ page }) => {
+  test('Verify 0 in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1471,7 +1359,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in cm option Bond length setting', async ({ page }) => {
+  test('Verify 0 in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1490,7 +1378,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in inch option Bond length setting', async ({ page }) => {
+  test('Verify 0 in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1509,9 +1397,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in cm option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in cm option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1533,9 +1419,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in px option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in px option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1557,9 +1441,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in pt option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in pt option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1581,9 +1463,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in inch option Bond length setting', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in inch option Bond length setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
@@ -1605,9 +1485,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with px option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify negative value with px option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1628,9 +1506,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with cm option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify negative value with cm option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1651,9 +1527,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with pt option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify negative value with pt option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1674,9 +1548,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with inch option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify negative value with inch option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1697,9 +1569,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with px option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify 0 with px option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1717,9 +1587,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with cm option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify 0 with cm option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1737,9 +1605,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with pt option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify 0 with pt option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1757,9 +1623,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with inch option in the setting Bond thickness', async ({
-    page,
-  }) => {
+  test('Verify 0 with inch option in the setting Bond thickness', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1777,9 +1641,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with px option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify negative value with px option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1800,9 +1662,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with cm option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify negative value with cm option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1823,9 +1683,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with pt option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify negative value with pt option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1846,9 +1704,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with inch option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify negative value with inch option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
@@ -1869,9 +1725,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with px option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify 0 with px option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1892,9 +1746,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with cm option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify 0 with cm option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1915,9 +1767,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with pt option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify 0 with pt option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1938,9 +1788,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with inch option in the setting Stereo (Wedge) bond width', async ({
-    page,
-  }) => {
+  test('Verify 0 with inch option in the setting Stereo (Wedge) bond width', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
@@ -1961,9 +1809,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with up to 1 decimal places in px option in Hash spacing', async ({
-    page,
-  }) => {
+  test('Verify negative value with up to 1 decimal places in px option in Hash spacing', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -1982,9 +1828,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value with up to 1 decimal places in pt option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value with up to 1 decimal places in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2003,9 +1847,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value with up to 1 decimal places in cm option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value with up to 1 decimal places in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2024,9 +1866,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify a negative value with up to 1 decimal places in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify a negative value with up to 1 decimal places in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2045,7 +1885,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in px option in Hash spacing', async ({ page }) => {
+  test('Verify 0 in px option in Hash spacing', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2064,7 +1904,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in pt option Hash spacing setting', async ({ page }) => {
+  test('Verify 0 in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2083,7 +1923,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in cm option Hash spacing setting', async ({ page }) => {
+  test('Verify 0 in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2102,7 +1942,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in inch option Hash spacing setting', async ({ page }) => {
+  test('Verify 0 in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2121,9 +1961,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 in inch option Hash spacing setting', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 in inch option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2146,7 +1984,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 in cm option Hash spacing setting', async ({ page }) => {
+  test('Verify 1000.1 in cm option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2168,7 +2006,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 in pt option Hash spacing setting', async ({ page }) => {
+  test('Verify 1000.1 in pt option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2190,7 +2028,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 in px option Hash spacing setting', async ({ page }) => {
+  test('Verify 1000.1 in px option Hash spacing setting', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
@@ -2212,7 +2050,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify Bond spacing can not applyes 0', async ({ page }) => {
+  test('Verify Bond spacing can not applyes 0', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -2226,9 +2064,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify Bond spacing can not applyes negative value', async ({
-    page,
-  }) => {
+  test('Verify Bond spacing can not applyes negative value', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
@@ -2242,7 +2078,7 @@ test.describe('Negative cases for Bonds Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify Bond spacing can not applyes 101 value', async ({ page }) => {
+  test('Verify Bond spacing can not applyes 101 value', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting

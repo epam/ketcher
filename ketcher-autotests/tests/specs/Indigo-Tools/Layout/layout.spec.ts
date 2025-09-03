@@ -1,4 +1,4 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -9,7 +9,6 @@ import {
   dragMouseTo,
   clickOnAtom,
   waitForPageInit,
-  takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
 } from '@utils';
@@ -24,7 +23,7 @@ test.describe('Indigo Tools - Layout', () => {
     Test case: EPMLSOPKET-1777
     Description: 'Layout' button is always active and presents in top toolbar panel.
     */
-    await takeTopToolbarScreenshot(page);
+    await expect(IndigoFunctionsToolbar(page).layoutButton).toBeEnabled();
   });
 });
 

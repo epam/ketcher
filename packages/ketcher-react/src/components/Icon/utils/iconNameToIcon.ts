@@ -246,6 +246,7 @@ import MonomerAutochainIcon from '../../../assets/icons/files/monomer-autochain.
 import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
 import CheckFilledIcon from '../../../assets/icons/files/check-filled.svg';
 import WarningFilledIcon from '../../../assets/icons/files/warning-filled.svg';
+import LeavingGroup from '../../../assets/icons/files/leaving-group.svg';
 
 export const iconNameToIcon = {
   α,
@@ -494,4 +495,5 @@ export const iconNameToIcon = {
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerIcon,
   checkFilled: CheckFilledIcon,
   warningFilled: WarningFilledIcon,
+  leavingGroup: LeavingGroup,
 } as const;

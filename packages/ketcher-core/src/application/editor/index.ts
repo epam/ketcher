@@ -27,6 +27,7 @@ export * from './operations';
 export * from './actions';
 export * from './shared/constants';
 export * from './shared/coordinates';
+export * from './shared/customEvents';
 export * from './editor.types';
 export * from './Editor';
 export * from './EditorHistory';

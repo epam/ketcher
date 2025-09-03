@@ -6,6 +6,7 @@ import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openFileAndAddToCanvasAsNewProject,
+  openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files/readFile';
 import {
@@ -2367,3 +2368,400 @@ for (const monomerToCreate of monomersToCreate) {
     await takeEditorScreenshot(page);
   });
 }
+
+for (const monomerToCreate of monomersToCreate) {
+  test.fail(
+    `46. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from KET in Macro mode`,
+    async () => {
+      // Bug: https://github.com/epam/ketcher/issues/7769
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Macro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Switch to Macro mode
+       *      6. Save it to KET and validate the result
+       *      7. Load saved monomer from KET as New Project
+       *      8. Take screenshot to validate monomer got loaded
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(
+        page,
+        eligableMolecules[0].MoleculeSMARTS,
+      );
+      await prepareMoleculeForMonomerCreation(
+        page,
+        eligableMolecules[0].AtomIDsToExclude,
+        eligableMolecules[0].BondIDsToExclude,
+      );
+
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await verifyFileExport(
+        page,
+        `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.ket`,
+        FileType.KET,
+      );
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        page,
+        `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.ket`,
+      );
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+        hideMonomerPreview: true,
+      });
+    },
+  );
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`47. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from MOL V3000 in Macro mode`, async () => {
+    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Save it to MOL V3000 and validate the result
+     *      7. Load saved monomer from MOL V3000 as New Project
+     *      8. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.mol`,
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.mol`,
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
+    });
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
+    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Save it to Sequence (1-letter-code) and validate the result
+     *      7. Load saved monomer from Sequence (1-letter-code) as New Project
+     *      8. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(
+      page,
+      `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+      FileType.SDF,
+      SdfFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+    );
+    await takeEditorScreenshot(page);
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
+    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from Sequence (3-letter-code) in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Save it to Sequence (3-letter-code) and validate the result
+     *      7. Load saved monomer from Sequence (3-letter-code) as New Project
+     *      8. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      eligableMolecules[0].MoleculeSMARTS,
+    );
+    await prepareMoleculeForMonomerCreation(
+      page,
+      eligableMolecules[0].AtomIDsToExclude,
+      eligableMolecules[0].BondIDsToExclude,
+    );
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+      FileType.SDF,
+      SdfFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+    );
+    await takeEditorScreenshot(page);
+  });
+}
+
+// for (const monomerToCreate of monomersToCreate) {
+//   test(`31. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CML in Micro mode`, async () => {
+//     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+//     /*
+//      * Test task: https://github.com/epam/ketcher/issues/7657
+//      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CML in Micro mode
+//      *
+//      * Case:
+//      *      1. Open Molecules canvas
+//      *      2. Load molecule on canvas
+//      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//      *      4. Create monomer with given attributes
+//      *      5. Save it to CML and validate the result
+//      *      6. Load saved monomer from CML as New Project
+//      *      7. Take screenshot to validate monomer got loaded
+//      *
+//      * Version 3.7
+//      */
+//     await pasteFromClipboardAndOpenAsNewProject(
+//       page,
+//       eligableMolecules[0].MoleculeSMARTS,
+//     );
+//     await prepareMoleculeForMonomerCreation(
+//       page,
+//       eligableMolecules[0].AtomIDsToExclude,
+//       eligableMolecules[0].BondIDsToExclude,
+//     );
+
+//     await createMonomer(page, {
+//       ...monomerToCreate,
+//     });
+
+//     await verifyFileExport(
+//       page,
+//       `CML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cml`,
+//       FileType.CML,
+//     );
+//     await openFileAndAddToCanvasAsNewProject(
+//       page,
+//       `CML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cml`,
+//     );
+//     await takeEditorScreenshot(page);
+//   });
+// }
+
+// for (const monomerToCreate of monomersToCreate) {
+//   test(`32. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to SVG in Micro mode`, async () => {
+//     /*
+//      * Test task: https://github.com/epam/ketcher/issues/7657
+//      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved SVG in Micro mode
+//      *
+//      * Case:
+//      *      1. Open Molecules canvas
+//      *      2. Load molecule on canvas
+//      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//      *      4. Create monomer with given attributes
+//      *      5. Save it to SVG and validate the result
+//      *
+//      * Version 3.7
+//      */
+//     await pasteFromClipboardAndOpenAsNewProject(
+//       page,
+//       eligableMolecules[0].MoleculeSMARTS,
+//     );
+//     await prepareMoleculeForMonomerCreation(
+//       page,
+//       eligableMolecules[0].AtomIDsToExclude,
+//       eligableMolecules[0].BondIDsToExclude,
+//     );
+
+//     await createMonomer(page, {
+//       ...monomerToCreate,
+//     });
+
+//     await verifySVGExport(page);
+//   });
+// }
+
+// for (const monomerToCreate of monomersToCreate) {
+//   test(`33. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to PNG in Micro mode`, async () => {
+//     /*
+//      * Test task: https://github.com/epam/ketcher/issues/7657
+//      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved PNG in Micro mode
+//      *
+//      * Case:
+//      *      1. Open Molecules canvas
+//      *      2. Load molecule on canvas
+//      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//      *      4. Create monomer with given attributes
+//      *      5. Save it to PNG and validate the result
+//      *
+//      * Version 3.7
+//      */
+//     await pasteFromClipboardAndOpenAsNewProject(
+//       page,
+//       eligableMolecules[0].MoleculeSMARTS,
+//     );
+//     await prepareMoleculeForMonomerCreation(
+//       page,
+//       eligableMolecules[0].AtomIDsToExclude,
+//       eligableMolecules[0].BondIDsToExclude,
+//     );
+
+//     await createMonomer(page, {
+//       ...monomerToCreate,
+//     });
+
+//     await verifyPNGExport(page);
+//   });
+// }
+
+// for (const monomerToCreate of monomersToCreate) {
+//   test(`34. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDXML in Micro mode`, async () => {
+//     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+//     /*
+//      * Test task: https://github.com/epam/ketcher/issues/7657
+//      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDXML in Micro mode
+//      *
+//      * Case:
+//      *      1. Open Molecules canvas
+//      *      2. Load molecule on canvas
+//      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//      *      4. Create monomer with given attributes
+//      *      5. Save it to CDXML and validate the result
+//      *      6. Load saved monomer from CDXML as New Project
+//      *      7. Take screenshot to validate monomer got loaded
+//      *
+//      * Version 3.7
+//      */
+//     await pasteFromClipboardAndOpenAsNewProject(
+//       page,
+//       eligableMolecules[0].MoleculeSMARTS,
+//     );
+//     await prepareMoleculeForMonomerCreation(
+//       page,
+//       eligableMolecules[0].AtomIDsToExclude,
+//       eligableMolecules[0].BondIDsToExclude,
+//     );
+
+//     await createMonomer(page, {
+//       ...monomerToCreate,
+//     });
+
+//     await verifyFileExport(
+//       page,
+//       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdxml`,
+//       FileType.CDXML,
+//     );
+//     await openFileAndAddToCanvasAsNewProject(
+//       page,
+//       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdxml`,
+//     );
+//     await takeEditorScreenshot(page);
+//   });
+// }
+
+// for (const monomerToCreate of monomersToCreate) {
+//   test(`35. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDX in Micro mode`, async () => {
+//     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+//     /*
+//      * Test task: https://github.com/epam/ketcher/issues/7657
+//      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDX in Micro mode
+//      *
+//      * Case:
+//      *      1. Open Molecules canvas
+//      *      2. Load molecule on canvas
+//      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//      *      4. Create monomer with given attributes
+//      *      5. Save it to CDX and validate the result
+//      *      6. Load saved monomer from CDX as New Project
+//      *      7. Take screenshot to validate monomer got loaded
+//      *
+//      * Version 3.7
+//      */
+//     await pasteFromClipboardAndOpenAsNewProject(
+//       page,
+//       eligableMolecules[0].MoleculeSMARTS,
+//     );
+//     await prepareMoleculeForMonomerCreation(
+//       page,
+//       eligableMolecules[0].AtomIDsToExclude,
+//       eligableMolecules[0].BondIDsToExclude,
+//     );
+
+//     await createMonomer(page, {
+//       ...monomerToCreate,
+//     });
+
+//     await verifyFileExport(
+//       page,
+//       `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdx`,
+//       FileType.CDX,
+//     );
+//     await openFileAndAddToCanvasAsNewProject(
+//       page,
+//       `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdx`,
+//     );
+//     await takeEditorScreenshot(page);
+//   });
+// }

@@ -61,6 +61,9 @@ import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { closeErrorMessage } from '@utils/common/helpers';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -2109,7 +2112,7 @@ for (const monomerToCreate of monomersToCreate) {
       // Bug: https://github.com/epam/ketcher/issues/7769
       /*
        * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Macro mode
+       * Description: Check that created ${monomerToCreate.description} monomer can be saved/opened to/from KET in Macro mode
        *
        * Case:
        *      1. Open Molecules canvas
@@ -2199,7 +2202,7 @@ for (const monomerToCreate of monomersToCreate) {
     test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
       /*
        * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created Amino acid and Nucleotide monomer (expanded) can be saved/opened to/from SDF V2000 in Macro mode
+       * Description: Check that created Amino acid and Nucleotide monomer can be saved/opened to/from SDF V2000 in Macro mode
        *
        * Case:
        *      1. Open Molecules canvas
@@ -2261,7 +2264,7 @@ for (const monomerToCreate of monomersToCreate) {
     test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
       /*
        * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created Amino acid monomer (expanded) can be saved/opened to/from Sequence (3-letter-code) in Macro mode
+       * Description: Check that created Amino acid monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode
        *
        * Case:
        *      1. Open Molecules canvas
@@ -2374,4 +2377,71 @@ for (const monomerToCreate of monomersToCreate) {
       });
     });
   }
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`51. Check that created ${monomerToCreate.description} monomer can not be saved to IDT in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer can not be saved to IDT in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Save it to IDT
+     *      7. Validate the error message shown on the screen: Convert error! Sequence saver: Cannot save...
+     *
+     * Version 3.7
+     */
+    const errorMessage = 'Convert error! Sequence saver: Cannot save';
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.IDT,
+    );
+    await expect(page.getByTestId('info-modal-body')).toContainText(
+      errorMessage,
+    );
+    await closeErrorMessage(page);
+    await SaveStructureDialog(page).cancel();
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`52. Check that created ${monomerToCreate.description} monomer can be saved to SVG Document in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer can be saved to SVG Document in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Verify export to SVG Document
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifySVGExport(page);
+  });
 }

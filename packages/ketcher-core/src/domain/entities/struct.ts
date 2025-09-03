@@ -1222,9 +1222,24 @@ export class Struct {
     return null;
   }
 
+  getGroupIdsFromAtomId(atomId: number | undefined): number[] {
+    const sgroupIds: number[] = [];
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (sgroup.atoms.includes(atomId)) sgroupIds.push(groupId);
+    }
+    return sgroupIds;
+  }
+
   getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
     const sgroupId = this.getGroupIdFromAtomId(atomId as number);
     return this.sgroups?.get(sgroupId as number);
+  }
+
+  getGroupsFromAtomId(atomId: number | undefined): SGroup[] {
+    const sgroupIds = this.getGroupIdsFromAtomId(atomId as number);
+    return sgroupIds
+      .map((sgroupId) => this.sgroups?.get(sgroupId as number))
+      .filter((sgroup) => sgroup !== undefined);
   }
 
   // TODO: simplify if bonds ids ever appear in sgroup

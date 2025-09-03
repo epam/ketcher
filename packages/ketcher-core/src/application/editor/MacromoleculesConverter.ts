@@ -382,9 +382,9 @@ export class MacromoleculesConverter {
       const fragmentSgroups = new Set<SGroup>();
       struct.atoms.forEach((atom, atomId) => {
         if (atom.fragment !== fragmentId) return;
-        const sgroup = struct.getGroupFromAtomId(atomId);
-        if (sgroup) {
-          fragmentSgroups.add(sgroup);
+        const sgroups = struct.getGroupsFromAtomId(atomId);
+        if (sgroups.length > 0) {
+          sgroups.forEach((sgroup) => fragmentSgroups.add(sgroup));
         }
       });
 

@@ -10,6 +10,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files/readFile';
 import {
+  MacroFileType,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -21,6 +22,7 @@ import {
   dragTo,
   MolFileFormat,
   SdfFileFormat,
+  SequenceFileFormat,
   waitForMonomerPreview,
 } from '@utils/index';
 import {
@@ -55,6 +57,10 @@ import {
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -347,15 +353,9 @@ test(`4. Check that when user clicks on the "Create monomer" button the structur
    *
    * Version 3.7
    */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   await takeEditorScreenshot(page);
@@ -389,16 +389,9 @@ test.fail(
 
     const commonLeftToolbar = CommonLeftToolbar(page);
     const leftToolbar = LeftToolbar(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
     await leftToolbar.createMonomer();
 
     await Promise.all([
@@ -539,15 +532,9 @@ test(`7. Check than monomer Type field is blank when open it first time`, async 
    *
    * Version 3.7
    */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
 
   await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
@@ -568,15 +555,9 @@ test(`8. Check options from the drop-down menu Type`, async () => {
    *
    * Version 3.7
    */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).typeCombobox.click();
   await Promise.all([
@@ -613,15 +594,9 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
    * Version 3.7
    */
   const errorMessage = page.getByText('Mandatory fields must be filled.');
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
   await CreateMonomerDialog(page).submit();
@@ -652,15 +627,9 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
    * Version 3.7
    */
   const errorMessage = page.getByText('Mandatory fields must be filled.');
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
@@ -705,15 +674,9 @@ for (const eligableName of eligableNames) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await createMonomer(page, {
       type: MonomerType.CHEM,
       symbol: 'Temp',
@@ -758,15 +721,9 @@ for (const nonEligableName of nonEligableNames) {
     const errorMessage = page.getByText(nonEligableName.errorMessage);
     const createMonomerDialog = CreateMonomerDialog(page);
 
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.CHEM);
     await createMonomerDialog.setSymbol('Temp');
@@ -810,15 +767,9 @@ for (const eligableSymbol of eligableSymbols) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await createMonomer(page, {
       type: MonomerType.CHEM,
       symbol: eligableSymbol.value,
@@ -916,15 +867,9 @@ for (const nonEligableSymbol of nonEligableSymbols) {
     const errorMessage = page.getByText(nonEligableSymbol.errorMessage);
     const createMonomerDialog = CreateMonomerDialog(page);
 
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(nonEligableSymbol.type);
     await createMonomerDialog.setSymbol(nonEligableSymbol.symbol);
@@ -960,15 +905,9 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
   const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
   await createMonomerDialog.setSymbol('AminoAcid');
@@ -1003,15 +942,9 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
   const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
   await createMonomerDialog.setSymbol('Base');
@@ -1046,15 +979,9 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
   const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Nucleotide);
   await createMonomerDialog.setSymbol('Nucleotide');
@@ -1086,15 +1013,9 @@ test(`18. Check drop-down grid for Natural analogue for Amino acid`, async () =>
    */
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
   await createMonomerDialog.setSymbol('AminoAcid');
@@ -1126,15 +1047,9 @@ test(`19. Check drop-down grid for Natural analogue for Base`, async () => {
    */
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
   await createMonomerDialog.setSymbol('Base');
@@ -1166,15 +1081,9 @@ test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () =>
    */
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Nucleotide);
   await createMonomerDialog.setSymbol('Base');
@@ -1207,15 +1116,9 @@ test(`21. Check that if the user changes the monomer type after they've set a na
    */
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Nucleotide);
   await createMonomerDialog.setSymbol('Base');
@@ -1297,15 +1200,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1344,15 +1240,9 @@ test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, a
    */
   const createMonomerDialog = CreateMonomerDialog(page);
 
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    eligableMolecules[0].MoleculeSMARTS,
-  );
-  await prepareMoleculeForMonomerCreation(
-    page,
-    eligableMolecules[0].AtomIDsToExclude,
-    eligableMolecules[0].BondIDsToExclude,
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Nucleotide);
   await createMonomerDialog.setSymbol('Nucleotide');
@@ -1384,15 +1274,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1428,15 +1311,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1476,15 +1352,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1520,15 +1389,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1564,15 +1426,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1610,15 +1465,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1656,15 +1504,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1702,15 +1543,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1748,15 +1582,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1790,15 +1617,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1823,15 +1643,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1859,15 +1672,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1904,15 +1710,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1949,15 +1748,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1994,15 +1786,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2041,15 +1826,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2088,15 +1866,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2135,15 +1906,9 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2182,15 +1947,9 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2225,15 +1984,9 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2259,15 +2012,9 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2296,15 +2043,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2342,15 +2082,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2390,15 +2123,8 @@ for (const monomerToCreate of monomersToCreate) {
        *
        * Version 3.7
        */
-      await pasteFromClipboardAndOpenAsNewProject(
-        page,
-        eligableMolecules[0].MoleculeSMARTS,
-      );
-      await prepareMoleculeForMonomerCreation(
-        page,
-        eligableMolecules[0].AtomIDsToExclude,
-        eligableMolecules[0].BondIDsToExclude,
-      );
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -2412,6 +2138,7 @@ for (const monomerToCreate of monomersToCreate) {
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.ket`,
+        MacroFileType.Ket,
       );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -2423,7 +2150,6 @@ for (const monomerToCreate of monomersToCreate) {
 
 for (const monomerToCreate of monomersToCreate) {
   test(`47. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from MOL V3000 in Macro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Macro mode
@@ -2440,15 +2166,8 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2463,6 +2182,7 @@ for (const monomerToCreate of monomersToCreate) {
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       `Molfiles-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.mol`,
+      MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -2472,97 +2192,133 @@ for (const monomerToCreate of monomersToCreate) {
 }
 
 for (const monomerToCreate of monomersToCreate) {
-  test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Macro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Switch to Macro mode
-     *      6. Save it to Sequence (1-letter-code) and validate the result
-     *      7. Load saved monomer from Sequence (1-letter-code) as New Project
-     *      8. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+  if (
+    monomerToCreate.type === MonomerType.AminoAcid ||
+    monomerToCreate.type === MonomerType.Nucleotide
+  ) {
+    test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
+      // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Macro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode
+       *      7. Save it to Sequence (1-letter-code) and validate the result
+       *      8. Load saved monomer from Sequence (1-letter-code) as New Project
+       *      9. Take screenshot to validate monomer got loaded
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+      await getAtomLocator(page, { atomId: 0 }).click();
+      await CommonLeftToolbar(page).selectEraseTool();
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await verifyFileExport(
+        page,
+        `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+        FileType.SEQ,
+        SequenceFileFormat.oneLetter,
+      );
+
+      if (monomerToCreate.type === MonomerType.AminoAcid) {
+        await openFileAndAddToCanvasAsNewProjectMacro(
+          page,
+          `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+          [
+            MacroFileType.Sequence,
+            [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
+          ],
+        );
+      }
+      if (monomerToCreate.type === MonomerType.Nucleotide) {
+        await openFileAndAddToCanvasAsNewProjectMacro(
+          page,
+          `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+          [MacroFileType.Sequence, SequenceMonomerType.RNA],
+        );
+      }
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+        hideMonomerPreview: true,
+      });
     });
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await verifyFileExport(
-      page,
-      `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-      FileType.SDF,
-      SdfFileFormat.v2000,
-    );
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-    );
-    await takeEditorScreenshot(page);
-  });
+  }
 }
 
 for (const monomerToCreate of monomersToCreate) {
-  test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from Sequence (3-letter-code) in Macro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Switch to Macro mode
-     *      6. Save it to Sequence (3-letter-code) and validate the result
-     *      7. Load saved monomer from Sequence (3-letter-code) as New Project
-     *      8. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      eligableMolecules[0].MoleculeSMARTS,
-    );
-    await prepareMoleculeForMonomerCreation(
-      page,
-      eligableMolecules[0].AtomIDsToExclude,
-      eligableMolecules[0].BondIDsToExclude,
-    );
+  if (
+    monomerToCreate.type === MonomerType.AminoAcid ||
+    monomerToCreate.type === MonomerType.Nucleotide
+  ) {
+    test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from Sequence (3-letter-code) in Macro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode
+       *      7. Save it to Sequence (3-letter-code) and validate the result
+       *      8. Load saved monomer from Sequence (3-letter-code) as New Project
+       *      9. Take screenshot to validate monomer got loaded
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+      await getAtomLocator(page, { atomId: 0 }).click();
+      await CommonLeftToolbar(page).selectEraseTool();
+
+      await verifyFileExport(
+        page,
+        `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+        FileType.SEQ,
+        SequenceFileFormat.threeLetter,
+      );
+
+      if (monomerToCreate.type === MonomerType.AminoAcid) {
+        await openFileAndAddToCanvasAsNewProjectMacro(
+          page,
+          `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+          [
+            MacroFileType.Sequence,
+            [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
+          ],
+        );
+      }
+      if (monomerToCreate.type === MonomerType.Nucleotide) {
+        await openFileAndAddToCanvasAsNewProjectMacro(
+          page,
+          `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+          [MacroFileType.Sequence, SequenceMonomerType.RNA],
+        );
+      }
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+        hideMonomerPreview: true,
+      });
     });
-
-    await verifyFileExport(
-      page,
-      `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-      FileType.SDF,
-      SdfFileFormat.v3000,
-    );
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-    );
-    await takeEditorScreenshot(page);
-  });
+  }
 }
 
 // for (const monomerToCreate of monomersToCreate) {
@@ -2583,15 +2339,8 @@ for (const monomerToCreate of monomersToCreate) {
 //      *
 //      * Version 3.7
 //      */
-//     await pasteFromClipboardAndOpenAsNewProject(
-//       page,
-//       eligableMolecules[0].MoleculeSMARTS,
-//     );
-//     await prepareMoleculeForMonomerCreation(
-//       page,
-//       eligableMolecules[0].AtomIDsToExclude,
-//       eligableMolecules[0].BondIDsToExclude,
-//     );
+//      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//      await prepareMoleculeForMonomerCreation(page, ['0']);
 
 //     await createMonomer(page, {
 //       ...monomerToCreate,
@@ -2625,15 +2374,8 @@ for (const monomerToCreate of monomersToCreate) {
 //      *
 //      * Version 3.7
 //      */
-//     await pasteFromClipboardAndOpenAsNewProject(
-//       page,
-//       eligableMolecules[0].MoleculeSMARTS,
-//     );
-//     await prepareMoleculeForMonomerCreation(
-//       page,
-//       eligableMolecules[0].AtomIDsToExclude,
-//       eligableMolecules[0].BondIDsToExclude,
-//     );
+//      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//      await prepareMoleculeForMonomerCreation(page, ['0']);
 
 //     await createMonomer(page, {
 //       ...monomerToCreate,
@@ -2658,15 +2400,8 @@ for (const monomerToCreate of monomersToCreate) {
 //      *
 //      * Version 3.7
 //      */
-//     await pasteFromClipboardAndOpenAsNewProject(
-//       page,
-//       eligableMolecules[0].MoleculeSMARTS,
-//     );
-//     await prepareMoleculeForMonomerCreation(
-//       page,
-//       eligableMolecules[0].AtomIDsToExclude,
-//       eligableMolecules[0].BondIDsToExclude,
-//     );
+//      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//      await prepareMoleculeForMonomerCreation(page, ['0']);
 
 //     await createMonomer(page, {
 //       ...monomerToCreate,
@@ -2694,15 +2429,8 @@ for (const monomerToCreate of monomersToCreate) {
 //      *
 //      * Version 3.7
 //      */
-//     await pasteFromClipboardAndOpenAsNewProject(
-//       page,
-//       eligableMolecules[0].MoleculeSMARTS,
-//     );
-//     await prepareMoleculeForMonomerCreation(
-//       page,
-//       eligableMolecules[0].AtomIDsToExclude,
-//       eligableMolecules[0].BondIDsToExclude,
-//     );
+//      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//      await prepareMoleculeForMonomerCreation(page, ['0']);
 
 //     await createMonomer(page, {
 //       ...monomerToCreate,
@@ -2739,15 +2467,8 @@ for (const monomerToCreate of monomersToCreate) {
 //      *
 //      * Version 3.7
 //      */
-//     await pasteFromClipboardAndOpenAsNewProject(
-//       page,
-//       eligableMolecules[0].MoleculeSMARTS,
-//     );
-//     await prepareMoleculeForMonomerCreation(
-//       page,
-//       eligableMolecules[0].AtomIDsToExclude,
-//       eligableMolecules[0].BondIDsToExclude,
-//     );
+//      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//      await prepareMoleculeForMonomerCreation(page, ['0']);
 
 //     await createMonomer(page, {
 //       ...monomerToCreate,

@@ -77,7 +77,7 @@ export const PhosphateAvatar = () => (
       data-actual-width="30"
       data-actual-height="30"
     >
-      <rect width="28" height="28" rx="15" stroke-dasharray="4 4" />
+      <rect width="28" height="28" rx="15" strokeDasharray="4 4" />
     </symbol>
   </>
 );

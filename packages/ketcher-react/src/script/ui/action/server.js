@@ -76,7 +76,8 @@ const config = {
     enabledInViewOnly: true,
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (editor, server, options) =>
+      editor.isMonomerCreationWizardActive || !options.app.server,
     hidden: (options) => isHidden(options, 'analyse'),
   },
   recognize: {
@@ -91,6 +92,7 @@ const config = {
     title: '3D Viewer',
     enabledInViewOnly: true,
     action: { dialog: 'miew' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'miew'),
   },
   'explicit-hydrogens': {

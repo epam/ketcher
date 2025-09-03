@@ -31,7 +31,6 @@ import requestReducer from './request';
 import { thunk } from 'redux-thunk';
 import toolbarReducer from './toolbar';
 import floatingToolsReducer from './floatingTools';
-import monomerCreationMiddleware from './editor/middlewares/monomerCreation';
 
 export { onAction, load };
 
@@ -118,7 +117,7 @@ export default function (options, server, setEditor) {
     templates: initTmplsState,
   };
 
-  const middleware = [thunk, monomerCreationMiddleware];
+  const middleware = [thunk];
   if (
     process.env.NODE_ENV !== 'production' &&
     process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'

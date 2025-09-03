@@ -262,3 +262,28 @@ export function getAttachmentPointNumberFromLabel(
 ) {
   return Number(attachmentPointLabel.replace('R', ''));
 }
+
+export const getNextFreeAttachmentPoint = (
+  attachmentPoints: AttachmentPointName[],
+) => {
+  const attachmentPointNumbers = attachmentPoints.map(
+    getAttachmentPointNumberFromLabel,
+  );
+
+  attachmentPointNumbers.sort((a, b) => a - b);
+
+  let nextFreeAttachmentPointNumber = 1;
+  for (const number of attachmentPointNumbers) {
+    if (number === nextFreeAttachmentPointNumber) {
+      nextFreeAttachmentPointNumber += 1;
+    } else {
+      break;
+    }
+  }
+
+  if (nextFreeAttachmentPointNumber > 8) {
+    throw new Error('Cannot assign more than 8 attachment points');
+  }
+
+  return getAttachmentPointLabel(nextFreeAttachmentPointNumber);
+};

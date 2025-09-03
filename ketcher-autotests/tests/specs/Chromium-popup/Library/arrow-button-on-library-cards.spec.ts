@@ -1246,42 +1246,6 @@ test.describe('Arrow button on Library cards', () => {
   );
 
   test(
-    'Case 29: Check Erase after addition monomers by arrow button',
-    { tag: ['@chromium-popup'] },
-    async () => {
-      /*
-       * Version 3.7
-       * Test case: https://github.com/epam/ketcher/issues/7631
-       * Description: Erase works after addition monomers by arrow button.
-       * Scenario:
-       * 1. Go to Macro - Flex mode
-       * 2. Add monomer by arrow button
-       * 3. Select Erase tool and delete last added monomer
-       * 4. Check that after deleting last added monomer it is removed from canvas
-       * 5. Click Undo button
-       * 6. Check that after clicking Undo button last deleted monomer is added to canvas
-       */
-      for (let i = 0; i < 3; i++) {
-        await Library(page).clickMonomerAutochain(Peptide._1Nal);
-      }
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await CommonLeftToolbar(page).selectEraseTool();
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await CommonTopLeftToolbar(page).undo();
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
-
-  test(
     'Case 30: Check zoom in and zoom out for monomers added by arrow button',
     { tag: ['@chromium-popup'] },
     async () => {
@@ -1564,6 +1528,84 @@ test.describe('Arrow button on Library cards', () => {
         MonomerAttachmentPoint.R2,
         MonomerAttachmentPoint.R1,
       );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 38: Check Erase after addition monomers by arrow button',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Erase works after addition monomers by arrow button.
+       * Scenario:
+       * 1. Go to Macro - Flex mode
+       * 2. Add monomer by arrow button
+       * 3. Select Erase tool and delete last added monomer
+       * 4. Check that after deleting last added monomer it is removed from canvas
+       * 5. Click Undo button
+       * 6. Check that after clicking Undo button last deleted monomer is added to canvas
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Peptide._1Nal);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonLeftToolbar(page).selectEraseTool();
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
+
+  test(
+    'Case 39: Check Undo/Redo after addition monomers by arrow button in Snake mode',
+    { tag: ['@chromium-popup'] },
+    async ({ SnakeCanvas: _ }) => {
+      /*
+       * Version 3.7
+       * Test case: https://github.com/epam/ketcher/issues/7631
+       * Description: Undo/Redo works after addition monomers by arrow button.
+       * Scenario:
+       * 1. Go to Macro - Snake mode
+       * 2. Add monomer by arrow button
+       * 3. Click Undo button
+       * 4. Click Redo button
+       * 5. Check that after clicking Undo button last added monomer is removed from canvas
+       * 6. Check that after clicking Redo button last added monomer is added to canvas
+       * For now we have bug https://github.com/epam/ketcher/issues/7786
+       * After fixing we need to update screenshot
+       */
+      for (let i = 0; i < 3; i++) {
+        await Library(page).clickMonomerAutochain(Preset.MOE_T_P);
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      for (let i = 0; i < 2; i++) {
+        await CommonTopLeftToolbar(page).undo();
+      }
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      for (let i = 0; i < 2; i++) {
+        await CommonTopLeftToolbar(page).redo();
+      }
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

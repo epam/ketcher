@@ -24,7 +24,10 @@ export type WizardNotificationId =
   | 'emptyMandatoryFields'
   | 'invalidSymbol'
   | 'symbolExists'
-  | 'editingIsNotAllowed';
+  | 'editingIsNotAllowed'
+  | 'noAttachmentPoints'
+  | 'incorrectAttachmentPointsOrder'
+  | 'creationSuccessful';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

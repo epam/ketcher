@@ -34,6 +34,7 @@ import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
+import { isNumber } from 'lodash';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -491,6 +492,46 @@ class ReBond extends ReObject {
         restruct: render.ctab,
         visel: this.visel,
       });
+    }
+
+    this.addTestIds(restruct.molecule, bond);
+  }
+
+  private addTestIds(struct: Struct, bond: Bond) {
+    const bondPathElement = this.path.node;
+
+    if (!bondPathElement) {
+      return;
+    }
+
+    bondPathElement.setAttribute('data-testid', 'bond');
+    bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
+    bondPathElement.setAttribute('data-bondtype', bond.type);
+    bondPathElement.setAttribute('data-bondstereo', bond.stereo);
+    bondPathElement.setAttribute('data-fromatomid', bond.begin);
+    bondPathElement.setAttribute('data-toatomid', bond.end);
+
+    const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
+    const endSGroupId = struct.getGroupIdFromAtomId(bond.end);
+
+    if (beginSGroupId === endSGroupId) {
+      return;
+    }
+
+    if (isNumber(beginSGroupId)) {
+      bondPathElement.setAttribute('data-fromsgroupid', beginSGroupId);
+
+      if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
+        bondPathElement.setAttribute('data-frommonomerid', beginSGroupId);
+      }
+    }
+
+    if (isNumber(endSGroupId)) {
+      bondPathElement.setAttribute('data-tosgroupid', endSGroupId);
+
+      if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
+        bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
+      }
     }
   }
 }

@@ -4,8 +4,13 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
-import { takeEditorScreenshot, takeTopToolbarScreenshot } from '@utils';
+import {
+  clickByLink,
+  takeEditorScreenshot,
+  takeTopToolbarScreenshot,
+} from '@utils';
 
 let page: Page;
 
@@ -48,5 +53,30 @@ test.describe('Top toolbar Macro mode', () => {
     const helpButton = page.getByTestId(iconHelp.testId).first();
     await expect(helpButton).toHaveAttribute('title', iconHelp.title);
     await helpButton.click();
+  });
+
+  test('Case 2: Check links in About floating window', async () => {
+    /*
+     * Version 3.7
+     * Test case: https://github.com/epam/ketcher/issues/6270
+     * Description: Check links in About floating window
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Check links in About floating window
+     */
+    await CommonTopRightToolbar(page).about();
+    await clickByLink(
+      page,
+      'https://lifescience.opensource.epam.com/ketcher/index.html',
+    );
+    await page.bringToFront();
+    await clickByLink(
+      page,
+      'http://lifescience.opensource.epam.com/ketcher/#feedback',
+    );
+    await page.bringToFront();
+    await clickByLink(page, 'http://lifescience.opensource.epam.com/');
+    await page.bringToFront();
+    await clickByLink(page, 'http://lifescience.opensource.epam.com/indigo/');
   });
 });

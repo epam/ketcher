@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test, Page } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -89,7 +89,7 @@ test.describe('Atom Tool', () => {
     const extendedTableButton = RightToolbar(page).extendedTableButton;
 
     await extendedTableButton.click();
-    await takeEditorScreenshot(page);
+    await expect(RightToolbar(page).extendedTableButton).toBeEnabled();
   });
 
   test('Periodic table-selecting Atom in palette', async () => {

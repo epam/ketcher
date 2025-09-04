@@ -81,6 +81,14 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           );
         })}
       </Submenu>
+      <Item
+        {...props}
+        data-testid="Create a monomer-option"
+        onClick={editor.openMonomerCreationWizard.bind(editor)}
+        disabled={!editor.isMonomerCreationWizardEnabled}
+      >
+        Create a monomer
+      </Item>
 
       <Item
         {...props}

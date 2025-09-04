@@ -1473,7 +1473,7 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
 }
 
 async function exitFromEditMode(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
+  await keyboardPressOnCanvas(page, 'Escape');
   await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
 }
 

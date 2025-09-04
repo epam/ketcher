@@ -37,9 +37,7 @@ import {
   MolFileFormat,
   ZoomOutByKeyboard,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { delay, selectAllStructuresOnCanvas } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -65,16 +63,17 @@ import {
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
+  AtomsSetting,
   BondsSetting,
   FontOption,
   GeneralSetting,
@@ -98,6 +97,7 @@ import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -495,27 +495,31 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 16: No overlapping UI elements in Query Properties right-click menu', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5615
-     * Description: No overlapping UI elements in Query Properties right-click menu.
-     * Scenario:
-     * 1. Open Micro
-     * 2. Right-click and select Query Properties -> H count or Substitution count (in my case)
-     * 3. Take screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await drawBenzeneRing(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).hover([
-      MicroAtomOption.QueryProperties,
-      QueryAtomOption.HCount,
-    ]);
-    await takeEditorScreenshot(page);
-    await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
-    await takeEditorScreenshot(page);
-  });
+  test(
+    'Case 16: No overlapping UI elements in Query Properties right-click menu',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5615
+       * Description: No overlapping UI elements in Query Properties right-click menu.
+       * Scenario:
+       * 1. Open Micro
+       * 2. Right-click and select Query Properties -> H count or Substitution count (in my case)
+       * 3. Take screenshot
+       */
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await drawBenzeneRing(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
+      await takeEditorScreenshot(page);
+      await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 17: Bond spacing is correct after saving in PNG (svg)', async () => {
     /*
@@ -590,29 +594,33 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 20: The atom is completely colored', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5597
-     * Description: The atom is completely colored.
-     * Scenario:
-     * 1. Open Micro
-     * 2. Add file
-     * 3. Highlight the atom
-     * 4. Take screenshot
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Chromium-popup/chain-with-double-bond.ket',
-    );
-    await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Red,
-    ]);
-    await takeEditorScreenshot(page);
-  });
+  test(
+    'Case 20: The atom is completely colored',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5597
+       * Description: The atom is completely colored.
+       * Scenario:
+       * 1. Open Micro
+       * 2. Add file
+       * 3. Highlight the atom
+       * 4. Take screenshot
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Chromium-popup/chain-with-double-bond.ket',
+      );
+      await takeEditorScreenshot(page);
+      await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).click([MicroBondOption.Highlight, HighlightOption.Red]);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 21: If switch to View Only Mode with Fragment Selection you can change or select another selection mode', async () => {
     /*
@@ -698,7 +706,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -709,11 +717,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
-
-    const mspPhosphate = getMonomerLocator(page, Phosphate.msp);
-    await mspPhosphate.hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async () => {
@@ -924,33 +927,36 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5668
-     * Description: Atoms and bonds is highlighted when the whole molecule with atoms is choosen
-     * Scenario:
-     * 1. Open Ketcher Micro mode
-     * 2. Load a file
-     * 3. Select all
-     * 4. Highlight the selected structure
-     * 5. Take screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
-    );
-    await takeEditorScreenshot(page);
-    await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Green,
-    ]);
-    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
-    await takeEditorScreenshot(page);
-  });
+  test(
+    'Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5668
+       * Description: Atoms and bonds is highlighted when the whole molecule with atoms is choosen
+       * Scenario:
+       * 1. Open Ketcher Micro mode
+       * 2. Load a file
+       * 3. Select all
+       * 4. Highlight the selected structure
+       * 5. Take screenshot
+       */
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        page,
+        'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+      );
+      await takeEditorScreenshot(page);
+      await selectAllStructuresOnCanvas(page);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'N', atomId: 0 }),
+      ).click([MicroBondOption.Highlight, HighlightOption.Green]);
+      await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 33: Able to select Erase tool after expanding macromolecule abbreviation in Micro mode', async () => {
     /*
@@ -1192,29 +1198,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 41: System opens correct context menu for monomers on micro canvas if clicked on atom or bond', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5809
-     * Description: System opens correct context menu for monomers on micro canvas if clicked on atom or bond.
-     * Scenario:
-     * 1. Go to Micro
-     * 2. Load from file
-     * 3. Right click on appeared monomer and click on Expand monomer at context menu
-     * 4. Right click on any bond or atom
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Chromium-popup/5. Unsplit nucleotide 5hMedC (from library).ket',
-    );
-    await ZoomOutByKeyboard(page, { repeat: 2 });
-    await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('5hMedC'));
-    await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).open();
-    await takeEditorScreenshot(page);
-  });
+  test(
+    'Case 41: System opens correct context menu for monomers on micro canvas if clicked on atom or bond',
+    { tag: ['@chromium-popup'] },
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5809
+       * Description: System opens correct context menu for monomers on micro canvas if clicked on atom or bond.
+       * Scenario:
+       * 1. Go to Micro
+       * 2. Load from file
+       * 3. Right click on appeared monomer and click on Expand monomer at context menu
+       * 4. Right click on any bond or atom
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Chromium-popup/5. Unsplit nucleotide 5hMedC (from library).ket',
+      );
+      await ZoomOutByKeyboard(page, { repeat: 2 });
+      await takeEditorScreenshot(page);
+      await expandMonomer(page, page.getByText('5hMedC'));
+      await takeEditorScreenshot(page);
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'N', atomId: 13 }),
+      ).open();
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 42: After bulk deletion of monomer abbreviations, Undo not returns expanded monomers', async () => {
     /*

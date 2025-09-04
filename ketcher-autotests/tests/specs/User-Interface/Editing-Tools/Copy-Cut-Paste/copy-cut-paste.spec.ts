@@ -21,7 +21,6 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -31,6 +30,7 @@ import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { INPUT_DELAY } from '@utils/globals';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -900,7 +900,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -947,7 +947,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -1041,7 +1041,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -1146,7 +1146,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
     List of buttons and coincidental tooltips is displayed:
-    Copy as MOL (Ctrl+M);
+    Copy as MOL (Ctrl+Shift+M);
     Copy as KET (Ctrl+Shift+K);
     Copy Image (Ctrl+Shift+F)
     Object is created.

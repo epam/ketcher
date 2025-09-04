@@ -96,48 +96,50 @@ const SubMenu = ({
   );
   return (
     <RootContainer data-testid={testId} ref={ref}>
-      <VisibleItem>
-        <MenuItem
-          disabled={disabled}
-          itemId={visibleItemId}
-          title={visibleItemTitle}
-          testId={visibleItemTestId}
-          onClick={
-            needOpenByMenuItemClick ? handleDropDownClick : EmptyFunction
-          }
-        />
-        {open || (
-          <StyledDropdownIcon
-            className="dropdown"
-            name="dropdown"
-            onClick={handleDropDownClick}
-            isActive={isActive(visibleItemId)}
-            dataTestId="dropdown-expand"
+      <>
+        <VisibleItem>
+          <MenuItem
+            disabled={disabled}
+            itemId={visibleItemId}
+            title={visibleItemTitle}
+            testId={visibleItemTestId}
+            onClick={
+              needOpenByMenuItemClick ? handleDropDownClick : EmptyFunction
+            }
           />
-        )}
-      </VisibleItem>
-      {ketcherEditorRootElement &&
-        createPortal(
-          <OptionsItemsCollapse
-            in={open}
-            timeout={0}
-            style={{ ...portalStyle }}
-            unmountOnExit
-            onClick={hideCollapse}
-          >
-            <ClickAwayListener onClickAway={hideCollapse}>
-              <OptionsContainer
-                isVertical={vertical}
-                isAutoSize={autoSize}
-                islayoutModeButton={layoutModeButton}
-                data-testid="multi-tool-dropdown"
-              >
-                {subComponents.map((component) => component)}
-              </OptionsContainer>
-            </ClickAwayListener>
-          </OptionsItemsCollapse>,
-          ketcherEditorRootElement,
-        )}
+          {open || (
+            <StyledDropdownIcon
+              className="dropdown"
+              name="dropdown"
+              onClick={handleDropDownClick}
+              isActive={isActive(visibleItemId)}
+              dataTestId="dropdown-expand"
+            />
+          )}
+        </VisibleItem>
+        {ketcherEditorRootElement &&
+          createPortal(
+            <OptionsItemsCollapse
+              in={open}
+              timeout={0}
+              style={{ ...portalStyle }}
+              unmountOnExit
+              onClick={hideCollapse}
+            >
+              <ClickAwayListener onClickAway={hideCollapse}>
+                <OptionsContainer
+                  isVertical={vertical}
+                  isAutoSize={autoSize}
+                  islayoutModeButton={layoutModeButton}
+                  data-testid="multi-tool-dropdown"
+                >
+                  {subComponents.map((component) => component)}
+                </OptionsContainer>
+              </ClickAwayListener>
+            </OptionsItemsCollapse>,
+            ketcherEditorRootElement,
+          )}
+      </>
     </RootContainer>
   );
 };

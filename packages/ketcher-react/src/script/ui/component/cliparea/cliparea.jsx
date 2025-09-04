@@ -30,6 +30,27 @@ const ieCb = typeof window !== 'undefined' ? window.clipboardData : {};
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
 
+const isUserEditing = () => {
+  const el = document.activeElement;
+  if (!el) {
+    return false;
+  }
+
+  // If focused on ClipArea's textarea, treat as not editing a user field
+  if (el.hasAttribute && el.hasAttribute('data-cliparea')) {
+    return false;
+  }
+  // Check for input, textarea, or contenteditable
+  return Boolean(
+    el.tagName === 'TEXTAREA' ||
+      (el.tagName === 'INPUT' &&
+        el.type !== 'button' &&
+        el.type !== 'submit' &&
+        el.type !== 'reset') ||
+      el.contentEditable === 'true',
+  );
+};
+
 class ClipArea extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +75,7 @@ class ClipArea extends Component {
           event.preventDefault();
       },
       copy: (event) => {
-        if (!this.props.focused()) {
+        if (!this.props.focused() || isUserEditing()) {
           return;
         }
         if (isClipboardAPIAvailable()) {
@@ -94,7 +115,7 @@ class ClipArea extends Component {
         }
       },
       cut: async (event) => {
-        if (!this.props.focused()) {
+        if (!this.props.focused() || isUserEditing()) {
           return;
         }
         if (isClipboardAPIAvailable()) {
@@ -116,7 +137,7 @@ class ClipArea extends Component {
         }
       },
       paste: (event) => {
-        if (!this.props.focused()) {
+        if (!this.props.focused() || isUserEditing()) {
           return;
         }
         if (isClipboardAPIAvailable()) {
@@ -178,6 +199,7 @@ class ClipArea extends Component {
       <textarea
         ref={this.textAreaRef}
         className={clsx(CLIP_AREA_BASE_CLASS, classes.cliparea)}
+        data-cliparea
         contentEditable
         autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}

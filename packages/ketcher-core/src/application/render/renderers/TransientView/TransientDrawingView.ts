@@ -17,6 +17,11 @@ import {
 } from './LineLengthHighlightView';
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
 import { MonomerItemType } from 'domain/types';
+import { SelectionView, SelectionViewParams } from './SelectionView';
+import {
+  GroupCentersnapView,
+  GroupCenterSnapViewParams,
+} from 'application/render/renderers/TransientView/GroupCenterSnapView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -131,6 +136,18 @@ export class TransientDrawingView {
     this.removeView(DistanceSnapView.viewName);
   }
 
+  public showGroupCenterSnap(params: GroupCenterSnapViewParams) {
+    this.addView(GroupCentersnapView.viewName, {
+      show: GroupCentersnapView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideGroupCenterSnap() {
+    this.removeView(GroupCentersnapView.viewName);
+  }
+
   public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
     this.addView(ModifyAminoAcidsView.viewName, {
       show: ModifyAminoAcidsView.show,
@@ -168,6 +185,17 @@ export class TransientDrawingView {
 
   public hideAutochainPreview() {
     this.removeView(AutochainPreviewView.viewName);
+  }
+
+  public showSelection(params: SelectionViewParams) {
+    this.addView(SelectionView.viewName, {
+      show: SelectionView.show,
+      params,
+    });
+  }
+
+  public hideSelection() {
+    this.removeView(SelectionView.viewName);
   }
 
   public clear() {

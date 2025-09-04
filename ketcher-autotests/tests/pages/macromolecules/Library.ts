@@ -218,6 +218,43 @@ export const Library = (page: Page) => {
       await getElement(monomer.testId).hover();
     },
 
+    /** Locator of the arrow button (autochain) on the monomer card */
+    getMonomerAutochainButton(monomer: Monomer): Locator {
+      return page.getByTestId(monomer.testId).locator('.autochain');
+    },
+
+    /** Hover over the arrow button on the monomer card */
+    async hoverMonomerAutochain(monomer: Monomer) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      await this.goToMonomerLocation(location);
+
+      const card = page.getByTestId(monomer.testId);
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.hover();
+    },
+
+    /** Click on the arrow button on the monomer card */
+    async clickMonomerAutochain(monomer: Monomer) {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      await this.goToMonomerLocation(location);
+
+      const card = page.getByTestId(monomer.testId);
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.click();
+    },
+
     async dragMonomerOnCanvas(
       monomer: Monomer | PresetType,
       coordinates: { x: number; y: number; fromCenter?: boolean },

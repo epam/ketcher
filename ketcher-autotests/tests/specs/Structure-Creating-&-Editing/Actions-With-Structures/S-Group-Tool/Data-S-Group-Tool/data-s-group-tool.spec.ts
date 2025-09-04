@@ -18,13 +18,11 @@ import {
   waitForRender,
   moveMouseAway,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
   verifyFileExport,
@@ -44,6 +42,9 @@ import {
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -325,7 +326,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -356,7 +357,7 @@ test.describe('Data S-Group tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
@@ -387,8 +388,9 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo by hotkeys atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.move(point.x, point.y);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await CommonLeftToolbar(page).selectEraseTool();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).click();
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
 

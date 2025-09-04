@@ -43,7 +43,11 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
           {message}
         </div>
         <footer>
-          <button className={styles.ok} onClick={close}>
+          <button
+            className={styles.ok}
+            onClick={close}
+            data-testid="info-modal-close"
+          >
             {error.close}
           </button>
         </footer>

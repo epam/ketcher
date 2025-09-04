@@ -32,6 +32,10 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   symbolExists:
     'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
   editingIsNotAllowed: 'Editing of the structure is not allowed.',
+  noAttachmentPoints: 'The monomer must have at least one attachment point.',
+  incorrectAttachmentPointsOrder:
+    'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
+  creationSuccessful: 'The monomer was successfully added to the library.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -40,6 +44,9 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   invalidSymbol: 'error',
   symbolExists: 'error',
   editingIsNotAllowed: 'error',
+  noAttachmentPoints: 'error',
+  incorrectAttachmentPointsOrder: 'error',
+  creationSuccessful: 'info',
 };
 
 export const MonomerCreationExternalNotificationAction =

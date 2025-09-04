@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -19,7 +20,6 @@ import {
   clickOnCanvas,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +41,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Glycerol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +61,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Isobutanol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +81,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.TButanol,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -104,7 +104,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -133,7 +133,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
       SaltsAndSolventsTabItems.Sulfolane,
     );
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

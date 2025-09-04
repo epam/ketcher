@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   clickOnAtom,
@@ -5,6 +6,7 @@ import {
   deleteByKeyboard,
   doubleClickOnAtom,
   dragMouseTo,
+  dragTo,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
@@ -13,10 +15,12 @@ import {
 } from '@utils';
 import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms/getRightAtomByAttributes/getRightAtomByAttributes';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const xMark = 300;
 const yMark = 200;
@@ -81,15 +85,17 @@ test.describe('Fragment selection tool', () => {
 
   test('Fuse atoms together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1358
-    const atomNumber = 4;
-    const atomLabel = 9;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
-    await clickOnAtom(page, 'C', atomNumber);
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, atomLabel);
-    await dragMouseTo(atomPoint.x, atomPoint.y, page);
+    await clickOnAtom(page, 'C', 2);
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
+    );
     await takeEditorScreenshot(page);
   });
 

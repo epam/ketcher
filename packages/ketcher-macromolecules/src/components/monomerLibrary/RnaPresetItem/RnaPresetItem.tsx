@@ -87,6 +87,10 @@ const RnaPresetItem = ({
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(preset);
   }, [editor, preset]);
+
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   useLibraryItemDrag(preset, cardRef);
 
   return (

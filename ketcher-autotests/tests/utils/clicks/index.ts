@@ -1,8 +1,9 @@
-import { Page } from '@playwright/test';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-magic-numbers */
+import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType, takeEditorScreenshot } from '..';
-import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
 import { selectButtonById } from '../canvas/tools/helpers';
 import { AtomLabelType } from './types';
 import {
@@ -14,6 +15,8 @@ import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type BoundingBox = {
   width: number;
@@ -211,6 +214,28 @@ export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
   await page.mouse.move(x, y);
 }
 
+export async function dragTo(
+  page: Page,
+  element: Locator,
+  target: ClickTarget,
+) {
+  await element.hover();
+  await page.mouse.down();
+  await waitForRender(page, async () => {
+    if ('x' in target && 'y' in target) {
+      await page.mouse.move(target.x, target.y);
+    } else {
+      const box = await target.boundingBox();
+      if (box) {
+        const targetCenterX = box.x + box.width / 2;
+        const targetCenterY = box.y + box.height / 2;
+        await page.mouse.move(targetCenterX, targetCenterY);
+      }
+    }
+    await page.mouse.up();
+  });
+}
+
 export async function dragMouseTo(x: number, y: number, page: Page) {
   await page.mouse.down();
   await page.mouse.move(x, y);
@@ -325,7 +350,7 @@ export async function applyAutoMapMode(
   mode: string,
   withScreenshot = true,
 ) {
-  await resetCurrentTool(page);
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionAutoMapping,
   );

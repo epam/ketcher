@@ -79,7 +79,7 @@ jobs:
           EOF
       - name: Run tests
         run: |
-          cd example/ && nohup npm run serve:standalone &
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
           cd ketcher-autotests/
           npm i
           npx playwright install chromium

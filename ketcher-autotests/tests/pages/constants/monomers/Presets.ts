@@ -84,6 +84,14 @@ export const Preset = {
     base: Base.T,
     phosphate: Phosphate.P,
   } as PresetType,
+  MyRNA: {
+    alias: 'MyRNA',
+    testId: 'MyRNA_baA_25R_bP',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar._25R,
+    base: Base.baA,
+    phosphate: Phosphate.bP,
+  } as PresetType,
 };
 
 export type PresetsType = typeof Preset;

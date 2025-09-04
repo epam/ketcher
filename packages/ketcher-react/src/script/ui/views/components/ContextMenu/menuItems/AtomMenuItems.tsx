@@ -20,11 +20,9 @@ import {
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
-import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
-import { isNumber } from 'lodash';
-import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
+import useMakeLeavingGroupAtomMenuItem from '../hooks/useMakeLeavingGroupAtomMenuItem';
 
 const {
   ringBondCount,
@@ -100,8 +98,6 @@ const atomPropertiesForSubMenu: {
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
-  const [handleAddAttachmentPoint] = useAddAttachmentPoint();
-  const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const { ketcherId } = useAppContext();
@@ -146,34 +142,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
-  const sgroup = isNumber(selectedAtomId)
-    ? struct.getGroupFromAtomId(selectedAtomId)
-    : undefined;
-  const atomInSgroupWithLabel = sgroup && !sgroup?.isSuperatomWithoutLabel;
-  const attachmentPoints = sgroup?.getAttachmentPoints() || [];
-  const maxAttachmentPointsAmount = attachmentPoints.length >= 8;
-  const isAtomSuperatomAttachmentPoint = Atom.isSuperatomAttachmentAtom(
-    struct,
-    selectedAtomId,
-  );
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
   );
-  const atomExternalConnections = isNumber(selectedAtomId)
-    ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
-    : undefined;
-  const atomFreeAttachmentPoints = attachmentPoints?.filter(
-    (attachmentPoint) =>
-      attachmentPoint.atomId === selectedAtomId &&
-      !atomExternalConnections?.some(
-        (bond) =>
-          bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber ||
-          bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber,
-      ),
-  );
+
   const highlightAtomWithColor = (color: string) => {
     const atomIds = props.propsFromTrigger?.atomIds || [];
     editor.highlights.create({
@@ -184,21 +157,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     });
   };
 
-  const isAddAttachmentPointDisabled =
-    !onlyOneAtomSelected ||
-    (() => {
-      if (!isNumber(selectedAtomId)) return true;
-
-      const connectedComponents = struct.findConnectedComponent(selectedAtomId);
-      for (const connectedAtomId of connectedComponents) {
-        const connectedGroup = struct.getGroupFromAtomId(connectedAtomId);
-        if (connectedGroup?.isMonomer) {
-          return true;
-        }
-      }
-
-      return false;
-    })();
+  const MakeLeavingGroupAtomMenuItem = useMakeLeavingGroupAtomMenuItem({
+    props,
+    selectedAtomId,
+    editor,
+  });
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
@@ -212,6 +175,12 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
+  if (MakeLeavingGroupAtomMenuItem !== null) {
+    return MakeLeavingGroupAtomMenuItem;
+  }
+
+  const disabled = editor.isMonomerCreationWizardActive;
+
   return (
     <>
       <Item
@@ -222,6 +191,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
+        disabled={disabled}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
@@ -238,58 +208,42 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       >
         Enhanced stereochemistry...
       </Item>
-      <Submenu
+      {!disabled && (
+        <Submenu
+          {...props}
+          label="Query properties"
+          data-testid="Query properties-option"
+          style={{ overflow: 'visible' }}
+        >
+          {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
+            return (
+              <Submenu
+                {...props}
+                label={title}
+                data-testid={`${title}-option`}
+                key={key}
+                className={styles.sameGroup}
+              >
+                <ButtonGroup<AtomAllAttributeValue>
+                  buttons={buttons}
+                  defaultValue={getPropertyValue(key)}
+                  title={title}
+                  onClick={(value: AtomAllAttributeValue) =>
+                    updateAtomProperty(key, value)
+                  }
+                />
+              </Submenu>
+            );
+          })}
+        </Submenu>
+      )}
+      {!disabled && <HighlightMenu onHighlight={highlightAtomWithColor} />}
+      <Item
         {...props}
-        label="Query properties"
-        data-testid="Query properties-option"
-        style={{ overflow: 'visible' }}
+        data-testid="Delete-option"
+        onClick={handleDelete}
+        disabled={disabled}
       >
-        {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
-          return (
-            <Submenu
-              {...props}
-              label={title}
-              data-testid={`${title}-option`}
-              key={key}
-              className={styles.sameGroup}
-            >
-              <ButtonGroup<AtomAllAttributeValue>
-                buttons={buttons}
-                defaultValue={getPropertyValue(key)}
-                title={title}
-                onClick={(value: AtomAllAttributeValue) =>
-                  updateAtomProperty(key, value)
-                }
-              ></ButtonGroup>
-            </Submenu>
-          );
-        })}
-      </Submenu>
-      {onlyOneAtomSelected &&
-        !atomInSgroupWithLabel &&
-        !maxAttachmentPointsAmount &&
-        !isAtomSuperatomLeavingGroup && (
-          <Item
-            {...props}
-            data-testid="Add attachment point-option"
-            onClick={handleAddAttachmentPoint}
-            disabled={isAddAttachmentPointDisabled}
-          >
-            Add attachment point
-          </Item>
-        )}
-      <HighlightMenu onHighlight={highlightAtomWithColor} />
-      {isAtomSuperatomAttachmentPoint &&
-        atomFreeAttachmentPoints.length > 0 && (
-          <Item
-            {...props}
-            data-testid="Remove attachment point-option"
-            onClick={handleRemoveAttachmentPoint}
-          >
-            Remove attachment point
-          </Item>
-        )}
-      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>

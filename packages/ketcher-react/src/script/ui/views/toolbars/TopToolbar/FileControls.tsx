@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { TopToolbarIconButton } from './TopToolbarIconButton';
+import { useSelector } from 'react-redux';
 
 interface FileControlsProps {
   onFileOpen: () => void;
   onSave: () => void;
   shortcuts: { [key in string]: string };
   hiddenButtons: string[];
+  disabledButtons: string[];
 }
 
 export const FileControls = ({
@@ -27,7 +29,12 @@ export const FileControls = ({
   onSave,
   shortcuts,
   hiddenButtons,
+  disabledButtons,
 }: FileControlsProps) => {
+  const isWizardActive = useSelector(
+    (state: { editor?: { isMonomerCreationWizardActive?: boolean } }) =>
+      Boolean(state?.editor?.isMonomerCreationWizardActive),
+  );
   return (
     <>
       <TopToolbarIconButton
@@ -36,6 +43,7 @@ export const FileControls = ({
         iconName="open"
         shortcut={shortcuts.open}
         isHidden={hiddenButtons.includes('open')}
+        disabled={disabledButtons.includes('open') || isWizardActive}
         testId="open-file-button"
       />
       <TopToolbarIconButton
@@ -44,6 +52,7 @@ export const FileControls = ({
         iconName="save"
         shortcut={shortcuts.save}
         isHidden={hiddenButtons.includes('save')}
+        disabled={disabledButtons.includes('save') || isWizardActive}
         testId="save-file-button"
       />
     </>

@@ -68,7 +68,8 @@ const config = {
     enabledInViewOnly: true,
     title: 'Check Structure',
     action: { dialog: 'check' },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (editor, server, options) =>
+      editor.isMonomerCreationWizardActive || !options.app.server,
     hidden: (options) => isHidden(options, 'check'),
   },
   analyse: {

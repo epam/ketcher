@@ -146,8 +146,8 @@ class StructEditor extends Component {
     );
   }
 
-  componentDidUpdate(prevProps) {
-    setupEditor(this.editor, this.props, prevProps);
+  UNSAFE_componentWillReceiveProps(props) {
+    setupEditor(this.editor, props, this.props);
   }
 
   componentDidMount() {

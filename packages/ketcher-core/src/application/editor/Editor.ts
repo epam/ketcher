@@ -92,7 +92,6 @@ import { BaseMonomerRenderer } from 'application/render';
 import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import {
   getAminoAcidsToModify,
@@ -106,6 +105,7 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { SelectBase } from 'application/editor/tools/select/SelectBase';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -271,7 +271,7 @@ export class CoreEditor {
   };
 
   private cancelActiveDrag(): void {
-    if (this.tool instanceof SelectRectangle) {
+    if (this.tool instanceof SelectBase) {
       this.tool.stopMovement();
     }
   }

@@ -345,8 +345,10 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (r)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
+    // There is bug 'https://github.com/epam/ketcher/issues/7763'
+    // So expected helm string is not correct
     differentHELMExport:
-      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (p)',
@@ -359,15 +361,19 @@ const correctHELMStrings: IHELMString[] = [
       '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)p}$$$$V2.0',
+    // There is bug 'https://github.com/epam/ketcher/issues/7763'
+    // So expected helm string is not correct
     differentHELMExport:
-      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)p}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription:
       '54. Single peptide with inline SMILES (L) without attachment points',
     HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
-    differentHELMExport: 'PEPTIDE1{[C(C(C)C)C(N[H])C(=O)O]}$$$$V2.0',
+    // There is bug 'https://github.com/epam/ketcher/issues/7763'
+    // So expected helm string is not correct
+    differentHELMExport: 'PEPTIDE1{[C(C(C)C)[C@H](N[H])C(=O)O]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -375,7 +381,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     differentHELMExport:
-      'PEPTIDE1{[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
+      'PEPTIDE1{[C(C(C)C)[C@H](N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -401,10 +407,10 @@ const correctHELMStrings: IHELMString[] = [
       '[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].' +
       '[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     differentHELMExport:
-      'PEPTIDE1{[N([*:1])C(C)C([*:2])=O |$;_R1;;;;_R2;$|].' +
-      '[C([*:2])(=O)C(N[*:1])CS[*:3] |$;_R2;;;;_R1;;;_R3$|].' +
-      '[C([*:2])(=O)C(N[*:1])CC(=O)O[*:3] |$;_R2;;;;_R1;;;;;_R3$|].' +
-      '[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
+      'PEPTIDE1{[N([*:1])[C@@H](C)C([*:2])=O |$;_R1;;;;_R2;$|].' +
+      '[C([*:2])(=O)[C@@H](N[*:1])CS[*:3] |$;_R2;;;;_R1;;;_R3$|].' +
+      '[C([*:2])(=O)[C@@H](N[*:1])CC(=O)O[*:3] |$;_R2;;;;_R1;;;;;_R3$|].' +
+      '[C(C(C)C)[C@H](N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -783,435 +789,435 @@ test.describe('Export to HELM: ', () => {
 });
 
 const incorrectHELMStrings: IHELMString[] = [
-  {
-    helmDescription: '1. RNA - Base only',
-    HELMString: 'RNA1{(A)}$$$$V2.0',
-  },
-  {
-    helmDescription: '2. No monomer index',
-    HELMString: 'RNA{r(A)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '3. Not a HELM content',
-    HELMString: 'Bla-bla-blaV2.0',
-  },
-  {
-    helmDescription: '4. wrong sugar name',
-    HELMString: 'RNA1{bla-bla-bla(A)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '5. wrong base name',
-    HELMString: 'RNA1{r(bla-bla-bla)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '6. wrong phosphate name',
-    HELMString: 'RNA1{r(A)bla-bla-bla}$$$$V2.0',
-  },
-  {
-    helmDescription: '7. no RNA name',
-    HELMString: 'RNA1{}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2057',
-  },
-  {
-    helmDescription: '8. wrong RNA name',
-    HELMString: 'RNA1{bla-bla-bla}$$$$V2.0',
-  },
-  {
-    helmDescription: '9. wrong brakets',
-    HELMString: 'RNA1(r(A)p)$$$$V2.0',
-  },
-  {
-    helmDescription: '10. no squire brackets',
-    HELMString: 'RNA1{Sm5moe(m2nprn2A)mepo2}$$$$V2.0',
-  },
-  {
-    helmDescription: '11. No peptide name',
-    HELMString: 'PEPTIDE1{}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2057',
-  },
-  {
-    helmDescription: '12. No peptide index',
-    HELMString: 'PEPTIDE{L}$$$$V2.0',
-  },
-  {
-    helmDescription: '13. wrong Peptide name',
-    HELMString: 'PEPTIDE1{bla-bla-bla}$$$$V2.0',
-  },
-  {
-    helmDescription: '14. wrong brackets',
-    HELMString: 'PEPTIDE1(L)$$$$V2.0',
-  },
-  {
-    helmDescription: '15. no ending token',
-    HELMString: 'PEPTIDE1{L}',
-  },
-  {
-    helmDescription: '16. no squire brackets',
-    HELMString: 'PEPTIDE1{D-gGlu}$$$$V2.0',
-  },
-  {
-    helmDescription: '17. No CHEM name',
-    HELMString: 'CHEM1{}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2057',
-  },
-  {
-    helmDescription: '18. No CHEM index',
-    HELMString: 'CHEM{[A6OH]}$$$$V2.0',
-  },
-  {
-    helmDescription: '19. wrong CHEM name',
-    HELMString: 'CHEM1{[Bla-bla-bla]}$$$$V2.0',
-  },
-  {
-    helmDescription: '20. wrong brackets',
-    HELMString: 'CHEM1([A6OH])$$$$V2.0',
-  },
-  {
-    helmDescription: '21. “X” is not valid for CHEM',
-    HELMString: 'CHEM1{X}$$$$V2.0',
-  },
-  {
-    helmDescription: '22. “X” is not valid for RNA',
-    HELMString: 'RNA1{X}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '23. The character “X” represents one single unknown amino acid in a PEPTIDE polymer.',
-    HELMString: 'PEPTIDE1{X}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '24. Unknown Polymers are marked as BLOB type polymers. These polymers do not contain a list of monomers ' +
-      'but they specify their type inside the curly braces. The polymer BLOB1{Bead} for example represents a polymer with the type “Bead”.',
-    HELMString: 'BLOB1{}V2.0',
-  },
-  {
-    helmDescription: '25. No monomer index',
-    HELMString: 'BLOB{Bead}V2.0',
-  },
-  {
-    helmDescription: '26. CHEM could be the chain of monomers',
-    HELMString:
-      'CHEM1{[A6OH].[Az].[EG].[MCC].[PEG2].[SMCC].[SMPEG2].[SS3].[hxy].[sDBL]}$$$$V2.0',
-  },
-  {
-    helmDescription: '27. Missing ratio token (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
-  },
-  {
-    helmDescription: '28. Wrong ratio token type (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
-  },
-  {
-    helmDescription: '29. Negative ratio (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:-10+C:0.1)}$$$$V2.0',
-  },
-  {
-    helmDescription: '30. Missing ratio token (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
-  },
-  {
-    helmDescription: '31. Wrong ratio token type (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
-  },
-  {
-    helmDescription: '32. Negative ratio (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:-10+[Az]:0.1)}$$$$V2.0',
-  },
-  {
-    helmDescription: '33. Missing ratio token (RNA)',
-    HELMString: 'RNA1{r(A:+C:200)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '34. Wrong ratio token type (RNA)',
-    HELMString: 'RNA1{r(A:100+C:aaa)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '35. Negative ratio (RNA)',
-    HELMString: 'RNA1{r(A:-100+C:200)p}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2270',
-  },
-  {
-    helmDescription: '36. Missing probability token (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
-  },
-  {
-    helmDescription: '37. Wrong probability token type (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:10,C:aaa)}$$$$V2.0',
-  },
-  {
-    helmDescription: '38. Negative probability (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:-10,C:20)}$$$$V2.0',
-  },
-  {
-    helmDescription: '39. Probability is greater than 100 (PEPTIDE)',
-    HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
-  },
-  {
-    helmDescription: '40. Missing probability token (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
-  },
-  {
-    helmDescription: '41. Wrong probability token type (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:10,[Az]:aaa)}$$$$V2.0',
-  },
-  {
-    helmDescription: '42. Negative probability (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:-10,[Az]:20)}$$$$V2.0',
-  },
   // {
-  //   helmDescription: '43. Probability is greater than 100 (CHEM)',
-  //   HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
+  //   helmDescription: '1. RNA - Base only',
+  //   HELMString: 'RNA1{(A)}$$$$V2.0',
   // },
-  // It is not a bug because of Aleksandr Savelev suggestion
-  {
-    helmDescription: '44. Missing probability token (RNA)',
-    HELMString: 'RNA1{r(A:,C:90)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '45. Wrong probability token type (RNA)',
-    HELMString: 'RNA1{(r(A:10,C:aaa)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '46. Negative probability (RNA)',
-    HELMString: 'RNA1{(r(A:-10,C:90)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '47. Probability is greater than 100 (RNA)',
-    HELMString: 'RNA1{(r(A:10,C:1000)p}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '48. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
-    HELMString: "CHEM1{[SMPEG2]'5'}$$$$V2.0",
-  },
-  {
-    helmDescription: '49. Negative repeating number (RNA)',
-    HELMString: "RNA1{[Sm5moe]([m2nprn2A])[mepo2]'-5'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2062',
-  },
-  {
-    helmDescription: '50. Negative repeating number (PEPTIDE)',
-    HELMString: "PEPTIDE1{[D-gGlu]'-5'}$$$$V2.0",
-  },
-  {
-    helmDescription: '51. Negative repeating number (CHEM)',
-    HELMString: "CHEM1{[SMPEG2]'-5'}$$$$V2.0",
-  },
-  {
-    helmDescription:
-      '52. Repeating in groups for CHEMS cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
-    HELMString:
-      "CHEM1{[A6OH].[Az]'2'.[EG]'3'.[MCC]'4'.[PEG2]'5'.[SMCC]'6'}$$$$V2.0",
-  },
-  {
-    helmDescription:
-      '53. Group of CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
-    HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5'}$$$$V2.0",
-  },
-  {
-    helmDescription: '54. Negative repeating number (PEPTIDE)',
-    HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'-5'}$$$$V2.0",
-  },
-  {
-    helmDescription: '55. Negative repeating number (CHEM)',
-    HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'-5'}$$$$V2.0",
-  },
-  {
-    helmDescription: '56. Negative repeating number',
-    HELMString:
-      "RNA1{([Sm5moe]([m2nprn2A])[mepo2]+[menoe2r]([nobn6pur])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'-5'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2277',
-  },
-  {
-    helmDescription:
-      '57. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
-    HELMString: "CHEM1{[SMPEG2]'3-7'}$$$$V2.0",
-  },
-  {
-    helmDescription: '58. Invalid range (RNA)',
-    HELMString: "RNA1{[Sm5moe]([m2nprn2A])[mepo2]'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2062',
-  },
-  {
-    helmDescription: '59. Invalid range (PEPTIDE)',
-    HELMString: "PEPTIDE1{[D-gGlu]'5-i'}$$$$V2.0",
-  },
-  {
-    helmDescription: '60. Invalid range (CHEM)',
-    HELMString: "CHEM1{[SMPEG2]'5-i'}$$$$V2.0",
-  },
-  {
-    helmDescription: '61. Range for CHEMS is impossible',
-    HELMString:
-      "CHEM1{[A6OH]'1-2'.[Az]'2-3'.[EG]'3-4'.[MCC]'4-5'.[PEG2]'5-6'.[SMCC]'6-7'}$$$$V2.0",
-  },
-  {
-    helmDescription: '62. Range for CHEMS is impossible',
-    HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'3-7'}$$$$V2.0",
-  },
-  {
-    helmDescription: '63. Invalid range (PEPTIDE)',
-    HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
-  },
-  {
-    helmDescription: '64. Invalid range (CHEM)',
-    HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
-  },
-  {
-    helmDescription: '65. Invalid range (RNA)',
-    HELMString:
-      "RNA1{([Sm5moe]([m2nprn2A])[mepo2]+[menoe2r]([nobn6pur])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2279',
-  },
-  {
-    helmDescription: '66. Wrong polymer name index (CHEM)',
-    HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM10,PEPTIDE1,1:R2-1:R1$$$V2.0',
-  },
-  {
-    helmDescription: '67. Wrong polymer name in connections section',
-    HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$BlaBlaBla,PEPTIDE1,1:R2-1:R1$$$V2.0',
-  },
-  {
-    helmDescription: '68. Wrong monomer index in polymer',
-    HELMString: 'PEPTIDE1{A}|RNA1{r(A)p}$RNA1,PEPTIDE1,5:R2-1:R1$$$V2.0V2.0',
-  },
-  {
-    helmDescription:
-      "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
-    HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
-  },
-  {
-    helmDescription: '70. Missing monomer name',
-    HELMString: 'RNA1{r(A)p}|CHEM1{[A6OH]}$CHEM1,1:R1-3:R2$$$V2.0',
-  },
-  {
-    helmDescription: '71. Missing connection points',
-    HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1$$$V2.0',
-  },
-  {
-    helmDescription:
-      '72. RNA(rA) with single inline SMILES (A) without attachment points',
-    HELMString: 'RNA1{r([C1(N)=NC=NC2N([H])C=NC1=2])}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '73. RNA(rp) with single inline SMILES (p) without attachment points',
-    HELMString: 'RNA1{r[p(O)(O)(=O)O]}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '74. RNA(rAp) with  single inline SMILES (r) without attachment points',
-    HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)p}$$$$V2.0',
-  },
-  {
-    helmDescription: '75. no ending token (RNA)',
-    HELMString: 'RNA1{r(A)p}',
-  },
-  {
-    helmDescription: '76. no ending token (CHEM)',
-    HELMString: 'CHEM1{[A6OH]}',
-  },
-  {
-    helmDescription: '77. no ending token (PEPTIDE)',
-    HELMString: 'PEPTIDE1{L}',
-  },
-  {
-    helmDescription:
-      '78. RNA(r(A)p) with inline SMILES (A) without attachment points',
-    HELMString:
-      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]' +
-      '([C1(N)=NC=NC2N([H])C=NC1=2])' +
-      '[p%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
-  },
-  {
-    helmDescription:
-      '79. RNA(RP) with single inline SMILES (p) without attachment points',
-    HELMString: 'RNA1{r[p(O)(O)(=O)O]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2361',
-  },
-  {
-    helmDescription:
-      '80. RNA(r(A)p) with  single inline SMILES (r) without attachment points',
-    HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)p}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
-  },
+  // {
+  //   helmDescription: '2. No monomer index',
+  //   HELMString: 'RNA{r(A)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '3. Not a HELM content',
+  //   HELMString: 'Bla-bla-blaV2.0',
+  // },
+  // {
+  //   helmDescription: '4. wrong sugar name',
+  //   HELMString: 'RNA1{bla-bla-bla(A)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '5. wrong base name',
+  //   HELMString: 'RNA1{r(bla-bla-bla)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '6. wrong phosphate name',
+  //   HELMString: 'RNA1{r(A)bla-bla-bla}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '7. no RNA name',
+  //   HELMString: 'RNA1{}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2057',
+  // },
+  // {
+  //   helmDescription: '8. wrong RNA name',
+  //   HELMString: 'RNA1{bla-bla-bla}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '9. wrong brakets',
+  //   HELMString: 'RNA1(r(A)p)$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '10. no squire brackets',
+  //   HELMString: 'RNA1{Sm5moe(m2nprn2A)mepo2}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '11. No peptide name',
+  //   HELMString: 'PEPTIDE1{}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2057',
+  // },
+  // {
+  //   helmDescription: '12. No peptide index',
+  //   HELMString: 'PEPTIDE{L}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '13. wrong Peptide name',
+  //   HELMString: 'PEPTIDE1{bla-bla-bla}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '14. wrong brackets',
+  //   HELMString: 'PEPTIDE1(L)$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '15. no ending token',
+  //   HELMString: 'PEPTIDE1{L}',
+  // },
+  // {
+  //   helmDescription: '16. no squire brackets',
+  //   HELMString: 'PEPTIDE1{D-gGlu}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '17. No CHEM name',
+  //   HELMString: 'CHEM1{}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2057',
+  // },
+  // {
+  //   helmDescription: '18. No CHEM index',
+  //   HELMString: 'CHEM{[A6OH]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '19. wrong CHEM name',
+  //   HELMString: 'CHEM1{[Bla-bla-bla]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '20. wrong brackets',
+  //   HELMString: 'CHEM1([A6OH])$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '21. “X” is not valid for CHEM',
+  //   HELMString: 'CHEM1{X}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '22. “X” is not valid for RNA',
+  //   HELMString: 'RNA1{X}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '23. The character “X” represents one single unknown amino acid in a PEPTIDE polymer.',
+  //   HELMString: 'PEPTIDE1{X}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '24. Unknown Polymers are marked as BLOB type polymers. These polymers do not contain a list of monomers ' +
+  //     'but they specify their type inside the curly braces. The polymer BLOB1{Bead} for example represents a polymer with the type “Bead”.',
+  //   HELMString: 'BLOB1{}V2.0',
+  // },
+  // {
+  //   helmDescription: '25. No monomer index',
+  //   HELMString: 'BLOB{Bead}V2.0',
+  // },
+  // {
+  //   helmDescription: '26. CHEM could be the chain of monomers',
+  //   HELMString:
+  //     'CHEM1{[A6OH].[Az].[EG].[MCC].[PEG2].[SMCC].[SMPEG2].[SS3].[hxy].[sDBL]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '27. Missing ratio token (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '28. Wrong ratio token type (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '29. Negative ratio (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:-10+C:0.1)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '30. Missing ratio token (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '31. Wrong ratio token type (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '32. Negative ratio (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:-10+[Az]:0.1)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '33. Missing ratio token (RNA)',
+  //   HELMString: 'RNA1{r(A:+C:200)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '34. Wrong ratio token type (RNA)',
+  //   HELMString: 'RNA1{r(A:100+C:aaa)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '35. Negative ratio (RNA)',
+  //   HELMString: 'RNA1{r(A:-100+C:200)p}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2270',
+  // },
+  // {
+  //   helmDescription: '36. Missing probability token (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '37. Wrong probability token type (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:10,C:aaa)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '38. Negative probability (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:-10,C:20)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '39. Probability is greater than 100 (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '40. Missing probability token (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '41. Wrong probability token type (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:10,[Az]:aaa)}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '42. Negative probability (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:-10,[Az]:20)}$$$$V2.0',
+  // },
+  // // {
+  // //   helmDescription: '43. Probability is greater than 100 (CHEM)',
+  // //   HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
+  // // },
+  // // It is not a bug because of Aleksandr Savelev suggestion
+  // {
+  //   helmDescription: '44. Missing probability token (RNA)',
+  //   HELMString: 'RNA1{r(A:,C:90)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '45. Wrong probability token type (RNA)',
+  //   HELMString: 'RNA1{(r(A:10,C:aaa)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '46. Negative probability (RNA)',
+  //   HELMString: 'RNA1{(r(A:-10,C:90)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '47. Probability is greater than 100 (RNA)',
+  //   HELMString: 'RNA1{(r(A:10,C:1000)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '48. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+  //   HELMString: "CHEM1{[SMPEG2]'5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '49. Negative repeating number (RNA)',
+  //   HELMString: "RNA1{[Sm5moe]([m2nprn2A])[mepo2]'-5'}$$$$V2.0",
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2062',
+  // },
+  // {
+  //   helmDescription: '50. Negative repeating number (PEPTIDE)',
+  //   HELMString: "PEPTIDE1{[D-gGlu]'-5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '51. Negative repeating number (CHEM)',
+  //   HELMString: "CHEM1{[SMPEG2]'-5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription:
+  //     '52. Repeating in groups for CHEMS cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+  //   HELMString:
+  //     "CHEM1{[A6OH].[Az]'2'.[EG]'3'.[MCC]'4'.[PEG2]'5'.[SMCC]'6'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription:
+  //     '53. Group of CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+  //   HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '54. Negative repeating number (PEPTIDE)',
+  //   HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'-5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '55. Negative repeating number (CHEM)',
+  //   HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'-5'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '56. Negative repeating number',
+  //   HELMString:
+  //     "RNA1{([Sm5moe]([m2nprn2A])[mepo2]+[menoe2r]([nobn6pur])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'-5'}$$$$V2.0",
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2277',
+  // },
+  // {
+  //   helmDescription:
+  //     '57. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+  //   HELMString: "CHEM1{[SMPEG2]'3-7'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '58. Invalid range (RNA)',
+  //   HELMString: "RNA1{[Sm5moe]([m2nprn2A])[mepo2]'5-i'}$$$$V2.0",
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2062',
+  // },
+  // {
+  //   helmDescription: '59. Invalid range (PEPTIDE)',
+  //   HELMString: "PEPTIDE1{[D-gGlu]'5-i'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '60. Invalid range (CHEM)',
+  //   HELMString: "CHEM1{[SMPEG2]'5-i'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '61. Range for CHEMS is impossible',
+  //   HELMString:
+  //     "CHEM1{[A6OH]'1-2'.[Az]'2-3'.[EG]'3-4'.[MCC]'4-5'.[PEG2]'5-6'.[SMCC]'6-7'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '62. Range for CHEMS is impossible',
+  //   HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'3-7'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '63. Invalid range (PEPTIDE)',
+  //   HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '64. Invalid range (CHEM)',
+  //   HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
+  // },
+  // {
+  //   helmDescription: '65. Invalid range (RNA)',
+  //   HELMString:
+  //     "RNA1{([Sm5moe]([m2nprn2A])[mepo2]+[menoe2r]([nobn6pur])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'5-i'}$$$$V2.0",
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2279',
+  // },
+  // {
+  //   helmDescription: '66. Wrong polymer name index (CHEM)',
+  //   HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM10,PEPTIDE1,1:R2-1:R1$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '67. Wrong polymer name in connections section',
+  //   HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$BlaBlaBla,PEPTIDE1,1:R2-1:R1$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '68. Wrong monomer index in polymer',
+  //   HELMString: 'PEPTIDE1{A}|RNA1{r(A)p}$RNA1,PEPTIDE1,5:R2-1:R1$$$V2.0V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
+  //   HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '70. Missing monomer name',
+  //   HELMString: 'RNA1{r(A)p}|CHEM1{[A6OH]}$CHEM1,1:R1-3:R2$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '71. Missing connection points',
+  //   HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '72. RNA(rA) with single inline SMILES (A) without attachment points',
+  //   HELMString: 'RNA1{r([C1(N)=NC=NC2N([H])C=NC1=2])}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '73. RNA(rp) with single inline SMILES (p) without attachment points',
+  //   HELMString: 'RNA1{r[p(O)(O)(=O)O]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '74. RNA(rAp) with  single inline SMILES (r) without attachment points',
+  //   HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)p}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '75. no ending token (RNA)',
+  //   HELMString: 'RNA1{r(A)p}',
+  // },
+  // {
+  //   helmDescription: '76. no ending token (CHEM)',
+  //   HELMString: 'CHEM1{[A6OH]}',
+  // },
+  // {
+  //   helmDescription: '77. no ending token (PEPTIDE)',
+  //   HELMString: 'PEPTIDE1{L}',
+  // },
+  // {
+  //   helmDescription:
+  //     '78. RNA(r(A)p) with inline SMILES (A) without attachment points',
+  //   HELMString:
+  //     'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]' +
+  //     '([C1(N)=NC=NC2N([H])C=NC1=2])' +
+  //     '[p%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  // },
+  // {
+  //   helmDescription:
+  //     '79. RNA(RP) with single inline SMILES (p) without attachment points',
+  //   HELMString: 'RNA1{r[p(O)(O)(=O)O]}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2361',
+  // },
+  // {
+  //   helmDescription:
+  //     '80. RNA(r(A)p) with  single inline SMILES (r) without attachment points',
+  //   HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)p}$$$$V2.0',
+  //   shouldFail: true,
+  //   issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  // },
   {
     helmDescription:
       '81. List of peptide of inline Smiles (A,C,D,L) - no attachment points',
     HELMString:
       'PEPTIDE1{[N([H])[C@H](C(O)=O)C].[C(O)([C@H](CS[H])N[H])=O].[C(O)([C@H](CC(O[H])=O)N[H])=O].[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
   },
-  {
-    helmDescription:
-      '82. Multi-character peptide ID with missing opening bracket',
-    HELMString: 'PEPTIDE1{1Nal]}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '83. Multi-character peptide ID with missing closing bracket',
-    HELMString: 'PEPTIDE1{[1Nal}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '84. Multi-character preset of all monomer ID with missing opening bracket for sugar',
-    HELMString: 'RNA1{5S6Rm5](mo6pur)sP-}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '85. Multi-character preset of all monomer ID with missing closing bracket for sugar',
-    HELMString: 'RNA1{[5S6Rm5(mo6pur)sP-}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '86. Multi-character preset of all monomer ID with missing opening bracket for base',
-    HELMString: 'RNA1{5S6Rm5(mo6pur])sP-}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '87. Multi-character preset of all monomer ID with missing closing bracket for base',
-    HELMString: 'RNA1{5S6Rm5([mo6pur)sP-}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '88. Multi-character preset of all monomer ID with missing opening bracket for phosphate',
-    HELMString: 'RNA1{5S6Rm5(mo6pur)sP-]}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '89. Multi-character preset of all monomer ID with missing closing bracket for phosphate',
-    HELMString: 'RNA1{5S6Rm5(mo6pur)[sP-}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '90. Multi-character unsplit monomer ID with missing opening bracket',
-    HELMString: 'RNA1{2-damdA]}$$$$V2.0',
-  },
-  {
-    helmDescription:
-      '91. Multi-character unsplit monomer ID with missing closing bracket',
-    HELMString: 'RNA1{[2-damdA}$$$$V2.0',
-  },
-  {
-    helmDescription: '92. Multi-character CHEM ID with missing opening bracket',
-    HELMString: 'CHEM1{4aPEGMal]}$$$$V2.0',
-  },
-  {
-    helmDescription: '93. Multi-character CHEM ID with missing closing bracket',
-    HELMString: 'CHEM1{[4aPEGMal}$$$$V2.0',
-  },
+  // {
+  //   helmDescription:
+  //     '82. Multi-character peptide ID with missing opening bracket',
+  //   HELMString: 'PEPTIDE1{1Nal]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '83. Multi-character peptide ID with missing closing bracket',
+  //   HELMString: 'PEPTIDE1{[1Nal}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '84. Multi-character preset of all monomer ID with missing opening bracket for sugar',
+  //   HELMString: 'RNA1{5S6Rm5](mo6pur)sP-}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '85. Multi-character preset of all monomer ID with missing closing bracket for sugar',
+  //   HELMString: 'RNA1{[5S6Rm5(mo6pur)sP-}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '86. Multi-character preset of all monomer ID with missing opening bracket for base',
+  //   HELMString: 'RNA1{5S6Rm5(mo6pur])sP-}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '87. Multi-character preset of all monomer ID with missing closing bracket for base',
+  //   HELMString: 'RNA1{5S6Rm5([mo6pur)sP-}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '88. Multi-character preset of all monomer ID with missing opening bracket for phosphate',
+  //   HELMString: 'RNA1{5S6Rm5(mo6pur)sP-]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '89. Multi-character preset of all monomer ID with missing closing bracket for phosphate',
+  //   HELMString: 'RNA1{5S6Rm5(mo6pur)[sP-}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '90. Multi-character unsplit monomer ID with missing opening bracket',
+  //   HELMString: 'RNA1{2-damdA]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription:
+  //     '91. Multi-character unsplit monomer ID with missing closing bracket',
+  //   HELMString: 'RNA1{[2-damdA}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '92. Multi-character CHEM ID with missing opening bracket',
+  //   HELMString: 'CHEM1{4aPEGMal]}$$$$V2.0',
+  // },
+  // {
+  //   helmDescription: '93. Multi-character CHEM ID with missing closing bracket',
+  //   HELMString: 'CHEM1{[4aPEGMal}$$$$V2.0',
+  // },
 ];
 
 test.describe('Import incorrect HELM sequence: ', () => {

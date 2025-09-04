@@ -81,18 +81,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const editor = ketcher.editor as Editor;
 
-      if (editor.monomerCreationState !== null) {
-        window.dispatchEvent(
-          new CustomEvent<WizardNotificationId>(
-            MonomerCreationExternalNotificationAction,
-            {
-              detail: 'editingIsNotAllowed',
-            },
-          ),
-        );
-        return;
-      }
-
       if (editor.render.options.viewOnlyMode) {
         return;
       }
@@ -117,8 +105,24 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           // if it was a click outside of any item
           editor.selection(null);
         }
+
         return;
       } else if (!selection) {
+        if (
+          editor.isMonomerCreationWizardActive &&
+          closestItem.map !== 'atoms'
+        ) {
+          window.dispatchEvent(
+            new CustomEvent<WizardNotificationId>(
+              MonomerCreationExternalNotificationAction,
+              {
+                detail: 'editingIsNotAllowed',
+              },
+            ),
+          );
+          return;
+        }
+
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
         getIsItemInSelection({

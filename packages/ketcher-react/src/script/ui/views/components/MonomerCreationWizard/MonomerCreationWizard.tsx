@@ -2,24 +2,26 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon } from 'components';
 import {
+  AttachmentPointClickData,
+  AttachmentPointName,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
+  getAttachmentPointNumberFromLabel,
+  ketcherProvider,
   KetMonomerClass,
+  MonomerCreationAttachmentPointClickEvent,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useEffect, useMemo, useReducer } from 'react';
+import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
-import {
-  closeMonomerCreationWizard,
-  submitMonomerCreation,
-} from '../../../state/editor/actions/monomerCreation';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
+import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
   WizardAction,
   WizardFormFieldId,
@@ -34,6 +36,12 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
+import { useAppContext } from '../../../../../hooks';
+import Editor from '../../../../editor';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
+import { createPortal } from 'react-dom';
+import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import assert from 'assert';
 
 const initialWizardState: WizardState = {
   values: {
@@ -181,12 +189,54 @@ const validateInputs = (values: WizardValues) => {
   return { errors, notifications };
 };
 
+const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+
+  if (attachmentPoints.length === 0) {
+    notifications.set('noAttachmentPoints', {
+      type: 'error',
+      message: NotificationMessages.noAttachmentPoints,
+    });
+
+    return notifications;
+  }
+
+  const attachmentPointNumbers = attachmentPoints.map(
+    getAttachmentPointNumberFromLabel,
+  );
+
+  attachmentPointNumbers.sort((a, b) => a - b);
+
+  let startingIndex = 0;
+  while (attachmentPointNumbers[startingIndex] <= 2) {
+    startingIndex++;
+  }
+
+  for (let i = startingIndex; i < attachmentPointNumbers.length; i++) {
+    if (attachmentPointNumbers[i] - attachmentPointNumbers[i - 1] > 1) {
+      notifications.set('incorrectAttachmentPointsOrder', {
+        type: 'error',
+        message: NotificationMessages.incorrectAttachmentPointsOrder,
+      });
+      break;
+    }
+  }
+
+  return notifications;
+};
+
 const MonomerCreationWizard = () => {
-  const reduxDispatch = useDispatch();
+  const { ketcherId } = useAppContext();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const editor = ketcher.editor as Editor;
+
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
     initialWizardState,
   );
+
+  const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
+    useState<AttachmentPointClickData | null>(null);
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
@@ -209,6 +259,32 @@ const MonomerCreationWizard = () => {
       window.removeEventListener(
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    const attachmentPointClickHandler = (event: Event) => {
+      const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
+      const { atomId, atomLabel, attachmentPointName, position } = clickData;
+
+      setAttachmentPointEditPopupData({
+        atomId,
+        atomLabel,
+        attachmentPointName,
+        position,
+      });
+    };
+
+    window.addEventListener(
+      MonomerCreationAttachmentPointClickEvent,
+      attachmentPointClickHandler,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationAttachmentPointClickEvent,
+        attachmentPointClickHandler,
       );
     };
   }, []);
@@ -248,31 +324,66 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
+    setAttachmentPointEditPopupData(null);
+  };
+
+  const handleAttachmentPointNameChange = (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+  ) => {
+    editor.reassignAttachmentPoint(currentName, newName);
+  };
+
+  const handleAttachmentPointAtomChange = (
+    atomId: number,
+    atomLabel: string,
+  ) => {
+    editor.reassignAttachmentPointAtom(atomId, atomLabel);
+  };
+
+  const handleAttachmentPointEditPopupClose = () => {
+    setAttachmentPointEditPopupData(null);
   };
 
   const handleDiscard = () => {
-    reduxDispatch(closeMonomerCreationWizard());
+    editor.closeMonomerCreationWizard();
     resetWizard();
   };
 
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
 
-    const { errors, notifications } = validateInputs(values);
-    if (Object.keys(errors).length > 0) {
-      wizardStateDispatch({ type: 'SetErrors', errors });
-      wizardStateDispatch({ type: 'SetNotifications', notifications });
+    const { errors: inputsErrors, notifications: inputsNotifications } =
+      validateInputs(values);
+    if (Object.keys(inputsErrors).length > 0) {
+      wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: inputsNotifications,
+      });
       return;
     }
 
-    reduxDispatch(
-      submitMonomerCreation({
-        type,
-        symbol,
-        name,
-        naturalAnalogue,
-      }),
+    assert(editor.monomerCreationState);
+
+    const attachmentPointsNotifications = validateAttachmentPoints(
+      Array.from(editor.monomerCreationState.assignedAttachmentPoints.keys()),
     );
+    if (attachmentPointsNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: attachmentPointsNotifications,
+      });
+      return;
+    }
+
+    editor.saveNewMonomer({
+      type,
+      symbol,
+      name,
+      naturalAnalogue,
+    });
+
     resetWizard();
   };
 
@@ -282,7 +393,33 @@ const MonomerCreationWizard = () => {
     return null;
   }
 
-  const { attachmentAtomIdToLeavingAtomId } = monomerCreationState;
+  const { assignedAttachmentPoints } = monomerCreationState;
+  const attachmentPointsData = Array.from(
+    assignedAttachmentPoints.entries(),
+  ).map((entry) => {
+    const [attachmentPointName, [, leavingAtomId]] = entry as [
+      AttachmentPointName,
+      [number, number],
+    ];
+    const atom = editor.struct().atoms.get(leavingAtomId);
+
+    // TODO: Should be assert but it fails due to assignedAttachmentsPoints being stale after closing, investigate
+    if (!atom) {
+      return {
+        name: attachmentPointName,
+        atomLabel: 'H',
+      };
+    }
+
+    return {
+      name: attachmentPointName,
+      atomLabel: atom.label,
+    };
+  });
+
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  );
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -377,30 +514,38 @@ const MonomerCreationWizard = () => {
             />
           </div>
 
-          <div className={styles.divider} />
+          {attachmentPointsData.length > 0 && (
+            <>
+              <div className={styles.divider} />
 
-          <div className={styles.attributesFields}>
-            <p className={styles.attachmentPointsTitle}>Attachment points</p>
-            <div className={styles.attachmentPoints}>
-              {[...attachmentAtomIdToLeavingAtomId.entries()].map(
-                ([attachmentAtomId, leavingAtomId], index) => (
-                  <div
-                    className={styles.attachmentPoint}
-                    key={`${attachmentAtomId}-${leavingAtomId}`}
-                  >
-                    <p className={styles.attachmentPointText}>
-                      <span className={styles.attachmentPointIndex}>
-                        R{index + 1}
-                      </span>
-                      &nbsp;(H)
-                    </p>
-                    <Icon name="close" className={styles.attachmentPointIcon} />
-                  </div>
-                ),
-              )}
-            </div>
-          </div>
+              <div className={styles.attributesFields}>
+                <p className={styles.attachmentPointsTitle}>
+                  Attachment points
+                </p>
+                <div className={styles.attachmentPoints}>
+                  {attachmentPointsData.map(({ name, atomLabel }) => (
+                    <AttachmentPoint
+                      name={name}
+                      atomLabel={atomLabel}
+                      key={name}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
+
+        {ketcherEditorRootElement &&
+          createPortal(
+            <AttachmentPointEditPopup
+              data={attachmentPointEditPopupData}
+              onNameChange={handleAttachmentPointNameChange}
+              onAtomChange={handleAttachmentPointAtomChange}
+              onClose={handleAttachmentPointEditPopupClose}
+            />,
+            ketcherEditorRootElement,
+          )}
 
         <div className={styles.buttonsContainer}>
           <button className={styles.buttonDiscard} onClick={handleDiscard}>

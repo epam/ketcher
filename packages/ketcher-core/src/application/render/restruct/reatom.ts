@@ -49,6 +49,12 @@ import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import {
+  AttachmentPointClickData,
+  Coordinates,
+  MonomerCreationAttachmentPointClickEvent,
+} from 'application/editor';
+import assert from 'assert';
 
 interface ElemAttr {
   text: string;
@@ -576,15 +582,29 @@ class ReAtom extends ReObject {
       }
     }
 
-    if (render.monomerCreationRenderState) {
-      const { attachmentPoints } = render.monomerCreationRenderState;
+    if (render.monomerCreationState) {
+      const { assignedAttachmentPoints } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const attachmentAtoms = Array.from(attachmentPoints.keys());
-        const leavingGroups = Array.from(attachmentPoints.values());
+        const [attachmentAtoms, leavingGroups] = Array.from(
+          assignedAttachmentPoints.values(),
+        ).reduce(
+          (acc, currentPair) => {
+            const attachmentAtomId = currentPair[0];
+            const leavingAtomId = currentPair[1];
+            if (!acc[0].includes(attachmentAtomId)) {
+              acc[0].push(attachmentAtomId);
+            }
+            if (!acc[1].includes(leavingAtomId)) {
+              acc[1].push(leavingAtomId);
+            }
+            return acc;
+          },
+          [[], []] as [number[], number[]],
+        );
 
         let style: RenderOptionStyles | undefined;
         if (attachmentAtoms.includes(aid)) {
@@ -600,6 +620,100 @@ class ReAtom extends ReObject {
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        const attachmentPointName = Array.from(
+          assignedAttachmentPoints.keys(),
+        ).find((key) => {
+          const atomsPair = assignedAttachmentPoints.get(key);
+          assert(atomsPair);
+          return atomsPair[1] === aid;
+        });
+
+        if (attachmentPointName) {
+          const direction = this.bisectLargestSector(struct);
+          let labelDistance = 20;
+          for (let i = 0; i < this.visel.exts.length; ++i) {
+            labelDistance = Math.max(
+              labelDistance,
+              util.shiftRayBox(
+                ps,
+                direction,
+                this.visel.exts[i].translate(ps),
+              ) + 5,
+            );
+          }
+          const labelPos = ps.addScaled(direction, labelDistance);
+
+          const rLabelElement = render.paper
+            .text(labelPos.x, labelPos.y, attachmentPointName)
+            .attr({
+              font: options.font,
+              'font-size': options.fontszsubInPx,
+              fill: '#333333',
+              'font-weight': '700',
+              cursor: 'pointer',
+            });
+
+          const labelBBox = rLabelElement.getBBox();
+          const bgRadius = Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
+          const background = render.paper
+            .circle(labelPos.x, labelPos.y, bgRadius)
+            .attr({
+              fill: '#167782',
+              stroke: 'none',
+              cursor: 'pointer',
+              opacity: 0,
+            });
+
+          // Create a group for the label and background
+          const labelGroup = render.paper.set();
+          labelGroup.push(background, rLabelElement);
+
+          // Add hover handlers
+          labelGroup.hover(
+            // Mouse enter
+            () => {
+              background.attr({ opacity: 1 });
+              rLabelElement.attr({ fill: '#ffffff' });
+            },
+            // Mouse leave
+            () => {
+              background.attr({ opacity: 0 });
+              rLabelElement.attr({ fill: '#333333' });
+            },
+          );
+
+          labelGroup.click((event: PointerEvent) => {
+            const clickData: AttachmentPointClickData = {
+              atomId: aid,
+              atomLabel: this.a.label,
+              attachmentPointName,
+              position: Coordinates.modelToView(this.a.pp),
+            };
+
+            event.stopPropagation();
+
+            background.attr({ opacity: 1 });
+            rLabelElement.attr({ fill: '#ffffff' });
+
+            window.dispatchEvent(
+              new CustomEvent<AttachmentPointClickData>(
+                MonomerCreationAttachmentPointClickEvent,
+                {
+                  detail: clickData,
+                },
+              ),
+            );
+          });
+
+          restruct.addReObjectPath(
+            LayerMap.data,
+            this.visel,
+            labelGroup,
+            ps,
+            true,
+          );
         }
       }
     }

@@ -650,12 +650,14 @@ export class DrawingEntitiesManager {
 
     if (needToDeleteConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((bond) => {
+        // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
+        // This check helps to avoid operations duplication
+        if (bond.selected) return;
+
         if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
           // We need to remove connected bond when doing a group selection even if it is not selected
           // and mark it as selected to avoid operations duplication
-          if (!bond.selected) {
-            bond.turnOnSelection();
-          }
+          bond.turnOnSelection();
           command.merge(this.deletePolymerBond(bond));
         } else {
           command.merge(this.deleteMonomerToAtomBond(bond));

@@ -845,8 +845,7 @@ class Editor implements KetcherEditor {
 
     assert(leavingAtom);
 
-    leavingAtom.label = 'H';
-    this.render.ctab.molecule.calcImplicitHydrogen(leavingAtomId);
+    // TODO: Store previous leavingAtom label in order to restore it when removing
 
     const attachmentPointName = getNextFreeAttachmentPoint(
       Array.from(this.monomerCreationState.assignedAttachmentPoints.keys()),
@@ -952,6 +951,28 @@ class Editor implements KetcherEditor {
       (this.selectionBBox.min.y + this.selectionBBox.max.y) / 2,
     );
     const monomer = new Monomer(monomerItem, monomerPosition);
+
+    const finalAttachmentPoints =
+      this.monomerCreationState.assignedAttachmentPoints;
+
+    finalAttachmentPoints.forEach((atomPair) => {
+      const [, leavingAtomId] = atomPair;
+      const leavingAtom = this.struct().atoms.get(leavingAtomId);
+      assert(leavingAtom);
+
+      const originalLeavingAtomId =
+        this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
+      assert(originalLeavingAtomId);
+
+      const originalLeavingAtom = this.originalStruct.atoms.get(
+        originalLeavingAtomId,
+      );
+      assert(originalLeavingAtom);
+
+      originalLeavingAtom.rglabel = null;
+      originalLeavingAtom.label = leavingAtom.label;
+      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
+    });
 
     this.closeMonomerCreationWizard();
 

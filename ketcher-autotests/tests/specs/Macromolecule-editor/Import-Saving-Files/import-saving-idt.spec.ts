@@ -21,11 +21,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  closeErrorMessage,
-  closeOpenStructure,
-  pageReload,
-} from '@utils/common/helpers';
+import { closeOpenStructure, pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -65,6 +61,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -1641,15 +1638,11 @@ test.describe('Import incorrect IDT sequence: ', () => {
 
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
-      const errorMessage = page.getByText('Error message', {
-        exact: true,
-      });
 
-      if (await errorMessage.isVisible()) {
-        await closeErrorMessage(page);
+      if (await ErrorMessageDialog(page).infoModalWindow.isVisible()) {
+        await ErrorMessageDialog(page).close();
         await closeOpenStructure(page);
       }
-
       // Test should be skipped if related bug exists
       test.fixme(
         incorrectIDTString.shouldFail === true,
@@ -1684,7 +1677,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 600);
   });
@@ -1715,7 +1708,7 @@ test.describe('Ambiguous monomers: ', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 600);
   });
@@ -1745,7 +1738,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -1777,7 +1770,7 @@ test.describe('Ambiguous monomers: ', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -1807,7 +1800,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
@@ -1869,7 +1862,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
@@ -1926,7 +1919,7 @@ test.describe('Ambiguous monomers: ', () => {
       MacromoleculesFileFormatType.IDT,
     );
     await takeEditorScreenshot(page);
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -1987,7 +1980,7 @@ test.describe('Ambiguous monomers: ', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
 
@@ -2021,7 +2014,7 @@ test.describe('Ambiguous monomers: ', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
 

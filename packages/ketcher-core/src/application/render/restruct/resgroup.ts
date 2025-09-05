@@ -123,7 +123,7 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'COM': {
-          const subscript = sgroup.data.subscript || 'com';
+          const subscript = sgroup.data.subscript || 'c';
           const compno = sgroup.data.compno || 'X';
           SGroupdrawBracketsOptions.lowerIndexText = subscript;
           SGroupdrawBracketsOptions.upperIndexText = compno;

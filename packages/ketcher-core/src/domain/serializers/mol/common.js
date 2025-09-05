@@ -281,8 +281,10 @@ function saveComToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   let lines = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  const sncLine = 'M  SNC ' + idstr + ' ' + sgroup.data.compno;
-  lines.push(sncLine);
+  if (sgroup.data.compno != null) {
+    const sncLine = 'M  SNC ' + idstr + ' ' + sgroup.data.compno;
+    lines.push(sncLine);
+  }
   lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
   return lines.join('\n');
 }

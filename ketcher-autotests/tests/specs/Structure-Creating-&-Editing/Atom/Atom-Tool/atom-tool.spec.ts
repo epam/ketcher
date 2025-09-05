@@ -20,6 +20,7 @@ import {
   ZoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -47,11 +48,6 @@ import {
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const X_DELTA_ONE = 100;
-
-async function clickAtomShortcut(page: Page, labelKey: string) {
-  await page.keyboard.press(labelKey);
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 test.describe('Atom Tool', () => {
   let page: Page;
@@ -573,9 +569,10 @@ test.describe('Atom Tool', () => {
 
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
-        await clickAtomShortcut(page, labelKey);
-        await CommonLeftToolbar(page).selectAreaSelectionTool();
-        await CommonLeftToolbar(page).selectAreaSelectionTool();
+        await page.keyboard.press(labelKey);
+        await clickInTheMiddleOfTheScreen(page);
+        await CommonLeftToolbar(page).selectHandTool();
+        await moveMouseAway(page);
         await takeEditorScreenshot(page);
       });
     }

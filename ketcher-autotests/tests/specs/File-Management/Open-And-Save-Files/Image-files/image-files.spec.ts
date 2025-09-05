@@ -409,6 +409,8 @@ test.describe('Image files', () => {
     await openFile(page, `KET/image-png-159-symbols.ket`);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async () => {

@@ -734,7 +734,6 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >();
-    const potentialAttachmentPoints = new Map<number, number>();
 
     this.terminalRGroupAtoms.forEach((atomId, i) => {
       const selectedStructLeavingAtomId =
@@ -766,10 +765,23 @@ class Editor implements KetcherEditor {
       ]);
     });
 
-    this.potentialLeavingAtoms.forEach((atomId) => {
+    this.potentialLeavingAtoms.forEach((atomId, i) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
-
       assert(leavingAtom);
+
+      let attachmentAtomId = -1;
+      leavingAtom.neighbors.forEach((halfBondId) => {
+        const halfBond = currentStruct.halfBonds.get(halfBondId);
+        assert(halfBond !== undefined);
+
+        if (selection.atoms?.includes(halfBond.end)) {
+          attachmentAtomId = halfBond.end;
+        }
+      });
+
+      if (attachmentAtomId === -1) {
+        return;
+      }
 
       const selectedStructLeavingAtom = leavingAtom.clone();
       // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
@@ -783,19 +795,13 @@ class Editor implements KetcherEditor {
         atomId,
       );
 
-      const neighborHalfBondId = leavingAtom?.neighbors[0];
-
-      assert(neighborHalfBondId !== undefined);
-
-      const attachmentAtomId =
-        currentStruct.halfBonds.get(neighborHalfBondId)?.end;
-
-      assert(attachmentAtomId !== undefined);
-
       const selectedStructAttachmentAtomId =
         originalToSelectedAtomsIdMap.get(attachmentAtomId);
-
       assert(selectedStructAttachmentAtomId !== undefined);
+      this.selectedToOriginalAtomsIdMap.set(
+        selectedStructAttachmentAtomId,
+        attachmentAtomId,
+      );
 
       const newBond = new Bond({
         type: Bond.PATTERN.TYPE.SINGLE,
@@ -804,19 +810,19 @@ class Editor implements KetcherEditor {
       });
       selectedStruct.bonds.add(newBond);
 
-      potentialAttachmentPoints.set(
+      const attachmentPointName = getAttachmentPointLabel(
+        this.terminalRGroupAtoms.length + i + 1,
+      );
+
+      assignedAttachmentPoints.set(attachmentPointName, [
         selectedStructAttachmentAtomId,
         selectedStructLeavingAtomId,
-      );
-      this.selectedToOriginalAtomsIdMap.set(
-        selectedStructAttachmentAtomId,
-        attachmentAtomId,
-      );
+      ]);
     });
 
     this.monomerCreationState = {
       assignedAttachmentPoints,
-      potentialAttachmentPoints,
+      potentialAttachmentPoints: new Map<number, number>(),
     };
 
     this.originalStruct = currentStruct;

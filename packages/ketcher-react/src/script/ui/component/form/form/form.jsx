@@ -77,6 +77,21 @@ class Form extends Component {
 
     const handleOnChange = (name, value) => {
       const newState = Object.assign({}, this.props.result, { [name]: value });
+
+      if (name === 'type') {
+        switch (value) {
+          case 'SRU':
+            newState.subscript = 'n';
+            break;
+          case 'MIX':
+            newState.subscript = 'mix';
+            break;
+          case 'COM':
+            newState.subscript = 'c';
+            break;
+        }
+      }
+
       this.updateState(newState);
       if (onChange) onChange(value);
     };

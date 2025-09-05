@@ -261,6 +261,17 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
       break;
     }
+    case 'MON':
+      break;
+    case 'MIX': {
+      ifDef(sgroup.data, 'subscript', source.subscript);
+      break;
+    }
+    case 'COM': {
+      ifDef(sgroup.data, 'subscript', source.subscript);
+      ifDef(sgroup.data, 'compno', source.compno);
+      break;
+    }
     case 'SUP': {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);

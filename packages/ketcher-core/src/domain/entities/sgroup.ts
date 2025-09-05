@@ -816,6 +816,18 @@ export class SGroup {
   static isCOPGroup(sGroup: SGroup): boolean {
     return sGroup.type === SGroup.TYPES.COP;
   }
+
+  static isMONGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.MON;
+  }
+
+  static isMIXGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.MIX;
+  }
+
+  static isCOMGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.COM;
+  }
 }
 
 function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {

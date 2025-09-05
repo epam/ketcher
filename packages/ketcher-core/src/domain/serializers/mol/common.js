@@ -88,6 +88,9 @@ const prepareForSaving = {
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
   COP: prepareCopForSaving,
+  MON: prepareMonForSaving,
+  MIX: prepareMixForSaving,
+  COM: prepareComForSaving,
   queryComponent: prepareQueryComponentForSaving,
 };
 
@@ -143,6 +146,18 @@ function prepareCopForSaving(sgroup, mol) {
   sgroup.bonds = xBonds;
 }
 
+function prepareMonForSaving(sgroup, mol) {
+  sgroup.atoms = SGroup.getAtoms(mol, sgroup);
+}
+
+function prepareMixForSaving(sgroup, mol) {
+  sgroup.atoms = SGroup.getAtoms(mol, sgroup);
+}
+
+function prepareComForSaving(sgroup, mol) {
+  sgroup.atoms = SGroup.getAtoms(mol, sgroup);
+}
+
 function prepareSupForSaving(sgroup, mol) {
   // This code is also used for GroupSru and should be moved into a separate common method
   // It seems that such code should be used for any sgroup by this this should be checked
@@ -179,6 +194,9 @@ const saveToMolfile = {
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
   COP: saveCopToMolfile,
+  MON: saveMonToMolfile,
+  MIX: saveMixToMolfile,
+  COM: saveComToMolfile,
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
@@ -230,6 +248,41 @@ function saveCopToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   let lines = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveMonToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveMixToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveComToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  const sncLine = 'M  SNC ' + idstr + ' ' + sgroup.data.compno;
+  lines.push(sncLine);
   lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
   return lines.join('\n');
 }

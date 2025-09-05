@@ -71,7 +71,7 @@ const StyledIcon = styled(Icon)<IStyledIconProps>`
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const ChevronWrapper = styled('span')`
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -186,9 +186,10 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
         <Icon name={modeIcon} />
         <>
           <ModeLabel>{modeLabel}</ModeLabel>
-          <ChevronWrapper>
-            <Icon name="chevron" />
-          </ChevronWrapper>
+          <StyledIconForMacromoleculesToggler
+            name="chevron"
+            expanded={isExpanded}
+          />
         </>
         <>
           <CornerIcon name="dropdown" />

@@ -61,7 +61,7 @@ export class HoverIcon {
 
   isOverLoader(event: MouseEvent) {
     const target = <HTMLDivElement>event?.relatedTarget || event.target;
-    return target?.classList.contains('loading-spinner');
+    return target?.classList?.contains('loading-spinner');
   }
 
   onMouseMove(event: MouseEvent) {

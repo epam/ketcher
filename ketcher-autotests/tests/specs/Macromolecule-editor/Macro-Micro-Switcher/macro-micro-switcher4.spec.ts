@@ -24,7 +24,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
@@ -34,6 +34,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -280,7 +281,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await closeErrorMessage(page);
+  await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
 });
 
@@ -307,7 +308,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await closeErrorMessage(page);
+  await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
 });
 
@@ -333,8 +334,6 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
     MacromoleculesFileFormatType.IDT,
   );
   await takeEditorScreenshot(page);
-
-  // await closeErrorMessage(page);
   await SaveStructureDialog(page).cancel();
   test.fixme(
     true,

@@ -45,11 +45,12 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -656,7 +657,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await closeErrorAndInfoModals(page);
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).close();
     }
   });
 
@@ -722,7 +724,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorAndInfoModals(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Case 20: Atom weights in indigo updated according to last IUPAC data', async () => {
@@ -813,7 +815,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

@@ -32,12 +32,12 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { closeErrorMessage } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -242,7 +242,7 @@ test.describe('Import-Saving .ket Files', () => {
     await openFile(page, 'KET/corrupted-file.ket');
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {

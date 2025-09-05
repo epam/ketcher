@@ -45,13 +45,9 @@ import {
   PeriodicTableElement,
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const X_DELTA_ONE = 100;
-
-async function clickAtomShortcut(page: Page, labelKey: string) {
-  await page.keyboard.press(labelKey);
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 test.describe('Atom Tool', () => {
   let page: Page;
@@ -569,14 +565,17 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-5262
     Description: The selected atom appeared on the canvas
     */
-    const atomShortcuts = ['a', 'q', 'r', 'k', 'm', 'x'];
+    const atomShortcuts = ['A', 'Q', 'R', 'K', 'M', 'X'];
 
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
-        await clickAtomShortcut(page, labelKey);
+        await page.keyboard.press(labelKey);
+        await clickInTheMiddleOfTheScreen(page);
         await CommonLeftToolbar(page).selectAreaSelectionTool();
-        await CommonLeftToolbar(page).selectAreaSelectionTool();
-        await takeEditorScreenshot(page);
+        const atom = getAtomLocator(page, { atomLabel: labelKey });
+        expect(await atom.count()).toEqual(1);
+        await CommonTopLeftToolbar(page).clearCanvas();
+        await clickInTheMiddleOfTheScreen(page);
       });
     }
   });

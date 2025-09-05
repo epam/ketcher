@@ -33,7 +33,7 @@ import {
 } from '@utils';
 import { MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
@@ -107,6 +107,7 @@ import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1709,7 +1710,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorAndInfoModals(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {

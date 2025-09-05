@@ -7,15 +7,12 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
 } from '@utils';
-import {
-  closeErrorMessage,
-  closeOpenStructure,
-  pageReload,
-} from '@utils/common/helpers';
+import { closeOpenStructure, pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -1248,12 +1245,9 @@ test.describe('Import incorrect HELM sequence: ', () => {
 
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
-      const errorMessage = page.getByText('Error message', {
-        exact: true,
-      });
 
-      if (await errorMessage.isVisible()) {
-        await closeErrorMessage(page);
+      if (await ErrorMessageDialog(page).infoModalWindow.isVisible()) {
+        await ErrorMessageDialog(page).close();
         await closeOpenStructure(page);
       }
 

@@ -22,7 +22,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -39,6 +38,8 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -57,7 +58,6 @@ test.describe('Cascade Reactions', () => {
   });
 
   test.afterEach(async ({ context: _ }) => {
-    await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
@@ -105,7 +105,7 @@ test.describe('Cascade Reactions', () => {
       true,
     );
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed', async () => {
@@ -121,6 +121,8 @@ test.describe('Cascade Reactions', () => {
       true,
     );
     await takeEditorScreenshot(page);
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   const testCases = [
@@ -1735,6 +1737,8 @@ test.describe('Cascade Reactions', () => {
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(format);
         await takeEditorScreenshot(page);
+        await ErrorMessageDialog(page).close();
+        await SaveStructureDialog(page).cancel();
       });
     },
   );

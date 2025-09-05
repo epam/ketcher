@@ -16,7 +16,6 @@ export const test = mergeTests(utils, pageObjects).extend<
       MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
-      closeErrorAndInfoModals,
     },
     use,
   ) => {
@@ -26,7 +25,6 @@ export const test = mergeTests(utils, pageObjects).extend<
       LayoutMode.Sequence,
     );
     await use();
-    await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);

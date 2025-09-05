@@ -16,7 +16,6 @@ export const test = mergeTests(utils, pageObjects).extend<
       resetZoomLevelToDefault,
       clearLocalStorage,
       resetSettingsValuesToDefault,
-      closeErrorAndInfoModals,
     },
     use,
   ) => {
@@ -27,10 +26,8 @@ export const test = mergeTests(utils, pageObjects).extend<
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await resetSettingsValuesToDefault(page);
-    await closeErrorAndInfoModals(page);
     await clearLocalStorage(page);
     await use();
-    await closeErrorAndInfoModals(page);
   },
   initMoleculesCanvas: [
     async ({ createPage }, use) => {

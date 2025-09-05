@@ -13,11 +13,11 @@ import {
 } from '@utils';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -213,7 +213,7 @@ test.describe('Floating windows', () => {
     */
     await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {

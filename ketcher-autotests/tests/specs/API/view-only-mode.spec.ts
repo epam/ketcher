@@ -20,7 +20,6 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
   FileType,
@@ -48,6 +47,7 @@ import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/Calculated
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -275,7 +275,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await closeErrorAndInfoModals(page);
+    await OpenStructureDialog(page).close();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -289,7 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 92.3 H 7.7');
-    await closeErrorAndInfoModals(page);
+    await OpenStructureDialog(page).close();
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
@@ -355,7 +355,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
             saveStructureTextarea,
           ],
         });
-        await closeErrorAndInfoModals(page);
       });
     }
   });

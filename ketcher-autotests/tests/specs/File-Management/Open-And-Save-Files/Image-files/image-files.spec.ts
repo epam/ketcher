@@ -31,11 +31,7 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import {
-  clearLocalStorage,
-  closeErrorAndInfoModals,
-  pageReloadMicro,
-} from '@utils/common/helpers';
+import { clearLocalStorage, pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -57,6 +53,8 @@ import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/Calculated
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -69,7 +67,6 @@ test.describe('Image files', () => {
   });
 
   test.afterEach(async ({ context: _ }) => {
-    await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
@@ -365,6 +362,8 @@ test.describe('Image files', () => {
       await openFile(page, `KET/${fileName}.ket`);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
       await takeEditorScreenshot(page);
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).close();
     });
   }
 
@@ -395,6 +394,8 @@ test.describe('Image files', () => {
       await openFile(page, `KET/${file}`);
       await addToCanvasButton.click();
       await takeEditorScreenshot(page);
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).close();
     });
   }
 
@@ -408,6 +409,8 @@ test.describe('Image files', () => {
     await openFile(page, `KET/image-png-159-symbols.ket`);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async () => {
@@ -802,6 +805,7 @@ test.describe('Image files', () => {
        */
       await openImageAndAddToCanvas(page, `Images/${fileName}`);
       await takeEditorScreenshot(page);
+      await ErrorMessageDialog(page).close();
     });
   }
 
@@ -812,6 +816,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-png-15px.png');
     await takeEditorScreenshot(page);
+    await ErrorMessageDialog(page).close();
   });
 
   test('Verify that images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode', async () => {
@@ -2148,6 +2153,8 @@ test.describe('Image files', () => {
     await openFile(page, `CDXML/image-png-169-symbols.cdxml`);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file', async () => {

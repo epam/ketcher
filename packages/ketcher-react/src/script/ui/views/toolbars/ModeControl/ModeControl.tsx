@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
@@ -52,6 +53,15 @@ const DropDownButton = styled(Button)(() => ({
     width: '20px',
     height: '20px',
   },
+
+  '&.Mui-disabled': {
+    color: '#A0A0A0',
+    opacity: 0.5,
+  },
+  '&.Mui-disabled svg': {
+    opacity: 0.5,
+    filter: 'grayscale(100%)',
+  },
 }));
 
 const StyledIcon = styled(Icon)<IStyledIconProps>`
@@ -61,7 +71,7 @@ const StyledIcon = styled(Icon)<IStyledIconProps>`
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
+const ChevronWrapper = styled('span')`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -145,12 +155,17 @@ interface ModeProps {
 export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const isWizardActive = useSelector(
+    (state: { editor?: { isMonomerCreationWizardActive?: boolean } }) =>
+      Boolean(state?.editor?.isMonomerCreationWizardActive),
+  );
 
   const onClose = () => {
     setIsExpanded(false);
   };
 
   const onExpand = () => {
+    if (isWizardActive) return;
     setIsExpanded(true);
   };
 
@@ -165,15 +180,15 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
       <DropDownButton
         data-testid="polymer-toggler"
         onClick={onExpand}
+        disabled={isWizardActive}
         ref={btnRef}
       >
         <Icon name={modeIcon} />
         <>
           <ModeLabel>{modeLabel}</ModeLabel>
-          <StyledIconForMacromoleculesToggler
-            name="chevron"
-            expanded={isExpanded}
-          />
+          <ChevronWrapper>
+            <Icon name="chevron" />
+          </ChevronWrapper>
         </>
         <>
           <CornerIcon name="dropdown" />

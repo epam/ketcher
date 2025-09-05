@@ -1239,7 +1239,7 @@ export class Struct {
     const sgroupIds = this.getGroupIdsFromAtomId(atomId as number);
     return sgroupIds
       .map((sgroupId) => this.sgroups?.get(sgroupId as number))
-      .filter((sgroup) => sgroup !== undefined);
+      .filter((sgroup): sgroup is SGroup => sgroup !== undefined);
   }
 
   // TODO: simplify if bonds ids ever appear in sgroup

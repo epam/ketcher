@@ -20,7 +20,6 @@ import {
   ZoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
-  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,

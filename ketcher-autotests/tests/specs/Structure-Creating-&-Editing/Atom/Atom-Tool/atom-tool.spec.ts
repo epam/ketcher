@@ -21,7 +21,6 @@ import {
   RxnFileFormat,
   MolFileFormat,
   moveMouseAway,
-  clearCanvasByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,
@@ -47,7 +46,7 @@ import {
   PeriodicTableElement,
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const X_DELTA_ONE = 100;
 
@@ -567,16 +566,17 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-5262
     Description: The selected atom appeared on the canvas
     */
-    const atomShortcuts = ['a', 'q', 'r', 'k', 'm', 'x'];
+    const atomShortcuts = ['A', 'Q', 'R', 'K', 'M', 'X'];
 
     for (const labelKey of atomShortcuts) {
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
         await clickInTheMiddleOfTheScreen(page);
-        await CommonLeftToolbar(page).selectHandTool();
-        await moveMouseAway(page);
-        await takeEditorScreenshot(page);
+        await CommonLeftToolbar(page).selectAreaSelectionTool();
+        const atom = getAtomLocator(page, { atomLabel: labelKey });
+        expect(await atom.count()).toEqual(1);
         await CommonTopLeftToolbar(page).clearCanvas();
+        await clickInTheMiddleOfTheScreen(page);
       });
     }
   });

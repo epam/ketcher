@@ -21,6 +21,7 @@ import {
   RxnFileFormat,
   MolFileFormat,
   moveMouseAway,
+  clearCanvasByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,
@@ -46,6 +47,7 @@ import {
   PeriodicTableElement,
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 const X_DELTA_ONE = 100;
 
@@ -574,6 +576,7 @@ test.describe('Atom Tool', () => {
         await CommonLeftToolbar(page).selectHandTool();
         await moveMouseAway(page);
         await takeEditorScreenshot(page);
+        await CommonTopLeftToolbar(page).clearCanvas();
       });
     }
   });

@@ -597,7 +597,6 @@ export class CoreEditor {
     );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
-      this.drawingEntitiesManager.unselectAllDrawingEntities();
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
@@ -860,6 +859,7 @@ export class CoreEditor {
       );
     }
 
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
@@ -1178,10 +1178,15 @@ export class CoreEditor {
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {
+    const history = new EditorHistory(this);
     const modelChanges =
       this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
-    const history = new EditorHistory(this);
 
+    modelChanges.merge(
+      this.drawingEntitiesManager.unselectAllDrawingEntities(),
+    );
+
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();

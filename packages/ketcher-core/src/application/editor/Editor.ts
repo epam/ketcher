@@ -853,6 +853,7 @@ export class CoreEditor {
       );
     }
 
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
@@ -1175,8 +1176,11 @@ export class CoreEditor {
     const modelChanges =
       this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
 
-    this.drawingEntitiesManager.unselectAllDrawingEntities();
+    modelChanges.merge(
+      this.drawingEntitiesManager.unselectAllDrawingEntities(),
+    );
 
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();

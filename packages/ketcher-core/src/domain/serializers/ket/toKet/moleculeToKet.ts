@@ -205,6 +205,17 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       );
       break;
     }
+    case 'MON':
+      break;
+    case 'MIX': {
+      ifDef(result, 'subscript', source.data.subscript || 'mix');
+      break;
+    }
+    case 'COM': {
+      ifDef(result, 'subscript', source.data.subscript || 'c');
+      ifDef(result, 'compno', source.data.compno);
+      break;
+    }
     case 'SUP': {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);

@@ -108,7 +108,25 @@ class ReSGroup extends ReObject {
           const subtype = sgroup.data.subtype;
           if (sgroup.data.subtype) {
             SGroupdrawBracketsOptions.lowerIndexText = subtype.toLowerCase();
+          } else {
+            SGroupdrawBracketsOptions.lowerIndexText = 'co';
           }
+          break;
+        }
+        case 'MON': {
+          SGroupdrawBracketsOptions.lowerIndexText = 'mon';
+          break;
+        }
+        case 'MIX': {
+          const subscript = sgroup.data.subscript || 'mix';
+          SGroupdrawBracketsOptions.lowerIndexText = subscript;
+          break;
+        }
+        case 'COM': {
+          const subscript = sgroup.data.subscript || 'c';
+          const compno = sgroup.data.compno || 'X';
+          SGroupdrawBracketsOptions.lowerIndexText = subscript;
+          SGroupdrawBracketsOptions.upperIndexText = compno;
           break;
         }
         case 'SUP': {
@@ -135,6 +153,9 @@ class ReSGroup extends ReObject {
         'SUP',
         'GEN',
         'COP',
+        'MON',
+        'MIX',
+        'COM',
         'queryComponent',
       ];
       if (

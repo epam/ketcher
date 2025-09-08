@@ -465,6 +465,16 @@ export class Molfile {
         this.writeCR();
       }
 
+      if (sgroup.type === 'COM' && sgroup.data.compno != null) {
+        this.write('M  SNC');
+        this.writePaddedNumber(1, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sGroupIdInCTab, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sgroup.data.compno, 3);
+        this.writeCR();
+      }
+
       this.write('M  SLB');
       this.writePaddedNumber(1, 3);
       this.writeWhiteSpace(1);
@@ -496,11 +506,17 @@ export class Molfile {
         this.writeCR();
       }
 
-      if (sgroup.type === 'SRU') {
+      const subscriptDefault: Record<SGroup['type'], string> = {
+        SRU: 'n',
+        MIX: 'mix',
+        COM: 'c',
+      };
+
+      if (Object.keys(subscriptDefault).includes(sgroup.type)) {
         this.write('M  SMT ');
         this.writePaddedNumber(sGroupIdInCTab, 3);
         this.writeWhiteSpace();
-        this.write(sgroup.data.subscript || 'n');
+        this.write(sgroup.data.subscript || subscriptDefault[sgroup.type]);
         this.writeCR();
       }
       sgroup.getAttachmentPoints().forEach((attachmentPoint) => {

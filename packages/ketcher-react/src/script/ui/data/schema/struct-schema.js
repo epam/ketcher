@@ -376,6 +376,53 @@ const sgroup = {
       required: ['connectivity'],
     },
     {
+      key: 'MON',
+      title: 'Monomer',
+      type: 'object',
+      properties: {
+        type: { enum: ['MON'] },
+      },
+    },
+    {
+      key: 'MIX',
+      title: 'Mixture',
+      type: 'object',
+      properties: {
+        type: { enum: ['MIX'] },
+        subscript: {
+          title: 'Label',
+          type: 'string',
+          default: 'mix',
+          pattern: '^(?!\\s*$)[^"]+$',
+          invalidMessage:
+            'MIX label should not be empty and contain double quotes',
+        },
+      },
+    },
+    {
+      key: 'COM',
+      title: 'Component',
+      type: 'object',
+      properties: {
+        type: { enum: ['COM'] },
+        subscript: {
+          title: 'Label',
+          type: 'string',
+          default: 'c',
+          pattern: '^(?!\\s*$)[^"]+$',
+          invalidMessage:
+            'COM label should not be empty and contain double quotes',
+        },
+        compno: {
+          title: 'Component number',
+          type: 'integer',
+          default: 0,
+          minimum: 0,
+          maximum: 200,
+        },
+      },
+    },
+    {
       key: 'SUP',
       title: 'Superatom',
       type: 'object',

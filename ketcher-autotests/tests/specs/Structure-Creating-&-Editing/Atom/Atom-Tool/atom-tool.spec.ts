@@ -46,6 +46,7 @@ import {
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { time } from 'console';
 
 const X_DELTA_ONE = 100;
 
@@ -568,15 +569,15 @@ test.describe('Atom Tool', () => {
     const atomShortcuts = ['A', 'Q', 'R', 'K', 'M', 'X'];
 
     for (const labelKey of atomShortcuts) {
+      await CommonTopLeftToolbar(page).clearCanvas();
+      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await clickOnCanvas(page, 0, 0);
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
-        await clickInTheMiddleOfTheScreen(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool();
-        const atom = getAtomLocator(page, { atomLabel: labelKey });
-        expect(await atom.count()).toEqual(1);
-        await CommonTopLeftToolbar(page).clearCanvas();
-        await clickInTheMiddleOfTheScreen(page);
       });
+      await clickInTheMiddleOfTheScreen(page);
+      const atom = getAtomLocator(page, { atomLabel: labelKey });
+      expect(await atom.count()).toEqual(1);
     }
   });
 

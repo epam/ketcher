@@ -1,4 +1,5 @@
-import { test, expect } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -6,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
-  waitForPageInit,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
@@ -20,15 +20,20 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
+let page: Page;
 test.describe('', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test(
     'Open and Save file - Generate structure from ' +
       'InChI String - inserting correct string for multiple structures',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1963
        * Description: Open multiple structures from InChi string
@@ -45,7 +50,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure from InChI String - ' +
       'Chain string with single bonds only',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1967
        * Description: Open structure with single bonds from InChi string
@@ -62,7 +67,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure from InChI String - ' +
       'Chain string that contains some double bonds',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1968
        * Description: Open structure with some double bonds from InChi string
@@ -79,7 +84,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure from InChI ' +
       'String - Chain string that contains some triple bonds',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1969
        * Description: Open structure with some triple bonds from InChi string
@@ -96,7 +101,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure from ' +
       'InChI String - Cyclic structure with single bonds only',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1970
        * Description: Open cyclic structure with single bonds from InChi string
@@ -113,7 +118,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure ' +
       'from InChI String - Sugars without stereobonds',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1971
        * Description: Open sugar without stereobonds from InChi string
@@ -130,7 +135,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure ' +
       'from InChI String - Structure with stereobonds',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1974
        * Description: Open structure with stereobonds from InChi string
@@ -147,7 +152,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure ' +
       'from InChI String - Fused structure',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1975
        * Description: Open structure with fused bonds from InChi string
@@ -164,7 +169,7 @@ test.describe('', () => {
   test(
     'Open and Save file - Generate structure ' +
       'from InChI String - Spiro structure',
-    async ({ page }) => {
+    async () => {
       /**
        * Test case: EPMLSOPKET-1976
        * Description: Open spiro structure from InChi string
@@ -180,11 +185,15 @@ test.describe('', () => {
 });
 
 test.describe('Open and Save InChI file', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Open and Save file - Save empty InChI File', async ({ page }) => {
+  test('Open and Save file - Save empty InChI File', async () => {
     /**
      * Test case: EPMLSOPKET-1926
      * Description: Open and Save file - InChi for emty canvas
@@ -196,9 +205,7 @@ test.describe('Open and Save InChI file', () => {
     );
   });
 
-  test('Open and Save file - InChI String - Fused structure', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Fused structure', async () => {
     /**
      * Test case: EPMLSOPKET-1954
      * Description: Open and Save file - InChI String - Fused structure
@@ -216,9 +223,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Chain string with single bonds only', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Chain string with single bonds only', async () => {
     /**
      * Test case: EPMLSOPKET-1939
      * Description: Open and Save file - InChI String - Chain string with single bonds only
@@ -236,9 +241,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Chain string that contains some double bonds', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Chain string that contains some double bonds', async () => {
     /**
      * Test case: EPMLSOPKET-1940
      * Description: Open and Save file - InChI String - Chain string that contains some double bonds
@@ -259,9 +262,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Chain string that contains some triple', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Chain string that contains some triple', async () => {
     /**
      * Test case: EPMLSOPKET-1941
      * Description: Open and Save file - InChI String - Chain string that contains some triple
@@ -279,9 +280,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Cyclic structure with single bonds only', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Cyclic structure with single bonds only', async () => {
     /**
      * Test case: EPMLSOPKET-1951
      * Description: Open and Save file - InChI String - Cyclic structure with single bonds only
@@ -299,9 +298,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Sugars without stereobonds', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Sugars without stereobonds', async () => {
     /**
      * Test case: EPMLSOPKET-1952
      * Description: Open and Save file - InChI String - Sugars without stereobonds
@@ -322,9 +319,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Structure with stereobonds', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Structure with stereobonds', async () => {
     /**
      * Test case: EPMLSOPKET-1953
      * Description: Open and Save file - InChI String - Structure with stereobonds
@@ -338,9 +333,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Spiro structure', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Spiro structure', async () => {
     /**
      * Test case: EPMLSOPKET-1955
      * Description: Open and Save file - InChI String - Spiro structure
@@ -354,9 +347,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - Chain Stucture', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Chain Stucture', async () => {
     /**
      * Test case: EPMLSOPKET-1927
      * Description: Open and Save file - InChi for structure
@@ -377,9 +368,7 @@ test.describe('Open and Save InChI file', () => {
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });
 
-  test('Open and Save file - InChI String - Unconnected propane-hexane-benzene structure', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String - Unconnected propane-hexane-benzene structure', async () => {
     /**
      * Test case: EPMLSOPKET-1928
      * Description: Open and Save file - InChi string for some structures
@@ -397,7 +386,7 @@ test.describe('Open and Save InChI file', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - InChI String - For reaction', async ({ page }) => {
+  test('Open and Save file - InChI String - For reaction', async () => {
     /**
      * Test case: EPMLSOPKET-1929
      * Description: Open and Save file - InChi string for reaction
@@ -418,7 +407,7 @@ test.describe('Open and Save InChI file', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test('Open and Save file - InChi string - for Sgroup', async ({ page }) => {
+  test('Open and Save file - InChi string - for Sgroup', async () => {
     /**
      * Test case: EPMLSOPKET-1937
      * Description: Open and Save file - InChi string for Sgroup
@@ -436,7 +425,7 @@ test.describe('Open and Save InChI file', () => {
     );
   });
 
-  test('Open and Save file - InChI String - Alias', async ({ page }) => {
+  test('Open and Save file - InChI String - Alias', async () => {
     /**
      * Test case: EPMLSOPKET-1961
      * Description: Open and Save file - InChI String - Alias
@@ -452,9 +441,7 @@ test.describe('Open and Save InChI file', () => {
     await openFileAndAddToCanvas(page, 'InChI/alias.inchi');
   });
 
-  test('Open and Save file - Generate structure from InChI String - inserting incorrect name', async ({
-    page,
-  }) => {
+  test('Open and Save file - Generate structure from InChI String - inserting incorrect name', async () => {
     /**
      * Test case: EPMLSOPKET-1964
      * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name
@@ -478,7 +465,7 @@ test.describe('Open and Save InChI file', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test('Open and Save file - InChI String - Pseudoatom', async ({ page }) => {
+  test('Open and Save file - InChI String - Pseudoatom', async () => {
     /**
      * Test case: EPMLSOPKET-1962
      * Description: Open and Save file - InChI String - Pseudoatom
@@ -496,9 +483,7 @@ test.describe('Open and Save InChI file', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test('Open and Save file - InChI String for invalid atom symbol or special symbol', async ({
-    page,
-  }) => {
+  test('Open and Save file - InChI String for invalid atom symbol or special symbol', async () => {
     /**
      * Test case: EPMLSOPKET-1938
      * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
@@ -516,9 +501,7 @@ test.describe('Open and Save InChI file', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test('Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button', async ({
-    page,
-  }) => {
+  test('Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button', async () => {
     /**
      * Test case: EPMLSOPKET-1965
      * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
@@ -531,7 +514,7 @@ test.describe('Open and Save InChI file', () => {
     // await press
   });
 
-  test('Open and Save file - InChi string for Rgroup', async ({ page }) => {
+  test('Open and Save file - InChi string for Rgroup', async () => {
     /**
      * Test case: EPMLSOPKET-1930
      * Description: Open and Save file - InChi string for Rgroup

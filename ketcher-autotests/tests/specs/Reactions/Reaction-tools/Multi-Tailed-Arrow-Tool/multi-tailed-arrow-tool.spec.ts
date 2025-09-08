@@ -33,7 +33,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -394,7 +393,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
       await takeEditorScreenshot(page);
-      await closeErrorAndInfoModals(page);
     });
   }
 
@@ -3173,7 +3171,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
@@ -3194,7 +3192,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
@@ -3217,13 +3215,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
       page,

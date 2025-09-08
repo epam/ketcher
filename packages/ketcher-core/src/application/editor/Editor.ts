@@ -243,7 +243,7 @@ export class CoreEditor {
     editor = this;
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
-    this.initializeEventListeners();
+    this.initializeGlobalEventListeners();
   }
 
   private resetCanvasOffset() {
@@ -255,9 +255,10 @@ export class CoreEditor {
       this.ketcherRootElement?.getBoundingClientRect();
   }
 
-  private initializeEventListeners(): void {
+  private initializeGlobalEventListeners(): void {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     window.addEventListener('blur', this.handleWindowBlur);
+    window.addEventListener('resize', this.handleWindowResize);
   }
 
   private readonly handleVisibilityChange = (): void => {
@@ -268,6 +269,11 @@ export class CoreEditor {
 
   private readonly handleWindowBlur = (): void => {
     this.cancelActiveDrag();
+  };
+
+  private handleWindowResize = () => {
+    this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
   };
 
   private cancelActiveDrag(): void {
@@ -1438,6 +1444,12 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);
+    document.removeEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange,
+    );
+    window.removeEventListener('blur', this.handleWindowBlur);
+    window.removeEventListener('resize', this.handleWindowResize);
 
     this.cleanupsForDomEvents.forEach((cleanupFunction) => {
       cleanupFunction();

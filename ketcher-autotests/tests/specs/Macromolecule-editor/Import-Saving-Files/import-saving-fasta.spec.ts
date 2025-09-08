@@ -10,7 +10,6 @@ import {
   takeEditorScreenshot,
   MacroFileType,
 } from '@utils';
-import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,
   zoomWithMouseWheel,
@@ -28,6 +27,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -419,13 +419,6 @@ test.describe('Import-Saving .fasta Files', () => {
       );
       await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
-
-      await closeErrorMessage(page);
-
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 600);
     },
@@ -458,13 +451,6 @@ test.describe('Import-Saving .fasta Files', () => {
     );
     await takeEditorScreenshot(page);
 
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
-    );
-
-    await closeErrorMessage(page);
-
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -496,13 +482,6 @@ test.describe('Import-Saving .fasta Files', () => {
         MacromoleculesFileFormatType.FASTA,
       );
       await takeEditorScreenshot(page);
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
-      );
-
-      await closeErrorMessage(page);
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
@@ -554,12 +533,12 @@ test.describe('Import-Saving .fasta Files', () => {
       );
       await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
+      // test.fixme(
+      //   true,
+      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      // );
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
@@ -611,12 +590,12 @@ test.describe('Import-Saving .fasta Files', () => {
       );
       await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
+      // test.fixme(
+      //   true,
+      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      // );
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
@@ -668,12 +647,12 @@ test.describe('Import-Saving .fasta Files', () => {
       );
       await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
+      // test.fixme(
+      //   true,
+      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      // );
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);

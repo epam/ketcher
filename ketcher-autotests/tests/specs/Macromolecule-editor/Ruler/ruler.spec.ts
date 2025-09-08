@@ -14,7 +14,6 @@ import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -32,7 +31,6 @@ test.describe('Tests for Ruler', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
@@ -603,7 +601,6 @@ test.describe('Tests for Ruler', () => {
     });
     await Ruler(page).dragRulerHandle(400, 300);
     await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).dragRulerHandle(600, 300);

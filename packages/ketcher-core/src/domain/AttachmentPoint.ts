@@ -222,6 +222,9 @@ export class AttachmentPoint {
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
+      })
       .on('mousedown', (event) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);

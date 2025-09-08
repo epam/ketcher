@@ -24,6 +24,7 @@ export interface IEditorEvents {
   mouseOnMoveMonomer: Subscription;
   mouseLeaveMonomer: Subscription;
   mouseOverAttachmentPoint: Subscription;
+  mouseMoveAttachmentPoint: Subscription;
   mouseLeaveAttachmentPoint: Subscription;
   mouseUpAttachmentPoint: Subscription;
   mouseDownAttachmentPoint: Subscription;
@@ -97,6 +98,7 @@ export function resetEditorEvents() {
     mouseOnMoveMonomer: new Subscription(),
     mouseLeaveMonomer: new Subscription(),
     mouseOverAttachmentPoint: new Subscription(),
+    mouseMoveAttachmentPoint: new Subscription(),
     mouseLeaveAttachmentPoint: new Subscription(),
     mouseUpAttachmentPoint: new Subscription(),
     mouseDownAttachmentPoint: new Subscription(),

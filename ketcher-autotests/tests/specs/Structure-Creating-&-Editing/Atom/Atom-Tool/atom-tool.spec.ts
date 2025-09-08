@@ -46,7 +46,6 @@ import {
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { time } from 'console';
 
 const X_DELTA_ONE = 100;
 

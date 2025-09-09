@@ -22,8 +22,8 @@ import { useInterval } from '../../../../../hooks';
 interface ArrowScrollProps {
   startInView: boolean;
   endInView: boolean;
-  scrollForward: any;
-  scrollBack: any;
+  scrollForward: () => void;
+  scrollBack: () => void;
   isLeftRight?: boolean;
 }
 
@@ -62,7 +62,10 @@ const ArrowScroll = ({
         <></>
       ) : (
         <button
-          onClick={scrollForward}
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollForward();
+          }}
           onMouseUp={() => setScrollDown(false)}
           onMouseDown={() => setScrollDown(true)}
           className={clsx(
@@ -77,7 +80,10 @@ const ArrowScroll = ({
         <></>
       ) : (
         <button
-          onClick={scrollBack}
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollBack();
+          }}
           onMouseUp={() => setScrollUp(false)}
           onMouseDown={() => setScrollUp(true)}
           className={clsx(

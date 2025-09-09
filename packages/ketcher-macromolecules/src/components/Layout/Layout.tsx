@@ -143,9 +143,7 @@ const Top = (
   const { children, ...otherProps } = props;
   const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
-  const scrollRight = (e: Event) => {
-    e.stopPropagation();
-
+  const scrollRight = () => {
     if (!scrollRef.current) {
       return;
     }
@@ -153,9 +151,7 @@ const Top = (
     scrollRef.current.scrollLeft += 30;
   };
 
-  const scrollLeft = (e: Event) => {
-    e.stopPropagation();
-
+  const scrollLeft = () => {
     if (!scrollRef.current) {
       return;
     }

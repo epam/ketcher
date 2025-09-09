@@ -1458,8 +1458,6 @@ test.describe('Arrow button on Library cards', () => {
      * 4. Click Redo button
      * 5. Check that after clicking Undo button last added monomer is removed from canvas
      * 6. Check that after clicking Redo button last added monomer is added to canvas
-     * For now we have bug https://github.com/epam/ketcher/issues/7786
-     * After fixing we need to update screenshot
      */
     for (let i = 0; i < 3; i++) {
       await Library(page).clickMonomerAutochain(Preset.MOE_T_P);

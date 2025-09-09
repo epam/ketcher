@@ -378,10 +378,16 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
     await waitForMonomerPreview(page);
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await Library(page).hoverMonomer(Peptide.U);
     await waitForMonomerPreview(page);
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async () => {
@@ -733,9 +739,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await copyContentToClipboard(page, 'GATYLIK');
     await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await takeEditorScreenshot(page);
   });
 });

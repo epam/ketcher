@@ -5,6 +5,7 @@
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheScreen,
   MacroFileType,
   MolFileFormat,
   openFileAndAddToCanvasAsNewProject,
@@ -268,6 +269,7 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
+      await clickInTheMiddleOfTheScreen(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await takeEditorScreenshot(page, {
@@ -318,6 +320,7 @@ test.describe('Arrow button on Library cards', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
+      await clickInTheMiddleOfTheScreen(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await takeEditorScreenshot(page, {
@@ -832,6 +835,7 @@ test.describe('Arrow button on Library cards', () => {
        * 5. Check that monomer is on canvas
        */
       await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await clickInTheMiddleOfTheScreen(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await Library(page).switchToRNATab();
@@ -875,6 +879,7 @@ test.describe('Arrow button on Library cards', () => {
        * 5. Check that monomer is on canvas
        */
       await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await clickInTheMiddleOfTheScreen(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await Library(page).switchToRNATab();
@@ -928,6 +933,7 @@ test.describe('Arrow button on Library cards', () => {
        * 5. Check that monomer is on canvas
        */
       await Library(page).clickMonomerAutochain(Preset.MOE_A_P);
+      await clickInTheMiddleOfTheScreen(page);
       await Library(page).switchToPeptidesTab();
       await Library(page).clickMonomerAutochain(Peptide._1Nal);
       await Library(page).switchToRNATab();

@@ -267,7 +267,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
   });
 
   test('Case 11: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click', async () => {
-    // Fails due to the bug: https://github.com/epam/ketcher/issues/7512
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6830

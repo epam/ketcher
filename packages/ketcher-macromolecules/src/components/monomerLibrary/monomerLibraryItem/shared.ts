@@ -12,9 +12,10 @@ export const cardMouseOverHandler = (
 ) => {
   setAutochainErrorMessage('');
 
-  const { selectedMonomersWithFreeR2 } = editor.getDataForAutochain();
+  const { selectedMonomersWithFreeR2, selectedMonomers } =
+    editor.getDataForAutochain();
 
-  if (selectedMonomersWithFreeR2.length > 1) {
+  if (selectedMonomers.length > 0 && selectedMonomersWithFreeR2.length !== 1) {
     setAutochainErrorMessage(
       'Select a monomer or a chain that has one R2 available.',
     );

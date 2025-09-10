@@ -685,7 +685,7 @@ test.describe('Connection rules for peptides: ', () => {
   //           } else {
   //             await page.getByTitle(targetConnectionPoint).first().click();
   //           }
-  //           await page.getByTitle('Connect').first().click();
+  //           await ConnectionPointsDialog(page).connect();
   //         }
 
   //         await zoomWithMouseWheel(page, -600);
@@ -737,7 +737,7 @@ test.describe('Connection rules for peptides: ', () => {
 
   //           if (await page.getByRole('dialog').isVisible()) {
   //             await page.getByTitle('R1').first().click();
-  //             await page.getByTitle('Connect').first().click();
+  //             await ConnectionPointsDialog(page).connect();
   //           }
 
   //           await zoomWithMouseWheel(page, -600);

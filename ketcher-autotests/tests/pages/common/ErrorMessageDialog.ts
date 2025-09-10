@@ -26,3 +26,5 @@ export const ErrorMessageDialog = (page: Page) => {
     },
   };
 };
+
+export type ErrorMessageDialogType = ReturnType<typeof ErrorMessageDialog>;

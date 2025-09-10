@@ -90,27 +90,19 @@ const useMakeLeavingGroupAtomMenuItem = ({
 
   return isAtomAssignedAttachmentPoint ? (
     <>
-      <Item>
-        <Icon
-          name="editMenu"
-          className={styles.icon}
-          onClick={handleEditClick}
-        />
+      <Item data-testid="edit-connection-point" onClick={handleEditClick}>
+        <Icon name="editMenu" className={styles.icon} />
         Edit connection point
       </Item>
-      <Item>
-        <Icon
-          name="deleteMenu"
-          className={styles.icon}
-          onClick={handleRemoveClick}
-        />
+      <Item data-testid="remove-assignment" onClick={handleRemoveClick}>
+        <Icon name="deleteMenu" className={styles.icon} />
         Remove assignment
       </Item>
     </>
   ) : (
     <Item
       {...props}
-      data-testid="Assign as a leaving group"
+      data-testid="assign-as-a-leaving-group"
       onClick={handleMakeLeavingGroupAtomClick}
       disabled={attachmentPointsLimitReached}
     >

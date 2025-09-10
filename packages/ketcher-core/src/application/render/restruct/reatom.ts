@@ -583,25 +583,33 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints } = render.monomerCreationState;
+      const { assignedAttachmentPoints, potentialAttachmentPoints } =
+        render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
+        const potentialLeavingGroups = Array.from(
+          potentialAttachmentPoints.values(),
+        );
         const [attachmentAtoms, leavingGroups] = Array.from(
           assignedAttachmentPoints.values(),
         ).reduce(
           (acc, currentPair) => {
+            let attachmentAtomsIds = acc[0];
             const attachmentAtomId = currentPair[0];
+            if (!attachmentAtomsIds.includes(attachmentAtomId)) {
+              attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
+            }
+
+            let leavingAtomsIds = acc[1];
             const leavingAtomId = currentPair[1];
-            if (!acc[0].includes(attachmentAtomId)) {
-              acc[0].push(attachmentAtomId);
+            if (!leavingAtomsIds.includes(leavingAtomId)) {
+              leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
             }
-            if (!acc[1].includes(leavingAtomId)) {
-              acc[1].push(leavingAtomId);
-            }
-            return acc;
+
+            return [attachmentAtomsIds, leavingAtomsIds];
           },
           [[], []] as [number[], number[]],
         );
@@ -614,6 +622,11 @@ class ReAtom extends ReObject {
             fill: '#fff8c5',
             stroke: '#f8dc8f',
             'stroke-width': '2px',
+          };
+        } else if (potentialLeavingGroups.includes(aid)) {
+          style = {
+            stroke: '#43B5C0',
+            'stroke-dasharray': '- ',
           };
         }
 

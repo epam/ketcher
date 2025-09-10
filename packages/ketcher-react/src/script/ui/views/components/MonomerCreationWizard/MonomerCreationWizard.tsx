@@ -343,6 +343,7 @@ const MonomerCreationWizard = () => {
 
   const handleAttachmentPointEditPopupClose = () => {
     setAttachmentPointEditPopupData(null);
+    editor.cleanupCloseAttachmentPointEditPopup();
   };
 
   const handleDiscard = () => {

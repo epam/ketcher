@@ -21,13 +21,13 @@
 .contextMenu {
   // Reference https://fkhadra.github.io/react-contexify/how-to-style
   --contexify-menu-bgColor: @color-background-primary;
-  --contexify-item-color: @color-text-secondary;
+  --contexify-item-color:@color-text-primary;
   --contexify-activeItem-color: @color-text-secondary;
-  --contexify-activeItem-bgColor: @color-dropdown-hover;
+  --contexify-activeItem-bgColor: @color-grey-3;
   --contexify-rightSlot-color: @color-text-secondary;
   --contexify-activeRightSlot-color: @color-text-secondary;
-  --contexify-arrow-color: @color-grey-5;
-  --contexify-activeArrow-color: @color-grey-5;
+  --contexify-arrow-color: @color-text-primary;
+  --contexify-activeArrow-color: @color-text-primary;
   --contexify-menu-shadow: 0 2px 5px 0 rgba(@main-color, 0.54);
   --contexify-zIndex: 1;
   --contexify-menu-minWidth: 160px;
@@ -74,13 +74,24 @@
     }
   }
 
+
+  // Disable auto separators between items
   :global(.contexify_item):not(.sameGroup,:last-child) {
     &::after {
-      content: '';
-      display: block;
-      border-top: 1px solid @border-color;
-      margin: 3px 0;
+      content: none;
     }
+  }
+
+  // Style dedicated Separator component placed before Delete
+  :global(.contexify_separator) {
+    margin: 3px 0;
+    height: 0;
+    border-top: 1px solid @border-color;
+    background: transparent;
+  }
+
+  :global(.contexify_rightSlot) {
+    margin-right: -15px;
   }
 
   .devider {
@@ -90,9 +101,4 @@
       margin: 3px 0;
   }
 
-  .subMenu {
-    :global(.contexify_rightSlot) {
-      margin-right: -15px;
-    }
-  }
 }

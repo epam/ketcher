@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useAtomEdit from '../hooks/useAtomEdit';
@@ -91,6 +91,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         Enhanced stereochemistry...
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
+      <Separator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         Delete
       </Item>

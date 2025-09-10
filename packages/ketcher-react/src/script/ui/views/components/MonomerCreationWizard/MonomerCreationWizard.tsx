@@ -409,12 +409,14 @@ const MonomerCreationWizard = () => {
       return {
         name: attachmentPointName,
         atomLabel: 'H',
+        implicitH: 0,
       };
     }
 
     return {
       name: attachmentPointName,
       atomLabel: atom.label,
+      implicitH: atom.implicitH,
     };
   });
 
@@ -524,13 +526,16 @@ const MonomerCreationWizard = () => {
                   Attachment points
                 </p>
                 <div className={styles.attachmentPoints}>
-                  {attachmentPointsData.map(({ name, atomLabel }) => (
-                    <AttachmentPoint
-                      name={name}
-                      atomLabel={atomLabel}
-                      key={name}
-                    />
-                  ))}
+                  {attachmentPointsData.map(
+                    ({ name, atomLabel, implicitH }) => (
+                      <AttachmentPoint
+                        name={name}
+                        atomLabel={atomLabel}
+                        implicitH={implicitH}
+                        key={name}
+                      />
+                    ),
+                  )}
                 </div>
               </div>
             </>

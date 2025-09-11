@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef } from 'react';
+import { useState, useRef, type ComponentProps } from 'react';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
 
-interface IStyledIconProps {
+type StyledIconProps = ComponentProps<typeof Icon> & {
   expanded?: boolean;
   hidden?: boolean;
-}
+};
 const ElementAndDropdown = styled('div')`
   position: relative;
   width: 28px;
@@ -52,16 +53,25 @@ const DropDownButton = styled(Button)(() => ({
     width: '20px',
     height: '20px',
   },
+
+  '&.Mui-disabled': {
+    color: '#A0A0A0',
+    opacity: 0.5,
+  },
+  '&.Mui-disabled svg': {
+    opacity: 0.5,
+    filter: 'grayscale(100%)',
+  },
 }));
 
-const StyledIcon = styled(Icon)<IStyledIconProps>`
+const StyledIcon = styled(Icon)<StyledIconProps>`
   width: 16px;
   height: 16px;
   transform: ${({ expanded }) => (expanded ? 'rotate(180deg)' : 'none')};
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)<StyledIconProps>`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -145,12 +155,17 @@ interface ModeProps {
 export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const isWizardActive = useSelector(
+    (state: { editor?: { isMonomerCreationWizardActive?: boolean } }) =>
+      Boolean(state?.editor?.isMonomerCreationWizardActive),
+  );
 
   const onClose = () => {
     setIsExpanded(false);
   };
 
   const onExpand = () => {
+    if (isWizardActive) return;
     setIsExpanded(true);
   };
 
@@ -165,6 +180,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
       <DropDownButton
         data-testid="polymer-toggler"
         onClick={onExpand}
+        disabled={isWizardActive}
         ref={btnRef}
       >
         <Icon name={modeIcon} />

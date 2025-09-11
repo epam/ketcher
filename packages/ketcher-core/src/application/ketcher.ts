@@ -459,7 +459,7 @@ export class Ketcher {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
@@ -490,7 +490,7 @@ export class Ketcher {
   }
 
   async setHelm(helmStr: string): Promise<void | undefined> {
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof helmStr === 'string');
       const struct: Struct = await prepareStructToRender(
         helmStr,
@@ -512,7 +512,7 @@ export class Ketcher {
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
@@ -546,13 +546,13 @@ export class Ketcher {
       throw new Error('Layout is not available in macro mode');
     }
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       const struct = await this._indigo.layout(
         this.editor.struct(),
         this.editor.serverSettings,
       );
       const ketSerializer = new KetSerializer();
-      this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
   }
 

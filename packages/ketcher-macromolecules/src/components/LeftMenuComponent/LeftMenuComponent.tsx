@@ -18,6 +18,7 @@ import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
+import { SELECT_SUBMENU_ID } from 'components/menu/constants';
 
 export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
@@ -44,21 +45,22 @@ export function LeftMenuComponent() {
         <Menu.Group>
           <Menu.Submenu
             testId="select-drop-down-button"
+            subMenuId={SELECT_SUBMENU_ID}
             needOpenByMenuItemClick={false}
           >
             <Menu.Item
               itemId="select-rectangle"
-              title={`Select Rectangle (${hotkeysShortcuts.exit})`}
+              title={`Select Rectangle (${hotkeysShortcuts.switchSelectTool})`}
               testId="select-rectangle"
             />
             <Menu.Item
               itemId="select-lasso"
-              title={`Lasso selection (${hotkeysShortcuts.exit})`}
+              title={`Lasso selection (${hotkeysShortcuts.switchSelectTool})`}
               testId="select-lasso"
             />
             <Menu.Item
               itemId="select-fragment"
-              title={`Fragment selection (${hotkeysShortcuts.exit})`}
+              title={`Fragment selection (${hotkeysShortcuts.switchSelectTool})`}
               testId="select-fragment"
             />
           </Menu.Submenu>

@@ -56,7 +56,7 @@ export abstract class BaseMode {
     );
 
     if (needRemoveSelection) {
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      editor.events.selectSelectionTool.dispatch();
     }
 
     return command;

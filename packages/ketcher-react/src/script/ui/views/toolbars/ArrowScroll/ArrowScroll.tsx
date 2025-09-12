@@ -22,8 +22,8 @@ import { useRaf } from '../../../../../hooks';
 interface ArrowScrollProps {
   startInView: boolean;
   endInView: boolean;
-  scrollForward: (dtMs?: number) => void;
-  scrollBack: (dtMs?: number) => void;
+  scrollForward: (dtMs: number) => void;
+  scrollBack: (dtMs: number) => void;
   isLeftRight?: boolean;
 }
 

@@ -222,6 +222,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Select h456UR and e6A monomers
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).selectMonomer(Base.h456UR);
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test

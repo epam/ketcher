@@ -4,18 +4,25 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
+  dragMouseTo,
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
+  resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -221,5 +228,175 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
     ).toEqual(['A6', 'C6', 'G6', 'T6', 'U12', 'Other168']);
     await CalculateVariablesPanel(page).close();
+  });
+
+  test('Case 9: HELM load not fails if it contains more than one instance of monomers with aliasHELM property', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3056
+     * Description: HELM load not fails if it contains more than one instance of monomers with aliasHELM property
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from HELM
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 10: Export RNA monomers from MOLv3000 work for ACCLDraw export', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3047
+     * Description: Export RNA monomers from MOLv3000 work for ACCLDraw export
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from MOLv3000
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'Molfiles-V3000/Bugs/ACCLDraw-file.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 11: System not wrongly loads s-group superatom as chem', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3052
+     * Description: System not wrongly loads s-group superatom as chem
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from MOLv3000
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'Molfiles-V3000/Bugs/s-group.mol',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 12: Adding substituents to reactants not breaks chemical property calculations', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3045
+     * Description: Adding substituents to reactants not breaks chemical property calculations
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from KET
+     * 3. Open Calculate properties and check that properties are calculated
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Bugs/reaction-file-with-substituent.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C7H8',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '92.141',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CalculateVariablesPanel(page).close();
+    await clickOnCanvas(page, 700, 310, { from: 'pageTopLeft' });
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C12H10',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '154.212',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CalculateVariablesPanel(page).close();
+    await resetZoomLevelToDefault(page);
+  });
+
+  test('Case 13: Mix of ketcher library aliases and HELM aliases inside ambigous monomer not causes it wrong type on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3062
+     * Description: Mix of ketcher library aliases and HELM aliases inside ambigous monomer not causes it wrong type on the canvas
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from HELM
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[Sm5moe]([m2nprn2A]+[nobn6pur]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 14: System can recognize single ribose or phosphate if loaded from HELM', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3061
+     * Description: System can recognize single ribose or phosphate if loaded from HELM
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from HELM
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 15: Area selection work for bond/atom reposition', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7440
+     * Description: Area selection work for bond/atom reposition
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Add Benzene to the canvas
+     * 3. Select area selection tool
+     * 4. Select all the molecule including atom and bond
+     */
+    await drawBenzeneRing(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
+    await dragMouseTo(700, 800, page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

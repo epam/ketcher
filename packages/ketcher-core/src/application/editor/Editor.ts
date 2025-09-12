@@ -471,9 +471,19 @@ export class CoreEditor {
 
   private setupCopyPasteEvent() {
     this.copyEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
       this.mode.onCopy(event);
     };
     this.pasteEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
       this.mode.onPaste(event);
     };
     document.addEventListener('copy', this.copyEventHandler);

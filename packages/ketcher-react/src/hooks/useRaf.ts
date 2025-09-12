@@ -14,9 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './useSettingsContext';
-export * from './useResizeObserver';
-export * from './useFormContext';
-export * from './useAppContext';
-export * from './useRaf';
-export * from './useSubscribtionOnEvents';
+import { useEffect, useRef } from 'react';
+
+export const useRaf = (active: boolean, onFrame: (dtMs: number) => void) => {
+  const callbackRef = useRef(onFrame);
+  useEffect(() => {
+    callbackRef.current = onFrame;
+  }, [onFrame]);
+
+  useEffect(() => {
+    if (!active) return;
+
+    let rafId = 0;
+    let previousTime = performance.now();
+
+    const loop = (now: number) => {
+      const dt = now - previousTime;
+      previousTime = now;
+      callbackRef.current(dt);
+      rafId = requestAnimationFrame(loop);
+    };
+
+    rafId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId);
+  }, [active]);
+};

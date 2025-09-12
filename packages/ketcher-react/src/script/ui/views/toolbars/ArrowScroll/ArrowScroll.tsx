@@ -17,13 +17,13 @@
 import classes from './ArrowScroll.module.less';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useInterval } from '../../../../../hooks';
+import { useRaf } from '../../../../../hooks';
 
 interface ArrowScrollProps {
   startInView: boolean;
   endInView: boolean;
-  scrollForward: () => void;
-  scrollBack: () => void;
+  scrollForward: (dtMs?: number) => void;
+  scrollBack: (dtMs?: number) => void;
   isLeftRight?: boolean;
 }
 
@@ -36,8 +36,8 @@ const ArrowScroll = ({
 }: ArrowScrollProps) => {
   const [isScrollDown, setScrollDown] = useState(false);
   const [isScrollUp, setScrollUp] = useState(false);
-  useInterval(scrollBack, isScrollDown ? 100 : null);
-  useInterval(scrollForward, isScrollUp ? 100 : null);
+  useRaf(isScrollDown, (dt) => scrollForward(dt));
+  useRaf(isScrollUp, (dt) => scrollBack(dt));
 
   useEffect(() => {
     return () => {
@@ -64,7 +64,7 @@ const ArrowScroll = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            scrollForward();
+            scrollForward(100);
           }}
           onMouseUp={() => setScrollDown(false)}
           onMouseDown={() => setScrollDown(true)}
@@ -82,7 +82,7 @@ const ArrowScroll = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            scrollBack();
+            scrollBack(100);
           }}
           onMouseUp={() => setScrollUp(false)}
           onMouseDown={() => setScrollUp(true)}

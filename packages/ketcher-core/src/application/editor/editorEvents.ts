@@ -9,6 +9,7 @@ export interface IEditorEvents {
   selectMonomer: Subscription;
   selectPreset: Subscription;
   selectTool: Subscription;
+  selectSelectionTool: Subscription;
   createBondViaModal: Subscription;
   cancelBondCreationViaModal: Subscription;
   selectMode: Subscription;
@@ -83,6 +84,7 @@ export function resetEditorEvents() {
     selectMonomer: new Subscription(),
     selectPreset: new Subscription(),
     selectTool: new Subscription(),
+    selectSelectionTool: new Subscription(),
     createBondViaModal: new Subscription(),
     cancelBondCreationViaModal: new Subscription(),
     selectMode: new Subscription(),
@@ -218,7 +220,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
       currentSelectToolIdx = 0;
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.events.selectSelectionTool.dispatch();
       editor.cancelLibraryItemDrag();
     },
   },

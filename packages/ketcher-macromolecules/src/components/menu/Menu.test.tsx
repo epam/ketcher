@@ -46,6 +46,8 @@ const MenuContainer = () => {
 
 describe('Menu component', () => {
   it('should render menu component in a container', () => {
-    expect(render(withThemeProvider(<MenuContainer />))).toMatchSnapshot();
+    expect(
+      render(withThemeAndStoreProvider(<MenuContainer />)),
+    ).toMatchSnapshot();
   });
 });

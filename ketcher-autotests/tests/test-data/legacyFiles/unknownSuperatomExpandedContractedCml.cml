@@ -1,0 +1,80 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable max-len */
+const unknownSuperatomExpandedContractedCml = `<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="C" x2="11.075" y2="-8.1"/>
+            <atom id="a1" elementType="C" x2="12.8053" y2="-8.0995"/>
+            <atom id="a2" elementType="C" x2="11.9418" y2="-7.5999"/>
+            <atom id="a3" elementType="C" x2="12.8053" y2="-9.1004"/>
+            <atom id="a4" elementType="C" x2="11.075" y2="-9.1049"/>
+            <atom id="a5" elementType="C" x2="11.944" y2="-9.59989"/>
+            <atom id="a6" elementType="C" x2="13.6716" y2="-7.5999"/>
+            <atom id="a7" elementType="C" x2="10.2104" y2="-9.6074"/>
+            <atom id="a8" elementType="C" x2="10.209" y2="-7.5998"/>
+            <atom id="a9" elementType="C" x2="13.6718" y2="-9.5996"/>
+            <atom id="a10" elementType="C" x2="16.475" y2="-8.05"/>
+            <atom id="a11" elementType="C" x2="18.2053" y2="-8.0495"/>
+            <atom id="a12" elementType="C" x2="17.3418" y2="-7.5499"/>
+            <atom id="a13" elementType="C" x2="18.2053" y2="-9.0504"/>
+            <atom id="a14" elementType="C" x2="16.475" y2="-9.0549"/>
+            <atom id="a15" elementType="C" x2="17.344" y2="-9.5499"/>
+            <atom id="a16" elementType="C" x2="19.0716" y2="-7.5499"/>
+            <atom id="a17" elementType="C" x2="15.6104" y2="-9.55739"/>
+            <atom id="a18" elementType="C" x2="15.609" y2="-7.5498"/>
+            <atom id="a19" elementType="C" x2="19.0718" y2="-9.54959"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a2 a0" order="2">
+                <bondStereo atomRefs4="a1 a2 a0 a4">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a3 a1" order="2">
+                <bondStereo atomRefs4="a5 a3 a1 a2">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a0 a4" order="1"/>
+            <bond atomRefs2="a1 a2" order="1"/>
+            <bond atomRefs2="a4 a5" order="2">
+                <bondStereo atomRefs4="a0 a4 a5 a3">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a5 a3" order="1"/>
+            <bond atomRefs2="a1 a6" order="1"/>
+            <bond atomRefs2="a4 a7" order="1"/>
+            <bond atomRefs2="a0 a8" order="1"/>
+            <bond atomRefs2="a3 a9" order="1"/>
+            <bond atomRefs2="a12 a10" order="2">
+                <bondStereo atomRefs4="a11 a12 a10 a14">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a13 a11" order="2">
+                <bondStereo atomRefs4="a15 a13 a11 a12">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a10 a14" order="1"/>
+            <bond atomRefs2="a11 a12" order="1"/>
+            <bond atomRefs2="a14 a15" order="2">
+                <bondStereo atomRefs4="a10 a14 a15 a13">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a15 a13" order="1"/>
+            <bond atomRefs2="a11 a16" order="1"/>
+            <bond atomRefs2="a14 a17" order="1"/>
+            <bond atomRefs2="a10 a18" order="1"/>
+            <bond atomRefs2="a13 a19" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a0 a1 a2 a3 a4 a5 a6 a7 a8 a9" role="SuperatomSgroup" title="Some Name">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a10 a11 a12 a13 a14 a15 a16 a17 a18 a19" role="SuperatomSgroup" title="Some Name">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>
+`;

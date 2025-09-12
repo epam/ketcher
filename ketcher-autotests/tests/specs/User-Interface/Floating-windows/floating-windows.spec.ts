@@ -223,7 +223,7 @@ test.describe('Floating windows', () => {
     */
     await pasteFromClipboardAndOpenAsNewProject(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+      await FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

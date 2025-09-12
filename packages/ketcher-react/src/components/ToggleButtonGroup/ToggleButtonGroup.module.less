@@ -21,15 +21,19 @@
   .btn();
 
   cursor: pointer;
-  height: 24px;
+  height: 28px;
+  border: none!important;
+  outline: none!important;
+  box-shadow: none!important;
   white-space: nowrap;
+  background-color: @color-grey-7!important;
   font-size: 12px;
-  color: @color-grey-6!important;
-  border-color: @color-grey-6!important;
+  color: @color-text-primary!important;
   text-transform: none!important;
 
   &:hover {
-    color: @color-spec-button-primary-hover!important;
+    color: @color-spec-button-hover!important;
+    background-color: @color-grey-3!important;
   }
 }
 
@@ -41,6 +45,10 @@
   &:hover {
     background-color: @color-spec-button-primary-hover!important;
   }
+}
+
+:global(.MuiToggleButtonGroup-grouped) {
+  border: none!important;
 }
 
 

@@ -1134,6 +1134,13 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
+  cleanupCloseAttachmentPointEditPopup() {
+    assert(this.monomerCreationState);
+
+    this.monomerCreationState.clickedAttachmentPoint = null;
+    this.render.update(true);
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection; // eslint-disable-line

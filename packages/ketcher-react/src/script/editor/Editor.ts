@@ -894,18 +894,16 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const selectedStructLeavingAtom = isLeavingAtomSelected
-        ? leavingAtom
-        : new Atom({
-          label: AtomLabel.H,
-          pp: leavingAtom.pp,
-        });
+      const selectedStructLeavingAtom = new Atom({
+        label: AtomLabel.H,
+        pp: leavingAtom.pp,
+      });
       // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
       selectedStructLeavingAtom.fragment =
         selectedStruct.atoms.get(0)?.fragment ?? 0;
-      const selectedStructLeavingAtomId = isLeavingAtomSelected
-        ? originalLeavingAtomId
-        : selectedStruct.atoms.add(selectedStructLeavingAtom);
+      const selectedStructLeavingAtomId = selectedStruct.atoms.add(
+        selectedStructLeavingAtom,
+      );
       this.selectedToOriginalAtomsIdMap.set(
         selectedStructLeavingAtomId,
         atomId,
@@ -919,14 +917,12 @@ class Editor implements KetcherEditor {
         attachmentAtomId,
       );
 
-      if (!isLeavingAtomSelected) {
-        const newBond = new Bond({
-          type: Bond.PATTERN.TYPE.SINGLE,
-          begin: selectedStructAttachmentAtomId,
-          end: selectedStructLeavingAtomId,
-        });
-        selectedStruct.bonds.add(newBond);
-      }
+      const newBond = new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: selectedStructAttachmentAtomId,
+        end: selectedStructLeavingAtomId,
+      });
+      selectedStruct.bonds.add(newBond);
 
       const assignedAttachmentPointNames = Array.from(
         assignedAttachmentPoints.keys(),

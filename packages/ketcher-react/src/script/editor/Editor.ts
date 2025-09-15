@@ -660,6 +660,19 @@ class Editor implements KetcherEditor {
         }
       });
 
+      selectionAtoms.forEach((selectionAtomId) => {
+        const selectionAtom = currentStruct.atoms.get(selectionAtomId);
+
+        assert(selectionAtom);
+
+        if (
+          selectionAtom.neighbors.length === 1 &&
+          !isNumber(selectionAtom.rglabel)
+        ) {
+          potentialLeavingAtoms.push(selectionAtomId);
+        }
+      });
+
       const totalPotentialLeavingAtoms =
         terminalRGroupAtoms.length + potentialLeavingAtoms.length;
       if (totalPotentialLeavingAtoms > 8) {
@@ -860,13 +873,20 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const selectedStructLeavingAtom = new Atom({
-        label: AtomLabel.H,
-        pp: leavingAtom.pp,
-      });
-      const selectedStructLeavingAtomId = selectedStruct.atoms.add(
-        selectedStructLeavingAtom,
-      );
+      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
+      const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
+      const selectedStructLeavingAtom = isLeavingAtomSelected
+        ? leavingAtom
+        : new Atom({
+          label: AtomLabel.H,
+          pp: leavingAtom.pp,
+        });
+      // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
+      selectedStructLeavingAtom.fragment =
+        selectedStruct.atoms.get(0)?.fragment ?? 0;
+      const selectedStructLeavingAtomId = isLeavingAtomSelected
+        ? atomId
+        : selectedStruct.atoms.add(selectedStructLeavingAtom);
       this.selectedToOriginalAtomsIdMap.set(
         selectedStructLeavingAtomId,
         atomId,
@@ -880,12 +900,14 @@ class Editor implements KetcherEditor {
         attachmentAtomId,
       );
 
-      const newBond = new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
-        begin: selectedStructAttachmentAtomId,
-        end: selectedStructLeavingAtomId,
-      });
-      selectedStruct.bonds.add(newBond);
+      if (!isLeavingAtomSelected) {
+        const newBond = new Bond({
+          type: Bond.PATTERN.TYPE.SINGLE,
+          begin: selectedStructAttachmentAtomId,
+          end: selectedStructLeavingAtomId,
+        });
+        selectedStruct.bonds.add(newBond);
+      }
 
       const assignedAttachmentPointNames = Array.from(
         assignedAttachmentPoints.keys(),

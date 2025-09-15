@@ -267,21 +267,38 @@ export function getAttachmentPointNumberFromLabel(
   return Number(attachmentPointLabel.replace('R', ''));
 }
 
+export function getAttachmentPointNumberFromRGroupLabel(rGroupLabel: number) {
+  if (rGroupLabel <= 0 || !isSingleRGroupAttachmentPoint(rGroupLabel)) {
+    throw new Error('rGroupLabel must be a positive power of 2');
+  }
+
+  return Math.log2(rGroupLabel) + 1;
+}
+
 export const getNextFreeAttachmentPoint = (
   attachmentPoints: AttachmentPointName[],
+  skipR1AndR2 = false,
 ) => {
-  const attachmentPointNumbers = attachmentPoints.map(
-    getAttachmentPointNumberFromLabel,
-  );
-
-  attachmentPointNumbers.sort((a, b) => a - b);
+  const orderedAttachmentPointNumbers = attachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
 
   let nextFreeAttachmentPointNumber = 1;
-  for (const number of attachmentPointNumbers) {
+  // Go through the ordered list of assigned attachment points to find a gap
+  for (const number of orderedAttachmentPointNumbers) {
     if (number === nextFreeAttachmentPointNumber) {
-      nextFreeAttachmentPointNumber += 1;
+      nextFreeAttachmentPointNumber++;
     } else {
-      break;
+      // Gap found, but we may need to skip R1 or R2 assignment in some cases
+      if (
+        skipR1AndR2 &&
+        (nextFreeAttachmentPointNumber === 1 ||
+          nextFreeAttachmentPointNumber === 2)
+      ) {
+        nextFreeAttachmentPointNumber++;
+      } else {
+        break;
+      }
     }
   }
 

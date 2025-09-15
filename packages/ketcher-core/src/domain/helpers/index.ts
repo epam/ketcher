@@ -23,4 +23,5 @@ export {
   getAttachmentPointNumberFromLabel,
   getNextFreeAttachmentPoint,
   isSingleRGroupAttachmentPoint,
+  getAttachmentPointNumberFromRGroupLabel,
 } from './attachmentPointCalculations';

@@ -31,6 +31,7 @@ import {
   fromSgroupAddition,
   genericsList,
   getAttachmentPointLabel,
+  getAttachmentPointNumberFromRGroupLabel,
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
   IKetAttachmentPoint,
@@ -749,7 +750,7 @@ class Editor implements KetcherEditor {
       [number, number]
     >();
 
-    this.terminalRGroupAtoms.forEach((atomId, i) => {
+    this.terminalRGroupAtoms.forEach((atomId) => {
       const selectedStructLeavingAtomId =
         originalToSelectedAtomsIdMap.get(atomId);
 
@@ -760,6 +761,23 @@ class Editor implements KetcherEditor {
       );
 
       assert(selectedStructLeavingAtom);
+      assert(selectedStructLeavingAtom.rglabel);
+
+      const attachmentPointNumber = getAttachmentPointNumberFromRGroupLabel(
+        Number(selectedStructLeavingAtom.rglabel),
+      );
+      let attachmentPointName: AttachmentPointName;
+      if (attachmentPointNumber === 1 || attachmentPointNumber === 2) {
+        attachmentPointName = getAttachmentPointLabel(attachmentPointNumber);
+      } else {
+        const assignedAttachmentPointNames = Array.from(
+          assignedAttachmentPoints.keys(),
+        );
+        attachmentPointName = getNextFreeAttachmentPoint(
+          assignedAttachmentPointNames,
+          true,
+        );
+      }
 
       selectedStructLeavingAtom.rglabel = null;
       selectedStructLeavingAtom.label = AtomLabel.H;
@@ -769,8 +787,6 @@ class Editor implements KetcherEditor {
       const selectedStructAttachmentAtomId =
         selectedStruct.halfBonds.get(neighborHalfBondId)?.end;
 
-      const attachmentPointName = getAttachmentPointLabel(i + 1);
-
       assert(selectedStructAttachmentAtomId !== undefined);
 
       assignedAttachmentPoints.set(attachmentPointName, [
@@ -779,7 +795,7 @@ class Editor implements KetcherEditor {
       ]);
     });
 
-    this.potentialLeavingAtoms.forEach((atomId, i) => {
+    this.potentialLeavingAtoms.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
 
@@ -824,8 +840,11 @@ class Editor implements KetcherEditor {
       });
       selectedStruct.bonds.add(newBond);
 
-      const attachmentPointName = getAttachmentPointLabel(
-        this.terminalRGroupAtoms.length + i + 1,
+      const assignedAttachmentPointNames = Array.from(
+        assignedAttachmentPoints.keys(),
+      );
+      const attachmentPointName = getNextFreeAttachmentPoint(
+        assignedAttachmentPointNames,
       );
 
       assignedAttachmentPoints.set(attachmentPointName, [

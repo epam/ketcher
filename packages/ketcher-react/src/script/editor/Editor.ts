@@ -17,6 +17,7 @@
 import {
   Action,
   Atom,
+  AtomLabel,
   AttachmentPointName,
   Bond,
   Coordinates,
@@ -761,7 +762,7 @@ class Editor implements KetcherEditor {
       assert(selectedStructLeavingAtom);
 
       selectedStructLeavingAtom.rglabel = null;
-      selectedStructLeavingAtom.label = 'H';
+      selectedStructLeavingAtom.label = AtomLabel.H;
 
       const neighborHalfBondId = selectedStructLeavingAtom.neighbors[0];
 
@@ -796,10 +797,10 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const selectedStructLeavingAtom = leavingAtom.clone();
-      // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
-      selectedStructLeavingAtom.fragment =
-        selectedStruct.atoms.get(0)?.fragment ?? 0;
+      const selectedStructLeavingAtom = new Atom({
+        label: AtomLabel.H,
+        pp: leavingAtom.pp,
+      });
       const selectedStructLeavingAtomId = selectedStruct.atoms.add(
         selectedStructLeavingAtom,
       );

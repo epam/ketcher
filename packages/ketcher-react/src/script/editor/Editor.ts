@@ -855,6 +855,8 @@ class Editor implements KetcherEditor {
       },
     );
 
+    const selectedPotentialLeavingAtoms = new Map<number, number>();
+
     this.potentialLeavingAtoms.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
@@ -875,6 +877,23 @@ class Editor implements KetcherEditor {
 
       const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
       const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
+
+      if (isLeavingAtomSelected) {
+        const originalAttachmentAtomId =
+          originalToSelectedAtomsIdMap.get(attachmentAtomId);
+
+        if (!isNumber(originalAttachmentAtomId)) {
+          return;
+        }
+
+        selectedPotentialLeavingAtoms.set(
+          originalAttachmentAtomId,
+          originalLeavingAtomId,
+        );
+
+        return;
+      }
+
       const selectedStructLeavingAtom = isLeavingAtomSelected
         ? leavingAtom
         : new Atom({
@@ -925,7 +944,7 @@ class Editor implements KetcherEditor {
 
     this.monomerCreationState = {
       assignedAttachmentPoints,
-      potentialAttachmentPoints: new Map<number, number>(),
+      potentialAttachmentPoints: selectedPotentialLeavingAtoms,
     };
 
     this.originalStruct = currentStruct;

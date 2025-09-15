@@ -660,6 +660,19 @@ class Editor implements KetcherEditor {
         }
       });
 
+      selectionAtoms.forEach((selectionAtomId) => {
+        const selectionAtom = currentStruct.atoms.get(selectionAtomId);
+
+        assert(selectionAtom);
+
+        if (
+          selectionAtom.neighbors.length === 1 &&
+          !isNumber(selectionAtom.rglabel)
+        ) {
+          potentialLeavingAtoms.push(selectionAtomId);
+        }
+      });
+
       const totalPotentialLeavingAtoms =
         terminalRGroupAtoms.length + potentialLeavingAtoms.length;
       if (totalPotentialLeavingAtoms > 8) {
@@ -842,6 +855,8 @@ class Editor implements KetcherEditor {
       },
     );
 
+    const selectedPotentialLeavingAtoms = new Map<number, number>();
+
     this.potentialLeavingAtoms.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
@@ -860,10 +875,32 @@ class Editor implements KetcherEditor {
         return;
       }
 
+      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
+      const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
+
+      if (isLeavingAtomSelected) {
+        const originalAttachmentAtomId =
+          originalToSelectedAtomsIdMap.get(attachmentAtomId);
+
+        if (!isNumber(originalAttachmentAtomId)) {
+          return;
+        }
+
+        selectedPotentialLeavingAtoms.set(
+          originalAttachmentAtomId,
+          originalLeavingAtomId,
+        );
+
+        return;
+      }
+
       const selectedStructLeavingAtom = new Atom({
         label: AtomLabel.H,
         pp: leavingAtom.pp,
       });
+      // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
+      selectedStructLeavingAtom.fragment =
+        selectedStruct.atoms.get(0)?.fragment ?? 0;
       const selectedStructLeavingAtomId = selectedStruct.atoms.add(
         selectedStructLeavingAtom,
       );
@@ -903,7 +940,7 @@ class Editor implements KetcherEditor {
 
     this.monomerCreationState = {
       assignedAttachmentPoints,
-      potentialAttachmentPoints: new Map<number, number>(),
+      potentialAttachmentPoints: selectedPotentialLeavingAtoms,
     };
 
     this.originalStruct = currentStruct;

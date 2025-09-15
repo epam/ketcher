@@ -1022,6 +1022,9 @@ class Editor implements KetcherEditor {
       monomer,
     );
 
+    this.render.ctab.molecule.clearFragments();
+    this.render.ctab.molecule.markFragments();
+
     this.update(action);
 
     const { root: templateRoot, ...templateData } = monomerTemplate;

@@ -17,6 +17,7 @@
 import {
   Action,
   Atom,
+  AtomLabel,
   AttachmentPointName,
   Bond,
   Coordinates,
@@ -30,11 +31,14 @@ import {
   fromSgroupAddition,
   genericsList,
   getAttachmentPointLabel,
+  getAttachmentPointLabelWithBinaryShift,
+  getAttachmentPointNumberFromLabel,
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
   IKetAttachmentPoint,
   IKetMonomerTemplate,
   IMAGE_KEY,
+  isSingleRGroupAttachmentPoint,
   KetcherLogger,
   ketcherProvider,
   KetSerializer,
@@ -570,7 +574,8 @@ class Editor implements KetcherEditor {
     return Boolean(this.monomerCreationState);
   }
 
-  private terminalRGroupAtoms: number[] = [];
+  // Pairs of [atomId, attachmentPointLabel (as R1, R10 or similar)]
+  private terminalRGroupAtoms: Array<[number, string]> = [];
   private potentialLeavingAtoms: number[] = [];
 
   public get isMonomerCreationWizardEnabled() {
@@ -588,15 +593,26 @@ class Editor implements KetcherEditor {
 
         assert(atom);
 
-        // Selection should not contain S-Groups, R-Groups (except for terminal R-groups) or atoms from extended table
+        const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
+
+        const belongsToSGroup = sgs.size > 0;
+        const isAttachmentPoint = attachmentPoints !== null;
+        const isNonTerminalRGroupLabel =
+          rglabel !== null && neighbors.length > 1;
+        const hasMultipleRGroupLabel =
+          rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
+        const belongsToRGroup = this.render.ctab.molecule.rgroups.some(
+          (rgroup) => rgroup.frags.has(atom.fragment),
+        );
+        const isExtendedTableAtom = genericsList.includes(label);
+
         return (
-          atom.sgs.size > 0 ||
-          atom.attachmentPoints !== null ||
-          (atom.rglabel !== null && atom.neighbors.length > 1) ||
-          this.render.ctab.molecule.rgroups.some((rgroup) =>
-            rgroup.frags.has(atom.fragment),
-          ) ||
-          genericsList.includes(atom.label)
+          belongsToSGroup ||
+          isAttachmentPoint ||
+          isNonTerminalRGroupLabel ||
+          hasMultipleRGroupLabel ||
+          belongsToRGroup ||
+          isExtendedTableAtom
         );
       });
 
@@ -650,7 +666,17 @@ class Editor implements KetcherEditor {
         return false;
       }
 
-      this.terminalRGroupAtoms = terminalRGroupAtoms;
+      this.terminalRGroupAtoms = terminalRGroupAtoms.map((atomId) => {
+        const atom = currentStruct.atoms.get(atomId);
+
+        assert(atom);
+        assert(atom.rglabel);
+
+        const attachmentPointLabel = getAttachmentPointLabelWithBinaryShift(
+          Number(atom.rglabel),
+        );
+        return [atomId, attachmentPointLabel];
+      });
       this.potentialLeavingAtoms = potentialLeavingAtoms;
 
       return terminalRGroupAtoms.length > 0 || potentialLeavingAtoms.length > 0;
@@ -736,37 +762,87 @@ class Editor implements KetcherEditor {
       [number, number]
     >();
 
-    this.terminalRGroupAtoms.forEach((atomId, i) => {
-      const selectedStructLeavingAtomId =
-        originalToSelectedAtomsIdMap.get(atomId);
+    const sideTerminalSGroupAtoms = this.terminalRGroupAtoms.filter(
+      ([, attachmentPointLabel]) =>
+        attachmentPointLabel !== AttachmentPointName.R1 &&
+        attachmentPointLabel !== AttachmentPointName.R2,
+    );
+    let sideAttachmentPointsNames: AttachmentPointName[] = [];
+    for (let i = 0; i < sideTerminalSGroupAtoms.length; i++) {
+      const attachmentPointNumber = i + 3;
+      if (attachmentPointNumber > 8) {
+        break;
+      }
 
-      assert(selectedStructLeavingAtomId !== undefined);
-
-      const selectedStructLeavingAtom = selectedStruct.atoms.get(
-        selectedStructLeavingAtomId,
+      sideAttachmentPointsNames = sideAttachmentPointsNames.concat(
+        getAttachmentPointLabel(attachmentPointNumber),
       );
+    }
 
-      assert(selectedStructLeavingAtom);
+    const terminalRGroupAtomsSortedByLabel = [...this.terminalRGroupAtoms].sort(
+      ([, labelA], [, labelB]) => {
+        const labelANumber = getAttachmentPointNumberFromLabel(
+          labelA as AttachmentPointName,
+        );
+        const labelBNumber = getAttachmentPointNumberFromLabel(
+          labelB as AttachmentPointName,
+        );
+        return labelANumber - labelBNumber;
+      },
+    );
 
-      selectedStructLeavingAtom.rglabel = null;
-      selectedStructLeavingAtom.label = 'H';
+    terminalRGroupAtomsSortedByLabel.forEach(
+      ([atomId, attachmentPointLabel]) => {
+        const selectedStructLeavingAtomId =
+          originalToSelectedAtomsIdMap.get(atomId);
 
-      const neighborHalfBondId = selectedStructLeavingAtom.neighbors[0];
+        assert(selectedStructLeavingAtomId !== undefined);
 
-      const selectedStructAttachmentAtomId =
-        selectedStruct.halfBonds.get(neighborHalfBondId)?.end;
+        const selectedStructLeavingAtom = selectedStruct.atoms.get(
+          selectedStructLeavingAtomId,
+        );
 
-      const attachmentPointName = getAttachmentPointLabel(i + 1);
+        assert(selectedStructLeavingAtom);
+        assert(selectedStructLeavingAtom.rglabel);
 
-      assert(selectedStructAttachmentAtomId !== undefined);
+        let attachmentPointName: AttachmentPointName;
+        if (
+          attachmentPointLabel === AttachmentPointName.R1 ||
+          attachmentPointLabel === AttachmentPointName.R2 ||
+          sideAttachmentPointsNames.includes(
+            attachmentPointLabel as AttachmentPointName,
+          )
+        ) {
+          attachmentPointName = attachmentPointLabel as AttachmentPointName;
+        } else {
+          const assignedAttachmentPointNames = Array.from(
+            assignedAttachmentPoints.keys(),
+          );
+          attachmentPointName = getNextFreeAttachmentPoint(
+            assignedAttachmentPointNames,
+            assignedAttachmentPointNames.length <
+              sideAttachmentPointsNames.length,
+          );
+        }
 
-      assignedAttachmentPoints.set(attachmentPointName, [
-        selectedStructAttachmentAtomId,
-        selectedStructLeavingAtomId,
-      ]);
-    });
+        selectedStructLeavingAtom.rglabel = null;
+        selectedStructLeavingAtom.label = AtomLabel.H;
 
-    this.potentialLeavingAtoms.forEach((atomId, i) => {
+        const neighborHalfBondId = selectedStructLeavingAtom.neighbors[0];
+
+        const selectedStructAttachmentAtomId =
+          selectedStruct.halfBonds.get(neighborHalfBondId)?.end;
+
+        assert(selectedStructAttachmentAtomId !== undefined);
+
+        assignedAttachmentPoints.set(attachmentPointName, [
+          selectedStructAttachmentAtomId,
+          selectedStructLeavingAtomId,
+        ]);
+      },
+    );
+
+    this.potentialLeavingAtoms.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
 
@@ -784,10 +860,10 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const selectedStructLeavingAtom = leavingAtom.clone();
-      // Fragment is copied from original struct, we have to replace it manually to the fragment from the selected struct
-      selectedStructLeavingAtom.fragment =
-        selectedStruct.atoms.get(0)?.fragment ?? 0;
+      const selectedStructLeavingAtom = new Atom({
+        label: AtomLabel.H,
+        pp: leavingAtom.pp,
+      });
       const selectedStructLeavingAtomId = selectedStruct.atoms.add(
         selectedStructLeavingAtom,
       );
@@ -811,8 +887,12 @@ class Editor implements KetcherEditor {
       });
       selectedStruct.bonds.add(newBond);
 
-      const attachmentPointName = getAttachmentPointLabel(
-        this.terminalRGroupAtoms.length + i + 1,
+      const assignedAttachmentPointNames = Array.from(
+        assignedAttachmentPoints.keys(),
+      );
+      const attachmentPointName = getNextFreeAttachmentPoint(
+        assignedAttachmentPointNames,
+        assignedAttachmentPointNames.length < sideAttachmentPointsNames.length,
       );
 
       assignedAttachmentPoints.set(attachmentPointName, [

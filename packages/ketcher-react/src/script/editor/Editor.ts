@@ -885,7 +885,7 @@ class Editor implements KetcherEditor {
       selectedStructLeavingAtom.fragment =
         selectedStruct.atoms.get(0)?.fragment ?? 0;
       const selectedStructLeavingAtomId = isLeavingAtomSelected
-        ? atomId
+        ? originalLeavingAtomId
         : selectedStruct.atoms.add(selectedStructLeavingAtom);
       this.selectedToOriginalAtomsIdMap.set(
         selectedStructLeavingAtomId,

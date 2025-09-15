@@ -77,6 +77,7 @@ import {
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
+import { isNumber } from 'lodash';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -968,7 +969,7 @@ class Editor implements KetcherEditor {
 
       const originalLeavingAtomId =
         this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
-      assert(originalLeavingAtomId);
+      assert(isNumber(originalLeavingAtomId));
 
       const originalLeavingAtom = this.originalStruct.atoms.get(
         originalLeavingAtomId,

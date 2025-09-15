@@ -15,7 +15,7 @@ const AttachmentPoint = ({ name, atomLabel, implicitH }: Props) => {
         &nbsp;
         <span>
           (
-          {implicitH > 0 && (
+          {implicitH > 1 && (
             <>
               H<sub>{implicitH}</sub>
             </>

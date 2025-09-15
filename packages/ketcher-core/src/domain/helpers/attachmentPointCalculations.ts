@@ -253,6 +253,10 @@ export function getAttachmentPointLabelWithBinaryShift(
   return attachmentPointLabel;
 }
 
+export function isSingleRGroupAttachmentPoint(rGroupLabel: number) {
+  return rGroupLabel > 0 && (rGroupLabel & (rGroupLabel - 1)) === 0;
+}
+
 export function getAttachmentPointLabel(attachmentPointNumber: number) {
   return `R${attachmentPointNumber}` as AttachmentPointName;
 }

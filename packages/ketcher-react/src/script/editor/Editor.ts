@@ -35,6 +35,7 @@ import {
   IKetAttachmentPoint,
   IKetMonomerTemplate,
   IMAGE_KEY,
+  isSingleRGroupAttachmentPoint,
   KetcherLogger,
   ketcherProvider,
   KetSerializer,
@@ -588,15 +589,26 @@ class Editor implements KetcherEditor {
 
         assert(atom);
 
-        // Selection should not contain S-Groups, R-Groups (except for terminal R-groups) or atoms from extended table
+        const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
+
+        const belongsToSGroup = sgs.size > 0;
+        const isAttachmentPoint = attachmentPoints !== null;
+        const isNonTerminalRGroupLabel =
+          rglabel !== null && neighbors.length > 1;
+        const hasMultipleRGroupLabel =
+          rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
+        const belongsToRGroup = this.render.ctab.molecule.rgroups.some(
+          (rgroup) => rgroup.frags.has(atom.fragment),
+        );
+        const isExtendedTableAtom = genericsList.includes(label);
+
         return (
-          atom.sgs.size > 0 ||
-          atom.attachmentPoints !== null ||
-          (atom.rglabel !== null && atom.neighbors.length > 1) ||
-          this.render.ctab.molecule.rgroups.some((rgroup) =>
-            rgroup.frags.has(atom.fragment),
-          ) ||
-          genericsList.includes(atom.label)
+          belongsToSGroup ||
+          isAttachmentPoint ||
+          isNonTerminalRGroupLabel ||
+          hasMultipleRGroupLabel ||
+          belongsToRGroup ||
+          isExtendedTableAtom
         );
       });
 

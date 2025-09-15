@@ -283,22 +283,12 @@ export const getNextFreeAttachmentPoint = (
     .map(getAttachmentPointNumberFromLabel)
     .sort((a, b) => a - b);
 
-  let nextFreeAttachmentPointNumber = 1;
-  // Go through the ordered list of assigned attachment points to find a gap
+  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
   for (const number of orderedAttachmentPointNumbers) {
     if (number === nextFreeAttachmentPointNumber) {
       nextFreeAttachmentPointNumber++;
     } else {
-      // Gap found, but we may need to skip R1 or R2 assignment in some cases
-      if (
-        skipR1AndR2 &&
-        (nextFreeAttachmentPointNumber === 1 ||
-          nextFreeAttachmentPointNumber === 2)
-      ) {
-        nextFreeAttachmentPointNumber++;
-      } else {
-        break;
-      }
+      break;
     }
   }
 

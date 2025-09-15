@@ -31,7 +31,7 @@ import {
   fromSgroupAddition,
   genericsList,
   getAttachmentPointLabel,
-  getAttachmentPointNumberFromRGroupLabel,
+  getAttachmentPointLabelWithBinaryShift,
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
   IKetAttachmentPoint,
@@ -573,7 +573,8 @@ class Editor implements KetcherEditor {
     return Boolean(this.monomerCreationState);
   }
 
-  private terminalRGroupAtoms: number[] = [];
+  // Pairs of [atomId, attachmentPointLabel (as R1, R10 or similar)]
+  private terminalRGroupAtoms: Array<[number, string]> = [];
   private potentialLeavingAtoms: number[] = [];
 
   public get isMonomerCreationWizardEnabled() {
@@ -664,7 +665,17 @@ class Editor implements KetcherEditor {
         return false;
       }
 
-      this.terminalRGroupAtoms = terminalRGroupAtoms;
+      this.terminalRGroupAtoms = terminalRGroupAtoms.map((atomId) => {
+        const atom = currentStruct.atoms.get(atomId);
+
+        assert(atom);
+        assert(atom.rglabel);
+
+        const attachmentPointLabel = getAttachmentPointLabelWithBinaryShift(
+          Number(atom.rglabel),
+        );
+        return [atomId, attachmentPointLabel];
+      });
       this.potentialLeavingAtoms = potentialLeavingAtoms;
 
       return terminalRGroupAtoms.length > 0 || potentialLeavingAtoms.length > 0;
@@ -750,7 +761,17 @@ class Editor implements KetcherEditor {
       [number, number]
     >();
 
-    this.terminalRGroupAtoms.forEach((atomId) => {
+    const sideTerminalSGroupAtoms = this.terminalRGroupAtoms.filter(
+      ([, attachmentPointLabel]) =>
+        attachmentPointLabel !== AttachmentPointName.R1 &&
+        attachmentPointLabel !== AttachmentPointName.R2,
+    );
+    const sideAttachmentPointsNames = sideTerminalSGroupAtoms.map((_, i) => {
+      const attachmentPointNumber = i + 3;
+      return getAttachmentPointLabel(attachmentPointNumber);
+    });
+
+    this.terminalRGroupAtoms.forEach(([atomId, attachmentPointLabel]) => {
       const selectedStructLeavingAtomId =
         originalToSelectedAtomsIdMap.get(atomId);
 
@@ -763,12 +784,13 @@ class Editor implements KetcherEditor {
       assert(selectedStructLeavingAtom);
       assert(selectedStructLeavingAtom.rglabel);
 
-      const attachmentPointNumber = getAttachmentPointNumberFromRGroupLabel(
-        Number(selectedStructLeavingAtom.rglabel),
-      );
       let attachmentPointName: AttachmentPointName;
-      if (attachmentPointNumber === 1 || attachmentPointNumber === 2) {
-        attachmentPointName = getAttachmentPointLabel(attachmentPointNumber);
+      if (
+        attachmentPointLabel === AttachmentPointName.R1 ||
+        attachmentPointLabel === AttachmentPointName.R2 ||
+        sideAttachmentPointsNames.includes(attachmentPointLabel)
+      ) {
+        attachmentPointName = attachmentPointLabel;
       } else {
         const assignedAttachmentPointNames = Array.from(
           assignedAttachmentPoints.keys(),
@@ -845,6 +867,7 @@ class Editor implements KetcherEditor {
       );
       const attachmentPointName = getNextFreeAttachmentPoint(
         assignedAttachmentPointNames,
+        true,
       );
 
       assignedAttachmentPoints.set(attachmentPointName, [

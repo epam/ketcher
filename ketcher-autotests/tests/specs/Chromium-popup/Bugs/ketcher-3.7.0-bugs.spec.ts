@@ -7,7 +7,10 @@ import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -19,20 +22,32 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
+  keyboardTypeOnCanvas,
   MacroFileType,
+  MolFileFormat,
+  moveMouseToTheMiddleOfTheScreen,
+  openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
+  RxnFileFormat,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
+import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
 test.describe('Ketcher bugs in 3.7.0', () => {
-  test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
   test.afterEach(async () => {
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -41,7 +56,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await closePage();
   });
 
-  test('Case 1: Tooltip shown and addition not allowed when multiple monomers with free R2 are selected', async () => {
+  test('Case 1: Tooltip shown and addition not allowed when multiple monomers with free R2 are selected', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7548
@@ -108,7 +125,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 4: "Ghost image" positioned below mouse cursor if dragged from Library to canvas in popup mode', async () => {
+  test('Case 4: "Ghost image" positioned below mouse cursor if dragged from Library to canvas in popup mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7513
@@ -126,7 +145,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 5: Able to add ambiguous monomers via arrow button', async () => {
+  test('Case 5: Able to add ambiguous monomers via arrow button', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7538
@@ -144,7 +165,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 6: Tooltip shown and invalid attachment not allowed when adding a monomer without R1 to selected monomer with free R2', async () => {
+  test('Case 6: Tooltip shown and invalid attachment not allowed when adding a monomer without R1 to selected monomer with free R2', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7539
@@ -165,7 +188,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 7: Isoelectric Point calculation take into account occupied leaving groups (exclude them)', async () => {
+  test('Case 7: Isoelectric Point calculation take into account occupied leaving groups (exclude them)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/2928
@@ -209,7 +234,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     }
   });
 
-  test('Case 8: Calculate properties work for "rich" sequences', async () => {
+  test('Case 8: Calculate properties work for "rich" sequences', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3053
@@ -230,7 +257,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await CalculateVariablesPanel(page).close();
   });
 
-  test('Case 9: HELM load not fails if it contains more than one instance of monomers with aliasHELM property', async () => {
+  test('Case 9: HELM load not fails if it contains more than one instance of monomers with aliasHELM property', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3056
@@ -250,7 +279,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 10: Export RNA monomers from MOLv3000 work for ACCLDraw export', async () => {
+  test('Case 10: Export RNA monomers from MOLv3000 work for ACCLDraw export', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3047
@@ -269,7 +300,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 11: System not wrongly loads s-group superatom as chem', async () => {
+  test('Case 11: System not wrongly loads s-group superatom as chem', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3052
@@ -288,7 +321,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 12: Adding substituents to reactants not breaks chemical property calculations', async () => {
+  test('Case 12: Adding substituents to reactants not breaks chemical property calculations', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3045
@@ -335,7 +370,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await resetZoomLevelToDefault(page);
   });
 
-  test('Case 13: Mix of ketcher library aliases and HELM aliases inside ambigous monomer not causes it wrong type on the canvas', async () => {
+  test('Case 13: Mix of ketcher library aliases and HELM aliases inside ambigous monomer not causes it wrong type on the canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3062
@@ -355,7 +392,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 14: System can recognize single ribose or phosphate if loaded from HELM', async () => {
+  test('Case 14: System can recognize single ribose or phosphate if loaded from HELM', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3061
@@ -375,9 +414,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 15: Area selection work for bond/atom reposition', async ({
-    MoleculesCanvas: _,
-  }) => {
+  test('Case 15: Area selection work for bond/atom reposition', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7440
@@ -394,6 +431,220 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     );
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
     await dragMouseTo(700, 800, page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: Layout not shift when changing mode from sequence to flex and back upon first macromolecules mode initialization', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7205
+     * Description: Layout not shift when changing mode from sequence to flex and back upon first macromolecules mode initialization
+     * Scenario:
+     * 1. Open Ketcher and switch to Macromolecules mode
+     * 2. Note the initial position of the caret in sequence mode
+     * 3. Press any key allowed in the currently selected mode (ACGTU for "RNA" mode selected by default)
+     * 4. Switch to Flex mode
+     * 5. Switch back to Sequence mode
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 17: Correct leaving group atoms for expanded monomers', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7222
+     * Description: Correct leaving group atoms for expanded monomers
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Open KET file with expanded monomers
+     * 3. Expand all monomers
+     * 4. Hover monomers
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/leaving-group-atoms-for-expanded-monomers.ket',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await expandMonomers(
+      page,
+      getAbbreviationLocator(page, { name: 'Test-6-Ch' }),
+    );
+    await clickOnCanvas(page, 800, 100, { from: 'pageTopLeft' });
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 18: Saving to MOLv3000 work and system not throws exception', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3048
+     * Description: Saving to MOLv3000 work and system not throws exception
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from MOLv3000
+     * 3. Save as MOLv3000
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/save-to-molv3000.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/save-to-molv3000-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/save-to-molv3000-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 19: Alanine and R2-R1 bonds not lost after loading from MOL if peptide has side connection', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3051
+     * Description: Alanine and R2-R1 bonds not lost after loading from MOL if peptide has side connection
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from MOLv3000
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/peptide-has-side-connection.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 20: Stereo labels not missied on export to SVG result', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3049
+     * Description: Stereo labels not missied on export to SVG result
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from CDXML
+     * 3. Save as SVG
+     */
+    const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/Bugs/structure-with-stereolabels.cdxml',
+    );
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeElementScreenshot(page, saveStructureArea);
+  });
+
+  test('Case 21: Loading monomer chain from SDF file works - bonds between monomers not lost ', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3050
+     * Description: Loading monomer chain from SDF file works - bonds between monomers not lost
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from SDF
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SDF/Bugs/monomer-chain.sdf',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3069
+     * Description: Export to RXN work, system not throws exception: Error: memory access out of bounds
+     * Scenario:
+     * 1. Go to Micro mode
+     * 2. Load from KET
+     * 3. Press Save button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Memory problem.ket',
+    );
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+      FileType.RXN,
+      RxnFileFormat.v2000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 23: Export of expanded CHEMs works (system not losts CHEM type)', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/Indigo/issues/3094
+     * Description: Export of expanded CHEMs works (system not losts CHEM type)
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from HELM
+     * 3. Go to Molecules mode
+     * 4. Expand it
+     * 5. Save it to Mol v3000 file
+     * 6. Load it back as New Project and switch to Macromolecules mode
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'CHEM1{[4aPEGMal]}$$$$V2.0',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await selectAllStructuresOnCanvas(page);
+    await expandMonomer(
+      page,
+      getAbbreviationLocator(page, { name: '4aPEGMal' }),
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/4aPEGMal-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/4aPEGMal-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

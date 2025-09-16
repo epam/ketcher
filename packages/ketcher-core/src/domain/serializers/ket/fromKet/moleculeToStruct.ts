@@ -295,10 +295,13 @@ function sgroupAttachmentPointToStruct(
   const atomId = source.attachmentAtom;
   const leavingAtomId = source.leavingAtom;
   const attachmentId = source.attachmentId;
+
   return new SGroupAttachmentPoint(
     atomId,
     leavingAtomId,
     attachmentId,
-    attachmentId ? Number(attachmentId) : attachmentPointNumber,
+    attachmentId && !isNaN(Number(attachmentId))
+      ? Number(attachmentId)
+      : attachmentPointNumber,
   );
 }

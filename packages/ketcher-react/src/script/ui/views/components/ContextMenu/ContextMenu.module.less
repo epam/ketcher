@@ -74,15 +74,12 @@
     }
   }
 
-
-  // Disable auto separators between items
   :global(.contexify_item):not(.sameGroup,:last-child) {
     &::after {
       content: none;
     }
   }
 
-  // Style dedicated Separator component placed before Delete
   :global(.contexify_separator) {
     margin: 3px 0;
     height: 0;

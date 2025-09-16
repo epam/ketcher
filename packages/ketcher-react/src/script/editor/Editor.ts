@@ -1110,17 +1110,17 @@ class Editor implements KetcherEditor {
         this.selectedToOriginalAtomsIdMap,
       );
 
-    // TODO: Rewrite this logic according to the new approach with leaving groups
-    // this.singleBondsToOutsideOfSelection.forEach((bond) => {
-    //   const attachmentPointToBond = sGroupAttachmentPoints.find((point) => {
-    //     return point.atomId === bond.begin || point.atomId === bond.end;
-    //   });
-    //
-    //   if (attachmentPointToBond) {
-    //     bond.beginSuperatomAttachmentPointNumber =
-    //       attachmentPointToBond.attachmentPointNumber;
-    //   }
-    // });
+    sGroupAttachmentPoints.forEach((ap) => {
+      this.render.ctab.molecule.bonds.forEach((bond) => {
+        if (
+          (bond.begin === ap.atomId || bond.end === ap.atomId) &&
+          (!this.originalSelection.atoms?.includes(bond.begin) ||
+            !this.originalSelection.atoms?.includes(bond.end))
+        ) {
+          bond.beginSuperatomAttachmentPointNumber = ap.attachmentPointNumber;
+        }
+      });
+    });
 
     const action = fromSgroupAddition(
       this.render.ctab,

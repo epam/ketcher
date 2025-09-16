@@ -34,6 +34,7 @@ export type MonomerCreationState = {
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   potentialAttachmentPoints: Map<number, number>;
   clickedAttachmentPoint?: AttachmentPointName | null;
+  problematicAttachmentPoints?: Set<AttachmentPointName>;
 } | null;
 
 export class Render {

@@ -1224,6 +1224,14 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
+  setProblematicAttachmentPoints(problematicPoints: Set<AttachmentPointName>) {
+    assert(this.monomerCreationState);
+
+    this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
+    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.render.update(true);
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection; // eslint-disable-line

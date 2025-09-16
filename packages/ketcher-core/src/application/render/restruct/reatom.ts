@@ -583,8 +583,11 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints, potentialAttachmentPoints } =
-        render.monomerCreationState;
+      const {
+        assignedAttachmentPoints,
+        potentialAttachmentPoints,
+        problematicAttachmentPoints,
+      } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -658,12 +661,15 @@ class ReAtom extends ReObject {
           }
           const labelPos = ps.addScaled(direction, labelDistance);
 
+          const isProblematic =
+            problematicAttachmentPoints?.has(attachmentPointName);
+
           const rLabelElement = render.paper
             .text(labelPos.x, labelPos.y, attachmentPointName)
             .attr({
               font: options.font,
               'font-size': options.fontszsubInPx,
-              fill: '#333333',
+              fill: isProblematic ? '#F40724' : '#333333',
               'font-weight': '700',
               cursor: 'pointer',
             });
@@ -679,6 +685,15 @@ class ReAtom extends ReObject {
               opacity: 0,
             });
 
+          if (isProblematic) {
+            background.attr({
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+              opacity: 1,
+            });
+          }
+
           // Create a group for the label and background
           const labelGroup = render.paper.set();
           labelGroup.push(background, rLabelElement);
@@ -691,7 +706,8 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                attachmentPointName
+                  attachmentPointName ||
+                isProblematic
               ) {
                 return;
               }
@@ -705,7 +721,8 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                attachmentPointName
+                  attachmentPointName ||
+                isProblematic
               ) {
                 return;
               }

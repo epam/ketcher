@@ -284,18 +284,6 @@ export const getNextFreeAttachmentPoint = (
     }
   }
 
-  /*
-    When automatically assigning attachment points, we initially skip R1 and R2 assuming that user specifies left and right connections explicitly
-    However, if all R3..R8 are taken, we have to fallback to these two to complete the whole set of attachment points
-   */
-  if (skipR1AndR2) {
-    if (nextFreeAttachmentPointNumber === 9) {
-      nextFreeAttachmentPointNumber = 1;
-    } else if (nextFreeAttachmentPointNumber === 10) {
-      nextFreeAttachmentPointNumber = 2;
-    }
-  }
-
   if (nextFreeAttachmentPointNumber > 8) {
     throw new Error('Cannot assign more than 8 attachment points');
   }

@@ -644,6 +644,19 @@ class Editor implements KetcherEditor {
         }
       });
 
+      selectionAtoms.forEach((selectionAtomId) => {
+        const selectionAtom = currentStruct.atoms.get(selectionAtomId);
+
+        assert(selectionAtom);
+
+        if (
+          selectionAtom.neighbors.length === 1 &&
+          !isNumber(selectionAtom.rglabel)
+        ) {
+          potentialLeavingAtoms.push(selectionAtomId);
+        }
+      });
+
       const totalPotentialLeavingAtoms =
         terminalRGroupAtoms.length + potentialLeavingAtoms.length;
       if (totalPotentialLeavingAtoms > 8) {
@@ -766,6 +779,8 @@ class Editor implements KetcherEditor {
       ]);
     });
 
+    const selectedPotentialLeavingAtoms = new Map<number, number>();
+
     this.potentialLeavingAtoms.forEach((atomId, i) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
@@ -781,6 +796,25 @@ class Editor implements KetcherEditor {
       });
 
       if (attachmentAtomId === -1) {
+        return;
+      }
+
+      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
+      const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
+
+      if (isLeavingAtomSelected) {
+        const originalAttachmentAtomId =
+          originalToSelectedAtomsIdMap.get(attachmentAtomId);
+
+        if (!isNumber(originalAttachmentAtomId)) {
+          return;
+        }
+
+        selectedPotentialLeavingAtoms.set(
+          originalAttachmentAtomId,
+          originalLeavingAtomId,
+        );
+
         return;
       }
 
@@ -823,7 +857,7 @@ class Editor implements KetcherEditor {
 
     this.monomerCreationState = {
       assignedAttachmentPoints,
-      potentialAttachmentPoints: new Map<number, number>(),
+      potentialAttachmentPoints: selectedPotentialLeavingAtoms,
     };
 
     this.originalStruct = currentStruct;

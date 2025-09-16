@@ -6,6 +6,7 @@ import {
   AttachmentPointName,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
+  getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
   ketcherProvider,
   KetMonomerClass,
@@ -191,6 +192,7 @@ const validateInputs = (values: WizardValues) => {
 
 const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const problematicAttachmentPoints = new Set<AttachmentPointName>();
 
   if (attachmentPoints.length === 0) {
     notifications.set('noAttachmentPoints', {
@@ -198,31 +200,45 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
       message: NotificationMessages.noAttachmentPoints,
     });
 
-    return notifications;
+    return { notifications, problematicAttachmentPoints };
   }
 
-  const attachmentPointNumbers = attachmentPoints.map(
-    getAttachmentPointNumberFromLabel,
+  const sideAttachmentPoints = attachmentPoints.filter(
+    (attachmentPointName) => {
+      const pointNumber =
+        getAttachmentPointNumberFromLabel(attachmentPointName);
+      return pointNumber > 2;
+    },
   );
 
-  attachmentPointNumbers.sort((a, b) => a - b);
-
-  let startingIndex = 0;
-  while (attachmentPointNumbers[startingIndex] <= 2) {
-    startingIndex++;
+  if (sideAttachmentPoints.length === 0) {
+    return { notifications, problematicAttachmentPoints };
   }
 
-  for (let i = startingIndex; i < attachmentPointNumbers.length; i++) {
-    if (attachmentPointNumbers[i] - attachmentPointNumbers[i - 1] > 1) {
-      notifications.set('incorrectAttachmentPointsOrder', {
-        type: 'error',
-        message: NotificationMessages.incorrectAttachmentPointsOrder,
-      });
-      break;
+  const expectedSequence: number[] = [];
+  for (let i = 3; i < 3 + sideAttachmentPoints.length; i++) {
+    expectedSequence.push(i);
+  }
+
+  const actualNumbers = sideAttachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
+
+  actualNumbers.forEach((actualNumber) => {
+    if (!expectedSequence.includes(actualNumber)) {
+      const problematicPointName = getAttachmentPointLabel(actualNumber);
+      problematicAttachmentPoints.add(problematicPointName);
     }
+  });
+
+  if (problematicAttachmentPoints.size > 0) {
+    notifications.set('incorrectAttachmentPointsOrder', {
+      type: 'error',
+      message: NotificationMessages.incorrectAttachmentPointsOrder,
+    });
   }
 
-  return notifications;
+  return { notifications, problematicAttachmentPoints };
 };
 
 const MonomerCreationWizard = () => {
@@ -367,7 +383,10 @@ const MonomerCreationWizard = () => {
 
     assert(editor.monomerCreationState);
 
-    const attachmentPointsNotifications = validateAttachmentPoints(
+    const {
+      notifications: attachmentPointsNotifications,
+      problematicAttachmentPoints,
+    } = validateAttachmentPoints(
       Array.from(editor.monomerCreationState.assignedAttachmentPoints.keys()),
     );
     if (attachmentPointsNotifications.size > 0) {
@@ -375,6 +394,7 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: attachmentPointsNotifications,
       });
+      editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
       return;
     }
 
@@ -386,6 +406,7 @@ const MonomerCreationWizard = () => {
     });
 
     resetWizard();
+    editor.setProblematicAttachmentPoints(new Set());
   };
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);

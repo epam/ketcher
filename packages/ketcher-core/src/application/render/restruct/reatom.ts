@@ -687,17 +687,42 @@ class ReAtom extends ReObject {
           labelGroup.hover(
             // Mouse enter
             () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                attachmentPointName
+              ) {
+                return;
+              }
+
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
             },
             // Mouse leave
             () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                attachmentPointName
+              ) {
+                return;
+              }
+
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
             },
           );
 
           labelGroup.click((event: PointerEvent) => {
+            if (!render.monomerCreationState) {
+              return;
+            }
+
+            render.monomerCreationState.clickedAttachmentPoint =
+              attachmentPointName;
+
             const clickData: AttachmentPointClickData = {
               atomId: aid,
               atomLabel: this.a.label,

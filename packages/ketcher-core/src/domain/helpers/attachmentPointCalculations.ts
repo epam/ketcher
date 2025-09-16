@@ -253,6 +253,10 @@ export function getAttachmentPointLabelWithBinaryShift(
   return attachmentPointLabel;
 }
 
+export function isSingleRGroupAttachmentPoint(rGroupLabel: number) {
+  return rGroupLabel > 0 && (rGroupLabel & (rGroupLabel - 1)) === 0;
+}
+
 export function getAttachmentPointLabel(attachmentPointNumber: number) {
   return `R${attachmentPointNumber}` as AttachmentPointName;
 }
@@ -265,19 +269,30 @@ export function getAttachmentPointNumberFromLabel(
 
 export const getNextFreeAttachmentPoint = (
   attachmentPoints: AttachmentPointName[],
+  skipR1AndR2 = false,
 ) => {
-  const attachmentPointNumbers = attachmentPoints.map(
-    getAttachmentPointNumberFromLabel,
-  );
+  const orderedAttachmentPointNumbers = attachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
 
-  attachmentPointNumbers.sort((a, b) => a - b);
-
-  let nextFreeAttachmentPointNumber = 1;
-  for (const number of attachmentPointNumbers) {
+  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
+  for (const number of orderedAttachmentPointNumbers) {
     if (number === nextFreeAttachmentPointNumber) {
-      nextFreeAttachmentPointNumber += 1;
+      nextFreeAttachmentPointNumber++;
     } else {
       break;
+    }
+  }
+
+  /*
+    When automatically assigning attachment points, we initially skip R1 and R2 assuming that user specifies left and right connections explicitly
+    However, if all R3..R8 are taken, we have to fallback to these two to complete the whole set of attachment points
+   */
+  if (skipR1AndR2) {
+    if (nextFreeAttachmentPointNumber === 9) {
+      nextFreeAttachmentPointNumber = 1;
+    } else if (nextFreeAttachmentPointNumber === 10) {
+      nextFreeAttachmentPointNumber = 2;
     }
   }
 

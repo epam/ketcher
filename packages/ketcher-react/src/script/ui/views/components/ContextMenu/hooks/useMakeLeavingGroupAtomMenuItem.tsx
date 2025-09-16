@@ -41,7 +41,7 @@ const useMakeLeavingGroupAtomMenuItem = ({
     (key) => {
       const atomsPair = assignedAttachmentPoints.get(key);
       assert(atomsPair);
-      return atomsPair.includes(selectedAtomId);
+      return atomsPair[1] === selectedAtomId;
     },
   );
 

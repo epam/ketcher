@@ -31,6 +31,7 @@ const attachmentPointAtomOptions: Array<Option> = [
   { value: AtomLabel.N, label: 'NH2' },
   { value: AtomLabel.Cl, label: 'Cl' },
   { value: AtomLabel.F, label: 'F' },
+  { value: AtomLabel.C, label: 'CH3' },
 ];
 
 const AttachmentPointEditPopup = ({

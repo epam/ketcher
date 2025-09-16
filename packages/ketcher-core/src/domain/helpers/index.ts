@@ -22,4 +22,6 @@ export {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
   getNextFreeAttachmentPoint,
+  isSingleRGroupAttachmentPoint,
+  getAttachmentPointLabelWithBinaryShift,
 } from './attachmentPointCalculations';

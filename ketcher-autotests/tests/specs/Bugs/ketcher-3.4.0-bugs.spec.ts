@@ -1226,33 +1226,27 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
   });
 
-  test.fail(
-    'Case 46: Calculated values work for "rich" monomer chain',
-    async () => {
-      // Test fails because of the bug: https://github.com/epam/Indigo/issues/3053
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7243
-       * Bug: https://github.com/epam/Indigo/issues/2931
-       * Description: Calculated values work for "rich" monomer chain.
-       * Scenario:
-       * 1. Go to Macro
-       * 2. Load from KET
-       * 3. Open the "Calculate Properties" window
-       * 4. Verify that the properties are calculated correctly for the Peptides tab
-       */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
-      );
-      await MacromoleculesTopToolbar(page).calculateProperties();
-      expect(
-        await CalculateVariablesPanel(
-          page,
-        ).getNucleotideNaturalAnalogCountList(),
-      ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-      await MacromoleculesTopToolbar(page).calculateProperties();
-    },
-  );
+  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2931
+     * Description: Calculated values work for "rich" monomer chain.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
+    ).toEqual(['A6', 'C6', 'G6', 'T6', 'U12', 'Other168']);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
     /*

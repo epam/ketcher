@@ -1,19 +1,33 @@
 import { ToggleButton } from '@mui/material';
 import classes from './ToggleButtonGroup.module.less';
 import clsx from 'clsx';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
+
+interface ButtonItem<T> {
+  label: string;
+  value: T;
+}
+
+interface ToggleButtonGroupProps<T> {
+  buttons: ButtonItem<T>[];
+  onClick: (value: T) => void;
+  defaultValue: T;
+  title?: string;
+}
+
+const BUTTON_HEIGHT = 28;
+const BUTTON_MARGIN = 2;
+const GRID_GAP = 4;
+const GRID_COLUMNS = 4;
+const SINGLE_BUTTON_WIDTH = 53;
+const TWO_BUTTON_GRID_COLUMNS = '53px 78px';
 
 export default function ButtonGroup<T>({
   buttons,
   onClick,
   defaultValue,
   title,
-}: {
-  buttons: { label: string; value: T }[];
-  onClick: (value: T) => void;
-  defaultValue: T;
-  title?: string;
-}) {
+}: ToggleButtonGroupProps<T>) {
   const [value, setValue] = useState(defaultValue);
 
   const handleChange = useCallback(
@@ -25,108 +39,143 @@ export default function ButtonGroup<T>({
     [onClick],
   );
 
-  const isNumericLabel = (text: string) => {
-    const t = (text || '').trim();
-    return t !== '' && !isNaN(Number(t));
-  };
+  const isNumericLabel = useCallback((text: string): boolean => {
+    const trimmed = (text || '').trim();
+    return trimmed !== '' && !isNaN(Number(trimmed));
+  }, []);
 
-  const textButtons = buttons.filter(({ label }) => !isNumericLabel(label));
-  const numericButtons = buttons.filter(({ label }) => isNumericLabel(label));
+  const {
+    textButtons,
+    numericButtons,
+    hasNumeric,
+    isTwoTextButtons,
+    isSingleTextButton,
+  } = useMemo(() => {
+    const text = buttons.filter(({ label }) => !isNumericLabel(label));
+    const numeric = buttons.filter(({ label }) => isNumericLabel(label));
 
-  const hasNumeric = numericButtons.length > 0;
-  const isTwoTextButtons = textButtons.length === 2;
-  const isSingleTextButton = textButtons.length === 1;
+    return {
+      textButtons: text,
+      numericButtons: numeric,
+      hasNumeric: numeric.length > 0,
+      isTwoTextButtons: text.length === 2,
+      isSingleTextButton: text.length === 1,
+    };
+  }, [buttons, isNumericLabel]);
 
-  return (
-    <>
-      <div
-        style={{
-          display: hasNumeric && isTwoTextButtons ? 'grid' : 'flex',
-          gridTemplateColumns:
-            hasNumeric && isTwoTextButtons ? '53px 78px' : undefined,
-          columnGap: hasNumeric && isTwoTextButtons ? 2 : undefined,
-          rowGap: hasNumeric && isTwoTextButtons ? 0 : undefined,
-          flexWrap: hasNumeric && isTwoTextButtons ? undefined : 'wrap',
-          flexDirection: hasNumeric ? undefined : 'column',
-        }}
-      >
-        {textButtons.map(({ label, value: buttonValue }) => (
+  const getContainerStyles = useMemo(
+    () => ({
+      display:
+        hasNumeric && isTwoTextButtons ? ('grid' as const) : ('flex' as const),
+      gridTemplateColumns:
+        hasNumeric && isTwoTextButtons ? TWO_BUTTON_GRID_COLUMNS : undefined,
+      columnGap: hasNumeric && isTwoTextButtons ? BUTTON_MARGIN : undefined,
+      rowGap: hasNumeric && isTwoTextButtons ? 0 : undefined,
+      flexWrap: hasNumeric && isTwoTextButtons ? undefined : ('wrap' as const),
+      flexDirection: hasNumeric ? undefined : ('column' as const),
+    }),
+    [hasNumeric, isTwoTextButtons],
+  );
+
+  const getTextButtonStyles = useCallback(
+    (_buttonValue: T) => ({
+      display: 'flex' as const,
+      flex:
+        hasNumeric && !isTwoTextButtons && !isSingleTextButton
+          ? ('1 0 45%' as const)
+          : undefined,
+      width:
+        hasNumeric && isSingleTextButton
+          ? SINGLE_BUTTON_WIDTH
+          : hasNumeric && isTwoTextButtons
+          ? undefined
+          : !hasNumeric
+          ? 'calc(100% - 3px)'
+          : '100%',
+      height: BUTTON_HEIGHT,
+      margin:
+        hasNumeric && isTwoTextButtons
+          ? '0 0 0 0'
+          : hasNumeric && isSingleTextButton
+          ? 0
+          : `${BUTTON_MARGIN}px`,
+      gap: hasNumeric && isTwoTextButtons ? 0 : undefined,
+      borderRadius: '4px',
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+    }),
+    [hasNumeric, isTwoTextButtons, isSingleTextButton],
+  );
+
+  const getNumericContainerStyles = useMemo(
+    () => ({
+      display: 'grid',
+      gridTemplateColumns: `repeat(${GRID_COLUMNS}, ${BUTTON_HEIGHT}px)`,
+      gap: GRID_GAP,
+      marginTop: GRID_GAP,
+    }),
+    [],
+  );
+
+  const getNumericButtonStyles = useMemo(
+    () => ({
+      display: 'flex' as const,
+      boxSizing: 'border-box' as const,
+      padding: 0,
+      minWidth: 0,
+      width: BUTTON_HEIGHT,
+      height: BUTTON_HEIGHT,
+      margin: 0,
+      borderRadius: '4px',
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+    }),
+    [],
+  );
+
+  const renderTextButtons = () => (
+    <div style={getContainerStyles}>
+      {textButtons.map(({ label, value: buttonValue }) => (
+        <ToggleButton
+          data-testid={`${title}-${label}-option`}
+          key={label}
+          value={Number(buttonValue) || ''}
+          onClick={(event) => handleChange(event, buttonValue)}
+          className={clsx(classes.button, {
+            [classes.selected]: buttonValue === value,
+          })}
+          style={getTextButtonStyles(buttonValue)}
+        >
+          {label || 'none'}
+        </ToggleButton>
+      ))}
+    </div>
+  );
+
+  const renderNumericButtons = () =>
+    numericButtons.length > 0 && (
+      <div style={getNumericContainerStyles}>
+        {numericButtons.map(({ label, value: buttonValue }) => (
           <ToggleButton
-            data-testid={title + '-' + label + '-option'}
+            data-testid={`${title}-${label}-option`}
             key={label}
             value={Number(buttonValue) || ''}
             onClick={(event) => handleChange(event, buttonValue)}
             className={clsx(classes.button, {
               [classes.selected]: buttonValue === value,
             })}
-            style={{
-              display: 'flex',
-              flex:
-                hasNumeric && !isTwoTextButtons && !isSingleTextButton
-                  ? '1 0 45%'
-                  : undefined,
-              width:
-                hasNumeric && isSingleTextButton
-                  ? 53
-                  : hasNumeric && isTwoTextButtons
-                  ? undefined
-                  : !hasNumeric
-                  ? 'calc(100% - 2px)'
-                  : '100%',
-              height: 28,
-              margin:
-                hasNumeric && isTwoTextButtons
-                  ? '0 0 0 0'
-                  : hasNumeric && isSingleTextButton
-                  ? 0
-                  : '2px',
-              gap: hasNumeric && isTwoTextButtons ? 0 : undefined,
-              borderRadius: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+            style={getNumericButtonStyles}
           >
-            {label || 'none'}
+            {label}
           </ToggleButton>
         ))}
       </div>
+    );
 
-      {numericButtons.length > 0 && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 28px)',
-            gap: 4,
-            marginTop: 4,
-          }}
-        >
-          {numericButtons.map(({ label, value: buttonValue }) => (
-            <ToggleButton
-              data-testid={title + '-' + label + '-option'}
-              key={label}
-              value={Number(buttonValue) || ''}
-              onClick={(event) => handleChange(event, buttonValue)}
-              className={clsx(classes.button, {
-                [classes.selected]: buttonValue === value,
-              })}
-              style={{
-                display: 'flex',
-                boxSizing: 'border-box',
-                padding: 0,
-                minWidth: 0,
-                width: 28,
-                height: 28,
-                margin: 0,
-                borderRadius: '4px',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {label}
-            </ToggleButton>
-          ))}
-        </div>
-      )}
+  return (
+    <>
+      {renderTextButtons()}
+      {renderNumericButtons()}
     </>
   );
 }

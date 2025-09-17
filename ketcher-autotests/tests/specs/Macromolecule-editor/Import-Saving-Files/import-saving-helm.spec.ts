@@ -445,7 +445,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{afl2Nm(nC6n5C)}|RNA2{R(tCnitr)}|RNA3{Sm5ALl(G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
     differentHELMExport:
-      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}$RNA2,RNA3,1:R2-1:R1|RNA2,RNA1,1:R1-1:R2$$$V2.0',
+      'RNA1{[afl2Nm]([nC6n5C]).R([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
   },
   {
     helmDescription:
@@ -505,7 +505,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{afl2Nm(nC6n5C)}|RNA5{R(tCnitr)}|RNA6{Sm5ALl(G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
     differentHELMExport:
-      'RNA1{[afl2Nm]([nC6n5C])}|RNA2{R([tCnitr])}|RNA3{[Sm5ALl](G)}|RNA4{[afl2Nm]([nC6n5C])}|RNA5{R([tCnitr])}|RNA6{[Sm5ALl](G)}$RNA1,RNA4,1:R2-1:R1|RNA4,RNA2,1:R2-1:R1|RNA2,RNA5,1:R2-1:R1|RNA5,RNA3,1:R2-1:R1|RNA3,RNA6,1:R2-1:R1$$$V2.0',
+      'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).R([tCnitr]).R([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
   },
   {
     helmDescription:

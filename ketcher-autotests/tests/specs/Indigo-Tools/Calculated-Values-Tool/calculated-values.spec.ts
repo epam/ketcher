@@ -44,7 +44,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C7H16');
-    await expect(molecularWeight).toHaveValue('100.202');
+    await expect(molecularWeight).toHaveValue('100.205');
     await expect(exactMass).toHaveValue('100.125');
     await expect(elementalAnalysis).toHaveValue('C 83.9 H 16.1');
   });
@@ -88,7 +88,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with 'C6 H6; C6 H12; C5 H6' data);
-    'Molecular Weight' field (filled with '78.112; 84.159; 66.101');
+    'Molecular Weight' field (filled with '78.114; 84.162; 66.103');
     field for the decimal places count with arrow for drop-down list is present at the right side;
     '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '78.047; 84.094; 66.047');
@@ -118,7 +118,7 @@ test.describe('Calculated Values Tools', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await expect(chemicalFormulaWrapper).toContainText('C6H6; C6H12; C5H6');
-    await expect(molecularWeight).toHaveValue('78.112; 84.159; 66.101');
+    await expect(molecularWeight).toHaveValue('78.114; 84.162; 66.103');
     await expect(exactMass).toHaveValue('78.047; 84.094; 66.047');
     await expect(elementalAnalysis).toHaveValue(
       'C 92.3 H 7.7; C 85.6 H 14.4; C 90.8 H 9.2',
@@ -140,7 +140,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with '[C6H6] + [C2 H4] > [C8 H10]');
-    'Molecular Weight' field (filled with '[78.112] + [28.053] > [106.165]');
+    'Molecular Weight' field (filled with '[78.114] + [28.054] > [106.168]');
     field for the decimal places count with arrow for drop-down list is present at the right side;
     '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '[78.047] + [28.031] > [106.078]');
@@ -169,7 +169,7 @@ test.describe('Calculated Values Tools', () => {
     await expect(chemicalFormulaWrapper).toContainText(
       '[C6H6]+[C2H4] > [C8H10]',
     );
-    await expect(molecularWeight).toHaveValue('[78.112]+[28.053] > [106.165]');
+    await expect(molecularWeight).toHaveValue('[78.114]+[28.054] > [106.168]');
     await expect(exactMass).toHaveValue('[78.047]+[28.031] > [106.078]');
     await expect(elementalAnalysis).toHaveValue(
       '[C 92.3 H 7.7]+[C 85.6 H 14.4] > [C 90.5 H 9.5]',
@@ -219,7 +219,7 @@ test.describe('Calculated Values Tools', () => {
     The opened window contains:
     'Calculated Values' title;
     'Chemical Formula' field (filled with 'C6H6' data);
-    'Molecular Weight' field (filled with '78.112');
+    'Molecular Weight' field (filled with '78.114');
     field for the decimal places count with arrow for drop-down list is present at the right side. '3 decimal places' are selected by default;
     'Exact Mass' field (filled with '78.047');
     field for the decimal places count with arrow for drop-down list is present at the right side. '3 decimal places' are selected by default;
@@ -245,7 +245,7 @@ test.describe('Calculated Values Tools', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await expect(chemicalFormulaWrapper).toContainText('C6H6');
-    await expect(molecularWeight).toHaveValue('78.112');
+    await expect(molecularWeight).toHaveValue('78.114');
     await expect(exactMass).toHaveValue('78.047');
     await expect(elementalAnalysis).toHaveValue('C 92.3 H 7.7');
 
@@ -287,7 +287,7 @@ test.describe('Calculated Values Tools', () => {
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C9H9O2');
-    await expect(molecularWeight).toHaveValue('149.167');
+    await expect(molecularWeight).toHaveValue('149.169');
     await expect(exactMass).toHaveValue('149.060');
     await expect(elementalAnalysis).toHaveValue('C 72.5 H 6.1 O 21.4');
   });
@@ -315,7 +315,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-bromination.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('[C6H6] > [C6H5Br]');
-    await expect(molecularWeight).toHaveValue('[78.112] > [157.008]');
+    await expect(molecularWeight).toHaveValue('[78.114] > [157.010]');
     await expect(exactMass).toHaveValue('[78.047] > [155.957]');
     await expect(elementalAnalysis).toHaveValue(
       '[C 92.3 H 7.7] > [C 45.9 H 3.2 Br 50.9]',
@@ -328,7 +328,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The calculation for the inorganic compound should be correct.
     For our example (Sulfur):
     Chemical Formula: H2 S
-    Molecular Weight: 34.081
+    Molecular Weight: 34.076
     Exact Mass: 33.988
     Elemental Analysis: H 5.9 S 94.1
     */
@@ -350,7 +350,7 @@ test.describe('Calculated Values Tools', () => {
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('H2S');
-    await expect(molecularWeight).toHaveValue('34.081');
+    await expect(molecularWeight).toHaveValue('34.076');
     await expect(exactMass).toHaveValue('33.988');
     await expect(elementalAnalysis).toHaveValue('H 5.9 S 94.1');
   });
@@ -566,7 +566,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C13 H28
     Molecular Weight:
-    184.361
+    184.367
     Exact Mass:
     184.219
     Elemental Analysis:
@@ -590,7 +590,7 @@ test.describe('Calculated Values Tools', () => {
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C13H28');
-    await expect(molecularWeight).toHaveValue('184.361');
+    await expect(molecularWeight).toHaveValue('184.367');
     await expect(exactMass).toHaveValue('184.219');
     await expect(elementalAnalysis).toHaveValue('C 84.7 H 15.3');
   });
@@ -604,7 +604,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C12 H26
     Molecular Weight:
-    170.335
+    170.340
     Exact Mass:
     170.203
     Elemental Analysis:
@@ -628,7 +628,7 @@ test.describe('Calculated Values Tools', () => {
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C12H26');
-    await expect(molecularWeight).toHaveValue('170.335');
+    await expect(molecularWeight).toHaveValue('170.340');
     await expect(exactMass).toHaveValue('170.203');
     await expect(elementalAnalysis).toHaveValue('C 84.6 H 15.4');
   });
@@ -642,7 +642,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C17 H36
     Molecular Weight:
-    240.468
+    240.475
     Exact Mass:
     240.282
     Elemental Analysis:
@@ -666,7 +666,7 @@ test.describe('Calculated Values Tools', () => {
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C17H36');
-    await expect(molecularWeight).toHaveValue('240.468');
+    await expect(molecularWeight).toHaveValue('240.475');
     await expect(exactMass).toHaveValue('240.282');
     await expect(elementalAnalysis).toHaveValue('C 84.9 H 15.1');
   });
@@ -910,7 +910,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C18 H12 O3
     Molecular Weight:
-    276.286
+    276.291
     Exact Mass:
     276.079
     Elemental Analysis:
@@ -931,7 +931,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/hetero-adduct.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C18H12O3');
-    await expect(molecularWeight).toHaveValue('276.286');
+    await expect(molecularWeight).toHaveValue('276.291');
     await expect(exactMass).toHaveValue('276.079');
     await expect(elementalAnalysis).toHaveValue('C 78.3 H 4.4 O 17.4');
   });
@@ -945,7 +945,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C10 14 CH9Br
     Molecular Weight:
-    223.086
+    223.089
     Exact Mass:
     221.992
     Elemental Analysis:
@@ -965,7 +965,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/c14napthylbromide.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C1014CH9Br');
-    await expect(molecularWeight).toHaveValue('223.086');
+    await expect(molecularWeight).toHaveValue('223.089');
     await expect(exactMass).toHaveValue('221.992');
     await expect(elementalAnalysis).toHaveValue('C 60.1 H 4.1 Br 35.8');
   });
@@ -995,7 +995,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     [C2H4O2]+[C2H6O] > [C4H8O2]+[H2O]
     Molecular Weight:
-    [60.052]+[46.068] > [88.105]+[18.015]
+    [60.052]+[46.069] > [88.106]+[18.015]
     Exact Mass:
     [60.021]+[46.042] > [88.052]+[18.011]
     Elemental Analysis:
@@ -1021,7 +1021,7 @@ test.describe('Calculated Values Tools', () => {
       '[C2H4O2]+[C2H6O] > [C4H8O2]+[H2O]',
     );
     await expect(molecularWeight).toHaveValue(
-      '[60.052]+[46.068] > [88.105]+[18.015]',
+      '[60.052]+[46.069] > [88.106]+[18.015]',
     );
     await expect(exactMass).toHaveValue(
       '[60.021]+[46.042] > [88.052]+[18.011]',
@@ -1040,7 +1040,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     [O]+[C2H6O]
     Molecular Weight:
-    [15.999]+[46.068]
+    [15.999]+[46.069]
     Exact Mass:
     [15.995]+[46.042]
     Elemental Analysis:
@@ -1064,7 +1064,7 @@ test.describe('Calculated Values Tools', () => {
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('[O]+[C2H6O]');
-    await expect(molecularWeight).toHaveValue('[15.999]+[46.068]');
+    await expect(molecularWeight).toHaveValue('[15.999]+[46.069]');
     await expect(exactMass).toHaveValue('[15.995]+[46.042]');
     await expect(elementalAnalysis).toHaveValue(
       '[O 100.0]+[C 52.1 H 13.1 O 34.7]',
@@ -1080,7 +1080,7 @@ test.describe('Calculated Values Tools', () => {
     Chemical Formula:
     C2H7
     Molecular Weight:
-    31.077
+    31.078
     Exact Mass:
     31.055
     Elemental Analysis:
@@ -1103,7 +1103,7 @@ test.describe('Calculated Values Tools', () => {
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('C2H7');
-    await expect(molecularWeight).toHaveValue('31.077');
+    await expect(molecularWeight).toHaveValue('31.078');
     await expect(exactMass).toHaveValue('31.055');
     await expect(elementalAnalysis).toHaveValue('C 77.3 H 22.7');
   });

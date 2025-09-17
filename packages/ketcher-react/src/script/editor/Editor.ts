@@ -591,7 +591,9 @@ class Editor implements KetcherEditor {
       const selectionInvalid = selection.atoms.some((atomId) => {
         const atom = this.render.ctab.molecule.atoms.get(atomId);
 
-        assert(atom);
+        if (!atom) {
+          return true;
+        }
 
         const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
 
@@ -631,7 +633,9 @@ class Editor implements KetcherEditor {
       const terminalRGroupAtoms = selection.atoms.filter((atomId) => {
         const atom = currentStruct.atoms.get(atomId);
 
-        assert(atom);
+        if (!atom) {
+          return false;
+        }
 
         return atom.rglabel !== null && atom.neighbors.length === 1;
       });

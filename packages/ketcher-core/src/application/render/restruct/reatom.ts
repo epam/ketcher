@@ -662,7 +662,7 @@ class ReAtom extends ReObject {
           const labelPos = ps.addScaled(direction, labelDistance);
 
           const isProblematic =
-            problematicAttachmentPoints?.has(attachmentPointName);
+            problematicAttachmentPoints.has(attachmentPointName);
 
           const rLabelElement = render.paper
             .text(labelPos.x, labelPos.y, attachmentPointName)

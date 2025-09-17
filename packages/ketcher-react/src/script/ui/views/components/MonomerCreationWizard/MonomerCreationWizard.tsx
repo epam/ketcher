@@ -369,6 +369,7 @@ const MonomerCreationWizard = () => {
 
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
+    editor.setProblematicAttachmentPoints(new Set());
 
     const { errors: inputsErrors, notifications: inputsNotifications } =
       validateInputs(values);
@@ -406,7 +407,6 @@ const MonomerCreationWizard = () => {
     });
 
     resetWizard();
-    editor.setProblematicAttachmentPoints(new Set());
   };
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);

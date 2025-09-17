@@ -28,6 +28,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' },
   Chg: { alias: 'Chg', testId: 'Chg___Alpha-cyclohexylglycine' },
   D: { alias: 'D', testId: 'D___Aspartic acid' },
+  DACys: { alias: 'DACys', testId: 'DACys___Deamino-Cysteine' },
   dA: { alias: 'dA', testId: 'dA___D-Alanine' },
   dC: { alias: 'dC', testId: 'dC___D-Cysteine' },
   D_aIle: { alias: 'D-aIle', testId: 'D-aIle___D-allo-Isoleucine' },

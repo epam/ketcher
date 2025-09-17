@@ -7,7 +7,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
-  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils/files/readFile';
@@ -18,7 +17,10 @@ import {
   takeElementScreenshot,
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import {
   clickOnCanvas,
   dragTo,
@@ -43,7 +45,11 @@ import {
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+  MonomerAttachmentPoint,
+} from '@utils/macromolecules/monomer';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -66,7 +72,9 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { closeErrorMessage } from '@utils/common/helpers';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -2423,7 +2431,7 @@ for (const monomerToCreate of monomersToCreate) {
     await expect(page.getByTestId('info-modal-body')).toContainText(
       errorMessage,
     );
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
 }
@@ -2496,4 +2504,413 @@ for (const monomerToCreate of monomersToCreate) {
       });
     }
   });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`54. Check that created ${monomerToCreate.description} can be deleted on canvas by Erase tool in Micro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer can be deleted on canvas by Erase tool in Micro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Collapse created monomer
+     *      6. Verify that monomer is present on canvas
+     *      7. Select Erase tool
+     *      8. Delete monomer by clicking on it
+     *      9. Verify that monomer is deleted from canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
+    const monomerOnMicro = getAbbreviationLocator(page, {
+      name: monomerToCreate.symbol,
+    });
+    await expect(monomerOnMicro).toBeVisible();
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    await monomerOnMicro.click();
+    await expect(monomerOnMicro).not.toBeVisible();
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`55. Check that created ${monomerToCreate.description} can be deleted on canvas by Erase tool in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} monomer can be deleted on canvas by Erase tool in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Verify that monomer is present on canvas
+     *      7. Select Erase tool
+     *      8. Delete monomer by clicking on it
+     *      9. Verify that monomer is deleted from canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    const monomerOnMacro = getMonomerLocator(page, {
+      monomerAlias: monomerToCreate.symbol,
+    });
+    await expect(monomerOnMacro).toBeVisible();
+
+    await CommonLeftToolbar(page).selectEraseTool();
+    await monomerOnMacro.click();
+    await expect(monomerOnMacro).not.toBeVisible();
+  });
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  test(`56. Check that created ${monomerToCreate.description} looks like ${monomerToCreate.description} in Macro mode (Flex->Snake->Sequence)`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} looks like ${monomerToCreate.description} in Macro mode (Flex->Snake->Sequence)
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Switch to Macro mode
+     *      6. Select and delete atom outside monomer
+     *      7. Verify that monomer is present on canvas
+     *      8. Select Erase tool
+     *      9. Delete monomer by clicking on it
+     *      10. Verify that monomer is deleted from canvas
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
+
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    const monomerOnMacro = getMonomerLocator(page, {
+      monomerAlias: monomerToCreate.symbol,
+    });
+    await takeElementScreenshot(page, monomerOnMacro);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeElementScreenshot(page, monomerOnMacro);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    const monomerOnSequence = getSymbolLocator(page, {});
+    await takeElementScreenshot(page, monomerOnSequence);
+  });
+}
+
+const monomersConnectTo = [
+  {
+    description: 'Amino Acid (DACys)',
+    monomer: Peptide.DACys,
+    attachmentPoint: MonomerAttachmentPoint.R2,
+  },
+  {
+    description: 'Sugar (5cGT)',
+    monomer: Sugar._5cGT,
+    attachmentPoint: MonomerAttachmentPoint.R2,
+  },
+  {
+    description: 'Base (C)',
+    monomer: Base.C,
+    attachmentPoint: MonomerAttachmentPoint.R1,
+  },
+  {
+    description: 'Phosphate (AmC6)',
+    monomer: Phosphate.AmC6,
+    attachmentPoint: MonomerAttachmentPoint.R2,
+  },
+  {
+    description: 'Nucleotide (3Puro)',
+    monomer: Nucleotide._3Puro,
+    attachmentPoint: MonomerAttachmentPoint.R1,
+  },
+];
+
+for (const monomerToCreate of monomersToCreate) {
+  for (const monomerConnectTo of monomersConnectTo) {
+    test(`57.1 Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode from library by center to center in Macro mode (Flex)`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode
+       *              from library by center to center in Macro mode (Flex)
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode - Flex layout
+       *      7. Drag and drop ${monomerConnectTo.description} monomer from library to the canvas
+       *      8. Connect both monomers by center to center
+       *      9. Validate that connection is created correctly
+       *
+       * Version 3.7
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+        await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+          x: 0,
+          y: 0,
+          fromCenter: true,
+        });
+      } else {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+        await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+        await prepareMoleculeForMonomerCreation(page, ['0']);
+
+        await createMonomer(page, {
+          ...monomerToCreate,
+        });
+        await getAtomLocator(page, { atomId: 0 }).click();
+        await CommonLeftToolbar(page).selectEraseTool();
+      }
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      const monomerOnMacro = getMonomerLocator(page, {
+        monomerAlias: monomerToCreate.symbol,
+      });
+      await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
+        x: 100,
+        y: 100,
+      });
+      const monomerConnectToOnMacro = getMonomerLocator(
+        page,
+        monomerConnectTo.monomer,
+      );
+      await bondTwoMonomers(page, monomerOnMacro, monomerConnectToOnMacro);
+      const bondLocator = getBondLocator(page, {});
+      expect(await bondLocator.count()).toEqual(1);
+    });
+  }
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  for (const monomerConnectTo of monomersConnectTo) {
+    test(`57.2 Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode from library by center to center in Macro mode (Snake)`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode
+       *              from library by center to center in Macro mode (Snake)
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode - Snake layout
+       *      7. Drag and drop ${monomerConnectTo.description} monomer from library to the canvas
+       *      8. Connect both monomers by center to center
+       *      9. Validate that connection is created correctly
+       *
+       * Version 3.7
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+        await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+          x: 0,
+          y: 0,
+          fromCenter: true,
+        });
+      } else {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+        await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+        await prepareMoleculeForMonomerCreation(page, ['0']);
+
+        await createMonomer(page, {
+          ...monomerToCreate,
+        });
+        await getAtomLocator(page, { atomId: 0 }).click();
+        await CommonLeftToolbar(page).selectEraseTool();
+      }
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      const monomerOnMacro = getMonomerLocator(page, {
+        monomerAlias: monomerToCreate.symbol,
+      });
+      await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
+        x: 100,
+        y: 100,
+      });
+      const monomerConnectToOnMacro = getMonomerLocator(
+        page,
+        monomerConnectTo.monomer,
+      );
+      await bondTwoMonomers(page, monomerOnMacro, monomerConnectToOnMacro);
+      const bondLocator = getBondLocator(page, {});
+      expect(await bondLocator.count()).toEqual(1);
+    });
+  }
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  for (const monomerConnectTo of monomersConnectTo) {
+    test(`58.1 Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode from library by center to center in Macro mode (Flex)`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode
+       *              from library by center to center in Macro mode (Flex)
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode - Flex layout
+       *      7. Drag and drop ${monomerConnectTo.description} monomer from library to the canvas
+       *      8. Connect both monomers by center to center
+       *      9. Validate that connection is created correctly
+       *
+       * Version 3.7
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+        await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+          x: 0,
+          y: 0,
+          fromCenter: true,
+        });
+      } else {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+        await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+        await prepareMoleculeForMonomerCreation(page, ['0']);
+
+        await createMonomer(page, {
+          ...monomerToCreate,
+        });
+        await getAtomLocator(page, { atomId: 0 }).click();
+        await CommonLeftToolbar(page).selectEraseTool();
+      }
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      const monomerOnMacro = getMonomerLocator(page, {
+        monomerAlias: monomerToCreate.symbol,
+      });
+      await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
+        x: 100,
+        y: 100,
+      });
+      const monomerConnectToOnMacro = getMonomerLocator(
+        page,
+        monomerConnectTo.monomer,
+      );
+      await bondTwoMonomers(
+        page,
+        monomerOnMacro,
+        monomerConnectToOnMacro,
+        MonomerAttachmentPoint.R1,
+        monomerConnectTo.attachmentPoint,
+      );
+      const bondLocator = getBondLocator(page, {});
+      expect(await bondLocator.count()).toEqual(1);
+    });
+  }
+}
+
+for (const monomerToCreate of monomersToCreate) {
+  for (const monomerConnectTo of monomersConnectTo) {
+    test(`58.2 Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode from library by center to center in Macro mode (Snake)`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} can be connected to ${monomerConnectTo.description} in Macro mode
+       *              from library by center to center in Macro mode (Snake)
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode - Snake layout
+       *      7. Drag and drop ${monomerConnectTo.description} monomer from library to the canvas
+       *      8. Connect both monomers by center to center
+       *      9. Validate that connection is created correctly
+       *
+       * Version 3.7
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+        await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+          x: 0,
+          y: 0,
+          fromCenter: true,
+        });
+      } else {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+        await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+        await prepareMoleculeForMonomerCreation(page, ['0']);
+
+        await createMonomer(page, {
+          ...monomerToCreate,
+        });
+        await getAtomLocator(page, { atomId: 0 }).click();
+        await CommonLeftToolbar(page).selectEraseTool();
+      }
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      const monomerOnMacro = getMonomerLocator(page, {
+        monomerAlias: monomerToCreate.symbol,
+      });
+      await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
+        x: 100,
+        y: 100,
+      });
+      const monomerConnectToOnMacro = getMonomerLocator(
+        page,
+        monomerConnectTo.monomer,
+      );
+      await bondTwoMonomers(
+        page,
+        monomerOnMacro,
+        monomerConnectToOnMacro,
+        MonomerAttachmentPoint.R1,
+        monomerConnectTo.attachmentPoint,
+      );
+      const bondLocator = getBondLocator(page, {});
+      expect(await bondLocator.count()).toEqual(1);
+    });
+  }
 }

@@ -11,6 +11,7 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: 'Super-G',
     testId: 'Super-G___8-aza-7-deazaguanosine',
   },
+  _3Puro: { alias: '3Puro', testId: "3Puro___3' Puromycin" },
   AmMC6T: {
     alias: 'AmMC6T',
     testId: 'AmMC6T___Amino Modifier C6 dT',

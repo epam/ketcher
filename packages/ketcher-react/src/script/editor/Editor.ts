@@ -945,6 +945,7 @@ class Editor implements KetcherEditor {
     this.monomerCreationState = {
       assignedAttachmentPoints,
       potentialAttachmentPoints: selectedPotentialLeavingAtoms,
+      problematicAttachmentPoints: new Set(),
     };
 
     this.originalStruct = currentStruct;
@@ -1002,6 +1003,24 @@ class Editor implements KetcherEditor {
     this.struct(this.originalStruct, false);
 
     this.tool('select');
+  }
+
+  private cleanupAttachmentPoint(leavingAtomId: number) {
+    const leavingAtom = this.struct().atoms.get(leavingAtomId);
+    assert(leavingAtom);
+
+    const originalLeavingAtomId =
+      this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
+    assert(isNumber(originalLeavingAtomId));
+
+    const originalLeavingAtom = this.originalStruct.atoms.get(
+      originalLeavingAtomId,
+    );
+    assert(originalLeavingAtom);
+
+    originalLeavingAtom.rglabel = null;
+    originalLeavingAtom.label = leavingAtom.label;
+    this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
   }
 
   saveNewMonomer(data) {
@@ -1080,27 +1099,12 @@ class Editor implements KetcherEditor {
     );
     const monomer = new Monomer(monomerItem, monomerPosition);
 
-    const finalAttachmentPoints =
-      this.monomerCreationState.assignedAttachmentPoints;
-
-    finalAttachmentPoints.forEach((atomPair) => {
-      const [, leavingAtomId] = atomPair;
-      const leavingAtom = this.struct().atoms.get(leavingAtomId);
-      assert(leavingAtom);
-
-      const originalLeavingAtomId =
-        this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
-      assert(isNumber(originalLeavingAtomId));
-
-      const originalLeavingAtom = this.originalStruct.atoms.get(
-        originalLeavingAtomId,
-      );
-      assert(originalLeavingAtom);
-
-      originalLeavingAtom.rglabel = null;
-      originalLeavingAtom.label = leavingAtom.label;
-      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
-    });
+    this.monomerCreationState.assignedAttachmentPoints.forEach(
+      ([, leavingAtomId]) => this.cleanupAttachmentPoint(leavingAtomId),
+    );
+    this.monomerCreationState.potentialAttachmentPoints.forEach(
+      (leavingAtomId) => this.cleanupAttachmentPoint(leavingAtomId),
+    );
 
     this.closeMonomerCreationWizard();
 
@@ -1180,6 +1184,8 @@ class Editor implements KetcherEditor {
     newName: AttachmentPointName,
   ) {
     assert(this.monomerCreationState);
+
+    this.monomerCreationState.problematicAttachmentPoints.delete(currentName);
 
     const atomPair =
       this.monomerCreationState.assignedAttachmentPoints.get(currentName);

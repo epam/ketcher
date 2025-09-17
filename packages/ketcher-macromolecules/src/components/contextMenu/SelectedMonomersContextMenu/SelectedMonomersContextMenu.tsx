@@ -48,6 +48,11 @@ export const SelectedMonomersContextMenu = ({
   const isBondContext = (props?: { polymerBondRenderer?: unknown }) =>
     !!props?.polymerBondRenderer;
 
+  const isAntisenseBlockVisible =
+    selectedMonomers &&
+    selectedMonomers.length > 0 &&
+    isAntisenseOptionVisible(selectedMonomers);
+
   const menuItems = [
     {
       name: 'copy',
@@ -85,6 +90,7 @@ export const SelectedMonomersContextMenu = ({
           !isAntisenseOptionVisible(props?.selectedMonomers)
         );
       },
+      separator: isAntisenseBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.modifyAminoAcids,

@@ -315,14 +315,6 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
   await takeEditorScreenshot(page);
-
-  // await closeErrorMessage(page);
-  await SaveStructureDialog(page).cancel();
-  test.fixme(
-    true,
-    `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
-     Test should be updated after fix`,
-  );
 });
 
 test(`Verify that all 16 bond types can't be saved correctly in macromolecules mode into IDT`, async () => {

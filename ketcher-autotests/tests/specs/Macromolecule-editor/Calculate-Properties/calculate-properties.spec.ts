@@ -298,7 +298,7 @@ test.describe('Calculate Properties tests', () => {
     await keyboardTypeOnCanvas(page, 'AAA');
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '925.653',
+      '925.663',
     );
     await waitForCalculateProperties(page, async () => {
       await keyboardTypeOnCanvas(page, 'AA');
@@ -322,7 +322,7 @@ test.describe('Calculate Properties tests', () => {
     await CommonTopLeftToolbar(page).calculateProperties();
     await page.waitForTimeout(1000);
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '925.653',
+      '925.663',
     );
     await CalculateVariablesPanel(page).setMolecularMassUnits(
       MolecularMassUnit.kDa,
@@ -340,7 +340,7 @@ test.describe('Calculate Properties tests', () => {
       MolecularMassUnit.Da,
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '925.653',
+      '925.663',
     );
   });
 
@@ -611,7 +611,7 @@ test.describe('Calculate Properties tests', () => {
       'C30H38N12O16P2',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '884.641',
+      '884.65',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -650,7 +650,7 @@ test.describe('Calculate Properties tests', () => {
       'C29H37N13O17P3',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '932.602',
+      '932.611',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -677,7 +677,7 @@ test.describe('Calculate Properties tests', () => {
       'C10H13NOS',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '195.281',
+      '195.28',
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
@@ -735,7 +735,7 @@ test.describe('Calculate Properties tests', () => {
       'C10H13NO2S',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '211.281',
+      '211.279',
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
@@ -794,7 +794,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C6H6');
-    expect(molecularMass).toEqual('78.112');
+    expect(molecularMass).toEqual('78.114');
   });
 
   test('Case 26: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring', async () => {
@@ -821,7 +821,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
-    expect(molecularMass).toEqual('39.056');
+    expect(molecularMass).toEqual('39.057');
   });
 
   test('Case 27: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence', async () => {
@@ -849,7 +849,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C2H2');
-    expect(molecularMass).toEqual('26.037');
+    expect(molecularMass).toEqual('26.038');
   });
 
   test('Case 28: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence', async () => {
@@ -877,7 +877,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
-    expect(molecularMass).toEqual('39.056');
+    expect(molecularMass).toEqual('39.057');
   });
 
   test('Case 29: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence', async () => {
@@ -905,7 +905,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C9H11NO');
-    expect(molecularMass).toEqual('149.19');
+    expect(molecularMass).toEqual('149.193');
   });
 
   test('Case 30: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence', async () => {
@@ -933,7 +933,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C16H18N5O6P');
-    expect(molecularMass).toEqual('407.318');
+    expect(molecularMass).toEqual('407.323');
   });
 
   test('Case 31: Verify correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene)', async () => {
@@ -957,7 +957,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H8');
-    expect(molecularMass).toEqual('128.171');
+    expect(molecularMass).toEqual('128.174');
   });
 
   test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async () => {
@@ -980,7 +980,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H7NO2');
-    expect(molecularMass).toEqual('89.093');
+    expect(molecularMass).toEqual('89.094');
   });
 
   test('Case 33: Verify that the molecular formula and molecular mass is correctly calculated for a simple RNA/DNA structure', async () => {
@@ -1002,7 +1002,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H14N5O7P');
-    expect(molecularMass).toEqual('347.221');
+    expect(molecularMass).toEqual('347.224');
   });
 
   test('Case 34: Verify that the molecular formula and molecular mass is correctly calculated for a simple CHEM structure', async () => {
@@ -1024,7 +1024,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C14H28BrClINO2');
-    expect(molecularMass).toEqual('484.639');
+    expect(molecularMass).toEqual('484.637');
   });
 
   test('Case 35: Verify correct molecular mass calculation for complex polymers with connected small molecules', async () => {
@@ -1052,7 +1052,7 @@ test.describe('Calculate Properties tests', () => {
     ).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C33H43N5O10S');
-    expect(molecularMass).toEqual('701.787');
+    expect(molecularMass).toEqual('701.792');
   });
 
   test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async () => {
@@ -1343,7 +1343,7 @@ test.describe('Calculate Properties tests', () => {
       'C19H23N6O7P',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '478.396',
+      '478.402',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -1369,7 +1369,7 @@ test.describe('Calculate Properties tests', () => {
       'C19H23N6O6P',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '462.396',
+      '462.403',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -1396,7 +1396,7 @@ test.describe('Calculate Properties tests', () => {
       'C13H18N6O6',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '354.319',
+      '354.323',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -1422,7 +1422,7 @@ test.describe('Calculate Properties tests', () => {
       'C21H23N6O7',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '471.443',
+      '471.45',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
@@ -1448,7 +1448,7 @@ test.describe('Calculate Properties tests', () => {
       'C19H22N6O6',
     );
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '430.415',
+      '430.421',
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),

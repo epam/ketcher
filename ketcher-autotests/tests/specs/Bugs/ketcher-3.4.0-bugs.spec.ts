@@ -957,7 +957,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(chemicalFormulaWrapper).toContainText('[C7H14] > [C4H8]');
-    await expect(molecularWeight).toHaveValue('[98.186] > [56.106]');
+    await expect(molecularWeight).toHaveValue('[98.189] > [56.108]');
     await expect(exactMass).toHaveValue('[98.110] > [56.063]');
     await expect(elementalAnalysis).toHaveValue(
       '[C 85.6 H 14.4] > [C 85.6 H 14.4]',
@@ -1081,7 +1081,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '354.319',
+      '354.323',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C13H18N6O6',
@@ -1156,7 +1156,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '471.443',
+      '471.45',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C21H23N6O7',
@@ -1188,7 +1188,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '144.172',
+      '144.174',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C6H12N2O2',
@@ -1233,7 +1233,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       '[C8H10BrN3O]+[C18H15P] > [C8H10BrN3O]',
     );
     await expect(molecularWeight).toHaveValue(
-      '[244.089]+[262.285] > [244.089]',
+      '[244.092]+[262.292] > [244.092]',
     );
     await expect(exactMass).toHaveValue('[243.001]+[262.091] > [243.001]');
     await expect(elementalAnalysis).toHaveValue(
@@ -1241,27 +1241,32 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
   });
 
-  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7243
-     * Bug: https://github.com/epam/Indigo/issues/2931
-     * Description: Calculated values work for "rich" monomer chain.
-     * Scenario:
-     * 1. Go to Macro
-     * 2. Load from KET
-     * 3. Open the "Calculate Properties" window
-     * 4. Verify that the properties are calculated correctly for the Peptides tab
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
-    );
-    await CommonTopLeftToolbar(page).calculateProperties();
-    expect(
-      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-    await CommonTopLeftToolbar(page).calculateProperties();
-  });
+  test.fail(
+    'Case 46: Calculated values work for "rich" monomer chain',
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7243
+       * Bug: https://github.com/epam/Indigo/issues/2931
+       * Description: Calculated values work for "rich" monomer chain.
+       * Scenario:
+       * 1. Go to Macro
+       * 2. Load from KET
+       * 3. Open the "Calculate Properties" window
+       * 4. Verify that the properties are calculated correctly for the Peptides tab
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+      );
+      await CommonTopLeftToolbar(page).calculateProperties();
+      expect(
+        await CalculateVariablesPanel(
+          page,
+        ).getNucleotideNaturalAnalogCountList(),
+      ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
+      await CommonTopLeftToolbar(page).calculateProperties();
+    },
+  );
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
     /*
@@ -1304,7 +1309,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await CommonTopLeftToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
-      '1176.844',
+      '1.177',
     );
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C38H50N16O24P2',

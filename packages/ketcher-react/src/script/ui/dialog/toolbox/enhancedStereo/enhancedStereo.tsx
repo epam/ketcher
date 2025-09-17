@@ -189,14 +189,14 @@ function maxOfAnds(stereLabels): number {
   const numbers = stereLabels.map((label) => {
     return label.match(/&/) ? +label.match(/\d+/)?.join() : 0;
   });
-  return Math.max(...numbers);
+  return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
 function maxOfOrs(stereLabels): number {
   const numbers = stereLabels.map((label) => {
     return label.match(/or/) ? +label.match(/\d+/)?.join() : 0;
   });
-  return Math.max(...numbers);
+  return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
 export default connect((state) => ({

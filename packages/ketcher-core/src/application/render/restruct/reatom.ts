@@ -583,25 +583,36 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints } = render.monomerCreationState;
+      const {
+        assignedAttachmentPoints,
+        potentialAttachmentPoints,
+        problematicAttachmentPoints,
+      } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
+        const potentialLeavingGroups = Array.from(
+          potentialAttachmentPoints.values(),
+        );
         const [attachmentAtoms, leavingGroups] = Array.from(
           assignedAttachmentPoints.values(),
         ).reduce(
           (acc, currentPair) => {
+            let attachmentAtomsIds = acc[0];
             const attachmentAtomId = currentPair[0];
+            if (!attachmentAtomsIds.includes(attachmentAtomId)) {
+              attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
+            }
+
+            let leavingAtomsIds = acc[1];
             const leavingAtomId = currentPair[1];
-            if (!acc[0].includes(attachmentAtomId)) {
-              acc[0].push(attachmentAtomId);
+            if (!leavingAtomsIds.includes(leavingAtomId)) {
+              leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
             }
-            if (!acc[1].includes(leavingAtomId)) {
-              acc[1].push(leavingAtomId);
-            }
-            return acc;
+
+            return [attachmentAtomsIds, leavingAtomsIds];
           },
           [[], []] as [number[], number[]],
         );
@@ -614,6 +625,11 @@ class ReAtom extends ReObject {
             fill: '#fff8c5',
             stroke: '#f8dc8f',
             'stroke-width': '2px',
+          };
+        } else if (potentialLeavingGroups.includes(aid)) {
+          style = {
+            stroke: '#43B5C0',
+            'stroke-dasharray': '- ',
           };
         }
 
@@ -645,12 +661,15 @@ class ReAtom extends ReObject {
           }
           const labelPos = ps.addScaled(direction, labelDistance);
 
+          const isProblematic =
+            problematicAttachmentPoints.has(attachmentPointName);
+
           const rLabelElement = render.paper
             .text(labelPos.x, labelPos.y, attachmentPointName)
             .attr({
               font: options.font,
               'font-size': options.fontszsubInPx,
-              fill: '#333333',
+              fill: isProblematic ? '#F40724' : '#333333',
               'font-weight': '700',
               cursor: 'pointer',
             });
@@ -666,6 +685,15 @@ class ReAtom extends ReObject {
               opacity: 0,
             });
 
+          if (isProblematic) {
+            background.attr({
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+              opacity: 1,
+            });
+          }
+
           // Create a group for the label and background
           const labelGroup = render.paper.set();
           labelGroup.push(background, rLabelElement);
@@ -674,17 +702,44 @@ class ReAtom extends ReObject {
           labelGroup.hover(
             // Mouse enter
             () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                  attachmentPointName ||
+                isProblematic
+              ) {
+                return;
+              }
+
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
             },
             // Mouse leave
             () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                  attachmentPointName ||
+                isProblematic
+              ) {
+                return;
+              }
+
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
             },
           );
 
           labelGroup.click((event: PointerEvent) => {
+            if (!render.monomerCreationState) {
+              return;
+            }
+
+            render.monomerCreationState.clickedAttachmentPoint =
+              attachmentPointName;
+
             const clickData: AttachmentPointClickData = {
               atomId: aid,
               atomLabel: this.a.label,

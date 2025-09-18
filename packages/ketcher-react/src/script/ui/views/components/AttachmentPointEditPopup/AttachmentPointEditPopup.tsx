@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { AttachmentPointClickData, AttachmentPointName } from 'ketcher-core';
+import {
+  AtomLabel,
+  AttachmentPointClickData,
+  AttachmentPointName,
+} from 'ketcher-core';
 import Select, { Option } from '../../../component/form/Select';
 
 import styles from './AttachmentPointEditPopup.module.less';
@@ -22,11 +26,12 @@ const attachmentPointNameOptions = Array.from({ length: 8 }).map((_, i) => ({
 }));
 
 const attachmentPointAtomOptions: Array<Option> = [
-  { value: 'H', label: 'H' },
-  { value: 'O', label: 'OH' },
-  { value: 'N', label: 'NH2' },
-  { value: 'Cl', label: 'Cl' },
-  { value: 'F', label: 'F' },
+  { value: AtomLabel.H, label: 'H' },
+  { value: AtomLabel.O, label: 'OH' },
+  { value: AtomLabel.N, label: 'NH2' },
+  { value: AtomLabel.Cl, label: 'Cl' },
+  { value: AtomLabel.F, label: 'F' },
+  { value: AtomLabel.C, label: 'CH3' },
 ];
 
 const AttachmentPointEditPopup = ({

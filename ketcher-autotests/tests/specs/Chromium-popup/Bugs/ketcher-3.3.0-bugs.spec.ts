@@ -222,6 +222,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Select h456UR and e6A monomers
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).selectMonomer(Base.h456UR);
     await waitForMonomerPreview(page);
     // Screenshot suppression is not used on purpose, as it’s required for the test
@@ -266,40 +267,45 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test.fail(
-    'Case 11: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click',
-
-    async () => {
-      // Fails due to the bug: https://github.com/epam/ketcher/issues/7512
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6937
-       * Bug: https://github.com/epam/ketcher/issues/6830
-       * Description: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click.
-       * Scenario:
-       * 1. Go to Macro
-       * 2. Expand RNA Builder
-       * 3. Add to RNA Builder monomers
-       * 3. Click on any monomer in the RNA Builder section
-       * 4. Observe that the corresponding monomer in the library is highlighted
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Flex,
-      );
-      await Library(page).rnaBuilder.expand();
-      await Library(page).selectMonomers([
-        Sugar.UNA,
-        Base.V,
-        Phosphate.Test_6_Ph,
-      ]);
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).rnaBuilder.selectSugarSlot();
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).rnaBuilder.selectBaseSlot();
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).rnaBuilder.selectPhosphateSlot();
-      await takeMonomerLibraryScreenshot(page);
-    },
-  );
+  test('Case 11: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6937
+     * Bug: https://github.com/epam/ketcher/issues/6830
+     * Description: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Expand RNA Builder
+     * 3. Add to RNA Builder monomers
+     * 3. Click on any monomer in the RNA Builder section
+     * 4. Observe that the corresponding monomer in the library is highlighted
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).rnaBuilder.expand();
+    await Library(page).selectMonomers([
+      Sugar.UNA,
+      Phosphate.Test_6_Ph,
+      Base.V,
+    ]);
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 12: Able to delete multiple sequences at once via right-click menu in Sequence mode', async () => {
     /*

@@ -19,7 +19,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage } from '@utils/common/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
@@ -32,6 +31,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -115,7 +115,6 @@ test.describe('Import-Saving .seq Files', () => {
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'Sequence/sequence-empty.seq');
     await expect(addToCanvasButton).toBeDisabled();
-    await closeErrorMessage(page);
   });
 
   test('Check that system does not let uploading corrupted .seq file', async ({
@@ -296,14 +295,7 @@ test.describe('Import-Saving .seq Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
       await takeEditorScreenshot(page);
-      await closeErrorMessage(page);
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 600);
@@ -336,14 +328,7 @@ test.describe('Import-Saving .seq Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
       await takeEditorScreenshot(page);
-
-      await closeErrorMessage(page);
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
@@ -376,14 +361,7 @@ test.describe('Import-Saving .seq Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
       await takeEditorScreenshot(page);
-      await closeErrorMessage(page);
 
       await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
@@ -444,7 +422,7 @@ test.describe('Import-Saving .seq Files', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
 
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
@@ -504,7 +482,7 @@ test.describe('Import-Saving .seq Files', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
@@ -562,7 +540,7 @@ test.describe('Import-Saving .seq Files', () => {
     );
     await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -826,7 +804,7 @@ for (const incorrectSequence of incorrectSequences) {
       hideMacromoleculeEditorScrollBars: true,
     });
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
   });
 }
 
@@ -1052,7 +1030,9 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorMessage(page);
+    if (await ErrorMessageDialog(page).infoModalWindow.isVisible()) {
+      await ErrorMessageDialog(page).close();
+    }
   });
 }
 

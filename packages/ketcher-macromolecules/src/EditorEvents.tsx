@@ -19,6 +19,7 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
+  selectLastSelectedSelectionMenuItem,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -61,6 +62,9 @@ export const EditorEvents = () => {
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const lastSelectedSelectionMenuItem = useAppSelector(
+    selectLastSelectedSelectionMenuItem,
+  );
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
@@ -74,6 +78,21 @@ export const EditorEvents = () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
   }, [editor]);
+
+  useEffect(() => {
+    const onSelectSelectionTool = () => {
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      dispatch(selectTool(lastSelectedSelectionMenuItem));
+    };
+
+    if (editor) {
+      editor.events.selectSelectionTool.add(onSelectSelectionTool);
+    }
+
+    return () => {
+      editor?.events.selectSelectionTool.remove(onSelectSelectionTool);
+    };
+  }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
     const handler = ([toolName]: [string]) => {
@@ -318,6 +337,8 @@ export const EditorEvents = () => {
   useEffect(() => {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
+    editor?.events.mouseLeaveAttachmentPoint.add(handleClosePreview);
+    editor?.events.mouseDownAttachmentPoint.add(handleClosePreview);
     editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
@@ -331,6 +352,7 @@ export const EditorEvents = () => {
       }
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
+    editor?.events.mouseMoveAttachmentPoint.add(onMoveHandler);
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
     editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
@@ -339,12 +361,14 @@ export const EditorEvents = () => {
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
+      editor?.events.mouseLeaveAttachmentPoint.remove(handleClosePreview);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
+      editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 

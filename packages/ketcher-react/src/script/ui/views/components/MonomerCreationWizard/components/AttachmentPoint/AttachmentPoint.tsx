@@ -4,14 +4,24 @@ import styles from './AttachmentPoint.module.less';
 type Props = {
   name: AttachmentPointName;
   atomLabel: string;
+  implicitH: number;
 };
 
-const AttachmentPoint = ({ name, atomLabel }: Props) => {
+const AttachmentPoint = ({ name, atomLabel, implicitH }: Props) => {
   return (
     <div className={styles.attachmentPoint}>
       <p className={styles.attachmentPointText}>
         <span className={styles.attachmentPointIndex}>{name}</span>
-        &nbsp;({atomLabel})
+        &nbsp;
+        <span>
+          (
+          {implicitH > 1 && (
+            <>
+              H<sub>{implicitH}</sub>
+            </>
+          )}
+          {atomLabel})
+        </span>
       </p>
     </div>
   );

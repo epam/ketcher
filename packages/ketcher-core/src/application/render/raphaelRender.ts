@@ -33,6 +33,8 @@ export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   potentialAttachmentPoints: Map<number, number>;
+  problematicAttachmentPoints: Set<AttachmentPointName>;
+  clickedAttachmentPoint?: AttachmentPointName | null;
 } | null;
 
 export class Render {

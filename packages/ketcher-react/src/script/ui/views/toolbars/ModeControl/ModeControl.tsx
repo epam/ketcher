@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-core';
 
 interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
+  name?: string;
 }
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -61,7 +64,7 @@ const StyledIcon = styled(Icon)<IStyledIconProps>`
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
@@ -146,13 +149,69 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const onClose = () => {
+  const getIfFullScreen = useCallback(() => {
+    return !!(
+      document.fullscreenElement ||
+      document.mozFullScreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    );
+  }, []);
+
+  const switchModeWithFullscreen = useCallback(
+    (isPolymer: boolean) => {
+      const isCurrentlyFullscreen = getIfFullScreen();
+
+      if (isCurrentlyFullscreen) {
+        const targetSelector = isPolymer
+          ? KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR
+          : KETCHER_ROOT_NODE_CSS_SELECTOR;
+        const targetElement = document.querySelector(
+          targetSelector,
+        ) as HTMLElement;
+
+        console.log(targetElement, 'targetElement');
+        if (targetElement) {
+          //  exit from fullscreen
+          (document.exitFullscreen && document.exitFullscreen()) ||
+            (document.msExitFullscreen && document.msExitFullscreen()) ||
+            (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
+            (document.webkitExitFullscreen && document.webkitExitFullscreen());
+
+          // intrance in fullscreen
+          setTimeout(() => {
+            (targetElement.requestFullscreen &&
+              targetElement.requestFullscreen()) ||
+              (targetElement.msRequestFullscreen &&
+                targetElement.msRequestFullscreen()) ||
+              (targetElement.mozRequestFullScreen &&
+                targetElement.mozRequestFullScreen()) ||
+              (targetElement.webkitRequestFullscreen &&
+                targetElement.webkitRequestFullscreen());
+          }, 10);
+        }
+      }
+
+      // cleanup
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      const canvas = document.querySelector('canvas') as HTMLElement;
+      if (canvas) canvas.focus();
+    },
+    [getIfFullScreen],
+  );
+
+  const handleModeSwitch = (isPolymer: boolean) => {
+    toggle(isPolymer);
     setIsExpanded(false);
+    setTimeout(() => {
+      if (btnRef.current) btnRef.current.blur();
+      switchModeWithFullscreen(isPolymer);
+    }, 10);
   };
 
-  const onExpand = () => {
-    setIsExpanded(true);
-  };
+  const onClose = () => setIsExpanded(false);
+  const onExpand = () => setIsExpanded(true);
 
   const modeLabel = isPolymerEditor ? 'Macromolecules' : 'Molecules';
   const modeIcon = isPolymerEditor ? 'macromolecules-mode' : 'molecules-mode';
@@ -188,13 +247,13 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           vertical: 'bottom',
           horizontal: 'left',
         }}
+        disablePortal
       >
         <DropDownContent>
           <ModeControlButton
             data-testid="molecules_mode"
             onClick={() => {
-              toggle(false);
-              onClose();
+              handleModeSwitch(false);
             }}
           >
             <Icon name="molecules-mode" />
@@ -205,8 +264,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           <ModeControlButton
             data-testid="macromolecules_mode"
             onClick={() => {
-              toggle(true);
-              onClose();
+              handleModeSwitch(true);
             }}
           >
             <Icon name="macromolecules-mode" />

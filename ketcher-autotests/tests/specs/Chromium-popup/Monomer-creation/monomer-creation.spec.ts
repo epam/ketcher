@@ -143,7 +143,9 @@ async function prepareMoleculeForMonomerCreation(
   await page.keyboard.down('Shift');
   if (AtomIDsToExclude) {
     for (const atomId of AtomIDsToExclude) {
-      await getAtomLocator(page, { atomId: Number(atomId) }).click();
+      await getAtomLocator(page, { atomId: Number(atomId) }).click({
+        force: true,
+      });
     }
   }
   if (BondIDsToExclude) {
@@ -218,81 +220,111 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
     testDescription: '2. Single Up bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](/[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '3. Single Down bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](\\[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '4. Single Up/Down bond to unselected structure',
     MoleculeSMARTS:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAWAPwABQXBAOv/zgD6+vQAA4AEAAAABIAFAAAAAAIIACsALQD7+hkAAAAEgAYAAAAAAggADgAPAPv6GQAwBAEABzEEEAAFAAAABwAAAAgAAAAFAAAARgQBAAIAAASABwAAAAACCAAAAAAAAAAAAAAABIAIAAAAAAIIAAAAAAD19TMAAAAFgAkAAAAEBgQABQAAAAUGBAAGAAAAAAAFgAoAAAAEBgQABgAAAAUGBAAHAAAAAAAFgAsAAAAEBgQABgAAAAUGBAAIAAAAAQYCAAgAAAAHgAAAAAAEAhAAAAAAAPX1MwAAAAAA9fUzAAAKAgAHAAcKAgALAD0KAgAAAAaAAAAAAAACCAAAAAAA9fUzAAEHAQABCAcBAAAABxIAAQAAAAMAYADIAAAAQ2hpcmFsAAAAAAAAAAAAAAAA',
     AtomIDsToExclude: ['3'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '5. Double Cis/Trans bond to unselected structure',
     MoleculeSMARTS:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAUIAYB853rAOsf2QDokx8BA4AEAAAABIAFAAAAAAIIACoALQD7+hkAAAAEgAYAAAAAAggADgAPAPv6GQAwBAEABzEEEAAFAAAABwAAAAgAAAAFAAAARgQBAAIAAASABwAAAAACCAAAAAAAAAAAAAAABIAIAAAAAAIIAAAAAAD19TMAAAAFgAkAAAAEBgQABQAAAAUGBAAGAAAAAAAFgAoAAAAEBgQABgAAAAUGBAAHAAAAAAAFgAsAAAAEBgQABgAAAAUGBAAIAAAAAAYCAAIAAQYCAAgAAAAHgAAAAAAEAhAAAAAAAPX1MwAAAAAA9fUzAAAKAgAHAAcKAgALAD0KAgAAAAaAAAAAAAACCAAAAAAA9fUzAAEHAQABCAcBAAAABxIAAQAAAAMAYADIAAAAQ2hpcmFsAAAAAAAAAAAAAAAA',
     AtomIDsToExclude: ['3'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '6. Double bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](=[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '7. Triple bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](#[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '8. Any bond to unselected structure',
     MoleculeSMARTS:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAIPcAwN7kAAAgygDm1BgBA4AEAAAABIAFAAAAAAIIAAAALQAT+xkAAAAEgAYAAAAAAggAAAAPABP7GQAAAASABwAAAAACCAAAAAAAAAAAAAAABIAIAAAAAAIIAAAAAAAl9jMAAAAFgAkAAAAEBgQABQAAAAUGBAAGAAAAAAAFgAoAAAAEBgQABgAAAAUGBAAHAAAAAAYCAP//AAAFgAsAAAAEBgQABgAAAAUGBAAIAAAAAAAAAAAAAAAAAA==',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '9. Aromatic bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](:[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '10. Single/Double bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](!:;-,=[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '11. Single/Aromatic bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](-[#6])[#6]',
     AtomIDsToExclude: ['3'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '12. Single/Double bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](!:;-,=[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '13. Single/Aromatic bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6]([#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '14. Double/Aromatic bond to unselected structure',
     MoleculeSMARTS: '[#6]-[#6](=,:[#6])-[#6]',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '15. Dative bond to unselected structure',
     MoleculeSMARTS:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAwOQA7YSqAADAtwAUe94AA4AEAAAABIAFAAAAAAIIAAAALQAT+xkAAAAEgAYAAAAAAggAAAAPABP7GQAAAASABwAAAAACCAAAAAAAAAAAAAAABIAIAAAAAAIIAAAAAAAm9jMAAAAFgAkAAAAEBgQABQAAAAUGBAAGAAAAAAAFgAoAAAAEBgQABgAAAAUGBAAHAAAAAAYCAAAQAAAFgAsAAAAEBgQABgAAAAUGBAAIAAAAAAAAAAAAAAAAAA==',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '16. Hydrogen bond to unselected structure',
     MoleculeSMARTS:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAVIPcAcufrAOsfygBo3R8BA4AEAAAABIAFAAAAAAIIACoALQD7+hkAAAAEgAYAAAAAAggADgAPAPv6GQAAAASABwAAAAACCAAAAAAAAAAAAAAABIAIAAAAAAIIAAAAAAD19TMAAAAFgAkAAAAEBgQABQAAAAUGBAAGAAAAAAAFgAoAAAAEBgQABgAAAAUGBAAHAAAAAAYCAABAAAAFgAsAAAAEBgQABgAAAAUGBAAIAAAAAAAAAAAAAAAAAA==',
     AtomIDsToExclude: ['2'],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/7893',
   },
   {
     testDescription: '17. Chemical structure contain any S-groups',
@@ -317,8 +349,8 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
   },
   {
     testDescription: '21. Selected chemical structure not continuous',
-    MoleculeSMARTS: 'CCNCC',
-    AtomIDsToExclude: ['2'],
+    MoleculeSMARTS: 'CC(C)NC(C)C',
+    AtomIDsToExclude: ['3'],
   },
 ];
 
@@ -338,6 +370,12 @@ for (const nonEligableMolecule of nonEligableMolecules) {
      *
      * Version 3.7
      */
+
+    test.fail(
+      nonEligableMolecule.shouldFail === true,
+      `This test is expected to fail because of bug: ${nonEligableMolecule.issueNumber}`,
+    );
+
     await pasteFromClipboardAndOpenAsNewProject(
       page,
       nonEligableMolecule.MoleculeSMARTS,

@@ -44980,7 +44980,7 @@
     "fullName": "5-Carboxytetramethylrhodamine",
     "alias": "5TAMRA",
     "idtAliases": {
-      "base": "(5)6-TAMN",
+      "base": "6-TAMN",
       "modifications": {
         "endpoint5": "56-TAMN"
       }

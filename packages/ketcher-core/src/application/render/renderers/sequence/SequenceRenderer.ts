@@ -852,8 +852,6 @@ export class SequenceRenderer {
     ]);
     chainsCollection.rearrange();
 
-    editor.drawingEntitiesManager.clearCanvas();
-
     SequenceRenderer.show(
       chainsCollection,
       oldNewSequenceChainIndex !== -1 &&

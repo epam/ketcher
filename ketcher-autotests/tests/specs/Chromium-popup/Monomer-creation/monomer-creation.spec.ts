@@ -715,10 +715,8 @@ const eligableNames = [
   },
 ];
 
-for (const eligableName of eligableNames) {
-  test(`11. Create monomer with ${eligableName.description}`, async ({
-    MoleculesCanvas: _,
-  }) => {
+for (const [index, eligableName] of eligableNames.entries()) {
+  test(`11. Create monomer with ${eligableName.description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Entering a valid monomer name allows saving
@@ -739,12 +737,12 @@ for (const eligableName of eligableNames) {
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      symbol: 'Temp',
+      symbol: `Test11-${index}`,
       name: eligableName.value,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomer = getMonomerLocator(page, {
-      monomerAlias: 'Temp',
+      monomerAlias: `Test11-${index}`,
     });
     await dragTo(page, monomer, { x: 450, y: 250 });
     await monomer.hover({ force: true });
@@ -1430,9 +1428,10 @@ for (const monomerToCreate of monomersToCreate) {
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
      *      5. Contract created monomer
-     *      6. Validate it appeared on the canvas
-     *      7. Expand created monomer and click on its atom
-     *      8. Take screenshot to validate monomer got expanded
+     *      6. Delete atom outside the monomer
+     *      7. Validate it appeared on the canvas
+     *      8. Expand created monomer and click on its atom
+     *      9. Take screenshot to validate monomer got expanded
      *
      * Version 3.7
      */
@@ -1443,6 +1442,7 @@ for (const monomerToCreate of monomersToCreate) {
         y: 0,
         fromCenter: true,
       });
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     } else {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -1451,9 +1451,10 @@ for (const monomerToCreate of monomersToCreate) {
       await createMonomer(page, {
         ...monomerToCreate,
       });
+      await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
+      await getAtomLocator(page, { atomId: 0 }).click();
+      await CommonLeftToolbar(page).selectEraseTool();
     }
-
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
     const monomerOnMicro = getAbbreviationLocator(page, {
       name: monomerToCreate.symbol,

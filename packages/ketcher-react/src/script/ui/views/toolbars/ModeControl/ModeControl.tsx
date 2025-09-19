@@ -14,12 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-core';
 
 interface IStyledIconProps {
   expanded?: boolean;
@@ -149,64 +147,16 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const getIfFullScreen = useCallback(() => {
-    return !!(
-      document.fullscreenElement ||
-      document.mozFullScreenElement ||
-      document.webkitFullscreenElement ||
-      document.msFullscreenElement
-    );
-  }, []);
-
-  const switchModeWithFullscreen = useCallback(
-    (isPolymer: boolean) => {
-      const isCurrentlyFullscreen = getIfFullScreen();
-
-      if (isCurrentlyFullscreen) {
-        const targetSelector = isPolymer
-          ? KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR
-          : KETCHER_ROOT_NODE_CSS_SELECTOR;
-        const targetElement = document.querySelector(
-          targetSelector,
-        ) as HTMLElement;
-
-        console.log(targetElement, 'targetElement');
-        if (targetElement) {
-          //  exit from fullscreen
-          (document.exitFullscreen && document.exitFullscreen()) ||
-            (document.msExitFullscreen && document.msExitFullscreen()) ||
-            (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-            (document.webkitExitFullscreen && document.webkitExitFullscreen());
-
-          // intrance in fullscreen
-          setTimeout(() => {
-            (targetElement.requestFullscreen &&
-              targetElement.requestFullscreen()) ||
-              (targetElement.msRequestFullscreen &&
-                targetElement.msRequestFullscreen()) ||
-              (targetElement.mozRequestFullScreen &&
-                targetElement.mozRequestFullScreen()) ||
-              (targetElement.webkitRequestFullscreen &&
-                targetElement.webkitRequestFullscreen());
-          }, 10);
-        }
-      }
-
-      // cleanup
+  const handleModeSwitch = (isPolymer: boolean) => {
+    toggle(isPolymer);
+    setIsExpanded(false);
+    // Простая очистка для восстановления интерактивности
+    setTimeout(() => {
+      if (btnRef.current) btnRef.current.blur();
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
       const canvas = document.querySelector('canvas') as HTMLElement;
       if (canvas) canvas.focus();
-    },
-    [getIfFullScreen],
-  );
-
-  const handleModeSwitch = (isPolymer: boolean) => {
-    toggle(isPolymer);
-    setIsExpanded(false);
-    setTimeout(() => {
-      if (btnRef.current) btnRef.current.blur();
-      switchModeWithFullscreen(isPolymer);
     }, 10);
   };
 

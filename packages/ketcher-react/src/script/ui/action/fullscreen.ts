@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const requestFullscreen = (element: HTMLElement) => {
   (element.requestFullscreen && element.requestFullscreen()) ||
@@ -41,9 +40,13 @@ const getIfFullScreen = () => {
 };
 
 const toggleFullscreen = () => {
+  // Check if we're in popup mode (has MuiPaper-root with ketcher-dialog class)
+  const popupDialog = document.querySelector(
+    '.MuiPaper-root.ketcher-dialog',
+  ) as HTMLElement;
   const fullscreenElement: HTMLElement =
-    document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
-    document.documentElement;
+    popupDialog || document.getElementById('root') || document.documentElement;
+
   getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
 };
 

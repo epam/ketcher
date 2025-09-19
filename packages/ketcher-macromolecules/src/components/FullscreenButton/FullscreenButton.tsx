@@ -14,10 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-  IconButton,
-} from 'ketcher-react';
+import { IconButton } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -61,9 +58,13 @@ const ButtonContainer = styled.div`
 export const FullscreenButton = (props) => {
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
   const toggleFullscreen = () => {
-    // TODO: add selector / ref prop when will be shared component
+    // Check if we're in popup mode (has MuiPaper-root with ketcher-dialog class)
+    const popupDialog = document.querySelector(
+      '.MuiPaper-root.ketcher-dialog',
+    ) as HTMLElement;
     const fullscreenElement: HTMLElement =
-      document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ||
+      popupDialog ||
+      document.getElementById('root') ||
       document.documentElement;
     fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
     setFullScreenMode(!fullScreenMode);

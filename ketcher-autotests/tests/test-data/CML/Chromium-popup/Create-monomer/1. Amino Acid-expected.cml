@@ -2,7 +2,7 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="C" x2="7.85389" y2="-7.36875"/>
+            <atom id="a0" elementType="H" x2="7.85389" y2="-7.36875"/>
             <atom id="a2" elementType="C" x2="9.15292" y2="-7.86875"/>
             <atom id="a3" elementType="C" x2="10.0189" y2="-7.36875"/>
         </atomArray>
@@ -10,7 +10,7 @@
             <bond atomRefs2="a2 a3" order="1"/>
             <bond atomRefs2="a0 a2" order="1"/>
         </bondArray>
-        <molecule id="sg0" atomRefs="a2 a3" role="SuperatomSgroup" title="AminoAcid">
+        <molecule id="sg0" atomRefs="a2 a3" role="SuperatomSgroup" title="AminoAcid31">
             <MBracket type="SQUARE">
                 <MPoint x="-0.433" y="0.25"/>
                 <MPoint x="0" y="0"/>

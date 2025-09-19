@@ -23,7 +23,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-Phosphate___Phosphate Test monomer"
+                "$ref": "monomerTemplate-Phosphate26___Phosphate Test monomer for test 26"
             }
         ]
     },
@@ -31,19 +31,14 @@
         "type": "molecule",
         "atoms": [
             {
-                "label": "C",
+                "label": "H",
                 "location": [
-                    7.853886830279996,
+                    7.8538866776921035,
                     -7.368750002448907,
                     0
                 ]
             }
-        ],
-        "stereoFlagPosition": {
-            "x": 9.585937657883004,
-            "y": 6.368750002448907,
-            "z": 0
-        }
+        ]
     },
     "monomer0": {
         "type": "monomer",
@@ -52,11 +47,11 @@
             "x": 9.152924783493198,
             "y": -7.618750016125615
         },
-        "alias": "Phosphate",
-        "templateId": "Phosphate___Phosphate Test monomer",
+        "alias": "Phosphate26",
+        "templateId": "Phosphate26___Phosphate Test monomer for test 26",
         "expanded": true
     },
-    "monomerTemplate-Phosphate___Phosphate Test monomer": {
+    "monomerTemplate-Phosphate26___Phosphate Test monomer for test 26": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -102,9 +97,9 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "Phosphate___Phosphate Test monomer",
-        "fullName": "Phosphate Test monomer",
-        "alias": "Phosphate",
+        "id": "Phosphate26___Phosphate Test monomer for test 26",
+        "fullName": "Phosphate Test monomer for test 26",
+        "alias": "Phosphate26",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

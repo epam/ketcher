@@ -445,72 +445,78 @@ test.fail(
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
     await leftToolbar.createMonomer();
+    try {
+      await Promise.all([
+        expect(commonTopLeftToolbar.clearCanvasButton).toBeDisabled(),
+        expect(commonTopLeftToolbar.openButton).toBeDisabled(),
+        expect(commonTopLeftToolbar.saveButton).toBeDisabled(),
+        expect(commonTopLeftToolbar.undoButton).toBeEnabled(),
+        expect(commonTopLeftToolbar.redoButton).toBeEnabled(),
+        expect(indigoFunctionsToolbar.aromatizeButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.dearomatizeButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.layoutButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.cleanUpButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.calculateCIPButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.checkStructureButton).toBeDisabled(),
+        expect(indigoFunctionsToolbar.calculatedValuesButton).toBeDisabled(),
+        expect(
+          indigoFunctionsToolbar.addRemoveExplicitHydrogensButton,
+        ).toBeDisabled(),
+        expect(indigoFunctionsToolbar.ThreeDViewerButton).toBeDisabled(),
+        expect(
+          commonTopRightToolbar.ketcherModeSwitcherCombobox,
+        ).toBeDisabled(),
+        expect(commonTopRightToolbar.fullScreenButton).toBeEnabled(),
+        expect(commonTopRightToolbar.helpButton).toBeDisabled(),
+        expect(commonTopRightToolbar.aboutButton).toBeDisabled(),
+        expect(commonTopRightToolbar.zoomSelector).toBeEnabled(),
+        expect(topRightToolbar.settingsButton).toBeDisabled(),
 
-    await Promise.all([
-      expect(commonTopLeftToolbar.clearCanvasButton).toBeDisabled(),
-      expect(commonTopLeftToolbar.openButton).toBeDisabled(),
-      expect(commonTopLeftToolbar.saveButton).toBeDisabled(),
-      expect(commonTopLeftToolbar.undoButton).toBeEnabled(),
-      expect(commonTopLeftToolbar.redoButton).toBeEnabled(),
-      expect(indigoFunctionsToolbar.aromatizeButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.dearomatizeButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.layoutButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.cleanUpButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.calculateCIPButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.checkStructureButton).toBeDisabled(),
-      expect(indigoFunctionsToolbar.calculatedValuesButton).toBeDisabled(),
-      expect(
-        indigoFunctionsToolbar.addRemoveExplicitHydrogensButton,
-      ).toBeDisabled(),
-      expect(indigoFunctionsToolbar.ThreeDViewerButton).toBeDisabled(),
-      expect(commonTopRightToolbar.ketcherModeSwitcherCombobox).toBeDisabled(),
-      expect(commonTopRightToolbar.fullScreenButton).toBeEnabled(),
-      expect(commonTopRightToolbar.helpButton).toBeDisabled(),
-      expect(commonTopRightToolbar.aboutButton).toBeDisabled(),
-      expect(commonTopRightToolbar.zoomSelector).toBeEnabled(),
-      expect(topRightToolbar.settingsButton).toBeDisabled(),
+        expect(rightToolbar.hydrogenButton).toBeDisabled(),
+        expect(rightToolbar.carbonButton).toBeDisabled(),
+        expect(rightToolbar.nitrogenButton).toBeDisabled(),
+        expect(rightToolbar.oxygenButton).toBeDisabled(),
+        expect(rightToolbar.sulfurButton).toBeDisabled(),
+        expect(rightToolbar.phosphorusButton).toBeDisabled(),
+        expect(rightToolbar.fluorineButton).toBeDisabled(),
+        expect(rightToolbar.chlorineButton).toBeDisabled(),
+        expect(rightToolbar.bromineButton).toBeDisabled(),
+        expect(rightToolbar.iodineButton).toBeDisabled(),
+        expect(rightToolbar.periodicTableButton).toBeDisabled(),
+        expect(rightToolbar.anyAtomButton).toBeDisabled(),
+        expect(rightToolbar.extendedTableButton).toBeDisabled(),
 
-      expect(rightToolbar.hydrogenButton).toBeDisabled(),
-      expect(rightToolbar.carbonButton).toBeDisabled(),
-      expect(rightToolbar.nitrogenButton).toBeDisabled(),
-      expect(rightToolbar.oxygenButton).toBeDisabled(),
-      expect(rightToolbar.sulfurButton).toBeDisabled(),
-      expect(rightToolbar.phosphorusButton).toBeDisabled(),
-      expect(rightToolbar.fluorineButton).toBeDisabled(),
-      expect(rightToolbar.chlorineButton).toBeDisabled(),
-      expect(rightToolbar.bromineButton).toBeDisabled(),
-      expect(rightToolbar.iodineButton).toBeDisabled(),
-      expect(rightToolbar.periodicTableButton).toBeDisabled(),
-      expect(rightToolbar.anyAtomButton).toBeDisabled(),
-      expect(rightToolbar.extendedTableButton).toBeDisabled(),
+        expect(commonLeftToolbar.handToolButton).toBeEnabled(),
+        expect(commonLeftToolbar.areaSelectionDropdownButton).toBeEnabled(),
+        expect(leftToolbar.chainButton).toBeDisabled(),
+        expect(leftToolbar.stereochemistryButton).toBeDisabled(),
+        expect(leftToolbar.chargePlusButton).toBeDisabled(),
+        expect(leftToolbar.chargeMinusButton).toBeDisabled(),
+        expect(leftToolbar.sGroupButton).toBeDisabled(),
+        expect(leftToolbar.rGroupToolsButton).toBeDisabled(),
+        expect(leftToolbar.createMonomerButton).toBeDisabled(),
+        expect(leftToolbar.reactionPlusToolButton).toBeDisabled(),
+        expect(leftToolbar.arrowToolsButton).toBeDisabled(),
+        expect(leftToolbar.reactionMappingToolsButton).toBeDisabled(),
+        expect(leftToolbar.shapeToolsButton).toBeDisabled(),
+        expect(leftToolbar.addTextButton).toBeDisabled(),
+        expect(leftToolbar.addImageButton).toBeDisabled(),
 
-      expect(commonLeftToolbar.handToolButton).toBeEnabled(),
-      expect(commonLeftToolbar.areaSelectionDropdownButton).toBeEnabled(),
-      expect(leftToolbar.chainButton).toBeDisabled(),
-      expect(leftToolbar.stereochemistryButton).toBeDisabled(),
-      expect(leftToolbar.chargePlusButton).toBeDisabled(),
-      expect(leftToolbar.chargeMinusButton).toBeDisabled(),
-      expect(leftToolbar.sGroupButton).toBeDisabled(),
-      expect(leftToolbar.rGroupToolsButton).toBeDisabled(),
-      expect(leftToolbar.createMonomerButton).toBeDisabled(),
-      expect(leftToolbar.reactionPlusToolButton).toBeDisabled(),
-      expect(leftToolbar.arrowToolsButton).toBeDisabled(),
-      expect(leftToolbar.reactionMappingToolsButton).toBeDisabled(),
-      expect(leftToolbar.shapeToolsButton).toBeDisabled(),
-      expect(leftToolbar.addTextButton).toBeDisabled(),
-      expect(leftToolbar.addImageButton).toBeDisabled(),
-
-      expect(bottomToolbar.benzeneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclopentadieneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclohexaneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclopentaneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclopropaneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclobutaneButton).toBeDisabled(),
-      expect(bottomToolbar.cycloheptaneButton).toBeDisabled(),
-      expect(bottomToolbar.cyclooctaneButton).toBeDisabled(),
-      expect(bottomToolbar.structureLibraryButton).toBeDisabled(),
-    ]);
-    await CreateMonomerDialog(page).discard();
+        expect(bottomToolbar.benzeneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclopentadieneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclohexaneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclopentaneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclopropaneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclobutaneButton).toBeDisabled(),
+        expect(bottomToolbar.cycloheptaneButton).toBeDisabled(),
+        expect(bottomToolbar.cyclooctaneButton).toBeDisabled(),
+        expect(bottomToolbar.structureLibraryButton).toBeDisabled(),
+      ]);
+    } finally {
+      await CreateMonomerDialog(page)
+        .discard()
+        .catch(() => {});
+    }
   },
 );
 
@@ -710,7 +716,9 @@ const eligableNames = [
 ];
 
 for (const eligableName of eligableNames) {
-  test(`11. Create monomer with ${eligableName.description}`, async () => {
+  test(`11. Create monomer with ${eligableName.description}`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Entering a valid monomer name allows saving
@@ -1331,13 +1339,22 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+      await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+    } else {
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
-
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).clickMonomerAutochain(monomerToCreate.libraryCard);
@@ -1368,12 +1385,22 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+      await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+    } else {
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+    }
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -1409,12 +1436,22 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
+      await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+    } else {
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
+    }
 
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
@@ -1429,7 +1466,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate26 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid26',
+    name: 'Amino Acid Test monomer for test 26',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar26',
+    name: 'Sugar Test monomer for test 26',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base26',
+    name: 'Base Test monomer for test 26',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate26',
+    name: 'Phosphate Test monomer for test 26',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide26',
+    name: 'Nucleotide Test monomer for test 26',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM26',
+    name: 'CHEM Test monomer for test 26',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate26) {
   test(`26. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1466,7 +1545,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate27 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid27',
+    name: 'Amino Acid Test monomer for test 27',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar27',
+    name: 'Sugar Test monomer for test 27',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base27',
+    name: 'Base Test monomer for test 27',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate27',
+    name: 'Phosphate Test monomer for test 27',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide27',
+    name: 'Nucleotide Test monomer for test 27',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM27',
+    name: 'CHEM Test monomer for test 27',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate27) {
   test(`27. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1504,7 +1625,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate28 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid28',
+    name: 'Amino Acid Test monomer for test 28',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar28',
+    name: 'Sugar Test monomer for test 28',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base28',
+    name: 'Base Test monomer for test 28',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate28',
+    name: 'Phosphate Test monomer for test 28',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide28',
+    name: 'Nucleotide Test monomer for test 28',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM28',
+    name: 'CHEM Test monomer for test 28',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate28) {
   test(`28. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1543,7 +1706,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate29 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid29',
+    name: 'Amino Acid Test monomer for test 29',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar29',
+    name: 'Sugar Test monomer for test 29',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base29',
+    name: 'Base Test monomer for test 29',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate29',
+    name: 'Phosphate Test monomer for test 29',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide29',
+    name: 'Nucleotide Test monomer for test 29',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM29',
+    name: 'CHEM Test monomer for test 29',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate29) {
   test(`29. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1582,7 +1787,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate30 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid30',
+    name: 'Amino Acid Test monomer for test 30',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar30',
+    name: 'Sugar Test monomer for test 30',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base30',
+    name: 'Base Test monomer for test 30',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate30',
+    name: 'Phosphate Test monomer for test 30',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide30',
+    name: 'Nucleotide Test monomer for test 30',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM30',
+    name: 'CHEM Test monomer for test 30',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate30) {
   test(`30. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1621,7 +1868,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate31 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid31',
+    name: 'Amino Acid Test monomer for test 31',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar31',
+    name: 'Sugar Test monomer for test 31',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base31',
+    name: 'Base Test monomer for test 31',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate31',
+    name: 'Phosphate Test monomer for test 31',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide31',
+    name: 'Nucleotide Test monomer for test 31',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM31',
+    name: 'CHEM Test monomer for test 31',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate31) {
   test(`31. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CML in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1659,7 +1948,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate32 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid32',
+    name: 'Amino Acid Test monomer for test 32',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar32',
+    name: 'Sugar Test monomer for test 32',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base32',
+    name: 'Base Test monomer for test 32',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate32',
+    name: 'Phosphate Test monomer for test 32',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide32',
+    name: 'Nucleotide Test monomer for test 32',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM32',
+    name: 'CHEM Test monomer for test 32',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate32) {
   test(`32. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to SVG in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1685,7 +2016,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate33 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid33',
+    name: 'Amino Acid Test monomer for test 33',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar33',
+    name: 'Sugar Test monomer for test 33',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base33',
+    name: 'Base Test monomer for test 33',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate33',
+    name: 'Phosphate Test monomer for test 33',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide33',
+    name: 'Nucleotide Test monomer for test 33',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM33',
+    name: 'CHEM Test monomer for test 33',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate33) {
   test(`33. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to PNG in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1711,7 +2084,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate34 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid34',
+    name: 'Amino Acid Test monomer for test 34',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar34',
+    name: 'Sugar Test monomer for test 34',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base34',
+    name: 'Base Test monomer for test 34',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate34',
+    name: 'Phosphate Test monomer for test 34',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide34',
+    name: 'Nucleotide Test monomer for test 34',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM34',
+    name: 'CHEM Test monomer for test 34',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate34) {
   test(`34. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDXML in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1749,7 +2164,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate35 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid35',
+    name: 'Amino Acid Test monomer for test 35',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar35',
+    name: 'Sugar Test monomer for test 35',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base35',
+    name: 'Base Test monomer for test 35',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate35',
+    name: 'Phosphate Test monomer for test 35',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide35',
+    name: 'Nucleotide Test monomer for test 35',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM35',
+    name: 'CHEM Test monomer for test 35',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate35) {
   test(`35. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDX in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1787,7 +2244,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate36 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid36',
+    name: 'Amino Acid Test monomer for test 36',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar36',
+    name: 'Sugar Test monomer for test 36',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base36',
+    name: 'Base Test monomer for test 36',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate36',
+    name: 'Phosphate Test monomer for test 36',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide36',
+    name: 'Nucleotide Test monomer for test 36',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM36',
+    name: 'CHEM Test monomer for test 36',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate36) {
   test(`36. Check that created ${monomerToCreate.description} monomer (collapesed) can be saved/opened to/from KET in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1825,7 +2324,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate37 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid37',
+    name: 'Amino Acid Test monomer for test 37',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar37',
+    name: 'Sugar Test monomer for test 37',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base37',
+    name: 'Base Test monomer for test 37',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate37',
+    name: 'Phosphate Test monomer for test 37',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide37',
+    name: 'Nucleotide Test monomer for test 37',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM37',
+    name: 'CHEM Test monomer for test 37',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate37) {
   test(`37. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from MOL V2000 in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1864,7 +2405,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate38 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid38',
+    name: 'Amino Acid Test monomer for test 38',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar38',
+    name: 'Sugar Test monomer for test 38',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base38',
+    name: 'Base Test monomer for test 38',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate38',
+    name: 'Phosphate Test monomer for test 38',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide38',
+    name: 'Nucleotide Test monomer for test 38',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM38',
+    name: 'CHEM Test monomer for test 38',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate38) {
   test(`38. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1904,7 +2487,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate39 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid39',
+    name: 'Amino Acid Test monomer for test 39',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar39',
+    name: 'Sugar Test monomer for test 39',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base39',
+    name: 'Base Test monomer for test 39',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate39',
+    name: 'Phosphate Test monomer for test 39',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide39',
+    name: 'Nucleotide Test monomer for test 39',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM39',
+    name: 'CHEM Test monomer for test 39',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate39) {
   test(`39. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1944,7 +2569,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate40 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid40',
+    name: 'Amino Acid Test monomer for test 40',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar40',
+    name: 'Sugar Test monomer for test 40',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base40',
+    name: 'Base Test monomer for test 40',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate40',
+    name: 'Phosphate Test monomer for test 40',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide40',
+    name: 'Nucleotide Test monomer for test 40',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM40',
+    name: 'CHEM Test monomer for test 40',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate40) {
   test(`40. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from SDF V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -1966,10 +2633,10 @@ for (const monomerToCreate of monomersToCreate) {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
     });
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
     await verifyFileExport(
       page,
@@ -1985,7 +2652,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate41 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid41',
+    name: 'Amino Acid Test monomer for test 41',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar41',
+    name: 'Sugar Test monomer for test 41',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base41',
+    name: 'Base Test monomer for test 41',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate41',
+    name: 'Phosphate Test monomer for test 41',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide41',
+    name: 'Nucleotide Test monomer for test 41',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM41',
+    name: 'CHEM Test monomer for test 41',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate41) {
   test(`41. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CML in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -2007,10 +2716,10 @@ for (const monomerToCreate of monomersToCreate) {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
     });
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
     await verifyFileExport(
       page,
@@ -2025,7 +2734,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate42 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid42',
+    name: 'Amino Acid Test monomer for test 42',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar42',
+    name: 'Sugar Test monomer for test 42',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base42',
+    name: 'Base Test monomer for test 42',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate42',
+    name: 'Phosphate Test monomer for test 42',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide42',
+    name: 'Nucleotide Test monomer for test 42',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM42',
+    name: 'CHEM Test monomer for test 42',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate42) {
   test(`42. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved to SVG in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2044,16 +2795,58 @@ for (const monomerToCreate of monomersToCreate) {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
     });
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
     await verifySVGExport(page);
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate43 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid43',
+    name: 'Amino Acid Test monomer for test 43',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar43',
+    name: 'Sugar Test monomer for test 43',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base43',
+    name: 'Base Test monomer for test 43',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate43',
+    name: 'Phosphate Test monomer for test 43',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide43',
+    name: 'Nucleotide Test monomer for test 43',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM43',
+    name: 'CHEM Test monomer for test 43',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate43) {
   test(`43. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved to PNG in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2072,16 +2865,58 @@ for (const monomerToCreate of monomersToCreate) {
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await createMonomer(page, {
       ...monomerToCreate,
     });
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
 
     await verifyPNGExport(page);
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate44 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid44',
+    name: 'Amino Acid Test monomer for test 44',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar44',
+    name: 'Sugar Test monomer for test 44',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base44',
+    name: 'Base Test monomer for test 44',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate44',
+    name: 'Phosphate Test monomer for test 44',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide44',
+    name: 'Nucleotide Test monomer for test 44',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM44',
+    name: 'CHEM Test monomer for test 44',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate44) {
   test(`44. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CDXML in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -2120,7 +2955,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate45 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid45',
+    name: 'Amino Acid Test monomer for test 45',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar45',
+    name: 'Sugar Test monomer for test 45',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base45',
+    name: 'Base Test monomer for test 45',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate45',
+    name: 'Phosphate Test monomer for test 45',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide45',
+    name: 'Nucleotide Test monomer for test 45',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM45',
+    name: 'CHEM Test monomer for test 45',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate45) {
   test(`45. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CDX in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
@@ -2159,7 +3036,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate46 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid46',
+    name: 'Amino Acid Test monomer for test 46',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar46',
+    name: 'Sugar Test monomer for test 46',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base46',
+    name: 'Base Test monomer for test 46',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate46',
+    name: 'Phosphate Test monomer for test 46',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide46',
+    name: 'Nucleotide Test monomer for test 46',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM46',
+    name: 'CHEM Test monomer for test 46',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate46) {
   test.fail(
     `46. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from KET in Macro mode`,
     async () => {
@@ -2205,7 +3124,49 @@ for (const monomerToCreate of monomersToCreate) {
   );
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate47 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid47',
+    name: 'Amino Acid Test monomer for test 47',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar47',
+    name: 'Sugar Test monomer for test 47',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base47',
+    name: 'Base Test monomer for test 47',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate47',
+    name: 'Phosphate Test monomer for test 47',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide47',
+    name: 'Nucleotide Test monomer for test 47',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM47',
+    name: 'CHEM Test monomer for test 47',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate47) {
   test(`47. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from MOL V3000 in Macro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2248,192 +3209,263 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
-  if (
-    monomerToCreate.type === MonomerType.AminoAcid ||
-    monomerToCreate.type === MonomerType.Nucleotide
-  ) {
-    test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created Amino acid and Nucleotide monomer can be saved/opened to/from SDF V2000 in Macro mode
-       *
-       * Case:
-       *      1. Open Molecules canvas
-       *      2. Load molecule on canvas
-       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-       *      4. Create monomer with given attributes
-       *      5. Select and delete atom outside monomer
-       *      6. Switch to Macro mode
-       *      7. Save it to Sequence (1-letter-code) and validate the result
-       *      8. Load saved monomer from Sequence (1-letter-code) as New Project
-       *      9. Take screenshot to validate monomer got loaded
-       *
-       * Version 3.7
-       */
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+const monomersToCreate48 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid48',
+    name: 'Amino Acid Test monomer for test 48',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide47',
+    name: 'Nucleotide Test monomer for test 49',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+];
 
-      await createMonomer(page, {
-        ...monomerToCreate,
-      });
-      await getAtomLocator(page, { atomId: 0 }).click();
-      await CommonLeftToolbar(page).selectEraseTool();
+for (const monomerToCreate of monomersToCreate48) {
+  test(`48. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (1-letter-code) in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created Amino acid and Nucleotide monomer can be saved/opened to/from SDF V2000 in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Select and delete atom outside monomer
+     *      6. Switch to Macro mode
+     *      7. Save it to Sequence (1-letter-code) and validate the result
+     *      8. Load saved monomer from Sequence (1-letter-code) as New Project
+     *      9. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await verifyFileExport(
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(
+      page,
+      `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.oneLetter,
+    );
+
+    if (monomerToCreate.type === MonomerType.AminoAcid) {
+      await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-        FileType.SEQ,
-        SequenceFileFormat.oneLetter,
+        [
+          MacroFileType.Sequence,
+          [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
+        ],
       );
-
-      if (monomerToCreate.type === MonomerType.AminoAcid) {
-        await openFileAndAddToCanvasAsNewProjectMacro(
-          page,
-          `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-          [
-            MacroFileType.Sequence,
-            [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
-          ],
-        );
-      }
-      if (monomerToCreate.type === MonomerType.Nucleotide) {
-        await openFileAndAddToCanvasAsNewProjectMacro(
-          page,
-          `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-          [MacroFileType.Sequence, SequenceMonomerType.RNA],
-        );
-      }
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-        hideMonomerPreview: true,
-      });
+    }
+    if (monomerToCreate.type === MonomerType.Nucleotide) {
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        page,
+        `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+        [MacroFileType.Sequence, SequenceMonomerType.RNA],
+      );
+    }
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
     });
-  }
+  });
 }
 
-for (const monomerToCreate of monomersToCreate) {
-  if (monomerToCreate.type === MonomerType.AminoAcid) {
-    test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created Amino acid monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode
-       *
-       * Case:
-       *      1. Open Molecules canvas
-       *      2. Load molecule on canvas
-       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-       *      4. Create monomer with given attributes
-       *      5. Select and delete atom outside monomer
-       *      6. Switch to Macro mode
-       *      7. Save it to Sequence (3-letter-code) and validate the result
-       *      8. Load saved monomer from Sequence (3-letter-code) as New Project
-       *      9. Take screenshot to validate monomer got loaded
-       *
-       * Version 3.7
-       */
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+const monomersToCreate49 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid49',
+    name: 'Amino Acid Test monomer for test 49',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+];
 
-      await createMonomer(page, {
-        ...monomerToCreate,
-      });
-      await getAtomLocator(page, { atomId: 0 }).click();
-      await CommonLeftToolbar(page).selectEraseTool();
+for (const monomerToCreate of monomersToCreate49) {
+  test(`49. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created Amino acid monomer can be saved/opened to/from Sequence (3-letter-code) in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Select and delete atom outside monomer
+     *      6. Switch to Macro mode
+     *      7. Save it to Sequence (3-letter-code) and validate the result
+     *      8. Load saved monomer from Sequence (3-letter-code) as New Project
+     *      9. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await verifyFileExport(
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(
+      page,
+      `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
+      FileType.SEQ,
+      SequenceFileFormat.threeLetter,
+    );
+
+    if (monomerToCreate.type === MonomerType.AminoAcid) {
+      await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-        FileType.SEQ,
-        SequenceFileFormat.threeLetter,
+        [
+          MacroFileType.Sequence,
+          [SequenceMonomerType.Peptide, PeptideLetterCodeType.threeLetterCode],
+        ],
       );
-
-      if (monomerToCreate.type === MonomerType.AminoAcid) {
-        await openFileAndAddToCanvasAsNewProjectMacro(
-          page,
-          `Sequence/Three-Letter/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
-          [
-            MacroFileType.Sequence,
-            [
-              SequenceMonomerType.Peptide,
-              PeptideLetterCodeType.threeLetterCode,
-            ],
-          ],
-        );
-      }
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-        hideMonomerPreview: true,
-      });
+    }
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
     });
-  }
+  });
 }
 
-for (const monomerToCreate of monomersToCreate) {
-  if (
-    monomerToCreate.type === MonomerType.AminoAcid ||
-    monomerToCreate.type === MonomerType.Nucleotide
-  ) {
-    test(`50. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from FASTA in Macro mode`, async () => {
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/7657
-       * Description: Check that created ${monomerToCreate.description} can be saved/opened to/from FASTA in Macro mode
-       *
-       * Case:
-       *      1. Open Molecules canvas
-       *      2. Load molecule on canvas
-       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-       *      4. Create monomer with given attributes
-       *      5. Select and delete atom outside monomer
-       *      6. Switch to Macro mode
-       *      7. Save it to FASTA and validate the result
-       *      8. Load saved monomer from FASTA as New Project
-       *      9. Take screenshot to validate monomer got loaded
-       *
-       * Version 3.7
-       */
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+const monomersToCreate50 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid48',
+    name: 'Amino Acid Test monomer for test 50',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide47',
+    name: 'Nucleotide Test monomer for test 50',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+];
 
-      await createMonomer(page, {
-        ...monomerToCreate,
-      });
-      await getAtomLocator(page, { atomId: 0 }).click();
-      await CommonLeftToolbar(page).selectEraseTool();
+for (const monomerToCreate of monomersToCreate50) {
+  test(`50. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from FASTA in Macro mode`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7657
+     * Description: Check that created ${monomerToCreate.description} can be saved/opened to/from FASTA in Macro mode
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+     *      4. Create monomer with given attributes
+     *      5. Select and delete atom outside monomer
+     *      6. Switch to Macro mode
+     *      7. Save it to FASTA and validate the result
+     *      8. Load saved monomer from FASTA as New Project
+     *      9. Take screenshot to validate monomer got loaded
+     *
+     * Version 3.7
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await verifyFileExport(
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifyFileExport(
+      page,
+      `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
+      FileType.FASTA,
+    );
+
+    if (monomerToCreate.type === MonomerType.AminoAcid) {
+      await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
-        FileType.FASTA,
+        [MacroFileType.FASTA, SequenceMonomerType.Peptide],
       );
+    }
+    if (monomerToCreate.type === MonomerType.Nucleotide) {
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        page,
+        `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
+        [MacroFileType.FASTA, SequenceMonomerType.RNA],
+      );
+    }
 
-      if (monomerToCreate.type === MonomerType.AminoAcid) {
-        await openFileAndAddToCanvasAsNewProjectMacro(
-          page,
-          `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
-          [MacroFileType.FASTA, SequenceMonomerType.Peptide],
-        );
-      }
-      if (monomerToCreate.type === MonomerType.Nucleotide) {
-        await openFileAndAddToCanvasAsNewProjectMacro(
-          page,
-          `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
-          [MacroFileType.FASTA, SequenceMonomerType.RNA],
-        );
-      }
-
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-        hideMonomerPreview: true,
-      });
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+      hideMonomerPreview: true,
     });
-  }
+  });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate51 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid51',
+    name: 'Amino Acid Test monomer for test 51',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar51',
+    name: 'Sugar Test monomer for test 51',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base51',
+    name: 'Base Test monomer for test 51',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate51',
+    name: 'Phosphate Test monomer for test 51',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide51',
+    name: 'Nucleotide Test monomer for test 51',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM51',
+    name: 'CHEM Test monomer for test 51',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate51) {
   test(`51. Check that created ${monomerToCreate.description} monomer can not be saved to IDT in Macro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2451,7 +3483,7 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    const errorMessage = 'Convert error! Sequence saver: Cannot save';
+    const errorMessage = 'Convert error! Sequence saver:';
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
@@ -2474,7 +3506,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate52 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid52',
+    name: 'Amino Acid Test monomer for test 52',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar52',
+    name: 'Sugar Test monomer for test 52',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base52',
+    name: 'Base Test monomer for test 52',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate52',
+    name: 'Phosphate Test monomer for test 52',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide52',
+    name: 'Nucleotide Test monomer for test 52',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM52',
+    name: 'CHEM Test monomer for test 52',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate52) {
   test(`52. Check that created ${monomerToCreate.description} monomer can be saved to SVG Document in Macro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2501,7 +3575,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate53 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid53',
+    name: 'Amino Acid Test monomer for test 53',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar53',
+    name: 'Sugar Test monomer for test 53',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base53',
+    name: 'Base Test monomer for test 53',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate53',
+    name: 'Phosphate Test monomer for test 53',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide53',
+    name: 'Nucleotide Test monomer for test 53',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM53',
+    name: 'CHEM Test monomer for test 53',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate53) {
   test(`53. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2544,7 +3660,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate54 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid54',
+    name: 'Amino Acid Test monomer for test 54',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar54',
+    name: 'Sugar Test monomer for test 54',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base54',
+    name: 'Base Test monomer for test 54',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate54',
+    name: 'Phosphate Test monomer for test 54',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide54',
+    name: 'Nucleotide Test monomer for test 54',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM54',
+    name: 'CHEM Test monomer for test 54',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate54) {
   test(`54. Check that created ${monomerToCreate.description} can be deleted on canvas by Erase tool in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2582,7 +3740,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate55 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid55',
+    name: 'Amino Acid Test monomer for test 55',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar55',
+    name: 'Sugar Test monomer for test 55',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base55',
+    name: 'Base Test monomer for test 55',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate55',
+    name: 'Phosphate Test monomer for test 55',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide55',
+    name: 'Nucleotide Test monomer for test 55',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM55',
+    name: 'CHEM Test monomer for test 55',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate55) {
   test(`55. Check that created ${monomerToCreate.description} can be deleted on canvas by Erase tool in Macro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2620,7 +3820,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate56 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid56',
+    name: 'Amino Acid Test monomer for test 56',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar56',
+    name: 'Sugar Test monomer for test 56',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base56',
+    name: 'Base Test monomer for test 56',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate56',
+    name: 'Phosphate Test monomer for test 56',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide56',
+    name: 'Nucleotide Test monomer for test 56',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM56',
+    name: 'CHEM Test monomer for test 56',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate56) {
   test(`56. Check that created ${monomerToCreate.description} looks like ${monomerToCreate.description} in Macro mode (Flex->Snake->Sequence)`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2659,7 +3901,9 @@ for (const monomerToCreate of monomersToCreate) {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeElementScreenshot(page, monomerOnMacro);
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     const monomerOnSequence = getSymbolLocator(page, {});
     await takeElementScreenshot(page, monomerOnSequence);
   });

@@ -23,7 +23,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-CHEM___CHEM Test monomer"
+                "$ref": "monomerTemplate-CHEM26___CHEM Test monomer for test 26"
             }
         ]
     },
@@ -31,19 +31,14 @@
         "type": "molecule",
         "atoms": [
             {
-                "label": "C",
+                "label": "H",
                 "location": [
-                    7.853886830279996,
+                    7.8538866776921035,
                     -7.368750002448907,
                     0
                 ]
             }
-        ],
-        "stereoFlagPosition": {
-            "x": 9.585937657883004,
-            "y": 6.368750002448907,
-            "z": 0
-        }
+        ]
     },
     "monomer0": {
         "type": "monomer",
@@ -52,11 +47,11 @@
             "x": 9.152924783493198,
             "y": -7.618750016125615
         },
-        "alias": "CHEM",
-        "templateId": "CHEM___CHEM Test monomer",
+        "alias": "CHEM26",
+        "templateId": "CHEM26___CHEM Test monomer for test 26",
         "expanded": true
     },
-    "monomerTemplate-CHEM___CHEM Test monomer": {
+    "monomerTemplate-CHEM26___CHEM Test monomer for test 26": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -102,9 +97,9 @@
         ],
         "class": "CHEM",
         "classHELM": "CHEM",
-        "id": "CHEM___CHEM Test monomer",
-        "fullName": "CHEM Test monomer",
-        "alias": "CHEM",
+        "id": "CHEM26___CHEM Test monomer for test 26",
+        "fullName": "CHEM Test monomer for test 26",
+        "alias": "CHEM26",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

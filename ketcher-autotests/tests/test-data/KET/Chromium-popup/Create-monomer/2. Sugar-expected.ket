@@ -23,7 +23,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-Sugar___Sugar Test monomer"
+                "$ref": "monomerTemplate-Sugar26___Sugar Test monomer for test 26"
             }
         ]
     },
@@ -31,19 +31,14 @@
         "type": "molecule",
         "atoms": [
             {
-                "label": "C",
+                "label": "H",
                 "location": [
-                    7.853886830279996,
+                    7.8538866776921035,
                     -7.368750002448907,
                     0
                 ]
             }
-        ],
-        "stereoFlagPosition": {
-            "x": 9.585937657883004,
-            "y": 6.368750002448907,
-            "z": 0
-        }
+        ]
     },
     "monomer0": {
         "type": "monomer",
@@ -52,11 +47,11 @@
             "x": 9.152924783493198,
             "y": -7.618750016125615
         },
-        "alias": "Sugar",
-        "templateId": "Sugar___Sugar Test monomer",
+        "alias": "Sugar26",
+        "templateId": "Sugar26___Sugar Test monomer for test 26",
         "expanded": true
     },
-    "monomerTemplate-Sugar___Sugar Test monomer": {
+    "monomerTemplate-Sugar26___Sugar Test monomer for test 26": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -102,9 +97,9 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "Sugar___Sugar Test monomer",
-        "fullName": "Sugar Test monomer",
-        "alias": "Sugar",
+        "id": "Sugar26___Sugar Test monomer for test 26",
+        "fullName": "Sugar Test monomer for test 26",
+        "alias": "Sugar26",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

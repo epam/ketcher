@@ -23,7 +23,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-AminoAcid___Amino Acid Test monomer"
+                "$ref": "monomerTemplate-AminoAcid36___Amino Acid Test monomer for test 36"
             }
         ]
     },
@@ -31,19 +31,14 @@
         "type": "molecule",
         "atoms": [
             {
-                "label": "C",
+                "label": "H",
                 "location": [
-                    8.279096881136981,
+                    8.279096728549089,
                     -7.415995561015587,
                     0
                 ]
             }
-        ],
-        "stereoFlagPosition": {
-            "x": 9.585937657883004,
-            "y": 6.368750002448907,
-            "z": 0
-        }
+        ]
     },
     "monomer0": {
         "type": "monomer",
@@ -52,11 +47,11 @@
             "x": 9.152924783493198,
             "y": -7.618750016125615
         },
-        "alias": "AminoAcid",
-        "templateId": "AminoAcid___Amino Acid Test monomer",
+        "alias": "AminoAcid36",
+        "templateId": "AminoAcid36___Amino Acid Test monomer for test 36",
         "expanded": false
     },
-    "monomerTemplate-AminoAcid___Amino Acid Test monomer": {
+    "monomerTemplate-AminoAcid36___Amino Acid Test monomer for test 36": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -102,9 +97,9 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "id": "AminoAcid___Amino Acid Test monomer",
-        "fullName": "Amino Acid Test monomer",
-        "alias": "AminoAcid",
+        "id": "AminoAcid36___Amino Acid Test monomer for test 36",
+        "fullName": "Amino Acid Test monomer for test 36",
+        "alias": "AminoAcid36",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

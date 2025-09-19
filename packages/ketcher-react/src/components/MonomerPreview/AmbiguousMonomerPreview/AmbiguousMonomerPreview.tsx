@@ -83,7 +83,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
       className={className}
       data-testid="polymer-library-preview"
     >
-      <Header>{header}</Header>
+      <Header data-testid="preview-tooltip-title">{header}</Header>
       <Content>
         {fallback ??
           preparedPreviewData.map((entry) => (

@@ -255,17 +255,17 @@ const TemplateDialog: FC<Props> = (props) => {
       >
         <Tab
           label="Template Library"
-          data-testId="template-library-tab"
+          data-testid="template-library-tab"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
         />
         <Tab
           label="Functional Groups"
-          data-testId="functional-groups-tab"
+          data-testid="functional-groups-tab"
           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
         />
         <Tab
           label="Salts and Solvents"
-          data-testId="salts-and-solvents-tab"
+          data-testid="salts-and-solvents-tab"
           {...a11yProps(TemplateTabs.SaltsAndSolvents)}
         />
       </Tabs>

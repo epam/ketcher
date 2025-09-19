@@ -158,6 +158,7 @@ const MonomerConnection = ({
       modalWidth="358px"
       expanded={modalExpanded}
       setExpanded={setModalExpanded}
+      testId="monomer-connection-modal"
     >
       <Modal.Content>
         <ModalContent>

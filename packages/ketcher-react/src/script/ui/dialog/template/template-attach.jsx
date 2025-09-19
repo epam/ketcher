@@ -313,7 +313,7 @@ class Attach extends Component {
               placeholder="template"
             />
             <span>Selected attachment points</span>
-            <AttachmentOutput data-testId="attach-output">
+            <AttachmentOutput data-testid="attach-output">
               Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
               <strong>{bondid}</strong>
             </AttachmentOutput>
@@ -322,7 +322,7 @@ class Attach extends Component {
                 variant="outlined"
                 onClick={this.props.onCancel}
                 className={classes.button}
-                data-testId="template-cancel-button"
+                data-testid="template-cancel-button"
               >
                 Cancel
               </CancelButton>

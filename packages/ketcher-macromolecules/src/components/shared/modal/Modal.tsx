@@ -105,6 +105,7 @@ export const Modal = ({
   const paperProps = useMemo(
     () => ({
       testId,
+      'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',

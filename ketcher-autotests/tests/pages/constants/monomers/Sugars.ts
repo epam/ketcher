@@ -52,6 +52,10 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     alias: 'nC62r',
     testId: 'nC62r___2-O-(6-aminohexyl)ribose',
   },
+  Sugar: {
+    alias: 'Sugar',
+    testId: 'Sugar___Sugar Test monomer',
+  },
   UNA: {
     alias: 'UNA',
     testId: "UNA___2'-3'-Unlocked-ribose",

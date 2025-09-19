@@ -59,7 +59,7 @@ const PresetPreview = ({ className }: Props) => {
       style={{ alignItems: 'flex-start' }}
       data-testid="polymer-library-preview"
     >
-      <PresetName>{presetName}</PresetName>
+      <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
       {monomers.map(
         (monomer, index) =>
           monomer && (

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1" BoundingBox="248.372894 228.562500 274.587738 222.479874">
+        <fragment id="4">
+            <n id="10" NodeType="Fragment">
+                <fragment id="11">
+                    <n id="6" p="26.214838 13.582635"/>
+                    <n id="12" NodeType="ExternalConnectionPoint"/>
+                    <n id="7" p="52.194843 -1.417365"/>
+                    <b id="8" B="6" E="7"/>
+                    <b id="14" B="12" E="6"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>AminoAcid44</s>
+                </t>
+            </n>
+            <n id="5" Element="1" p="0.000000 -0.000000">
+                <t p="0.000000 -0.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">H</s>
+                </t>
+            </n>
+            <b id="13" B="5" E="10"/>
+        </fragment>
+    </page>
+</CDXML>

@@ -219,7 +219,7 @@ export async function dragTo(
   element: Locator,
   target: ClickTarget,
 ) {
-  await element.hover();
+  await element.hover({ force: true });
   await page.mouse.down();
   await waitForRender(page, async () => {
     if ('x' in target && 'y' in target) {

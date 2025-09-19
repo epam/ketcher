@@ -31,6 +31,7 @@ Object {
         <div
           aria-labelledby="«r0»"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
+          data-testid="openStructureModal"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
           testid="openStructureModal"

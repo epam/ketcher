@@ -10,6 +10,10 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   A6OH: { alias: 'A6OH', testId: 'A6OH___6-amino-hexanol' },
   Az: { alias: 'Az', testId: 'Az___4-azidobutyric acid' },
   B7: { alias: 'B7', testId: 'B7___Biotin' },
+  CHEM: {
+    alias: 'CHEM',
+    testId: 'CHEM___CHEM Test monomer',
+  },
   DOTA: { alias: 'DOTA', testId: 'DOTA___Tetraxetan' },
   EG: { alias: 'EG', testId: 'EG___Ethylene Glycol' },
   F1: { alias: 'F1', testId: '' },

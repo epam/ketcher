@@ -1,79 +1,31 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { test } from '@fixtures';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openFileAndAddToCanvasAsNewProject,
-  openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndOpenAsNewProject,
-  pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils/files/readFile';
 import {
-  MacroFileType,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
-  takeElementScreenshot,
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import {
-  bondTwoMonomers,
-  getBondLocator,
-} from '@utils/macromolecules/polymerBond';
-import {
-  clickOnCanvas,
-  dragTo,
-  MolFileFormat,
-  SdfFileFormat,
-  SequenceFileFormat,
-  waitForMonomerPreview,
-} from '@utils/index';
-import {
-  createMonomer,
-  CreateMonomerDialog,
-} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { clickOnCanvas } from '@utils/index';
+import { createMonomer } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   AminoAcidNaturalAnalogue,
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
-import {
-  getMonomerLocator,
-  getSymbolLocator,
-  MonomerAttachmentPoint,
-} from '@utils/macromolecules/monomer';
-import { Library } from '@tests/pages/macromolecules/Library';
-import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Base } from '@tests/pages/constants/monomers/Bases';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
-import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
-import { Chem } from '@tests/pages/constants/monomers/Chem';
-import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { collapseMonomer } from '@utils/canvas/monomer/helpers';
 import {
   FileType,
   verifyFileExport,
-  verifyHELMExport,
-  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  PeptideLetterCodeType,
-  SequenceMonomerType,
-} from '@tests/pages/constants/monomers/Constants';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;

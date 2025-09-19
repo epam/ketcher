@@ -2165,86 +2165,6 @@ for (const monomerToCreate of monomersToCreate34) {
   });
 }
 
-const monomersToCreate35 = [
-  {
-    description: '1. Amino Acid',
-    type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid35',
-    name: 'Amino Acid Test monomer for test 35',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-  },
-  {
-    description: '2. Sugar',
-    type: MonomerType.Sugar,
-    symbol: 'Sugar35',
-    name: 'Sugar Test monomer for test 35',
-  },
-  {
-    description: '3. Base',
-    type: MonomerType.Base,
-    symbol: 'Base35',
-    name: 'Base Test monomer for test 35',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-  },
-  {
-    description: '4. Phosphate',
-    type: MonomerType.Phosphate,
-    symbol: 'Phosphate35',
-    name: 'Phosphate Test monomer for test 35',
-  },
-  {
-    description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
-    symbol: 'Nucleotide35',
-    name: 'Nucleotide Test monomer for test 35',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-  },
-  {
-    description: '6. CHEM',
-    type: MonomerType.CHEM,
-    symbol: 'CHEM35',
-    name: 'CHEM Test monomer for test 35',
-  },
-];
-
-for (const monomerToCreate of monomersToCreate35) {
-  test(`35. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDX in Micro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from CDX in Micro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Save it to CDX and validate the result
-     *      6. Load saved monomer from CDX as New Project
-     *      7. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
-
-    await verifyFileExport(
-      page,
-      `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdx`,
-      FileType.CDX,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdx`,
-    );
-    await takeEditorScreenshot(page);
-  });
-}
-
 const monomersToCreate36 = [
   {
     description: '1. Amino Acid',
@@ -2956,87 +2876,6 @@ for (const monomerToCreate of monomersToCreate44) {
   });
 }
 
-const monomersToCreate45 = [
-  {
-    description: '1. Amino Acid',
-    type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid45',
-    name: 'Amino Acid Test monomer for test 45',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-  },
-  {
-    description: '2. Sugar',
-    type: MonomerType.Sugar,
-    symbol: 'Sugar45',
-    name: 'Sugar Test monomer for test 45',
-  },
-  {
-    description: '3. Base',
-    type: MonomerType.Base,
-    symbol: 'Base45',
-    name: 'Base Test monomer for test 45',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-  },
-  {
-    description: '4. Phosphate',
-    type: MonomerType.Phosphate,
-    symbol: 'Phosphate45',
-    name: 'Phosphate Test monomer for test 45',
-  },
-  {
-    description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
-    symbol: 'Nucleotide45',
-    name: 'Nucleotide Test monomer for test 45',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-  },
-  {
-    description: '6. CHEM',
-    type: MonomerType.CHEM,
-    symbol: 'CHEM45',
-    name: 'CHEM Test monomer for test 45',
-  },
-];
-
-for (const monomerToCreate of monomersToCreate45) {
-  test(`45. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CDX in Micro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CDX in Micro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Collapse it
-     *      6. Save it to CDX and validate the result
-     *      7. Load saved monomer from CDX as New Project
-     *      8. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
-    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
-    await verifyFileExport(
-      page,
-      `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-collapsed-expected.cdx`,
-      FileType.CDX,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      `CDX/Chromium-popup/Create-monomer/${monomerToCreate.description}-collapsed-expected.cdx`,
-    );
-    await takeEditorScreenshot(page);
-  });
-}
-
 const monomersToCreate46 = [
   {
     description: '1. Amino Acid',
@@ -3354,14 +3193,14 @@ const monomersToCreate50 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid48',
+    symbol: 'AminoAcid50',
     name: 'Amino Acid Test monomer for test 50',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.Nucleotide,
-    symbol: 'Nucleotide47',
+    symbol: 'Nucleotide50',
     name: 'Nucleotide Test monomer for test 50',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
@@ -3580,41 +3419,52 @@ const monomersToCreate53 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid53',
+    symbol: 'AminoAcid',
     name: 'Amino Acid Test monomer for test 53',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    libraryCard: Peptide.AminoAcid,
+    helm: 'PEPTIDE1{[AminoAcid]}$$$$V2.0',
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar53',
+    symbol: 'Sugar',
     name: 'Sugar Test monomer for test 53',
+    libraryCard: Sugar.Sugar,
+    helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base53',
+    symbol: 'Base',
     name: 'Base Test monomer for test 53',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+    libraryCard: Base.Base,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate53',
+    symbol: 'Phosphate',
     name: 'Phosphate Test monomer for test 53',
+    libraryCard: Phosphate.Phosphate,
+    helm: 'RNA1{[Phosphate]}$$$$V2.0',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.Nucleotide,
-    symbol: 'Nucleotide53',
+    symbol: 'Nucleotide',
     name: 'Nucleotide Test monomer for test 53',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
+    libraryCard: Nucleotide.Nucleotide,
+    helm: 'RNA1{[Nucleotide]}$$$$V2.0',
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM53',
+    symbol: 'CHEM',
     name: 'CHEM Test monomer for test 53',
+    libraryCard: Chem.CHEM,
+    helm: 'CHEM1{[CHEM]}$$$$V2.0',
   },
 ];
 

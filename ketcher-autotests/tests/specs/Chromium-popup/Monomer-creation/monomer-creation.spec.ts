@@ -1415,7 +1415,49 @@ for (const monomerToCreate of monomersToCreate) {
   });
 }
 
-for (const monomerToCreate of monomersToCreate) {
+const monomersToCreate25 = [
+  {
+    description: '1. Amino Acid',
+    type: MonomerType.AminoAcid,
+    symbol: 'AminoAcid25',
+    name: 'Amino Acid Test monomer for test 25',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  },
+  {
+    description: '2. Sugar',
+    type: MonomerType.Sugar,
+    symbol: 'Sugar25',
+    name: 'Sugar Test monomer for test 25',
+  },
+  {
+    description: '3. Base',
+    type: MonomerType.Base,
+    symbol: 'Base25',
+    name: 'Base Test monomer for test 25',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '4. Phosphate',
+    type: MonomerType.Phosphate,
+    symbol: 'Phosphate25',
+    name: 'Phosphate Test monomer for test 25',
+  },
+  {
+    description: '5. Nucleotide',
+    type: MonomerType.Nucleotide,
+    symbol: 'Nucleotide25',
+    name: 'Nucleotide Test monomer for test 25',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  },
+  {
+    description: '6. CHEM',
+    type: MonomerType.CHEM,
+    symbol: 'CHEM25',
+    name: 'CHEM Test monomer for test 25',
+  },
+];
+
+for (const monomerToCreate of monomersToCreate25) {
   test(`25. Check that created ${monomerToCreate.description} monomer can be contracted and expanded on canvas`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1435,26 +1477,15 @@ for (const monomerToCreate of monomersToCreate) {
      *
      * Version 3.7
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    if (await Library(page).isMonomerExist(monomerToCreate.libraryCard)) {
-      await Library(page).dragMonomerOnCanvas(monomerToCreate.libraryCard, {
-        x: 0,
-        y: 0,
-        fromCenter: true,
-      });
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    } else {
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+    await prepareMoleculeForMonomerCreation(page, ['0']);
 
-      await createMonomer(page, {
-        ...monomerToCreate,
-      });
-      await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
-      await getAtomLocator(page, { atomId: 0 }).click();
-      await CommonLeftToolbar(page).selectEraseTool();
-    }
+    await createMonomer(page, {
+      ...monomerToCreate,
+    });
+    await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
+    await getAtomLocator(page, { atomId: 0 }).click();
+    await CommonLeftToolbar(page).selectEraseTool();
 
     const monomerOnMicro = getAbbreviationLocator(page, {
       name: monomerToCreate.symbol,
@@ -3060,8 +3091,8 @@ const monomersToCreate48 = [
   {
     description: '5. Nucleotide',
     type: MonomerType.Nucleotide,
-    symbol: 'Nucleotide47',
-    name: 'Nucleotide Test monomer for test 49',
+    symbol: 'Nucleotide48',
+    name: 'Nucleotide Test monomer for test 48',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
 ];

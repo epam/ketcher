@@ -25,14 +25,13 @@ const useIDTAliasesTextForMonomer = ({
 
     const { base, modifications } = idtAliases;
 
+    if (!modifications) {
+      return base;
+    }
+    const { endpoint5, internal, endpoint3 } = modifications;
+
     // For preview on canvas
     if (attachmentPointsToBonds) {
-      if (!modifications) {
-        return base;
-      }
-
-      const { endpoint5, internal, endpoint3 } = modifications;
-
       const { R1, R2 } = attachmentPointsToBonds;
       // Handle phosphate exclusively
       if (monomerClass === KetMonomerClass.Phosphate) {
@@ -57,15 +56,12 @@ const useIDTAliasesTextForMonomer = ({
     }
 
     // For preview in library
-    if (!modifications) {
-      return base;
-    }
 
     const allModificationsHaveSameBase = Object.values(modifications).every(
       (modification) => modification.includes(base),
     );
 
-    if (allModificationsHaveSameBase) {
+    if (endpoint3 && endpoint5 && internal && allModificationsHaveSameBase) {
       return base;
     }
 

@@ -106,7 +106,15 @@ const assembleMenuItems = (
                 <>{icon}</>
               </span>
             )}
-            <span className="context_menu-text">{title}</span>
+            <span
+              className={
+                name === 'delete'
+                  ? 'context_menu-delete-text'
+                  : 'context_menu-text'
+              }
+            >
+              {title}
+            </span>
           </Item>
         );
       items.push(item);

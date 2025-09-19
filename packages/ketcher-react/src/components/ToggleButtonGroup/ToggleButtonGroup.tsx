@@ -17,10 +17,10 @@ interface ToggleButtonGroupProps<T> {
 
 const BUTTON_HEIGHT = 28;
 const BUTTON_MARGIN = 2;
-const GRID_GAP = 4;
+const GRID_GAP = 5;
 const GRID_COLUMNS = 4;
-const SINGLE_BUTTON_WIDTH = 53;
-const TWO_BUTTON_GRID_COLUMNS = '53px 78px';
+const SINGLE_BUTTON_WIDTH = 51;
+const TWO_BUTTON_GRID_COLUMNS = '51px 74px';
 
 export default function ButtonGroup<T>({
   buttons,
@@ -73,37 +73,34 @@ export default function ButtonGroup<T>({
       rowGap: hasNumeric && isTwoTextButtons ? 0 : undefined,
       flexWrap: hasNumeric && isTwoTextButtons ? undefined : ('wrap' as const),
       flexDirection: hasNumeric ? undefined : ('column' as const),
+      gap: !hasNumeric ? GRID_GAP : undefined,
     }),
     [hasNumeric, isTwoTextButtons],
   );
 
   const getTextButtonStyles = useCallback(
-    (_buttonValue: T) => ({
-      display: 'flex' as const,
-      flex:
-        hasNumeric && !isTwoTextButtons && !isSingleTextButton
-          ? ('1 0 45%' as const)
-          : undefined,
-      width:
-        hasNumeric && isSingleTextButton
-          ? SINGLE_BUTTON_WIDTH
-          : hasNumeric && isTwoTextButtons
-          ? undefined
-          : !hasNumeric
-          ? 'calc(100% - 3px)'
-          : '100%',
-      height: BUTTON_HEIGHT,
-      margin:
-        hasNumeric && isTwoTextButtons
-          ? '0 0 0 0'
-          : hasNumeric && isSingleTextButton
-          ? 0
-          : `${BUTTON_MARGIN}px`,
-      gap: hasNumeric && isTwoTextButtons ? 0 : undefined,
-      borderRadius: '4px',
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-    }),
+    (_buttonValue: T) => {
+      const isGridLayout = hasNumeric && isTwoTextButtons;
+      const isMultipleTextButtons =
+        hasNumeric && !isTwoTextButtons && !isSingleTextButton;
+
+      return {
+        display: 'flex' as const,
+        flex: isMultipleTextButtons ? ('1 0 45%' as const) : undefined,
+        width:
+          hasNumeric && isSingleTextButton
+            ? SINGLE_BUTTON_WIDTH
+            : isGridLayout
+            ? undefined
+            : '100%',
+        height: BUTTON_HEIGHT,
+        margin: isGridLayout ? '0 0 0 0' : 0,
+        gap: isGridLayout ? 0 : undefined,
+        borderRadius: '4px',
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+      };
+    },
     [hasNumeric, isTwoTextButtons, isSingleTextButton],
   );
 

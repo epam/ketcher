@@ -93,7 +93,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             : 'Edit...'}
         </span>
       </Item>
-
+      <Separator />
       {bondNamesWithoutEmptyValue.map((name) => {
         const iconName = getIconName(name);
         const classNames = styles.sameGroup;
@@ -113,6 +113,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           </Item>
         );
       })}
+      <Separator />
 
       <Submenu
         {...props}

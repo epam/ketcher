@@ -506,7 +506,10 @@ class ReBond extends ReObject {
 
     bondPathElement.setAttribute('data-testid', 'bond');
     bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
-    bondPathElement.setAttribute('data-bondtype', bond.type);
+    bondPathElement.setAttribute(
+      'data-bondtype',
+      bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
+    );
     bondPathElement.setAttribute('data-bondstereo', bond.stereo);
     bondPathElement.setAttribute('data-fromatomid', bond.begin);
     bondPathElement.setAttribute('data-toatomid', bond.end);

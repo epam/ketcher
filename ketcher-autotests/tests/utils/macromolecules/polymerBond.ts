@@ -701,12 +701,15 @@ export function getBondLocator(
   if (toConnectionPoint !== undefined) {
     attributes['data-toconnectionpoint'] = toConnectionPoint;
   }
-  if (fromAtomId !== undefined)
+  if (fromAtomId !== undefined) {
     attributes['data-fromatomid'] = String(fromAtomId);
-  if (fromSGroupId !== undefined)
+  }
+  if (fromSGroupId !== undefined) {
     attributes['data-fromsgroupid'] = String(fromSGroupId);
-  if (toSGroupId !== undefined)
+  }
+  if (toSGroupId !== undefined) {
     attributes['data-tosgroupid'] = String(toSGroupId);
+  }
 
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)

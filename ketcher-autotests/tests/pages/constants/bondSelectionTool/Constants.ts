@@ -36,8 +36,8 @@ export enum MicroBondDataIds {
   DoubleAromatic = '',
   Dative = '9',
   Hydrogen = '10',
-  SingleUp = '1',
-  SingleDown = '1',
-  SingleUpDown = '1',
-  DoubleCisTrans = '2',
+  SingleUp = '13',
+  SingleDown = '23',
+  SingleUpDown = '19',
+  DoubleCisTrans = '18',
 }

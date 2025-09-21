@@ -100,7 +100,6 @@ import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Const
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
-
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
   const n = index ?? 0;
@@ -1355,10 +1354,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
@@ -1762,7 +1761,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load IDT from paste from clipboard way: (YY:00330067)
      */
     await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).close();
   });
@@ -1789,10 +1789,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

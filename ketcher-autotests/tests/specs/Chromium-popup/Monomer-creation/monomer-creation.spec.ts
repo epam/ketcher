@@ -3354,7 +3354,6 @@ for (const monomerToCreate of monomersToCreate51) {
      *
      * Version 3.7
      */
-    const errorMessage = 'Convert error! Sequence saver:';
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await prepareMoleculeForMonomerCreation(page, ['0']);
 
@@ -3369,9 +3368,8 @@ for (const monomerToCreate of monomersToCreate51) {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await expect(page.getByTestId('info-modal-body')).toContainText(
-      errorMessage,
-    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Sequence saver:');
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

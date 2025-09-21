@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -266,7 +266,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (1-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -279,8 +279,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  await takeEditorScreenshot(page);
-
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+  );
   await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
 });
@@ -293,7 +295,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (3-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -306,7 +308,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
-  await takeEditorScreenshot(page);
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
+  );
 
   await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();

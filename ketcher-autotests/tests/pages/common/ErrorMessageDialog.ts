@@ -15,6 +15,9 @@ export const ErrorMessageDialog = (page: Page) => {
 
   return {
     ...locators,
+    async isVisible() {
+      return await locators.infoModalWindow.isVisible();
+    },
 
     async close() {
       await locators.infoModalClose.click();
@@ -22,7 +25,7 @@ export const ErrorMessageDialog = (page: Page) => {
     },
 
     async getErrorMessage() {
-      await locators.infoModalBody.textContent();
+      return await locators.infoModalBody.textContent();
     },
   };
 };

@@ -41,7 +41,7 @@ class Portal extends Component<Props> {
     this.isElementInDom = false;
 
     if (this.props.testId) {
-      this.element.setAttribute('data-testId', this.props.testId);
+      this.element.setAttribute('data-testid', this.props.testId);
     }
   }
 

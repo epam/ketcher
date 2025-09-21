@@ -17,7 +17,12 @@ export const ErrorModal = () => {
     dispatch(closeErrorModal());
   };
   return (
-    <Modal isOpen={isModalOpen} title={errorTitle} onClose={onClose}>
+    <Modal
+      isOpen={isModalOpen}
+      title={errorTitle}
+      onClose={onClose}
+      testId="info-modal-window"
+    >
       <Modal.Content>
         <ErrorTextWrapper data-testid="info-modal-body">
           {errorMessage}

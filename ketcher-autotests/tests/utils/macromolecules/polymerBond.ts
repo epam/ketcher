@@ -47,7 +47,7 @@ export async function bondTwoMonomers(
   await secondMonomerElement.hover({ force: true });
   await page.mouse.up();
   await hideMonomerPreview(page);
-  const dialog = page.getByRole('dialog');
+  const dialog = page.getByTestId('monomer-connection-modal');
   if ((await dialog.isVisible()) && needSelectAttachmentPoint) {
     if (connectTitle1) {
       await page.locator(`button[title='${connectTitle1}']`).nth(0).click();

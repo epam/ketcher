@@ -218,6 +218,23 @@ export const Library = (page: Page) => {
       await getElement(monomer.testId).hover();
     },
 
+    async isMonomerExist(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ): Promise<boolean> {
+      const location = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      if (selectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLocation(location);
+      }
+
+      return await getElement(monomer.testId).isVisible();
+    },
+
     /** Locator of the arrow button (autochain) on the monomer card */
     getMonomerAutochainButton(monomer: Monomer): Locator {
       return page.getByTestId(monomer.testId).locator('.autochain');

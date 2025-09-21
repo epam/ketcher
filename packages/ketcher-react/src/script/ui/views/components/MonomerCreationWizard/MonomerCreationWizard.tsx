@@ -484,6 +484,7 @@ const MonomerCreationWizard = () => {
                   className={styles.input}
                   options={monomerTypeSelectOptions}
                   placeholder="Select monomer type"
+                  data-testid="type-select"
                   value={type}
                   onChange={(value) => handleFieldChange('type', value)}
                   error={errors.type}
@@ -498,6 +499,7 @@ const MonomerCreationWizard = () => {
                   type="text"
                   className={clsx(styles.input, errors.symbol && styles.error)}
                   placeholder="e.g. PEG-2"
+                  data-testid="symbol-input"
                   value={symbol}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('symbol', event.target.value)
@@ -514,6 +516,7 @@ const MonomerCreationWizard = () => {
                   className={clsx(styles.input, errors.name && styles.error)}
                   placeholder="e.g. Diethylene Glycol"
                   value={name}
+                  data-testid="name-input"
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('name', event.target.value)
                   }
@@ -575,10 +578,18 @@ const MonomerCreationWizard = () => {
           )}
 
         <div className={styles.buttonsContainer}>
-          <button className={styles.buttonDiscard} onClick={handleDiscard}>
+          <button
+            className={styles.buttonDiscard}
+            onClick={handleDiscard}
+            data-testid="discard-button"
+          >
             Discard
           </button>
-          <button className={styles.buttonSubmit} onClick={handleSubmit}>
+          <button
+            className={styles.buttonSubmit}
+            onClick={handleSubmit}
+            data-testid="submit-button"
+          >
             Submit
           </button>
         </div>

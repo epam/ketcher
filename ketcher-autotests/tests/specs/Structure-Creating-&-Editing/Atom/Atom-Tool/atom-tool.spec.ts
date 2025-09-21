@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test, Page } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -21,7 +21,6 @@ import {
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   cutAndPaste,
@@ -46,13 +45,9 @@ import {
   PeriodicTableElement,
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const X_DELTA_ONE = 100;
-
-async function clickAtomShortcut(page: Page, labelKey: string) {
-  await page.keyboard.press(labelKey);
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 test.describe('Atom Tool', () => {
   let page: Page;
@@ -90,7 +85,7 @@ test.describe('Atom Tool', () => {
     const extendedTableButton = RightToolbar(page).extendedTableButton;
 
     await extendedTableButton.click();
-    await takeEditorScreenshot(page);
+    await expect(RightToolbar(page).extendedTableButton).toBeEnabled();
   });
 
   test('Periodic table-selecting Atom in palette', async () => {
@@ -153,7 +148,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -187,7 +182,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -570,15 +565,18 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-5262
     Description: The selected atom appeared on the canvas
     */
-    const atomShortcuts = ['a', 'q', 'r', 'k', 'm', 'x'];
+    const atomShortcuts = ['A', 'Q', 'R', 'K', 'M', 'X'];
 
     for (const labelKey of atomShortcuts) {
+      await CommonTopLeftToolbar(page).clearCanvas();
+      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await clickOnCanvas(page, 0, 0);
       await waitForRender(page, async () => {
-        await clickAtomShortcut(page, labelKey);
-        await resetCurrentTool(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool();
-        await takeEditorScreenshot(page);
+        await page.keyboard.press(labelKey);
       });
+      await clickInTheMiddleOfTheScreen(page);
+      const atom = getAtomLocator(page, { atomLabel: labelKey });
+      expect(await atom.count()).toEqual(1);
     }
   });
 

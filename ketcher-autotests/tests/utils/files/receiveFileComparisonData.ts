@@ -115,6 +115,7 @@ export async function verifyFileExport(
         (line) =>
           !line.includes('-INDIGO-') &&
           !line.includes('$DATM') &&
+          !line.includes('$MDL') &&
           !line.includes('Ketcher'),
       );
     }

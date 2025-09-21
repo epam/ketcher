@@ -37,7 +37,6 @@ import {
   MolFileFormat,
   ZoomOutByKeyboard,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { delay, selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -49,7 +48,6 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -99,6 +97,8 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -121,7 +121,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings();
@@ -205,7 +204,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await MiewDialog(page).closeByX();
     await disableViewOnlyModeBySetOptions(page);
   });
 
@@ -310,6 +309,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).closeWindowButton.click();
   });
 
   test('Case 9: The reaction can be saved to MOL V3000', async () => {
@@ -685,6 +685,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).closeWindowButton.click();
   });
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
@@ -707,7 +708,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -792,6 +793,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
+    await pressButton(page, 'Reconnect');
   });
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
@@ -1401,6 +1403,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
@@ -1697,7 +1701,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await copyToClipboardByIcon(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
@@ -1826,8 +1830,18 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      '(YY:00330067)',
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toBe(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Case 66: Sugar R should not save in the IDT format', async () => {
@@ -1857,5 +1871,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 });

@@ -1,5 +1,5 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectRectangle } from 'application/editor/internal';
+import { CoreEditor, SelectBase } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -404,7 +404,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectRectangle) cursor = 'move';
+    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)
@@ -486,6 +486,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.editorEvents.mouseOnMoveMonomer.dispatch(event);
       })
       .on('mouseleave', (event) => {
+        if (event.relatedTarget?.__data__ instanceof AttachmentPoint) {
+          return;
+        }
+
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.editorEvents.mouseLeaveMonomer.dispatch(event);
       })

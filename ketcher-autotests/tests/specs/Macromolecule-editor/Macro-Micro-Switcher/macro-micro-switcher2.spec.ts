@@ -31,12 +31,10 @@ import {
   Arrows,
   Pluses,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -423,7 +421,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await copyToClipboardByIcon(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -673,7 +671,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

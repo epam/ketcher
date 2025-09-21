@@ -121,9 +121,13 @@ const FooterContent = ({ data, tab }) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
-  if (tab === TemplateTabs.SaltsAndSolvents) {
-    return clickToAddToCanvas;
-  }
+  const filename =
+    tab === TemplateTabs.TemplateLibrary
+      ? 'ketcher-tmpls.sdf'
+      : tab === TemplateTabs.FunctionalGroupLibrary
+      ? 'ketcher-fg-tmpls.sdf'
+      : 'ketcher-salts-solvents.sdf';
+
   return (
     <div
       style={{
@@ -138,11 +142,7 @@ const FooterContent = ({ data, tab }) => {
         data={data}
         className={classes.saveButton}
         testId="save-to-sdf-button"
-        filename={
-          tab === TemplateTabs.TemplateLibrary
-            ? 'ketcher-tmpls.sdf'
-            : 'ketcher-fg-tmpls.sdf'
-        }
+        filename={filename}
       >
         Save to SDF
       </SaveButton>
@@ -255,17 +255,17 @@ const TemplateDialog: FC<Props> = (props) => {
       >
         <Tab
           label="Template Library"
-          data-testId="template-library-tab"
+          data-testid="template-library-tab"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
         />
         <Tab
           label="Functional Groups"
-          data-testId="functional-groups-tab"
+          data-testid="functional-groups-tab"
           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
         />
         <Tab
           label="Salts and Solvents"
-          data-testId="salts-and-solvents-tab"
+          data-testid="salts-and-solvents-tab"
           {...a11yProps(TemplateTabs.SaltsAndSolvents)}
         />
       </Tabs>

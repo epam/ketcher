@@ -100,9 +100,6 @@ export const SequenceItemContextMenu = ({
     selectedMonomers?.length > 0 && isAntisenseOptionVisible(selectedMonomers);
   const isHydrogenBondBlockVisible =
     !isEstablishHydrogenBondDisabled(selections) || hasHydrogenBonds;
-  const isModifyBlockVisible =
-    !!modifyAminoAcidsMenuItems.length ||
-    (menuProps?.isSelectedOnlyNucleoelements && !menuProps.hasAntisense);
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -186,7 +183,6 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
       title: 'Remove hydrogen bonds',
-      separator: isModifyBlockVisible,
       disabled: ({
         props,
       }: {
@@ -228,6 +224,7 @@ export const SequenceItemContextMenu = ({
       disabled: false,
       hidden: !modifyAminoAcidsMenuItems.length,
       subMenuItems: modifyAminoAcidsMenuItems,
+      separator: true,
     },
     {
       name: SequenceItemContextMenuNames.delete,

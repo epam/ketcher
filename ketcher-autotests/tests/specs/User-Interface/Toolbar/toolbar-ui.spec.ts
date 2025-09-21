@@ -10,7 +10,6 @@ import {
   waitForIndigoToLoad,
   keyboardPressOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -61,7 +60,7 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,

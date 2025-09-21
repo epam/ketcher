@@ -17,30 +17,42 @@
 @import '../../style/mixins.less';
 @import '../../style/variables.less';
 
-.button {
+.button.button {
   .btn();
-
+  
   cursor: pointer;
-  height: 24px;
+  height: 28px;
+  border: none;
+  outline: none;
+  box-shadow: none;
   white-space: nowrap;
+  background-color: @color-grey-7;
   font-size: 12px;
-  color: @color-grey-6!important;
-  border-color: @color-grey-6!important;
-  text-transform: none!important;
+  color: @color-text-primary;
+  text-transform: none;
 
   &:hover {
-    color: @color-spec-button-primary-hover!important;
+    color: @color-spec-button-hover;
+    background-color: @color-grey-3;
+  }
+
+  &.selected,
+  &:active {
+    background: @color-primary;
+    color: #fff;
+
+    &:hover {
+      background-color: @color-spec-button-primary-hover;
+    }
   }
 }
 
-.button.selected,
-.button:active {
-  background: @color-primary!important;
-  color: #fff!important;
-
-  &:hover {
-    background-color: @color-spec-button-primary-hover!important;
+:global(.MuiToggleButtonGroup-root) {
+  .button.button {
+    border: none;
   }
 }
 
-
+:global(.MuiToggleButtonGroup-grouped.MuiToggleButtonGroup-grouped) {
+  border: none;
+}

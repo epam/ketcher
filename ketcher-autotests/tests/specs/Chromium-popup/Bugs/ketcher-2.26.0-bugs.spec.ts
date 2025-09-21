@@ -1830,8 +1830,16 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      '(YY:00330067)',
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toBe(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
+    );
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).close();
   });

@@ -498,7 +498,9 @@ class ReBond extends ReObject {
   }
 
   private addTestIds(struct: Struct, bond: Bond) {
-    const bondPathElement = this.path.node;
+    const bondPathElement = this.path.items
+      ? this.path.items[0].node
+      : this.path.node;
 
     if (!bondPathElement) {
       return;

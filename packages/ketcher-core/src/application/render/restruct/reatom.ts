@@ -126,32 +126,56 @@ class ReAtom extends ReObject {
     const ret = this.makeHoverPlate(render);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
-
-    if (render.monomerCreationState) {
-      const { potentialAttachmentPoints } = render.monomerCreationState;
-      const atomId = render.ctab.molecule.atoms.keyOf(this.a);
-
-      if (atomId !== null) {
-        const potentialLeavingGroups = Array.from(
-          potentialAttachmentPoints.values(),
-        );
-
-        const isPotentialAttachmentPointAtom =
-          potentialAttachmentPoints.has(atomId) ||
-          potentialLeavingGroups.some((leavingAtomIds) =>
-            leavingAtomIds.has(atomId),
-          );
-        if (isPotentialAttachmentPointAtom) {
-          const path = this.makeHighlightePlate(render.ctab, {
-            stroke: '#43B5C0',
-            'stroke-dasharray': '- ',
-          });
-          render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
-        }
-      }
-    }
+    this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
+      render,
+    );
 
     return ret;
+  }
+
+  private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
+    render: Render,
+  ) {
+    if (!render.monomerCreationState) {
+      return;
+    }
+
+    const { potentialAttachmentPoints, assignedAttachmentPoints } =
+      render.monomerCreationState;
+    const atomId = render.ctab.molecule.atoms.keyOf(this.a);
+
+    if (atomId === null) {
+      return;
+    }
+
+    const potentialLeavingGroups = Array.from(
+      potentialAttachmentPoints.values(),
+    );
+
+    const isAtomInAssignedAttachmentPoint = Array.from(
+      assignedAttachmentPoints.values(),
+    ).some((atomsPair) => {
+      const [attachmentAtomId, leavingAtomId] = atomsPair;
+      return attachmentAtomId === atomId || leavingAtomId === atomId;
+    });
+
+    if (isAtomInAssignedAttachmentPoint) {
+      return;
+    }
+
+    const isPotentialAttachmentPointAtom =
+      potentialAttachmentPoints.has(atomId) ||
+      this.a.implicitH > 0 ||
+      potentialLeavingGroups.some((leavingAtomIds) =>
+        leavingAtomIds.has(atomId),
+      );
+    if (isPotentialAttachmentPointAtom) {
+      const path = this.makeHighlightePlate(render.ctab, {
+        stroke: '#43B5C0',
+        'stroke-dasharray': '- ',
+      });
+      render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
+    }
   }
 
   setHover(hover: boolean, render: Render) {
@@ -607,19 +631,13 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const {
-        assignedAttachmentPoints,
-        potentialAttachmentPoints,
-        problematicAttachmentPoints,
-      } = render.monomerCreationState;
+      const { assignedAttachmentPoints, problematicAttachmentPoints } =
+        render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const potentialLeavingGroups = Array.from(
-          potentialAttachmentPoints.values(),
-        );
         const [attachmentAtoms, leavingGroups] = Array.from(
           assignedAttachmentPoints.values(),
         ).reduce(

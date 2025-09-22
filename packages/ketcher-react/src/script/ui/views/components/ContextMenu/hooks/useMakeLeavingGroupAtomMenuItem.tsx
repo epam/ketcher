@@ -28,17 +28,30 @@ const useMakeLeavingGroupAtomMenuItem = ({
   const { assignedAttachmentPoints, potentialAttachmentPoints } =
     editor.monomerCreationState;
 
+  const isAtomInAssignedAttachmentPoint = Array.from(
+    assignedAttachmentPoints.values(),
+  ).some((atomPair) => {
+    const [attachmentAtomId, leavingAtomId] = atomPair;
+    return (
+      selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
+    );
+  });
+
+  if (isAtomInAssignedAttachmentPoint) {
+    return null;
+  }
+
   // const isAtomPotentialAttachmentPoint = Array.from(
   //   potentialAttachmentPoints.values(),
   // ).includes(selectedAtomId);
+  const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
+  const isPotentialLeavingGroupAtom = Array.from(
+    potentialAttachmentPoints.values(),
+  ).some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
   const isPotentialAttachmentAtom =
-    potentialAttachmentPoints.has(selectedAtomId);
-  const isPotentialLeavingGroupAtom =
-    !isPotentialAttachmentAtom &&
-    Array.from(potentialAttachmentPoints.values()).some((leavingAtomIds) =>
-      leavingAtomIds.has(selectedAtomId),
-    );
+    potentialAttachmentPoints.has(selectedAtomId) ||
+    (implicitHydrogen !== undefined && implicitHydrogen > 0);
 
   // const attachmentPointName = Array.from(assignedAttachmentPoints.keys()).find(
   //   (key) => {
@@ -50,9 +63,9 @@ const useMakeLeavingGroupAtomMenuItem = ({
   //
   // const isAtomAssignedAttachmentPoint = Boolean(attachmentPointName);
 
-  if (!isPotentialAttachmentAtom && !isPotentialLeavingGroupAtom) {
-    return null;
-  }
+  // if (!isPotentialAttachmentAtom && !isPotentialLeavingGroupAtom) {
+  //   return null;
+  // }
 
   // const handleEditClick = () => {
   //   const atom = editor.struct().atoms.get(selectedAtomId);
@@ -85,26 +98,6 @@ const useMakeLeavingGroupAtomMenuItem = ({
 
   const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
 
-  if (isPotentialAttachmentAtom) {
-    const handleMarkConnectionPointAtomClick = () => {
-      assert(selectedAtomId !== undefined);
-
-      editor.assignConnectionPointAtom(selectedAtomId);
-    };
-
-    return (
-      <Item
-        {...props}
-        data-testid="mark-as-connection-point"
-        onClick={handleMarkConnectionPointAtomClick}
-        disabled={attachmentPointsLimitReached}
-      >
-        <Icon name="connectionPoint" className={styles.icon} />
-        Mark as connection point
-      </Item>
-    );
-  }
-
   if (isPotentialLeavingGroupAtom) {
     const handleMarkLeavingGroupAtomClick = () => {
       assert(selectedAtomId !== undefined);
@@ -121,6 +114,26 @@ const useMakeLeavingGroupAtomMenuItem = ({
       >
         <Icon name="leavingGroup" className={styles.icon} />
         Mark as leaving group
+      </Item>
+    );
+  }
+
+  if (isPotentialAttachmentAtom) {
+    const handleMarkConnectionPointAtomClick = () => {
+      assert(selectedAtomId !== undefined);
+
+      editor.assignConnectionPointAtom(selectedAtomId);
+    };
+
+    return (
+      <Item
+        {...props}
+        data-testid="mark-as-connection-point"
+        onClick={handleMarkConnectionPointAtomClick}
+        disabled={attachmentPointsLimitReached}
+      >
+        <Icon name="connectionPoint" className={styles.icon} />
+        Mark as connection point
       </Item>
     );
   }

@@ -22,8 +22,10 @@ import {
   Bond,
   Coordinates,
   Editor as KetcherEditor,
+  Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
   FloatingToolsParams,
+  fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
   fromNewCanvas,
@@ -1007,12 +1009,41 @@ class Editor implements KetcherEditor {
     const potentialLeavingAtoms =
       this.monomerCreationState.potentialAttachmentPoints.get(atomId);
 
-    assert(potentialLeavingAtoms);
+    let leavingAtomId: number;
+    if (potentialLeavingAtoms) {
+      const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
+        .sort((a, b) => a - b)
+        .reduce(
+          (acc, currentAtomId) => {
+            const atom = this.struct().atoms.get(currentAtomId);
+            assert(atom);
 
-    const leavingAtomId = Math.min(...Array.from(potentialLeavingAtoms));
-    const leavingAtom = this.render.ctab.molecule.atoms.get(leavingAtomId);
+            const atomicNumber = Elements.get(atom.label)?.number;
+            if (atomicNumber !== undefined) {
+              const minimalAtomicNumber = acc[0];
+              if (atomicNumber < minimalAtomicNumber) {
+                return [atomicNumber, currentAtomId];
+              }
+            }
 
-    assert(leavingAtom);
+            return acc;
+          },
+          [999, -1] as [number, number],
+        );
+
+      leavingAtomId = minimalAtomicNumberAtomId;
+    } else {
+      const [action, , endAtomId] = fromBondAddition(
+        this.render.ctab,
+        { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
+        atomId,
+        { label: AtomLabel.H },
+      );
+
+      this.update(action, true);
+
+      leavingAtomId = endAtomId;
+    }
 
     const attachmentPointName = getNextFreeAttachmentPoint(
       Array.from(this.monomerCreationState.assignedAttachmentPoints.keys()),

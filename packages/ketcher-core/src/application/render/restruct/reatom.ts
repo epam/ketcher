@@ -684,8 +684,21 @@ class ReAtom extends ReObject {
         });
 
         if (attachmentPointName) {
-          const direction = this.bisectLargestSector(struct);
-          let labelDistance = 20;
+          const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
+          assert(atomsPair);
+          const [attachmentAtomId, leavingGroupAtomId] = atomsPair;
+
+          const attachmentAtom = struct.atoms.get(attachmentAtomId);
+          const leavingGroupAtom = struct.atoms.get(leavingGroupAtomId);
+
+          assert(attachmentAtom);
+          assert(leavingGroupAtom);
+
+          const attachmentPos = attachmentAtom.pp;
+          const leavingGroupPos = leavingGroupAtom.pp;
+          const direction = leavingGroupPos.sub(attachmentPos).normalized();
+
+          let labelDistance = 25;
           for (let i = 0; i < this.visel.exts.length; ++i) {
             labelDistance = Math.max(
               labelDistance,
@@ -769,10 +782,15 @@ class ReAtom extends ReObject {
             },
           );
 
-          labelGroup.click((event: PointerEvent) => {
-            if (!render.monomerCreationState) {
+          labelGroup.mousedown((event: PointerEvent) => {
+            // Right-click
+            if (event.button !== 2) {
               return;
             }
+
+            event.stopPropagation();
+
+            assert(render.monomerCreationState);
 
             render.monomerCreationState.clickedAttachmentPoint =
               attachmentPointName;
@@ -783,8 +801,6 @@ class ReAtom extends ReObject {
               attachmentPointName,
               position: Coordinates.modelToView(this.a.pp),
             };
-
-            event.stopPropagation();
 
             background.attr({ opacity: 1 });
             rLabelElement.attr({ fill: '#ffffff' });

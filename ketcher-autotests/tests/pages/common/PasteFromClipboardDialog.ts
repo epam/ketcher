@@ -65,7 +65,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
     },
 
     async fillTextArea(text: string) {
-      locators.openStructureTextarea.fill(text);
+      await locators.openStructureTextarea.fill(text);
     },
 
     async addToCanvas(

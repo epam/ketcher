@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 import Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -93,12 +93,10 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             : 'Edit...'}
         </span>
       </Item>
-
-      {bondNamesWithoutEmptyValue.map((name, i) => {
+      <Separator />
+      {bondNamesWithoutEmptyValue.map((name) => {
         const iconName = getIconName(name);
-        const classNames =
-          styles.sameGroup +
-          (i === bondNamesWithoutEmptyValue.length - 1 ? styles.devider : '');
+        const classNames = styles.sameGroup;
 
         return (
           <Item
@@ -115,6 +113,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           </Item>
         );
       })}
+      <Separator />
 
       <Submenu
         {...props}
@@ -167,6 +166,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       >
         Edit S-Group...
       </Item>
+      <Separator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>

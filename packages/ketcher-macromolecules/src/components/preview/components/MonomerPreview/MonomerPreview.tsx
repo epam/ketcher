@@ -65,7 +65,11 @@ const MonomerPreview = ({ className }: Props) => {
   return (
     (monomer.struct || isUnresolved) && (
       <Container className={className} data-testid="polymer-library-preview">
-        {monomerName && <MonomerName>{monomerName}</MonomerName>}
+        {monomerName && (
+          <MonomerName data-testid="preview-tooltip-title">
+            {monomerName}
+          </MonomerName>
+        )}
         {isUnresolved ? (
           <UnresolvedMonomerPreview />
         ) : (

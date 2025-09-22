@@ -1254,6 +1254,7 @@ class Editor implements KetcherEditor {
     const atomPair =
       this.monomerCreationState.assignedAttachmentPoints.get(name);
     assert(atomPair);
+    // TODO: Create a correct mapping here
     this.monomerCreationState.potentialAttachmentPoints.set(
       atomPair[0],
       atomPair[1],

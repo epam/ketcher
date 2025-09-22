@@ -41,9 +41,6 @@ const useMakeLeavingGroupAtomMenuItem = ({
     return null;
   }
 
-  // const isAtomPotentialAttachmentPoint = Array.from(
-  //   potentialAttachmentPoints.values(),
-  // ).includes(selectedAtomId);
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
   const isPotentialLeavingGroupAtom = Array.from(
@@ -52,49 +49,6 @@ const useMakeLeavingGroupAtomMenuItem = ({
   const isPotentialAttachmentAtom =
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
-
-  // const attachmentPointName = Array.from(assignedAttachmentPoints.keys()).find(
-  //   (key) => {
-  //     const atomsPair = assignedAttachmentPoints.get(key);
-  //     assert(atomsPair);
-  //     return atomsPair[1] === selectedAtomId;
-  //   },
-  // );
-  //
-  // const isAtomAssignedAttachmentPoint = Boolean(attachmentPointName);
-
-  // if (!isPotentialAttachmentAtom && !isPotentialLeavingGroupAtom) {
-  //   return null;
-  // }
-
-  // const handleEditClick = () => {
-  //   const atom = editor.struct().atoms.get(selectedAtomId);
-  //
-  //   assert(atom);
-  //   assert(attachmentPointName);
-  //
-  //   const attachmentPointEditData: AttachmentPointClickData = {
-  //     atomId: selectedAtomId,
-  //     atomLabel: atom.label,
-  //     attachmentPointName,
-  //     position: Coordinates.modelToView(atom.pp),
-  //   };
-  //
-  //   window.dispatchEvent(
-  //     new CustomEvent<AttachmentPointClickData>(
-  //       MonomerCreationAttachmentPointClickEvent,
-  //       {
-  //         detail: attachmentPointEditData,
-  //       },
-  //     ),
-  //   );
-  // };
-
-  // const handleRemoveClick = () => {
-  //   assert(attachmentPointName);
-  //
-  //   editor.removeAttachmentPoint(attachmentPointName);
-  // };
 
   const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
 
@@ -139,19 +93,6 @@ const useMakeLeavingGroupAtomMenuItem = ({
   }
 
   return null;
-
-  // return isAtomAssignedAttachmentPoint ? (
-  //   <>
-  //     <Item data-testid="edit-connection-point" onClick={handleEditClick}>
-  //       <Icon name="editMenu" className={styles.icon} />
-  //       Edit connection point
-  //     </Item>
-  //     <Item data-testid="remove-assignment" onClick={handleRemoveClick}>
-  //       <Icon name="deleteMenu" className={styles.icon} />
-  //       Remove assignment
-  //     </Item>
-  //   </>
-  // ) :
 };
 
 export default useMakeLeavingGroupAtomMenuItem;

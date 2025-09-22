@@ -748,6 +748,13 @@ class ReAtom extends ReObject {
           const labelGroup = render.paper.set();
           labelGroup.push(background, rLabelElement);
 
+          labelGroup.forEach((element) => {
+            element.node?.setAttribute(
+              'data-attachment-point-name',
+              attachmentPointName,
+            );
+          });
+
           // Add hover handlers
           labelGroup.hover(
             // Mouse enter
@@ -783,40 +790,24 @@ class ReAtom extends ReObject {
           );
 
           labelGroup.mousedown((event: PointerEvent) => {
+            event.stopPropagation();
+
             // Right-click
             if (event.button !== 2) {
               return;
             }
-
-            event.stopPropagation();
 
             assert(render.monomerCreationState);
 
             render.monomerCreationState.clickedAttachmentPoint =
               attachmentPointName;
 
-            const clickData: AttachmentPointClickData = {
-              atomId: aid,
-              atomLabel: this.a.label,
-              attachmentPointName,
-              position: Coordinates.modelToView(this.a.pp),
-            };
-
             background.attr({ opacity: 1 });
             rLabelElement.attr({ fill: '#ffffff' });
-
-            window.dispatchEvent(
-              new CustomEvent<AttachmentPointClickData>(
-                MonomerCreationAttachmentPointClickEvent,
-                {
-                  detail: clickData,
-                },
-              ),
-            );
           });
 
           restruct.addReObjectPath(
-            LayerMap.atom,
+            LayerMap.data,
             this.visel,
             labelGroup,
             ps,

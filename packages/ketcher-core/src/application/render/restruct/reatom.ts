@@ -127,6 +127,30 @@ class ReAtom extends ReObject {
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
 
+    if (render.monomerCreationState) {
+      const { potentialAttachmentPoints } = render.monomerCreationState;
+      const atomId = render.ctab.molecule.atoms.keyOf(this.a);
+
+      if (atomId !== null) {
+        const potentialLeavingGroups = Array.from(
+          potentialAttachmentPoints.values(),
+        );
+
+        const isPotentialAttachmentPointAtom =
+          potentialAttachmentPoints.has(atomId) ||
+          potentialLeavingGroups.some((leavingAtomIds) =>
+            leavingAtomIds.has(atomId),
+          );
+        if (isPotentialAttachmentPointAtom) {
+          const path = this.makeHighlightePlate(render.ctab, {
+            stroke: '#43B5C0',
+            'stroke-dasharray': '- ',
+          });
+          render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+      }
+    }
+
     return ret;
   }
 
@@ -626,16 +650,6 @@ class ReAtom extends ReObject {
             stroke: '#f8dc8f',
             'stroke-width': '2px',
           };
-        } else if (
-          potentialAttachmentPoints.has(aid) ||
-          potentialLeavingGroups.some((leavingAtomIds) =>
-            leavingAtomIds.has(aid),
-          )
-        ) {
-          style = {
-            stroke: '#43B5C0',
-            'stroke-dasharray': '- ',
-          };
         }
 
         if (style) {
@@ -768,7 +782,7 @@ class ReAtom extends ReObject {
           });
 
           restruct.addReObjectPath(
-            LayerMap.data,
+            LayerMap.atom,
             this.visel,
             labelGroup,
             ps,

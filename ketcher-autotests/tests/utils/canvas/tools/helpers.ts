@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { waitForRender } from '@utils';
+import { takeEditorScreenshot, waitForRender } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
@@ -67,6 +67,36 @@ export async function selectWithLasso(
   await waitForRender(page, async () => {
     await page.mouse.up();
   });
+}
+
+export async function selectTAndDeselectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  const steps = 14;
+  const dx = 1;
+  const dy = 1;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const p of coords) {
+    await page.mouse.move(p.x, p.y, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.move(startX + dx, startY + dy, { steps });
+  for (const p of coords) {
+    await page.mouse.move(p.x + dx, p.y + dy, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {

@@ -13,30 +13,29 @@ import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
 import { CoreEditor } from 'application/editor';
-
-export interface SnakeLayoutNode {
-  monomers: BaseMonomer[];
-}
-
-export interface TwoStrandedSnakeLayoutNode {
-  senseNode?: SnakeLayoutNode;
-  antisenseNode?: SnakeLayoutNode;
-  chain: Chain;
-}
+import { SettingsManager } from 'utilities';
+import {
+  ISnakeLayoutModelRow,
+  ISnakeLayoutNode,
+  ITwoStrandedSnakeLayoutNode,
+} from 'domain/entities/snake-layout-model/types';
+import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
 
 export class SnakeLayoutModel {
-  private nodes: TwoStrandedSnakeLayoutNode[] = [];
+  private nodes: ITwoStrandedSnakeLayoutNode[] = [];
+  public chains: SnakeLayoutModelChain[] = [];
   private monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
-    TwoStrandedSnakeLayoutNode
+    ITwoStrandedSnakeLayoutNode
   > = new Map();
 
   constructor(chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
+    this.fillChains();
   }
 
-  private addNode(snakeLayoutNode: SnakeLayoutNode, chain) {
-    const twoStrandedSnakeLayoutNode: TwoStrandedSnakeLayoutNode = {
+  private addNode(snakeLayoutNode: ISnakeLayoutNode, chain) {
+    const twoStrandedSnakeLayoutNode: ITwoStrandedSnakeLayoutNode = {
       senseNode: snakeLayoutNode,
       chain,
     };
@@ -55,7 +54,7 @@ export class SnakeLayoutModel {
     node: SubChainNode,
     isAntisense = false,
   ) {
-    const nodes: SnakeLayoutNode[] = [];
+    const nodes: ISnakeLayoutNode[] = [];
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
@@ -109,9 +108,9 @@ export class SnakeLayoutModel {
       if (!chain.isAntisense) {
         return;
       }
-      let nodesBeforeHydrogenConnectionToBase: SnakeLayoutNode[] = [];
+      let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | TwoStrandedSnakeLayoutNode
+        | ITwoStrandedSnakeLayoutNode
         | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
@@ -260,7 +259,7 @@ export class SnakeLayoutModel {
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | TwoStrandedSnakeLayoutNode
+            | ITwoStrandedSnakeLayoutNode
             | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
@@ -321,8 +320,46 @@ export class SnakeLayoutModel {
   }
 
   public forEachNode(
-    callback: (node: TwoStrandedSnakeLayoutNode, index: number) => void,
+    callback: (node: ITwoStrandedSnakeLayoutNode, index: number) => void,
   ) {
     this.nodes.forEach(callback);
+  }
+
+  public forEachChain(
+    callback: (chain: SnakeLayoutModelChain, index: number) => void,
+  ) {
+    this.chains.forEach(callback);
+  }
+
+  private fillChains() {
+    const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
+    let currentIndexInSequenceModelChain = 0;
+    let currentSequenceModelChain = new SnakeLayoutModelChain();
+    let currentSequenceModelRow: ISnakeLayoutModelRow = {
+      snakeLayoutModelItems: [],
+    };
+    let previousSenseNodeChain: Chain;
+
+    this.nodes.forEach((sequenceModelItem) => {
+      const currentSenseChain = sequenceModelItem.chain;
+
+      if (previousSenseNodeChain !== currentSenseChain) {
+        currentSequenceModelChain = new SnakeLayoutModelChain();
+        this.chains.push(currentSequenceModelChain);
+        currentIndexInSequenceModelChain = 0;
+      }
+
+      if (currentIndexInSequenceModelChain % lineLength === 0) {
+        currentSequenceModelRow = {
+          snakeLayoutModelItems: [],
+        };
+        currentSequenceModelChain.addRow(currentSequenceModelRow);
+      }
+
+      currentSequenceModelRow.snakeLayoutModelItems.push(sequenceModelItem);
+
+      previousSenseNodeChain = currentSenseChain;
+      currentIndexInSequenceModelChain++;
+    });
   }
 }

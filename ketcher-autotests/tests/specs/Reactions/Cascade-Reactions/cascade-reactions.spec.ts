@@ -39,7 +39,6 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function addTail(page: Page, x: number, y: number) {

@@ -1399,10 +1399,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
@@ -1867,10 +1867,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

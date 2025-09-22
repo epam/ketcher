@@ -138,7 +138,7 @@ for (const monomerToCreate of monomersToCreate35) {
     );
     await takeEditorScreenshot(page);
 
-    if (await ErrorMessageDialog(page).infoModalWindow.isVisible()) {
+    if (await ErrorMessageDialog(page).isVisible()) {
       await ErrorMessageDialog(page).close();
       await PasteFromClipboardDialog(page).cancel();
     }
@@ -224,7 +224,7 @@ for (const monomerToCreate of monomersToCreate45) {
     );
     await takeEditorScreenshot(page);
 
-    if (await ErrorMessageDialog(page).infoModalWindow.isVisible()) {
+    if (await ErrorMessageDialog(page).isVisible()) {
       await ErrorMessageDialog(page).close();
       await PasteFromClipboardDialog(page).cancel();
     }

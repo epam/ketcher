@@ -19,6 +19,7 @@ import {
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 test.describe('', () => {
@@ -399,9 +400,9 @@ test.describe('Open and Save InChI file', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\ncore: <reaction> is not a molecule';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -452,9 +453,9 @@ test.describe('Open and Save InChI file', () => {
       '1S/C9H14/c1-3-5-7-9-8-6-4-2/h3,5-9H,4H2,1-2H3/b5-3-,8-6+,9-7+',
       true,
     );
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: 'h' specifier is allowed only for query molecules', " +
@@ -475,9 +476,9 @@ test.describe('Open and Save InChI file', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -493,9 +494,9 @@ test.describe('Open and Save InChI file', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
@@ -524,9 +525,9 @@ test.describe('Open and Save InChI file', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\ninchi-wrapper: Molecule with RGroups cannot be converted into InChI';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);

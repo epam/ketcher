@@ -1074,10 +1074,10 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1136,11 +1136,10 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
         noR1orR2ConnectionPointReplaceMonomer,
         sequence.ReplacementPositions.Center,
       );
-
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1177,10 +1176,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1215,10 +1214,10 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1255,10 +1254,10 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
         sequence.ReplacementPositions.Center,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1295,10 +1294,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1418,10 +1417,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1458,10 +1457,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists

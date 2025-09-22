@@ -516,7 +516,7 @@ test.describe('Import-Saving .fasta Files', () => {
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
-          4. Take screenshot to make sure export is correct
+          4. System should not allow to save and show error message
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
@@ -531,13 +531,10 @@ test.describe('Import-Saving .fasta Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
-      await takeEditorScreenshot(page);
-
-      // test.fixme(
-      //   true,
-      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      // );
-
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Sequence saver: Can't save '%' to sequence format",
+      );
       await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();
@@ -588,13 +585,10 @@ test.describe('Import-Saving .fasta Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
-      await takeEditorScreenshot(page);
-
-      // test.fixme(
-      //   true,
-      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      // );
-
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Sequence saver: Can't save '%' to sequence format",
+      );
       await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();
@@ -645,13 +639,10 @@ test.describe('Import-Saving .fasta Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
-      await takeEditorScreenshot(page);
-
-      // test.fixme(
-      //   true,
-      //   `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      // );
-
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Sequence saver: Can't save '%' to sequence format",
+      );
       await ErrorMessageDialog(page).close();
 
       await SaveStructureDialog(page).cancel();

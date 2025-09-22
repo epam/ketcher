@@ -360,8 +360,11 @@ test.describe('Image files', () => {
        */
       await CommonTopLeftToolbar(page).openFile();
       await openFile(page, `KET/${fileName}.ket`);
-      await PasteFromClipboardDialog(page).addToCanvasButton.click();
-      await takeEditorScreenshot(page);
+      await PasteFromClipboardDialog(page).addToCanvas({
+        errorMessageExpected: true,
+      });
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain('Cannot deserialize input JSON.');
       await ErrorMessageDialog(page).close();
       await OpenStructureDialog(page).close();
     });
@@ -388,12 +391,13 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      const addToCanvasButton =
-        PasteFromClipboardDialog(page).addToCanvasButton;
       await CommonTopLeftToolbar(page).openFile();
       await openFile(page, `KET/${file}`);
-      await addToCanvasButton.click();
-      await takeEditorScreenshot(page);
+      await PasteFromClipboardDialog(page).addToCanvas({
+        errorMessageExpected: true,
+      });
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain('Cannot deserialize input JSON.');
       await ErrorMessageDialog(page).close();
       await OpenStructureDialog(page).close();
     });
@@ -404,11 +408,13 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
-    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, `KET/image-png-159-symbols.ket`);
-    await addToCanvasButton.click();
-    await takeEditorScreenshot(page);
+    await PasteFromClipboardDialog(page).addToCanvas({
+      errorMessageExpected: true,
+    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot deserialize input JSON.');
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).close();
   });
@@ -804,7 +810,8 @@ test.describe('Image files', () => {
        * Description: Error message is displayed - "Unsupported image type"
        */
       await openImageAndAddToCanvas(page, `Images/${fileName}`);
-      await takeEditorScreenshot(page);
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain('Unsupported image type');
       await ErrorMessageDialog(page).close();
     });
   }
@@ -815,7 +822,8 @@ test.describe('Image files', () => {
      * Description: Error message is displayed - "Image should be at least 16x16 pixels"
      */
     await openImageAndAddToCanvas(page, 'Images/image-png-15px.png');
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Image should be at least 16x16 pixels');
     await ErrorMessageDialog(page).close();
   });
 
@@ -2151,8 +2159,11 @@ test.describe('Image files', () => {
      */
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, `CDXML/image-png-169-symbols.cdxml`);
-    await PasteFromClipboardDialog(page).addToCanvasButton.click();
-    await takeEditorScreenshot(page);
+    await PasteFromClipboardDialog(page).addToCanvas({
+      errorMessageExpected: true,
+    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot deserialize input JSON.');
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).close();
   });

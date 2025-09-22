@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -39,7 +39,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -104,8 +104,10 @@ test.describe('Cascade Reactions', () => {
       // error expected
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Molfile version unknown:');
     await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
   });
 
   test('Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed', async () => {
@@ -120,9 +122,12 @@ test.describe('Cascade Reactions', () => {
       // error expected
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header ', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header '",
+    );
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
   });
 
   const testCases = [
@@ -1736,7 +1741,10 @@ test.describe('Cascade Reactions', () => {
          */
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(format);
-        await takeEditorScreenshot(page);
+        const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+        expect(errorMessage).toContain(
+          'Convert error!\ncore: <molecule> is not a base reaction',
+        );
         await ErrorMessageDialog(page).close();
         await SaveStructureDialog(page).cancel();
       });

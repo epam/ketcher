@@ -96,6 +96,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
@@ -239,7 +240,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = getBondLocator(page, {
+      bondType: MicroBondDataIds.SingleDown,
+    }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
@@ -1351,10 +1354,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
@@ -1758,7 +1761,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load IDT from paste from clipboard way: (YY:00330067)
      */
     await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).close();
   });
@@ -1785,10 +1789,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

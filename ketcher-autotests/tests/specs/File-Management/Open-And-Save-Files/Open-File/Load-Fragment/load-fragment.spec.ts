@@ -1,5 +1,6 @@
 import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -137,9 +138,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       false,
     );
 
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +

@@ -1,7 +1,7 @@
 import { BaseMonomer } from 'domain/entities';
-import { SnakeLayoutNode } from 'domain/entities/snake-layout-model/SnakeLayoutModel';
+import { ISnakeLayoutNode } from './types';
 
-export class SingleMonomerSnakeLayoutNode implements SnakeLayoutNode {
+export class SingleMonomerSnakeLayoutNode implements ISnakeLayoutNode {
   constructor(public monomer: BaseMonomer) {}
 
   public get monomers() {

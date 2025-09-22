@@ -104,11 +104,11 @@ import {
 } from 'domain/constants/monomers';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
-  SnakeLayoutModel,
-  SnakeLayoutNode,
-  TwoStrandedSnakeLayoutNode,
-} from 'domain/entities/snake-layout-model/SnakeLayoutModel';
+  ISnakeLayoutNode,
+  ITwoStrandedSnakeLayoutNode,
+} from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
@@ -1706,27 +1706,25 @@ export class DrawingEntitiesManager {
       const snakeLayoutModel = new SnakeLayoutModel(chainsCollection);
       let hasAntisenseInPreviousRow = false;
       let hasRnaInPreviousRow = false;
-      let snakeLayoutNodesInRow: SnakeLayoutNode[] = [];
-      let previousSenseNode: SnakeLayoutNode | undefined;
-      let previousAntisenseNode: SnakeLayoutNode | undefined;
+      let snakeLayoutNodesInRow: ISnakeLayoutNode[] = [];
+      let previousSenseNode: ISnakeLayoutNode | undefined;
+      let previousAntisenseNode: ISnakeLayoutNode | undefined;
       let previousTwoStrandedSnakeLayoutNode:
-        | TwoStrandedSnakeLayoutNode
+        | ITwoStrandedSnakeLayoutNode
         | undefined;
-      let nodeIndexInChain = -1;
 
-      snakeLayoutModel.forEachNode(
-        (twoStrandedSnakeLayoutNode, twoStrandedSnakeLayoutNodeIndex) => {
+      snakeLayoutModel.forEachChain((chain, chainIndex) => {
+        chain.forEachNode((twoStrandedSnakeLayoutNode, nodeIndexInChain) => {
           const senseNode = twoStrandedSnakeLayoutNode.senseNode;
           const antisenseNode = twoStrandedSnakeLayoutNode.antisenseNode;
           const senseNodeChain = twoStrandedSnakeLayoutNode.chain;
           const previousSenseNodeChain =
             previousTwoStrandedSnakeLayoutNode?.chain;
-          const isFirstNodeOverall = twoStrandedSnakeLayoutNodeIndex === 0;
+          const isFirstNodeOverall = chainIndex === 0 && nodeIndexInChain === 0;
           const isNewSenseChain =
             senseNodeChain &&
             previousSenseNodeChain &&
             senseNodeChain !== previousSenseNodeChain;
-          nodeIndexInChain = isNewSenseChain ? 0 : ++nodeIndexInChain;
           const isNewRow =
             !isFirstNodeOverall &&
             (nodeIndexInChain % numberOfCellsInRow === 0 || isNewSenseChain);
@@ -1845,8 +1843,8 @@ export class DrawingEntitiesManager {
           previousSenseNode = senseNode || previousSenseNode;
           previousAntisenseNode = antisenseNode || previousAntisenseNode;
           previousTwoStrandedSnakeLayoutNode = twoStrandedSnakeLayoutNode;
-        },
-      );
+        });
+      });
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);

@@ -1,8 +1,3 @@
-import {
-  AttachmentPointClickData,
-  Coordinates,
-  MonomerCreationAttachmentPointClickEvent,
-} from 'ketcher-core';
 import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { Editor } from 'src/script/editor';
 import assert from 'assert';
@@ -33,83 +28,117 @@ const useMakeLeavingGroupAtomMenuItem = ({
   const { assignedAttachmentPoints, potentialAttachmentPoints } =
     editor.monomerCreationState;
 
-  const isAtomPotentialAttachmentPoint = Array.from(
-    potentialAttachmentPoints.values(),
-  ).includes(selectedAtomId);
+  // const isAtomPotentialAttachmentPoint = Array.from(
+  //   potentialAttachmentPoints.values(),
+  // ).includes(selectedAtomId);
 
-  const attachmentPointName = Array.from(assignedAttachmentPoints.keys()).find(
-    (key) => {
-      const atomsPair = assignedAttachmentPoints.get(key);
-      assert(atomsPair);
-      return atomsPair[1] === selectedAtomId;
-    },
-  );
+  const isPotentialAttachmentAtom =
+    potentialAttachmentPoints.has(selectedAtomId);
+  const isPotentialLeavingGroupAtom =
+    !isPotentialAttachmentAtom &&
+    Array.from(potentialAttachmentPoints.values()).some((leavingAtomIds) =>
+      leavingAtomIds.has(selectedAtomId),
+    );
 
-  const isAtomAssignedAttachmentPoint = Boolean(attachmentPointName);
+  // const attachmentPointName = Array.from(assignedAttachmentPoints.keys()).find(
+  //   (key) => {
+  //     const atomsPair = assignedAttachmentPoints.get(key);
+  //     assert(atomsPair);
+  //     return atomsPair[1] === selectedAtomId;
+  //   },
+  // );
+  //
+  // const isAtomAssignedAttachmentPoint = Boolean(attachmentPointName);
 
-  if (!isAtomPotentialAttachmentPoint && !isAtomAssignedAttachmentPoint) {
+  if (!isPotentialAttachmentAtom && !isPotentialLeavingGroupAtom) {
     return null;
   }
 
+  // const handleEditClick = () => {
+  //   const atom = editor.struct().atoms.get(selectedAtomId);
+  //
+  //   assert(atom);
+  //   assert(attachmentPointName);
+  //
+  //   const attachmentPointEditData: AttachmentPointClickData = {
+  //     atomId: selectedAtomId,
+  //     atomLabel: atom.label,
+  //     attachmentPointName,
+  //     position: Coordinates.modelToView(atom.pp),
+  //   };
+  //
+  //   window.dispatchEvent(
+  //     new CustomEvent<AttachmentPointClickData>(
+  //       MonomerCreationAttachmentPointClickEvent,
+  //       {
+  //         detail: attachmentPointEditData,
+  //       },
+  //     ),
+  //   );
+  // };
+
+  // const handleRemoveClick = () => {
+  //   assert(attachmentPointName);
+  //
+  //   editor.removeAttachmentPoint(attachmentPointName);
+  // };
+
   const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
 
-  const handleMakeLeavingGroupAtomClick = () => {
-    assert(selectedAtomId !== undefined);
+  if (isPotentialAttachmentAtom) {
+    const handleMarkConnectionPointAtomClick = () => {
+      assert(selectedAtomId !== undefined);
 
-    editor.assignLeavingGroupAtom(selectedAtomId);
-  };
-
-  const handleEditClick = () => {
-    const atom = editor.struct().atoms.get(selectedAtomId);
-
-    assert(atom);
-    assert(attachmentPointName);
-
-    const attachmentPointEditData: AttachmentPointClickData = {
-      atomId: selectedAtomId,
-      atomLabel: atom.label,
-      attachmentPointName,
-      position: Coordinates.modelToView(atom.pp),
+      editor.assignConnectionPointAtom(selectedAtomId);
     };
 
-    window.dispatchEvent(
-      new CustomEvent<AttachmentPointClickData>(
-        MonomerCreationAttachmentPointClickEvent,
-        {
-          detail: attachmentPointEditData,
-        },
-      ),
+    return (
+      <Item
+        {...props}
+        data-testid="mark-as-connection-point"
+        onClick={handleMarkConnectionPointAtomClick}
+        disabled={attachmentPointsLimitReached}
+      >
+        <Icon name="connectionPoint" className={styles.icon} />
+        Mark as connection point
+      </Item>
     );
-  };
+  }
 
-  const handleRemoveClick = () => {
-    assert(attachmentPointName);
+  if (isPotentialLeavingGroupAtom) {
+    const handleMarkLeavingGroupAtomClick = () => {
+      assert(selectedAtomId !== undefined);
 
-    editor.removeAttachmentPoint(attachmentPointName);
-  };
+      editor.assignLeavingGroupAtom(selectedAtomId);
+    };
 
-  return isAtomAssignedAttachmentPoint ? (
-    <>
-      <Item data-testid="edit-connection-point" onClick={handleEditClick}>
-        <Icon name="editMenu" className={styles.icon} />
-        Edit connection point
+    return (
+      <Item
+        {...props}
+        data-testid="mark-as-leaving-group"
+        onClick={handleMarkLeavingGroupAtomClick}
+        disabled={attachmentPointsLimitReached}
+      >
+        <Icon name="leavingGroup" className={styles.icon} />
+        Mark as leaving group
       </Item>
-      <Item data-testid="remove-assignment" onClick={handleRemoveClick}>
-        <Icon name="deleteMenu" className={styles.icon} />
-        Remove assignment
-      </Item>
-    </>
-  ) : (
-    <Item
-      {...props}
-      data-testid="assign-as-a-leaving-group"
-      onClick={handleMakeLeavingGroupAtomClick}
-      disabled={attachmentPointsLimitReached}
-    >
-      <Icon name="leavingGroup" className={styles.icon} />
-      Assign as a leaving group
-    </Item>
-  );
+    );
+  }
+
+  return null;
+
+  // return isAtomAssignedAttachmentPoint ? (
+  //   <>
+  //     <Item data-testid="edit-connection-point" onClick={handleEditClick}>
+  //       <Icon name="editMenu" className={styles.icon} />
+  //       Edit connection point
+  //     </Item>
+  //     <Item data-testid="remove-assignment" onClick={handleRemoveClick}>
+  //       <Icon name="deleteMenu" className={styles.icon} />
+  //       Remove assignment
+  //     </Item>
+  //   </>
+  // ) :
 };
 
 export default useMakeLeavingGroupAtomMenuItem;

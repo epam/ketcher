@@ -626,7 +626,12 @@ class ReAtom extends ReObject {
             stroke: '#f8dc8f',
             'stroke-width': '2px',
           };
-        } else if (potentialLeavingGroups.includes(aid)) {
+        } else if (
+          potentialAttachmentPoints.has(aid) ||
+          potentialLeavingGroups.some((leavingAtomIds) =>
+            leavingAtomIds.has(aid),
+          )
+        ) {
           style = {
             stroke: '#43B5C0',
             'stroke-dasharray': '- ',

@@ -663,7 +663,9 @@ class Editor implements KetcherEditor {
           potentialLeavingAtoms.push(bond.begin);
         }
       });
-
+      // TODO: Gather previous and this into different collections – potential leaving atoms is something we try to assign automatically
+      // Them + R groups can't be more than 8
+      // The one below is not assigned automatically so it is a different collection
       selectionAtoms.forEach((selectionAtomId) => {
         const selectionAtom = currentStruct.atoms.get(selectionAtomId);
 
@@ -859,7 +861,7 @@ class Editor implements KetcherEditor {
       },
     );
 
-    const selectedPotentialLeavingAtoms = new Map<number, number>();
+    const selectedPotentialLeavingAtoms = new Map<number, Set<number>>();
 
     this.potentialLeavingAtoms.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
@@ -890,10 +892,18 @@ class Editor implements KetcherEditor {
           return;
         }
 
-        selectedPotentialLeavingAtoms.set(
+        const setPotentialLeavingAtoms = selectedPotentialLeavingAtoms.get(
           originalAttachmentAtomId,
-          originalLeavingAtomId,
         );
+        if (!setPotentialLeavingAtoms) {
+          const potentialLeavingAtoms = new Set([originalLeavingAtomId]);
+          selectedPotentialLeavingAtoms.set(
+            originalAttachmentAtomId,
+            potentialLeavingAtoms,
+          );
+        } else {
+          setPotentialLeavingAtoms.add(originalLeavingAtomId);
+        }
 
         return;
       }
@@ -954,10 +964,10 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     let atomPairForLeavingGroup: [number, number] | null = null;
-    for (const atomPair of this.monomerCreationState.potentialAttachmentPoints.entries()) {
-      const [attachmentAtomId, leavingAtomId] = atomPair;
-      if (leavingAtomId === atomId) {
-        atomPairForLeavingGroup = [attachmentAtomId, leavingAtomId];
+    for (const attachmentPointAtoms of this.monomerCreationState.potentialAttachmentPoints.entries()) {
+      const [attachmentAtomId, leavingAtomIds] = attachmentPointAtoms;
+      if (leavingAtomIds.has(atomId)) {
+        atomPairForLeavingGroup = [attachmentAtomId, atomId];
         break;
       }
     }
@@ -986,6 +996,34 @@ class Editor implements KetcherEditor {
     );
 
     // Create new object to trigger Redux state update in UI layer
+    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+
+    this.render.update(true);
+  }
+
+  assignConnectionPointAtom(atomId: number) {
+    assert(this.monomerCreationState);
+
+    const potentialLeavingAtoms =
+      this.monomerCreationState.potentialAttachmentPoints.get(atomId);
+
+    assert(potentialLeavingAtoms);
+
+    const leavingAtomId = Math.min(...Array.from(potentialLeavingAtoms));
+    const leavingAtom = this.render.ctab.molecule.atoms.get(leavingAtomId);
+
+    assert(leavingAtom);
+
+    const attachmentPointName = getNextFreeAttachmentPoint(
+      Array.from(this.monomerCreationState.assignedAttachmentPoints.keys()),
+    );
+
+    this.monomerCreationState.assignedAttachmentPoints.set(
+      attachmentPointName,
+      [atomId, leavingAtomId],
+    );
+    this.monomerCreationState.potentialAttachmentPoints.delete(atomId);
+
     this.monomerCreationState = Object.assign({}, this.monomerCreationState);
 
     this.render.update(true);
@@ -1100,7 +1138,10 @@ class Editor implements KetcherEditor {
       ([, leavingAtomId]) => this.cleanupAttachmentPoint(leavingAtomId),
     );
     this.monomerCreationState.potentialAttachmentPoints.forEach(
-      (leavingAtomId) => this.cleanupAttachmentPoint(leavingAtomId),
+      (leavingAtomIds) =>
+        Array.from(leavingAtomIds.values()).forEach((leavingAtomId) =>
+          this.cleanupAttachmentPoint(leavingAtomId),
+        ),
     );
 
     this.closeMonomerCreationWizard();

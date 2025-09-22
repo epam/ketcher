@@ -17,7 +17,7 @@
 import classes from './ArrowScroll.module.less';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useRaf } from '../../../../../hooks';
+import { useRequestAnimationFrame } from '../../../../../hooks';
 
 interface ArrowScrollProps {
   startInView: boolean;
@@ -36,8 +36,8 @@ const ArrowScroll = ({
 }: ArrowScrollProps) => {
   const [isScrollDown, setScrollDown] = useState(false);
   const [isScrollUp, setScrollUp] = useState(false);
-  useRaf(isScrollDown, (dt) => scrollForward(dt));
-  useRaf(isScrollUp, (dt) => scrollBack(dt));
+  useRequestAnimationFrame(isScrollDown, (dt) => scrollForward(dt));
+  useRequestAnimationFrame(isScrollUp, (dt) => scrollBack(dt));
 
   useEffect(() => {
     return () => {

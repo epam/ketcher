@@ -16,7 +16,10 @@
 
 import { useEffect, useRef } from 'react';
 
-export const useRaf = (active: boolean, onFrame: (dtMs: number) => void) => {
+export const useRequestAnimationFrame = (
+  active: boolean,
+  onFrame: (deltaTimeInMilliseconds: number) => void,
+) => {
   const callbackRef = useRef(onFrame);
   useEffect(() => {
     callbackRef.current = onFrame;
@@ -25,17 +28,17 @@ export const useRaf = (active: boolean, onFrame: (dtMs: number) => void) => {
   useEffect(() => {
     if (!active) return;
 
-    let rafId = 0;
+    let requestAnimationFrameId = 0;
     let previousTime = performance.now();
 
     const loop = (now: number) => {
       const dt = now - previousTime;
       previousTime = now;
       callbackRef.current(dt);
-      rafId = requestAnimationFrame(loop);
+      requestAnimationFrameId = requestAnimationFrame(loop);
     };
 
-    rafId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafId);
+    requestAnimationFrameId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(requestAnimationFrameId);
   }, [active]);
 };

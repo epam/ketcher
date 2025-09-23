@@ -652,19 +652,10 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
-  public async updateMonomersLibrary(
+  private async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
-
-    ketcherProvider.getKetcher(this.id);
-
-    if (!editor) {
-      throw new Error(
-        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
-      );
-    }
     const rawMonomersDataString =
       typeof rawMonomersData !== 'string'
         ? JSON.stringify(rawMonomersData)
@@ -684,9 +675,57 @@ export class Ketcher {
       dataInKetFormat = rawMonomersDataString;
     }
 
+    return dataInKetFormat;
+  }
+
+  public async updateMonomersLibrary(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    ketcherProvider.getKetcher(this.id);
+
+    if (!editor) {
+      throw new Error(
+        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
+      );
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.updateMonomersLibrary(dataInKetFormat);
     SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+  }
+
+  public async replaceMonomersLibrary(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    ketcherProvider.getKetcher(this.id);
+
+    if (!editor) {
+      throw new Error(
+        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
+      );
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      rawMonomersData,
+      params,
+    );
+
+    editor.clearMonomersLibrary();
+    editor.updateMonomersLibrary(dataInKetFormat);
+    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
+    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    editor.events.updateMonomersLibrary.dispatch();
   }
 
   public switchToMacromoleculesMode() {

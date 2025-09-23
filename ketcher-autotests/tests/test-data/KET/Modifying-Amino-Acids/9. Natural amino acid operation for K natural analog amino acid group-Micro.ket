@@ -464,6 +464,7 @@
         "id": "K___Lysine",
         "fullName": "Lysine",
         "alias": "K",
+        "aliasHELM": "K",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

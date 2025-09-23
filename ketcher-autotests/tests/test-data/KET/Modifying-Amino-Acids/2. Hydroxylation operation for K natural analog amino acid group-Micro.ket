@@ -479,6 +479,7 @@
         "id": "Hyl5xi___5-hydroxylysine",
         "fullName": "5-hydroxylysine",
         "alias": "Hyl5xi",
+        "aliasHELM": "Hyl_5xi",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

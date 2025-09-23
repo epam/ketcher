@@ -300,6 +300,7 @@
         "id": "meC___N-Methyl-Cysteine",
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
+        "aliasHELM": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

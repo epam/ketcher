@@ -221,6 +221,7 @@
         "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "Ribose (2,5 connectivity)",
         "alias": "25R",
+        "aliasHELM": "25r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,

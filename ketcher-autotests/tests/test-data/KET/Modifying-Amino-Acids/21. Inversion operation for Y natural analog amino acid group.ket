@@ -689,6 +689,7 @@
         "id": "dY___D-Tyrosine",
         "fullName": "D-Tyrosine",
         "alias": "dY",
+        "aliasHELM": "dY",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

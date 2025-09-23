@@ -689,6 +689,7 @@
         "id": "meY___N-Methyl-Tyrosine",
         "fullName": "N-Methyl-Tyrosine",
         "alias": "meY",
+        "aliasHELM": "meY",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

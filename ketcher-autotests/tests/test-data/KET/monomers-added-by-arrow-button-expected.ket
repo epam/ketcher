@@ -276,6 +276,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -558,6 +559,7 @@
         "id": "MOE___2'-O-Methoxyethyl ribose",
         "fullName": "2'-O-Methoxyethyl ribose",
         "alias": "MOE",
+        "aliasHELM": "moe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -678,6 +680,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -992,6 +995,7 @@
         "id": "1Nal___3-(1-naphthyl)-alanine",
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
+        "aliasHELM": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1223,6 +1227,7 @@
         "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "Ribose (2,5 connectivity)",
         "alias": "25R",
+        "aliasHELM": "25r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -1559,6 +1564,7 @@
         "id": "baA___N6-benzyladenine",
         "fullName": "N6-benzyladenine",
         "alias": "baA",
+        "aliasHELM": "bn6A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1661,6 +1667,7 @@
         "id": "bP___Boranophosphate",
         "fullName": "Boranophosphate",
         "alias": "bP",
+        "aliasHELM": "bp",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

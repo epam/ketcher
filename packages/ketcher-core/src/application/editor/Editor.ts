@@ -286,6 +286,11 @@ export class CoreEditor {
     return editor;
   }
 
+  public clearMonomersLibrary() {
+    this._monomersLibrary = [];
+    this._monomersLibraryParsedJson = null;
+  }
+
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
       persistentMonomersLibrary.length !== 0 &&

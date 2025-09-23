@@ -7,16 +7,27 @@ import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
+  clickOnCanvas,
   keyboardPressOnCanvas,
+  MacroFileType,
   openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectTAndDeselectWithLasso,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
 } from '@utils';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 
 let page: Page;
 
@@ -462,6 +473,610 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 15: Check deletion of selected structure by lasso through right-click menu ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by lasso through right-click menu ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 450, 250, [
+      { x: 800, y: 250 },
+      { x: 800, y: 500 },
+      { x: 400, y: 500 },
+      { x: 400, y: 250 },
+      { x: 450, y: 250 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: Check deletion of selected structure by lasso through right-click menu ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by lasso through right-click menu ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 17: Check deletion of selected structure by lasso through right-click menu ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by lasso through right-click menu ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     * We have a bug https://github.com/epam/ketcher/issues/7914 After fix we should update snapshots
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 18: Check that Calculate properties works for selection by Lasso ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Lasso ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 450, 250, [
+      { x: 800, y: 250 },
+      { x: 800, y: 500 },
+      { x: 400, y: 500 },
+      { x: 400, y: 250 },
+      { x: 450, y: 250 },
+    ]);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C10H14N5O7P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '347.224',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 19: Check that Calculate properties works for selection by Lasso ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Lasso ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C10H14N5O7P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '347.224',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 20: Check that Calculate properties works for selection by Lasso ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Lasso ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C10H14N5O7P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '347.224',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 21: Check that Create antisence strand (toolbar icon) works for selection by Lasso ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 22: Check that Create antisence strand (toolbar icon) works for selection by Lasso ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 23: Check that Create antisence strand (toolbar icon) works for selection by Lasso ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 24: Check that Create antisence strand (right-click menu) works for selection by Lasso ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 25: Check that Create antisence strand (right-click menu) works for selection by Lasso ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 26: Check that Create antisence strand (right-click menu) works for selection by Lasso ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 27: Check that Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ) ', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 450, 250, [
+      { x: 800, y: 250 },
+      { x: 800, y: 500 },
+      { x: 400, y: 500 },
+      { x: 400, y: 250 },
+      { x: 450, y: 250 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 28: Check that Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ) ', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 29: Check that Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ) ', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Lasso Selection tool
+     * 4. Select elements by lasso
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/micro-and-macro-structures.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
+    ]);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -1255,7 +1255,7 @@ class Editor implements KetcherEditor {
 
     const [attachmentAtomId] = atomPair;
 
-    let newAtomPair: number[];
+    let newAtomPair: [number, number];
     if (newLeavingAtomId === -1) {
       const [action, , endAtomId] = fromBondAddition(
         this.render.ctab,
@@ -1362,6 +1362,40 @@ class Editor implements KetcherEditor {
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
     this.monomerCreationState = Object.assign({}, this.monomerCreationState);
     this.render.update(true);
+  }
+
+  highlightAttachmentPoint(name: AttachmentPointName | null) {
+    if (!name) {
+      this.render.ctab.setSelection(null);
+      return;
+    }
+
+    assert(this.monomerCreationState);
+
+    const atomPair =
+      this.monomerCreationState.assignedAttachmentPoints.get(name);
+    assert(atomPair);
+
+    let selection: Selection = {
+      atoms: [...atomPair],
+    };
+
+    const [attachmentAtomId, leavingAtomId] = atomPair;
+    const bondId = this.struct().bonds.find((_, bond) => {
+      return (
+        (bond.begin === attachmentAtomId && bond.end === leavingAtomId) ||
+        (bond.begin === leavingAtomId && bond.end === attachmentAtomId)
+      );
+    });
+
+    if (bondId !== null) {
+      selection = {
+        ...selection,
+        bonds: [bondId],
+      };
+    }
+
+    this.render.ctab.setSelection(selection);
   }
 
   findPotentialLeavingAtoms(attachmentAtomId: number) {

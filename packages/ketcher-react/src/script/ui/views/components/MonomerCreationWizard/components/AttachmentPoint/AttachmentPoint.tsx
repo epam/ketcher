@@ -5,6 +5,7 @@ import { useAttachmentPointSelectsData } from '../../hooks/useAttachmentPointSel
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';
 import Editor from '../../../../../../editor';
 import { Icon } from '../../../../../../../components';
+import { useEffect, useRef } from 'react';
 
 type Props = {
   name: AttachmentPointName;
@@ -27,7 +28,31 @@ const AttachmentPoint = ({
   onLeavingAtomChange,
   onRemove,
 }: Props) => {
+  const attachmentPointsContainerRef = useRef<HTMLDivElement>(null);
   const selectData = useAttachmentPointSelectsData(editor, name);
+
+  useEffect(() => {
+    const element = attachmentPointsContainerRef.current;
+    if (!element) {
+      return;
+    }
+
+    const mouseOverHandler = () => {
+      editor.highlightAttachmentPoint(name);
+    };
+
+    const mouseLeaveHandler = () => {
+      editor.highlightAttachmentPoint(null);
+    };
+
+    element.addEventListener('mouseover', mouseOverHandler);
+    element.addEventListener('mouseleave', mouseLeaveHandler);
+
+    return () => {
+      element.removeEventListener('mouseover', mouseOverHandler);
+      element.removeEventListener('mouseleave', mouseLeaveHandler);
+    };
+  }, []);
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== name) {
@@ -58,6 +83,7 @@ const AttachmentPoint = ({
           <Icon name="deleteMenu" />
         </button>
       }
+      ref={attachmentPointsContainerRef}
     />
   );
 };

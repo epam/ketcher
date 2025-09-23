@@ -358,6 +358,7 @@
         "id": "dL___D-Leucine",
         "fullName": "D-Leucine",
         "alias": "dL",
+        "aliasHELM": "dL",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

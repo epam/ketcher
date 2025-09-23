@@ -461,6 +461,7 @@
         "id": "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",
         "fullName": "2'-O-Tris-trifluoromethoxyethyl ribose",
         "alias": "FMOE",
+        "aliasHELM": "ctfl3moe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,

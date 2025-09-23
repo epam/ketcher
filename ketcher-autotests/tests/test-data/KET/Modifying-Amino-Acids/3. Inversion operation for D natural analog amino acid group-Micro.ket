@@ -257,6 +257,7 @@
         "id": "dD___D-Aspartic acid",
         "fullName": "D-Aspartic acid",
         "alias": "dD",
+        "aliasHELM": "dD",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -294,6 +294,7 @@
         "id": "meI___N-Methyl-Isoleucine",
         "fullName": "N-Methyl-Isoleucine",
         "alias": "meI",
+        "aliasHELM": "meI",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -480,6 +480,7 @@
         "id": "meG___Sarcosine",
         "fullName": "Sarcosine",
         "alias": "meG",
+        "aliasHELM": "meG",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,

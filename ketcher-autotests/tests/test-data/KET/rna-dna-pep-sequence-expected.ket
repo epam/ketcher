@@ -511,6 +511,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -888,6 +889,7 @@
         "id": "P___Proline",
         "fullName": "Proline",
         "alias": "P",
+        "aliasHELM": "P",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

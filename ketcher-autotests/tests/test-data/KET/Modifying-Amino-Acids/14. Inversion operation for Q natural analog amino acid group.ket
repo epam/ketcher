@@ -244,6 +244,7 @@
         "id": "dQ___D-Glutamine",
         "fullName": "D-Glutamine",
         "alias": "dQ",
+        "aliasHELM": "dQ",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

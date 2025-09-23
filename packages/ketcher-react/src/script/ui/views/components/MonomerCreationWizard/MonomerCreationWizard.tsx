@@ -420,8 +420,6 @@ const MonomerCreationWizard = () => {
   const displayEditDialog =
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
 
-  console.log(assignedAttachmentPoints);
-
   return (
     <div className={styles.monomerCreationWizard}>
       <div className={styles.leftColumn}>
@@ -446,14 +444,14 @@ const MonomerCreationWizard = () => {
       </div>
 
       <div className={styles.rightColumn}>
-        <div
-          className={clsx(
-            selectStyles.selectContainer,
-            styles.attributesWindow,
-          )}
-        >
+        <div className={styles.attributesWindow}>
           <p className={styles.attributesTitle}>Attributes</p>
-          <div className={styles.attributesFields}>
+          <div
+            className={clsx(
+              styles.attributesFields,
+              selectStyles.selectContainer,
+            )}
+          >
             <AttributeField
               title="Type"
               control={
@@ -520,7 +518,12 @@ const MonomerCreationWizard = () => {
 
           <div className={styles.divider} />
 
-          <div className={styles.attributesFields}>
+          <div
+            className={clsx(
+              styles.attributesFields,
+              selectStyles.selectContainer,
+            )}
+          >
             <div className={styles.attachmentPointsHeader}>
               <p className={styles.attachmentPointsTitle}>Attachment points</p>
               <span

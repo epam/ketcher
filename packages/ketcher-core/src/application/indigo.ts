@@ -55,6 +55,7 @@ type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
   inputFormat?: ChemicalMimeType;
   sequenceType?: SequenceType;
+  outputContentType?: 'chemical/x-monomer-library';
 };
 type AutomapOptions = {
   mode?: AutomapMode;
@@ -107,6 +108,7 @@ export class Indigo {
   ): Promise<ConvertResult> {
     const outputFormat = options?.outputFormat ?? ChemicalMimeType.KET;
     const inputFormat = options?.inputFormat;
+    const outputContentType = options?.outputContentType;
 
     return this.#structService.convert(
       {
@@ -116,6 +118,7 @@ export class Indigo {
       },
       {
         'sequence-type': options?.sequenceType,
+        'output-content-type': outputContentType,
       },
     );
   }

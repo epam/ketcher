@@ -37,14 +37,12 @@ const AttachmentPointLabelMenuItems = ({
     assert(atomPair);
 
     const [, leavingAtomId] = atomPair;
-    const atom = editor.struct().atoms.get(leavingAtomId);
-    assert(atom);
+    const leavingAtom = editor.struct().atoms.get(leavingAtomId);
+    assert(leavingAtom);
 
     const attachmentPointEditData: AttachmentPointClickData = {
-      atomId: leavingAtomId,
-      atomLabel: atom.label,
       attachmentPointName,
-      position: Coordinates.modelToView(atom.pp),
+      position: Coordinates.modelToView(leavingAtom.pp),
     };
 
     window.dispatchEvent(

@@ -49,11 +49,6 @@ import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
-import {
-  AttachmentPointClickData,
-  Coordinates,
-  MonomerCreationAttachmentPointClickEvent,
-} from 'application/editor';
 import assert from 'assert';
 
 interface ElemAttr {
@@ -698,18 +693,7 @@ class ReAtom extends ReObject {
           const leavingGroupPos = leavingGroupAtom.pp;
           const direction = leavingGroupPos.sub(attachmentPos).normalized();
 
-          let labelDistance = 25;
-          for (let i = 0; i < this.visel.exts.length; ++i) {
-            labelDistance = Math.max(
-              labelDistance,
-              util.shiftRayBox(
-                ps,
-                direction,
-                this.visel.exts[i].translate(ps),
-              ) + 5,
-            );
-          }
-          const labelPos = ps.addScaled(direction, labelDistance);
+          const labelPos = ps.addScaled(direction, 30);
 
           const isProblematic =
             problematicAttachmentPoints.has(attachmentPointName);

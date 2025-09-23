@@ -4,11 +4,15 @@ import {
   AtomLabel,
   AttachmentPointClickData,
   AttachmentPointName,
+  getAttachmentPointNumberFromLabel,
 } from 'ketcher-core';
-import Select, { Option } from '../../../component/form/Select';
+import Select from '../../../component/form/Select';
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
+import { Editor } from '../../../../editor';
+import assert from 'assert';
+import { isNumber } from 'lodash';
 
 type Props = {
   data: AttachmentPointClickData | null;
@@ -16,29 +20,20 @@ type Props = {
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
   ) => void;
-  onAtomChange: (atomId: number, atomLabel: string) => void;
+  onLeavingAtomChange: (
+    apName: AttachmentPointName,
+    newLeavingAtomId: number,
+  ) => void;
   onClose: VoidFunction;
+  editor: Editor;
 };
-
-const attachmentPointNameOptions = Array.from({ length: 8 }).map((_, i) => ({
-  value: `R${i + 1}`,
-  label: `R${i + 1}`,
-}));
-
-const attachmentPointAtomOptions: Array<Option> = [
-  { value: AtomLabel.H, label: 'H' },
-  { value: AtomLabel.O, label: 'OH' },
-  { value: AtomLabel.N, label: 'NH2' },
-  { value: AtomLabel.Cl, label: 'Cl' },
-  { value: AtomLabel.F, label: 'F' },
-  { value: AtomLabel.C, label: 'CH3' },
-];
 
 const AttachmentPointEditPopup = ({
   data,
   onNameChange,
-  onAtomChange,
+  onLeavingAtomChange,
   onClose,
+  editor,
 }: Props) => {
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -87,11 +82,19 @@ const AttachmentPointEditPopup = ({
     };
   }, [onClose]);
 
-  if (!data) {
+  if (!data || !editor.monomerCreationState) {
     return null;
   }
 
-  const { atomId, atomLabel, attachmentPointName, position } = data;
+  const { attachmentPointName, position } = data;
+  const { assignedAttachmentPoints } = editor.monomerCreationState;
+
+  const atomPair = assignedAttachmentPoints.get(attachmentPointName);
+  assert(atomPair);
+
+  const [attachmentAtomId, leavingAtomId] = atomPair;
+  const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
+  assert(attachmentAtom);
 
   const handleNameChange = (value: string) => {
     if (value !== attachmentPointName) {
@@ -101,19 +104,58 @@ const AttachmentPointEditPopup = ({
     onClose();
   };
 
-  const handleAtomChange = (value: string) => {
-    if (value !== atomLabel) {
-      onAtomChange(atomId, value);
+  const handleLeavingAtomChange = (value: string) => {
+    const atomId = parseInt(value, 10);
+    if (atomId !== leavingAtomId) {
+      onLeavingAtomChange(attachmentPointName, atomId);
     }
 
     onClose();
   };
 
+  const attachmentPointNameOptionsLength = Math.max(
+    ...Array.from(assignedAttachmentPoints.keys()).map(
+      getAttachmentPointNumberFromLabel,
+    ),
+  );
+
+  const attachmentPointNameOptions = Array.from({
+    length: attachmentPointNameOptionsLength,
+  }).map((_, i) => ({
+    value: `R${i + 1}`,
+    label: `R${i + 1}`,
+  }));
+
+  let alternativeLeavingAtomOptions = editor
+    .findPotentialLeavingAtoms(attachmentAtomId)
+    .map((atom) => {
+      const atomId = editor.struct().atoms.keyOf(atom);
+      assert(isNumber(atomId));
+
+      let label = atom.label;
+      if (atom.implicitH > 0) {
+        label = label.concat(
+          atom.implicitH > 1 ? `${AtomLabel.H}${atom.implicitH}` : AtomLabel.H,
+        );
+      }
+
+      return {
+        value: atomId.toString(),
+        label,
+      };
+    });
+  if (attachmentAtom.implicitH > 0) {
+    alternativeLeavingAtomOptions = alternativeLeavingAtomOptions.concat({
+      value: '-1',
+      label: AtomLabel.H,
+    });
+  }
+
   const currentNameOption = attachmentPointNameOptions.find(
     (option) => option.value === attachmentPointName,
   );
-  const currentAtomOption = attachmentPointAtomOptions.find(
-    (option) => option.value === atomLabel,
+  const currentLeavingAtomOption = alternativeLeavingAtomOptions.find(
+    (option) => option.value === leavingAtomId.toString(),
   );
 
   return (
@@ -131,9 +173,9 @@ const AttachmentPointEditPopup = ({
           onChange={(value) => handleNameChange(value)}
         />
         <Select
-          options={attachmentPointAtomOptions}
-          value={currentAtomOption?.value}
-          onChange={(value) => handleAtomChange(value)}
+          options={alternativeLeavingAtomOptions}
+          value={currentLeavingAtomOption?.value}
+          onChange={(value) => handleLeavingAtomChange(value)}
         />
       </div>
     </div>

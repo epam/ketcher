@@ -1306,6 +1306,8 @@ class Editor implements KetcherEditor {
       this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
     }
 
+    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+
     this.render.update(true);
   }
 

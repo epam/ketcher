@@ -795,7 +795,7 @@ class ReAtom extends ReObject {
             this.visel,
             labelGroup,
             ps,
-            true,
+            false,
           );
         }
       }

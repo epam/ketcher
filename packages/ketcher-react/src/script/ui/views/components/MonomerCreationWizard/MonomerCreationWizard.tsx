@@ -539,29 +539,31 @@ const MonomerCreationWizard = () => {
             />
           </div>
 
-          {attachmentPointsData.length > 0 && (
-            <>
-              <div className={styles.divider} />
+          <div className={styles.divider} />
 
-              <div className={styles.attributesFields}>
-                <p className={styles.attachmentPointsTitle}>
-                  Attachment points
-                </p>
-                <div className={styles.attachmentPoints}>
-                  {attachmentPointsData.map(
-                    ({ name, atomLabel, implicitH }) => (
-                      <AttachmentPoint
-                        name={name}
-                        atomLabel={atomLabel}
-                        implicitH={implicitH}
-                        key={name}
-                      />
-                    ),
-                  )}
-                </div>
+          <div className={styles.attributesFields}>
+            <div className={styles.attachmentPointsHeader}>
+              <p className={styles.attachmentPointsTitle}>Attachment points</p>
+              <span
+                className={styles.attachmentPointInfoIcon}
+                title="New attachment points can be added by interacting with attachment atoms and leaving group atoms on the structure."
+              >
+                <Icon name="about" />
+              </span>
+            </div>
+            {attachmentPointsData.length > 0 && (
+              <div className={styles.attachmentPoints}>
+                {attachmentPointsData.map(({ name, atomLabel, implicitH }) => (
+                  <AttachmentPoint
+                    name={name}
+                    atomLabel={atomLabel}
+                    implicitH={implicitH}
+                    key={name}
+                  />
+                ))}
               </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
 
         {ketcherEditorRootElement &&

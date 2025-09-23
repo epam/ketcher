@@ -52,6 +52,7 @@ import {
   ModeTypes,
   SupportedImageFormats,
   SupportedModes,
+  UpdateMonomersLibraryParams,
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
@@ -651,7 +652,10 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
-  public updateMonomersLibrary(rawMonomersData: string | JSON) {
+  public async updateMonomersLibrary(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
 
     ketcherProvider.getKetcher(this.id);
@@ -661,13 +665,27 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
-
-    editor.updateMonomersLibrary(rawMonomersData);
-    SettingsManager.addMonomerLibraryUpdate(
+    const rawMonomersDataString =
       typeof rawMonomersData !== 'string'
         ? JSON.stringify(rawMonomersData)
-        : rawMonomersData,
-    );
+        : rawMonomersData;
+
+    let dataInKetFormat: string | JSON;
+
+    if (params?.format === 'sdf') {
+      const convertResult = await this.indigo.convert(rawMonomersDataString, {
+        inputFormat: ChemicalMimeType.MonomerLibrary,
+        outputFormat: ChemicalMimeType.MonomerLibrary,
+        outputContentType: 'chemical/x-monomer-library',
+      });
+
+      dataInKetFormat = convertResult.struct;
+    } else {
+      dataInKetFormat = rawMonomersDataString;
+    }
+
+    editor.updateMonomersLibrary(dataInKetFormat);
+    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 

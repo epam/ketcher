@@ -382,6 +382,7 @@
         "id": "V___Valine",
         "fullName": "Valine",
         "alias": "V",
+        "aliasHELM": "V",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

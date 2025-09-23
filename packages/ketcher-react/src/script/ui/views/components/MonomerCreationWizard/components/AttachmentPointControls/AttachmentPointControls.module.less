@@ -1,0 +1,26 @@
+@import '../../../../../../../style/variables';
+
+.selectsWrapper {
+  display: flex;
+  width: 100%;
+
+  & > div :global(.MuiSelect-select) {
+    border-radius: 0 !important;
+  }
+
+  & > div:first-child :global(.MuiSelect-select) {
+    border-radius: 4px 0 0 4px !important;
+  }
+
+  & > div:last-child :global(.MuiSelect-select) {
+    border-radius: 0 4px 4px 0 !important;
+  }
+}
+
+.nameSelect {
+  flex: 1;
+}
+
+.leavingAtomSelect {
+  flex: 1;
+}

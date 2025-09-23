@@ -45,17 +45,11 @@ import {
   setAttachmentPoints,
 } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function selectExtendedTableElements(page: Page, element: string) {
-  const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-  await extendedTableButton.click();
-  await page.getByRole('button', { name: element, exact: true }).click();
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -297,7 +291,7 @@ test.describe('Attachment Point Tool', () => {
     await anyAtomButton.click();
     await clickOnAtom(page, 'C', 2);
 
-    await selectExtendedTableElements(page, 'G');
+    await selectExtendedTableElement(page, ExtendedTableButton.G);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });

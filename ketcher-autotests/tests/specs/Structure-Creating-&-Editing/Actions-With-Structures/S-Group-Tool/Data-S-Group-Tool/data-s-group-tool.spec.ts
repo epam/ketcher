@@ -49,20 +49,6 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
 
-async function editSGroupProperties(
-  page: Page,
-  text: string,
-  context: string,
-  testValue: string,
-) {
-  await page.getByText(text).dblclick();
-  await page.getByTestId('s-group-type-input-span').click();
-  await page.getByRole('option', { name: context }).click();
-  await page.getByLabel('Repeat count').click();
-  await page.getByLabel('Repeat count').fill(testValue);
-  await pressButton(page, 'Apply');
-}
-
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -134,7 +120,12 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to edit the Data S-group.
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
-    await editSGroupProperties(page, '33', 'Multiple group', '1');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
     await takeEditorScreenshot(page);
   });
 

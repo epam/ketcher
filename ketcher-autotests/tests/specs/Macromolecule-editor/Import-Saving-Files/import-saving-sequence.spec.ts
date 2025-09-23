@@ -846,13 +846,12 @@ test(`7. Verify export option includes both single-letter and three-letter seque
   await CommonTopLeftToolbar(page).saveFile();
 
   // Click on "File format" dropdown
-  await page.getByRole('combobox').click();
-  const dropdown = page.locator('ul[role="listbox"]');
-  const singleLetter = dropdown.locator('li', {
-    hasText: 'Sequence (1-letter code)',
+  await SaveStructureDialog(page).fileFormatDropdownList.click();
+  const singleLetter = page.getByText('Sequence (1-letter code)', {
+    exact: true,
   });
-  const threeLetter = dropdown.locator('li', {
-    hasText: 'Sequence (3-letter code)',
+  const threeLetter = page.getByText('Sequence (3-letter code)', {
+    exact: true,
   });
 
   await expect(singleLetter).toBeVisible();
@@ -986,7 +985,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     expectedErrorMessage:
       'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
     shouldFail: true,
-    issueNumber: 'Will create once got internet back',
+    issueNumber: 'https://github.com/epam/Indigo/issues/3200',
   },
   {
     testCaseDescription:
@@ -999,11 +998,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    // todo clean this too
     expectedErrorMessage:
       'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
     shouldFail: true,
-    issueNumber: 'Will create once got internet back',
+    issueNumber: 'https://github.com/epam/Indigo/issues/3200',
   },
   {
     testCaseDescription:

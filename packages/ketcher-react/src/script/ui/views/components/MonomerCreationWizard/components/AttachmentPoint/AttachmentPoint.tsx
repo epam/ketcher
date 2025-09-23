@@ -14,12 +14,7 @@ const AttachmentPoint = ({ name, atomLabel, implicitH }: Props) => {
         <span className={styles.attachmentPointIndex}>{name}</span>
         &nbsp;
         <span>
-          (
-          {implicitH > 1 && (
-            <>
-              H<sub>{implicitH}</sub>
-            </>
-          )}
+          ({implicitH > 0 && <>H{implicitH > 1 && <sub>{implicitH}</sub>}</>}
           {atomLabel})
         </span>
       </p>

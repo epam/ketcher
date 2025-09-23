@@ -5,8 +5,6 @@ export const MonomerCreationAttachmentPointClickEvent =
   'MonomerCreationAttachmentPointClick';
 
 export type AttachmentPointClickData = {
-  atomId: number;
-  atomLabel: string;
   attachmentPointName: AttachmentPointName;
   position: Vec2;
 };

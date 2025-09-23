@@ -282,11 +282,9 @@ const MonomerCreationWizard = () => {
   useEffect(() => {
     const attachmentPointClickHandler = (event: Event) => {
       const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
-      const { atomId, atomLabel, attachmentPointName, position } = clickData;
+      const { attachmentPointName, position } = clickData;
 
       setAttachmentPointEditPopupData({
-        atomId,
-        atomLabel,
         attachmentPointName,
         position,
       });
@@ -350,11 +348,11 @@ const MonomerCreationWizard = () => {
     editor.reassignAttachmentPoint(currentName, newName);
   };
 
-  const handleAttachmentPointAtomChange = (
-    atomId: number,
-    atomLabel: string,
+  const handleLeavingAtomChange = (
+    apName: AttachmentPointName,
+    newLeavingAtomId: number,
   ) => {
-    editor.reassignAttachmentPointAtom(atomId, atomLabel);
+    editor.reassignAttachmentPointLeavingAtom(apName, newLeavingAtomId);
   };
 
   const handleAttachmentPointEditPopupClose = () => {
@@ -571,8 +569,9 @@ const MonomerCreationWizard = () => {
             <AttachmentPointEditPopup
               data={attachmentPointEditPopupData}
               onNameChange={handleAttachmentPointNameChange}
-              onAtomChange={handleAttachmentPointAtomChange}
+              onLeavingAtomChange={handleLeavingAtomChange}
               onClose={handleAttachmentPointEditPopupClose}
+              editor={editor}
             />,
             ketcherEditorRootElement,
           )}

@@ -1243,15 +1243,37 @@ class Editor implements KetcherEditor {
     ketcher.updateMonomersLibrary(libraryItem);
   }
 
-  reassignAttachmentPointAtom(atomId: number, atomLabel: string) {
-    const atom = this.render.ctab.molecule.atoms.get(atomId);
-    if (!atom) {
-      return;
+  reassignAttachmentPointLeavingAtom(
+    name: AttachmentPointName,
+    newLeavingAtomId: number,
+  ) {
+    assert(this.monomerCreationState);
+
+    const atomPair =
+      this.monomerCreationState.assignedAttachmentPoints.get(name);
+    assert(atomPair);
+
+    const [attachmentAtomId] = atomPair;
+
+    let newAtomPair: number[];
+    if (newLeavingAtomId === -1) {
+      const [action, , endAtomId] = fromBondAddition(
+        this.render.ctab,
+        { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
+        attachmentAtomId,
+        { label: AtomLabel.H },
+      );
+
+      this.update(action, true);
+
+      newAtomPair = [attachmentAtomId, endAtomId];
+    } else {
+      newAtomPair = [attachmentAtomId, newLeavingAtomId];
     }
 
-    // Change the label of the attachment point atom
-    atom.label = atomLabel;
-    this.render.ctab.molecule.calcImplicitHydrogen(atomId);
+    this.monomerCreationState.assignedAttachmentPoints.set(name, newAtomPair);
+
+    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
 
     this.render.update(true);
   }
@@ -1338,6 +1360,37 @@ class Editor implements KetcherEditor {
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
     this.monomerCreationState = Object.assign({}, this.monomerCreationState);
     this.render.update(true);
+  }
+
+  findPotentialLeavingAtoms(attachmentAtomId: number) {
+    const bondsToOutside = this.struct().bonds.filter((_, bond) => {
+      return (
+        (attachmentAtomId === bond.begin && attachmentAtomId !== bond.end) ||
+        (attachmentAtomId === bond.end && attachmentAtomId !== bond.begin)
+      );
+    });
+
+    const potentialLeavingAtoms: Atom[] = [];
+    bondsToOutside.forEach((bond) => {
+      if (
+        bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+        bond.stereo !== Bond.PATTERN.STEREO.NONE
+      ) {
+        return;
+      }
+
+      const atomIdToUse =
+        attachmentAtomId === bond.begin ? bond.end : bond.begin;
+
+      const atom = this.struct().atoms.get(atomIdToUse);
+      assert(atom);
+
+      if (atom.neighbors.length === 1) {
+        potentialLeavingAtoms.push(atom);
+      }
+    });
+
+    return potentialLeavingAtoms;
   }
 
   selection(ci?: any) {

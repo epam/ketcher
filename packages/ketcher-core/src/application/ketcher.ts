@@ -698,7 +698,7 @@ export class Ketcher {
     );
 
     editor.updateMonomersLibrary(dataInKetFormat);
-    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
+    SettingsManager.addMonomerLibraryUpdate(JSON.stringify(dataInKetFormat));
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 
@@ -723,7 +723,9 @@ export class Ketcher {
 
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
+    SettingsManager.addMonomerLibraryUpdate(
+      JSON.stringify({ replacement: true, data: dataInKetFormat }),
+    );
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
     editor.events.updateMonomersLibrary.dispatch();
   }

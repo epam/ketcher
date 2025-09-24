@@ -585,6 +585,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -773,6 +774,7 @@
         "id": "U___Uracil",
         "fullName": "Uracil",
         "alias": "U",
+        "aliasHELM": "U",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -876,6 +878,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -1118,6 +1121,7 @@
         "id": "G___Guanine",
         "fullName": "Guanine",
         "alias": "G",
+        "aliasHELM": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1310,6 +1314,7 @@
         "id": "C___Cytosine",
         "fullName": "Cytosine",
         "alias": "C",
+        "aliasHELM": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -1620,6 +1625,7 @@
         "id": "1Nal___3-(1-naphthyl)-alanine",
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
+        "aliasHELM": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1891,6 +1897,7 @@
         "id": "Cys_Bn___S-benzylcysteine",
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
+        "aliasHELM": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -2095,6 +2102,7 @@
         "id": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "alias": "AspOMe",
+        "aliasHELM": "Asp_OMe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -2413,6 +2421,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

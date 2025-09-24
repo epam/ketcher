@@ -418,6 +418,7 @@
         "id": "dR___D-Arginine",
         "fullName": "D-Arginine",
         "alias": "dR",
+        "aliasHELM": "dR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

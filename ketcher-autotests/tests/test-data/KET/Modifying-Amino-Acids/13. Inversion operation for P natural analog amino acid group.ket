@@ -438,6 +438,7 @@
         "id": "dP___D-Proline",
         "fullName": "D-Proline",
         "alias": "dP",
+        "aliasHELM": "dP",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

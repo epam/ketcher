@@ -638,6 +638,7 @@
         "id": "dA___D-Alanine",
         "fullName": "D-Alanine",
         "alias": "dA",
+        "aliasHELM": "dA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

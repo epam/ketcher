@@ -734,6 +734,7 @@
         "id": "TyrPO3___O-phospho-L-tyrosine",
         "fullName": "O-phospho-L-tyrosine",
         "alias": "TyrPO3",
+        "aliasHELM": "Tyr_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 11,

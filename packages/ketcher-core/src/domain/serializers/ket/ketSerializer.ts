@@ -725,6 +725,7 @@ export class KetSerializer implements Serializer<Struct> {
       id: templateId,
       fullName: monomer.monomerItem.props.Name,
       alias: monomer.monomerItem.label,
+      aliasHELM: monomer.monomerItem.props.aliasHELM,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,

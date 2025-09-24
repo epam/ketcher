@@ -455,6 +455,7 @@
         "id": "Hyp___trans-4-hydroxy-L-proline",
         "fullName": "trans-4-hydroxy-L-proline",
         "alias": "Hyp",
+        "aliasHELM": "Hyp",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,

@@ -443,6 +443,7 @@
         "id": "W___Tryptophan",
         "fullName": "Tryptophan",
         "alias": "W",
+        "aliasHELM": "W",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

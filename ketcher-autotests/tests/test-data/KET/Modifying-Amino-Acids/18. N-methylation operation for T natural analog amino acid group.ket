@@ -325,6 +325,7 @@
         "id": "meT___N-Methyl-Threonine",
         "fullName": "N-Methyl-Threonine",
         "alias": "meT",
+        "aliasHELM": "meT",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

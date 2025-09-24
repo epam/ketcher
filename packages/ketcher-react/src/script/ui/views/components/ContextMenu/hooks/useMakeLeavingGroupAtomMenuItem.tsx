@@ -4,6 +4,7 @@ import assert from 'assert';
 import { Item } from 'react-contexify';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
+import { ReactNode } from 'react';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;
@@ -52,6 +53,8 @@ const useMakeLeavingGroupAtomMenuItem = ({
 
   const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
 
+  const menuItems: ReactNode[] = [];
+
   if (isPotentialLeavingGroupAtom) {
     const handleMarkLeavingGroupAtomClick = () => {
       assert(selectedAtomId !== undefined);
@@ -59,16 +62,17 @@ const useMakeLeavingGroupAtomMenuItem = ({
       editor.assignLeavingGroupAtom(selectedAtomId);
     };
 
-    return (
+    menuItems.push(
       <Item
         {...props}
-        data-testid="mark-as-leaving-group"
         onClick={handleMarkLeavingGroupAtomClick}
         disabled={attachmentPointsLimitReached}
+        key="mark-as-leaving-group"
+        data-testid="mark-as-leaving-group"
       >
         <Icon name="leavingGroup" className={styles.icon} />
         Mark as leaving group
-      </Item>
+      </Item>,
     );
   }
 
@@ -79,20 +83,21 @@ const useMakeLeavingGroupAtomMenuItem = ({
       editor.assignConnectionPointAtom(selectedAtomId);
     };
 
-    return (
+    menuItems.push(
       <Item
         {...props}
-        data-testid="mark-as-connection-point"
         onClick={handleMarkConnectionPointAtomClick}
         disabled={attachmentPointsLimitReached}
+        data-testid="mark-as-connection-point"
+        key="mark-as-connection-point"
       >
         <Icon name="connectionPoint" className={styles.icon} />
         Mark as connection point
-      </Item>
+      </Item>,
     );
   }
 
-  return null;
+  return menuItems.length > 0 ? menuItems : null;
 };
 
 export default useMakeLeavingGroupAtomMenuItem;

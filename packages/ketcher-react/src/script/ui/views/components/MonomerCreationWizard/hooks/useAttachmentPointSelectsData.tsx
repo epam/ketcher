@@ -38,38 +38,48 @@ export const useAttachmentPointSelectsData = (
       ),
     );
 
-    const nameOptions = Array.from({
+    const nameOptions: Option[] = Array.from({
       length: attachmentPointNameOptionsLength,
     }).map((_, i) => ({
       value: `R${i + 1}`,
       label: `R${i + 1}`,
     }));
 
-    let leavingAtomOptions = editor
+    let leavingAtomOptions: Option[] = editor
       .findPotentialLeavingAtoms(attachmentAtomId)
       .map((atom) => {
         const atomId = editor.struct().atoms.keyOf(atom);
         assert(isNumber(atomId));
 
-        let label = atom.label;
-        if (atom.implicitH > 0) {
-          label = label.concat(
-            atom.implicitH > 1
-              ? `${AtomLabel.H}${atom.implicitH}`
-              : AtomLabel.H,
-          );
-        }
+        const { label, implicitH } = atom;
+
+        const children = (
+          <>
+            {label}
+            {implicitH > 0 &&
+              (implicitH > 1 ? (
+                <>
+                  {AtomLabel.H}
+                  <sub>{implicitH}</sub>
+                </>
+              ) : (
+                AtomLabel.H
+              ))}
+          </>
+        );
 
         return {
           value: atomId.toString(),
-          label,
+          label: '',
+          children,
         };
       });
 
     if (attachmentAtom.implicitH > 0) {
       leavingAtomOptions = leavingAtomOptions.concat({
         value: '-1',
-        label: AtomLabel.H,
+        label: '',
+        children: <i>{AtomLabel.H}</i>,
       });
     }
 

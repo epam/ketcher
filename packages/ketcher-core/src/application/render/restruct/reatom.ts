@@ -743,7 +743,7 @@ class ReAtom extends ReObject {
           const leavingGroupPos = leavingGroupAtom.pp;
           const direction = leavingGroupPos.sub(attachmentPos).normalized();
 
-          const labelPos = ps.addScaled(direction, 30);
+          const labelPos = ps.addScaled(direction, 35);
 
           const isProblematic =
             problematicAttachmentPoints.has(attachmentPointName);

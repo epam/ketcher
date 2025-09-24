@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
@@ -7,9 +8,9 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickOnCanvas,
   keyboardPressOnCanvas,
@@ -21,6 +22,7 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
 } from '@utils';
+import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -85,7 +87,9 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
 
-  test('Case 3: Check that be able to draw an irregular selection area on the canvas by clicking and dragging the mouse for Lasso', async () => {
+  test('Case 3: Check that be able to draw an irregular selection area on the canvas by clicking and dragging the mouse for Lasso', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Able to draw an irregular selection area on the canvas by clicking and dragging the mouse for Lasso.
@@ -95,17 +99,16 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * 3. Select Lasso Selection tool
      * 4. Draw an irregular selection area on the canvas and select the Benzene ring
      */
-    await drawBenzeneRing(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/benzene-ring.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
-    await selectWithLasso(page, 570, 290, [
-      { x: 710, y: 290 },
-      { x: 740, y: 350 },
-      { x: 670, y: 450 },
-      { x: 555, y: 405 },
-      { x: 570, y: 290 },
+    await selectWithLasso(page, 360, 260, [
+      { x: 720, y: 260 },
+      { x: 720, y: 480 },
+      { x: 360, y: 480 },
+      { x: 360, y: 260 },
+      { x: 360, y: 260 },
     ]);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -490,7 +493,10 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * 5. Right click on the canvas and select "Delete" in the context menu
      * 6. Press Undo button
      * 7. Press Redo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
      */
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/micro-and-macro-structures.ket',
@@ -498,12 +504,12 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Lasso,
     );
-    await selectWithLasso(page, 450, 250, [
-      { x: 800, y: 250 },
-      { x: 800, y: 500 },
-      { x: 400, y: 500 },
-      { x: 400, y: 250 },
-      { x: 450, y: 250 },
+    await selectWithLasso(page, 300, 110, [
+      { x: 800, y: 110 },
+      { x: 800, y: 540 },
+      { x: 280, y: 540 },
+      { x: 280, y: 110 },
+      { x: 300, y: 110 },
     ]);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1074,6 +1080,229 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMacromoleculeEditorScrollBars: true,
     });
     await clickOnCanvas(page, 400, 500);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 30: Check that the user can click on any monomer in the structure to automatically select the entire fragment connected to that element (The term "fragments" refers to any collection to monomers, and small molecules connected via bonds. )(Flex mode)', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The user can click on any monomer in the structure to automatically select the entire
+     * fragment connected to that element (The term "fragments" refers to any collection to monomers,
+     * and small molecules connected via bonds. )(Flex mode).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Click on any monomer in the structure
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 31: Check that the user can click on any monomer in the structure to automatically select the entire fragment connected to that element (The term "fragments" refers to any collection to monomers, and small molecules connected via bonds. )(Snake mode)', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The user can click on any monomer in the structure to automatically select the entire
+     * fragment connected to that element (The term "fragments" refers to any collection to monomers,
+     * and small molecules connected via bonds. )(Snake mode).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Click on any monomer in the structure
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 32: Check that the user can click on any monomer in the structure to automatically select the entire fragment connected to that element (The term "fragments" refers to any collection to monomers, and small molecules connected via bonds. )(Sequence mode)', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The user can click on any monomer in the structure to automatically select the entire
+     * fragment connected to that element (The term "fragments" refers to any collection to monomers,
+     * and small molecules connected via bonds. )(Sequence mode).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Click on any monomer in the structure
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 33: Check deletion of selected structure by Fragment and Undo ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment and Undo ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Erase button
+     * 6. Press Undo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 34: Check deletion of selected structure by Fragment and Undo ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment and Undo ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Erase button
+     * 6. Press Undo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonLeftToolbar(page).selectEraseTool();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pageReload(page);
+  });
+
+  test('Case 35: Check deletion of selected structure by Fragment and Undo ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment and Undo ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Delete button on keyboard
+     * 6. Press Undo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await keyboardPressOnCanvas(page, 'Delete');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

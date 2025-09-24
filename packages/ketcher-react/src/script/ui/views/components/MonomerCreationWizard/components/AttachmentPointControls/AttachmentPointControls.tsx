@@ -11,11 +11,19 @@ type Props = {
   onLeavingAtomChange: (newLeavingAtomId: number) => void;
   className?: string;
   additionalControls?: ReactNode;
+  highlight?: boolean;
 };
 
 const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
   (
-    { data, onNameChange, onLeavingAtomChange, className, additionalControls },
+    {
+      data,
+      onNameChange,
+      onLeavingAtomChange,
+      className,
+      additionalControls,
+      highlight,
+    },
     ref,
   ) => {
     const {
@@ -35,7 +43,14 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
     };
 
     return (
-      <div className={clsx(styles.selectsWrapper, className)} ref={ref}>
+      <div
+        className={clsx(
+          styles.selectsWrapper,
+          className,
+          highlight && styles.highlight,
+        )}
+        ref={ref}
+      >
         <Select
           className={styles.nameSelect}
           options={nameOptions}

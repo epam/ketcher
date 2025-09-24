@@ -5,7 +5,7 @@ import { useAttachmentPointSelectsData } from '../../hooks/useAttachmentPointSel
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';
 import Editor from '../../../../../../editor';
 import { Icon } from '../../../../../../../components';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   name: AttachmentPointName;
@@ -52,7 +52,44 @@ const AttachmentPoint = ({
       element.removeEventListener('mouseover', mouseOverHandler);
       element.removeEventListener('mouseleave', mouseLeaveHandler);
     };
-  }, []);
+  }, [editor, name]);
+
+  const [highlight, setHighlight] = useState(false);
+
+  useEffect(() => {
+    const handleAttachmentPointHighlight = (event: Event) => {
+      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
+        .detail;
+      setHighlight(attachmentPointName === name);
+    };
+    const handleResetAttachmentPointHighlight = (event: Event) => {
+      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
+        .detail;
+      if (attachmentPointName === name) {
+        setHighlight(false);
+      }
+    };
+
+    window.addEventListener(
+      'highlightAttachmentPointControls',
+      handleAttachmentPointHighlight,
+    );
+    window.addEventListener(
+      'resetHighlightAttachmentPointControls',
+      handleResetAttachmentPointHighlight,
+    );
+
+    return () => {
+      window.removeEventListener(
+        'highlightAttachmentPointControls',
+        handleAttachmentPointHighlight,
+      );
+      window.removeEventListener(
+        'resetHighlightAttachmentPointControls',
+        handleResetAttachmentPointHighlight,
+      );
+    };
+  }, [name]);
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== name) {
@@ -74,6 +111,7 @@ const AttachmentPoint = ({
       onNameChange={handleNameChange}
       onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}
+      highlight={highlight}
       additionalControls={
         <button
           className={styles.removeButton}

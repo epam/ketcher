@@ -89,7 +89,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { parseMonomersLibrary } from './helpers';
+import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
@@ -288,7 +288,7 @@ export class CoreEditor {
 
   public clearMonomersLibrary() {
     this._monomersLibrary = [];
-    this._monomersLibraryParsedJson = null;
+    this._monomersLibraryParsedJson = getEmptyMonomersLibraryJson();
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
@@ -306,9 +306,16 @@ export class CoreEditor {
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
-    storedMonomerLibraryUpdates.forEach((update) =>
-      this.updateMonomersLibrary(update),
-    );
+    storedMonomerLibraryUpdates.forEach((update) => {
+      const parsedUpdate = JSON.parse(update);
+
+      if (parsedUpdate.replacement) {
+        this.clearMonomersLibrary();
+        this.updateMonomersLibrary(parsedUpdate.data);
+      } else {
+        this.updateMonomersLibrary(parsedUpdate.data || update);
+      }
+    });
     persistentMonomersLibrary = this._monomersLibrary;
     persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }

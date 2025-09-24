@@ -676,11 +676,36 @@ class Editor implements KetcherEditor {
         assert(selectionAtom);
 
         if (
-          selectionAtom.neighbors.length === 1 &&
-          !isNumber(selectionAtom.rglabel)
+          selectionAtom.neighbors.length > 1 ||
+          isNumber(selectionAtom.rglabel)
         ) {
-          potentialLeavingAtoms.push(selectionAtomId);
+          return;
         }
+
+        const bondIdToSelectionAtom = this.struct().bonds.find((_, bond) => {
+          return (
+            bond.hb1 === selectionAtom.neighbors[0] ||
+            bond.hb2 === selectionAtom.neighbors[0]
+          );
+        });
+
+        if (bondIdToSelectionAtom === null) {
+          return;
+        }
+
+        const bondToSelectionAtom = this.struct().bonds.get(
+          bondIdToSelectionAtom,
+        );
+        assert(bondToSelectionAtom);
+
+        if (
+          bondToSelectionAtom.type !== Bond.PATTERN.TYPE.SINGLE ||
+          bondToSelectionAtom.stereo !== Bond.PATTERN.STEREO.NONE
+        ) {
+          return;
+        }
+
+        potentialLeavingAtoms.push(selectionAtomId);
       });
 
       const totalPotentialLeavingAtoms =

@@ -45,7 +45,7 @@ import {
   UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { attachmentPointNames } from 'domain/types';
+import { AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
@@ -121,11 +121,61 @@ class ReAtom extends ReObject {
     const ret = this.makeHoverPlate(render);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
+    this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
     );
 
     return ret;
+  }
+
+  private attachHighlightTriggerForAttachmentPointAtom(
+    hoverElement: any,
+    render: Render,
+  ) {
+    if (!render.monomerCreationState) {
+      return;
+    }
+
+    const atomId = render.ctab.molecule.atoms.keyOf(this.a);
+    if (atomId === null) {
+      return;
+    }
+
+    const { assignedAttachmentPoints } = render.monomerCreationState;
+
+    const attachmentPointEntry = Array.from(
+      assignedAttachmentPoints.entries(),
+    ).find(([, atomsPair]) => {
+      const [attachmentAtomId, leavingAtomId] = atomsPair;
+      return attachmentAtomId === atomId || leavingAtomId === atomId;
+    });
+
+    if (attachmentPointEntry) {
+      const [attachmentPointName] = attachmentPointEntry;
+      hoverElement.hover(
+        () => {
+          window.dispatchEvent(
+            new CustomEvent<AttachmentPointName>(
+              'highlightAttachmentPointControls',
+              {
+                detail: attachmentPointName,
+              },
+            ),
+          );
+        },
+        () => {
+          window.dispatchEvent(
+            new CustomEvent<AttachmentPointName>(
+              'resetHighlightAttachmentPointControls',
+              {
+                detail: attachmentPointName,
+              },
+            ),
+          );
+        },
+      );
+    }
   }
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -755,6 +805,15 @@ class ReAtom extends ReObject {
 
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
+
+              window.dispatchEvent(
+                new CustomEvent<AttachmentPointName>(
+                  'highlightAttachmentPointControls',
+                  {
+                    detail: attachmentPointName,
+                  },
+                ),
+              );
             },
             // Mouse leave
             () => {
@@ -770,6 +829,15 @@ class ReAtom extends ReObject {
 
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
+
+              window.dispatchEvent(
+                new CustomEvent<AttachmentPointName>(
+                  'resetHighlightAttachmentPointControls',
+                  {
+                    detail: attachmentPointName,
+                  },
+                ),
+              );
             },
           );
 

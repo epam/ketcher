@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -101,14 +101,16 @@ const SubMenu = ({
   const activeOptions = options.filter((itemKey) => isActive(itemKey));
   const activeOption = activeOptions[0];
 
-  if (subMenuId && activeOption && activeOption !== lastActiveOption) {
-    dispatch(
-      setSelectedMenuGroupItem({
-        groupName: subMenuId,
-        activeItemName: activeOption,
-      }),
-    );
-  }
+  useEffect(() => {
+    if (subMenuId && activeOption && activeOption !== lastActiveOption) {
+      dispatch(
+        setSelectedMenuGroupItem({
+          groupName: subMenuId,
+          activeItemName: activeOption,
+        }),
+      );
+    }
+  }, [dispatch, subMenuId, activeOption, lastActiveOption]);
 
   const visibleItemId =
     activeItem ?? (activeOption || lastActiveOption || options[0]);

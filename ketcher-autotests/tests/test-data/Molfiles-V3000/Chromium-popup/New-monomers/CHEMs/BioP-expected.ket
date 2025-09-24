@@ -1,0 +1,451 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-BioP___5' Biotin"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "BioP",
+        "templateId": "BioP___5' Biotin"
+    },
+    "monomerTemplate-BioP___5' Biotin": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -5.592,
+                    1.534,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -4.914,
+                    0.799,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.403,
+                    -0.073,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.384,
+                    0.123,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -6.5,
+                    1.116,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.287,
+                    -1.066,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -6.195,
+                    -1.484,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.873,
+                    -0.749,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.415,
+                    -1.556,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.555,
+                    -1.046,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.683,
+                    -1.535,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.823,
+                    -1.025,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.951,
+                    -1.514,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.091,
+                    -1.004,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.939,
+                    -2.514,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.395,
+                    2.514,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.781,
+                    -1.494,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.641,
+                    -0.983,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.513,
+                    -1.473,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.373,
+                    -0.962,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.245,
+                    -1.452,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.105,
+                    -0.942,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    5.977,
+                    -1.431,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.837,
+                    -0.921,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.989,
+                    -2.431,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.873,
+                    -1.874,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    22,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    25
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "BioP___5' Biotin",
+        "fullName": "5' Biotin",
+        "alias": "BioP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 22,
+                "leavingGroup": {
+                    "atoms": [
+                        25
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "Biosg",
+            "modifications": {
+                "endpoint5": "5Biosg"
+            }
+        }
+    }
+}

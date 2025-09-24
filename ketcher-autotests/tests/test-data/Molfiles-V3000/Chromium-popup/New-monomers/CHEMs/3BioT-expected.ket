@@ -1,0 +1,586 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-3BioT___3' Biotin TEG"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "3BioT",
+        "templateId": "3BioT___3' Biotin TEG"
+    },
+    "monomerTemplate-3BioT___3' Biotin TEG": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -8.655,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -7.789,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.923,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.057,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.191,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -4.325,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.459,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.593,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.727,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.861,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.005,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.872,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.738,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.604,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.47,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.336,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.202,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.068,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.934,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.8,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.666,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.532,
+                    -1.047,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.398,
+                    -1.547,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -10.455,
+                    1.547,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -9.646,
+                    0.959,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -9.955,
+                    0.008,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -10.955,
+                    0.008,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -11.264,
+                    0.959,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -9.646,
+                    -0.943,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -10.455,
+                    -1.531,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -11.264,
+                    -0.943,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -10.455,
+                    2.547,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.191,
+                    -2.547,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.666,
+                    -2.547,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    11.264,
+                    -1.047,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    23,
+                    27
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    27,
+                    26
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    26,
+                    25
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    26,
+                    30
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    30,
+                    29
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    29,
+                    28
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    25
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    23,
+                    31
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    32
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    33
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    34
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "3BioT___3' Biotin TEG",
+        "fullName": "3' Biotin TEG",
+        "alias": "3BioT",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 22,
+                "leavingGroup": {
+                    "atoms": [
+                        34
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "BioTEG",
+            "modifications": {
+                "endpoint3": "3BioTEG"
+            }
+        }
+    }
+}

@@ -1,0 +1,618 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-RhoG___Rhodamine Green"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "RhoG",
+        "templateId": "RhoG___Rhodamine Green"
+    },
+    "monomerTemplate-RhoG___Rhodamine Green": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    5.05,
+                    5.135,
+                    0
+                ],
+                "charge": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.184,
+                    4.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.184,
+                    3.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.318,
+                    3.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.451,
+                    3.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.451,
+                    4.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.318,
+                    5.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.585,
+                    3.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.719,
+                    3.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.719,
+                    4.635,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.585,
+                    5.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.147,
+                    3.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.013,
+                    3.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.013,
+                    4.635,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.147,
+                    5.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.585,
+                    2.135,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.6,
+                    1.962,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.258,
+                    1.023,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.901,
+                    0.257,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.886,
+                    0.43,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.228,
+                    1.369,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.214,
+                    1.544,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.556,
+                    2.484,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.856,
+                    0.778,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.559,
+                    -0.683,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.879,
+                    5.135,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.426,
+                    -0.856,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.202,
+                    -1.449,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.768,
+                    -1.796,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.753,
+                    -1.969,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.095,
+                    -2.909,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.08,
+                    -3.082,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.422,
+                    -4.022,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.407,
+                    -4.195,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.749,
+                    -5.135,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.05,
+                    -3.429,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    14,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    21,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    25
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    26
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    24,
+                    27
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    26,
+                    28
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    29
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    29,
+                    30
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    30,
+                    31
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    31,
+                    32
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    32,
+                    33
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    33,
+                    34
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    33,
+                    35
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "RhoG___Rhodamine Green",
+        "fullName": "Rhodamine Green",
+        "alias": "RhoG",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 33,
+                "leavingGroup": {
+                    "atoms": [
+                        34
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "RhoG-XN",
+            "modifications": {
+                "endpoint5": "5RhoG-XN",
+                "endpoint3": "3RhodGn-XN"
+            }
+        }
+    }
+}

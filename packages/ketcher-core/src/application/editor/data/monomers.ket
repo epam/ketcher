@@ -54469,9 +54469,9 @@
     ],
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "Cy5.5___Cy5.5 dye",
-    "fullName": "Cy5.5 dye",
-    "alias": "Cy5.5",
+    "id": "Cy55___Cy55 dye",
+    "fullName": "Cy55 dye",
+    "alias": "Cy55",
     "idtAliases": {
       "base": "Cy55",
       "modifications": {

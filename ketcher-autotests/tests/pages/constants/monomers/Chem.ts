@@ -57,7 +57,7 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   HEX: { alias: 'HEX', testId: 'HEX___Hexachlorofluorescein' },
   TET: { alias: 'TET', testId: 'TET___Tetrachlorofluorescein' },
   Sp9: { alias: 'Sp9', testId: 'Sp9___Spacer 9' },
-  Cy5_5: { alias: 'Cy5.5', testId: 'Cy5.5___Cy5.5 dye' },
+  Cy55: { alias: 'Cy55', testId: 'Cy55___Cy55 dye' },
   _2_Bio: { alias: '2-Bio', testId: '2-Bio___Dual Biotin' },
   UAmM: { alias: 'UAmM', testId: 'UAmM___Uni-Link Amino Modifier' },
   AF532: { alias: 'AF532', testId: 'AF532___Alexa Fluor 532 dye' },

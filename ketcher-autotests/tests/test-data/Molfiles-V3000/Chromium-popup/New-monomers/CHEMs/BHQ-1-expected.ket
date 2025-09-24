@@ -1,0 +1,686 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-BHQ-1___Black Hole Quencher 1"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "BHQ-1",
+        "templateId": "BHQ-1___Black Hole Quencher 1"
+    },
+    "monomerTemplate-BHQ-1___Black Hole Quencher 1": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -5.83,
+                    -4.31,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.119,
+                    -4.292,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.978,
+                    -3.807,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.109,
+                    -5.282,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.82,
+                    -5.303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.956,
+                    -5.784,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.67,
+                    -5.809,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -3.267,
+                    -3.789,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.288,
+                    -3.755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.815,
+                    -2.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.857,
+                    -1.155,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.33,
+                    -2.021,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.867,
+                    -1.132,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.822,
+                    -2.842,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.353,
+                    -1.971,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.394,
+                    -0.263,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.595,
+                    -0.239,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.512,
+                    1.343,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.223,
+                    1.344,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.369,
+                    1.838,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.223,
+                    0.354,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.512,
+                    0.349,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.372,
+                    -0.14,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.08,
+                    1.838,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.936,
+                    1.343,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.793,
+                    1.837,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.649,
+                    1.342,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.08,
+                    2.826,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.937,
+                    3.32,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.937,
+                    4.309,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.299,
+                    -3.694,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.701,
+                    -3.667,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.377,
+                    -0.301,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.377,
+                    -0.325,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -4.987,
+                    -2.807,
+                    0
+                ],
+                "charge": 1
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.126,
+                    -2.299,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.858,
+                    -2.315,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    5.804,
+                    4.809,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.804,
+                    5.809,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.669,
+                    4.308,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.67,
+                    5.309,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    14,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    19,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    21
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    20
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    20,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    23,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    25
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    26
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    23,
+                    27
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    27,
+                    28
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    29
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    30
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    30,
+                    31
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    32
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    32,
+                    33
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    34
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    34,
+                    35
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    34,
+                    36
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    29,
+                    37
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    37,
+                    38
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    37,
+                    39
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    37,
+                    40
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "BHQ-1___Black Hole Quencher 1",
+        "fullName": "Black Hole Quencher 1",
+        "alias": "BHQ-1",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 37,
+                "leavingGroup": {
+                    "atoms": [
+                        40
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "BHQ_1",
+            "modifications": {
+                "endpoint5": "5BHQ_1",
+                "endpoint3": "3BHQ_1"
+            }
+        }
+    }
+}

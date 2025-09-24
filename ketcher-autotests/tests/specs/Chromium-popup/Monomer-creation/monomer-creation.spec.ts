@@ -12,7 +12,6 @@ import {
 } from '@utils/files/readFile';
 import {
   MacroFileType,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -22,7 +21,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  clickOnCanvas,
   dragTo,
   MolFileFormat,
   SdfFileFormat,
@@ -32,6 +30,7 @@ import {
 import {
   createMonomer,
   CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -131,29 +130,6 @@ interface IMoleculesForMonomerCreation {
   issueNumber?: string;
   // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
   pageReloadNeeded?: boolean;
-}
-
-async function prepareMoleculeForMonomerCreation(
-  page: Page,
-  AtomIDsToExclude?: string[],
-  BondIDsToExclude?: string[],
-) {
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await page.keyboard.down('Shift');
-  if (AtomIDsToExclude) {
-    for (const atomId of AtomIDsToExclude) {
-      await getAtomLocator(page, { atomId: Number(atomId) }).click({
-        force: true,
-      });
-    }
-  }
-  if (BondIDsToExclude) {
-    for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
-    }
-  }
-  await page.keyboard.up('Shift');
 }
 
 const eligableMolecules: IMoleculesForMonomerCreation[] = [

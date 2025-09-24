@@ -1,0 +1,372 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-ThiP___Thiol Modifier C6 S-S"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "ThiP",
+        "templateId": "ThiP___Thiol Modifier C6 S-S"
+    },
+    "monomerTemplate-ThiP___Thiol Modifier C6 S-S": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -6.929,
+                    -0.256,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.066,
+                    -0.756,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.199,
+                    -0.255,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.333,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.466,
+                    -0.255,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.6,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.734,
+                    -0.255,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.867,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.001,
+                    -0.255,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.865,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.733,
+                    -0.255,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.6,
+                    -0.757,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.467,
+                    -0.258,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.329,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.195,
+                    -0.256,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.068,
+                    -0.754,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    6.922,
+                    -0.243,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -7.796,
+                    -0.755,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    7.796,
+                    -0.729,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.906,
+                    0.757,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    7.788,
+                    0.257,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    20
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "ThiP___Thiol Modifier C6 S-S",
+        "fullName": "Thiol Modifier C6 S-S",
+        "alias": "ThiP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 16,
+                "leavingGroup": {
+                    "atoms": [
+                        20
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "ThioMC6-D",
+            "modifications": {
+                "endpoint5": "5ThioMC6-D",
+                "internal": "iThioMC6-D"
+            }
+        }
+    }
+}

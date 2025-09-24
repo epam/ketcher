@@ -5,6 +5,8 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
   MacroFileType,
+  openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
@@ -14,6 +16,18 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -39,7 +53,7 @@ const newCHEMs = [
   Chem.HEX,
   Chem.TET,
   Chem.Sp9,
-  Chem.Cy5_5,
+  Chem.Cy55,
   Chem._2_Bio,
   Chem.UAmM,
   Chem.AF532,
@@ -414,5 +428,506 @@ test(`12. Verify that newly added sixty-five new CHEMs can be found through the 
     await expect(
       Library(page).getMonomerLibraryCardLocator(chem),
     ).toBeVisible();
+  }
+});
+
+test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM SCY5`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Verify that creating a duplicate of a new item is not allowed for CHEM SCY5
+   *
+   * Case:
+   *      1. Open Micromolecules canvas
+   *      2. Search for the CHEM SCY5 in the library
+   *      3. Attempt to create a duplicate of the CHEM SCY5
+   *      4. Validate that an error message is displayed
+   *
+   * Version 3.8
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+  const symbolExistsMessageBanner = NotificationMessageBanner(
+    page,
+    ErrorMessage.symbolExists,
+  );
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.CHEM);
+  await createMonomerDialog.setSymbol(Chem.SCY5.alias);
+  await createMonomerDialog.submit();
+  expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
+  await symbolExistsMessageBanner.ok();
+
+  await createMonomerDialog.discard();
+});
+
+test(`14. Verify that creating a duplicate of a new item is not allowed for newly added two phosphates`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Verify that creating a duplicate of a new item is not allowed for newly added two phosphates
+   *
+   * Case:
+   *      1. Open Micromolecules canvas
+   *      2. Search for the phosphate in the library
+   *      3. Attempt to create a duplicate of the phosphate
+   *      4. Validate that an error message is displayed
+   *      5. Repeat steps 2-4 for each phosphate
+   *
+   * Version 3.8
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+  const symbolExistsMessageBanner = NotificationMessageBanner(
+    page,
+    ErrorMessage.symbolExists,
+  );
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Phosphate);
+
+  for (const phosphate of newPhosphates) {
+    await createMonomerDialog.setSymbol(phosphate.alias);
+    await createMonomerDialog.submit();
+    expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
+    await symbolExistsMessageBanner.ok();
+  }
+
+  await createMonomerDialog.discard();
+});
+
+test(`15. Verify that creating a duplicate of a new item is not allowed for newly added nineteen standalone nucleotide`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Verify that creating a duplicate of a new item is not allowed for newly added nineteen standalone nucleotide
+   *
+   * Case:
+   *      1. Open Micromolecules canvas
+   *      2. Search for the nucleotide in the library
+   *      3. Attempt to create a duplicate of the nucleotide
+   *      4. Validate that an error message is displayed
+   *      5. Repeat steps 2-4 for each nucleotide
+   *
+   * Version 3.8
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+  const symbolExistsMessageBanner = NotificationMessageBanner(
+    page,
+    ErrorMessage.symbolExists,
+  );
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+
+  for (const nucleotide of newNucleotides) {
+    await createMonomerDialog.setSymbol(nucleotide.alias);
+    await createMonomerDialog.submit();
+    expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
+    await symbolExistsMessageBanner.ok();
+  }
+
+  await createMonomerDialog.discard();
+});
+
+test(`16. Verify that creating a duplicate of a new item is not allowed for newly added sixty-five new CHEMs`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Verify that creating a duplicate of a new item is not allowed for newly added sixty-five new CHEMs
+   *
+   * Case:
+   *      1. Open Micromolecules canvas
+   *      2. Search for the CHEM in the library
+   *      3. Attempt to create a duplicate of the CHEM
+   *      4. Validate that an error message is displayed
+   *      5. Repeat steps 2-4 for each CHEM
+   *
+   * Version 3.8
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+  const symbolExistsMessageBanner = NotificationMessageBanner(
+    page,
+    ErrorMessage.symbolExists,
+  );
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.CHEM);
+
+  for (const chem of newCHEMs) {
+    await createMonomerDialog.setSymbol(chem.alias);
+    await createMonomerDialog.submit();
+    expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
+    await symbolExistsMessageBanner.ok();
+  }
+
+  await createMonomerDialog.discard();
+});
+
+test(`17. Check that newly added two phosphates can be saved and opened for KET`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved and opened for KET
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as KET file
+   *      6. Clear the canvas
+   *      7. Open the saved KET file
+   *      8. Validate that the phosphates are on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).dragMonomerOnCanvas(phosphate, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `KET/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`18. Check that newly added eleven presets can be saved and opened for KET`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be saved and opened for KET
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as KET file
+   *      6. Clear the canvas
+   *      7. Open the saved KET file
+   *      8. Validate that the preset is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).dragMonomerOnCanvas(preset, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
+
+    await verifyFileExport(
+      page,
+      `KET/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
+    );
+
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`19. Check that newly added nineteen standalone nucleotide can be saved and opened for KET`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for KET
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the nucleotide is on the canvas
+   *      5. Save the structure as KET file
+   *      6. Clear the canvas
+   *      7. Open the saved KET file
+   *      8. Validate that the nucleotide is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).dragMonomerOnCanvas(nucleotide, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `KET/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`20. Check that newly added sixty-five new CHEMs can be saved and opened for KET`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for KET
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the CHEM is on the canvas
+   *      5. Save the structure as KET file
+   *      6. Clear the canvas
+   *      7. Open the saved KET file
+   *      8. Validate that the CHEM is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each CHEM
+   *
+   * Version 3.8
+   */
+  for (const chem of newCHEMs) {
+    await Library(page).dragMonomerOnCanvas(chem, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `KET/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `KET/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the phosphates are on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).dragMonomerOnCanvas(phosphate, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the preset is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).dragMonomerOnCanvas(preset, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
+    );
+
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the nucleotide is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the nucleotide is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).dragMonomerOnCanvas(nucleotide, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the CHEM is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the CHEM is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each CHEM
+   *
+   * Version 3.8
+   */
+  for (const chem of newCHEMs) {
+    await Library(page).dragMonomerOnCanvas(chem, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
+    );
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

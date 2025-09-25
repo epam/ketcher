@@ -35,6 +35,7 @@ import {
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
+  KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
 } from 'application/formatters';
@@ -77,6 +78,7 @@ import {
   initHotKeys,
   KetcherLogger,
   keyNorm,
+  SettingsManager,
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
@@ -90,7 +92,6 @@ import { BaseMonomerRenderer } from 'application/render';
 import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import {
   getAminoAcidsToModify,
@@ -103,6 +104,8 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import { D3SvgElementSelection } from 'application/render/types';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { SelectBase } from 'application/editor/tools/select/SelectBase';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -136,7 +139,11 @@ interface IAutochainMonomerAddResult {
   modelChanges: Command;
   firstMonomer: BaseMonomer;
   lastMonomer: BaseMonomer;
+  drawingEntities: DrawingEntity[];
 }
+
+export const EditorClassName = 'Ketcher-polymer-editor-root';
+export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
@@ -158,6 +165,7 @@ export class CoreEditor {
   private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
+  public ketcherRootElement: HTMLDivElement | null;
   public drawnStructuresWrapperElement: SVGGElement;
   public canvasOffset: DOMRect = {
     width: 0,
@@ -165,6 +173,8 @@ export class CoreEditor {
     x: 0,
     y: 0,
   } as DOMRect;
+
+  public ketcherRootElementBoundingClientRect: DOMRect | undefined;
 
   public nextAutochainPosition?: Vec2 = undefined;
 
@@ -202,6 +212,9 @@ export class CoreEditor {
     this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
+    this.ketcherRootElement = this.canvas?.closest<HTMLDivElement>(
+      KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+    );
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
@@ -223,22 +236,29 @@ export class CoreEditor {
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
-    this.initializeEventListeners();
+    this.initializeGlobalEventListeners();
   }
 
   private resetCanvasOffset() {
     this.canvasOffset = this.canvas.getBoundingClientRect();
   }
 
-  private initializeEventListeners(): void {
+  private resetKetcherRootElementOffset() {
+    this.ketcherRootElementBoundingClientRect =
+      this.ketcherRootElement?.getBoundingClientRect();
+  }
+
+  private initializeGlobalEventListeners(): void {
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
     window.addEventListener('blur', this.handleWindowBlur);
+    window.addEventListener('resize', this.handleWindowResize);
   }
 
   private readonly handleVisibilityChange = (): void => {
@@ -251,8 +271,13 @@ export class CoreEditor {
     this.cancelActiveDrag();
   };
 
+  private handleWindowResize = () => {
+    this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
+  };
+
   private cancelActiveDrag(): void {
-    if (this.tool instanceof SelectRectangle) {
+    if (this.tool instanceof SelectBase) {
       this.tool.stopMovement();
     }
   }
@@ -275,8 +300,12 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
-    persistentMonomersLibrary = monomersLibrary;
-    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+    const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
+    storedMonomerLibraryUpdates.forEach((update) =>
+      this.updateMonomersLibrary(update),
+    );
+    persistentMonomersLibrary = this._monomersLibrary;
+    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
@@ -351,6 +380,27 @@ export class CoreEditor {
     return this._monomersLibrary;
   }
 
+  public checkIfMonomerSymbolClassPairExists(
+    symbol: string,
+    monomerClass: KetMonomerClass | undefined,
+  ) {
+    if (!monomerClass) {
+      return true;
+    }
+
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      const { props } = monomerItem;
+      return (
+        props.MonomerClass === monomerClass &&
+        (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
+  }
+
   public get defaultRnaPresetsLibraryItems() {
     const monomersLibraryJson = this.monomersLibraryParsedJson;
 
@@ -421,9 +471,19 @@ export class CoreEditor {
 
   private setupCopyPasteEvent() {
     this.copyEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
       this.mode.onCopy(event);
     };
     this.pasteEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
       this.mode.onPaste(event);
     };
     document.addEventListener('copy', this.copyEventHandler);
@@ -547,7 +607,6 @@ export class CoreEditor {
     );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
-      this.drawingEntitiesManager.unselectAllDrawingEntities();
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
@@ -625,6 +684,7 @@ export class CoreEditor {
         item: IRnaPreset | MonomerOrAmbiguousType,
         position: { x: number; y: number },
       ) => {
+        const modelChanges = new Command();
         const history = new EditorHistory(this);
         const { x, y } = position;
 
@@ -655,8 +715,16 @@ export class CoreEditor {
           return;
         }
 
-        history.update(monomersAddResult.modelChanges);
-        this.renderersContainer.update(monomersAddResult.modelChanges);
+        modelChanges.merge(monomersAddResult.modelChanges);
+
+        modelChanges.merge(
+          this.drawingEntitiesManager.selectDrawingEntities(
+            monomersAddResult.drawingEntities,
+          ),
+        );
+
+        history.update(modelChanges);
+        this.renderersContainer.update(modelChanges);
         this.calculateAndStoreNextAutochainPosition(
           monomersAddResult.lastMonomer,
         );
@@ -671,11 +739,11 @@ export class CoreEditor {
     );
   }
 
-  private getDataForAutochain() {
-    const selectedMonomersWithFreeR2 =
-      this.drawingEntitiesManager.selectedMonomers.filter((monomer) => {
-        return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
-      });
+  public getDataForAutochain() {
+    const selectedMonomers = this.drawingEntitiesManager.selectedMonomers;
+    const selectedMonomersWithFreeR2 = selectedMonomers.filter((monomer) => {
+      return monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2);
+    });
     const selectedMonomerToConnect =
       selectedMonomersWithFreeR2.length === 1
         ? selectedMonomersWithFreeR2[0]
@@ -695,6 +763,8 @@ export class CoreEditor {
     return {
       selectedMonomerToConnect,
       newMonomerPosition,
+      selectedMonomersWithFreeR2,
+      selectedMonomers,
     };
   }
 
@@ -733,6 +803,8 @@ export class CoreEditor {
       isLibraryItemRnaPreset(monomerOrRnaItem),
     );
 
+    const canvasWasEmptyBeforeAutochain =
+      this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
     const history = new EditorHistory(this);
     const { selectedMonomerToConnect, newMonomerPosition } =
@@ -790,6 +862,15 @@ export class CoreEditor {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
+    if (canvasWasEmptyBeforeAutochain) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.selectDrawingEntities(
+          monomersAddResult.drawingEntities,
+        ),
+      );
+    }
+
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
@@ -917,6 +998,15 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: sugar,
       lastMonomer: phosphate ?? sugar,
+      drawingEntities: [
+        ...monomers,
+        ...(sugar.attachmentPointsToBonds.R2
+          ? [sugar.attachmentPointsToBonds.R2]
+          : []),
+        ...(sugar.attachmentPointsToBonds.R3
+          ? [sugar.attachmentPointsToBonds.R3]
+          : []),
+      ],
     };
   }
 
@@ -938,6 +1028,7 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: monomer,
       lastMonomer: monomer,
+      drawingEntities: [monomer],
     };
   }
 
@@ -960,6 +1051,7 @@ export class CoreEditor {
       modelChanges,
       firstMonomer: monomer,
       lastMonomer: monomer,
+      drawingEntities: [monomer],
     };
   }
 
@@ -1097,10 +1189,15 @@ export class CoreEditor {
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {
+    const history = new EditorHistory(this);
     const modelChanges =
       this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
-    const history = new EditorHistory(this);
 
+    modelChanges.merge(
+      this.drawingEntitiesManager.unselectAllDrawingEntities(),
+    );
+
+    modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();
@@ -1363,6 +1460,12 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);
+    document.removeEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange,
+    );
+    window.removeEventListener('blur', this.handleWindowBlur);
+    window.removeEventListener('resize', this.handleWindowResize);
 
     this.cleanupsForDomEvents.forEach((cleanupFunction) => {
       cleanupFunction();
@@ -1563,6 +1666,7 @@ export class CoreEditor {
 
   public switchToMacromolecules() {
     this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
     this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();

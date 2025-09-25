@@ -33,7 +33,7 @@
 
 **Ketcher molecules mode** consists of the following elements:
 
-<img src=images/Ketcher-Micro-Whole-Canvas.png width = "1000"/>
+<img src=images/Ketcher-Micro-Whole-Canvas-3.7..png width = "1000"/>
 
 **Note**: Depending on the screen size, some tools on the _Tool palette_ can be displayed in expanded or collapsed forms.
 
@@ -128,7 +128,7 @@ To draw/edit atoms you can:
 
 - Click on the <img src=images/14.png width = "35"/> button to use the _Extended table_ and select a corresponding _Generic group_ or _Special Node_;
 
-<img src=images/14_ext_tablen.png width = "400"/>
+<img src=images/Extended-Table-3.7..png width = "400"/>
 
 ## Drawing Bonds
 
@@ -458,7 +458,7 @@ In the _Stereochemistry tab_ in _Settings_ you can:
 - Choose one of the four color display modes;
 - Enable/disable option when Chiral flag is ignored.
 
-<img src=images/49_sett_stereon.png width = "300"/>
+<img src=images/Ignore-Chilar-Flag-3.7..png width = "300"/>
 
 When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V2000 and MDL V3000 files, as well as the display of labels at stereogenic centers and stereo flags:
 
@@ -474,11 +474,11 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-canvas-3.5..png width = "1000"/>
+<img src=images/Macro-canvas-3.7..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
-<img src=images/Macro-Toolbar-3.4..png width = "1000"/>
+<img src=images/Macro-Toolbar-3.7..png width = "1000"/>
 
 - **Clear Canvas** (1) button to clear the drawing area;
 - **Open…** (2) and **Save As…** (3) buttons to import a drawing from a molecular file or save it to a supported molecular file format;
@@ -492,8 +492,10 @@ You can use the buttons on the main toolbar:
 
 - **Sequence mode typing type switcher** (10) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
 - **Molecules/Macromolecules switcher** (11) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
-- **Fullscreen mode** (12) button allows to initiate displaying Ketcher window in the fullscreen mode;
-- **Zoom panel** (13) displays the current zoom percentage.
+- **Help** button (12) to view Help;
+- **About** button (13) to display version and copyright information of the program;
+- **Fullscreen mode** (14) button allows to initiate displaying Ketcher window in the fullscreen mode;
+- **Zoom panel** (15) displays the current zoom percentage.
 
 The left toolbar consists of the following elements:
 
@@ -514,9 +516,9 @@ When hovered, the ruler is visible – it can be used to change the number of mo
 
 <img src=images/Ruler-Hover-3.5..png width = "800"/>
 
-<img src=images/Ruler-Snake-3.5..gif width = "500"/>
+<img src=images/Ruler-Snake-3.7..gif width = "500"/>
 
-<img src=images/Ruler-Sequence-3.5..gif width = "500"/>
+<img src=images/Ruler-Sequence-3.7..gif width = "500"/>
 
 Different numbers for monomers in a line can be set in different layout modes. The numbers are saved in browser cache, and will be applied upon opening Ketcher again.
 
@@ -528,28 +530,28 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.3..png width = "800"/>
+<img src=images/Library-Tabs-3.7..png width = "800"/>
 
 **Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
 
-<img src=images/Library-Search-3.3..png width = "600"/>
+<img src=images/Library-Search-3.7..png width = "600"/>
 
 Depending on the size of the Ketcher window, the library might have a slightly different apperance to fit more information into a smaller space:
 
-<img src=images/Compacted-Library-3.3..png width = "400"/>
+<img src=images/Compacted-Library-3.7..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
 In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, and the IDT alias(es) (if the monomer has IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.3..png width = "600"/>
+<img src=images/Monomer-Preview-3.7..png width = "600"/>
 
 In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as IDT alias(es) (if the preset has IDT alias(es)):
 
-<img src=images/Preset-Preview-3.0..png width = "200"/>
+<img src=images/Preset-Preview-3.7..png width = "200"/>
 
 In case of an ambiguous monomer, names of monomers making up that ambiguous monomer will be shown, as well as a type of ambiguous monomer (alternatives or mixed):
 
-<img src=images/Ambiguous-Preview-3.0..png width = "125"/>
+<img src=images/Ambiguous-Preview-3.7..png width = "125"/>
 
 ### RNA Builder
 
@@ -587,7 +589,47 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 ### Adding Custom Monomers to the Library
 
-New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/6247-update-the-help-document/README.md))
+#### Monomer Creation Wizard
+
+When a structure with some outgoing bonds is selected, for example:
+
+<img src=images/Selection-for-Creating-a-Monomer-3.7..png width = "150"/>
+
+_Monomer Creation_ icon on the left toolbar in Molecules mode is enabled:
+
+<img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
+
+Clicking it will open a _Monomer Creation Wizard_:
+
+<img src=images/Entering-the-Monomer-Creation-Wizard-3.7..png width = "700"/>
+
+In the _Monomer Creation Wizard_ users can set the following properties:
+- Monomer type;
+- Monomer symbol;
+- Monomer name;
+- Monomer natural analogue (if appropriate based on monomer type).
+
+Monomer attachment points are assigned by default, and the monomer structure cannot be changed after _The Wizard_ is entered.
+
+After mandatory fields are filled:
+
+<img src=images/Exiting-the-Monomer-Creation-Wizard-3.7..png width = "700"/>
+
+the user can click on _Submit_. That causes the previouselly selected structure to become an expanded monomer in Molecules mode:
+
+<img src=images/New-Monomer-Micro-3.7..png width = "150"/>
+
+and a regular monomer in Macromolecules mode:
+
+<img src=images/New-Monomer-Macro-3.7..png width = "150"/>
+
+that can also be seen in the library:
+
+<img src=images/New-Monomer-Library-3.7..png width = "150"/>
+
+#### Monomer Addition Through API
+
+New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/master/README.md))
 
 ## Sequence Mode
 
@@ -650,7 +692,13 @@ Monomers/presets/structures can be added to snake and flex modes by:
 - Pasting them on the canvas;
 - Adding them from the library though drag and drop:
 
-<img src=images/Drag-and-drop-3.6..gif width = "500"/>
+<img src=images/Drag-and-drop-3.7..gif width = "500"/>
+
+- Using the _arrow icon_ on the monomer/preset library card:
+
+<img src=images/Autochain-3.7..gif width = "500"/>
+
+**Note**: If the _arrow icon_ is clicked while a selection on canvas exists, the new monomer/preset will be added with a bond to the selected structure. If no selection exists, the new element will be added near the last added structure on canvas.
 
 ### Establishing Bonds
 
@@ -742,7 +790,7 @@ Creation of an RNA antisense strand in sequence layout mode from the right-click
 
 Creation of a DNA antisense strand in flex layout mode using the _Create Antisense Strand_ icon:
 
-<img src=images/Create-AS-In-Flex-1-3.3..png width = "300"/>
+<img src=images/Create-AS-In-Flex-1-3.7..png width = "300"/>
 <img src=images/Create-AS-In-Flex-2-3.2..png width = "300"/>
 
 ### Working with Antisense Chains in Sequence Layout Mode
@@ -796,13 +844,13 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
      - *Hydrophobicity* - Represented as a graph with the x-axis signifying amino-acid count, and the y-axis the hydrophobicity score of the natural analogue; The method used is from _Black S.D. and Mould D.R. (1991)_;
      - *Amino Acid Count* - Represents the count of every amino acid with the same natural analogue.
 
-<img src=images/Calculate-Properties-3.5..png width = "800"/>
+<img src=images/Calculate-Properties-3.7..png width = "800"/>
 
 - Nucleic acid specific properties are:
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
      - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleozide.
  
-<img src=images/Calculate-Properties-2-3.5..png width = "800"/>
+<img src=images/Calculate-Properties-2-3.7..png width = "800"/>
 
 The *Calculate Properties* window is available in all modes.
 
@@ -934,7 +982,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `Mod+x`              | Cut                |
 | `Mod+c`              | Copy               |
 | `Mod+Shift+f`        | Copy Image         |
-| `Mod+m`              | Copy as MOL        |
+| `Mod+Shift+m`        | Copy as MOL        |
 | `Mod+Shift+k`        | Copy as KET        |
 | `Mod+v`              | Paste              |
 | `Mod+a`              | Select All         |
@@ -979,6 +1027,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `4`                  | Aromatic Bond                                                                      |
 | `0`                  | Any Bond                                                                           |
 | `Alt+t`              | Add text                                                                           |
+| `Mod+M`              | Open the _Monomer Creation Wizard_                                                 |
 
 **Atoms**
 | Shortcut  | Action                                 |

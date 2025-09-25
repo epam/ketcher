@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -47,7 +47,7 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { Presets } from '@constants/monomers/Presets';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
@@ -205,7 +205,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Presets.U);
+    await Library(page).selectMonomer(Preset.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -372,8 +372,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await Library(page).selectMonomer(Peptides.O);
-    await Library(page).selectMonomer(Peptides.K);
+    await Library(page).selectMonomer(Peptide.O);
+    await Library(page).selectMonomer(Peptide.K);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -676,10 +676,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await Library(page).selectMonomer(Peptides.X);
-    await Library(page).selectMonomer(Peptides.B);
-    await Library(page).selectMonomer(Peptides.J);
-    await Library(page).selectMonomer(Peptides.Z);
+    await Library(page).selectMonomer(Peptide.X);
+    await Library(page).selectMonomer(Peptide.B);
+    await Library(page).selectMonomer(Peptide.J);
+    await Library(page).selectMonomer(Peptide.Z);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1226,33 +1226,27 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
   });
 
-  test.fail(
-    'Case 46: Calculated values work for "rich" monomer chain',
-    async () => {
-      // Test fails because of the bug: https://github.com/epam/Indigo/issues/3053
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7243
-       * Bug: https://github.com/epam/Indigo/issues/2931
-       * Description: Calculated values work for "rich" monomer chain.
-       * Scenario:
-       * 1. Go to Macro
-       * 2. Load from KET
-       * 3. Open the "Calculate Properties" window
-       * 4. Verify that the properties are calculated correctly for the Peptides tab
-       */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
-      );
-      await MacromoleculesTopToolbar(page).calculateProperties();
-      expect(
-        await CalculateVariablesPanel(
-          page,
-        ).getNucleotideNaturalAnalogCountList(),
-      ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-      await MacromoleculesTopToolbar(page).calculateProperties();
-    },
-  );
+  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2931
+     * Description: Calculated values work for "rich" monomer chain.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
+    ).toEqual(['A6', 'C6', 'G6', 'T6', 'U12', 'Other168']);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
     /*

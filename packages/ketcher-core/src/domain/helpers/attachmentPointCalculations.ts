@@ -253,6 +253,10 @@ export function getAttachmentPointLabelWithBinaryShift(
   return attachmentPointLabel;
 }
 
+export function isSingleRGroupAttachmentPoint(rGroupLabel: number) {
+  return rGroupLabel > 0 && (rGroupLabel & (rGroupLabel - 1)) === 0;
+}
+
 export function getAttachmentPointLabel(attachmentPointNumber: number) {
   return `R${attachmentPointNumber}` as AttachmentPointName;
 }
@@ -262,3 +266,27 @@ export function getAttachmentPointNumberFromLabel(
 ) {
   return Number(attachmentPointLabel.replace('R', ''));
 }
+
+export const getNextFreeAttachmentPoint = (
+  attachmentPoints: AttachmentPointName[],
+  skipR1AndR2 = false,
+) => {
+  const orderedAttachmentPointNumbers = attachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
+
+  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
+  for (const number of orderedAttachmentPointNumbers) {
+    if (number === nextFreeAttachmentPointNumber) {
+      nextFreeAttachmentPointNumber++;
+    } else {
+      break;
+    }
+  }
+
+  if (nextFreeAttachmentPointNumber > 8) {
+    throw new Error('Cannot assign more than 8 attachment points');
+  }
+
+  return getAttachmentPointLabel(nextFreeAttachmentPointNumber);
+};

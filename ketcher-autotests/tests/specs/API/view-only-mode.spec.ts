@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import {
   waitForPageInit,
   takePageScreenshot,
@@ -18,10 +18,8 @@ import {
   deleteByKeyboard,
   keyboardPressOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
   FileType,
@@ -46,6 +44,10 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -273,7 +275,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await closeErrorAndInfoModals(page);
+    await OpenStructureDialog(page).close();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -287,7 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 92.3 H 7.7');
-    await closeErrorAndInfoModals(page);
+    await OpenStructureDialog(page).close();
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
@@ -313,7 +315,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { keys: 'Control+c', action: 'Copy' },
     { keys: 'Control+Shift+f', action: 'Copy Image' },
     { keys: 'Control+Shift+k', action: 'Copy as KET' },
-    { keys: 'Control+m', action: 'Copy as MOL' },
+    { keys: 'Control+Shift+m', action: 'Copy as MOL' },
     { keys: 'Control+o', action: 'Open' },
     { keys: 'Control+s', action: 'Save As' },
     { keys: 'Control+a', action: 'Select All' },
@@ -353,7 +355,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
             saveStructureTextarea,
           ],
         });
-        await closeErrorAndInfoModals(page);
       });
     }
   });
@@ -418,12 +419,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
+
     await enableViewOnlyModeBySetOptions(page);
-    const point1 = await getAtomByIndex(page, { label: 'C' }, 1);
-    await ContextMenu(page, point1).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 

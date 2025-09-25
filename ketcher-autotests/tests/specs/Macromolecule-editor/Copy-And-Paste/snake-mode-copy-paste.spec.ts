@@ -1,5 +1,5 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -52,8 +52,8 @@ test.describe('Snake mode copy&paste', () => {
     page,
   }) => {
     await page.keyboard.down('Shift');
-    await getMonomerLocator(page, Peptides.D).click();
-    await getMonomerLocator(page, Peptides.F).first().click();
+    await getMonomerLocator(page, Peptide.D).click();
+    await getMonomerLocator(page, Peptide.F).first().click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

@@ -1,10 +1,10 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Locator, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Locator, test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,
@@ -14,7 +14,6 @@ import {
   takeEditorScreenshot,
   takePageScreenshot,
   waitForPageInit,
-  clickOnCanvas,
   zoomWithMouseWheel,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -49,11 +48,11 @@ test.describe('Undo Redo', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await Library(page).switchToPeptidesTab();
-    peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
-    peptide2 = await addSingleMonomerToCanvas(page, Peptides.Tza, 400, 300, 1);
+    peptide1 = await addSingleMonomerToCanvas(page, Peptide.Tza, 300, 300, 0);
+    peptide2 = await addSingleMonomerToCanvas(page, Peptide.Tza, 400, 300, 1);
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       500,
       300,
       2,
@@ -160,16 +159,16 @@ test.describe('Undo-Redo tests', () => {
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
-    await await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
-      Peptides.D_aIle,
-      Peptides.SertBu,
-      Peptides.Phe_ol,
-      Peptides.TyrabD,
-      Sugars._25R,
-      Bases.c3A,
-      Phosphates.msp,
-      Bases.cpmA,
+      Peptide.D_aIle,
+      Peptide.SertBu,
+      Peptide.Phe_ol,
+      Peptide.TyrabD,
+      Sugar._25R,
+      Base.c3A,
+      Phosphate.msp,
+      Base.cpmA,
       Chem.SMPEG2,
     ];
 
@@ -198,26 +197,17 @@ test.describe('Undo-Redo tests', () => {
 
     test.slow();
 
-    const addMonomers = async (x: number, y: number) => {
-      await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
-        x,
-        y,
-      });
-    };
-
     const numberOfRows = 6;
     const numberOfColumns = 8;
     const step = 100;
-    const coordinates = [];
 
     for (let row = 0; row < numberOfRows; row++) {
       for (let column = 0; column < numberOfColumns; column++) {
-        coordinates.push({ x: column * step, y: row * step });
+        await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+          x: (column + 1) * step,
+          y: (row + 1) * step,
+        });
       }
-    }
-
-    for (const { x, y } of coordinates) {
-      await addMonomers(x, y);
     }
 
     const maxUndoHistorySize = 32;
@@ -241,26 +231,17 @@ test.describe('Undo-Redo tests', () => {
 
     test.slow();
 
-    const addMonomers = async (x: number, y: number) => {
-      await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
-        x,
-        y,
-      });
-    };
-
     const numberOfRows = 6;
     const numberOfColumns = 8;
     const step = 100;
-    const coordinates = [];
 
     for (let row = 0; row < numberOfRows; row++) {
       for (let column = 0; column < numberOfColumns; column++) {
-        coordinates.push({ x: column * step, y: row * step });
+        await Library(page).dragMonomerOnCanvas(Chem.SMPEG2, {
+          x: (column + 1) * step,
+          y: (row + 1) * step,
+        });
       }
-    }
-
-    for (const { x, y } of coordinates) {
-      await addMonomers(x, y);
     }
 
     const maxUndoHistorySize = 32;
@@ -284,13 +265,13 @@ test.describe('Undo-Redo tests', () => {
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
-    await await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
-      Peptides.SertBu,
-      Peptides.TyrabD,
-      Sugars._25R,
-      Bases.c3A,
-      Phosphates.msp,
+      Peptide.SertBu,
+      Peptide.TyrabD,
+      Sugar._25R,
+      Base.c3A,
+      Phosphate.msp,
       Chem.SMPEG2,
     ];
 
@@ -411,7 +392,7 @@ test.describe('Undo-Redo tests', () => {
     */
     await Library(page).switchToRNATab();
     await takePageScreenshot(page);
-    await Library(page).dragMonomerOnCanvas(Peptides.Edc, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -431,7 +412,7 @@ test.describe('Undo-Redo tests', () => {
     */
     const x = 200;
     const y = 200;
-    await Library(page).dragMonomerOnCanvas(Presets.C, {
+    await Library(page).dragMonomerOnCanvas(Preset.C, {
       x,
       y,
       fromCenter: true,
@@ -465,9 +446,9 @@ test.describe('Undo-Redo tests', () => {
           9. Take screenshot to make sure it is on canvas
     */
     await Library(page).switchToRNATab();
-    await Library(page).dragMonomerOnCanvas(Peptides.X, {
-      x: -10,
-      y: -10,
+    await Library(page).dragMonomerOnCanvas(Peptide.X, {
+      x: 0,
+      y: 0,
       fromCenter: true,
     });
 
@@ -477,7 +458,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
+    await getMonomerLocator(page, Peptide.X).click();
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
@@ -509,9 +490,9 @@ test.describe('Undo-Redo tests', () => {
           9. Take screenshot to make sure it is on canvas
     */
     await Library(page).switchToRNATab();
-    await Library(page).dragMonomerOnCanvas(Bases.DNA_N, {
-      x: -10,
-      y: -10,
+    await Library(page).dragMonomerOnCanvas(Base.DNA_N, {
+      x: 0,
+      y: 0,
       fromCenter: true,
     });
 
@@ -521,7 +502,7 @@ test.describe('Undo-Redo tests', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, 0, 0, { from: 'pageCenter' });
+    await getMonomerLocator(page, Base.DNA_N).click();
     await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);

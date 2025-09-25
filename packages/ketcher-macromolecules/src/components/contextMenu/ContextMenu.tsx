@@ -76,7 +76,7 @@ const assembleMenuItems = (
       const item =
         subMenuItems && subMenuItems.length ? (
           <Submenu label={title} data-testid={name} key={name}>
-            {assembleMenuItems(subMenuItems, handleMenuChange)}
+            {assembleMenuItems(subMenuItems, handleMenuChange) as never}
           </Submenu>
         ) : (
           <Item
@@ -101,8 +101,20 @@ const assembleMenuItems = (
             }}
             onMouseOut={() => onMouseOut?.(name)}
           >
-            {icon && <span className="context_menu-icon">{icon}</span>}
-            <span className="context_menu-text">{title}</span>
+            {icon && (
+              <span className="context_menu-icon">
+                <>{icon}</>
+              </span>
+            )}
+            <span
+              className={
+                name === 'delete'
+                  ? 'context_menu-delete-text'
+                  : 'context_menu-text'
+              }
+            >
+              {title}
+            </span>
           </Item>
         );
       items.push(item);
@@ -137,7 +149,7 @@ export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
 
   return (
     <StyledMenu id={id}>
-      {assembleMenuItems(menuItems, handleMenuChange)}
+      {assembleMenuItems(menuItems, handleMenuChange) as never}
     </StyledMenu>
   );
 };

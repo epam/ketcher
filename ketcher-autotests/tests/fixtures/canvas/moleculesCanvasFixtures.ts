@@ -10,26 +10,24 @@ export const test = mergeTests(utils, pageObjects).extend<
 >({
   MoleculesCanvas: async (
     {
-      page,
+      ketcher,
       CommonTopLeftToolbar,
       CommonTopRightToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
       resetSettingsValuesToDefault,
-      closeErrorAndInfoModals,
     },
     use,
   ) => {
+    const page = ketcher.page as Page;
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await resetSettingsValuesToDefault(page);
-    await closeErrorAndInfoModals(page);
     await clearLocalStorage(page);
     await use();
-    await closeErrorAndInfoModals(page);
   },
   initMoleculesCanvas: [
     async ({ createPage }, use) => {

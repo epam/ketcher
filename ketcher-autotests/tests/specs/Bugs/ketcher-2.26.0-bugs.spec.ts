@@ -2,8 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, expect } from '@playwright/test';
-import { test } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -35,9 +34,7 @@ import {
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -48,7 +45,6 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -62,17 +58,19 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
+  AtomsSetting,
   BondsSetting,
   FontOption,
   GeneralSetting,
@@ -97,6 +95,10 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -118,7 +120,6 @@ test.afterAll(async ({ closePage }) => {
 
 test.describe('Ketcher bugs in 2.26.0', () => {
   test.afterEach(async () => {
-    await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings();
@@ -198,7 +199,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await MiewDialog(page).closeByX();
     await disableViewOnlyModeBySetOptions(page);
   });
 
@@ -239,7 +240,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = getBondLocator(page, {
+      bondType: MicroBondDataIds.SingleDown,
+    }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
@@ -303,6 +306,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).cancel();
   });
 
   test('Case 9: The reaction can be saved to MOL V3000', async () => {
@@ -501,11 +505,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).hover([
-      MicroAtomOption.QueryProperties,
-      QueryAtomOption.HCount,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
     await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
     await takeEditorScreenshot(page);
@@ -600,11 +605,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Red,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Red]);
     await takeEditorScreenshot(page);
   });
 
@@ -666,6 +672,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).cancel();
   });
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
@@ -686,14 +693,14 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Bond tooltip preview placed wrong in on edge cases.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await resetCurrentTool(page);
-    await getMonomerLocator(page, Peptides.Cys_Bn).hover();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Sugars._25mo3r).hover();
+    await getMonomerLocator(page, Sugar._25mo3r).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Phosphates.msp).hover();
+    await getMonomerLocator(page, Phosphate.msp).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -766,6 +773,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
+    await pressButton(page, 'Reconnect');
   });
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({
@@ -915,11 +923,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Green,
-    ]);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Green]);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1179,8 +1186,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, getAbbreviationLocator(page, { name: '5hMedC' }));
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 13 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1345,10 +1354,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
@@ -1633,7 +1644,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await copyToClipboardByIcon(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
@@ -1750,7 +1761,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load IDT from paste from clipboard way: (YY:00330067)
      */
     await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Case 66: Sugar R should not save in the IDT format', async ({
@@ -1766,7 +1780,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Save to IDT
      * 4. Take screenshot
      */
-    await Library(page).dragMonomerOnCanvas(Sugars.R, {
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -1775,9 +1789,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+    );
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 });

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Page, test, expect, Locator } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -1473,7 +1473,7 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
 }
 
 async function exitFromEditMode(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
+  await keyboardPressOnCanvas(page, 'Escape');
   await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
 }
 
@@ -1824,8 +1824,8 @@ async function setupSenseAndAntiSenseSequences(
     await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
-  const senseBase = getMonomerLocator(page, Bases.c7io7n).first();
-  const antisenseBase = getMonomerLocator(page, Bases.c7io7n).nth(1);
+  const senseBase = getMonomerLocator(page, Base.c7io7n).first();
+  const antisenseBase = getMonomerLocator(page, Base.c7io7n).nth(1);
 
   await bondTwoMonomers(
     page,

@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   FunctionalGroupsTabItems,
@@ -15,7 +16,6 @@ import {
   waitForRender,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 // const SHIFT = 50;
 
@@ -39,7 +39,7 @@ test.describe('Click and drag FG on canvas', () => {
       FunctionalGroupsTabItems.Cbz,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -59,7 +59,7 @@ test.describe('Click and drag FG on canvas', () => {
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -82,7 +82,7 @@ test.describe('Click and drag FG on canvas', () => {
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -99,14 +99,14 @@ test.describe('Click and drag FG on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CF3,
     );
     await dragMouseAndMoveTo(page, -50);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -129,7 +129,7 @@ test.describe('Click and drag FG on canvas', () => {
       );
       await dragMouseAndMoveTo(page, 50);
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await waitForRender(page, async () => {
       await BottomToolbar(page).StructureLibrary();
@@ -138,7 +138,7 @@ test.describe('Click and drag FG on canvas', () => {
       );
       await dragMouseAndMoveTo(page, -50);
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

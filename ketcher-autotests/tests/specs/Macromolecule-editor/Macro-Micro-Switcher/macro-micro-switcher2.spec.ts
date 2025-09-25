@@ -5,7 +5,7 @@ Tests below moved here from macro-micro-switcher since they are designed to be e
 and can't be executed in "clear canvas way"
 */
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { test, Page } from '@playwright/test';
+import { test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -31,22 +31,20 @@ import {
   Arrows,
   Pluses,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Chem } from '@constants/monomers/Chem';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -100,12 +98,12 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     test.slow();
     await Library(page).addMonomersToFavorites([
-      Peptides.bAla,
-      Peptides.Phe4Me,
-      Peptides.meM,
-      Sugars._25R,
-      Bases.baA,
-      Phosphates.bP,
+      Peptide.bAla,
+      Peptide.Phe4Me,
+      Peptide.meM,
+      Sugar._25R,
+      Base.baA,
+      Phosphate.bP,
       Chem.Test_6_Ch,
     ]);
     await Library(page).hideLibrary();
@@ -423,7 +421,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await copyToClipboardByIcon(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -673,7 +671,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

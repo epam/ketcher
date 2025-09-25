@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { test, expect, Page } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { test, expect, Page } from '@fixtures';
 import {
   moveMouseAway,
   openFileAndAddToCanvas,
@@ -32,12 +32,13 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { closeErrorMessage } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -151,7 +152,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.bAla, {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -161,7 +162,7 @@ test.describe('Import-Saving .ket Files', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
     await resetZoomLevelToDefault(page);
-    await getMonomerLocator(page, Peptides.bAla).hover();
+    await getMonomerLocator(page, Peptide.bAla).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -197,7 +198,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     await resetZoomLevelToDefault(page);
-    await Library(page).dragMonomerOnCanvas(Sugars._25R, {
+    await Library(page).dragMonomerOnCanvas(Sugar._25R, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -210,7 +211,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    await Library(page).dragMonomerOnCanvas(Peptides.D_2Nal, {
+    await Library(page).dragMonomerOnCanvas(Peptide.D_2Nal, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -236,13 +237,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
-    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'KET/corrupted-file.ket');
-    await addToCanvasButton.click();
-    await takeEditorScreenshot(page);
-    await closeErrorMessage(page);
+    await PasteFromClipboardDialog(page).addToCanvas();
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {

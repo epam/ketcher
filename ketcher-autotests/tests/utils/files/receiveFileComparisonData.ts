@@ -23,6 +23,8 @@ import {
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { takeElementScreenshot } from '@utils/canvas/helpers';
 
 export enum FileType {
   KET = 'ket',
@@ -113,6 +115,7 @@ export async function verifyFileExport(
         (line) =>
           !line.includes('-INDIGO-') &&
           !line.includes('$DATM') &&
+          !line.includes('$MDL') &&
           !line.includes('Ketcher'),
       );
     }
@@ -238,5 +241,29 @@ export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
 
   expect(HELMExportResult).toEqual(HELMExportExpected);
 
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifyPNGExport(page: Page) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.PNGImage,
+  );
+  await takeElementScreenshot(
+    page,
+    SaveStructureDialog(page).saveStructureTextarea,
+  );
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifySVGExport(page: Page) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.SVGDocument,
+  );
+  await takeElementScreenshot(
+    page,
+    SaveStructureDialog(page).saveStructureTextarea,
+  );
   await SaveStructureDialog(page).cancel();
 }

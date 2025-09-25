@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, expect, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, expect, test } from '@fixtures';
 import {
   FILE_TEST_DATA,
   MolFileFormat,
@@ -32,13 +32,8 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroFileType } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  addSuperatomAttachmentPoint,
-  removeSuperatomAttachmentPoint,
-} from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
@@ -82,7 +77,10 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { setSettingsOptions } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  setSettingsOption,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   AtomsSetting,
   BondsSetting,
@@ -108,6 +106,9 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -135,7 +136,7 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   }
 }
 
-let page: Page;
+export let page: Page;
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
@@ -416,12 +417,12 @@ test.describe('Macro-Micro-Switcher', () => {
     */
 
     await Library(page).addMonomersToFavorites([
-      Peptides.bAla,
-      Peptides.Phe4Me,
-      Peptides.meM,
-      Sugars._25R,
-      Bases.baA,
-      Phosphates.bP,
+      Peptide.bAla,
+      Peptide.Phe4Me,
+      Peptide.meM,
+      Sugar._25R,
+      Base.baA,
+      Phosphate.bP,
       Chem.Test_6_Ch,
     ]);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -468,7 +469,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -488,7 +489,7 @@ test.describe('Macro-Micro-Switcher', () => {
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    await Library(page).dragMonomerOnCanvas(Peptides.A, {
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
       x: 0,
       y: 0,
       fromCenter: true,
@@ -528,33 +529,27 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  test(
-    'The 3D view works for micromolecules when there are macromolecules on the canvas',
-    {
-      tag: ['@IncorrectResultBecauseOfBug'],
-    },
-    async () => {
-      /* 
+  test('The 3D view works for micromolecules when there are macromolecules on the canvas', async () => {
+    /* 
     Test case: Macro-Micro-Switcher/#4203
     Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
-    After closing the ticket, should update the screenshots.
-
     */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await Library(page).selectMonomer(Peptides.bAla);
-      await clickInTheMiddleOfTheScreen(page);
-      await moveMouseAway(page);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRingButton(page, RingButton.Benzene);
-      await clickInTheMiddleOfTheScreen(page);
-      await IndigoFunctionsToolbar(page).ThreeDViewer();
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page, {
-        maxDiffPixelRatio: 0.05,
-      });
-    },
-  );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await selectRingButton(page, RingButton.Benzene);
+    await clickInTheMiddleOfTheScreen(page);
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixelRatio: 0.05,
+    });
+  });
 
   test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async () => {
     /* 
@@ -571,7 +566,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).selectMonomer(Peptides.bAla);
+    await Library(page).selectMonomer(Peptide.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -978,69 +973,24 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify attachment points can be added/removed via context menu', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: Attachment points can be added/removed via context menu.
-    */
-    await drawBenzeneRing(page);
-    await addSuperatomAttachmentPoint(page, 'C', 1);
-    await addSuperatomAttachmentPoint(page, 'C', 2);
-    await addSuperatomAttachmentPoint(page, 'C', 3);
-    await takeEditorScreenshot(page);
-    await removeSuperatomAttachmentPoint(page, 'C', 2);
-    await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Ensure that new attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
-    */
-    // await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-chain.mol', page);
-    await openFileAndAddToCanvas(page, 'KET/long-chain.ket');
-    await addSuperatomAttachmentPoint(page, 'C', 4);
-    await addSuperatomAttachmentPoint(page, 'C', 6);
-    await addSuperatomAttachmentPoint(page, 'C', 8);
-    await addSuperatomAttachmentPoint(page, 'C', 10);
-    await addSuperatomAttachmentPoint(page, 'C', 12);
-    await addSuperatomAttachmentPoint(page, 'C', 14);
-    await addSuperatomAttachmentPoint(page, 'C', 16);
-    await addSuperatomAttachmentPoint(page, 'C', 17);
-    await takeEditorScreenshot(page);
-  });
-
   test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
-    await openFileAndAddToCanvas(
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-eight-attachment-points.ket',
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 9);
-    await ContextMenu(page, point).open();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check that system start to use missed labels if user want to create AP greater that R8 (if it has R1,R3-R8 - attempt to add causes R2 selection)', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
-    */
-    await openFileAndAddToCanvas(
-      page,
-      'KET/chain-with-eight-attachment-points.ket',
-    );
-    await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R2').click();
-    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await waitForRender(page, async () => {
+      // await page.keyboard.press('Escape');
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
+      ).open();
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1182,7 +1132,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1190,7 +1140,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1198,7 +1148,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1278,7 +1228,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData2 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1286,7 +1236,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1294,7 +1244,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.moen,
+      monomer: Phosphate.moen,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1371,7 +1321,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData3 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1379,7 +1329,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1387,7 +1337,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1470,7 +1420,7 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData4 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
+      monomer: Sugar._25R,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1478,7 +1428,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
+      monomer: Base.meA,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R1,
@@ -1486,7 +1436,7 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
+      monomer: Phosphate.sP_,
       bondEndpoints: {
         first: MonomerAttachmentPoint.R1,
         second: MonomerAttachmentPoint.R2,
@@ -1633,9 +1583,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Github ticket: #4530
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
-    await openFileAndAddToCanvasMacro(page, 'KET/part-chain-with-s-group.ket');
-    const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await ContextMenu(page, point).open();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/part-chain-with-s-group.ket',
+    );
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1752,10 +1708,13 @@ test.describe('Macro-Micro-Switcher', () => {
       true,
     );
 
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await closeErrorAndInfoModals(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error'",
+    );
+
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).close();
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -2146,19 +2105,6 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R1').click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check we can attach AP to single atom', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: AP attached to single atom.
-    */
-    const atomToolbar = RightToolbar(page);
-
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
-    await addSuperatomAttachmentPoint(page, 'O', 0);
     await takeEditorScreenshot(page);
   });
 

@@ -792,8 +792,14 @@ export class Struct {
     const ids = new Pile<number>();
     while (list.length > 0) {
       const aid = list.pop()!;
-      ids.add(aid);
       const atom = this.atoms.get(aid)!;
+
+      if (this.isAtomFromMacromolecule(aid)) {
+        continue;
+      }
+
+      ids.add(aid);
+
       atom.neighbors.forEach((nei) => {
         const neiId = this.halfBonds.get(nei)!.end;
         if (!ids.has(neiId)) list.push(neiId);
@@ -819,7 +825,8 @@ export class Struct {
     this.atoms.forEach((atom, aid) => {
       if (
         (discardExistingFragments || atom.fragment < 0) &&
-        !addedAtoms.has(aid)
+        !addedAtoms.has(aid) &&
+        !this.isAtomFromMacromolecule(aid)
       ) {
         const component = this.findConnectedComponent(aid);
         components.push(component);
@@ -839,6 +846,13 @@ export class Struct {
       if (atom.stereoLabel) frag.updateStereoAtom(this, aid, fid, true);
       atom.fragment = fid;
     });
+  }
+
+  clearFragments() {
+    this.atoms.forEach((atom) => {
+      atom.fragment = -1;
+    });
+    this.frags.clear();
   }
 
   markFragments(properties?) {

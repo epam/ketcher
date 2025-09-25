@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -91,9 +91,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getMonomerLocator(page, Peptides.A).click();
+    await getMonomerLocator(page, Peptide.A).click();
     await page.mouse.down();
-    await page.mouse.move(600, 400);
+    await page.mouse.move(600, 400, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -345,10 +345,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    const phosphateP = getMonomerLocator(page, Phosphates.P).first();
-    const sugarR = getMonomerLocator(page, Sugars.R).nth(1);
-    const phosphatebP = getMonomerLocator(page, Phosphates.bP).first();
-    const baseA = getMonomerLocator(page, Bases.A).nth(1);
+    const phosphateP = getMonomerLocator(page, Phosphate.P).first();
+    const sugarR = getMonomerLocator(page, Sugar.R).nth(1);
+    const phosphatebP = getMonomerLocator(page, Phosphate.bP).first();
+    const baseA = getMonomerLocator(page, Base.A).nth(1);
 
     await page.keyboard.down('Shift');
     await phosphateP.click();
@@ -421,75 +421,67 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  // https://github.com/epam/Indigo/issues/3061
-  test.fail(
-    'Case 12: System adds both sense and antisense chain nucleosids in SYNC mode',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6764
-       * Bug: https://github.com/epam/ketcher/issues/6606
-       * Description: System adds both sense and antisense chain nucleosids in SYNC mode.
-       * Scenario:
-       * 1. Go to Macro - Sequence mode (clean canvas)
-       * 2. Load from HELM
-       * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
-       * 4. Take a screenshot.
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{r(A)p.r(A)p.r(A)}|RNA2{p.r(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
-      );
-      await getSymbolLocator(page, {
-        symbolAlias: 'A',
-        nodeIndexOverall: 2,
-      }).dblclick();
-      await keyboardPressOnCanvas(page, 'ArrowRight');
-      await keyboardPressOnCanvas(page, 'C');
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6606
+     * Description: System adds both sense and antisense chain nucleosids in SYNC mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
+     * 4. Take a screenshot.
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(A)p.r(A)}|RNA2{p.r(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 2,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowRight');
+    await keyboardPressOnCanvas(page, 'C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
-  // https://github.com/epam/Indigo/issues/3061
-  test.fail(
-    'Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6764
-       * Bug: https://github.com/epam/ketcher/issues/6531
-       * Description: System can add nucleotide between phosphate and nucleotide in antisence chain.
-       * Scenario:
-       * 1. Go to Macro - Sequence mode (clean canvas)
-       * 2. Load from HELM
-       * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
-       * 4. Take a screenshot.
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'CHEM1{[4aPEGMal]}|RNA1{r(U)p}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{r(A)p}|RNA3{p}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
-      );
-      await getSymbolLocator(page, {
-        symbolAlias: 'U',
-        nodeIndexOverall: 1,
-      }).dblclick();
-      await keyboardPressOnCanvas(page, 'ArrowLeft');
-      await keyboardPressOnCanvas(page, 'C');
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6531
+     * Description: System can add nucleotide between phosphate and nucleotide in antisence chain.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
+     * 4. Take a screenshot.
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'CHEM1{[4aPEGMal]}|RNA1{r(U)p}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{r(A)p}|RNA3{p}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 1,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 14: Snapping not wipes monomer labels in some cases', async () => {
     /*
@@ -511,7 +503,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Sugars.R).first().click();
+    await getMonomerLocator(page, Sugar.R).first().click();
     await page.mouse.down();
     const coords = [
       [750, 250],
@@ -522,7 +514,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     ];
     for (let i = 0; i < coords.length; i++) {
       const [x, y] = coords[i];
-      await page.mouse.move(x, y);
+      await page.mouse.move(x, y, { steps: 10 });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

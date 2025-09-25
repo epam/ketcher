@@ -370,6 +370,7 @@
         "id": "ThrPO3___O-phospho-L-threonine",
         "fullName": "O-phospho-L-threonine",
         "alias": "ThrPO3",
+        "aliasHELM": "Thr_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeEditorScreenshot,
@@ -9,7 +9,6 @@ import {
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
@@ -153,7 +152,6 @@ test.describe('Import/export sequence:', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
-    await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

@@ -1,6 +1,6 @@
-import { test } from '@playwright/test';
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
+import { test } from '@fixtures';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   moveMouseAway,
   takeEditorScreenshot,
@@ -31,83 +31,83 @@ test.beforeEach(async ({ page }) => {
 const AmbiguousMonomers: IAmbiguousMonomerName[] = [
   {
     testDescription: "1. 'X' ambiguous peptide",
-    AmbiguousMonomer: Peptides.X,
+    AmbiguousMonomer: Peptide.X,
   },
   {
     testDescription: "2. 'B' ambiguous peptide",
-    AmbiguousMonomer: Peptides.B,
+    AmbiguousMonomer: Peptide.B,
   },
   {
     testDescription: "3. 'J' ambiguous peptide",
-    AmbiguousMonomer: Peptides.J,
+    AmbiguousMonomer: Peptide.J,
   },
   {
     testDescription: "4. 'Z' ambiguous peptide",
-    AmbiguousMonomer: Peptides.Z,
+    AmbiguousMonomer: Peptide.Z,
   },
   {
     testDescription: "5. 'N' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_N,
+    AmbiguousMonomer: Base.DNA_N,
   },
   {
     testDescription: "6. 'B' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_B,
+    AmbiguousMonomer: Base.DNA_B,
   },
   {
     testDescription: "7. 'H' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_H,
+    AmbiguousMonomer: Base.DNA_H,
   },
   {
     testDescription: "8. 'K' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_K,
+    AmbiguousMonomer: Base.DNA_K,
   },
   {
     testDescription: "9. 'W' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_W,
+    AmbiguousMonomer: Base.DNA_W,
   },
   {
     testDescription: "10. 'Y' ambiguous DNA base",
-    AmbiguousMonomer: Bases.DNA_Y,
+    AmbiguousMonomer: Base.DNA_Y,
   },
   {
     testDescription: "11. 'N' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_N,
+    AmbiguousMonomer: Base.RNA_N,
   },
   {
     testDescription: "12. 'B' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_B,
+    AmbiguousMonomer: Base.RNA_B,
   },
   {
     testDescription: "13. 'H' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_H,
+    AmbiguousMonomer: Base.RNA_H,
   },
   {
     testDescription: "14. 'K' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_K,
+    AmbiguousMonomer: Base.RNA_K,
   },
   {
     testDescription: "15. 'W' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_W,
+    AmbiguousMonomer: Base.RNA_W,
   },
   {
     testDescription: "16. 'Y' ambiguous RNA base",
-    AmbiguousMonomer: Bases.RNA_Y,
+    AmbiguousMonomer: Base.RNA_Y,
   },
   {
     testDescription: "17. 'M' ambiguous base",
-    AmbiguousMonomer: Bases.M,
+    AmbiguousMonomer: Base.M,
   },
   {
     testDescription: "18. 'R' ambiguous base",
-    AmbiguousMonomer: Bases.R,
+    AmbiguousMonomer: Base.R,
   },
   {
     testDescription: "19. 'S' ambiguous base",
-    AmbiguousMonomer: Bases.S,
+    AmbiguousMonomer: Base.S,
   },
   {
     testDescription: "20. 'V' ambiguous base",
-    AmbiguousMonomer: Bases.V,
+    AmbiguousMonomer: Base.V,
   },
 ];
 

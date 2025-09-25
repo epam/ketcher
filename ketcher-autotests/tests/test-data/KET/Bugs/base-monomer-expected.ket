@@ -206,6 +206,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

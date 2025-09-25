@@ -51,8 +51,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 1.625,
-            "y": -3.0250000000000004
+            "x": 2.875,
+            "y": -4.375
         },
         "alias": "A",
         "templateId": "A___Adenine"
@@ -240,6 +240,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -257,8 +258,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 1.625,
-            "y": -1.5250000000000001
+            "x": 2.875,
+            "y": -2.875
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose"
@@ -522,6 +523,7 @@
         "id": "MOE___2'-O-Methoxyethyl ribose",
         "fullName": "2'-O-Methoxyethyl ribose",
         "alias": "MOE",
+        "aliasHELM": "moe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -557,8 +559,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 3.125,
-            "y": -1.5250000000000001
+            "x": 4.375,
+            "y": -2.875
         },
         "alias": "P",
         "templateId": "P___Phosphate"
@@ -642,6 +644,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

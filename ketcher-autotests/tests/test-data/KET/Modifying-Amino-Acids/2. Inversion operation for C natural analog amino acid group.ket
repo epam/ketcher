@@ -285,6 +285,7 @@
         "id": "dC___D-Cysteine",
         "fullName": "D-Cysteine",
         "alias": "dC",
+        "aliasHELM": "dC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

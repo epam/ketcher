@@ -6,6 +6,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,
   MacroBondType,
+  MicroBondDataIds,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerAttachmentPoint } from './monomer';
@@ -47,7 +48,7 @@ export async function bondTwoMonomers(
   await secondMonomerElement.hover({ force: true });
   await page.mouse.up();
   await hideMonomerPreview(page);
-  const dialog = page.getByRole('dialog');
+  const dialog = page.getByTestId('monomer-connection-modal');
   if ((await dialog.isVisible()) && needSelectAttachmentPoint) {
     if (connectTitle1) {
       await page.locator(`button[title='${connectTitle1}']`).nth(0).click();
@@ -661,8 +662,11 @@ export function getBondLocator(
     toAtomId,
     fromConnectionPoint,
     toConnectionPoint,
+    fromAtomId,
+    fromSGroupId,
+    toSGroupId,
   }: {
-    bondType?: MacroBondDataIds | number;
+    bondType?: MacroBondDataIds | MicroBondDataIds | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
     fromMonomerId?: string | number;
@@ -670,6 +674,9 @@ export function getBondLocator(
     toAtomId?: string | number;
     fromConnectionPoint?: string;
     toConnectionPoint?: string;
+    fromAtomId?: string | number;
+    fromSGroupId?: string | number;
+    toSGroupId?: string | number;
   },
 ): Locator {
   const attributes: { [key: string]: string } = {};
@@ -693,6 +700,15 @@ export function getBondLocator(
   }
   if (toConnectionPoint !== undefined) {
     attributes['data-toconnectionpoint'] = toConnectionPoint;
+  }
+  if (fromAtomId !== undefined) {
+    attributes['data-fromatomid'] = String(fromAtomId);
+  }
+  if (fromSGroupId !== undefined) {
+    attributes['data-fromsgroupid'] = String(fromSGroupId);
+  }
+  if (toSGroupId !== undefined) {
+    attributes['data-tosgroupid'] = String(toSGroupId);
   }
 
   const attributeSelectors = Object.entries(attributes)

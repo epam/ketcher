@@ -49,6 +49,12 @@ import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import {
+  AttachmentPointClickData,
+  Coordinates,
+  MonomerCreationAttachmentPointClickEvent,
+} from 'application/editor';
+import assert from 'assert';
 
 interface ElemAttr {
   text: string;
@@ -576,15 +582,40 @@ class ReAtom extends ReObject {
       }
     }
 
-    if (render.monomerCreationRenderState) {
-      const { attachmentPoints } = render.monomerCreationRenderState;
+    if (render.monomerCreationState) {
+      const {
+        assignedAttachmentPoints,
+        potentialAttachmentPoints,
+        problematicAttachmentPoints,
+      } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const attachmentAtoms = Array.from(attachmentPoints.keys());
-        const leavingGroups = Array.from(attachmentPoints.values());
+        const potentialLeavingGroups = Array.from(
+          potentialAttachmentPoints.values(),
+        );
+        const [attachmentAtoms, leavingGroups] = Array.from(
+          assignedAttachmentPoints.values(),
+        ).reduce(
+          (acc, currentPair) => {
+            let attachmentAtomsIds = acc[0];
+            const attachmentAtomId = currentPair[0];
+            if (!attachmentAtomsIds.includes(attachmentAtomId)) {
+              attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
+            }
+
+            let leavingAtomsIds = acc[1];
+            const leavingAtomId = currentPair[1];
+            if (!leavingAtomsIds.includes(leavingAtomId)) {
+              leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
+            }
+
+            return [attachmentAtomsIds, leavingAtomsIds];
+          },
+          [[], []] as [number[], number[]],
+        );
 
         let style: RenderOptionStyles | undefined;
         if (attachmentAtoms.includes(aid)) {
@@ -595,11 +626,149 @@ class ReAtom extends ReObject {
             stroke: '#f8dc8f',
             'stroke-width': '2px',
           };
+        } else if (potentialLeavingGroups.includes(aid)) {
+          style = {
+            stroke: '#43B5C0',
+            'stroke-dasharray': '- ',
+          };
         }
 
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        const attachmentPointName = Array.from(
+          assignedAttachmentPoints.keys(),
+        ).find((key) => {
+          const atomsPair = assignedAttachmentPoints.get(key);
+          assert(atomsPair);
+          return atomsPair[1] === aid;
+        });
+
+        if (attachmentPointName) {
+          const direction = this.bisectLargestSector(struct);
+          let labelDistance = 20;
+          for (let i = 0; i < this.visel.exts.length; ++i) {
+            labelDistance = Math.max(
+              labelDistance,
+              util.shiftRayBox(
+                ps,
+                direction,
+                this.visel.exts[i].translate(ps),
+              ) + 5,
+            );
+          }
+          const labelPos = ps.addScaled(direction, labelDistance);
+
+          const isProblematic =
+            problematicAttachmentPoints.has(attachmentPointName);
+
+          const rLabelElement = render.paper
+            .text(labelPos.x, labelPos.y, attachmentPointName)
+            .attr({
+              font: options.font,
+              'font-size': options.fontszsubInPx,
+              fill: isProblematic ? '#F40724' : '#333333',
+              'font-weight': '700',
+              cursor: 'pointer',
+            });
+
+          const labelBBox = rLabelElement.getBBox();
+          const bgRadius = Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
+          const background = render.paper
+            .circle(labelPos.x, labelPos.y, bgRadius)
+            .attr({
+              fill: '#167782',
+              stroke: 'none',
+              cursor: 'pointer',
+              opacity: 0,
+            });
+
+          if (isProblematic) {
+            background.attr({
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+              opacity: 1,
+            });
+          }
+
+          // Create a group for the label and background
+          const labelGroup = render.paper.set();
+          labelGroup.push(background, rLabelElement);
+
+          // Add hover handlers
+          labelGroup.hover(
+            // Mouse enter
+            () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                  attachmentPointName ||
+                isProblematic
+              ) {
+                return;
+              }
+
+              background.attr({ opacity: 1 });
+              rLabelElement.attr({ fill: '#ffffff' });
+            },
+            // Mouse leave
+            () => {
+              assert(render.monomerCreationState);
+
+              if (
+                render.monomerCreationState.clickedAttachmentPoint ===
+                  attachmentPointName ||
+                isProblematic
+              ) {
+                return;
+              }
+
+              background.attr({ opacity: 0 });
+              rLabelElement.attr({ fill: '#333333' });
+            },
+          );
+
+          labelGroup.click((event: PointerEvent) => {
+            if (!render.monomerCreationState) {
+              return;
+            }
+
+            render.monomerCreationState.clickedAttachmentPoint =
+              attachmentPointName;
+
+            const clickData: AttachmentPointClickData = {
+              atomId: aid,
+              atomLabel: this.a.label,
+              attachmentPointName,
+              position: Coordinates.modelToView(this.a.pp),
+            };
+
+            event.stopPropagation();
+
+            background.attr({ opacity: 1 });
+            rLabelElement.attr({ fill: '#ffffff' });
+
+            window.dispatchEvent(
+              new CustomEvent<AttachmentPointClickData>(
+                MonomerCreationAttachmentPointClickEvent,
+                {
+                  detail: clickData,
+                },
+              ),
+            );
+          });
+
+          restruct.addReObjectPath(
+            LayerMap.data,
+            this.visel,
+            labelGroup,
+            ps,
+            true,
+          );
         }
       }
     }
@@ -803,6 +972,69 @@ class ReAtom extends ReObject {
         [rect, path],
         ps,
         true,
+      );
+    }
+
+    if (label?.path) {
+      label?.path.node?.setAttribute('data-testid', 'atom');
+      label?.path.node?.setAttribute(
+        'data-atom-id',
+        restruct.molecule.atoms.keyOf(this.a ?? ''),
+      );
+      label?.path.node?.setAttribute('data-atom-type', getAtomType(this.a));
+      label?.path.node?.setAttribute('data-atomLabel', this.a.label ?? '');
+      label?.path.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomIsotopeAtomicMass',
+        this.a.isotope ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomValence', this.a.valence ?? '');
+      label?.path.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomRingBondCount',
+        this.a.ringBondCount ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomSubstitutionCount',
+        this.a.substitutionCount ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomUnsaturated',
+        this.a.unsaturatedAtom ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomAromaticity',
+        this.a.queryProperties.aromaticity ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomImplicitHCount',
+        this.a.implicitHCount ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomRingMembership',
+        this.a.queryProperties.ringMembership ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomRingSize',
+        this.a.queryProperties.ringSize ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomConnectivity',
+        this.a.queryProperties.connectivity ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomChirality',
+        this.a.queryProperties.chirality ?? '',
+      );
+      label?.path.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+      label?.path.node?.setAttribute(
+        'data-atomExactChange',
+        this.a.exactChangeFlag ?? '',
+      );
+      label?.path.node?.setAttribute(
+        'data-atomCustomQuery',
+        this.a.queryProperties.customQuery ?? '',
       );
     }
   }

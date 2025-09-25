@@ -30,8 +30,8 @@ import React, {
   useCallback,
   useState,
   useRef,
-  MutableRefObject,
   useEffect,
+  RefObject,
 } from 'react';
 
 import { Dialog } from '../../../components';
@@ -153,10 +153,10 @@ const Text = (props: TextProps) => {
     },
   };
 
-  const refEditor = useRef() as MutableRefObject<Editor>;
+  const refEditor = useRef(null) as RefObject<Editor | null>;
   const setFocusInEditor = useCallback(() => {
-    refEditor.current.focus();
-    refEditor.current.editor?.setAttribute('data-testid', 'text-editor');
+    refEditor.current?.focus();
+    refEditor.current?.editor?.setAttribute('data-testid', 'text-editor');
   }, [refEditor]);
 
   // set focut on component mount

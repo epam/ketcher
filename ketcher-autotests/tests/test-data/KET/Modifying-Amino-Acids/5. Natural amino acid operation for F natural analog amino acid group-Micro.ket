@@ -839,6 +839,7 @@
         "id": "F___Phenylalanine",
         "fullName": "Phenylalanine",
         "alias": "F",
+        "aliasHELM": "F",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,

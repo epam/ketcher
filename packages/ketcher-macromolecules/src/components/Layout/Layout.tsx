@@ -14,9 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react';
+import React, { RefObject, useRef } from 'react';
 import styled from '@emotion/styled';
-import { MONOMER_LIBRARY_WIDTH } from 'components/monomerLibrary/styles';
+import { MONOMER_HIDE_LIBRARY_BUTTON_WIDTH } from 'components/monomerLibrary/styles';
+import { useInView } from 'react-intersection-observer';
+import { ArrowScroll } from 'ketcher-react';
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -29,6 +31,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingRight: withPaddingRight ? '12px' : 0,
+    overflow: fullWidth ? 'hidden' : 'initial',
   }),
 );
 
@@ -69,19 +72,41 @@ const Left = styled(BaseLeftRightStyle)``;
 
 const Right = styled(BaseLeftRightStyle)``;
 
-const Top = styled.div<{ shortened?: boolean }>(
+const StyledTopInnerDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  // cqw is used to ensure that the width is calculated based on the container(ketcher root) width, allowing for proper scrolling behavior
+  // with 100% width scrollbar does not work properly for some reason
+  width: 100cqw;
+`;
+
+const StyledTop = styled.div<{ shortened?: boolean }>(
   ({ shortened = false, theme }) => ({
     height: '36px',
-    width: shortened ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})` : 'calc(100%)',
+    width: shortened
+      ? '100%'
+      : `calc(100% - ${MONOMER_HIDE_LIBRARY_BUTTON_WIDTH})`,
     marginBottom: '6px',
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     boxShadow: theme.ketcher.shadow.mainLayoutBlocks,
     borderRadius: '4px',
+    overflowX: 'hidden',
   }),
 );
+
+const StyledArrowScrollWrapper = styled.div`
+  width: 42px;
+  height: 36px;
+  display: flex;
+  position: relative;
+  right: 0;
+  cursor: pointer;
+  background: white;
+  box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
+  border-radius: 4px;
+`;
 
 const Bottom = styled.div`
   &:not(:empty) {
@@ -93,6 +118,7 @@ const Main = styled.div({
   height: '100%',
   width: '100%',
   position: 'relative',
+  overflow: 'hidden',
 });
 
 const InsideRoot = styled.div({});
@@ -108,6 +134,58 @@ type LayoutSection =
   | 'Top'
   | 'Bottom'
   | 'InsideRoot';
+
+const Top = (
+  props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
+) => {
+  const [startRef, startInView] = useInView({ threshold: 1 });
+  const [endRef, endInView] = useInView({ threshold: 1 });
+  const { children, ...otherProps } = props;
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+
+  const scrollRight = (e: Event) => {
+    e.stopPropagation();
+
+    if (!scrollRef.current) {
+      return;
+    }
+
+    scrollRef.current.scrollLeft += 30;
+  };
+
+  const scrollLeft = (e: Event) => {
+    e.stopPropagation();
+
+    if (!scrollRef.current) {
+      return;
+    }
+
+    scrollRef.current.scrollLeft -= 30;
+  };
+
+  return (
+    <div style={{ display: 'flex', position: 'relative' }}>
+      <StyledTop {...otherProps} ref={scrollRef}>
+        <span ref={startRef}></span>
+        <StyledTopInnerDiv>
+          <>{children}</>
+        </StyledTopInnerDiv>
+        <span ref={endRef}></span>
+      </StyledTop>
+      {!startInView || !endInView ? (
+        <StyledArrowScrollWrapper>
+          <ArrowScroll
+            startInView={startInView}
+            endInView={endInView}
+            scrollBack={scrollLeft}
+            scrollForward={scrollRight}
+            isLeftRight
+          />
+        </StyledArrowScrollWrapper>
+      ) : null}
+    </div>
+  );
+};
 
 export const Layout = ({ children }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {

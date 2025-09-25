@@ -9,6 +9,7 @@ export interface IEditorEvents {
   selectMonomer: Subscription;
   selectPreset: Subscription;
   selectTool: Subscription;
+  selectSelectionTool: Subscription;
   createBondViaModal: Subscription;
   cancelBondCreationViaModal: Subscription;
   selectMode: Subscription;
@@ -24,6 +25,7 @@ export interface IEditorEvents {
   mouseOnMoveMonomer: Subscription;
   mouseLeaveMonomer: Subscription;
   mouseOverAttachmentPoint: Subscription;
+  mouseMoveAttachmentPoint: Subscription;
   mouseLeaveAttachmentPoint: Subscription;
   mouseUpAttachmentPoint: Subscription;
   mouseDownAttachmentPoint: Subscription;
@@ -82,6 +84,7 @@ export function resetEditorEvents() {
     selectMonomer: new Subscription(),
     selectPreset: new Subscription(),
     selectTool: new Subscription(),
+    selectSelectionTool: new Subscription(),
     createBondViaModal: new Subscription(),
     cancelBondCreationViaModal: new Subscription(),
     selectMode: new Subscription(),
@@ -97,6 +100,7 @@ export function resetEditorEvents() {
     mouseOnMoveMonomer: new Subscription(),
     mouseLeaveMonomer: new Subscription(),
     mouseOverAttachmentPoint: new Subscription(),
+    mouseMoveAttachmentPoint: new Subscription(),
     mouseLeaveAttachmentPoint: new Subscription(),
     mouseUpAttachmentPoint: new Subscription(),
     mouseDownAttachmentPoint: new Subscription(),
@@ -186,6 +190,13 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'selectEntities',
 ];
 
+const selectTools = [
+  ToolName.selectRectangle,
+  ToolName.selectLasso,
+  ToolName.selectFragment,
+];
+let currentSelectToolIdx = 0;
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -206,9 +217,18 @@ export const hotkeysConfiguration = {
     },
   },
   exit: {
-    shortcut: ['Shift+Tab', 'Escape'],
+    shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      currentSelectToolIdx = 0;
+      editor.events.selectSelectionTool.dispatch();
+      editor.cancelLibraryItemDrag();
+    },
+  },
+  switchSelectTool: {
+    shortcut: ['Shift+Tab'],
+    handler: (editor: CoreEditor) => {
+      currentSelectToolIdx = (currentSelectToolIdx + 1) % selectTools.length;
+      editor.events.selectTool.dispatch([selectTools[currentSelectToolIdx]]);
       editor.cancelLibraryItemDrag();
     },
   },

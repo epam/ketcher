@@ -48,6 +48,11 @@ export const SelectedMonomersContextMenu = ({
   const isBondContext = (props?: { polymerBondRenderer?: unknown }) =>
     !!props?.polymerBondRenderer;
 
+  const isAntisenseBlockVisible =
+    selectedMonomers &&
+    selectedMonomers.length > 0 &&
+    isAntisenseOptionVisible(selectedMonomers);
+
   const menuItems = [
     {
       name: 'copy',
@@ -61,6 +66,7 @@ export const SelectedMonomersContextMenu = ({
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
       disabled: ({ props = {} }) => !isCanvasContext(props),
+      separator: true,
     },
     {
       name: 'create_antisense_rna_chain',
@@ -77,7 +83,6 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'create_antisense_dna_chain',
       title: 'Create Antisense DNA Strand',
-      separator: true,
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
         return (
@@ -85,6 +90,7 @@ export const SelectedMonomersContextMenu = ({
           !isAntisenseOptionVisible(props?.selectedMonomers)
         );
       },
+      separator: isAntisenseBlockVisible,
     },
     {
       name: SequenceItemContextMenuNames.modifyAminoAcids,
@@ -96,7 +102,6 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'edit_connection_points',
       title: 'Edit Connection Points...',
-      separator: true,
       disabled: ({
         props,
       }: {
@@ -105,6 +110,7 @@ export const SelectedMonomersContextMenu = ({
           selectedMonomers?: BaseMonomer[];
         };
       }) => !isBondContext(props),
+      separator: true,
     },
     {
       name: 'delete',

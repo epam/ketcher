@@ -24,7 +24,7 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
@@ -64,6 +64,7 @@ Object {
         >
           <button
             class="ok"
+            data-testid="info-modal-close"
           >
             Close
           </button>
@@ -91,7 +92,7 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
@@ -131,6 +132,7 @@ Object {
       >
         <button
           class="ok"
+          data-testid="info-modal-close"
         >
           Close
         </button>
@@ -222,7 +224,7 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
@@ -239,6 +241,7 @@ Object {
         >
           <button
             class="ok"
+            data-testid="info-modal-close"
           >
             Close
           </button>
@@ -266,7 +269,7 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
@@ -283,6 +286,7 @@ Object {
       >
         <button
           class="ok"
+          data-testid="info-modal-close"
         >
           Close
         </button>

@@ -39,6 +39,7 @@ interface Props {
   name?: string;
   placeholder?: string;
   'data-testid'?: string;
+  error?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -56,6 +57,7 @@ const Select = ({
   name,
   placeholder,
   'data-testid': testId,
+  error,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
 
@@ -82,6 +84,7 @@ const Select = ({
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
       data-testid={testId}
+      error={error}
     >
       {options &&
         options.map((option) => {
@@ -102,7 +105,7 @@ const Select = ({
               })}
               data-testid={`${option.label}-option`}
             >
-              {option.children ?? option.label}
+              <>{option.children ?? option.label}</>
             </MenuItem>
           );
         })}

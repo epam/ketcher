@@ -79,11 +79,11 @@ jobs:
           EOF
       - name: Run tests
         run: |
-          cd example/ && nohup npm run serve:standalone &
+          cd example/ && nohup npm run serve:standalone > /dev/null 2>&1 &
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --project=chromium --grep-invert @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
@@ -108,7 +108,7 @@ jobs:
           pattern: pw-report-*
           merge-multiple: true
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
+        run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report/blob
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:

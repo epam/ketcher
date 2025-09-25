@@ -1,5 +1,5 @@
-import { Chem } from '@constants/monomers/Chem';
-import { Locator, test } from '@playwright/test';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Locator, test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   takeEditorScreenshot,

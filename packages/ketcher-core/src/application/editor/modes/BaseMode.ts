@@ -56,7 +56,7 @@ export abstract class BaseMode {
     );
 
     if (needRemoveSelection) {
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      editor.events.selectSelectionTool.dispatch();
     }
 
     return command;
@@ -275,7 +275,8 @@ export abstract class BaseMode {
     return (
       event.target instanceof HTMLElement &&
       (event.target?.nodeName === 'INPUT' ||
-        event.target?.nodeName === 'TEXTAREA')
+        event.target?.nodeName === 'TEXTAREA' ||
+        event.target.contentEditable === 'true')
     );
   }
 

@@ -265,6 +265,7 @@
         "id": "dM___D-Methionine",
         "fullName": "D-Methionine",
         "alias": "dM",
+        "aliasHELM": "dM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

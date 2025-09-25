@@ -17,6 +17,7 @@
 import { Menu } from 'components/menu';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
+  selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
   selectIsSequenceEditInRNABuilderMode,
@@ -51,6 +52,9 @@ export function TopMenuComponent() {
     useState<IconName>();
   const activeMenuItems = [activeTool];
   const isDisabled = isSequenceEditInRNABuilderMode;
+  const lastSelectedSelectionMenuItem = useAppSelector(
+    selectLastSelectedSelectionMenuItem,
+  );
 
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
@@ -85,8 +89,8 @@ export function TopMenuComponent() {
       editor?.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
       editor?.events.selectTool.dispatch([name]);
-      dispatch(selectTool('select-rectangle'));
-      editor?.events.selectTool.dispatch(['select-rectangle']);
+      dispatch(selectTool(lastSelectedSelectionMenuItem));
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
@@ -139,6 +143,7 @@ export function TopMenuComponent() {
           }
           needOpenByMenuItemClick={needOpenByMenuItemClick}
           vertical={true}
+          autoSize={true}
           layoutModeButton={true}
           generalTitle="Create Antisense Strand"
           testId="Create Antisense Strand"

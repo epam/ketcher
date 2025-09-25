@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -18,13 +18,13 @@ import {
   pressCancelInConfirmYourActionDialog,
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Chem } from '@constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   FileType,
   verifyFileExport,
@@ -36,6 +36,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -130,12 +131,12 @@ enum monomerIDs {
 const replaceMonomers: IReplaceMonomer[] = [
   {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   },
   {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   },
   {
@@ -156,28 +157,28 @@ const replaceMonomers: IReplaceMonomer[] = [
   },
   {
     Id: <number>monomerIDs.sugar_R,
-    Monomer: Sugars.R,
+    Monomer: Sugar.R,
     MonomerDescription: 'sugar (R)',
   },
   {
     Id: <number>monomerIDs.base_oC64m,
-    Monomer: Bases.oC64m5,
+    Monomer: Base.oC64m5,
     MonomerDescription: 'base (oC64m5)',
   },
   {
     Id: <number>monomerIDs.phosphate_P,
-    Monomer: Phosphates.P,
+    Monomer: Phosphate.P,
     MonomerDescription: 'phosphate (P)',
   },
   {
     Id: <number>monomerIDs.nucleotide_AmMC6T,
-    Monomer: Nucleotides.AmMC6T,
+    Monomer: Nucleotide.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
     // Nucleotide without natural analog
     Id: <number>monomerIDs.nucleotide_5NitInd,
-    Monomer: Nucleotides._5NitInd,
+    Monomer: Nucleotide._5NitInd,
     MonomerDescription: 'nucleotide (5NitInd)',
   },
   {
@@ -518,53 +519,53 @@ async function createTestPresets(page: Page) {
   // Create preset without base
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars.R);
+  await Library(page).selectMonomer(Sugar.R);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.P);
+  await Library(page).selectMonomer(Phosphate.P);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset without phosphate
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars.R);
+  await Library(page).selectMonomer(Sugar.R);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.A);
+  await Library(page).selectMonomer(Base.A);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.nC6n5C);
+  await Library(page).selectMonomer(Base.nC6n5C);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.Test_6_Ph);
+  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r(nC6n5C)
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.nC6n5C);
+  await Library(page).selectMonomer(Base.nC6n5C);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r()Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.Test_6_Ph);
+  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
   await Library(page).rnaBuilder.addToPresets();
 }
@@ -782,18 +783,6 @@ async function checkForKnownBugs(
     addAnnotation(`ReplacementPosition: ${replacementPosition}`);
     test.info().fixme();
   }
-}
-
-async function closeErrorMessage(page: Page) {
-  const errorMessage = page.getByText('Error message', {
-    exact: true,
-  });
-  const closeWindowButton = page.getByRole('button', {
-    name: 'Close window',
-  });
-
-  await closeWindowButton.click();
-  await errorMessage.waitFor({ state: 'hidden' });
 }
 
 for (const replaceMonomer of replaceMonomers) {
@@ -1043,17 +1032,17 @@ for (const replaceMonomer of replaceMonomers) {
 const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: 11,
-    Monomer: Peptides.Ala_al,
+    Monomer: Peptide.Ala_al,
     MonomerDescription: 'peptide w/o R2 (Ala-al)',
   },
   {
     Id: 12,
-    Monomer: Peptides._NHBn,
+    Monomer: Peptide._NHBn,
     MonomerDescription: 'peptide w/o natural analog w/o R2 (-NHBn)',
   },
   {
     Id: 13,
-    Monomer: Bases._5meC,
+    Monomer: Base._5meC,
     MonomerDescription: 'base w/o R2 (5meC)',
   },
   {
@@ -1085,12 +1074,12 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR2ConnectionPointReplaceMonomer,
@@ -1104,17 +1093,17 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
 const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: <number>monomerIDs.peptide_w_o_R1_D_OAla,
-    Monomer: Peptides.D_OAla,
+    Monomer: Peptide.D_OAla,
     MonomerDescription: 'peptide w/o R1 (D-OAla)',
   },
   {
     Id: <number>monomerIDs.peptide_w_o_R1_Boc_,
-    Monomer: Peptides.Boc_,
+    Monomer: Peptide.Boc_,
     MonomerDescription: 'peptide w/o R1 (Boc-)',
   },
   {
     Id: <number>monomerIDs.sugar_w_o_R1_5cGT,
-    Monomer: Sugars._5cGT,
+    Monomer: Sugar._5cGT,
     MonomerDescription: 'sugar w/o R1 (5cGT)',
   },
 ];
@@ -1147,13 +1136,12 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
         noR1orR2ConnectionPointReplaceMonomer,
         sequence.ReplacementPositions.Center,
       );
-
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1orR2ConnectionPointReplaceMonomer,
@@ -1188,12 +1176,12 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1ConnectionPointReplaceMonomer,
@@ -1226,12 +1214,12 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR2ConnectionPointReplaceMonomer,
@@ -1266,12 +1254,12 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
         sequence.ReplacementPositions.Center,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1orR2ConnectionPointReplaceMonomer,
@@ -1306,12 +1294,12 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1ConnectionPointReplaceMonomer,
@@ -1429,12 +1417,12 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1ConnectionPointReplaceMonomer,
@@ -1469,12 +1457,12 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1ConnectionPointReplaceMonomer,
@@ -1620,12 +1608,12 @@ const twoSequences: ISequence[] = [
 const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: 11,
-    Monomer: Peptides.Hcy,
+    Monomer: Peptide.Hcy,
     MonomerDescription: 'peptide (Hcy)',
   },
   {
     Id: 12,
-    Monomer: Peptides.Test_6_P,
+    Monomer: Peptide.Test_6_P,
     MonomerDescription: 'peptide w/o natural analog(Test-6-P)',
   },
   {
@@ -1654,22 +1642,22 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   },
   {
     Id: 16,
-    Monomer: Sugars._5formD,
+    Monomer: Sugar._5formD,
     MonomerDescription: 'sugar (5formD)',
   },
   {
     Id: 17,
-    Monomer: Bases.nC6n2G,
+    Monomer: Base.nC6n2G,
     MonomerDescription: 'base (nC6n2G)',
   },
   {
     Id: 18,
-    Monomer: Phosphates.Test_6_Ph,
+    Monomer: Phosphate.Test_6_Ph,
     MonomerDescription: 'phosphate (Test-6-Ph)',
   },
   {
     Id: 19,
-    Monomer: Nucleotides.AmMC6T,
+    Monomer: Nucleotide.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
@@ -1966,7 +1954,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2022,7 +2010,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2084,7 +2072,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2132,7 +2120,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2180,7 +2168,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2225,7 +2213,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2269,7 +2257,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2315,7 +2303,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2358,7 +2346,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2406,7 +2394,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 

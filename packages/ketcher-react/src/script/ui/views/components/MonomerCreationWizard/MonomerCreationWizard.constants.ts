@@ -1,0 +1,53 @@
+import { KetMonomerClass } from 'ketcher-core';
+
+import {
+  MonomerTypeSelectItem,
+  WizardNotificationMessageMap,
+  WizardNotificationTypeMap,
+} from './MonomerCreationWizard.types';
+
+export const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
+  {
+    value: KetMonomerClass.AminoAcid,
+    label: 'Amino acid',
+    iconName: 'peptide',
+  },
+  { value: KetMonomerClass.Sugar, label: 'Sugar', iconName: 'sugar' },
+  { value: KetMonomerClass.Base, label: 'Base', iconName: 'base' },
+  {
+    value: KetMonomerClass.Phosphate,
+    label: 'Phosphate',
+    iconName: 'phosphate',
+  },
+  { value: KetMonomerClass.RNA, label: 'Nucleotide', iconName: 'nucleotide' },
+  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
+];
+
+export const NotificationMessages: WizardNotificationMessageMap = {
+  defaultAttachmentPoints:
+    'Attachment points are set by default with hydrogens as leaving groups.',
+  emptyMandatoryFields: 'Mandatory fields must be filled.',
+  invalidSymbol:
+    'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  symbolExists:
+    'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+  editingIsNotAllowed: 'Editing of the structure is not allowed.',
+  noAttachmentPoints: 'The monomer must have at least one attachment point.',
+  incorrectAttachmentPointsOrder:
+    'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
+  creationSuccessful: 'The monomer was successfully added to the library.',
+};
+
+export const NotificationTypes: WizardNotificationTypeMap = {
+  defaultAttachmentPoints: 'info',
+  emptyMandatoryFields: 'error',
+  invalidSymbol: 'error',
+  symbolExists: 'error',
+  editingIsNotAllowed: 'error',
+  noAttachmentPoints: 'error',
+  incorrectAttachmentPointsOrder: 'error',
+  creationSuccessful: 'info',
+};
+
+export const MonomerCreationExternalNotificationAction =
+  'MonomerCreationExternalNotification';

@@ -6,7 +6,7 @@ import {
   polymerEditorTheme,
 } from '../../../mock-data';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 

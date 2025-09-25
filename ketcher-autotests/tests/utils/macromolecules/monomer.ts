@@ -178,13 +178,13 @@ export enum MonomerAttachmentPoint {
  *   await expect(locator).toHaveScreenshot();
  *
  * test('should take a screenshot of the monomer from Bases', async ({ page }) => {
- *  const locator = getMonomerLocator(page, Bases.A);
+ *  const locator = getMonomerLocator(page, Base.A);
  *  await expect(locator).toHaveScreenshot();
  * });
  *
  * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
  *   const locator = getMonomerLocator(page, {
- *     ...Sugars.fR,
+ *     ...Sugar.fR,
  *     rValues: [true, true, true],
  *   });
  *   await expect(locator).toHaveScreenshot();
@@ -226,29 +226,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
       attributes[`data-R${index + 1}`] = `${value}`;
     });
   }
-
-  const attributeSelectors = Object.entries(attributes)
-    .map(([key, value]) => `[${key}="${value}"]`)
-    .join('');
-
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
-}
-
-type GetAtomLocatorOptions = {
-  atomAlias?: string;
-  atomId?: string | number;
-};
-
-export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
-  const attributes: { [key: string]: string } = {};
-
-  attributes['data-testid'] = 'atom';
-
-  const { atomId, atomAlias } = options;
-  if (atomId) attributes['data-atomid'] = String(atomId);
-  if (atomAlias) attributes['data-atomalias'] = atomAlias;
 
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)

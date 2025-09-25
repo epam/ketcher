@@ -352,6 +352,7 @@
         "id": "dH___D-Histidine",
         "fullName": "D-Histidine",
         "alias": "dH",
+        "aliasHELM": "dH",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

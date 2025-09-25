@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -14,7 +14,6 @@ import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -32,7 +31,6 @@ test.describe('Tests for Ruler', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
@@ -603,7 +601,6 @@ test.describe('Tests for Ruler', () => {
     });
     await Ruler(page).dragRulerHandle(400, 300);
     await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).dragRulerHandle(600, 300);
@@ -626,5 +623,21 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7245
+     * Description: Not missing tooltip for standalone input field in ruler control
+     * Scenario:
+     * 1. Go to Macro mode - Snake mode
+     * 2. Drag the ruler slider outside the visible canvas so that the input field becomes standalone
+     * 3. Hover over the input field
+     */
+    await Ruler(page).setLength('100');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await Ruler(page).hoverOnInputField();
+    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
   });
 });

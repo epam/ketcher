@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -289,9 +289,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       'PEPTIDE1{A.[2Nal].[Edc]}$$$$V2.0',
     );
     await page.keyboard.down('Shift');
-    await getMonomerLocator(page, Peptides.A).click();
-    await getMonomerLocator(page, Peptides._2Nal).click();
-    await getMonomerLocator(page, Peptides.Edc).click();
+    await getMonomerLocator(page, Peptide.A).click();
+    await getMonomerLocator(page, Peptide._2Nal).click();
+    await getMonomerLocator(page, Peptide.Edc).click();
     await page.keyboard.up('Shift');
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
@@ -581,7 +581,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{C}|PEPTIDE2{C.C}|PEPTIDE3{C.C.C}$$$$V2.0',
     );
-    await getMonomerLocator(page, Peptides.C).nth(1).click();
+    await getMonomerLocator(page, Peptide.C).nth(1).click();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
@@ -594,7 +594,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       'C3H6NOS',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await getMonomerLocator(page, Peptides.C).nth(3).click();
+    await getMonomerLocator(page, Peptide.C).nth(3).click();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,

@@ -1,10 +1,10 @@
-import { Page, expect, test } from '@playwright/test';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Page, expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
@@ -35,12 +35,17 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
+let page: Page;
 test.describe('SMILES files', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('SmileString for structure with Bond properties', async ({ page }) => {
+  test('SmileString for structure with Bond properties', async () => {
     /*
     Test case: EPMLSOPKET-1906
     Description: SmileString is correctly generated from structure and vise
@@ -61,7 +66,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString for structure with Atom properties', async ({ page }) => {
+  test('SmileString for structure with Atom properties', async () => {
     /*
     Test case: EPMLSOPKET-1907
     Description: SmileString is correctly generated from structure and
@@ -85,9 +90,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from mol file that contains abbreviation', async ({
-    page,
-  }) => {
+  test('SmileString from mol file that contains abbreviation', async () => {
     /*
     Test case: EPMLSOPKET-1908
     Description: <<In Daylight SMILES the structure will be saved without S-groups>>
@@ -100,7 +103,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString  from mol file that contains Sgroup', async ({ page }) => {
+  test('SmileString  from mol file that contains Sgroup', async () => {
     /*
     Test case: EPMLSOPKET-1914
     Description: In Daylight SMILES the structure will be saved without S-groups
@@ -122,9 +125,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from mol file that contains Heteroatoms', async ({
-    page,
-  }) => {
+  test('SmileString from mol file that contains Heteroatoms', async () => {
     /*
     Test case: EPMLSOPKET-1915
     Description: SmileString is correctly generated from structure and
@@ -148,9 +149,7 @@ test.describe('SMILES files', () => {
   });
 
   // flaky
-  test('SmileString from mol file that contains attached data', async ({
-    page,
-  }) => {
+  test('SmileString from mol file that contains attached data', async () => {
     /*
     Test case: EPMLSOPKET-1916
     Description: Warning tab: Structure contains query properties of atoms
@@ -174,9 +173,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from V2000 mol file contains abs stereochemistry', async ({
-    page,
-  }) => {
+  test('SmileString from V2000 mol file contains abs stereochemistry', async () => {
     /*
     Test case: EPMLSOPKET-1917
     Description: SmileString is correctly generated from structure and vise versa
@@ -202,9 +199,7 @@ test.describe('SMILES files', () => {
   });
 
   // flaky
-  test('SmileString from mol file that contains combination of different features', async ({
-    page,
-  }) => {
+  test('SmileString from mol file that contains combination of different features', async () => {
     /*
     Test case: EPMLSOPKET-1920
     Description: SmileString is correctly generated from structure and vise versa structure is
@@ -230,9 +225,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from file that contains Cis/Trans configuration', async ({
-    page,
-  }) => {
+  test('SmileString from file that contains Cis/Trans configuration', async () => {
     /*
     Test case: EPMLSOPKET-1923
     Description: SmileString is correctly generated from structure and vise versa
@@ -255,9 +248,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from file that contains alias and pseudoatom', async ({
-    page,
-  }) => {
+  test('SmileString from file that contains alias and pseudoatom', async () => {
     /*
     Test case: EPMLSOPKET-1924
     Description: The structure generated from SMILE string is correct,
@@ -279,7 +270,7 @@ test.describe('SMILES files', () => {
 
   test.fail(
     'SmileString from reaction consists of two or more reaction arrows and structures',
-    async ({ page }) => {
+    async () => {
       /*
        * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
        * Test case: EPMLSOPKET-8905
@@ -304,9 +295,7 @@ test.describe('SMILES files', () => {
     },
   );
 
-  test('Open Daylight SMILES file with reagent above arrow', async ({
-    page,
-  }) => {
+  test('Open Daylight SMILES file with reagent above arrow', async () => {
     /*
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
@@ -329,7 +318,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open SMILE file with S-Group Properties', async ({ page }) => {
+  test('Open SMILE file with S-Group Properties', async () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1040
     Description: SMILE file opens and have S-Group Properties
@@ -350,9 +339,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Stereobond is preserved after pasting a SMILES structure', async ({
-    page,
-  }) => {
+  test('Stereobond is preserved after pasting a SMILES structure', async () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1300
     Description: The Single Down stereo bond is on the structure
@@ -361,9 +348,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async ({
-    page,
-  }) => {
+  test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1300
     Description: The Single Up, Single Down and Single Up/Down  stereo bonds is on the structure
@@ -374,9 +359,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async ({
-    page,
-  }) => {
+  test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1257
     Description: Stereo information for bond and atom is kept
@@ -388,9 +371,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back
@@ -412,9 +393,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back
@@ -436,9 +415,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back
@@ -460,9 +437,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back
@@ -484,9 +459,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back
@@ -508,9 +481,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back
@@ -532,14 +503,11 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with chems could be saved to Extended SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with chems could be saved to Extended SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to extended SMILE and loaded back
     */
-    test.fail();
     // function await getExtendedSmiles but get JSON instead cxsmi file
     // after fixing need to update the screenshot
 
@@ -559,9 +527,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with other nucleotides could be saved to Extended SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with other nucleotides could be saved to Extended SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with other nucleotides could be saved to extended SMILE and loaded back
@@ -582,9 +548,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides connected with bases could be saved to Extended SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with bases could be saved to Extended SMILE file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to extended SMILE and loaded back
@@ -605,9 +569,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the simple schema with retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the simple schema with retrosynthetic arrow could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
@@ -631,7 +593,7 @@ test.describe('SMILES files', () => {
 
   test.fail(
     'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back',
-    async ({ page }) => {
+    async () => {
       /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
@@ -655,9 +617,7 @@ test.describe('SMILES files', () => {
     },
   );
 
-  test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
@@ -679,9 +639,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with two retrosynthetic arrows could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with two retrosynthetic arrows could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
@@ -703,9 +661,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
@@ -727,9 +683,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMILE file and loaded back', async () => {
     /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back

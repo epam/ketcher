@@ -719,6 +719,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
+        "aliasHELM": "d",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,
@@ -943,6 +944,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1065,6 +1067,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -1395,6 +1398,7 @@
         "id": "T___Thymine",
         "fullName": "Thymine",
         "alias": "T",
+        "aliasHELM": "T",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

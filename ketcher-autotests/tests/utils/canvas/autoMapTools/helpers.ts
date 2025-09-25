@@ -1,8 +1,8 @@
 import { moveOnAtom } from '@utils/clicks';
-import { resetCurrentTool } from '../tools';
 import { Page } from '@playwright/test';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 interface Atom {
   label: string;
@@ -10,7 +10,7 @@ interface Atom {
 }
 
 export async function mapTwoAtoms(page: Page, atom1: Atom, atom2: Atom) {
-  await resetCurrentTool(page);
+  await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionMapping,
   );

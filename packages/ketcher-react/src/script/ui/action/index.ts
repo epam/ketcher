@@ -39,6 +39,9 @@ const disableIfViewOnly = (editor: Editor): boolean =>
 const disableIfMonomerCreationWizardActive = (editor: Editor): boolean =>
   editor.isMonomerCreationWizardActive;
 
+const combinedDisable = (editor: Editor) =>
+  disableIfViewOnly(editor) || disableIfMonomerCreationWizardActive(editor);
+
 const updateConfigItem = (item: UiAction): UiAction => {
   if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
     return item;
@@ -54,7 +57,7 @@ const updateConfigItem = (item: UiAction): UiAction => {
   } else {
     return {
       ...item,
-      disabled: disableIfViewOnly || disableIfMonomerCreationWizardActive,
+      disabled: combinedDisable,
     };
   }
 };
@@ -170,7 +173,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'copy-image'),
   },
   'copy-mol': {
-    shortcut: 'Mod+m',
+    shortcut: 'Mod+Shift+m',
     enabledInViewOnly: true,
     title: 'Copy as MOL',
     action: () => {

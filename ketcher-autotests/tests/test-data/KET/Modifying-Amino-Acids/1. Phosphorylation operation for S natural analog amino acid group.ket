@@ -383,6 +383,7 @@
         "id": "SerPO3___O-phospho-L-serine",
         "fullName": "O-phospho-L-serine",
         "alias": "SerPO3",
+        "aliasHELM": "Ser_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,

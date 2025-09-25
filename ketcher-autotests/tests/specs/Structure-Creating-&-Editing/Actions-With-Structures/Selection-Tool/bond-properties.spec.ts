@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page } from '@playwright/test';
+import { test, Page } from '@fixtures';
 import {
   BondType,
   clickOnCanvas,

@@ -15,7 +15,14 @@
  ***************************************************************************/
 
 import { Provider } from 'react-redux';
-import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  PointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  RefObject,
+} from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -87,6 +94,7 @@ import {
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
+import { useMacromoleculesHotkeys } from './hooks/useMacromoleculesHotkeys';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
@@ -149,7 +157,7 @@ function EditorContainer({
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <RootSizeProvider
-          rootRef={rootElRef}
+          rootRef={rootElRef as RefObject<HTMLDivElement>}
           isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
@@ -207,6 +215,7 @@ function Editor({
   }, [dispatch]);
 
   useSetRnaPresets();
+  useMacromoleculesHotkeys();
 
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
@@ -314,7 +323,7 @@ function Editor({
     <>
       <Layout>
         <Layout.Top
-          shortened={isMonomerLibraryHidden}
+          shortened={!isMonomerLibraryHidden}
           data-testid="top-toolbar"
         >
           <TopMenuComponent />

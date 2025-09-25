@@ -479,6 +479,7 @@
         "id": "meK___N-Methyl-Lysine",
         "fullName": "N-Methyl-Lysine",
         "alias": "meK",
+        "aliasHELM": "meK",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

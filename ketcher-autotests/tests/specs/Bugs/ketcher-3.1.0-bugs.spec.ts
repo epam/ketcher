@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   takePageScreenshot,
@@ -19,7 +19,6 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { waitForPageInit } from '@utils/common';
 import {
   modifyInRnaBuilder,
@@ -34,18 +33,22 @@ import {
   keyboardTypeOnCanvas,
   resetZoomLevelToDefault,
 } from '@utils/keyboard/index';
-import { Bases } from '@constants/monomers/Bases';
+import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { GeneralSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  AtomsSetting,
+  GeneralSetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -170,12 +173,15 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 5. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 4);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
+    ).open();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -205,7 +211,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.[dR](A+C+G+U)P.R(A)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    const sugarR = getMonomerLocator(page, Sugars.R).first();
+    const sugarR = getMonomerLocator(page, Sugar.R).first();
 
     await ContextMenu(page, sugarR).open();
     await takeEditorScreenshot(page, {
@@ -218,7 +224,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6166
-     * Description: Color schema for Favorites tab at RNA Library is like in the library for Peptides.
+     * Description: Color schema for Favorites tab at RNA Library is like in the library for Peptide.
      * Scenario:
      * 1. Go to Macro mode
      * 2. Go to Peptides tab and add A and C peptides to Favorites
@@ -226,7 +232,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Take a screenshot
      */
     await Library(page).switchToPeptidesTab();
-    await Library(page).addMonomersToFavorites([Peptides.A, Peptides.C]);
+    await Library(page).addMonomersToFavorites([Peptide.A, Peptide.C]);
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -339,7 +345,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       goToPeptides: false,
     });
     await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomer(Peptides.D_OAla);
+    await Library(page).hoverMonomer(Peptide.D_OAla);
     await waitForMonomerPreview(page);
     await takeElementScreenshot(
       page,
@@ -365,10 +371,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomer(Peptides.O);
+    await Library(page).hoverMonomer(Peptide.O);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
-    await Library(page).hoverMonomer(Peptides.U);
+    await Library(page).hoverMonomer(Peptide.U);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -632,7 +638,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await symbolN.click();
     await modifyInRnaBuilder(page, symbolN);
     await Library(page).rnaBuilder.selectBaseSlot();
-    await Library(page).selectMonomer(Bases._4ime6A);
+    await Library(page).selectMonomer(Base._4ime6A);
     await Library(page).rnaBuilder.save();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -687,7 +693,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Move monomer
      * 4. Take a screenshot
      */
-    const firstMonomer = getMonomerLocator(page, Peptides.F).first();
+    const firstMonomer = getMonomerLocator(page, Peptide.F).first();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,

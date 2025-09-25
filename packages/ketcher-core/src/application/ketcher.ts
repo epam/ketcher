@@ -76,6 +76,7 @@ export class Ketcher {
   _indigo: Indigo;
   readonly #eventBus: EventEmitter;
   changeEvent: Subscription;
+  libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
     // we should assign editor exactly after ketcher creation
@@ -95,6 +96,7 @@ export class Ketcher {
     assert(formatterFactory != null);
     this._id = uniqueId();
     this.changeEvent = new Subscription();
+    this.libraryUpdateEvent = new Subscription();
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
     this._indigo = new Indigo(this.structService);
@@ -457,7 +459,7 @@ export class Ketcher {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
@@ -488,7 +490,7 @@ export class Ketcher {
   }
 
   async setHelm(helmStr: string): Promise<void | undefined> {
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof helmStr === 'string');
       const struct: Struct = await prepareStructToRender(
         helmStr,
@@ -510,7 +512,7 @@ export class Ketcher {
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
@@ -544,13 +546,13 @@ export class Ketcher {
       throw new Error('Layout is not available in macro mode');
     }
 
-    runAsyncAction<void>(async () => {
+    await runAsyncAction<void>(async () => {
       const struct = await this._indigo.layout(
         this.editor.struct(),
         this.editor.serverSettings,
       );
       const ketSerializer = new KetSerializer();
-      this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
   }
 
@@ -661,6 +663,12 @@ export class Ketcher {
     }
 
     editor.updateMonomersLibrary(rawMonomersData);
+    SettingsManager.addMonomerLibraryUpdate(
+      typeof rawMonomersData !== 'string'
+        ? JSON.stringify(rawMonomersData)
+        : rawMonomersData,
+    );
+    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 
   public switchToMacromoleculesMode() {

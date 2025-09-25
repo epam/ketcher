@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -36,8 +36,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { Chem } from '@constants/monomers/Chem';
-import { Presets } from '@constants/monomers/Presets';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   FileType,
@@ -45,14 +45,15 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -202,8 +203,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'PEPTIDE1{[Cys_Bn]}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    const Peptide = getMonomerLocator(page, Peptides.Cys_Bn).first();
-    await ContextMenu(page, Peptide).open();
+    const Peptides = getMonomerLocator(page, Peptide.Cys_Bn).first();
+    await ContextMenu(page, Peptides).open();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: false,
       hideMacromoleculeEditorScrollBars: true,
@@ -388,7 +389,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       goToPeptides: false,
     });
     await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await Library(page).hoverMonomer(Presets.A);
+    await Library(page).hoverMonomer(Preset.A);
     await page.mouse.down();
     await page.mouse.move(200, 200);
     await takeEditorScreenshot(page, {
@@ -396,7 +397,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await page.mouse.up();
-    await Library(page).hoverMonomer(Presets.A);
+    await Library(page).hoverMonomer(Preset.A);
     await page.mouse.down();
     await page.mouse.move(200, 200);
     await takeEditorScreenshot(page, {
@@ -488,7 +489,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'PEPTIDE1{C}$$$V2.0',
+      'PEPTIDE1{C}$$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
@@ -514,7 +515,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'PEPTIDE1{C}$$$V2.0',
+      'PEPTIDE1{C}$$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
@@ -574,11 +575,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.MOLv3000,
       fileContent,
     );
-    await Library(page).dragMonomerOnCanvas(Peptides.Cys_Bn, {
+    await Library(page).dragMonomerOnCanvas(Peptide.Cys_Bn, {
       x: 580,
       y: 388,
     });
-    await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
+    await getMonomerLocator(page, Peptide.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -591,7 +592,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'Molfiles-V3000/Bugs/monomer-with-unique-structure-expected.mol',
     );
-    await getMonomerLocator(page, Peptides.Cys_Bn).nth(1).hover();
+    await getMonomerLocator(page, Peptide.Cys_Bn).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -652,11 +653,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         MacroFileType.HELM,
         helm,
       );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await closeErrorAndInfoModals(page);
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected symbol ']'.'",
+      );
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).close();
     }
   });
 
@@ -718,11 +720,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await closeErrorAndInfoModals(page);
+
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
+    );
+    await ErrorMessageDialog(page).close();
   });
 
   test('Case 20: Atom weights in indigo updated according to last IUPAC data', async () => {
@@ -774,7 +777,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{C.C.C}$$$$V2.0',
     );
-    await getMonomerLocator(page, Peptides.C).nth(1).click();
+    await getMonomerLocator(page, Peptide.C).nth(1).click();
     await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).setMolecularMassUnits(
       MolecularMassUnit.Da,
@@ -813,7 +816,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

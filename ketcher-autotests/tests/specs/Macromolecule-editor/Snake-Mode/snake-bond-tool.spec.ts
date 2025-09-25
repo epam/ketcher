@@ -1,8 +1,8 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test, expect } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test, expect } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
@@ -42,7 +42,7 @@ async function createBondedMonomers(page: Page) {
   await Library(page).switchToPeptidesTab();
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    Peptides.dU,
+    Peptide.dU,
     200,
     200,
     0,
@@ -50,7 +50,7 @@ async function createBondedMonomers(page: Page) {
 
   const [peptide2, peptide3] = await addBondedMonomersToCanvas(
     page,
-    Peptides.Tza,
+    Peptide.Tza,
     100,
     100,
     50,
@@ -60,7 +60,7 @@ async function createBondedMonomers(page: Page) {
 
   const peptide4 = await addSingleMonomerToCanvas(
     page,
-    Peptides.meC,
+    Peptide.meC,
     400,
     400,
     0,
@@ -107,7 +107,7 @@ test.describe('Snake Bond Tool', () => {
     await Library(page).switchToPeptidesTab();
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       300,
       300,
       100,
@@ -116,14 +116,14 @@ test.describe('Snake Bond Tool', () => {
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       300,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      Peptides.Tza,
+      Peptide.Tza,
       200,
       200,
       3,
@@ -145,7 +145,7 @@ test.describe('Snake Bond Tool', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
 
-    await addBondedMonomersToCanvas(page, Peptides.Tza, 100, 100, 25, 25, 18);
+    await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 25, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -191,7 +191,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      Presets.A,
+      Preset.A,
       300,
       300,
       0,
@@ -199,7 +199,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      Presets.C,
+      Preset.C,
       400,
       600,
       1,
@@ -207,7 +207,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2 } = await addRnaPresetOnCanvas(
       page,
-      Presets.G,
+      Preset.G,
       600,
       400,
       2,
@@ -228,7 +228,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      Presets.A,
+      Preset.A,
       300,
       300,
       0,
@@ -236,7 +236,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      Presets.C,
+      Preset.C,
       400,
       600,
       1,
@@ -244,7 +244,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      Presets.G,
+      Preset.G,
       600,
       400,
       2,
@@ -252,7 +252,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar3, phosphate: phosphate3 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       800,
       200,
       3,
@@ -260,7 +260,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar4, phosphate: phosphate4 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       100,
       100,
       4,
@@ -268,7 +268,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar5, phosphate: phosphate5 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       200,
       200,
       5,
@@ -276,7 +276,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar6, phosphate: phosphate6 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       300,
       200,
       6,
@@ -284,7 +284,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar7, phosphate: phosphate7 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       400,
       200,
       7,
@@ -292,7 +292,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar8, phosphate: phosphate8 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       500,
       200,
       8,
@@ -300,7 +300,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar9 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
+      Preset.T,
       600,
       200,
       9,
@@ -324,25 +324,21 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
-    await Library(page).switchToPeptidesTab();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const [peptide1] = await addBondedMonomersToCanvas(
       page,
-      Peptides.Tza,
-      500,
-      500,
+      Peptide.Tza,
+      100,
+      200,
       100,
       100,
       3,
     );
-
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).switchToPeptidesTab();
-    await addBondedMonomersToCanvas(page, Peptides.bAla, 700, 500, 50, 50, 4);
-    await Library(page).switchToRNATab();
+    await addBondedMonomersToCanvas(page, Peptide.bAla, 400, 200, 50, 50, 4);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      Presets.A,
+      Preset.A,
       200,
       200,
       0,
@@ -350,7 +346,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      Presets.C,
+      Preset.C,
       300,
       500,
       1,
@@ -358,14 +354,12 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      Presets.G,
+      Preset.G,
       400,
       300,
       2,
       2,
     );
-
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -392,7 +386,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      Presets.A,
+      Preset.A,
       200,
       200,
       0,
@@ -400,7 +394,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar } = await addRnaPresetOnCanvas(
       page,
-      Presets.G,
+      Preset.G,
       700,
       300,
       1,
@@ -410,7 +404,7 @@ test.describe('Snake Bond Tool', () => {
     await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Sugars.R,
+      Sugar.R,
       500,
       500,
       2,
@@ -418,7 +412,7 @@ test.describe('Snake Bond Tool', () => {
     await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Bases.A,
+      Base.A,
       600,
       600,
       1,
@@ -449,57 +443,50 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake bond for chain with side chains', async () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      Presets.C,
-      200,
-      200,
+      Preset.C,
+      50,
+      50,
       0,
       0,
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      Presets.G,
-      500,
-      300,
+      Preset.G,
+      350,
+      150,
       1,
       1,
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      Presets.T,
-      700,
-      300,
+      Preset.T,
+      550,
+      150,
       2,
       2,
     );
-    await addRnaPresetOnCanvas(page, Presets.U, 900, 300, 3, 3);
-    await Library(page).openRNASection(RNASection.Sugars);
+    await addRnaPresetOnCanvas(page, Preset.U, 900, 300, 3, 3);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Sugars.R,
-      350,
-      350,
+      Sugar.R,
+      200,
+      200,
       4,
     );
-    await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Bases.nC6n8A,
+      Base.nC6n8A,
+      200,
       350,
-      500,
       0,
     );
-
-    await Library(page).switchToPeptidesTab();
     const [peptide] = await addBondedMonomersToCanvas(
       page,
-      Peptides.A,
-      500,
-      500,
+      Peptide.A,
+      350,
+      350,
       50,
       50,
       3,
@@ -507,9 +494,9 @@ test.describe('Snake Bond Tool', () => {
 
     const [hcyPeptide, hcyPeptide1] = await addBondedMonomersToCanvas(
       page,
-      Peptides.Hcy,
-      600,
-      500,
+      Peptide.Hcy,
+      350,
+      250,
       50,
       0,
       2,
@@ -517,22 +504,21 @@ test.describe('Snake Bond Tool', () => {
 
     const [balPeptide] = await addBondedMonomersToCanvas(
       page,
-      Peptides.bAla,
-      700,
-      700,
+      Peptide.bAla,
+      500,
+      500,
       50,
       0,
       2,
     );
     const balPeptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.bAla,
-      850,
-      650,
+      Peptide.bAla,
+      520,
+      500,
       2,
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(
       page,
@@ -574,11 +560,11 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake mode for single monomer and nucleoside', async () => {
     await Library(page).switchToPeptidesTab();
-    await addSingleMonomerToCanvas(page, Peptides.bAla, 300, 300, 0);
+    await addSingleMonomerToCanvas(page, Peptide.bAla, 300, 300, 0);
     await Library(page).openRNASection(RNASection.Sugars);
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Sugars.R,
+      Sugar.R,
       500,
       500,
       0,
@@ -586,7 +572,7 @@ test.describe('Snake Bond Tool', () => {
     await Library(page).openRNASection(RNASection.Bases);
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      Bases.A,
+      Base.A,
       600,
       600,
       0,
@@ -614,7 +600,7 @@ test.describe('Snake Bond Tool', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Peptides.meE).hover();
+    await getMonomerLocator(page, Peptide.meE).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -637,7 +623,7 @@ test.describe('Snake Bond Tool', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Peptides.meE).hover();
+    await getMonomerLocator(page, Peptide.meE).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x1, y1, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -714,7 +700,7 @@ test.describe('Snake Bond Tool', () => {
     await scrollUp(page, 200);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await getMonomerLocator(page, Peptides.meS).hover();
+    await getMonomerLocator(page, Peptide.meS).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await moveMouseAway(page);
@@ -741,7 +727,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, -400);
 
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Peptides.DHis1B).hover();
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -810,7 +796,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.DHis1B).click();
+    await getMonomerLocator(page, Peptide.DHis1B).click();
     await takeEditorScreenshot(page);
   });
 
@@ -826,7 +812,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides.meR).click();
+    await getMonomerLocator(page, Peptide.meR).click();
     await takeEditorScreenshot(page);
   });
 
@@ -846,7 +832,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await getMonomerLocator(page, Peptides.DHis1B).hover();
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -873,7 +859,7 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
-    await getMonomerLocator(page, Peptides.DHis1B).hover();
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -895,7 +881,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
-    await getMonomerLocator(page, Peptides.DHis1B).hover();
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -978,6 +964,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1019,6 +1006,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
     and maximum call stack size exceeded error not appears during snake layout.
     */
+    test.slow();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(

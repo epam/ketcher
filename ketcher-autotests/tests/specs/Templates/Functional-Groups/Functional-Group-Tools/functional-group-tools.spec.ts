@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   pressButton,
@@ -7,7 +8,6 @@ import {
   dragMouseTo,
   takeEditorScreenshot,
   clickOnAtom,
-  waitForPageInit,
   moveOnAtom,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -18,9 +18,7 @@ import {
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -50,15 +48,25 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 
 // const X_DELTA = 300;
 
 test.describe('Templates - Functional Group Tools', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Add a Bond to a contracted Functional Group', async ({ page }) => {
+  test('Add a Bond to a contracted Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-10086
     Description: A bond is added to a contracted functional group and form a bond
@@ -71,11 +79,11 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Add a Chain to a contracted Functional Group', async ({ page }) => {
+  test('Add a Chain to a contracted Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-10087
     Description: A chain is added to a contracted functional group and form a bond
@@ -88,11 +96,11 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await LeftToolbar(page).chain();
     await dragMouseAndMoveTo(page, 300);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Fragment Selection of expanded Functional Group', async ({ page }) => {
+  test('Fragment Selection of expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2889
     Description: All the Functional Group elements are selected and highlighted on the canvas
@@ -107,11 +115,11 @@ test.describe('Templates - Functional Group Tools', () => {
       SelectionToolType.Fragment,
     );
     await clickOnAtom(page, 'C', anyAtom);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate of expanded Functional Group', async ({ page }) => {
+  test('Rotate of expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2900
     Description: All elements of the Functional Group are rotated
@@ -139,11 +147,11 @@ test.describe('Templates - Functional Group Tools', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate Tool (FG + Other structures)', async ({ page }) => {
+  test('Rotate Tool (FG + Other structures)', async () => {
     /*
     Test case: EPMLSOPKET-3935
     Description: The selected Functional Group is rotated. Benzene ring is rotated.
@@ -172,11 +180,11 @@ test.describe('Templates - Functional Group Tools', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Charge to the Functional group', async ({ page }) => {
+  test('Add Charge to the Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2913
     Description: EDIT ABBREVIATION window appears after click by Charge on expanded FG.
@@ -192,13 +200,11 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await LeftToolbar(page).chargePlus();
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Dragging a selected Functional Group not duplicates it', async ({
-    page,
-  }) => {
+  test('Dragging a selected Functional Group not duplicates it', async () => {
     /*
     Test case: EPMLSOPKET-8938
     Description: A duplicate is not created, the original Functional Group is dragged with the cursor
@@ -213,11 +219,11 @@ test.describe('Templates - Functional Group Tools', () => {
       SelectionToolType.Rectangle,
     );
     await dragMouseAndMoveTo(page, 300);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Bond to the expanded Functional group', async ({ page }) => {
+  test('Add Bond to the expanded Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2908
     Description: EDIT ABBREVIATION window appears after click by Bond on expanded FG.
@@ -231,11 +237,11 @@ test.describe('Templates - Functional Group Tools', () => {
       await pressButton(page, 'Remove Abbreviation');
     });
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Chain to the expanded Functional group', async ({ page }) => {
+  test('Add Chain to the expanded Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2910
     Description: EDIT ABBREVIATION window appears after click by Chain on expanded FG.
@@ -253,11 +259,11 @@ test.describe('Templates - Functional Group Tools', () => {
     });
     await clickOnAtom(page, 'O', anyAtom);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Atom to the expanded Functional group', async ({ page }) => {
+  test('Add Atom to the expanded Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2911
     Description: EDIT ABBREVIATION window appears after click by Chain on expanded FG.
@@ -272,13 +278,11 @@ test.describe('Templates - Functional Group Tools', () => {
       await pressButton(page, 'Remove Abbreviation');
     });
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Remove Abbreviation and Undo/Redo action for Functional group', async ({
-    page,
-  }) => {
+  test('Remove Abbreviation and Undo/Redo action for Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2907
     Description: A modal window appears. Window contains two options: 'Expand Abbreviation', 'Remove Abbreviation'.
@@ -299,21 +303,24 @@ test.describe('Templates - Functional Group Tools', () => {
       getAbbreviationLocator(page, { name: 'CO2Et' }).first(),
     );
     await CommonTopLeftToolbar(page).undo();
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).redo();
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Templates - Functional Group Tools2', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('EDIT ABBREVIATION window appears after click on expanded Functional Group', async ({
-    page,
-  }) => {
+  test('EDIT ABBREVIATION window appears after click on expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2909
     Description: EDIT ABBREVIATION window appears after click by Bond tool on expanded FG and
@@ -323,20 +330,18 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-
-    await resetCurrentTool(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Vertical Flip of expanded Functional Group', async ({ page }) => {
+  test('Vertical Flip of expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2928
     Description: If only FG is selected then only
@@ -351,7 +356,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -360,11 +365,11 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Vertical Flip (Alt+V)');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Horizontal Flip of expanded Functional Group', async ({ page }) => {
+  test('Horizontal Flip of expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2928
     Description: If only FG is selected then only
@@ -380,7 +385,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -389,13 +394,11 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Horizontal Flip (Alt+H)');
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Erase of contracted and expanded Functional Group', async ({
-    page,
-  }) => {
+  test('Erase of contracted and expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2901
     Description: Contracted Functional Group is removed after click with Erase tool;
@@ -411,14 +414,12 @@ test.describe('Templates - Functional Group Tools2', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
     await CommonLeftToolbar(page).selectEraseTool();
-
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
     await openFileAndAddToCanvas(
@@ -427,41 +428,37 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Add Template to the Functional group', async ({ page }) => {
+  test('Add Template to the Functional group', async () => {
     /*
     Test case: EPMLSOPKET-2912
     Description: EDIT ABBREVIATION window appears after click by Template on expanded FG.
     After click Remove abbreviation in modal window user can add Template to structure.
    */
-    let point: { x: number; y: number };
+    // let point: { x: number; y: number };
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await selectRingButton(page, RingButton.Benzene);
-    point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click(SuperatomOption.RemoveAbbreviation);
 
     await takeEditorScreenshot(page);
 
     await selectRingButton(page, RingButton.Cyclopentadiene);
-    point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await resetCurrentTool(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Contract/Remove Abbreviation of Functional Group', async ({
-    page,
-  }) => {
+  test('Expand/Contract/Remove Abbreviation of Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2914
     Description: 1)Functional group is expanded. 2)Functional group is contracted.
@@ -480,22 +477,20 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await expandAbbreviation(page, middleOfTheScreen);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await contractAbbreviation(page, middleOfTheScreen);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await removeAbbreviation(page, middleOfTheScreen);
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Contract Abbreviation of Functional Group and Undo/Redo action', async ({
-    page,
-  }) => {
+  test('Expand/Contract Abbreviation of Functional Group and Undo/Redo action', async () => {
     /*
     Test case: EPMLSOPKET-2904
     Description: 'Expand/Contract Abbreviation' button can work several times on the same FG.
@@ -512,23 +507,21 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await expandAbbreviation(page, middleOfTheScreen);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await contractAbbreviation(page, middleOfTheScreen);
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Rectangle and Lasso Selection of expanded Functional Group', async ({
-    page,
-  }) => {
+  test('Rectangle and Lasso Selection of expanded Functional Group', async () => {
     /*
     Test case: EPMLSOPKET-2888
     Description: All the Functional Group elements are selected and highlighted on the canvas
@@ -542,7 +535,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -556,11 +549,11 @@ test.describe('Templates - Functional Group Tools2', () => {
       SelectionToolType.Lasso,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Expand Functional Group on a structure', async ({ page }) => {
+  test('Expand Functional Group on a structure', async () => {
     /*
     Test case: EPMLSOPKET-2917
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
@@ -570,11 +563,11 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
       getAbbreviationLocator(page, { name: 'Boc' }),
     );
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Contract Functional Group on a structure', async ({ page }) => {
+  test('Contract Functional Group on a structure', async () => {
     /*
     Test case: EPMLSOPKET-2918
     Description: Functional Group is contracted on a Benzene ring.
@@ -586,13 +579,11 @@ test.describe('Templates - Functional Group Tools2', () => {
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await contractAbbreviation(page, middleOfTheScreen);
 
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Bond between Functional Group and structure not disappears after adding Functional Group again', async ({
-    page,
-  }) => {
+  test('Bond between Functional Group and structure not disappears after adding Functional Group again', async () => {
     /*
     Test case: EPMLSOPKET-10085
     Description: Added Functional Group replaces the existing one and the bond remains in place
@@ -615,7 +606,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CPh3,
@@ -623,13 +614,11 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('The Functional Group is added to all top of the bonds', async ({
-    page,
-  }) => {
+  test('The Functional Group is added to all top of the bonds', async () => {
     /*
     Test case: EPMLSOPKET-8927
     Description: The Functional Group is added to all bonds without errors and distortions
@@ -673,11 +662,11 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickOnCanvas(page, COORDS_CLICK.x6, COORDS_CLICK.y6, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Functional Group replaced by atom', async ({ page }) => {
+  test('Functional Group replaced by atom', async () => {
     /*
     Test case: EPMLSOPKET-3994
     Description: The FG is replaced by Nitrogen atom
@@ -691,17 +680,22 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Templates - Functional Group Tools3', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Filtering Functional Groups', async ({ page }) => {
+  test('Filtering Functional Groups', async () => {
     /*
     Test case: EPMLSOPKET-2930
     Description: All FG's which contain symbols 'C2' are displayed on FG's window.
@@ -721,9 +715,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Remove abbreviation context menu with selected tools', async ({
-    page,
-  }) => {
+  test('Expand/Remove abbreviation context menu with selected tools', async () => {
     /*
     Test case: EPMLSOPKET-3933
     Description:  Functional Group-Expand/Remove abbreviation context menu is shown
@@ -801,9 +793,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Contract/Remove Abbreviation with multiple FG', async ({
-    page,
-  }) => {
+  test('Expand/Contract/Remove Abbreviation with multiple FG', async () => {
     /*
     Test case: EPMLSOPKET-2902
     Description: 1) All selected FG's are expanded.
@@ -824,12 +814,14 @@ test.describe('Templates - Functional Group Tools3', () => {
     await contractAbbreviation(page, middleOfTheScreen);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await removeAbbreviation(page, point);
+    await removeAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'CCl3' }),
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Save to SDF', async ({ page }) => {
+  test('Save to SDF', async () => {
     /*
     Test case: EPMLSOPKET-2931
     Description: FG is downloaded ('ketcher-fg-tmpls.sdf' file). File contains all FG's from library
@@ -839,7 +831,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).clickSaveToSdfButton();
   });
 
-  test('Check aromatize/dearomatize tool on FG', async ({ page }) => {
+  test('Check aromatize/dearomatize tool on FG', async () => {
     /*
     Test case: EPMLSOPKET-2954
     Description: Two FG's are added. Aromatize funcion is selected, nothing happens.
@@ -859,7 +851,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
@@ -868,7 +860,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -885,7 +877,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check layout and cleanup buttons tool on FG', async ({ page }) => {
+  test('Check layout and cleanup buttons tool on FG', async () => {
     /*
     Test case: EPMLSOPKET-2955
     Description: Two FG's are added,
@@ -908,7 +900,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
@@ -917,7 +909,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
       from: 'pageTopLeft',
     });
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).selectAreaSelectionTool();
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -934,9 +926,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check structure on canvas when atom is hovered and Functional Group selected using hotkey', async ({
-    page,
-  }) => {
+  test('Check structure on canvas when atom is hovered and Functional Group selected using hotkey', async () => {
     /*
     Test case: EPMLSOPKET-12970
     Description: Structure on canvas remains unchanged
@@ -952,9 +942,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Hotkeys for atoms work on Functional Groups abbreviations', async ({
-    page,
-  }) => {
+  test('Hotkeys for atoms work on Functional Groups abbreviations', async () => {
     /*
     Test case: EPMLSOPKET-15503
     Description: Oxygen atoms replace a Functional Groups abbreviations on canvas
@@ -975,7 +963,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     {
       tag: ['@FlakyTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
@@ -995,15 +983,12 @@ test.describe('Templates - Functional Group Tools3', () => {
     },
   );
 
-  test('Attach cutted Functional Group to atoms of structure', async ({
-    page,
-  }) => {
+  test('Attach cutted Functional Group to atoms of structure', async () => {
     /*
     Test case: EPMLSOPKET-18058
     Description: Can attach cutted Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
-    test.fail();
     const anyAtom = 4;
     await openFileAndAddToCanvas(
       page,
@@ -1020,7 +1005,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Contracted Functional Group in 3D Viewer', async ({ page }) => {
+  test('Contracted Functional Group in 3D Viewer', async () => {
     /*
     Test case: EPMLSOPKET-3938
     Description: Contracted Functional Group shown as expanded in 3D view

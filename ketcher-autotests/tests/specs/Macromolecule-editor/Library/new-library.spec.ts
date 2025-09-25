@@ -1,8 +1,7 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test } from '@fixtures';
 import {
-  delay,
   MacroFileType,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -28,12 +27,12 @@ import {
   FavoriteStarSymbol,
   RNASection,
 } from '@tests/pages/constants/library/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Chem } from '@constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
   ZoomInByKeyboard,
@@ -431,11 +430,11 @@ test(
 );
 
 const monomerToDrag = [
-  Peptides.Cys_Bn,
-  Presets.MOE_A_P,
-  Sugars.FMOE,
-  Phosphates.bP,
-  Nucleotides.AmMC6T,
+  Peptide.Cys_Bn,
+  Preset.MOE_A_P,
+  Sugar.FMOE,
+  Phosphate.bP,
+  Nucleotide.AmMC6T,
   Chem.DOTA,
 ];
 
@@ -463,7 +462,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
   });
 }
@@ -492,7 +493,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
   });
 }
@@ -600,11 +603,11 @@ for (const monomer of monomerToDrag) {
 }
 
 const monomerToDrag2 = [
-  // Peptides.Cys_Bn,
-  Presets.MOE_A_P,
-  Sugars.FMOE,
-  Phosphates.bP,
-  Nucleotides.AmMC6T,
+  // Peptide.Cys_Bn,
+  Preset.MOE_A_P,
+  Sugar.FMOE,
+  Phosphate.bP,
+  Nucleotide.AmMC6T,
   Chem.DOTA,
 ];
 
@@ -815,9 +818,24 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
 
+    let monomerBoundingBox;
+    if (
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
+      monomerBoundingBox = await getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).boundingBox();
+    } else {
+      monomerBoundingBox = await getMonomerLocator(page, monomer).boundingBox();
+    }
+
+    if (!monomerBoundingBox) throw new Error('Monomer element not found');
+
     await page.mouse.down();
-    await page.mouse.move(111, 111);
-    if (monomerToDrag[4] === monomer) await page.mouse.move(109, 109);
+    await page.mouse.move(
+      monomerBoundingBox?.x - 10,
+      monomerBoundingBox?.y - 10,
+    );
     await waitForRender(page);
 
     await takeEditorScreenshot(page, {
@@ -850,11 +868,25 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
 
-    await page.mouse.down();
-    await page.mouse.move(111, 111);
-    if (monomerToDrag[4] === monomer) await page.mouse.move(109, 109);
-    await delay(0.1);
+    let monomerBoundingBox;
+    if (
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
+      monomerBoundingBox = await getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).boundingBox();
+    } else {
+      monomerBoundingBox = await getMonomerLocator(page, monomer).boundingBox();
+    }
 
+    if (!monomerBoundingBox) throw new Error('Monomer element not found');
+
+    await page.mouse.down();
+    await page.mouse.move(
+      monomerBoundingBox?.x - 10,
+      monomerBoundingBox?.y - 10,
+    );
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1009,7 +1041,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
-    if (!Object.values(Presets).includes(monomer)) {
+    if (
+      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
       await monomerOnCanvas.hover();
       await waitForMonomerPreview(page);
     }
@@ -1046,7 +1080,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
-    if (!Object.values(Presets).includes(monomer)) {
+    if (
+      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
       await monomerOnCanvas.hover();
       await waitForMonomerPreview(page);
     }
@@ -1081,7 +1117,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
-    if (!Object.values(Presets).includes(monomer)) {
+    if (
+      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
       const monomersOnCanvas = getMonomerLocator(page, monomer);
       await bondTwoMonomers(
         page,
@@ -1133,7 +1171,9 @@ for (const monomer of monomerToDrag) {
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
 
-    if (!Object.values(Presets).includes(monomer)) {
+    if (
+      !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+    ) {
       const monomersOnCanvas = getMonomerLocator(page, monomer);
       await bondTwoMonomers(
         page,
@@ -1187,7 +1227,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).undo();
@@ -1195,7 +1237,9 @@ for (const monomer of monomerToDrag) {
 
     await CommonTopLeftToolbar(page).redo();
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
   });
 }
@@ -1223,7 +1267,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).undo();
@@ -1231,7 +1277,9 @@ for (const monomer of monomerToDrag) {
 
     await CommonTopLeftToolbar(page).redo();
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
   });
 }
@@ -1398,7 +1446,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -1408,7 +1458,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).undo();
 
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).redo();
@@ -1445,7 +1497,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await selectAllStructuresOnCanvas(page);
@@ -1455,7 +1509,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).undo();
 
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).redo();
@@ -1701,7 +1757,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -1710,7 +1768,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).undo();
 
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).redo();
@@ -1747,7 +1807,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -1756,7 +1818,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopLeftToolbar(page).undo();
 
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 3 : 1,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 3
+        : 1,
     );
 
     await CommonTopLeftToolbar(page).redo();
@@ -1792,7 +1856,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
     await resetZoomLevelToDefault(page);
   });
@@ -1824,7 +1890,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
     await resetZoomLevelToDefault(page);
   });
@@ -1857,7 +1925,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
     await resetZoomLevelToDefault(page);
   });
@@ -1889,7 +1959,9 @@ for (const monomer of monomerToDrag) {
 
     const monomerOnCanvas = getMonomerLocator(page, {});
     await expect(monomerOnCanvas).toHaveCount(
-      Object.values(Presets).includes(monomer) ? 6 : 2,
+      Object.values(Preset).some((preset) => preset.alias === monomer.alias)
+        ? 6
+        : 2,
     );
     await resetZoomLevelToDefault(page);
   });

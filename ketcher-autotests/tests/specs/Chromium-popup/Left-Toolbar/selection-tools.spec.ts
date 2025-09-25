@@ -448,6 +448,8 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * 4. Select elements by lasso
      * 5. Press Delete button on keyboard
      * 6. Press Undo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
      */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -477,6 +479,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await pageReload(page);
   });
 
   test('Case 15: Check deletion of selected structure by lasso through right-click menu ( Flex mode )', async ({
@@ -496,7 +499,6 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * We have a bug https://github.com/epam/ketcher/issues/7923
      * After fix we should update snapshots and remove `await pageReload();`
      */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/micro-and-macro-structures.ket',
@@ -1104,14 +1106,14 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Sugar.R).click();
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1136,14 +1138,14 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getMonomerLocator(page, Sugar.R).click();
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1168,13 +1170,13 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1223,6 +1225,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await pageReload(page);
   });
 
   test('Case 34: Check deletion of selected structure by Fragment and Undo ( Snake mode )', async ({
@@ -1303,6 +1306,544 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pageReload(page);
+  });
+
+  test('Case 36: Check deletion of selected structure by Fragment through right-click menu ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment through right-click menu ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pageReload(page);
+  });
+
+  test('Case 37: Check deletion of selected structure by Fragment through right-click menu ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment through right-click menu ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pageReload(page);
+  });
+
+  test('Case 38: Check deletion of selected structure by Fragment through right-click menu ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: The deletion of selected structure by Fragment through right-click menu ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Delete" in the context menu
+     * 6. Press Undo button
+     * 7. Press Redo button
+     * We have a bug https://github.com/epam/ketcher/issues/7923
+     * After fix we should update snapshots and remove `await pageReload();`
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pageReload(page);
+  });
+
+  test('Case 39: Check that Calculate properties works for selection by Fragment ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Fragment ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C16H18N5O6P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '407.323',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 40: Check that Calculate properties works for selection by Fragment ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Fragment ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).click();
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C16H18N5O6P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '407.323',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 41: Check that Calculate properties works for selection by Fragment ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Calculate properties works for selection by Fragment ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Calculate Properties button
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
+      'C16H18N5O6P',
+    );
+    expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
+      '407.323',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
+
+  test('Case 42: Check that Create antisence strand (toolbar icon) works for selection by Fragment ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 43: Check that Create antisence strand (toolbar icon) works for selection by Fragment ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 44: Check that Create antisence strand (toolbar icon) works for selection by Fragment ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Press Create antisense strand button on the top toolbar
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await MacromoleculesTopToolbar(page).createAntisenseStrand();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 45: Check that Create antisence strand (right-click menu) works for selection by Fragment ( Flex mode )', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 46: Check that Create antisence strand (right-click menu) works for selection by Fragment ( Snake mode )', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    const anySymbol = getMonomerLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 47: Check that Create antisence strand (right-click menu) works for selection by Fragment ( Sequence mode )', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Right click on the canvas and select "Create Antisense Strand" in the context menu
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    const anySymbol = getSymbolLocator(page, {}).first();
+    await ContextMenu(page, anySymbol).open();
+    await ContextMenu(page, anySymbol).click(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 48: Check that Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ) ', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 49: Check that Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ) ', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getMonomerLocator(page, Sugar.R).first().click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 50: Check that Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ) ', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6358
+     * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ).
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with micro and macro elements
+     * 3. Select Fragment Selection tool
+     * 4. Select elements by Fragment
+     * 5. Click on empty area of canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/rna-connected-to-benzene-ring.ket',
+    );
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await clickOnCanvas(page, 400, 500);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

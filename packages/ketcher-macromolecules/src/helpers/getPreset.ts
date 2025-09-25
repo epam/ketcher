@@ -24,11 +24,12 @@ export const getPresets = (
     monomers.map((monomer) => {
       const monomerID = isAmbiguousMonomerLibraryItem(monomer)
         ? setAmbiguousMonomerTemplatePrefix(monomer.id)
-        : setMonomerTemplatePrefix(getMonomerUniqueKey(monomer));
+        : setMonomerTemplatePrefix(
+            monomer.props.id || getMonomerUniqueKey(monomer),
+          );
       return [monomerID, monomer];
     }),
   );
-
   return rnaPresetsTemplates
     .filter((rnaPresetsTemplate) => {
       return rnaPresetsTemplate.templates.every((rnaPartsMonomerTemplateRef) =>

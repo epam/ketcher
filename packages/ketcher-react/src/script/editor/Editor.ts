@@ -580,7 +580,8 @@ class Editor implements KetcherEditor {
 
   // Pairs of [atomId, attachmentPointLabel (as R1, R10 or similar)]
   private terminalRGroupAtoms: Array<[number, string]> = [];
-  private potentialLeavingAtoms: number[] = [];
+  private potentialLeavingAtomsForAutoAssignment: number[] = [];
+  private potentialLeavingAtomsForManualAssignment: number[] = [];
 
   public get isMonomerCreationWizardEnabled() {
     if (this.isMonomerCreationWizardActive) {
@@ -652,7 +653,7 @@ class Editor implements KetcherEditor {
         );
       });
 
-      const potentialLeavingAtoms: number[] = [];
+      const potentialLeavingAtomsForAutoAssignment: number[] = [];
       bondsToOutside.forEach((bond) => {
         if (
           bond.type !== Bond.PATTERN.TYPE.SINGLE ||
@@ -661,15 +662,12 @@ class Editor implements KetcherEditor {
           return;
         }
 
-        if (selectionAtoms.has(bond.begin)) {
-          potentialLeavingAtoms.push(bond.end);
-        } else {
-          potentialLeavingAtoms.push(bond.begin);
-        }
+        potentialLeavingAtomsForAutoAssignment.push(
+          selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
+        );
       });
-      // TODO: Gather previous and this into different collections – potential leaving atoms is something we try to assign automatically
-      // Them + R groups can't be more than 8
-      // The one below is not assigned automatically so it is a different collection
+
+      const potentialLeavingAtomForManualAssignment: number[] = [];
       selectionAtoms.forEach((selectionAtomId) => {
         const selectionAtom = currentStruct.atoms.get(selectionAtomId);
 
@@ -705,12 +703,13 @@ class Editor implements KetcherEditor {
           return;
         }
 
-        potentialLeavingAtoms.push(selectionAtomId);
+        potentialLeavingAtomForManualAssignment.push(selectionAtomId);
       });
 
-      const totalPotentialLeavingAtoms =
-        terminalRGroupAtoms.length + potentialLeavingAtoms.length;
-      if (totalPotentialLeavingAtoms > 8) {
+      const totalNumberOfAtomsForAutoAssignment =
+        terminalRGroupAtoms.length +
+        potentialLeavingAtomsForAutoAssignment.length;
+      if (totalNumberOfAtomsForAutoAssignment > 8) {
         return false;
       }
 
@@ -725,9 +724,16 @@ class Editor implements KetcherEditor {
         );
         return [atomId, attachmentPointLabel];
       });
-      this.potentialLeavingAtoms = potentialLeavingAtoms;
+      this.potentialLeavingAtomsForAutoAssignment =
+        potentialLeavingAtomsForAutoAssignment;
+      this.potentialLeavingAtomsForManualAssignment =
+        potentialLeavingAtomForManualAssignment;
 
-      return terminalRGroupAtoms.length > 0 || potentialLeavingAtoms.length > 0;
+      return (
+        terminalRGroupAtoms.length > 0 ||
+        potentialLeavingAtomsForAutoAssignment.length > 0 ||
+        potentialLeavingAtomForManualAssignment.length > 0
+      );
     }
 
     return false;
@@ -890,9 +896,7 @@ class Editor implements KetcherEditor {
       },
     );
 
-    const selectedPotentialLeavingAtoms = new Map<number, Set<number>>();
-
-    this.potentialLeavingAtoms.forEach((atomId) => {
+    this.potentialLeavingAtomsForAutoAssignment.forEach((atomId) => {
       const leavingAtom = currentStruct.atoms.get(atomId);
       assert(leavingAtom);
 
@@ -907,33 +911,6 @@ class Editor implements KetcherEditor {
       });
 
       if (attachmentAtomId === -1) {
-        return;
-      }
-
-      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
-      const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
-
-      if (isLeavingAtomSelected) {
-        const originalAttachmentAtomId =
-          originalToSelectedAtomsIdMap.get(attachmentAtomId);
-
-        if (!isNumber(originalAttachmentAtomId)) {
-          return;
-        }
-
-        const setPotentialLeavingAtoms = selectedPotentialLeavingAtoms.get(
-          originalAttachmentAtomId,
-        );
-        if (!setPotentialLeavingAtoms) {
-          const potentialLeavingAtoms = new Set([originalLeavingAtomId]);
-          selectedPotentialLeavingAtoms.set(
-            originalAttachmentAtomId,
-            potentialLeavingAtoms,
-          );
-        } else {
-          setPotentialLeavingAtoms.add(originalLeavingAtomId);
-        }
-
         return;
       }
 
@@ -978,9 +955,56 @@ class Editor implements KetcherEditor {
       ]);
     });
 
+    const potentialAttachmentPoints = new Map<number, Set<number>>();
+    this.potentialLeavingAtomsForManualAssignment.forEach((atomId) => {
+      const leavingAtom = currentStruct.atoms.get(atomId);
+      assert(leavingAtom);
+
+      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
+      const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
+
+      if (!isLeavingAtomSelected) {
+        return;
+      }
+
+      let attachmentAtomId = -1;
+      leavingAtom.neighbors.forEach((halfBondId) => {
+        const halfBond = currentStruct.halfBonds.get(halfBondId);
+        assert(halfBond !== undefined);
+
+        if (selection.atoms?.includes(halfBond.end)) {
+          attachmentAtomId = halfBond.end;
+        }
+      });
+
+      if (attachmentAtomId === -1) {
+        return;
+      }
+
+      const originalAttachmentAtomId =
+        originalToSelectedAtomsIdMap.get(attachmentAtomId);
+
+      if (!isNumber(originalAttachmentAtomId)) {
+        return;
+      }
+
+      const potentialLeavingAtomsSet = potentialAttachmentPoints.get(
+        originalAttachmentAtomId,
+      );
+      if (!potentialLeavingAtomsSet) {
+        const potentialLeavingAtoms = new Set([originalLeavingAtomId]);
+        potentialAttachmentPoints.set(
+          originalAttachmentAtomId,
+          potentialLeavingAtoms,
+        );
+      } else {
+        potentialLeavingAtomsSet.add(originalLeavingAtomId);
+      }
+    });
+
     this.monomerCreationState = {
       assignedAttachmentPoints,
-      potentialAttachmentPoints: selectedPotentialLeavingAtoms,
+      potentialAttachmentPoints,
       problematicAttachmentPoints: new Set(),
     };
 

@@ -10,6 +10,7 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerAttachmentPoint } from './monomer';
+import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
 
 export enum BondType {
   None = 0,
@@ -148,7 +149,7 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
         : await page.getByTitle(secondMonomerConnectionPoint).first().click();
     }
 
-    await page.getByTitle('Connect').first().click();
+    await ConnectionPointsDialog(page).connect();
 
     return {
       leftMonomerConnectionPoint: firstMonomerConnectionPoint,

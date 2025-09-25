@@ -99,6 +99,11 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import {
+  LeftMonomerConnectionPoint,
+  RightMonomerConnectionPoint,
+} from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -764,16 +769,18 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await page.getByRole('button', { name: 'R2' }).first().click();
-    await page.getByRole('button', { name: 'R1' }).nth(1).click();
-    await pressButton(page, 'Reconnect');
+    await ConnectionPointsDialog(page).selectConnectionPoints([
+      LeftMonomerConnectionPoint.R2,
+      RightMonomerConnectionPoint.R1,
+    ]);
+    await ConnectionPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditConnectionPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await pressButton(page, 'Reconnect');
+    await ConnectionPointsDialog(page).reconnect();
   });
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({

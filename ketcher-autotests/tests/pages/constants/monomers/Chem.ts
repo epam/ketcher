@@ -53,7 +53,7 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   TexRd: { alias: 'TexRd', testId: 'TexRd___Texas Red' },
   Cy3: { alias: 'Cy3', testId: 'Cy3___Cy3 dye' },
   Cy5: { alias: 'Cy5', testId: 'Cy5___Cy5 dye' },
-  _56_FAM: { alias: '56FAM', testId: "56FAM___Fluorescein (5' 6-FAM)" },
+  _56FAM: { alias: '56FAM', testId: "56FAM___Fluorescein (5' 6-FAM)" },
   HEX: { alias: 'HEX', testId: 'HEX___Hexachlorofluorescein' },
   TET: { alias: 'TET', testId: 'TET___Tetrachlorofluorescein' },
   Sp9: { alias: 'Sp9', testId: 'Sp9___Spacer 9' },

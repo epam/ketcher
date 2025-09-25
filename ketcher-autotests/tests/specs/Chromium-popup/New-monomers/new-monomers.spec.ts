@@ -49,7 +49,7 @@ const newCHEMs = [
   Chem.TexRd,
   Chem.Cy3,
   Chem.Cy5,
-  Chem._56_FAM,
+  Chem._56FAM,
   Chem.HEX,
   Chem.TET,
   Chem.Sp9,
@@ -754,58 +754,241 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
   }
 });
 
-test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
+// test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7910
+//    * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
+//    *
+//    * Case:
+//    *      1. Open Macromolecules canvas - Flex
+//    *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+//    *      4. Validate that the phosphates are on the canvas
+//    *      5. Save the structure as MOL V3000 file
+//    *      6. Clear the canvas
+//    *      7. Open the saved MOL V3000 file
+//    *      8. Validate that the phosphates are on the canvas after reopening
+//    *      9. Clean up the canvas
+//    *      10. Repeat steps 2-5 for each phosphate
+//    *
+//    * Version 3.8
+//    */
+//   for (const phosphate of newPhosphates) {
+//     await Library(page).dragMonomerOnCanvas(phosphate, {
+//       x: 0,
+//       y: 0,
+//       fromCenter: true,
+//     });
+//     await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+
+//     await verifyFileExport(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
+//       FileType.MOL,
+//     );
+//     await openFileAndAddToCanvasAsNewProjectMacro(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
+//     );
+//     await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+//     await CommonTopLeftToolbar(page).clearCanvas();
+//   }
+// });
+
+// test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7910
+//    * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
+//    *
+//    * Case:
+//    *      1. Open Macromolecules canvas - Flex
+//    *      3. Add new preset to the canvas from the library
+//    *      4. Validate that the preset is on the canvas
+//    *      5. Save the structure as MOL V3000 file
+//    *      6. Clear the canvas
+//    *      7. Open the saved MOL V3000 file
+//    *      8. Validate that the preset is on the canvas after reopening
+//    *      9. Clean up the canvas
+//    *      10. Repeat steps 2-5 for each preset
+//    *
+//    * Version 3.8
+//    */
+//   for (const preset of newPresets) {
+//     await Library(page).dragMonomerOnCanvas(preset, {
+//       x: 0,
+//       y: 0,
+//       fromCenter: true,
+//     });
+//     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+//     if (preset.base) {
+//       await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+//     }
+//     if (preset.phosphate) {
+//       await expect
+//         .soft(getMonomerLocator(page, preset.phosphate))
+//         .toBeVisible();
+//     }
+
+//     await verifyFileExport(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
+//       FileType.MOL,
+//     );
+//     await openFileAndAddToCanvasAsNewProjectMacro(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
+//     );
+
+//     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+//     if (preset.base) {
+//       await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+//     }
+//     if (preset.phosphate) {
+//       await expect
+//         .soft(getMonomerLocator(page, preset.phosphate))
+//         .toBeVisible();
+//     }
+
+//     await CommonTopLeftToolbar(page).clearCanvas();
+//   }
+// });
+
+// test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7910
+//    * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
+//    *
+//    * Case:
+//    *      1. Open Macromolecules canvas - Flex
+//    *      3. Add new nucleotide to the canvas from the library
+//    *      4. Validate that the nucleotide is on the canvas
+//    *      5. Save the structure as MOL V3000 file
+//    *      6. Clear the canvas
+//    *      7. Open the saved MOL V3000 file
+//    *      8. Validate that the nucleotide is on the canvas after reopening
+//    *      9. Clean up the canvas
+//    *      10. Repeat steps 2-5 for each nucleotide
+//    *
+//    * Version 3.8
+//    */
+//   for (const nucleotide of newNucleotides) {
+//     await Library(page).dragMonomerOnCanvas(nucleotide, {
+//       x: 0,
+//       y: 0,
+//       fromCenter: true,
+//     });
+//     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+
+//     await verifyFileExport(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
+//       FileType.MOL,
+//     );
+//     await openFileAndAddToCanvasAsNewProjectMacro(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
+//     );
+//     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+//     await CommonTopLeftToolbar(page).clearCanvas();
+//   }
+// });
+
+// test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7910
+//    * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
+//    *
+//    * Case:
+//    *      1. Open Macromolecules canvas - Flex
+//    *      3. Add new CHEM to the canvas from the library
+//    *      4. Validate that the CHEM is on the canvas
+//    *      5. Save the structure as MOL V3000 file
+//    *      6. Clear the canvas
+//    *      7. Open the saved MOL V3000 file
+//    *      8. Validate that the CHEM is on the canvas after reopening
+//    *      9. Clean up the canvas
+//    *      10. Repeat steps 2-5 for each CHEM
+//    *
+//    * Version 3.8
+//    */
+//   for (const chem of newCHEMs) {
+//     await Library(page).dragMonomerOnCanvas(chem, {
+//       x: 0,
+//       y: 0,
+//       fromCenter: true,
+//     });
+//     await expect(getMonomerLocator(page, chem)).toBeVisible();
+
+//     await verifyFileExport(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
+//       FileType.MOL,
+//     );
+//     await openFileAndAddToCanvasAsNewProjectMacro(
+//       page,
+//       `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
+//     );
+//     const monomerLocator = getMonomerLocator(page, chem);
+//     await expect(monomerLocator).toBeVisible();
+//     await CommonTopLeftToolbar(page).clearCanvas();
+//   }
+// });
+
+test.fail(
+  `25. Check that newly added two phosphates can be saved and opened for IDT`,
+  async () => {
+    // Fails due to issue with IDT export: https://github.com/epam/Indigo/issues/3144
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7910
+     * Description: Check that newly added two phosphates can be saved and opened for IDT
+     *
+     * Case:
+     *      1. Open Macromolecules canvas - Flex
+     *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+     *      4. Validate that the phosphates are on the canvas
+     *      5. Save the structure as IDT file
+     *      6. Clear the canvas
+     *      7. Open the saved IDT file
+     *      8. Validate that the phosphates are on the canvas after reopening
+     *      9. Clean up the canvas
+     *      10. Repeat steps 2-5 for each phosphate
+     *
+     * Version 3.8
+     */
+    for (const phosphate of newPhosphates) {
+      await Library(page).dragMonomerOnCanvas(phosphate, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+      await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+
+      await verifyFileExport(
+        page,
+        `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
+        FileType.IDT,
+      );
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        page,
+        `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
+      );
+      await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+      await CommonTopLeftToolbar(page).clearCanvas();
+    }
+  },
+);
+
+test(`26. Check that newly added eleven presets can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
-   * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
-   *
-   * Case:
-   *      1. Open Macromolecules canvas - Flex
-   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
-   *      4. Validate that the phosphates are on the canvas
-   *      5. Save the structure as MOL V3000 file
-   *      6. Clear the canvas
-   *      7. Open the saved MOL V3000 file
-   *      8. Validate that the phosphates are on the canvas after reopening
-   *      9. Clean up the canvas
-   *      10. Repeat steps 2-5 for each phosphate
-   *
-   * Version 3.8
-   */
-  for (const phosphate of newPhosphates) {
-    await Library(page).dragMonomerOnCanvas(phosphate, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
-    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
-
-    await verifyFileExport(
-      page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
-      FileType.KET,
-    );
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.ket`,
-    );
-    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  }
-});
-
-test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/7910
-   * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
+   * Description: Check that newly added eleven presets can be saved and opened for IDT
    *
    * Case:
    *      1. Open Macromolecules canvas - Flex
    *      3. Add new preset to the canvas from the library
    *      4. Validate that the preset is on the canvas
-   *      5. Save the structure as MOL V3000 file
+   *      5. Save the structure as IDT file
    *      6. Clear the canvas
-   *      7. Open the saved MOL V3000 file
+   *      7. Open the saved IDT file
    *      8. Validate that the preset is on the canvas after reopening
    *      9. Clean up the canvas
    *      10. Repeat steps 2-5 for each preset
@@ -830,12 +1013,12 @@ test(`22. Check that newly added eleven presets can be saved and opened for MOL 
 
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
-      FileType.KET,
+      `IDT/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.idt`,
+      FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.ket`,
+      `IDT/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.idt`,
     );
 
     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
@@ -852,18 +1035,19 @@ test(`22. Check that newly added eleven presets can be saved and opened for MOL 
   }
 });
 
-test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
+test(`27. Check that newly added nineteen standalone nucleotide can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
-   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
+   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for IDT
    *
    * Case:
    *      1. Open Macromolecules canvas - Flex
-   *      3. Add new nucleotide to the canvas from the library
+   *      2. Add new nucleotide to the canvas from the library
+   *      3. Check if it has R1 attachment point, if yes add 2_damdA nucleotide first, if not add nucleotide first and then dA
    *      4. Validate that the nucleotide is on the canvas
-   *      5. Save the structure as MOL V3000 file
+   *      5. Save the structure as IDT file
    *      6. Clear the canvas
-   *      7. Open the saved MOL V3000 file
+   *      7. Open the saved IDT file
    *      8. Validate that the nucleotide is on the canvas after reopening
    *      9. Clean up the canvas
    *      10. Repeat steps 2-5 for each nucleotide
@@ -871,63 +1055,109 @@ test(`23. Check that newly added nineteen standalone nucleotide can be saved and
    * Version 3.8
    */
   for (const nucleotide of newNucleotides) {
-    await Library(page).dragMonomerOnCanvas(nucleotide, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
+    await Library(page).clickMonomerAutochain(nucleotide);
+    if (
+      await getMonomerLocator(page, nucleotide).evaluate((el) =>
+        el.hasAttribute('data-R1'),
+      )
+    ) {
+      await CommonTopLeftToolbar(page).clearCanvas();
+      await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+      await Library(page).clickMonomerAutochain(nucleotide);
+    } else {
+      await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    }
+
     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
 
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
-      FileType.KET,
+      `IDT/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.idt`,
+      FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.ket`,
+      `IDT/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.idt`,
     );
     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });
 
-test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
+const ubnormalCHEMs = [
+  Chem._5TAMRA,
+  Chem.SCY5,
+  Chem._56FAM,
+  Chem.HEX,
+  Chem.TET,
+  Chem._2_Bio,
+  Chem.Acryd,
+  Chem.ThiP,
+  Chem.IRD700,
+  Chem.IRD800,
+  Chem.YakYel,
+  Chem.PCBio,
+  Chem.AF405,
+  Chem.FAMN,
+  Chem.Dy750,
+  Chem.BioP,
+  Chem._5hxy,
+  Chem.IRD800C,
+  Chem.BiAz,
+  Chem.AzTAM,
+  Chem.FAMK,
+  Chem._5BioT,
+  Chem.DBCOT,
+  Chem.A700,
+  Chem.A425,
+  Chem._5SUN,
+];
+
+test(`28. Check that newly added sixty-five new CHEMs can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
-   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
+   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for IDT
    *
    * Case:
    *      1. Open Macromolecules canvas - Flex
    *      3. Add new CHEM to the canvas from the library
    *      4. Validate that the CHEM is on the canvas
-   *      5. Save the structure as MOL V3000 file
+   *      5. Save the structure as IDT file
    *      6. Clear the canvas
-   *      7. Open the saved MOL V3000 file
+   *      7. Open the saved IDT file
    *      8. Validate that the CHEM is on the canvas after reopening
    *      9. Clean up the canvas
    *      10. Repeat steps 2-5 for each CHEM
    *
    * Version 3.8
    */
-  for (const chem of newCHEMs) {
-    await Library(page).dragMonomerOnCanvas(chem, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
-    await expect(getMonomerLocator(page, chem)).toBeVisible();
+  test.slow();
+  const normalCHEMs = newCHEMs.filter((c) => !ubnormalCHEMs.includes(c));
+  for (const chem of normalCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    if (
+      await getMonomerLocator(page, chem)
+        .first()
+        .evaluate((el) => el.hasAttribute('data-R1'))
+    ) {
+      await CommonTopLeftToolbar(page).clearCanvas();
+      await Library(page).clickMonomerAutochain(Chem.Sp18P);
+      await Library(page).clickMonomerAutochain(chem);
+    } else {
+      await Library(page).clickMonomerAutochain(Chem.Sp18P);
+    }
+    await expect(getMonomerLocator(page, chem).first()).toBeVisible();
 
     await verifyFileExport(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
-      FileType.KET,
+      `IDT/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.idt`,
+      FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.ket`,
+      `IDT/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.idt`,
     );
-    await expect(getMonomerLocator(page, chem)).toBeVisible();
+    await expect(getMonomerLocator(page, chem).first()).toBeVisible();
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

@@ -43512,6 +43512,9 @@
     "id": "Test-6-Ch___Test-6-AP-Chem",
     "fullName": "Test-6-AP-Chem",
     "alias": "Test-6-Ch",
+    "idtAliases": {
+      "base": "Test-6-Ch"
+    },
     "attachmentPoints": [
       {
         "attachmentAtom": 12,

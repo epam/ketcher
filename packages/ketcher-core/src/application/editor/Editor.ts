@@ -128,6 +128,7 @@ interface ICoreEditorConstructorParams {
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
 }
 
 interface ModifyAminoAcidsHandlerParams {
@@ -206,8 +207,13 @@ export class CoreEditor {
     theme,
     canvas,
     monomersLibraryUpdate,
+    monomersLibraryReplace,
     mode,
   }: ICoreEditorConstructorParams) {
+    const ketcher = ketcherProvider.getKetcher(ketcherId);
+    const monomersLibraryUpdateData =
+      monomersLibraryUpdate || monomersLibraryReplace;
+
     this._type = EditorType.Micromolecules;
     this.ketcherId = ketcherId;
     this.theme = theme;
@@ -222,14 +228,15 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
-    // this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
 
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    if (monomersLibraryUpdateData) {
+      if (monomersLibraryReplace) {
+        this.clearMonomersLibrary();
+      }
 
-    if (monomersLibraryUpdate) {
       ketcher
-        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdate)
+        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdateData)
         .then((monomersLibraryUpdateInKetFormat) => {
           this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
         });

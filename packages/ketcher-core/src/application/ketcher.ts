@@ -16,7 +16,11 @@ import { Subscription } from 'subscription';
  ***************************************************************************/
 
 import { saveAs } from 'file-saver';
-import { FormatterFactory, SupportedFormat } from './formatters';
+import {
+  FormatterFactory,
+  identifyStructFormat,
+  SupportedFormat,
+} from './formatters';
 import {
   GenerateImageOptions,
   StructService,
@@ -660,10 +664,14 @@ export class Ketcher {
       typeof rawMonomersData !== 'string'
         ? JSON.stringify(rawMonomersData)
         : rawMonomersData;
+    const format =
+      params?.format || identifyStructFormat(rawMonomersDataString);
 
     let dataInKetFormat: string | JSON;
 
-    if (params?.format === 'sdf') {
+    if (format === SupportedFormat.ket) {
+      dataInKetFormat = rawMonomersDataString;
+    } else {
       const convertResult = await this.indigo.convert(rawMonomersDataString, {
         inputFormat: ChemicalMimeType.MonomerLibrary,
         outputFormat: ChemicalMimeType.MonomerLibrary,
@@ -671,8 +679,6 @@ export class Ketcher {
       });
 
       dataInKetFormat = convertResult.struct;
-    } else {
-      dataInKetFormat = rawMonomersDataString;
     }
 
     return dataInKetFormat;

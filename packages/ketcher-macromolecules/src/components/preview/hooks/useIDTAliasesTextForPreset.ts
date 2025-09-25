@@ -19,27 +19,37 @@ const useIDTAliasesTextForPreset = ({
       return null;
     }
 
-    if (presetName.includes('MOE')) {
-      const { base, modifications } = idtAliases;
+    const { base, modifications } = idtAliases;
 
-      const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-      const internal = modifications?.internal ?? `i${base}`;
-      const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
-
-      switch (position) {
-        case PresetPosition.Library:
-          // In library view, show a single canonical code for MOE presets
-          return base;
-        case PresetPosition.ChainStart:
-          return endpoint5;
-        case PresetPosition.ChainMiddle:
-          return internal;
-        case PresetPosition.ChainEnd:
-          return endpoint3;
-      }
+    if (!modifications) {
+      return base;
     }
+    const { endpoint5, internal, endpoint3 } = modifications;
 
-    return idtAliases.base;
+    const baseToPositionsMap: Record<string, string[]> = {};
+    Object.values(modifications).forEach((modification) => {
+      const [position, base] = [modification.charAt(0), modification.slice(1)];
+      baseToPositionsMap[base] = baseToPositionsMap[base]
+        ? [...baseToPositionsMap[base], position]
+        : [position];
+    });
+    switch (position) {
+      case PresetPosition.Library:
+        if (endpoint3 && endpoint5 && internal) {
+          return base;
+        }
+        return Object.entries(baseToPositionsMap)
+          .map(([base, positions]) => {
+            return `(${positions.join(', ')})${base}`;
+          })
+          .join(', ');
+      case PresetPosition.ChainStart:
+        return endpoint5;
+      case PresetPosition.ChainMiddle:
+        return internal;
+      case PresetPosition.ChainEnd:
+        return endpoint3;
+    }
   }, [presetName, position, idtAliases]);
 };
 

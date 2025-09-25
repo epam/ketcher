@@ -214429,7 +214429,12 @@
     "name": "MOE(A)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErA"
+      "base": "2MOErA",
+      "modifications": {
+        "endpoint5": "52MOErA",
+        "internal": "i2MOErA",
+        "endpoint3": "32MOErA"
+      }
     },
     "templates": [
       {
@@ -214449,7 +214454,12 @@
     "name": "MOE(5meC)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErC"
+      "base": "2MOErC",
+      "modifications": {
+        "endpoint5": "52MOErC",
+        "internal": "i2MOErC",
+        "endpoint3": "32MOErC"
+      }
     },
     "templates": [
       {
@@ -214469,7 +214479,12 @@
     "name": "MOE(G)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErG"
+      "base": "2MOErG",
+      "modifications": {
+        "endpoint5": "52MOErG",
+        "internal": "i2MOErG",
+        "endpoint3": "32MOErG"
+      }
     },
     "templates": [
       {
@@ -214489,7 +214504,12 @@
     "name": "MOE(T)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErT"
+      "base": "2MOErT",
+      "modifications": {
+        "endpoint5": "52MOErT",
+        "internal": "i2MOErT",
+        "endpoint3": "32MOErT"
+      }
     },
     "templates": [
       {
@@ -214509,7 +214529,7 @@
     "name": "dR(U)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "deoxyU"
+      "base": "U"
     },
     "templates": [
       {

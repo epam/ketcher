@@ -6,8 +6,10 @@ import { test } from '@fixtures';
 import {
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
+  PresetType,
 } from '@utils';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
@@ -27,6 +29,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -755,6 +758,7 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 });
 
 // test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
+// Commented out because of https://github.com/epam/Indigo/issues/3206
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7910
 //    * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
@@ -795,6 +799,7 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 // });
 
 // test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
+// Commented out because of https://github.com/epam/Indigo/issues/3206
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7910
 //    * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
@@ -853,6 +858,7 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 // });
 
 // test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
+// Commented out because of https://github.com/epam/Indigo/issues/3206
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7910
 //    * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
@@ -893,6 +899,7 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 // });
 
 // test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
+// Commented out because of https://github.com/epam/Indigo/issues/3206
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7910
 //    * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
@@ -1158,6 +1165,172 @@ test(`28. Check that newly added sixty-five new CHEMs can be saved and opened fo
       `IDT/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.idt`,
     );
     await expect(getMonomerLocator(page, chem).first()).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`29. Check that newly added two phosphates can be saved and opened for HELM`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved and opened for HELM
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as HELM file
+   *      6. Clear the canvas
+   *      7. Open the saved HELM file
+   *      8. Validate that the phosphates are on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+
+    await verifyHELMExport(page, `RNA1{[${phosphate.alias}]}$$$$V2.0`);
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.HELM,
+      `RNA1{[${phosphate.alias}]}$$$$V2.0`,
+    );
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+const newPresetsWithHELMs: [PresetType, string][] = [
+  [Preset.dR_5meC_P, 'RNA1{d([m5C])p}$$$$V2.0'],
+  [Preset._12ddR__P, 'RNA1{[d12r].p}$$$$V2.0'],
+  [Preset.dR_In_P, 'RNA1{d([Hyp])p}$$$$V2.0'],
+  [Preset.dR_isoG_P, 'RNA1{d([isoG])p}$$$$V2.0'],
+  [Preset.fR_U_P, 'RNA1{[fl2r](U)p}$$$$V2.0'],
+  [Preset.fR_C_P, 'RNA1{[fl2r](C)p}$$$$V2.0'],
+  [Preset.fR_A_P, 'RNA1{[fl2r](A)p}$$$$V2.0'],
+  [Preset.fR_G_P, 'RNA1{[fl2r](G)p}$$$$V2.0'],
+  [Preset.R_meA_P, 'RNA1{r([m6A])p}$$$$V2.0'],
+  [Preset.R_In_P, 'RNA1{r([Hyp])p}$$$$V2.0'],
+  [Preset.R_G, 'RNA1{r(G)}$$$$V2.0'],
+];
+test(`30. Check that newly added eleven presets can be saved and opened for HELM`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be saved and opened for HELM
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as HELM file
+   *      6. Clear the canvas
+   *      7. Open the saved HELM file
+   *      8. Validate that the preset is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresetsWithHELMs) {
+    await Library(page).clickMonomerAutochain(preset[0]);
+    await expect.soft(getMonomerLocator(page, preset[0].sugar)).toBeVisible();
+    if (preset[0].base) {
+      await expect.soft(getMonomerLocator(page, preset[0].base)).toBeVisible();
+    }
+    if (preset[0].phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset[0].phosphate))
+        .toBeVisible();
+    }
+
+    await verifyHELMExport(page, preset[1]);
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.HELM,
+      preset[1],
+    );
+
+    await expect.soft(getMonomerLocator(page, preset[0].sugar)).toBeVisible();
+    if (preset[0].base) {
+      await expect.soft(getMonomerLocator(page, preset[0].base)).toBeVisible();
+    }
+    if (preset[0].phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset[0].phosphate))
+        .toBeVisible();
+    }
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`31. Check that newly added nineteen standalone nucleotide can be saved and opened for HELM`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for HELM
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the nucleotide is on the canvas
+   *      5. Save the structure as HELM file
+   *      6. Clear the canvas
+   *      7. Open the saved HELM file
+   *      8. Validate that the nucleotide is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).clickMonomerAutochain(nucleotide);
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+
+    await verifyHELMExport(page, `RNA1{[${nucleotide.alias}]}$$$$V2.0`);
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.HELM,
+      `RNA1{[${nucleotide.alias}]}$$$$V2.0`,
+    );
+
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`32. Check that newly added sixty-five new CHEMs can be saved and opened for HELM`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for HELM
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the CHEM is on the canvas
+   *      5. Save the structure as HELM file
+   *      6. Clear the canvas
+   *      7. Open the saved HELM file
+   *      8. Validate that the CHEM is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each CHEM
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+
+    await verifyHELMExport(page, `CHEM1{[${chem.alias}]}$$$$V2.0`);
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.HELM,
+      `CHEM1{[${chem.alias}]}$$$$V2.0`,
+    );
+
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

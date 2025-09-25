@@ -4,6 +4,7 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
+  clickOnCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndOpenAsNewProject,
@@ -31,6 +32,7 @@ import {
   verifyHELMExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -1433,6 +1435,164 @@ test(`36. Check that newly added sixty-five new CHEMs can be saved to SVG Docume
     await Library(page).clickMonomerAutochain(chem);
     await expect(getMonomerLocator(page, chem)).toBeVisible();
     await verifySVGExport(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`37. Check that newly added two phosphates can be deleted from canvas by Erase tool and restored by Undo`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be deleted from canvas by Erase tool and restored by Undo
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Delete the phosphate by Erase tool
+   *      6. Validate that the phosphate is deleted from the canvas
+   *      7. Restore the phosphate by Undo
+   *      8. Validate that the phosphates are on the canvas
+   *      9. Clear the canvas
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, phosphate);
+    await expect(monomer).toBeVisible();
+    await CommonLeftToolbar(page).selectEraseTool();
+    await monomer.click();
+    await expect(monomer).not.toBeVisible();
+    await CommonTopLeftToolbar(page).undo();
+    await expect(monomer).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`38. Check that newly added eleven presets can be deleted from canvas by Erase tool and restored by Undo`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be deleted from canvas by Erase tool and restored by Undo
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Delete the preset by Erase tool
+   *      6. Validate that the preset is deleted from the canvas
+   *      7. Restore the preset by Undo
+   *      8. Validate that the presets are on the canvas
+   *      9. Clear the canvas
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const preset of newPresets) {
+    await Library(page).clickMonomerAutochain(preset);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const sugarMonomer = getMonomerLocator(page, preset.sugar);
+    const baseMonomer = preset.base
+      ? getMonomerLocator(page, preset.base)
+      : null;
+    const phosphateMonomer = preset.phosphate
+      ? getMonomerLocator(page, preset.phosphate)
+      : null;
+    await expect.soft(sugarMonomer).toBeVisible();
+    if (baseMonomer) await expect.soft(baseMonomer).toBeVisible();
+    if (phosphateMonomer) await expect.soft(phosphateMonomer).toBeVisible();
+
+    await CommonLeftToolbar(page).selectEraseTool();
+
+    await sugarMonomer.click();
+    if (baseMonomer) await baseMonomer.click();
+    if (phosphateMonomer) await phosphateMonomer.click();
+
+    await expect.soft(sugarMonomer).not.toBeVisible();
+    if (baseMonomer) await expect.soft(baseMonomer).not.toBeVisible();
+    if (phosphateMonomer) await expect.soft(phosphateMonomer).not.toBeVisible();
+
+    await CommonTopLeftToolbar(page).undo();
+    if (baseMonomer) await CommonTopLeftToolbar(page).undo();
+    if (phosphateMonomer) await CommonTopLeftToolbar(page).undo();
+
+    await expect.soft(sugarMonomer).toBeVisible();
+    if (baseMonomer) await expect.soft(baseMonomer).toBeVisible();
+    if (phosphateMonomer) await expect.soft(phosphateMonomer).toBeVisible();
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`39. Check that newly added nineteen standalone nucleotide can be deleted from canvas by Erase tool and restored by Undo
+`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be deleted from canvas by Erase tool and restored by Undo
+
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Delete the nucleotide by Erase tool
+   *      6. Validate that the nucleotide is deleted from the canvas
+   *      7. Restore the nucleotide by Undo
+   *      8. Validate that the nucleotides are on the canvas
+   *      9. Clear the canvas
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).clickMonomerAutochain(nucleotide);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, nucleotide);
+    await expect(monomer).toBeVisible();
+    await CommonLeftToolbar(page).selectEraseTool();
+    await monomer.click();
+    await expect(monomer).not.toBeVisible();
+    await CommonTopLeftToolbar(page).undo();
+    await expect(monomer).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`40. Check that newly added sixty-five new CHEMs can be deleted from canvas by Erase tool and restored by Undo`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be deleted from canvas by Erase tool and restored by Undo
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the CHEM is on the canvas
+   *      5. Delete the CHEM by Erase tool
+   *      6. Validate that the CHEM is deleted from the canvas
+   *      7. Restore the CHEM by Undo
+   *      8. Validate that the CHEMs are on the canvas
+   *      9. Clear the canvas
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, chem);
+    await expect(monomer).toBeVisible();
+    await CommonLeftToolbar(page).selectEraseTool();
+    await monomer.click();
+    await expect(monomer).not.toBeVisible();
+    await CommonTopLeftToolbar(page).undo();
+    await expect(monomer).toBeVisible();
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

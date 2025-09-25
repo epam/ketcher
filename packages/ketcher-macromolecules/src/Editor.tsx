@@ -125,6 +125,7 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
   onInit?: (editor: CoreEditor) => void;
 }
 
@@ -139,6 +140,7 @@ function EditorContainer({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
@@ -166,6 +168,7 @@ function EditorContainer({
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              monomersLibraryReplace={monomersLibraryReplace}
               onInit={onInit}
             />
           </EditorWrapper>
@@ -179,6 +182,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  monomersLibraryReplace,
   onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
@@ -205,6 +209,7 @@ function Editor({
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
+        monomersLibraryReplace,
         onInit,
       }),
     );

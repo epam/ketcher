@@ -10,12 +10,16 @@ import { Ketcher, Editor as MoleculesEditor, CoreEditor } from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;
+  monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
 };
 
 interface MacromoleculesEditorProps {
   ketcherId: string;
   togglerComponent?: JSX.Element;
   isMacromoleculesEditorTurnedOn?: boolean;
+  monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
   onInit(macromoleculesEditor: CoreEditor): void;
 }
 /*
@@ -138,6 +142,8 @@ export const Editor = (props: Props) => {
               togglerComponent={togglerComponent}
               ketcherId={ketcherId}
               isMacromoleculesEditorTurnedOn={showPolymerEditor}
+              monomersLibraryUpdate={props.monomersLibraryUpdate}
+              monomersLibraryReplace={props.monomersLibraryReplace}
               onInit={onInitMacromoleculesEditor}
             />
           )}

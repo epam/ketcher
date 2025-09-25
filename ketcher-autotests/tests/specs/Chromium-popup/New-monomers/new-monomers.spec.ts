@@ -6,7 +6,6 @@ import { test } from '@fixtures';
 import {
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
-  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
   PresetType,
@@ -30,6 +29,7 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -1331,6 +1331,108 @@ test(`32. Check that newly added sixty-five new CHEMs can be saved and opened fo
     );
 
     await expect(getMonomerLocator(page, chem)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`33. Check that newly added two phosphates can be saved to SVG Document`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved to SVG Document
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as SVG Document
+   *      6. Validate resulted SVG Document
+   *      7. Clear the canvas
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await verifySVGExport(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`34. Check that newly added eleven presets can be saved to SVG Document`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be saved to SVG Document
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as SVG Document
+   *      6. Validate resulted SVG Document
+   *      7. Clear the canvas
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).clickMonomerAutochain(preset);
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
+
+    await verifySVGExport(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`35. Check that newly added nineteen standalone nucleotide can be saved to SVG Document`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be saved to SVG Document
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as SVG Document
+   *      6. Validate resulted SVG Document
+   *      7. Clear the canvas
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).clickMonomerAutochain(nucleotide);
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+    await verifySVGExport(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`36. Check that newly added sixty-five new CHEMs can be saved to SVG Document`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be saved to SVG Document
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as SVG Document
+   *      6. Validate resulted SVG Document
+   *      7. Clear the canvas
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
+    await verifySVGExport(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { Command } from 'domain/entities/Command';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
@@ -48,28 +46,12 @@ class EraserTool implements BaseTool {
     }
 
     if (selectedItemRenderer instanceof BaseRenderer) {
-      const clickedEntity = selectedItemRenderer.drawingEntity;
-
-      if (
-        clickedEntity instanceof BaseMonomer &&
-        this.editor.drawingEntitiesManager.selectedEntities.length
-      ) {
-        const unselectCommand = new Command();
-        clickedEntity.forEachBond((bond) => {
-          if (bond.selected) {
-            unselectCommand.merge(
-              this.editor.drawingEntitiesManager.unselectDrawingEntity(bond),
-            );
-          }
-        });
-        if (unselectCommand.operations.length) {
-          this.history.update(unselectCommand);
-          this.editor.renderersContainer.update(unselectCommand);
-        }
-      }
-
       const modelChanges =
-        this.editor.drawingEntitiesManager.deleteDrawingEntity(clickedEntity);
+        this.editor.drawingEntitiesManager.deleteDrawingEntity(
+          selectedItemRenderer.drawingEntity,
+          true,
+          true,
+        );
       modelChanges.merge(
         this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
       );

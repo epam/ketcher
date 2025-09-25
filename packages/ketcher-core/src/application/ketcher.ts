@@ -652,7 +652,7 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
-  private async ensureMonomersLibraryDataInKetFormat(
+  public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
   ) {
@@ -698,7 +698,7 @@ export class Ketcher {
     );
 
     editor.updateMonomersLibrary(dataInKetFormat);
-    SettingsManager.addMonomerLibraryUpdate(JSON.stringify(dataInKetFormat));
+    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 

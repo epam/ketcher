@@ -222,9 +222,17 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
-    this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
+    // this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
+    this.events.updateMonomersLibrary.dispatch();
+
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+
     if (monomersLibraryUpdate) {
-      this.updateMonomersLibrary(monomersLibraryUpdate);
+      ketcher
+        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdate)
+        .then((monomersLibraryUpdateInKetFormat) => {
+          this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+        });
     }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
@@ -241,7 +249,6 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -326,6 +333,7 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
 
+    // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
@@ -378,6 +386,29 @@ export class CoreEditor {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson![monomerIdToUse] =
           newMonomersLibraryChunkParsedJson[monomerIdToUse];
+      }
+    });
+
+    // handle monomer group templates
+    newMonomersLibraryChunkParsedJson.root.templates.forEach((templateRef) => {
+      const templateDefinition =
+        newMonomersLibraryChunkParsedJson[templateRef.$ref];
+
+      if (templateDefinition.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE) {
+        return;
+      }
+
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      if (
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        !this._monomersLibraryParsedJson!.root.templates.find(
+          (existingTemplateRef) =>
+            existingTemplateRef.$ref === templateRef.$ref,
+        )
+      ) {
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
     });
 

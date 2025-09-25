@@ -590,153 +590,154 @@ class Editor implements KetcherEditor {
 
     const selection = this.selection();
 
-    if (selection && selection.atoms?.length && selection.bonds?.length) {
-      const currentStruct = this.render.ctab.molecule;
-
-      const selectionInvalid = selection.atoms.some((atomId) => {
-        const atom = this.render.ctab.molecule.atoms.get(atomId);
-
-        if (!atom) {
-          return true;
-        }
-
-        const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
-
-        const belongsToSGroup = sgs.size > 0;
-        const isAttachmentPoint = attachmentPoints !== null;
-        const isNonTerminalRGroupLabel =
-          rglabel !== null && neighbors.length > 1;
-        const hasMultipleRGroupLabel =
-          rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
-        const belongsToRGroup = this.render.ctab.molecule.rgroups.some(
-          (rgroup) => rgroup.frags.has(atom.fragment),
-        );
-        const isExtendedTableAtom = genericsList.includes(label);
-
-        return (
-          belongsToSGroup ||
-          isAttachmentPoint ||
-          isNonTerminalRGroupLabel ||
-          hasMultipleRGroupLabel ||
-          belongsToRGroup ||
-          isExtendedTableAtom
-        );
-      });
-
-      if (selectionInvalid) {
-        return false;
-      }
-
-      const isSelectionContinuous = Editor.isSelectionContinuous(
-        selection,
-        currentStruct,
-      );
-      if (!isSelectionContinuous) {
-        return false;
-      }
-
-      const terminalRGroupAtoms = selection.atoms.filter((atomId) => {
-        const atom = currentStruct.atoms.get(atomId);
-
-        if (!atom) {
-          return false;
-        }
-
-        return atom.rglabel !== null && atom.neighbors.length === 1;
-      });
-
-      const selectionAtoms = new Set(selection.atoms);
-      const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
-        return (
-          (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
-          (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
-        );
-      });
-
-      const potentialLeavingAtomsForAutoAssignment: number[] = [];
-      bondsToOutside.forEach((bond) => {
-        if (
-          bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-          bond.stereo !== Bond.PATTERN.STEREO.NONE
-        ) {
-          return;
-        }
-
-        potentialLeavingAtomsForAutoAssignment.push(
-          selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
-        );
-      });
-
-      const potentialLeavingAtomForManualAssignment: number[] = [];
-      selectionAtoms.forEach((selectionAtomId) => {
-        const selectionAtom = currentStruct.atoms.get(selectionAtomId);
-
-        assert(selectionAtom);
-
-        if (
-          selectionAtom.neighbors.length > 1 ||
-          isNumber(selectionAtom.rglabel)
-        ) {
-          return;
-        }
-
-        const bondIdToSelectionAtom = this.struct().bonds.find((_, bond) => {
-          return (
-            bond.hb1 === selectionAtom.neighbors[0] ||
-            bond.hb2 === selectionAtom.neighbors[0]
-          );
-        });
-
-        if (bondIdToSelectionAtom === null) {
-          return;
-        }
-
-        const bondToSelectionAtom = this.struct().bonds.get(
-          bondIdToSelectionAtom,
-        );
-        assert(bondToSelectionAtom);
-
-        if (
-          bondToSelectionAtom.type !== Bond.PATTERN.TYPE.SINGLE ||
-          bondToSelectionAtom.stereo !== Bond.PATTERN.STEREO.NONE
-        ) {
-          return;
-        }
-
-        potentialLeavingAtomForManualAssignment.push(selectionAtomId);
-      });
-
-      const totalNumberOfAtomsForAutoAssignment =
-        terminalRGroupAtoms.length +
-        potentialLeavingAtomsForAutoAssignment.length;
-      if (totalNumberOfAtomsForAutoAssignment > 8) {
-        return false;
-      }
-
-      this.terminalRGroupAtoms = terminalRGroupAtoms.map((atomId) => {
-        const atom = currentStruct.atoms.get(atomId);
-
-        assert(atom);
-        assert(atom.rglabel);
-
-        const attachmentPointLabel = getAttachmentPointLabelWithBinaryShift(
-          Number(atom.rglabel),
-        );
-        return [atomId, attachmentPointLabel];
-      });
-      this.potentialLeavingAtomsForAutoAssignment =
-        potentialLeavingAtomsForAutoAssignment;
-      this.potentialLeavingAtomsForManualAssignment =
-        potentialLeavingAtomForManualAssignment;
-
-      return (
-        terminalRGroupAtoms.length > 0 ||
-        potentialLeavingAtomsForAutoAssignment.length > 0 ||
-        potentialLeavingAtomForManualAssignment.length > 0
-      );
+    if (!selection || !selection.atoms?.length || !selection.bonds?.length) {
+      return false;
     }
 
-    return false;
+    const currentStruct = this.struct();
+
+    const selectionInvalid = selection.atoms.some((atomId) => {
+      const atom = currentStruct.atoms.get(atomId);
+
+      if (!atom) {
+        return true;
+      }
+
+      const { sgs, attachmentPoints, rglabel, neighbors, label } = atom;
+
+      const belongsToSGroup = sgs.size > 0;
+      const isAttachmentPoint = attachmentPoints !== null;
+      const isNonTerminalRGroupLabel = rglabel !== null && neighbors.length > 1;
+      const hasMultipleRGroupLabel =
+        rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
+      const belongsToRGroup = currentStruct.rgroups.some((rgroup) =>
+        rgroup.frags.has(atom.fragment),
+      );
+      const isExtendedTableAtom = genericsList.includes(label);
+
+      return (
+        belongsToSGroup ||
+        isAttachmentPoint ||
+        isNonTerminalRGroupLabel ||
+        hasMultipleRGroupLabel ||
+        belongsToRGroup ||
+        isExtendedTableAtom
+      );
+    });
+
+    if (selectionInvalid) {
+      return false;
+    }
+
+    const isSelectionContinuous = Editor.isSelectionContinuous(
+      selection,
+      currentStruct,
+    );
+    if (!isSelectionContinuous) {
+      return false;
+    }
+
+    const terminalRGroupAtoms = selection.atoms.filter((atomId) => {
+      const atom = currentStruct.atoms.get(atomId);
+
+      if (!atom) {
+        return false;
+      }
+
+      return atom.rglabel !== null && atom.neighbors.length === 1;
+    });
+
+    const selectionAtoms = new Set(selection.atoms);
+    const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
+      return (
+        (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
+        (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+      );
+    });
+
+    const selectionHasInvalidOutgoingBonds = bondsToOutside.some(
+      (bond) =>
+        bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+        bond.stereo !== Bond.PATTERN.STEREO.NONE,
+    );
+    if (selectionHasInvalidOutgoingBonds) {
+      return false;
+    }
+
+    const potentialLeavingAtomsForAutoAssignment: number[] = [];
+    bondsToOutside.forEach((bond) => {
+      potentialLeavingAtomsForAutoAssignment.push(
+        selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
+      );
+    });
+
+    const potentialLeavingAtomForManualAssignment: number[] = [];
+    selectionAtoms.forEach((selectionAtomId) => {
+      const selectionAtom = currentStruct.atoms.get(selectionAtomId);
+
+      assert(selectionAtom);
+
+      if (
+        selectionAtom.neighbors.length > 1 ||
+        isNumber(selectionAtom.rglabel)
+      ) {
+        return;
+      }
+
+      const bondIdToSelectionAtom = currentStruct.bonds.find((_, bond) => {
+        return (
+          bond.hb1 === selectionAtom.neighbors[0] ||
+          bond.hb2 === selectionAtom.neighbors[0]
+        );
+      });
+
+      if (bondIdToSelectionAtom === null) {
+        return;
+      }
+
+      const bondToSelectionAtom = currentStruct.bonds.get(
+        bondIdToSelectionAtom,
+      );
+      assert(bondToSelectionAtom);
+
+      if (
+        bondToSelectionAtom.type !== Bond.PATTERN.TYPE.SINGLE ||
+        bondToSelectionAtom.stereo !== Bond.PATTERN.STEREO.NONE
+      ) {
+        return;
+      }
+
+      potentialLeavingAtomForManualAssignment.push(selectionAtomId);
+    });
+
+    const totalNumberOfAtomsForAutoAssignment =
+      terminalRGroupAtoms.length +
+      potentialLeavingAtomsForAutoAssignment.length;
+    if (totalNumberOfAtomsForAutoAssignment > 8) {
+      return false;
+    }
+
+    this.terminalRGroupAtoms = terminalRGroupAtoms.map((atomId) => {
+      const atom = currentStruct.atoms.get(atomId);
+
+      assert(atom);
+      assert(atom.rglabel);
+
+      const attachmentPointLabel = getAttachmentPointLabelWithBinaryShift(
+        Number(atom.rglabel),
+      );
+      return [atomId, attachmentPointLabel];
+    });
+    this.potentialLeavingAtomsForAutoAssignment =
+      potentialLeavingAtomsForAutoAssignment;
+    this.potentialLeavingAtomsForManualAssignment =
+      potentialLeavingAtomForManualAssignment;
+
+    return (
+      terminalRGroupAtoms.length > 0 ||
+      potentialLeavingAtomsForAutoAssignment.length > 0 ||
+      potentialLeavingAtomForManualAssignment.length > 0
+    );
   }
 
   static isSelectionContinuous(selection: Selection, struct: Struct): boolean {

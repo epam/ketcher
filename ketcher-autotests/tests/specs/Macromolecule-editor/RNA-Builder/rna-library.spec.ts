@@ -5,7 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
-  pressButton,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
@@ -50,6 +49,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { RightMonomerConnectionPoint } from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -110,8 +111,10 @@ async function drawBasePhosphate(page: Page) {
   await page.mouse.down();
   await phosphate.hover();
   await page.mouse.up();
-  await pressButton(page, 'R2');
-  await pressButton(page, 'Connect');
+  await ConnectionPointsDialog(page).selectConnectionPoint(
+    RightMonomerConnectionPoint.R2,
+  );
+  await ConnectionPointsDialog(page).connect();
 }
 
 async function drawSugarPhosphate(page: Page) {

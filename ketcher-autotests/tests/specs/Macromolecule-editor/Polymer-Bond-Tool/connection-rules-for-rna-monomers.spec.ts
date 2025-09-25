@@ -19,6 +19,7 @@ import {
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
@@ -590,7 +591,7 @@ test.describe('Connection rules for RNAs: ', () => {
         ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
         : await page.getByTitle(rightMonomerConnectionPoint).first().click();
 
-      await page.getByTitle('Connect').first().click();
+      await ConnectionPointsDialog(page).connect();
     }
   }
 

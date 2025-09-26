@@ -1,7 +1,7 @@
 import { IKetIdtAliases } from 'ketcher-core';
 import { useMemo } from 'react';
-
 import { PresetPosition } from 'state';
+import { removeSlashesFromIdtAlias } from 'helpers';
 
 type Props = {
   presetName: string | undefined;
@@ -22,9 +22,12 @@ const useIDTAliasesTextForPreset = ({
     if (presetName.includes('MOE')) {
       const { base, modifications } = idtAliases;
 
-      const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-      const internal = modifications?.internal ?? `i${base}`;
-      const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
+      const endpoint5 =
+        removeSlashesFromIdtAlias(modifications?.endpoint5) ?? `5${base}`;
+      const internal =
+        removeSlashesFromIdtAlias(modifications?.internal) ?? `i${base}`;
+      const endpoint3 =
+        removeSlashesFromIdtAlias(modifications?.endpoint3) ?? `3${base}`;
 
       switch (position) {
         case PresetPosition.Library:
@@ -38,7 +41,7 @@ const useIDTAliasesTextForPreset = ({
       }
     }
 
-    return idtAliases.base;
+    return removeSlashesFromIdtAlias(idtAliases.base);
   }, [presetName, position, idtAliases]);
 };
 

@@ -1,7 +1,7 @@
 import { AmbiguousMonomer, RNABase, Sugar } from 'domain/entities';
-import { SnakeLayoutNode } from 'domain/entities/snake-layout-model/SnakeLayoutModel';
+import { ISnakeLayoutMonomersNode } from './types';
 
-export class SugarWithBaseSnakeLayoutNode implements SnakeLayoutNode {
+export class SugarWithBaseSnakeLayoutNode implements ISnakeLayoutMonomersNode {
   constructor(public sugar: Sugar, public base: RNABase | AmbiguousMonomer) {}
 
   public get monomers() {

@@ -2145,9 +2145,58 @@ test(`50. Check that newly added eleven presets displaying to different views wi
     // to remove selection after adding monomer
     await clickOnCanvas(page, 0, 0);
 
-    const monomer = getMonomerLocator(page, preset);
-    await takeElementScreenshot(page, monomer);
-    await takeElementScreenshot(page, monomer);
+    const monomerSugar = getMonomerLocator(page, preset.sugar);
+    const monomerBase = preset.base
+      ? getMonomerLocator(page, preset.base)
+      : null;
+    const monomerPhosphate = preset.phosphate
+      ? getMonomerLocator(page, preset.phosphate)
+      : null;
+
+    await takeElementScreenshot(page, monomerSugar);
+    if (monomerBase) await takeElementScreenshot(page, monomerBase);
+    if (monomerPhosphate) await takeElementScreenshot(page, monomerPhosphate);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeElementScreenshot(page, monomerSugar);
+    if (monomerBase) await takeElementScreenshot(page, monomerBase);
+    if (monomerPhosphate) await takeElementScreenshot(page, monomerPhosphate);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`51. Check that newly added nineteen standalone nucleotide displaying to different views without errors (flex, sequence, snake)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide displaying to different views without errors (flex, sequence, snake)
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new nucleotide to the canvas from the library
+   *      3. Validate displaying of nucleotide on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of nucleotide in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of nucleotide in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(nucleotide);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, nucleotide);
     await takeElementScreenshot(page, monomer);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

@@ -1,8 +1,9 @@
-import { EmptySequenceNode } from 'domain/entities';
 import {
   ISnakeLayoutModelRow,
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
+import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModelChain {
   private rows: ISnakeLayoutModelRow[] = [];
@@ -28,7 +29,11 @@ export class SnakeLayoutModelChain {
   public get nodes() {
     return this.rows.reduce(
       (acc, row) => acc.concat(row.snakeLayoutModelItems),
-      [] as ITwoStrandedSnakeLayoutNode[],
+      [] as (
+        | ITwoStrandedSnakeLayoutNode
+        | EmptySnakeLayoutNode
+        | MoleculeSnakeLayoutNode
+      )[],
     );
   }
 
@@ -36,28 +41,18 @@ export class SnakeLayoutModelChain {
     return this.nodes.length;
   }
 
-  public get hasAntisense() {
-    return this.rows.some((row) =>
-      row.snakeLayoutModelItems.some(
-        (node) =>
-          node.antisenseNode &&
-          !(node.antisenseNode instanceof EmptySequenceNode),
-      ),
-    );
-  }
-
-  public get isNewSequenceChain() {
-    return (
-      this.length === 1 && this.firstNode.senseNode instanceof EmptySequenceNode
-    );
-  }
-
   public addRow(row: ISnakeLayoutModelRow) {
     this.rows.push(row);
   }
 
   public forEachNode(
-    callback: (node: ITwoStrandedSnakeLayoutNode, nodeIndex: number) => void,
+    callback: (
+      node:
+        | ITwoStrandedSnakeLayoutNode
+        | MoleculeSnakeLayoutNode
+        | EmptySnakeLayoutNode,
+      nodeIndex: number,
+    ) => void,
   ) {
     let nodeIndexInChain = 0;
 

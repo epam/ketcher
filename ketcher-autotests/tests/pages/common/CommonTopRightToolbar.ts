@@ -122,6 +122,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
+
       if (!(await macroOption.isVisible())) {
         await switcher.waitFor({ state: 'visible' });
         await switcher.click();
@@ -162,7 +163,6 @@ export const CommonTopRightToolbar = (page: Page) => {
         await switcher.waitFor({ state: 'visible' });
         await switcher.click();
 
-        const microOption = page.getByTestId(Mode.Molecules);
         await microOption.waitFor({ state: 'visible' });
         await microOption.click();
       }

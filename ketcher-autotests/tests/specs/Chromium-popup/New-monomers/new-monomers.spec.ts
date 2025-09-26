@@ -452,9 +452,7 @@ test(`12. Verify that newly added sixty-five new CHEMs can be found through the 
   }
 });
 
-test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM SCY5`, async ({
-  MoleculesCanvas: _,
-}) => {
+test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM SCY5`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
    * Description: Verify that creating a duplicate of a new item is not allowed for CHEM SCY5
@@ -467,6 +465,7 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
    *
    * Version 3.8
    */
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const createMonomerDialog = CreateMonomerDialog(page);
   const symbolExistsMessageBanner = NotificationMessageBanner(
     page,
@@ -486,9 +485,7 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
   await createMonomerDialog.discard();
 });
 
-test(`14. Verify that creating a duplicate of a new item is not allowed for newly added two phosphates`, async ({
-  MoleculesCanvas: _,
-}) => {
+test(`14. Verify that creating a duplicate of a new item is not allowed for newly added two phosphates`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
    * Description: Verify that creating a duplicate of a new item is not allowed for newly added two phosphates
@@ -502,6 +499,7 @@ test(`14. Verify that creating a duplicate of a new item is not allowed for newl
    *
    * Version 3.8
    */
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const createMonomerDialog = CreateMonomerDialog(page);
   const symbolExistsMessageBanner = NotificationMessageBanner(
     page,
@@ -523,9 +521,7 @@ test(`14. Verify that creating a duplicate of a new item is not allowed for newl
   await createMonomerDialog.discard();
 });
 
-test(`15. Verify that creating a duplicate of a new item is not allowed for newly added nineteen standalone nucleotide`, async ({
-  MoleculesCanvas: _,
-}) => {
+test(`15. Verify that creating a duplicate of a new item is not allowed for newly added nineteen standalone nucleotide`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
    * Description: Verify that creating a duplicate of a new item is not allowed for newly added nineteen standalone nucleotide
@@ -539,6 +535,7 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
    *
    * Version 3.8
    */
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const createMonomerDialog = CreateMonomerDialog(page);
   const symbolExistsMessageBanner = NotificationMessageBanner(
     page,
@@ -560,9 +557,7 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
   await createMonomerDialog.discard();
 });
 
-test(`16. Verify that creating a duplicate of a new item is not allowed for newly added sixty-five new CHEMs`, async ({
-  MoleculesCanvas: _,
-}) => {
+test(`16. Verify that creating a duplicate of a new item is not allowed for newly added sixty-five new CHEMs`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
    * Description: Verify that creating a duplicate of a new item is not allowed for newly added sixty-five new CHEMs
@@ -576,6 +571,7 @@ test(`16. Verify that creating a duplicate of a new item is not allowed for newl
    *
    * Version 3.8
    */
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const createMonomerDialog = CreateMonomerDialog(page);
   const symbolExistsMessageBanner = NotificationMessageBanner(
     page,
@@ -595,6 +591,7 @@ test(`16. Verify that creating a duplicate of a new item is not allowed for newl
   }
 
   await createMonomerDialog.discard();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test(`17. Check that newly added two phosphates can be saved and opened for KET`, async () => {

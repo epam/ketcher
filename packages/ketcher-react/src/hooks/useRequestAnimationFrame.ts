@@ -14,9 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './useSettingsContext';
-export * from './useResizeObserver';
-export * from './useFormContext';
-export * from './useAppContext';
-export * from './useRequestAnimationFrame';
-export * from './useSubscribtionOnEvents';
+import { useEffect, useRef } from 'react';
+
+export const useRequestAnimationFrame = (
+  active: boolean,
+  onFrame: (deltaTimeInMilliseconds: number) => void,
+) => {
+  const callbackRef = useRef(onFrame);
+  useEffect(() => {
+    callbackRef.current = onFrame;
+  }, [onFrame]);
+
+  useEffect(() => {
+    if (!active) return;
+
+    let requestAnimationFrameId = 0;
+    let previousTime = performance.now();
+
+    const loop = (now: number) => {
+      const dt = now - previousTime;
+      previousTime = now;
+      callbackRef.current(dt);
+      requestAnimationFrameId = requestAnimationFrame(loop);
+    };
+
+    requestAnimationFrameId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(requestAnimationFrameId);
+  }, [active]);
+};

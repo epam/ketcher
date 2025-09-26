@@ -10,6 +10,8 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
   PresetType,
+  takeEditorScreenshot,
+  takeElementScreenshot,
 } from '@utils';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
@@ -19,6 +21,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import {
   AttachmentPoint,
   getMonomerLocator,
+  getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
@@ -44,6 +47,9 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { SnakeMode } from 'ketcher-core';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -2071,6 +2077,88 @@ test(`48.2 Check that newly added sixty-five new CHEMs can be connected to any m
     );
 
     await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`49. Check that newly added two phosphates displaying to different views without errors (flex, sequence, snake)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates displaying to different views without errors (flex, sequence, snake)
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      3. Validate displaying of phosphates on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of phosphates in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of phosphates in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(phosphate);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, phosphate);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`50. Check that newly added eleven presets displaying to different views without errors (flex, sequence, snake)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets displaying to different views without errors (flex, sequence, snake)
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new preset to the canvas from the library
+   *      3. Validate displaying of presets on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of presets in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of presets in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(preset);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, preset);
+    await takeElementScreenshot(page, monomer);
+    await takeElementScreenshot(page, monomer);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

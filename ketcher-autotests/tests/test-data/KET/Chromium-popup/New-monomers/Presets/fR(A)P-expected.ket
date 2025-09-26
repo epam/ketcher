@@ -240,6 +240,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -462,6 +463,7 @@
         "id": "fR___2'-Fluoro-Ribose",
         "fullName": "2'-Fluoro-Ribose",
         "alias": "fR",
+        "aliasHELM": "fl2r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -582,6 +584,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

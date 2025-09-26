@@ -218,6 +218,7 @@
         "id": "5meC___5-methylcytosine",
         "fullName": "5-methylcytosine",
         "alias": "5meC",
+        "aliasHELM": "m5C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -423,6 +424,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
+        "aliasHELM": "d",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,
@@ -543,6 +545,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

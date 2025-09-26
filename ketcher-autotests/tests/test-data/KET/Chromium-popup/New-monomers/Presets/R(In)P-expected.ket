@@ -240,6 +240,7 @@
         "id": "In___Inosine",
         "fullName": "Inosine",
         "alias": "In",
+        "aliasHELM": "Hyp",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -462,6 +463,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -582,6 +584,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

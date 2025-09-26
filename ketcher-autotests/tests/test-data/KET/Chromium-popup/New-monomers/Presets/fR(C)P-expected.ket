@@ -203,6 +203,7 @@
         "id": "C___Cytosine",
         "fullName": "Cytosine",
         "alias": "C",
+        "aliasHELM": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -425,6 +426,7 @@
         "id": "fR___2'-Fluoro-Ribose",
         "fullName": "2'-Fluoro-Ribose",
         "alias": "fR",
+        "aliasHELM": "fl2r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -545,6 +547,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

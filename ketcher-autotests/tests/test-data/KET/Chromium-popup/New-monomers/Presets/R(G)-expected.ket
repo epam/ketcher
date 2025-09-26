@@ -238,6 +238,7 @@
         "id": "G___Guanine",
         "fullName": "Guanine",
         "alias": "G",
+        "aliasHELM": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -460,6 +461,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,

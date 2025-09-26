@@ -300,9 +300,6 @@ export async function bondTwoMonomersPointToPoint(
   await firstMonomer.hover({ force: true });
 
   if (firstMonomerAttachmentPoint) {
-    // const firstConnectionPoint = firstMonomer.locator(
-    //   `xpath=//*[text()="${firstMonomerAttachmentPoint}"]/..//*[@r="3"]`,
-    // );
     const firstAttachmentPoint = firstMonomer.getByTestId(
       firstMonomerAttachmentPoint,
     );
@@ -329,9 +326,6 @@ export async function bondTwoMonomersPointToPoint(
 
   await secondMonomer.hover({ force: true });
   if (secondMonomerAttachmentPoint) {
-    // const secondConnectionPoint = secondMonomer.locator(
-    //   `xpath=//*[text()="${secondMonomerAttachmentPoint}"]/..//*[@r="3"]`,
-    // );
     const secondAttachmentPoint = secondMonomer.getByTestId(
       secondMonomerAttachmentPoint,
     );

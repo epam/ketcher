@@ -255,6 +255,7 @@
         "id": "meA___N6-methyladenine",
         "fullName": "N6-methyladenine",
         "alias": "meA",
+        "aliasHELM": "m6A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -477,6 +478,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -597,6 +599,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

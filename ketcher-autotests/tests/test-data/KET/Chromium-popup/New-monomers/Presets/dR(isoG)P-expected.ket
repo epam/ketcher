@@ -255,6 +255,7 @@
         "id": "isoG___Isoguanine",
         "fullName": "Isoguanine",
         "alias": "isoG",
+        "aliasHELM": "isoG",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -460,6 +461,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
+        "aliasHELM": "d",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,
@@ -580,6 +582,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

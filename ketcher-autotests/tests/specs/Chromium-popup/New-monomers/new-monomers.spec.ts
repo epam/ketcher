@@ -21,7 +21,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import {
   AttachmentPoint,
   getMonomerLocator,
-  getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
@@ -47,9 +46,9 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { SnakeMode } from 'ketcher-core';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -2208,6 +2207,77 @@ test(`51. Check that newly added nineteen standalone nucleotide displaying to di
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`52. Check that newly added sixty-five new CHEMs displaying to different views without errors (flex, sequence, snake)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs displaying to different views without errors (flex, sequence, snake)
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new CHEM to the canvas from the library
+   *      3. Validate displaying of CHEM on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of CHEM in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of CHEM in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each CHEM
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(chem);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+
+    const monomer = getMonomerLocator(page, chem);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeElementScreenshot(page, monomer);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`53. Check that newly added two phosphates displaying correct after switching to Micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates displaying correct after switching to Micro mode
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      3. Validate displaying of phosphates on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of phosphates in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of phosphates in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(phosphate);
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page);
+
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

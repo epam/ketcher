@@ -380,7 +380,7 @@ function Editor({
               <SequenceStartArrow />
               <ArrowMarker />
             </defs>
-            <g className="drawn-structures" />
+            <g className="drawn-structures" data-testid="drawn-structures" />
             {isHandToolSelected && (
               <rect
                 x={0}

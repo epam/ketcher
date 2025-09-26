@@ -2275,7 +2275,37 @@ test(`53. Check that newly added two phosphates displaying correct after switchi
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).clickMonomerAutochain(phosphate);
 
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`54. Check that newly added eleven presets displaying correct after switching to Micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets displaying correct after switching to Micro mode
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      2. Add new preset to the canvas from the library
+   *      3. Validate displaying of presets on the canvas
+   *      4. Switch to Snake view
+   *      5. Validate displaying of presets in Snake view
+   *      6. Switch to Sequence view
+   *      7. Validate displaying of presets in Sequence view
+   *      8. Clean up the canvas
+   *      9. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).clickMonomerAutochain(preset);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();

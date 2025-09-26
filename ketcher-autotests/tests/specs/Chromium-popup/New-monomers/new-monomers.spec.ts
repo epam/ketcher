@@ -816,105 +816,103 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 //   }
 // });
 
-// test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
-// Commented out because of https://github.com/epam/Indigo/issues/3206
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7910
-//    * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
-//    *
-//    * Case:
-//    *      1. Open Macromolecules canvas - Flex
-//    *      3. Add new preset to the canvas from the library
-//    *      4. Validate that the preset is on the canvas
-//    *      5. Save the structure as MOL V3000 file
-//    *      6. Clear the canvas
-//    *      7. Open the saved MOL V3000 file
-//    *      8. Validate that the preset is on the canvas after reopening
-//    *      9. Clean up the canvas
-//    *      10. Repeat steps 2-5 for each preset
-//    *
-//    * Version 3.8
-//    */
-//   for (const preset of newPresets) {
-//     await Library(page).dragMonomerOnCanvas(preset, {
-//       x: 0,
-//       y: 0,
-//       fromCenter: true,
-//     });
-//     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
-//     if (preset.base) {
-//       await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
-//     }
-//     if (preset.phosphate) {
-//       await expect
-//         .soft(getMonomerLocator(page, preset.phosphate))
-//         .toBeVisible();
-//     }
+test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Validate that the preset is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the preset is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).dragMonomerOnCanvas(preset, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
 
-//     await verifyFileExport(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
-//       FileType.MOL,
-//     );
-//     await openFileAndAddToCanvasAsNewProjectMacro(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
-//     );
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Presets/${preset.alias}-expected.mol`,
+    );
 
-//     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
-//     if (preset.base) {
-//       await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
-//     }
-//     if (preset.phosphate) {
-//       await expect
-//         .soft(getMonomerLocator(page, preset.phosphate))
-//         .toBeVisible();
-//     }
+    await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
+    if (preset.base) {
+      await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
+    }
+    if (preset.phosphate) {
+      await expect
+        .soft(getMonomerLocator(page, preset.phosphate))
+        .toBeVisible();
+    }
 
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
-// });
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
 
-// test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
-// Commented out because of https://github.com/epam/Indigo/issues/3206
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7910
-//    * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
-//    *
-//    * Case:
-//    *      1. Open Macromolecules canvas - Flex
-//    *      3. Add new nucleotide to the canvas from the library
-//    *      4. Validate that the nucleotide is on the canvas
-//    *      5. Save the structure as MOL V3000 file
-//    *      6. Clear the canvas
-//    *      7. Open the saved MOL V3000 file
-//    *      8. Validate that the nucleotide is on the canvas after reopening
-//    *      9. Clean up the canvas
-//    *      10. Repeat steps 2-5 for each nucleotide
-//    *
-//    * Version 3.8
-//    */
-//   for (const nucleotide of newNucleotides) {
-//     await Library(page).dragMonomerOnCanvas(nucleotide, {
-//       x: 0,
-//       y: 0,
-//       fromCenter: true,
-//     });
-//     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+test(`23. Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Validate that the nucleotide is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the nucleotide is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).dragMonomerOnCanvas(nucleotide, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
 
-//     await verifyFileExport(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
-//       FileType.MOL,
-//     );
-//     await openFileAndAddToCanvasAsNewProjectMacro(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
-//     );
-//     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
-// });
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Nucleotides/${nucleotide.alias}-expected.mol`,
+    );
+    await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
 
 test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
   /*

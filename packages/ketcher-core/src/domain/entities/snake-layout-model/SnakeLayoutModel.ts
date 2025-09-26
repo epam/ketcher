@@ -433,27 +433,24 @@ export class SnakeLayoutModel {
               (moleculeBbox.height + cellSizeInAngstroms / 2) /
                 cellSizeInAngstroms,
             );
+            const isThereEnoughSpaceInCurrentRow =
+              nextCellIndexToFill + cellsNeededHorizontally <= lineLength;
+            const freeCellsInCurrentRow = lineLength - nextCellIndexToFill;
 
-            currentRowToHandle.snakeLayoutModelItems.push(
-              new MoleculeSnakeLayoutNode(molecule),
-            );
+            if (!isThereEnoughSpaceInCurrentRow) {
+              // Fill the rest of the row with empty nodes
+              for (let i = 0; i < freeCellsInCurrentRow; i++) {
+                currentRowToHandle.snakeLayoutModelItems.push(
+                  new EmptySnakeLayoutNode(),
+                );
+              }
 
-            for (let i = 1; i < cellsNeededHorizontally; i++) {
-              currentRowToHandle.snakeLayoutModelItems.push(
-                new EmptySnakeLayoutNode(),
-              );
-            }
-
-            emptyRowsToAdd = Math.max(
-              emptyRowsToAdd,
-              cellsNeededVertically - 1,
-            );
-
-            if (nextCellIndexToFill + cellsNeededHorizontally >= lineLength) {
+              // Add the current row to the chain and start a new one
               newChain.addRow(currentRowToHandle);
               currentRowToHandle = { snakeLayoutModelItems: [] };
               nextCellIndexToFill = 0;
 
+              // Add empty rows if needed (for high molecules)
               for (let i = 0; i < emptyRowsToAdd; i++) {
                 newChain.addRow({
                   snakeLayoutModelItems: row.snakeLayoutModelItems.map(
@@ -462,13 +459,29 @@ export class SnakeLayoutModel {
                 });
               }
               emptyRowsToAdd = 0;
-            } else {
-              nextCellIndexToFill += cellsNeededHorizontally;
             }
+
+            // Add the molecule node
+            currentRowToHandle.snakeLayoutModelItems.push(
+              new MoleculeSnakeLayoutNode(molecule),
+            );
+
+            // Fill the rest of cells needed for the molecule with empty nodes
+            for (let i = 1; i < cellsNeededHorizontally; i++) {
+              currentRowToHandle.snakeLayoutModelItems.push(
+                new EmptySnakeLayoutNode(),
+              );
+            }
+
+            nextCellIndexToFill += cellsNeededHorizontally;
+            emptyRowsToAdd = Math.max(
+              emptyRowsToAdd,
+              cellsNeededVertically - 1,
+            );
           });
         });
 
-        // Fill the rest of the row with empty nodes
+        // Fill the rest of the last row with empty nodes
         if (currentRowToHandle.snakeLayoutModelItems.length) {
           for (
             let i = currentRowToHandle.snakeLayoutModelItems.length;

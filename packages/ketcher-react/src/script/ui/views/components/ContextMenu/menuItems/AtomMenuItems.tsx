@@ -176,8 +176,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
-  if (MakeLeavingGroupAtomMenuItem !== null) {
-    return MakeLeavingGroupAtomMenuItem;
+  if (MakeLeavingGroupAtomMenuItem) {
+    return <>{MakeLeavingGroupAtomMenuItem}</>;
   }
 
   const disabled = editor.isMonomerCreationWizardActive;

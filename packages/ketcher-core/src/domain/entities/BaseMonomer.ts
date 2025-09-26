@@ -280,6 +280,12 @@ export abstract class BaseMonomer extends DrawingEntity {
     ) as PolymerBond[];
   }
 
+  public get monomerToAtomBonds() {
+    return this.bonds.filter(
+      (bond) => bond instanceof MonomerToAtomBond,
+    ) as MonomerToAtomBond[];
+  }
+
   public get bonds(): Array<PolymerBond | HydrogenBond | MonomerToAtomBond> {
     return [...this.covalentBonds, ...this.hydrogenBonds];
   }

@@ -16,7 +16,10 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   CreateMonomerDialog,
@@ -33,6 +36,14 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondTwoMonomers,
+  bondTwoMonomersPointToPoint,
+  getAvailableAttachmentPoints,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
+import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -1741,6 +1752,325 @@ test(`44.   Check that newly added sixty-five new CHEMs can be deleted from canv
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();
     await expect(monomer).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`45.1 Check that newly added two phosphates can be connected to any monomer by Single bond tool from center to center`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be connected to any monomer by Single bond tool from center to center
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the phosphate to 2_damdA by Single bond tool from center to center
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, phosphate);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    await bondTwoMonomers(page, monomer, monomerConnectTo);
+    if (await ConnectionPointsDialog(page).isVisible()) {
+      await ConnectionPointsDialog(page).selectAttachmentPoints({
+        leftMonomer: (await getAvailableAttachmentPoints(monomer))[0],
+        rightMonomer: AttachmentPoint.R1,
+      });
+      await ConnectionPointsDialog(page).connect();
+    }
+    const bond = getBondLocator(page, {
+      bondType: MacroBondDataIds.Single,
+      toConnectionPoint: AttachmentPoint.R1,
+      toMonomerId: (
+        (await monomerConnectTo.getAttribute('data-monomerid')) || ''
+      ).toString(),
+    });
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`45.2 Check that newly added two phosphates can be connected to any monomer by Single bond tool from attachment point to attachment point`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be connected to any monomer by Single bond tool from attachment point to attachment point
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the phosphate to 2_damdA by Single bond tool from attachment point to attachment point
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, phosphate);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`46.1 Check that newly added eleven presets can be connected to any monomer by Single bond tool from center to center`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be connected to any monomer by Single bond tool from center to center
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the preset to 2_damdA by Single bond tool from center to center
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each preset
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).clickMonomerAutochain(preset);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, preset.sugar);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`46.2 Check that newly added eleven presets can be connected to any monomer by Single bond tool from attachment point to attachment point`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added eleven presets can be connected to any monomer by Single bond tool from attachment point to attachment point
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new preset to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the preset (sugar) to 2_damdA by Single bond tool from attachment point to attachment point
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const preset of newPresets) {
+    await Library(page).clickMonomerAutochain(preset);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, preset.sugar);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R2,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`47.1 Check that newly added nineteen standalone nucleotide can be connected to any monomer by Single bond tool from center to center`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be connected to any monomer by Single bond tool from center to center
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the nucleotide to 2_damdA by Single bond tool from center to center
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).clickMonomerAutochain(nucleotide);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, nucleotide);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`47.2 Check that newly added nineteen standalone nucleotide can be connected to any monomer by Single bond tool from attachment point to attachment point`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added nineteen standalone nucleotide can be connected to any monomer by Single bond tool from attachment point to attachment point
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new nucleotide to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the nucleotide to 2_damdA by Single bond tool from attachment point to attachment point
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each nucleotide
+   *
+   * Version 3.8
+   */
+  for (const nucleotide of newNucleotides) {
+    await Library(page).clickMonomerAutochain(nucleotide);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, nucleotide);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`48.1  Check that newly added sixty-five new CHEMs can be connected to any monomer by Single bond tool from center to center`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be connected to any monomer by Single bond tool from center to center
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEMs to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the CHEM to 2_damdA by Single bond tool from center to center
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each CHEM
+   *
+   * Version 3.8
+   */
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, chem);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
+
+test(`48.2 Check that newly added sixty-five new CHEMs can be connected to any monomer by Single bond tool from attachment point to attachment point`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be connected to any monomer by Single bond tool from attachment point to attachment point
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEMs to the canvas from the library
+   *      4. Add 2_damdA nucleotide to the canvas from the library
+   *      5. Bond the CHEM to 2_damdA by Single bond tool from attachment point to attachment point
+   *      6. Validate that bond is created
+   *      7. Clear the canvas
+   *      8. Repeat steps 2-6 for each CHEM
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    // to remove selection after adding monomer
+    await clickOnCanvas(page, 0, 0);
+    await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    const monomer = getMonomerLocator(page, chem);
+    const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
+
+    const bond = await bondTwoMonomersPointToPoint(
+      page,
+      monomer,
+      monomerConnectTo,
+      (
+        await getAvailableAttachmentPoints(monomer)
+      )[0],
+      AttachmentPoint.R1,
+    );
+
+    await expect(bond).toBeAttached();
     await CommonTopLeftToolbar(page).clearCanvas();
   }
 });

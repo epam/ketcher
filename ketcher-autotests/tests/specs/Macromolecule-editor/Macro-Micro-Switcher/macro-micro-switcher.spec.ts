@@ -45,7 +45,7 @@ import {
   getMonomerLocator,
   moveMonomerOnMicro,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -1134,24 +1134,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1214,8 +1214,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
@@ -1230,24 +1230,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.moen,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1310,8 +1310,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = page.locator('g path').first();
     await bondLine.hover();
@@ -1323,24 +1323,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1404,8 +1404,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     const bondLine = getBondLocator(page, {
@@ -1422,24 +1422,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1502,8 +1502,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectEraseTool();
@@ -1539,8 +1539,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);

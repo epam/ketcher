@@ -34,7 +34,7 @@ import {
 import {
   getMonomerLocator,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
@@ -833,8 +833,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
@@ -866,8 +866,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R3,
-      MonomerAttachmentPoint.R4,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
@@ -895,8 +895,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
 
     const bondExists = await bondLine.isVisible();
@@ -937,8 +937,8 @@ test.describe('Import-Saving .idt Files', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R3,
-      MonomerAttachmentPoint.R4,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await bondLine.click();

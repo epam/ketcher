@@ -11,7 +11,7 @@ import {
 } from '@utils';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -48,7 +48,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
+    connectionPoints: { [connectionPointName: string]: AttachmentPoint };
   }
 
   const phosphateMonomers: { [monomerName: string]: IMonomer } = {
@@ -57,7 +57,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -65,7 +65,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
@@ -81,8 +81,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
@@ -321,7 +321,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -329,7 +329,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
@@ -345,8 +345,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
@@ -354,8 +354,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
@@ -363,8 +363,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
@@ -381,9 +381,9 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
@@ -467,8 +467,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '%': {
@@ -531,7 +531,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -539,7 +539,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
@@ -555,8 +555,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
@@ -591,9 +591,9 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
@@ -631,10 +631,10 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
@@ -792,7 +792,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
@@ -800,7 +800,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R3) - Side only': {
@@ -808,7 +808,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
-        R3: MonomerAttachmentPoint.R3,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R1,R2) - R3 gap': {
@@ -816,8 +816,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
@@ -825,8 +825,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
@@ -834,8 +834,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
@@ -852,9 +852,9 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
@@ -892,10 +892,10 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
@@ -925,11 +925,11 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
       },
     },
   };

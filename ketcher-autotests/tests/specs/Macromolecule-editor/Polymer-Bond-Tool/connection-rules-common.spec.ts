@@ -23,7 +23,7 @@ import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -519,11 +519,11 @@ test.describe('Common connection rules: ', () => {
     );
 
     const connectionPoints = [
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R3,
-      MonomerAttachmentPoint.R4,
-      MonomerAttachmentPoint.R5,
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
+      AttachmentPoint.R5,
       'R6',
     ];
 

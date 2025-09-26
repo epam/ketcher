@@ -32,7 +32,10 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -48,7 +51,7 @@ import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
-import { RightMonomerConnectionPoint } from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
+import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -109,9 +112,9 @@ async function drawBasePhosphate(page: Page) {
   await page.mouse.down();
   await phosphate.hover();
   await page.mouse.up();
-  await ConnectionPointsDialog(page).selectConnectionPoint(
-    RightMonomerConnectionPoint.R2,
-  );
+  await ConnectionPointsDialog(page).selectAttachmentPoints({
+    leftMonomer: AttachmentPoint.R2,
+  });
   await ConnectionPointsDialog(page).connect();
 }
 

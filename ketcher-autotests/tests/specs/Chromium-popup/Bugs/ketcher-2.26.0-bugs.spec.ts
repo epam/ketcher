@@ -58,6 +58,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
+  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -100,10 +101,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
-import {
-  LeftMonomerConnectionPoint,
-  RightMonomerConnectionPoint,
-} from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -789,10 +786,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await ConnectionPointsDialog(page).selectConnectionPoints([
-      LeftMonomerConnectionPoint.R2,
-      RightMonomerConnectionPoint.R1,
-    ]);
+    await ConnectionPointsDialog(page).selectAttachmentPoints({
+      leftMonomer: AttachmentPoint.R2,
+      rightMonomer: AttachmentPoint.R1,
+    });
     await ConnectionPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditConnectionPoints,

@@ -114,7 +114,7 @@ export type MonomerLocatorOptions = {
   | Monomer
 );
 
-export enum MonomerAttachmentPoint {
+export enum AttachmentPoint {
   R1 = 'R1',
   R2 = 'R2',
   R3 = 'R3',

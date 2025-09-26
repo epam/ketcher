@@ -42,7 +42,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
@@ -1211,8 +1211,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1243,8 +1243,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1275,8 +1275,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1307,8 +1307,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R2,
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1339,8 +1339,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1371,8 +1371,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1403,8 +1403,8 @@ test.describe('Arrow button on Library cards', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

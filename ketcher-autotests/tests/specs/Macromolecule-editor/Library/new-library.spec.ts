@@ -18,7 +18,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -1125,8 +1125,8 @@ for (const monomer of monomerToDrag) {
         page,
         monomersOnCanvas.nth(0),
         monomersOnCanvas.nth(1),
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
@@ -1139,8 +1139,8 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     }
     await takeEditorScreenshot(page, {
@@ -1179,8 +1179,8 @@ for (const monomer of monomerToDrag) {
         page,
         monomersOnCanvas.nth(0),
         monomersOnCanvas.nth(1),
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
@@ -1193,8 +1193,8 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     }
     await takeEditorScreenshot(page, {

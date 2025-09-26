@@ -47,7 +47,7 @@ import {
 import {
   getMonomerLocator,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -3769,27 +3769,27 @@ const monomersConnectTo = [
   {
     description: 'Amino Acid (DACys)',
     monomer: Peptide.DACys,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Sugar (5cGT)',
     monomer: Sugar._5cGT,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Base (C)',
     monomer: Base.C,
-    attachmentPoint: MonomerAttachmentPoint.R1,
+    attachmentPoint: AttachmentPoint.R1,
   },
   {
     description: 'Phosphate (AmC6)',
     monomer: Phosphate.AmC6,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Nucleotide (3Puro)',
     monomer: Nucleotide._3Puro,
-    attachmentPoint: MonomerAttachmentPoint.R1,
+    attachmentPoint: AttachmentPoint.R1,
   },
 ];
 
@@ -3976,7 +3976,7 @@ for (const monomerToCreate of monomersToCreate) {
         page,
         monomerOnMacro,
         monomerConnectToOnMacro,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R1,
         monomerConnectTo.attachmentPoint,
       );
       const bondLocator = getBondLocator(page, {});
@@ -4044,7 +4044,7 @@ for (const monomerToCreate of monomersToCreate) {
         page,
         monomerOnMacro,
         monomerConnectToOnMacro,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R1,
         monomerConnectTo.attachmentPoint,
       );
       const bondLocator = getBondLocator(page, {});

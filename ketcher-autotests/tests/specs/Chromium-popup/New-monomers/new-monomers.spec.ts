@@ -775,46 +775,41 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
   }
 });
 
-// test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
-// Commented out because of https://github.com/epam/Indigo/issues/3206
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7910
-//    * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
-//    *
-//    * Case:
-//    *      1. Open Macromolecules canvas - Flex
-//    *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
-//    *      4. Validate that the phosphates are on the canvas
-//    *      5. Save the structure as MOL V3000 file
-//    *      6. Clear the canvas
-//    *      7. Open the saved MOL V3000 file
-//    *      8. Validate that the phosphates are on the canvas after reopening
-//    *      9. Clean up the canvas
-//    *      10. Repeat steps 2-5 for each phosphate
-//    *
-//    * Version 3.8
-//    */
-//   for (const phosphate of newPhosphates) {
-//     await Library(page).dragMonomerOnCanvas(phosphate, {
-//       x: 0,
-//       y: 0,
-//       fromCenter: true,
-//     });
-//     await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+test(`21. Check that newly added two phosphates can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the phosphates are on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).clickMonomerAutochain(phosphate);
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
 
-//     await verifyFileExport(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
-//       FileType.MOL,
-//     );
-//     await openFileAndAddToCanvasAsNewProjectMacro(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
-//     );
-//     await expect(getMonomerLocator(page, phosphate)).toBeVisible();
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
-// });
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.mol`,
+    );
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
 
 test(`22. Check that newly added eleven presets can be saved and opened for MOL V3000`, async () => {
   /*
@@ -835,11 +830,7 @@ test(`22. Check that newly added eleven presets can be saved and opened for MOL 
    * Version 3.8
    */
   for (const preset of newPresets) {
-    await Library(page).dragMonomerOnCanvas(preset, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
+    await Library(page).clickMonomerAutochain(preset);
     await expect.soft(getMonomerLocator(page, preset.sugar)).toBeVisible();
     if (preset.base) {
       await expect.soft(getMonomerLocator(page, preset.base)).toBeVisible();
@@ -893,11 +884,7 @@ test(`23. Check that newly added nineteen standalone nucleotide can be saved and
    * Version 3.8
    */
   for (const nucleotide of newNucleotides) {
-    await Library(page).dragMonomerOnCanvas(nucleotide, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
+    await Library(page).clickMonomerAutochain(nucleotide);
     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
 
     await verifyFileExport(

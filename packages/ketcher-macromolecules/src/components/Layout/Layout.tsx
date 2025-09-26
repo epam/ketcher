@@ -143,24 +143,20 @@ const Top = (
   const { children, ...otherProps } = props;
   const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
-  const scrollRight = (e: Event) => {
-    e.stopPropagation();
+  const SCROLL_PX_PER_SEC = 300;
 
+  const scrollRight = (dtMs: number) => {
     if (!scrollRef.current) {
       return;
     }
-
-    scrollRef.current.scrollLeft += 30;
+    scrollRef.current.scrollLeft += (SCROLL_PX_PER_SEC * dtMs) / 1000;
   };
 
-  const scrollLeft = (e: Event) => {
-    e.stopPropagation();
-
+  const scrollLeft = (dtMs: number) => {
     if (!scrollRef.current) {
       return;
     }
-
-    scrollRef.current.scrollLeft -= 30;
+    scrollRef.current.scrollLeft -= (SCROLL_PX_PER_SEC * dtMs) / 1000;
   };
 
   return (

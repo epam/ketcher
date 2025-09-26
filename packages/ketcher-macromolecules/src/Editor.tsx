@@ -150,7 +150,9 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  store.dispatch(initKetcherId(ketcherId));
+  useEffect(() => {
+    store.dispatch(initKetcherId(ketcherId));
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>

@@ -72,6 +72,7 @@ export enum SupportedFormat {
   IDT = 'idt',
   HELM = 'helm',
   RDF = 'rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {

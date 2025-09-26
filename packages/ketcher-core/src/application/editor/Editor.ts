@@ -89,7 +89,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { parseMonomersLibrary } from './helpers';
+import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
@@ -128,6 +128,7 @@ interface ICoreEditorConstructorParams {
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
 }
 
 interface ModifyAminoAcidsHandlerParams {
@@ -206,8 +207,13 @@ export class CoreEditor {
     theme,
     canvas,
     monomersLibraryUpdate,
+    monomersLibraryReplace,
     mode,
   }: ICoreEditorConstructorParams) {
+    const ketcher = ketcherProvider.getKetcher(ketcherId);
+    const monomersLibraryUpdateData =
+      monomersLibraryUpdate || monomersLibraryReplace;
+
     this._type = EditorType.Micromolecules;
     this.ketcherId = ketcherId;
     this.theme = theme;
@@ -222,9 +228,18 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
-    this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
-    if (monomersLibraryUpdate) {
-      this.updateMonomersLibrary(monomersLibraryUpdate);
+    this.events.updateMonomersLibrary.dispatch();
+
+    if (monomersLibraryUpdateData) {
+      if (monomersLibraryReplace) {
+        this.clearMonomersLibrary();
+      }
+
+      ketcher
+        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdateData)
+        .then((monomersLibraryUpdateInKetFormat) => {
+          this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+        });
     }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
@@ -241,7 +256,6 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -286,6 +300,11 @@ export class CoreEditor {
     return editor;
   }
 
+  public clearMonomersLibrary() {
+    this._monomersLibrary = [];
+    this._monomersLibraryParsedJson = getEmptyMonomersLibraryJson();
+  }
+
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
       persistentMonomersLibrary.length !== 0 &&
@@ -301,9 +320,16 @@ export class CoreEditor {
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
-    storedMonomerLibraryUpdates.forEach((update) =>
-      this.updateMonomersLibrary(update),
-    );
+    storedMonomerLibraryUpdates.forEach((update) => {
+      const parsedUpdate = JSON.parse(update);
+
+      if (parsedUpdate.replacement) {
+        this.clearMonomersLibrary();
+        this.updateMonomersLibrary(parsedUpdate.data);
+      } else {
+        this.updateMonomersLibrary(parsedUpdate.data || update);
+      }
+    });
     persistentMonomersLibrary = this._monomersLibrary;
     persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
@@ -314,6 +340,7 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
 
+    // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
@@ -366,6 +393,29 @@ export class CoreEditor {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson![monomerIdToUse] =
           newMonomersLibraryChunkParsedJson[monomerIdToUse];
+      }
+    });
+
+    // handle monomer group templates
+    newMonomersLibraryChunkParsedJson.root.templates.forEach((templateRef) => {
+      const templateDefinition =
+        newMonomersLibraryChunkParsedJson[templateRef.$ref];
+
+      if (templateDefinition.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE) {
+        return;
+      }
+
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      if (
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        !this._monomersLibraryParsedJson!.root.templates.find(
+          (existingTemplateRef) =>
+            existingTemplateRef.$ref === templateRef.$ref,
+        )
+      ) {
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
     });
 

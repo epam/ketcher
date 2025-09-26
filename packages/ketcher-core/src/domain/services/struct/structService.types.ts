@@ -38,6 +38,7 @@ export enum ChemicalMimeType {
   IDT = 'chemical/x-idt',
   HELM = 'chemical/x-helm',
   RDF = 'chemical/x-rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {

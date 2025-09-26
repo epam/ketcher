@@ -170,34 +170,36 @@ export const getModifyAminoAcidsMenuItems = (
       return;
     }
 
-    const modificationType = monomerLibraryItem.props.modificationType;
+    const modificationTypes = monomerLibraryItem.props.modificationTypes;
 
-    if (!modificationType) {
+    if (!modificationTypes) {
       return;
     }
 
-    // If modification does not have R1 or R2 attachment points to persist connection
-    if (
-      monomersWithSameNaturalAnalogCode.some(
-        (monomer: BaseMonomer) =>
-          monomer.label !== monomerLibraryItem.label &&
-          !canModifyAminoAcid(monomer, monomerLibraryItem),
-      )
-    ) {
-      modificationTypesDisabledByAttachmentPoints.add(modificationType);
+    modificationTypes.forEach((modificationType) => {
+      // If modification does not have R1 or R2 attachment points to persist connection
+      if (
+        monomersWithSameNaturalAnalogCode.some(
+          (monomer: BaseMonomer) =>
+            monomer.label !== monomerLibraryItem.label &&
+            !canModifyAminoAcid(monomer, monomerLibraryItem),
+        )
+      ) {
+        modificationTypesDisabledByAttachmentPoints.add(modificationType);
 
-      return;
-    }
+        return;
+      }
 
-    if (
-      monomersWithSameNaturalAnalogCode.every(
-        (monomer) => monomer.label === monomerLibraryItem.label,
-      )
-    ) {
-      return;
-    }
+      if (
+        monomersWithSameNaturalAnalogCode.every(
+          (monomer) => monomer.label === monomerLibraryItem.label,
+        )
+      ) {
+        return;
+      }
 
-    modificationsForSelection.add(modificationType);
+      modificationsForSelection.add(modificationType);
+    });
   });
 
   const menuItems = [...modificationsForSelection.values()]

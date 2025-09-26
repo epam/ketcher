@@ -31,6 +31,7 @@ import {
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
 } from './helpers';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -517,6 +518,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     // check if there is nucleotide in current row
     const isBondConnectedWithNucleotide =
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
+    const distanceY = Math.abs(endPosition.y - startPosition.y);
     const verticalLineLength = isAntisense
       ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
       : this.polymerBond.firstMonomer.monomerItem.isSense &&
@@ -524,7 +526,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
       : isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH
-      : VERTICAL_LINE_LENGTH + 5;
+      : distanceY - SnakeLayoutCellWidth / 2 - 5;
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       if (

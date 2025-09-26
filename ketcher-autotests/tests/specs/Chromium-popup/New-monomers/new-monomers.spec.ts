@@ -916,47 +916,43 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
 //   }
 // });
 
-// test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
-// Commented out because of https://github.com/epam/Indigo/issues/3206
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7910
-//    * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
-//    *
-//    * Case:
-//    *      1. Open Macromolecules canvas - Flex
-//    *      3. Add new CHEM to the canvas from the library
-//    *      4. Validate that the CHEM is on the canvas
-//    *      5. Save the structure as MOL V3000 file
-//    *      6. Clear the canvas
-//    *      7. Open the saved MOL V3000 file
-//    *      8. Validate that the CHEM is on the canvas after reopening
-//    *      9. Clean up the canvas
-//    *      10. Repeat steps 2-5 for each CHEM
-//    *
-//    * Version 3.8
-//    */
-//   for (const chem of newCHEMs) {
-//     await Library(page).dragMonomerOnCanvas(chem, {
-//       x: 0,
-//       y: 0,
-//       fromCenter: true,
-//     });
-//     await expect(getMonomerLocator(page, chem)).toBeVisible();
+test(`24. Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added sixty-five new CHEMs can be saved and opened for MOL V3000
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new CHEM to the canvas from the library
+   *      4. Validate that the CHEM is on the canvas
+   *      5. Save the structure as MOL V3000 file
+   *      6. Clear the canvas
+   *      7. Open the saved MOL V3000 file
+   *      8. Validate that the CHEM is on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each CHEM
+   *
+   * Version 3.8
+   */
+  test.slow();
+  for (const chem of newCHEMs) {
+    await Library(page).clickMonomerAutochain(chem);
+    await expect(getMonomerLocator(page, chem)).toBeVisible();
 
-//     await verifyFileExport(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
-//       FileType.MOL,
-//     );
-//     await openFileAndAddToCanvasAsNewProjectMacro(
-//       page,
-//       `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
-//     );
-//     const monomerLocator = getMonomerLocator(page, chem);
-//     await expect(monomerLocator).toBeVisible();
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
-// });
+    await verifyFileExport(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
+      FileType.MOL,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `Molfiles-V3000/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.mol`,
+    );
+    const monomerLocator = getMonomerLocator(page, chem);
+    await expect(monomerLocator).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
 
 test.fail(
   `25. Check that newly added two phosphates can be saved and opened for IDT`,

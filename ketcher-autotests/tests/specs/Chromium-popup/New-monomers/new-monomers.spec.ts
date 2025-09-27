@@ -5,7 +5,6 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
-  delay,
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndOpenAsNewProject,

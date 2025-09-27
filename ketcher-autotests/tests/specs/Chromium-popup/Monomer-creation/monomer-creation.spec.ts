@@ -74,6 +74,8 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -627,14 +629,18 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
   await CreateMonomerDialog(page).submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(page, CreateMonomerDialog(page).typeCombobox);
   await CreateMonomerDialog(page).discard();
 });
@@ -660,7 +666,6 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
@@ -668,7 +673,9 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
   await CreateMonomerDialog(page).submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(await ErrorMessageDialog(page).getErrorMessage()).toEqual(
+    'Mandatory fields must be filled.',
+  );
   await takeElementScreenshot(page, CreateMonomerDialog(page).nameEditbox);
   await CreateMonomerDialog(page).discard();
 });
@@ -763,7 +770,12 @@ for (const nonEligableName of nonEligableNames) {
     await createMonomerDialog.setSymbol('Temp');
     await createMonomerDialog.setName(nonEligableName.value);
     await createMonomerDialog.submit();
-    expect(await errorMessage.count()).toBeGreaterThan(0);
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.emptyMandatoryFields,
+      ).getNotificationMessage(),
+    ).toEqual(nonEligableName.errorMessage);
     await CreateMonomerDialog(page).discard();
   });
 }
@@ -936,7 +948,6 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -948,7 +959,12 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,
@@ -973,7 +989,6 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -985,7 +1000,12 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,
@@ -1010,7 +1030,6 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -1022,7 +1041,12 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,

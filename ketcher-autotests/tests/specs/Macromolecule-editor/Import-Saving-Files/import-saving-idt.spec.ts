@@ -373,8 +373,10 @@ test.describe('Import-Saving .idt Files', () => {
       A*T*A*C*G*C*G*C*C*T`,
       true,
     );
-
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*', 'SEQUENCE loader: Unknown polymer type 'A'.', 'scanner: appendLine(): end of stream', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*'",
+    );
   });
 
   test('Validate that sequences with modifications can be edited after import', async () => {

@@ -63,7 +63,6 @@ const newCHEMs = [
   Chem._5TAMRA,
   Chem.SCY5,
   Chem.Sp18P,
-  Chem.SpC3,
   Chem.Dig,
   Chem.JOE,
   Chem._5ROX,
@@ -1038,6 +1037,30 @@ test(`26. Check that newly added eleven presets can be saved and opened for IDT`
   }
 });
 
+const fivePrimeR2Nucleotides = [
+  Nucleotide.biodT,
+  Nucleotide.FldT,
+  Nucleotide.d2AmPr,
+  Nucleotide._5MidC,
+  Nucleotide._5OctdU,
+];
+const threePrimeR1Nucleotides = [
+  Nucleotide._5TAMdT,
+  Nucleotide.Dab,
+  Nucleotide.ddC,
+  Nucleotide.InvdT,
+  Nucleotide._3Puro,
+];
+const internalR1R2Nucleotides = [
+  Nucleotide._8odG,
+  Nucleotide.BHQ_1dT,
+  Nucleotide.BHQ_2dT,
+  Nucleotide.AzddT,
+  Nucleotide.BiAzdT,
+  Nucleotide.AzTAMdT,
+  Nucleotide.FAMKdT,
+];
+
 test(`27. Check that newly added nineteen standalone nucleotide can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
@@ -1057,20 +1080,24 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
    *
    * Version 3.8
    */
-  for (const nucleotide of newNucleotides) {
-    await Library(page).clickMonomerAutochain(nucleotide);
-    if (
-      await getMonomerLocator(page, nucleotide).evaluate((el) =>
-        el.hasAttribute('data-R1'),
-      )
-    ) {
-      await CommonTopLeftToolbar(page).clearCanvas();
+
+  for (const nucleotide of [
+    ...fivePrimeR2Nucleotides,
+    ...threePrimeR1Nucleotides,
+    ...internalR1R2Nucleotides,
+  ]) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    if (fivePrimeR2Nucleotides.some((n) => n === nucleotide)) {
+      await Library(page).clickMonomerAutochain(nucleotide);
+      await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+    } else if (threePrimeR1Nucleotides.some((n) => n === nucleotide)) {
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
       await Library(page).clickMonomerAutochain(nucleotide);
-    } else {
+    } else if (internalR1R2Nucleotides.some((n) => n === nucleotide)) {
+      await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
+      await Library(page).clickMonomerAutochain(nucleotide);
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
     }
-
     await expect(getMonomerLocator(page, nucleotide)).toBeVisible();
 
     await verifyFileExport(
@@ -1087,7 +1114,7 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
   }
 });
 
-const ubnormalCHEMs = [
+const abnormalCHEMs = [
   Chem._5TAMRA,
   Chem.SCY5,
   Chem._56FAM,
@@ -1095,7 +1122,6 @@ const ubnormalCHEMs = [
   Chem.TET,
   Chem._2_Bio,
   Chem.Acryd,
-  Chem.ThiP,
   Chem.IRD700,
   Chem.IRD800,
   Chem.YakYel,
@@ -1109,13 +1135,13 @@ const ubnormalCHEMs = [
   Chem.BiAz,
   Chem.AzTAM,
   Chem.FAMK,
-  Chem._5BioT,
   Chem.DBCOT,
   Chem.A700,
   Chem.A425,
   Chem._5SUN,
 ];
 
+const fivePrimeR2s = [Chem.SpC3, Chem.UAmM, Chem.ThiP, Chem.PCS];
 test(`28. Check that newly added sixty-five new CHEMs can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
@@ -1135,19 +1161,16 @@ test(`28. Check that newly added sixty-five new CHEMs can be saved and opened fo
    * Version 3.8
    */
   test.slow();
-  const normalCHEMs = newCHEMs.filter((c) => !ubnormalCHEMs.includes(c));
-  for (const chem of normalCHEMs) {
-    await Library(page).clickMonomerAutochain(chem);
-    if (
-      await getMonomerLocator(page, chem)
-        .first()
-        .evaluate((el) => el.hasAttribute('data-R1'))
-    ) {
-      await CommonTopLeftToolbar(page).clearCanvas();
-      await Library(page).clickMonomerAutochain(Chem.Sp18P);
+  const verifiableCHEMs = newCHEMs.filter((c) => !abnormalCHEMs.includes(c));
+
+  for (const chem of verifiableCHEMs) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    if (verifiableCHEMs.some((chem) => fivePrimeR2s.includes(chem))) {
       await Library(page).clickMonomerAutochain(chem);
+      await Library(page).clickMonomerAutochain(Chem.Sp18P);
     } else {
       await Library(page).clickMonomerAutochain(Chem.Sp18P);
+      await Library(page).clickMonomerAutochain(chem);
     }
     await expect(getMonomerLocator(page, chem).first()).toBeVisible();
 
@@ -1161,7 +1184,6 @@ test(`28. Check that newly added sixty-five new CHEMs can be saved and opened fo
       `IDT/Chromium-popup/New-monomers/CHEMs/${chem.alias}-expected.idt`,
     );
     await expect(getMonomerLocator(page, chem).first()).toBeVisible();
-    await CommonTopLeftToolbar(page).clearCanvas();
   }
 });
 

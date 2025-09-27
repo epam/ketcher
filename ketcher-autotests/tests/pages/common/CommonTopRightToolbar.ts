@@ -4,8 +4,6 @@ import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
-import { KETCHER_CANVAS } from '../constants/canvas/Constants';
-import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;

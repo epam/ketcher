@@ -1,11 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
   moveMouseToTheMiddleOfTheScreen,
   BondType,
   clickOnBond,

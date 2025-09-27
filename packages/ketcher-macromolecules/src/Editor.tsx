@@ -360,6 +360,7 @@ function Editor({
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            data-canvasmode="macromolecules-mode"
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"

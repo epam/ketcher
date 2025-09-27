@@ -322,6 +322,7 @@ class StructEditor extends Component {
         className={clsx(classes.canvas, className)}
         {...props}
         data-testid="ketcher-canvas"
+        data-canvasmode="molecules-mode"
       >
         <ContextMenuTrigger>
           <div

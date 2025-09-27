@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 6.275,
-            "y": -8.200000000000001
+            "x": 1.25,
+            "y": -1.25
         },
         "alias": "ThiP",
         "templateId": "ThiP___Thiol Modifier C6 S-S"

@@ -4,6 +4,8 @@ import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
+import { KETCHER_CANVAS } from '../constants/canvas/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -122,8 +124,9 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
+      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
 
-      if (!(await macroOption.isVisible())) {
+      if (!(await macromoleculesCanvas.isVisible())) {
         await switcher.waitFor({ state: 'visible' });
         await switcher.click();
         await macroOption.waitFor({ state: 'visible' });
@@ -158,8 +161,9 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
+      const moleculesCanvas = page.getByTestId('canvas');
 
-      if (!(await microOption.isVisible())) {
+      if (!(await moleculesCanvas.isVisible())) {
         await switcher.waitFor({ state: 'visible' });
         await switcher.click();
 

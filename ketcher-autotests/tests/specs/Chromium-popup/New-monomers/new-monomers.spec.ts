@@ -5,6 +5,7 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
+  delay,
   MacroFileType,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndOpenAsNewProject,
@@ -464,13 +465,12 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
    *
    * Version 3.8
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const createMonomerDialog = CreateMonomerDialog(page);
   const symbolExistsMessageBanner = NotificationMessageBanner(
     page,
     ErrorMessage.symbolExists,
   );
-
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
@@ -482,6 +482,7 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
   await symbolExistsMessageBanner.ok();
 
   await createMonomerDialog.discard();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test(`14. Verify that creating a duplicate of a new item is not allowed for newly added two phosphates`, async () => {
@@ -749,12 +750,9 @@ test(`20. Check that newly added sixty-five new CHEMs can be saved and opened fo
    *
    * Version 3.8
    */
+  test.slow();
   for (const chem of newCHEMs) {
-    await Library(page).dragMonomerOnCanvas(chem, {
-      x: 0,
-      y: 0,
-      fromCenter: true,
-    });
+    await Library(page).clickMonomerAutochain(chem);
     await expect(getMonomerLocator(page, chem)).toBeVisible();
 
     await verifyFileExport(
@@ -935,49 +933,46 @@ test(`24. Check that newly added sixty-five new CHEMs can be saved and opened fo
   }
 });
 
-test.fail(
-  `25. Check that newly added two phosphates can be saved and opened for IDT`,
-  async () => {
-    // Fails due to issue with IDT export: https://github.com/epam/Indigo/issues/3144
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7910
-     * Description: Check that newly added two phosphates can be saved and opened for IDT
-     *
-     * Case:
-     *      1. Open Macromolecules canvas - Flex
-     *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
-     *      4. Validate that the phosphates are on the canvas
-     *      5. Save the structure as IDT file
-     *      6. Clear the canvas
-     *      7. Open the saved IDT file
-     *      8. Validate that the phosphates are on the canvas after reopening
-     *      9. Clean up the canvas
-     *      10. Repeat steps 2-5 for each phosphate
-     *
-     * Version 3.8
-     */
-    for (const phosphate of newPhosphates) {
-      await Library(page).dragMonomerOnCanvas(phosphate, {
-        x: 0,
-        y: 0,
-        fromCenter: true,
-      });
-      await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+test(`25. Check that newly added two phosphates can be saved and opened for IDT`, async () => {
+  // Fails due to issue with IDT export: https://github.com/epam/Indigo/issues/3144
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7910
+   * Description: Check that newly added two phosphates can be saved and opened for IDT
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - Flex
+   *      3. Add new phosphates AmC12, AmC6 to the canvas from the library
+   *      4. Validate that the phosphates are on the canvas
+   *      5. Save the structure as IDT file
+   *      6. Clear the canvas
+   *      7. Open the saved IDT file
+   *      8. Validate that the phosphates are on the canvas after reopening
+   *      9. Clean up the canvas
+   *      10. Repeat steps 2-5 for each phosphate
+   *
+   * Version 3.8
+   */
+  for (const phosphate of newPhosphates) {
+    await Library(page).dragMonomerOnCanvas(phosphate, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
 
-      await verifyFileExport(
-        page,
-        `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
-        FileType.IDT,
-      );
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        page,
-        `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
-      );
-      await expect(getMonomerLocator(page, phosphate)).toBeVisible();
-      await CommonTopLeftToolbar(page).clearCanvas();
-    }
-  },
-);
+    await verifyFileExport(
+      page,
+      `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      `IDT/Chromium-popup/New-monomers/Phosphates/${phosphate.alias}-expected.idt`,
+    );
+    await expect(getMonomerLocator(page, phosphate)).toBeVisible();
+    await CommonTopLeftToolbar(page).clearCanvas();
+  }
+});
 
 test(`26. Check that newly added eleven presets can be saved and opened for IDT`, async () => {
   /*
@@ -2017,6 +2012,7 @@ test(`48.1  Check that newly added sixty-five new CHEMs can be connected to any 
    *
    * Version 3.8
    */
+  test.slow();
   for (const chem of newCHEMs) {
     await Library(page).clickMonomerAutochain(chem);
     // to remove selection after adding monomer

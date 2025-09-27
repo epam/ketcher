@@ -91,12 +91,16 @@ export const PasteFromClipboardDialog = (page: Page) => {
     ) {
       if (option.errorMessageExpected) {
         await waitForLoad(page, async () => {
-          expect(PasteFromClipboardDialog(page).openAsNewButton).toBeEnabled();
+          await expect(
+            PasteFromClipboardDialog(page).openAsNewButton,
+          ).toBeEnabled();
           await PasteFromClipboardDialog(page).openAsNewButton.click();
         });
       } else {
         await waitForLoadAndRender(page, async () => {
-          expect(PasteFromClipboardDialog(page).openAsNewButton).toBeEnabled();
+          await expect(
+            PasteFromClipboardDialog(page).openAsNewButton,
+          ).toBeEnabled();
           await PasteFromClipboardDialog(page).openAsNewButton.click();
         });
       }

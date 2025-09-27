@@ -360,6 +360,7 @@ function Editor({
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            data-canvasmode="macromolecules-mode"
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
@@ -380,7 +381,7 @@ function Editor({
               <SequenceStartArrow />
               <ArrowMarker />
             </defs>
-            <g className="drawn-structures" />
+            <g className="drawn-structures" data-testid="drawn-structures" />
             {isHandToolSelected && (
               <rect
                 x={0}

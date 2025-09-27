@@ -26,11 +26,11 @@ export const OpenPPTXFileDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
-    async pressAddToCanvasButton() {
+    async addToCanvas() {
       await waitForSpinnerFinishedWork(page, async () => {
         await locators.addToCanvasButton.click();
       });
@@ -71,7 +71,7 @@ export async function openPPTXFile(
     await openPPTXFileDialog.selectStructure(numberOf);
   }
   if (action === Action.AddToCanvas) {
-    await openPPTXFileDialog.pressAddToCanvasButton();
+    await openPPTXFileDialog.addToCanvas();
   } else if (action === Action.OpenAsNewProject) {
     await openPPTXFileDialog.pressOpenAsNewProjectButton();
   }

@@ -46,6 +46,8 @@ import {
   TypeChoice,
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ExtendedTableDialog } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 const X_DELTA_ONE = 100;
 
@@ -82,9 +84,7 @@ test.describe('Atom Tool', () => {
     - "Cancel" and "Add" buttons are at the right bottom corner of the window: "Cancel" is always active, "Add" becomes active when any symbol is selected;
     - "x" button is at the top right corner of the window.
     */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await expect(RightToolbar(page).extendedTableButton).toBeEnabled();
   });
 
@@ -192,11 +192,11 @@ test.describe('Atom Tool', () => {
     Description: The selected button is highlighted. Several dialog buttons can`t be selected.
     The "Add" button becomes enabled when any generic group is selected.
     */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
-    await page.getByRole('button', { name: 'AH', exact: true }).click();
-    await takeEditorScreenshot(page);
+    await RightToolbar(page).extendedTable();
+    await ExtendedTableDialog(page).clickExtendedTableElement(
+      ExtendedTableButton.AH,
+    );
+    expect(ExtendedTableDialog(page).addButton).toBeEnabled();
   });
 
   test('Manipulation with structures with different atoms, List/Not List and Generic Group - Move whole structure', async () => {
@@ -225,7 +225,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByText('AH').click();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -241,7 +241,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -457,7 +457,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -472,7 +472,7 @@ test.describe('Atom Tool', () => {
     */
     const numberOfAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });

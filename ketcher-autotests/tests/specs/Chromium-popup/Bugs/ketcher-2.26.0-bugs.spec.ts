@@ -58,6 +58,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
+  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -100,10 +101,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
-import {
-  LeftMonomerConnectionPoint,
-  RightMonomerConnectionPoint,
-} from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -643,7 +640,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       SelectionToolType.Fragment,
     );
     await enableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectHandTool();
+    await CommonLeftToolbar(page).handTool();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -789,10 +786,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await ConnectionPointsDialog(page).selectConnectionPoints([
-      LeftMonomerConnectionPoint.R2,
-      RightMonomerConnectionPoint.R1,
-    ]);
+    await ConnectionPointsDialog(page).selectAttachmentPoints({
+      leftMonomer: AttachmentPoint.R2,
+      rightMonomer: AttachmentPoint.R1,
+    });
     await ConnectionPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditConnectionPoints,
@@ -987,7 +984,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1257,7 +1254,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1848,7 +1845,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
     );
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Case 66: Sugar R should not save in the IDT format', async () => {

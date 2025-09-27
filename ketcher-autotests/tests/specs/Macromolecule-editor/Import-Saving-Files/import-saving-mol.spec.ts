@@ -237,7 +237,7 @@ test.describe('Import-Saving .mol Files', () => {
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
         MacroFileType.MOLv3000,
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await page.getByText(monomer.text).locator('..').first().click();
       await takeEditorScreenshot(page);
     });

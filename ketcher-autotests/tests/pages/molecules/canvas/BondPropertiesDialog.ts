@@ -6,7 +6,7 @@ import {
 } from '@tests/pages/constants/bondProperties/Constants';
 import { waitForRender } from '@utils/common';
 
-type BondPropertiesLocators = {
+type BondPropertiesDialogLocators = {
   closeWindowButton: Locator;
   bondDialog: Locator;
   bondTypeDropdown: Locator;
@@ -19,7 +19,7 @@ type BondPropertiesLocators = {
 };
 
 export const BondPropertiesDialog = (page: Page) => {
-  const locators: BondPropertiesLocators = {
+  const locators: BondPropertiesDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     bondDialog: page.getByTestId('bondProps-dialog'),
     bondTypeDropdown: page.getByTestId('type-input-span'),
@@ -96,5 +96,39 @@ export const BondPropertiesDialog = (page: Page) => {
       await option.waitFor({ state: 'visible' });
       await option.click();
     },
+
+    async setOptions(
+      options:
+        | {
+            type?: BondTypeOption;
+            topology?: BondTopologyOption;
+            reactingCenter?: BondReactingCenterOption;
+          }
+        | {
+            customQuery: string;
+          },
+    ) {
+      if ('customQuery' in options && options.customQuery) {
+        await this.checkCustomQueryCheckbox();
+        await this.fillCustomQueryText(options.customQuery);
+        await this.apply();
+        return;
+      }
+      await this.uncheckCustomQueryCheckbox();
+      if ('type' in options && options.type) {
+        await this.selectBondType(options.type);
+      }
+      if ('topology' in options && options.topology) {
+        await this.selectBondTopology(options.topology);
+      }
+      if ('reactingCenter' in options && options.reactingCenter) {
+        await this.selectBondReactingCenter(options.reactingCenter);
+      }
+      await this.apply();
+    },
   };
 };
+
+export type BondPropertiesDialogLocatorsType = ReturnType<
+  typeof BondPropertiesDialog
+>;

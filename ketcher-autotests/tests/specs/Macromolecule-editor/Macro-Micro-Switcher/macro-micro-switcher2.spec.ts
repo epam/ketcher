@@ -274,7 +274,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -631,7 +631,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -639,7 +639,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedoInMacro(page);
     await takeEditorScreenshot(page);
@@ -1188,7 +1188,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1487,7 +1487,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

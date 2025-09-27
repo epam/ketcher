@@ -892,7 +892,7 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectPartOfMolecules(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -1805,7 +1805,7 @@ test.describe('Cascade Reactions', () => {
             await addTail(page, 482, 464);
             await takeEditorScreenshot(page);
             await selectPartOfMolecules(page);
-            await CommonLeftToolbar(page).selectEraseTool();
+            await CommonLeftToolbar(page).erase();
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();
             await takeEditorScreenshot(page);

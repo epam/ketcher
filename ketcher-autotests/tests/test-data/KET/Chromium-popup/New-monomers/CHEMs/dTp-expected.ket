@@ -1,0 +1,255 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-dTp___Dithiol modifier"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "dTp",
+        "templateId": "dTp___Dithiol modifier"
+    },
+    "monomerTemplate-dTp___Dithiol modifier": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    -1,
+                    -1.732,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    0,
+                    -1.732,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.5,
+                    -0.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5,
+                    -0.866,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.5,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.5,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    1.5,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2,
+                    1.732,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.5,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.5,
+                    0.866,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    12
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "dTp___Dithiol modifier",
+        "fullName": "Dithiol modifier",
+        "alias": "dTp",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        12
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "DTPA"
+        }
+    }
+}

@@ -19,11 +19,11 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
  * @returns Promise<string>
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
-  const loadingSpinner = page.getByTestId('loading-spinner');
+  const loadingSpinner = page.getByTestId('loading-spinner').first();
 
   callback();
   await delay(0.3);
-  if (await loadingSpinner.isVisible()) {
+  while (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }
 

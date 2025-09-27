@@ -37,7 +37,7 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -114,7 +114,7 @@ export type MonomerLocatorOptions = {
   | Monomer
 );
 
-export enum MonomerAttachmentPoint {
+export enum AttachmentPoint {
   R1 = 'R1',
   R2 = 'R2',
   R3 = 'R3',

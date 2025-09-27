@@ -265,14 +265,14 @@ test.describe('Template Manupulations', () => {
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();

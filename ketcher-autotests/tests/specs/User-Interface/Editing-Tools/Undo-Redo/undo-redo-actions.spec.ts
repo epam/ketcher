@@ -94,7 +94,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await clickOnAtom(page, 'C', 0);
 

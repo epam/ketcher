@@ -11,7 +11,15 @@ export const Phosphate = createMonomerGroup(MonomerType.Phosphate, {
     alias: 'Phosphate',
     testId: 'Phosphate___Phosphate Test monomer',
   },
+  NoPhosphate: {
+    alias: 'No Phosphate On The Canvas',
+    testId: 'No Such Phosphate In The Library',
+  },
   AmC6: { alias: 'AmC6', testId: 'AmC6___6-aminohexyl dihydrogen phosphate' },
+  AmC12: {
+    alias: 'AmC12',
+    testId: 'AmC12___12-aminododecyl dihydrogen phosphate',
+  },
   sP_: { alias: 'sP-', testId: 'sP-___Dihydrogen phosphorothioate' },
   bP: { alias: 'bP', testId: 'bP___Boranophosphate' },
   moen: { alias: 'moen', testId: 'moen___2-Methoxyethylamino' },

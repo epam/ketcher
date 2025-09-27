@@ -154,9 +154,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4010
       Description: verify visual representation of "Extended" table 
     */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 

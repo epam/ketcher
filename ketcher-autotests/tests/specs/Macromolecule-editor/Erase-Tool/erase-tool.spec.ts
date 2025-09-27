@@ -94,7 +94,7 @@ test.describe('Erase Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     // Delete peptide linked with two other peptides by bonds
     await peptide3.click();
@@ -133,7 +133,7 @@ test.describe('Erase Tool', () => {
       page,
       `KET/rna-with-fmoe-sugar.ket`,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Sugar.FMOE).click();
     await takeEditorScreenshot(page);
   });
@@ -151,7 +151,7 @@ test.describe('Erase Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await clickOnCanvas(page, 100, 100);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.Test_6_Ch).click();
     await takeEditorScreenshot(page);
   });
@@ -171,7 +171,7 @@ test.describe('Erase Tool', () => {
       `KET/two-chems-connected.ket`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
   });
@@ -188,7 +188,7 @@ test.describe('Erase Tool', () => {
       page,
       `KET/two-chems-connected.ket`,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -208,7 +208,7 @@ test.describe('Erase Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
   });
 
@@ -221,7 +221,7 @@ test.describe('Erase Tool', () => {
     */
     await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
   });
@@ -266,7 +266,7 @@ test.describe('Erase Tool', () => {
     Description: Deleted entity from the middle of chain restored after pressing Undo.
     */
     await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -285,7 +285,7 @@ test.describe('Erase Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -304,7 +304,7 @@ test.describe('Erase Tool', () => {
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -323,7 +323,7 @@ test.describe('Erase Tool', () => {
       page,
       `KET/peptides-flex-chain.ket`,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -337,7 +337,7 @@ test.describe('Erase Tool', () => {
       page,
       `KET/peptides-flex-chain.ket`,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await CommonTopRightToolbar(page).selectZoomInTool(5);
     await clickInTheMiddleOfTheScreen(page);
     await getMonomerLocator(page, Peptide.Bal).click();
@@ -363,7 +363,7 @@ test.describe('Erase Tool', () => {
         );
       }
     });
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -376,7 +376,7 @@ test.describe('Erase Tool', () => {
     erased portions are not reflected in opened file.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Bal).click();
     await getMonomerLocator(page, Peptide.D_2Nal).click();
 
@@ -404,7 +404,7 @@ test.describe('Erase Tool', () => {
     erased portions are not reflected in opened file.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/peptides-flex-chain.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Bal).click();
     await getMonomerLocator(page, Peptide.D_2Nal).click();
     await verifyFileExport(
@@ -449,7 +449,7 @@ test.describe('Erase Tool', () => {
 
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Peptide.X).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await takeEditorScreenshot(page);
   });
@@ -480,7 +480,7 @@ test.describe('Erase Tool', () => {
 
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Base.RNA_N).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await takeEditorScreenshot(page);
   });

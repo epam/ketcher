@@ -260,7 +260,7 @@ test.describe('Open Ketcher', () => {
 
     await CommonTopLeftToolbar(page).undo();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 

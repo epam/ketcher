@@ -1,0 +1,282 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-UAmM___Uni-Link Amino Modifier"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "UAmM",
+        "templateId": "UAmM___Uni-Link Amino Modifier"
+    },
+    "monomerTemplate-UAmM___Uni-Link Amino Modifier": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    2.199,
+                    -0.443,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    3.066,
+                    -0.943,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -3.932,
+                    -1.02,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.076,
+                    -0.526,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.221,
+                    -1.02,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.366,
+                    -0.526,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.51,
+                    -1.02,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.345,
+                    -0.526,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.2,
+                    -1.02,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.345,
+                    0.462,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.2,
+                    0.955,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.2,
+                    1.943,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.932,
+                    -0.443,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.066,
+                    -1.943,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.932,
+                    -1.443,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    14
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "UAmM___Uni-Link Amino Modifier",
+        "fullName": "Uni-Link Amino Modifier",
+        "alias": "UAmM",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 10,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        14
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "UniAmM",
+            "modifications": {
+                "endpoint5": "5UniAmM",
+                "internal": "iUniAmM"
+            }
+        }
+    }
+}

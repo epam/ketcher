@@ -1170,7 +1170,7 @@ test.describe('Sequence edit mode', () => {
     await createRNAAntisenseChain(page, anySymbolA);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1208,7 +1208,7 @@ test.describe('Sequence edit mode', () => {
     await createDNAAntisenseChain(page, anySymbolA);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

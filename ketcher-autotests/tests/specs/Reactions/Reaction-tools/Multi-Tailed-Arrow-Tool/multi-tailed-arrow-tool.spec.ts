@@ -591,7 +591,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -615,7 +615,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -945,7 +945,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     /* Here we erase multi-tailed arrow */
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);

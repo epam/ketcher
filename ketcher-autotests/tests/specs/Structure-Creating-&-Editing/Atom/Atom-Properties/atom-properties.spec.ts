@@ -21,7 +21,6 @@ import {
 } from '@utils/canvas/selectSelection';
 
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
-import { selectElementFromExtendedTable } from './utils';
 import {
   FileType,
   verifyFileExport,
@@ -70,6 +69,8 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1556,7 +1557,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1659
       Description: The Generic Group symbol is present on the canvas.
     */
-    await selectElementFromExtendedTable(page, 'G', 'Add');
+    await selectExtendedTableElement(page, ExtendedTableButton.G);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
@@ -1568,7 +1569,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1659
       Description: The Generic Group symbol is present in Atom Properties modal.
     */
-    await selectElementFromExtendedTable(page, 'GH*', 'Add');
+    await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,

@@ -148,6 +148,8 @@ export class AttachmentPoint {
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
+      .attr('data-testid', `${this.attachmentPointName}`)
+      .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
 
     const labelGroup = this.attachmentPoint.append('text');

@@ -129,7 +129,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });

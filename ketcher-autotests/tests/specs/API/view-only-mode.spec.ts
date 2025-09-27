@@ -275,7 +275,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page, {
       mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -289,7 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 92.3 H 7.7');
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });

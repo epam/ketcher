@@ -95,6 +95,7 @@ Object {
           >
             <button
               class="MuiButtonBase-root css-1gtlr3p-MuiButtonBase-root"
+              data-testid="cancel-delete-preset-button"
               role="button"
               tabindex="0"
               title="Cancel"
@@ -107,6 +108,7 @@ Object {
             </button>
             <button
               class="MuiButtonBase-root css-1arq8ci-MuiButtonBase-root"
+              data-testid="delete-preset-button"
               role="button"
               tabindex="0"
               title="Delete"

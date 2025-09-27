@@ -287,7 +287,7 @@ test('10. Verify deletion of the star atom from the canvas using the delete opti
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   // Change to getAtomLocator later
   const atomToDelete = page
     .getByText('*', { exact: true })

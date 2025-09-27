@@ -141,7 +141,7 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   );
   await takeEditorScreenshot(page);
 
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   await findAndClickAllCenterBonds(page);
 
@@ -431,7 +431,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -476,7 +476,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },

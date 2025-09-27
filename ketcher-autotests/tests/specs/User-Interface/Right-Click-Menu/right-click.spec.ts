@@ -12,7 +12,6 @@ import {
   clickOnAtom,
   clickOnCanvas,
   screenshotBetweenUndoRedo,
-  moveMouseAway,
   resetZoomLevelToDefault,
   takeElementScreenshot,
   pasteFromClipboardAndOpenAsNewProject,
@@ -39,7 +38,10 @@ import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedS
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 import { BondTypeOption } from '@tests/pages/constants/bondProperties/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  AtomsSetting,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Right-click menu', () => {
@@ -285,14 +287,7 @@ test.describe('Right-click menu', () => {
 
     await takeEditorScreenshot(page);
 
-    await page.getByRole('button', { name: 'Settings' }).click();
-    await page.getByText('Stereochemistry', { exact: true }).click();
-    await page
-      .locator('label')
-      .filter({ hasText: 'Ignore the chiral flag' })
-      .click();
-    await moveMouseAway(page);
-    await pressButton(page, 'Apply');
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await takeEditorScreenshot(page);
   });
 
@@ -311,20 +306,12 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
     ).click(MicroAtomOption.EnhancedStereochemistry);
-    await page.getByLabel('Create new OR Group').check();
-    await pressButton(page, 'Apply');
 
+    await EnhancedStereochemistry(page).selectCreateNewOrGroup();
+    await EnhancedStereochemistry(page).apply();
     await takeEditorScreenshot(page);
 
-    await page.getByRole('button', { name: 'Settings' }).click();
-    await page.getByText('Stereochemistry', { exact: true }).click();
-    await page
-      .locator('label')
-      .filter({ hasText: 'Ignore the chiral flag' })
-      .locator('div >> span, span')
-      .first()
-      .click();
-    await pressButton(page, 'Apply');
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await takeEditorScreenshot(page);
   });
 

@@ -46,7 +46,7 @@ export const CommonLeftToolbar = (page: Page) => {
   return {
     ...locators,
 
-    async selectHandTool() {
+    async handTool() {
       await locators.handToolButton.click();
     },
 
@@ -65,7 +65,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async selectEraseTool() {
+    async erase() {
       await waitForRender(page, async () => {
         await locators.eraseButton.click();
       });
@@ -84,7 +84,7 @@ export const CommonLeftToolbar = (page: Page) => {
           "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
         );
         // alternative way to open the dropdown (doesn't work on Macro mode)
-        await this.selectHandTool();
+        await this.handTool();
         await locators.bondSelectionDropdownButton.click({ force: true });
         await locators.bondSelectionDropdownButton.click({ force: true });
       }

@@ -2729,7 +2729,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       ModifyAminoAcidsOption.Phosphorylation,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -2780,7 +2780,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       ModifyAminoAcidsOption.SideChainAcetylation,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -2831,7 +2831,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       ModifyAminoAcidsOption.Citrullination,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -2882,7 +2882,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       ModifyAminoAcidsOption.Hydroxylation,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -2933,7 +2933,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       ModifyAminoAcidsOption.NMethylation,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -2984,7 +2984,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       ModifyAminoAcidsOption.Inversion,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);
@@ -3035,7 +3035,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       ModifyAminoAcidsOption.NaturalAminoAcid,
     ]);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     do {
       await randomPeptide.click();
     } while ((await randomPeptide.count()) > 0);

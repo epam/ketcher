@@ -78,7 +78,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await CommonTopLeftToolbar(page).clearCanvas();
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -133,7 +133,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(countBondsWithRing).toEqual(drawnBondsWithRing);
 
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
 
       await getAtomLocator(page, { atomLabel: 'C', atomId: 12 }).click();
 
@@ -368,7 +368,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await CommonTopLeftToolbar(page).undo();
         await CommonTopLeftToolbar(page).undo();
 
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
         await clickInTheMiddleOfTheScreen(page);
 
         await CommonTopLeftToolbar(page).undo();
@@ -642,6 +642,6 @@ for (const bondType of Object.values(MicroBondType)) {
     const button = page.getByTestId(bondType);
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
     // await button.click();
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
   });
 }

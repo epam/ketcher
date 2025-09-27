@@ -1,0 +1,215 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Azd___6-azidohexanoic acid"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "Azd",
+        "templateId": "Azd___6-azidohexanoic acid"
+    },
+    "monomerTemplate-Azd___6-azidohexanoic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    -1.732,
+                    2.75,
+                    0
+                ],
+                "charge": 1
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.598,
+                    3.25,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.866,
+                    2.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    1.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    -0.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    -1.75,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    -2.25,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.732,
+                    -3.25,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.598,
+                    -1.75,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    10
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Azd___6-azidohexanoic acid",
+        "fullName": "6-azidohexanoic acid",
+        "alias": "Azd",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "AzideN",
+            "modifications": {
+                "endpoint5": "5AzideN",
+                "endpoint3": "3AzideN"
+            }
+        }
+    }
+}

@@ -31,7 +31,7 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x + offset, y + offset, page);
@@ -75,7 +75,7 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });

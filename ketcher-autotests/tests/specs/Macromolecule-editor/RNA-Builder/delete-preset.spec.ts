@@ -6,6 +6,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
+import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
 
 test.describe('Macromolecules delete RNA presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,7 +35,7 @@ test.describe('Macromolecules delete RNA presets', () => {
     await ContextMenu(page, createdPreset).click(
       LibraryPresetOption.DeletePreset,
     );
-    await page.getByRole('button', { name: 'Delete' }).click();
+    await DeletePresetDialog(page).delete();
 
     await expect(createdPreset).not.toBeVisible();
   });

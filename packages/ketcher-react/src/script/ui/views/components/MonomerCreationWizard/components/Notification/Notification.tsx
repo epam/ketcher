@@ -35,11 +35,21 @@ const Notification = ({ id, type, message, wizardStateDispatch }: Props) => {
         type === 'info' && styles.info,
         type === 'error' && styles.error,
       )}
+      data-testid={`notification-${id}-message-banner`}
     >
       <div className={styles.notificationStrip} />
       <Icon name={iconMap[type]} className={styles.notificationIcon} />
-      <p className={styles.notificationText}>{message}</p>
-      <button className={styles.notificationButton} onClick={handleButtonClick}>
+      <p
+        className={styles.notificationText}
+        data-testid={`notification-message-body`}
+      >
+        {message}
+      </p>
+      <button
+        className={styles.notificationButton}
+        onClick={handleButtonClick}
+        data-testid={`notification-message-ok-button`}
+      >
         OK
       </button>
     </div>

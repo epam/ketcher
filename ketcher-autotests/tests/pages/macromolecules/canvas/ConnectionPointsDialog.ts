@@ -1,11 +1,13 @@
 import { Page, Locator } from '@playwright/test';
 import {
-  LeftMonomerConnectionPoint,
+  LeftMonomerConnectionPointButton,
   MonomerOverview,
-  RightMonomerConnectionPoint,
+  RightMonomerConnectionPointButton,
 } from '../constants/connectionPointsDialog/Constants';
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
-type ConnectionPointsLocators = {
+type ConnectionPointsDialogLocators = {
+  ConnectionPointsDialogWindow: Locator;
   closeButton: Locator;
   expandWindowButton: Locator;
   leftMonomerOverview: Locator;
@@ -16,7 +18,8 @@ type ConnectionPointsLocators = {
 };
 
 export const ConnectionPointsDialog = (page: Page) => {
-  const locators: ConnectionPointsLocators = {
+  const locators: ConnectionPointsDialogLocators = {
+    ConnectionPointsDialogWindow: page.getByTestId('monomer-connection-modal'),
     closeButton: page.getByTestId('close-window-button'),
     expandWindowButton: page.getByTestId('expand-window-button'),
     leftMonomerOverview: page.getByTestId(MonomerOverview.LeftMonomer),
@@ -29,6 +32,10 @@ export const ConnectionPointsDialog = (page: Page) => {
   return {
     ...locators,
 
+    async isVisible() {
+      return await locators.ConnectionPointsDialogWindow.isVisible();
+    },
+
     async close() {
       await locators.closeButton.click();
       await locators.closeButton.waitFor({ state: 'detached' });
@@ -38,25 +45,33 @@ export const ConnectionPointsDialog = (page: Page) => {
       await locators.expandWindowButton.click();
     },
 
-    async selectConnectionPoint(
-      button: LeftMonomerConnectionPoint | RightMonomerConnectionPoint,
-    ) {
-      if (!(await this.isActive(button))) {
-        await page.getByTestId(button).click();
+    async selectAttachmentPoints(buttons: {
+      leftMonomer?: AttachmentPoint;
+      rightMonomer?: AttachmentPoint;
+    }) {
+      await this.ConnectionPointsDialogWindow.waitFor({ state: 'visible' });
+      const leftAttachmentPointButton = buttons.leftMonomer
+        ? LeftMonomerConnectionPointButton[buttons.leftMonomer]
+        : null;
+      const rightAttachmentPointButton = buttons.rightMonomer
+        ? RightMonomerConnectionPointButton[buttons.rightMonomer]
+        : null;
+
+      if (
+        leftAttachmentPointButton &&
+        !(await this.isActive(leftAttachmentPointButton))
+      ) {
+        await page.getByTestId(leftAttachmentPointButton).click();
+      }
+      if (
+        rightAttachmentPointButton &&
+        !(await this.isActive(rightAttachmentPointButton))
+      ) {
+        await page.getByTestId(rightAttachmentPointButton).click();
       }
     },
 
-    async selectConnectionPoints(
-      buttons: [LeftMonomerConnectionPoint, RightMonomerConnectionPoint],
-    ) {
-      for (const button of buttons) {
-        await this.selectConnectionPoint(button);
-      }
-    },
-
-    async isActive(
-      button: LeftMonomerConnectionPoint | RightMonomerConnectionPoint,
-    ): Promise<boolean> {
+    async isActive(button: string): Promise<boolean> {
       return (
         (await page.getByTestId(button).getAttribute('data-isActive')) ===
         'true'
@@ -76,3 +91,7 @@ export const ConnectionPointsDialog = (page: Page) => {
     },
   };
 };
+
+export type ConnectionPointsDialogLocatorsType = ReturnType<
+  typeof ConnectionPointsDialog
+>;

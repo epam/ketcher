@@ -12,7 +12,6 @@ import {
 } from '@utils/files/readFile';
 import {
   MacroFileType,
-  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -22,7 +21,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  clickOnCanvas,
   dragTo,
   MolFileFormat,
   SdfFileFormat,
@@ -32,6 +30,7 @@ import {
 import {
   createMonomer,
   CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -48,7 +47,7 @@ import {
 import {
   getMonomerLocator,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -75,6 +74,8 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -131,29 +132,6 @@ interface IMoleculesForMonomerCreation {
   issueNumber?: string;
   // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
   pageReloadNeeded?: boolean;
-}
-
-async function prepareMoleculeForMonomerCreation(
-  page: Page,
-  AtomIDsToExclude?: string[],
-  BondIDsToExclude?: string[],
-) {
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await page.keyboard.down('Shift');
-  if (AtomIDsToExclude) {
-    for (const atomId of AtomIDsToExclude) {
-      await getAtomLocator(page, { atomId: Number(atomId) }).click({
-        force: true,
-      });
-    }
-  }
-  if (BondIDsToExclude) {
-    for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
-    }
-  }
-  await page.keyboard.up('Shift');
 }
 
 const eligableMolecules: IMoleculesForMonomerCreation[] = [
@@ -651,14 +629,18 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
   await CreateMonomerDialog(page).submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(page, CreateMonomerDialog(page).typeCombobox);
   await CreateMonomerDialog(page).discard();
 });
@@ -684,7 +666,6 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
@@ -692,7 +673,9 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
   await CreateMonomerDialog(page).submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(await ErrorMessageDialog(page).getErrorMessage()).toEqual(
+    'Mandatory fields must be filled.',
+  );
   await takeElementScreenshot(page, CreateMonomerDialog(page).nameEditbox);
   await CreateMonomerDialog(page).discard();
 });
@@ -776,7 +759,6 @@ for (const nonEligableName of nonEligableNames) {
      *
      * Version 3.7
      */
-    const errorMessage = page.getByText(nonEligableName.errorMessage);
     const createMonomerDialog = CreateMonomerDialog(page);
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -787,7 +769,12 @@ for (const nonEligableName of nonEligableNames) {
     await createMonomerDialog.setSymbol('Temp');
     await createMonomerDialog.setName(nonEligableName.value);
     await createMonomerDialog.submit();
-    expect(await errorMessage.count()).toBeGreaterThan(0);
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.emptyMandatoryFields,
+      ).getNotificationMessage(),
+    ).toEqual(nonEligableName.errorMessage);
     await CreateMonomerDialog(page).discard();
   });
 }
@@ -960,7 +947,6 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -972,7 +958,12 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,
@@ -997,7 +988,6 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -1009,7 +999,12 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,
@@ -1034,7 +1029,6 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
    *
    * Version 3.7
    */
-  const errorMessage = page.getByText('Mandatory fields must be filled.');
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
@@ -1046,7 +1040,12 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
-  expect(await errorMessage.count()).toBeGreaterThan(0);
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
   await takeElementScreenshot(
     page,
     CreateMonomerDialog(page).naturalAnalogueCombobox,
@@ -1485,7 +1484,7 @@ for (const monomerToCreate of monomersToCreate25) {
     });
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     const monomerOnMicro = getAbbreviationLocator(page, {
       name: monomerToCreate.symbol,
@@ -3123,7 +3122,7 @@ for (const monomerToCreate of monomersToCreate48) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3193,7 +3192,7 @@ for (const monomerToCreate of monomersToCreate49) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3263,7 +3262,7 @@ for (const monomerToCreate of monomersToCreate50) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3361,7 +3360,7 @@ for (const monomerToCreate of monomersToCreate51) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
@@ -3521,7 +3520,7 @@ for (const monomerToCreate of monomersToCreate53) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     if (monomerToCreate.helm) {
@@ -3614,7 +3613,7 @@ for (const monomerToCreate of monomersToCreate54) {
     });
     await expect(monomerOnMicro).toBeVisible();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomerOnMicro.click();
     await expect(monomerOnMicro).not.toBeVisible();
   });
@@ -3694,7 +3693,7 @@ for (const monomerToCreate of monomersToCreate55) {
     });
     await expect(monomerOnMacro).toBeVisible();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomerOnMacro.click();
     await expect(monomerOnMacro).not.toBeVisible();
   });
@@ -3769,7 +3768,7 @@ for (const monomerToCreate of monomersToCreate56) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -3793,27 +3792,27 @@ const monomersConnectTo = [
   {
     description: 'Amino Acid (DACys)',
     monomer: Peptide.DACys,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Sugar (5cGT)',
     monomer: Sugar._5cGT,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Base (C)',
     monomer: Base.C,
-    attachmentPoint: MonomerAttachmentPoint.R1,
+    attachmentPoint: AttachmentPoint.R1,
   },
   {
     description: 'Phosphate (AmC6)',
     monomer: Phosphate.AmC6,
-    attachmentPoint: MonomerAttachmentPoint.R2,
+    attachmentPoint: AttachmentPoint.R2,
   },
   {
     description: 'Nucleotide (3Puro)',
     monomer: Nucleotide._3Puro,
-    attachmentPoint: MonomerAttachmentPoint.R1,
+    attachmentPoint: AttachmentPoint.R1,
   },
 ];
 
@@ -3854,7 +3853,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -3916,7 +3915,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -3978,7 +3977,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -4000,7 +3999,7 @@ for (const monomerToCreate of monomersToCreate) {
         page,
         monomerOnMacro,
         monomerConnectToOnMacro,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R1,
         monomerConnectTo.attachmentPoint,
       );
       const bondLocator = getBondLocator(page, {});
@@ -4046,7 +4045,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -4068,7 +4067,7 @@ for (const monomerToCreate of monomersToCreate) {
         page,
         monomerOnMacro,
         monomerConnectToOnMacro,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R1,
         monomerConnectTo.attachmentPoint,
       );
       const bondLocator = getBondLocator(page, {});

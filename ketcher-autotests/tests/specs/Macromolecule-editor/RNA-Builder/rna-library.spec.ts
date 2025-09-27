@@ -16,9 +16,9 @@ import {
   takeElementScreenshot,
   takeTopToolbarScreenshot,
   clickOnCanvas,
-  MonomerType,
   Monomer,
   clickOnMiddleOfCanvas,
+  PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import {
@@ -32,7 +32,10 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -40,8 +43,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
-  monomerLibraryTypeLocation,
-  MonomerTypeLocation,
   RNASection,
   RNASectionArea,
 } from '@tests/pages/constants/library/Constants';
@@ -50,7 +51,7 @@ import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
-import { RightMonomerConnectionPoint } from '@tests/pages/macromolecules/constants/connectionPointsDialog/Constants';
+import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -111,9 +112,9 @@ async function drawBasePhosphate(page: Page) {
   await page.mouse.down();
   await phosphate.hover();
   await page.mouse.up();
-  await ConnectionPointsDialog(page).selectConnectionPoint(
-    RightMonomerConnectionPoint.R2,
-  );
+  await ConnectionPointsDialog(page).selectAttachmentPoints({
+    leftMonomer: AttachmentPoint.R2,
+  });
   await ConnectionPointsDialog(page).connect();
 }
 
@@ -631,7 +632,7 @@ test.describe('RNA Library', () => {
       await ContextMenu(page, customPreset).click(
         LibraryPresetOption.DeletePreset,
       );
-      await page.getByRole('button', { name: 'Delete' }).click();
+      await DeletePresetDialog(page).delete();
       await takePresetsScreenshot(page);
 
       // Reset to default state
@@ -872,7 +873,7 @@ test.describe('RNA Library', () => {
         page,
         'KET/monomers-connected-with-bonds.ket',
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
@@ -887,7 +888,7 @@ test.describe('RNA Library', () => {
   for (const monomer of monomerToDelete) {
     test(`Draw Sugar-Base-Phosphate and Delete ${monomer.monomer.alias} monomer`, async () => {
       await drawThreeMonomersConnectedWithBonds(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
@@ -900,7 +901,7 @@ test.describe('RNA Library', () => {
     */
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click();
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -1122,7 +1123,7 @@ test.describe('RNA Library', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -1180,7 +1181,7 @@ test.describe('RNA Library', () => {
       page,
       'KET/chain-with-unsplit-nucleotides.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Nucleotide.AmMC6T).click();
     await getMonomerLocator(page, { monomerAlias: 'Super G' }).click();
     await getMonomerLocator(page, { monomerAlias: '5-Bromo dU' }).click();
@@ -1256,7 +1257,7 @@ test.describe('RNA Library', () => {
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).redo();
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1368,7 +1369,7 @@ test.describe('RNA Library', () => {
     await ContextMenu(page, customPreset).click(
       LibraryPresetOption.DeletePreset,
     );
-    await page.getByRole('button', { name: 'Delete' }).click();
+    await DeletePresetDialog(page).delete();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -1518,7 +1519,7 @@ test.describe('RNA Library', () => {
     testDescription: string;
     SearchString: string;
     // Location where searched monomer located (we have to go to that location to make sure it is where)
-    ResultMonomerLocationTab: MonomerTypeLocation;
+    ResultedMonomer: Monomer | PresetType;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
@@ -1531,41 +1532,35 @@ test.describe('RNA Library', () => {
     {
       testDescription: '1. Verify search by full IDT alias (5Br-dU)',
       SearchString: '5Br-dU',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._5Br_dU,
     },
     {
       testDescription: '2. Verify search by part of IDT alias (itInd))',
       SearchString: 'itInd',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._5NitInd,
     },
     {
       testDescription: '3. Verify search with a single symbol /',
       SearchString: '/',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._2_damdA,
     },
     {
       testDescription:
         '4. Verify search with a specific ending symbol before the second / (hos/)',
       SearchString: 'hos/',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Phosphate],
+      ResultedMonomer: Phosphate.P,
     },
     {
       testDescription:
         '5. Verify no results when additional symbols are added after the second / (Ind/Am)',
       SearchString: 'Ind/Am',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide.NoNucleotide,
     },
     {
       testDescription:
         '6. Verify case insensitivity of the search (/5SUPER-DT)',
       SearchString: '/5SUPER-DT',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide.Super_T,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1573,17 +1568,13 @@ test.describe('RNA Library', () => {
       testDescription:
         '7. Verify search returns multiple monomers with the same starting symbol (Super))',
       SearchString: 'Super',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+      ResultedMonomer: Nucleotide.Super_G,
     },
     {
       testDescription:
         '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
       SearchString: '/3',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._2_damdA,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1591,8 +1582,7 @@ test.describe('RNA Library', () => {
       testDescription:
         '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
       SearchString: '/5',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._2_damdA,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1600,8 +1590,7 @@ test.describe('RNA Library', () => {
       testDescription:
         '10. Verify search returns multiple monomers that have internal modification (/i))',
       SearchString: '/i',
-      ResultMonomerLocationTab:
-        monomerLibraryTypeLocation[MonomerType.Nucleotide],
+      ResultedMonomer: Nucleotide._2_damdA,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
@@ -1622,8 +1611,8 @@ test.describe('RNA Library', () => {
         await Library(page).rnaBuilder.collapse();
 
         await Library(page).setSearchValue(IDTSearchString.SearchString);
-        await Library(page).goToMonomerLocation(
-          IDTSearchString.ResultMonomerLocationTab,
+        await Library(page).goToMonomerLibraryLocation(
+          IDTSearchString.ResultedMonomer,
         );
 
         await Library(page).searchEditbox.blur();
@@ -1732,24 +1721,24 @@ test.describe('RNA Library', () => {
     {
       testDescription: "1. Search 'J' ambiguous peptide",
       SearchString: 'J',
-      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
+      ResultedMonomer: Peptide.J,
     },
     {
       testDescription:
         "2. Search 'Leucine' as component of ambiguous peptide (should be J ambiguous monomer)",
       SearchString: 'Leucine',
-      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Peptide],
+      ResultedMonomer: Peptide.J,
     },
     {
       testDescription: "3. Search 'W' ambiguous DNA and RNA bases",
       SearchString: 'W',
-      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
+      ResultedMonomer: Base.DNA_W,
     },
     {
       testDescription:
         "4. Search 'Thymine'  as component of ambiguous DNA base",
       SearchString: 'Thymine',
-      ResultMonomerLocationTab: monomerLibraryTypeLocation[MonomerType.Base],
+      ResultedMonomer: Base.DNA_W,
     },
   ];
 
@@ -1767,8 +1756,8 @@ test.describe('RNA Library', () => {
         await Library(page).setSearchValue(
           AmbiguousMonomersSearchString.SearchString,
         );
-        await Library(page).goToMonomerLocation(
-          AmbiguousMonomersSearchString.ResultMonomerLocationTab,
+        await Library(page).goToMonomerLibraryLocation(
+          AmbiguousMonomersSearchString.ResultedMonomer,
         );
         await Library(page).searchEditbox.blur();
         await takeMonomerLibraryScreenshot(page);

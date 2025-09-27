@@ -132,7 +132,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
 
     // Erase selected elements
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
@@ -466,7 +466,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

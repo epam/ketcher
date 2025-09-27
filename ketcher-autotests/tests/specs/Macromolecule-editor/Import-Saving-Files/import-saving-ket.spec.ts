@@ -243,7 +243,7 @@ test.describe('Import-Saving .ket Files', () => {
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Convert error! Error during file parsing.');
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {

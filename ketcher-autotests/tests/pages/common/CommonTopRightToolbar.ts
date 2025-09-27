@@ -120,16 +120,19 @@ export const CommonTopRightToolbar = (page: Page) => {
           window._ketcher_isChainLengthRulerDisabled = true;
         });
       }
-
       const switcher = locators.ketcherModeSwitcherCombobox;
-      await switcher.waitFor({ state: 'visible' });
-      await switcher.click();
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      await macroOption.waitFor({ state: 'visible' });
-      await macroOption.click();
-      await MacromoleculesTopToolbar(
-        page,
-      ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
+      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
+
+      if (!(await macromoleculesCanvas.isVisible())) {
+        await switcher.waitFor({ state: 'visible' });
+        await switcher.click();
+        await macroOption.waitFor({ state: 'visible' });
+        await macroOption.click();
+        await MacromoleculesTopToolbar(
+          page,
+        ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
+      }
 
       if (options.enableFlexMode) {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -155,12 +158,16 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
-      await switcher.waitFor({ state: 'visible' });
-      await switcher.click();
-
       const microOption = page.getByTestId(Mode.Molecules);
-      await microOption.waitFor({ state: 'visible' });
-      await microOption.click();
+      const moleculesCanvas = page.getByTestId('canvas');
+
+      if (!(await moleculesCanvas.isVisible())) {
+        await switcher.waitFor({ state: 'visible' });
+        await switcher.click();
+
+        await microOption.waitFor({ state: 'visible' });
+        await microOption.click();
+      }
     },
   };
 };

@@ -985,7 +985,7 @@ test.describe('Side chain connections', () => {
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
     // await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1014,7 +1014,7 @@ test.describe('Side chain connections', () => {
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -1044,7 +1044,7 @@ test.describe('Side chain connections', () => {
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

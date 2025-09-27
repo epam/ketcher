@@ -179,7 +179,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnCanvas(page, -80, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, -60, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 
@@ -300,7 +300,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -375,7 +375,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -470,12 +470,12 @@ test.describe('Plus and Arrows tools ', () => {
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
       page,
     }) => {
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, -OFFSET_FROM_ARROW, 0, { from: 'pageCenter' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);

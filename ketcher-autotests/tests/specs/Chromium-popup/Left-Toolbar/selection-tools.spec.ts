@@ -423,6 +423,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1216,6 +1217,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonLeftToolbar(page).erase();
+
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

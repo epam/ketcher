@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
@@ -33,6 +33,17 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 //   return file.replaceAll('\r', '');
 // }
 
+let page: Page;
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ FlexCanvas: _ }) => {
+  // this empty function is needed
+});
+
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -46,7 +57,7 @@ test.describe('Import-Saving .fasta Files', () => {
   ] as const;
 
   for (const fileType of fastaFileTypes) {
-    test(`Import .fasta ${fileType} file`, async ({ page }) => {
+    test(`Import .fasta ${fileType} file`, async () => {
       await openFileAndAddToCanvasMacro(
         page,
         `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
@@ -57,9 +68,7 @@ test.describe('Import-Saving .fasta Files', () => {
     });
   }
 
-  test('Check import of .ket file and save in .fasta format', async ({
-    page,
-  }) => {
+  test('Check import of .ket file and save in .fasta format', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(
       page,
@@ -69,15 +78,11 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that empty file can be saved in .fasta format', async ({
-    page,
-  }) => {
+  test('Check that empty file can be saved in .fasta format', async () => {
     await verifyFileExport(page, 'FASTA/fasta-empty.fasta', FileType.FASTA);
   });
 
-  test('Check that system does not let importing empty .fasta file', async ({
-    page,
-  }) => {
+  test('Check that system does not let importing empty .fasta file', async () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'FASTA/fasta-empty.fasta');
@@ -97,9 +102,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await takeEditorScreenshot(page);
   // });
 
-  test('Validate correct displaying of snake viewed RNA chain loaded from .fasta file format', async ({
-    page,
-  }) => {
+  test('Validate correct displaying of snake viewed RNA chain loaded from .fasta file format', async () => {
     await openFileAndAddToCanvasMacro(
       page,
       'FASTA/fasta-snake-mode-rna.fasta',
@@ -109,9 +112,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that you can save snake viewed chain of peptides in a .fasta file', async ({
-    page,
-  }) => {
+  test('Check that you can save snake viewed chain of peptides in a .fasta file', async () => {
     await openFileAndAddToCanvasMacro(
       page,
       'FASTA/fasta-snake-mode-rna.fasta',
@@ -125,17 +126,13 @@ test.describe('Import-Saving .fasta Files', () => {
     );
   });
 
-  test('Should open .ket file and modify to .fasta format in save modal textarea', async ({
-    page,
-  }) => {
+  test('Should open .ket file and modify to .fasta format in save modal textarea', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'FASTA/fasta-rna-a.fasta', FileType.FASTA);
   });
 
   // Should not convert to Fasta type in case of there are more than one monomer type
-  test('Should not convert .ket file with RNA and Peptide to .fasta format in save modal', async ({
-    page,
-  }) => {
+  test('Should not convert .ket file with RNA and Peptide to .fasta format in save modal', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -146,9 +143,7 @@ test.describe('Import-Saving .fasta Files', () => {
   });
 
   // Should not convert to Fasta type in case of there is any CHEM
-  test('Should not convert .ket file with CHEMs to .fasta format in save modal', async ({
-    page,
-  }) => {
+  test('Should not convert .ket file with CHEMs to .fasta format in save modal', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -235,9 +230,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await takeEditorScreenshot(page);
   // });
 
-  test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
-    page,
-  }) => {
+  test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async () => {
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
 
     await openFileAndAddToCanvasMacro(page, filename, [
@@ -269,9 +262,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await takeEditorScreenshot(page);
   // });
 
-  test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async ({
-    page,
-  }) => {
+  test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async () => {
     const filename = 'FASTA/fasta-with-selenocystein.fasta';
     await openFileAndAddToCanvasMacro(page, filename, [
       MacroFileType.FASTA,
@@ -288,9 +279,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Export to FASTA: Verify correct export of DNA/RNA sequences with proper header', async ({
-    page,
-  }) => {
+  test('Export to FASTA: Verify correct export of DNA/RNA sequences with proper header', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
 
     await verifyFileExport(
@@ -300,9 +289,7 @@ test.describe('Import-Saving .fasta Files', () => {
     );
   });
 
-  test('Export to FASTA: Verify correct export of peptide sequences with proper header', async ({
-    page,
-  }) => {
+  test('Export to FASTA: Verify correct export of peptide sequences with proper header', async () => {
     await openFileAndAddToCanvasMacro(
       page,
       'KET/peptides-connected-with-bonds.ket',
@@ -318,7 +305,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Export to FASTA: Verify ignoring CHEMs and RNA-monomers not part of nucleotides or nucleosides during export',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4626
     After fix screenshot should be updated.
     */
@@ -334,7 +321,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Create cycled chain and side chain - save it to FASTA and sequence - verify that it is not supported and warning message occures',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4332
     Warning message NOT occures.
     After fix screenshot should be updated.
@@ -351,9 +338,7 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to fasta file and loaded back', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to fasta file and loaded back', async () => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to fasta file and loaded back
@@ -375,9 +360,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Saving ambiguous peptides (with mapping, alternatives) in FASTA format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous peptides (with mapping, alternatives) in FASTA format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     */
@@ -395,7 +378,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Saving ambiguous peptides (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.2 Verify saving ambiguous peptides (with mapping, mixed) in FASTA format (macro mode)
@@ -424,9 +407,7 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test('Saving ambiguous peptides (without mapping, alternatives) in FASTA format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous peptides (without mapping, alternatives) in FASTA format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.3 Verify saving ambiguous peptides (without mapping, alternatives) in FASTA format (macro mode)
@@ -458,7 +439,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Saving ambiguous peptides (without mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.4 Verify saving ambiguous peptides (without mapping, mixed) in FASTA format (macro mode)
@@ -488,9 +469,7 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test('Saving ambiguous DNA bases (with mapping, alternatives) in FASTA format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous DNA bases (with mapping, alternatives) in FASTA format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     */
@@ -509,7 +488,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Saving ambiguous DNA bases (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.6 Verify saving ambiguous DNA bases (with mapping, mixed) in FASTA format (macro mode)
@@ -542,9 +521,7 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test('Saving ambiguous RNA bases (with mapping, alternatives) in FASTA format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous RNA bases (with mapping, alternatives) in FASTA format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     */
@@ -563,7 +540,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Saving ambiguous RNA bases (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.8 Verify saving ambiguous RNA bases (with mapping, mixed) in FASTA format (macro mode)
@@ -596,9 +573,7 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test('Saving ambiguous (common) bases (with mapping, alternatives) in FASTA format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous (common) bases (with mapping, alternatives) in FASTA format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     */
@@ -617,7 +592,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test(
     'Saving ambiguous (common) bases (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 16.10 Verify saving ambiguous (common) bases (with mapping, mixed) in FASTA format (macro mode)
@@ -702,7 +677,7 @@ test.describe('Import correct FASTA file: ', () => {
   ];
 
   for (const correctFASTAFile of correctFASTAFiles) {
-    test(`${correctFASTAFile.FASTADescription}`, async ({ page }) => {
+    test(`${correctFASTAFile.FASTADescription}`, async () => {
       /*
       Test task: https://github.com/epam/ketcher/issues/5558
       Description: Verify import of FASTA files works correct

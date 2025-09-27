@@ -640,7 +640,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       SelectionToolType.Fragment,
     );
     await enableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectHandTool();
+    await CommonLeftToolbar(page).handTool();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -984,7 +984,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1254,7 +1254,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1845,7 +1845,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
     );
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Case 66: Sugar R should not save in the IDT format', async () => {

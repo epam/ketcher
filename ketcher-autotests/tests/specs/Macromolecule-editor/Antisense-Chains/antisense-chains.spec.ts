@@ -3389,7 +3389,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
     SelectionToolType.Rectangle,
   );
   await sugarRs.nth(2).click();
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await CommonLeftToolbar(page).selectAreaSelectionTool(

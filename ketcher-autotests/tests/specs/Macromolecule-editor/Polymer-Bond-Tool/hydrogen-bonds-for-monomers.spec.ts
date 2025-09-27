@@ -758,7 +758,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       expect(await bondLine.count()).toEqual(1);
 
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnConnectionLine(page);
 
       expect(await bondLine.count()).toEqual(0);
@@ -863,13 +863,13 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
     test.setTimeout(25000);
     const commonLeftToolbar = CommonLeftToolbar(page);
     // to reset Bond tool state
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     await commonLeftToolbar.bondSelectionDropdownExpandButton.click();
 
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     await commonLeftToolbar.selectBondTool(dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });

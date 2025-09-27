@@ -745,7 +745,7 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
     AttachmentPoint.R1,
     AttachmentPoint.R3,
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await page.mouse.click(517, 364);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await CommonTopLeftToolbar(page).undo();
@@ -780,7 +780,7 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
     AttachmentPoint.R1,
     AttachmentPoint.R3,
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await firstMonomer.click();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await CommonTopLeftToolbar(page).undo();

@@ -1473,7 +1473,7 @@ test(`37. Check that newly added two phosphates can be deleted from canvas by Er
 
     const monomer = getMonomerLocator(page, phosphate);
     await expect(monomer).toBeVisible();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomer.click();
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();
@@ -1516,7 +1516,7 @@ test(`38. Check that newly added eleven presets can be deleted from canvas by Er
     if (baseMonomer) await expect.soft(baseMonomer).toBeVisible();
     if (phosphateMonomer) await expect.soft(phosphateMonomer).toBeVisible();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await sugarMonomer.click();
     if (baseMonomer) await baseMonomer.click();
@@ -1564,7 +1564,7 @@ test(`39. Check that newly added nineteen standalone nucleotide can be deleted f
 
     const monomer = getMonomerLocator(page, nucleotide);
     await expect(monomer).toBeVisible();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomer.click();
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();
@@ -1598,7 +1598,7 @@ test(`40. Check that newly added sixty-five new CHEMs can be deleted from canvas
 
     const monomer = getMonomerLocator(page, chem);
     await expect(monomer).toBeVisible();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomer.click();
     await expect(monomer).not.toBeVisible();
     await CommonTopLeftToolbar(page).undo();

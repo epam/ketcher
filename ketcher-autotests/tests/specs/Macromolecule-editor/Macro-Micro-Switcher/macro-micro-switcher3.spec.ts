@@ -788,7 +788,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -927,7 +927,7 @@ test(
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
       await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

@@ -1461,7 +1461,7 @@ for (const monomerToCreate of monomersToCreate25) {
     });
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     const monomerOnMicro = getAbbreviationLocator(page, {
       name: monomerToCreate.symbol,
@@ -3099,7 +3099,7 @@ for (const monomerToCreate of monomersToCreate48) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3169,7 +3169,7 @@ for (const monomerToCreate of monomersToCreate49) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3239,7 +3239,7 @@ for (const monomerToCreate of monomersToCreate50) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await verifyFileExport(
@@ -3337,7 +3337,7 @@ for (const monomerToCreate of monomersToCreate51) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
@@ -3497,7 +3497,7 @@ for (const monomerToCreate of monomersToCreate53) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     if (monomerToCreate.helm) {
@@ -3590,7 +3590,7 @@ for (const monomerToCreate of monomersToCreate54) {
     });
     await expect(monomerOnMicro).toBeVisible();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomerOnMicro.click();
     await expect(monomerOnMicro).not.toBeVisible();
   });
@@ -3670,7 +3670,7 @@ for (const monomerToCreate of monomersToCreate55) {
     });
     await expect(monomerOnMacro).toBeVisible();
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await monomerOnMacro.click();
     await expect(monomerOnMacro).not.toBeVisible();
   });
@@ -3745,7 +3745,7 @@ for (const monomerToCreate of monomersToCreate56) {
       ...monomerToCreate,
     });
     await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -3830,7 +3830,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -3892,7 +3892,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -3954,7 +3954,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -4022,7 +4022,7 @@ for (const monomerToCreate of monomersToCreate) {
           ...monomerToCreate,
         });
         await getAtomLocator(page, { atomId: 0 }).click();
-        await CommonLeftToolbar(page).selectEraseTool();
+        await CommonLeftToolbar(page).erase();
       }
 
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

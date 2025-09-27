@@ -1452,7 +1452,7 @@ for (const monomer of monomerToDrag) {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await expect(monomerOnCanvas).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).undo();
@@ -1503,7 +1503,7 @@ for (const monomer of monomerToDrag) {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await expect(monomerOnCanvas).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).undo();

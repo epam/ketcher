@@ -905,7 +905,7 @@ test.describe('Import-Saving .idt Files', () => {
       throw new Error('Bond line is not present, likely due to a known bug.');
     }
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -940,7 +940,7 @@ test.describe('Import-Saving .idt Files', () => {
       AttachmentPoint.R3,
       AttachmentPoint.R4,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -1164,7 +1164,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.iMe_dC2).click();
     await takeEditorScreenshot(page);
   });

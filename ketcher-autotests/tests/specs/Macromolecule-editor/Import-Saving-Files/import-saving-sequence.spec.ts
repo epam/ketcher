@@ -831,7 +831,7 @@ for (const incorrectSequence of incorrectSequences) {
     expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
 
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 }
 

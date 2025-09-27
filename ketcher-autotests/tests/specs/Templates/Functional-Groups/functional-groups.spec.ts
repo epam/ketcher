@@ -384,7 +384,7 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

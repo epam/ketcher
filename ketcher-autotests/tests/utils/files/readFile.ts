@@ -156,7 +156,7 @@ export async function openImageAndAddToCanvas(
 
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
   if (x !== undefined && y !== undefined) {

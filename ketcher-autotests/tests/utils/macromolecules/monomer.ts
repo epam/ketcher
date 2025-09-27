@@ -37,7 +37,7 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );

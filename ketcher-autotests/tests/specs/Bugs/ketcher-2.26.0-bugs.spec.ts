@@ -954,7 +954,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1213,7 +1213,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/monomers-cycled.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1768,7 +1768,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Convert error! Error during file parsing.');
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Case 66: Sugar R should not save in the IDT format', async ({

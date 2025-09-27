@@ -158,7 +158,7 @@ test.describe('Common connection rules: ', () => {
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
 
     await monomerLocator.click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
   }
 
   /*

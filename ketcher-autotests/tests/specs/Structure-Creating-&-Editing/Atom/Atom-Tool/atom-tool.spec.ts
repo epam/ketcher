@@ -225,7 +225,7 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByText('AH').click();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -241,7 +241,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -457,7 +457,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -472,7 +472,7 @@ test.describe('Atom Tool', () => {
     */
     const numberOfAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });

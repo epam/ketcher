@@ -120,7 +120,7 @@ test.describe('Peptide library testing', () => {
     });
     // eslint-disable-next-line no-magic-numbers
     await clickOnCanvas(page, 100, 100);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.dA).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -178,7 +178,7 @@ test.describe('Peptide library testing', () => {
     });
     // eslint-disable-next-line no-magic-numbers
     await clickOnCanvas(page, 100, 100);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

@@ -873,7 +873,7 @@ test.describe('RNA Library', () => {
         page,
         'KET/monomers-connected-with-bonds.ket',
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
@@ -888,7 +888,7 @@ test.describe('RNA Library', () => {
   for (const monomer of monomerToDelete) {
     test(`Draw Sugar-Base-Phosphate and Delete ${monomer.monomer.alias} monomer`, async () => {
       await drawThreeMonomersConnectedWithBonds(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
@@ -901,7 +901,7 @@ test.describe('RNA Library', () => {
     */
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await bondLine.click();
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -1123,7 +1123,7 @@ test.describe('RNA Library', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -1181,7 +1181,7 @@ test.describe('RNA Library', () => {
       page,
       'KET/chain-with-unsplit-nucleotides.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Nucleotide.AmMC6T).click();
     await getMonomerLocator(page, { monomerAlias: 'Super G' }).click();
     await getMonomerLocator(page, { monomerAlias: '5-Bromo dU' }).click();
@@ -1257,7 +1257,7 @@ test.describe('RNA Library', () => {
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).redo();
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();

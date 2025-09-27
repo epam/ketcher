@@ -759,7 +759,6 @@ for (const nonEligableName of nonEligableNames) {
      *
      * Version 3.7
      */
-    const errorMessage = page.getByText(nonEligableName.errorMessage);
     const createMonomerDialog = CreateMonomerDialog(page);
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');

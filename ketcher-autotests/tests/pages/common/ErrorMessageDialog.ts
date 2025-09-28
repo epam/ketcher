@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 type ErrorMessageDialogLocators = {
   errorMessageWindow: Locator;
@@ -27,6 +27,7 @@ export const ErrorMessageDialog = (page: Page) => {
     },
 
     async getErrorMessage() {
+      await expect(locators.errorMessageBody).toBeVisible();
       const text = await locators.errorMessageBody.textContent();
       return text?.trim() ?? '';
     },

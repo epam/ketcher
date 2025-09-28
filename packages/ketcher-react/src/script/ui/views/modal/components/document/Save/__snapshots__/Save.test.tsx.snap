@@ -11,6 +11,7 @@ Object {
     >
       <div
         class="dialog dialog"
+        data-testid="info-modal-window"
         role="dialog"
         tabindex="-1"
         testid="save-structure-dialog"
@@ -36,6 +37,7 @@ Object {
         </header>
         <div
           class="body"
+          data-testid="info-modal-body"
         >
           <div
             class="formContainer"
@@ -418,6 +420,7 @@ Object {
   >
     <div
       class="dialog dialog"
+      data-testid="info-modal-window"
       role="dialog"
       tabindex="-1"
       testid="save-structure-dialog"
@@ -443,6 +446,7 @@ Object {
       </header>
       <div
         class="body"
+        data-testid="info-modal-body"
       >
         <div
           class="formContainer"

@@ -48,7 +48,10 @@ export async function bondTwoMonomers(
   await page.mouse.up();
   await hideMonomerPreview(page);
   const connectionPointsDialog = ConnectionPointsDialog(page);
-  if (attachmentPoint1 || attachmentPoint2) {
+  if (
+    (attachmentPoint1 || attachmentPoint2) &&
+    (await connectionPointsDialog.isVisible())
+  ) {
     await connectionPointsDialog.selectAttachmentPoints({
       leftMonomer: attachmentPoint1,
       rightMonomer: attachmentPoint2,
@@ -56,6 +59,13 @@ export async function bondTwoMonomers(
 
     await connectionPointsDialog.connect();
   }
+
+  return getBondLocator(page, {
+    fromMonomerId:
+      (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+    toMonomerId:
+      (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+  });
 }
 
 async function getMinFreeAttachmentPoint(

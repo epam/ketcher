@@ -588,8 +588,8 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 2,
-      box.y + box.height / 2 - 2,
+      box.x + box.width / 2 - 4,
+      box.y + box.height / 2 - 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -639,8 +639,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 2,
-      box.y + box.height / 2 - 2,
+      box.x + box.width / 2 - 4,
+      box.y + box.height / 2 - 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1121,13 +1121,14 @@ for (const monomer of monomerToDrag) {
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
       const monomersOnCanvas = getMonomerLocator(page, monomer);
-      await bondTwoMonomers(
+      const resultedBond = await bondTwoMonomers(
         page,
         monomersOnCanvas.nth(0),
         monomersOnCanvas.nth(1),
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );
+      await expect(resultedBond).toHaveCount(1);
     } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
@@ -1135,18 +1136,15 @@ for (const monomer of monomerToDrag) {
       const sugarOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Sugar,
       }).nth(1);
-      await bondTwoMonomers(
+      const resultedBond = await bondTwoMonomers(
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
         AttachmentPoint.R2,
         AttachmentPoint.R1,
       );
+      await expect(resultedBond).toHaveCount(1);
     }
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 }
 

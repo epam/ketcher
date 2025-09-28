@@ -40,7 +40,6 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
-  public isMonomerInRnaChainRow = false;
   public hydrogenBonds: HydrogenBond[] = [];
 
   constructor(

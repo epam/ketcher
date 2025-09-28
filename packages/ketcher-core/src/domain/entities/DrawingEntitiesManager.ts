@@ -65,6 +65,7 @@ import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import {
   MACROMOLECULES_BOND_TYPES,
+  provideEditorSettings,
   SequenceMode,
   SnakeMode,
 } from 'application/editor';
@@ -1677,7 +1678,10 @@ export class DrawingEntitiesManager {
     // not only snake mode???
     if (isSnakeMode) {
       const editor = CoreEditor.provideEditorInstance();
+      const editorSettings = provideEditorSettings();
       const canvasWidth = editor.canvas.width.baseVal.value;
+      const cellWidthInAngstroms =
+        SnakeLayoutCellWidth / editorSettings.macroModeScale;
 
       const lineLengthFromSettings =
         SettingsManager.editorLineLength['snake-layout-mode'];
@@ -1713,14 +1717,6 @@ export class DrawingEntitiesManager {
       snakeLayoutModel.forEachChain((chain) => {
         chain.forEachRow((row) => {
           const firstNodeInRow = row.snakeLayoutModelItems[0];
-
-          if (hasRnaInRow) {
-            snakeLayoutNodesInRow.forEach((snakeLayoutNode) => {
-              snakeLayoutNode.monomers.forEach((monomer) => {
-                monomer.isMonomerInRnaChainRow = true;
-              });
-            });
-          }
 
           if (
             hasAntisenseInRow &&
@@ -1758,7 +1754,10 @@ export class DrawingEntitiesManager {
               );
               const offset = Vec2.diff(
                 Coordinates.canvasToModel(newSenseNodePosition),
-                new Vec2(moleculeBbox.left, moleculeBbox.top),
+                new Vec2(
+                  moleculeBbox.left + cellWidthInAngstroms / 4,
+                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                ),
               );
 
               twoStrandedSnakeLayoutNode.molecule.forEach((atom) => {

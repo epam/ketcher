@@ -434,8 +434,8 @@ test.describe('Common connection rules: ', () => {
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
-  //     MonomerAttachmentPoint.R1,
-  //     MonomerAttachmentPoint.R1,
+  //     AttachmentPoint.R1,
+  //     AttachmentPoint.R1,
   //   );
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');

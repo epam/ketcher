@@ -72,7 +72,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
@@ -107,8 +107,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -126,9 +126,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -136,9 +136,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -146,9 +146,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
@@ -156,10 +156,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
@@ -167,10 +167,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -178,10 +178,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
@@ -189,11 +189,11 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
@@ -292,7 +292,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
@@ -327,8 +327,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -346,9 +346,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -356,9 +356,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -366,9 +366,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
@@ -376,10 +376,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
@@ -387,10 +387,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -398,10 +398,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
@@ -409,11 +409,11 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     J: {
@@ -431,8 +431,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
     //   },
     // },
   };
@@ -502,7 +502,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
@@ -519,8 +519,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R2,R3) - R1 gap': {
@@ -528,8 +528,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R3,R4)': {
@@ -537,8 +537,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -556,9 +556,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -566,9 +566,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -576,9 +576,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
@@ -597,10 +597,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -608,10 +608,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
@@ -619,11 +619,11 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
@@ -798,8 +798,8 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
@@ -817,9 +817,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
@@ -827,9 +827,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
@@ -837,9 +837,9 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
@@ -858,10 +858,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
@@ -869,10 +869,10 @@ test.describe('Connection rules for sugars: ', () => {
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {

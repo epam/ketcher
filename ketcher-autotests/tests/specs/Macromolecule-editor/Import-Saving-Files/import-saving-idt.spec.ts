@@ -703,7 +703,11 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErG/*/i2MOErG/*/3Phos/`,
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Symbol '*' could be placed only between two nucleotides/nucleosides.', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unknown polymer type ''.', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'scanner: BufferScanner::read() error'`,
+    );
+    await ErrorMessageDialog(page).close();
   });
 
   test('Verify it is possible to load IDT data from clipboard having trailing spaces at the end of the IDT string', async () => {

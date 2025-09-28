@@ -381,21 +381,17 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can Dearomatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
+  test('User can Dearomatize molecules with custom query parameters', async ({
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
-    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
-    1. Clear canvas
-    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
-    3. Press Aromatize button
-    4. Press Dearomatize button
-    4. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
-    Screenshots should be updated after fix.
+     * Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
+     * Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+     * 1. Clear canvas
+     * 2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+     * 3. Press Aromatize button
+     * 4. Press Dearomatize button
+     * 4. Validate canvas
      */
     await openFileAndAddToCanvasAsNewProject(
       page,

@@ -11,7 +11,7 @@ export const ErrorMessageDialog = (page: Page) => {
     errorMessageWindow: page.getByTestId('info-modal-window'),
     errorMessageBody: page
       .getByTestId('info-modal-window')
-      .getByTestId('info-modal-body'),
+      .getByTestId('info-modal-body2'),
     errorMessageClose: page.getByTestId('info-modal-close'),
   };
 

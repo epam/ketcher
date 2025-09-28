@@ -50,8 +50,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
 import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -89,75 +89,6 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
   await sugar.hover();
   await page.mouse.down();
   await phosphate.hover();
-  await page.mouse.up();
-}
-
-async function drawBasePhosphate(page: Page) {
-  const x = 800;
-  const y = 350;
-  const base = getMonomerLocator(page, Base.baA).nth(0);
-  const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
-
-  await Library(page).dragMonomerOnCanvas(Base.baA, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-  await Library(page).dragMonomerOnCanvas(Phosphate.P, {
-    x,
-    y,
-  });
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-  await base.hover();
-  await page.mouse.down();
-  await phosphate.hover();
-  await page.mouse.up();
-  await ConnectionPointsDialog(page).selectAttachmentPoints({
-    leftMonomer: AttachmentPoint.R2,
-  });
-  await ConnectionPointsDialog(page).connect();
-}
-
-async function drawSugarPhosphate(page: Page) {
-  const x = 800;
-  const y = 350;
-  const sugar = getMonomerLocator(page, Sugar._3A6).nth(0);
-  const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
-
-  await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-  await Library(page).dragMonomerOnCanvas(Phosphate.P, {
-    x,
-    y,
-  });
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-  await sugar.hover();
-  await page.mouse.down();
-  await phosphate.hover();
-  await page.mouse.up();
-}
-
-async function drawSugarBase(page: Page) {
-  const x = 800;
-  const y = 350;
-  const sugar = getMonomerLocator(page, Sugar._3A6).nth(0);
-  const base = getMonomerLocator(page, Base.baA).nth(0);
-  await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-  await Library(page).dragMonomerOnCanvas(Base.baA, {
-    x,
-    y,
-  });
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-  await sugar.hover();
-  await page.mouse.down();
-  await base.hover();
   await page.mouse.up();
 }
 
@@ -818,9 +749,20 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    const bondLine = page.locator('g[pointer-events="stroke"]');
-    await drawSugarBase(page);
-    await bondLine.hover();
+    const sugar = getMonomerLocator(page, Sugar._3A6).first();
+    const base = getMonomerLocator(page, Base.baA).first();
+    await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Base.baA, {
+      x: 800,
+      y: 350,
+    });
+    const bondLine = await bondTwoMonomers(page, sugar, base);
+
+    await bondLine.hover({ force: true });
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -830,9 +772,21 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar and Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]');
-    await drawSugarPhosphate(page);
-    await bondLine.hover();
+    const sugar = getMonomerLocator(page, Sugar._3A6).first();
+    const phosphate = getMonomerLocator(page, Phosphate.P).first();
+
+    await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Phosphate.P, {
+      x: 800,
+      y: 350,
+    });
+    const bondLine = await bondTwoMonomers(page, sugar, phosphate);
+
+    await bondLine.hover({ force: true });
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -842,9 +796,26 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base and Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]');
-    await drawBasePhosphate(page);
-    await bondLine.hover();
+    const base = getMonomerLocator(page, Base.baA).first();
+    const phosphate = getMonomerLocator(page, Phosphate.P).first();
+
+    await Library(page).dragMonomerOnCanvas(Base.baA, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Phosphate.P, {
+      x: 800,
+      y: 350,
+    });
+    const bondLine = await bondTwoMonomers(
+      page,
+      base,
+      phosphate,
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
+    );
+    await bondLine.hover({ force: true });
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

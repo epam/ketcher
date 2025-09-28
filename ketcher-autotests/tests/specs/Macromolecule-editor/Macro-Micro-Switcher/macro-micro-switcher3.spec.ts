@@ -39,7 +39,6 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {

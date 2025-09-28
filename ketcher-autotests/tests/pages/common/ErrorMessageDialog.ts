@@ -9,7 +9,9 @@ type ErrorMessageDialogLocators = {
 export const ErrorMessageDialog = (page: Page) => {
   const locators: ErrorMessageDialogLocators = {
     errorMessageWindow: page.getByTestId('info-modal-window'),
-    errorMessageBody: page.getByTestId('info-modal-body'),
+    errorMessageBody: page
+      .getByTestId('info-modal-window')
+      .getByTestId('info-modal-body'),
     errorMessageClose: page.getByTestId('info-modal-close'),
   };
 

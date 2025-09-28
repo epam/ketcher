@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import path from 'path';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   dragMouseTo,
   takeEditorScreenshot,
@@ -40,6 +40,7 @@ import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/A
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -790,10 +791,8 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     await expandMonomer(page, monomer.name);
     await CommonLeftToolbar(page).erase();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await SGroupPropertiesDialog(page).cancel();
+    expect(EditAbbreviationDialog(page).editAbbreviationWindow).toBeVisible();
+    await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
   }
 });

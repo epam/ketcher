@@ -38,7 +38,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
         <div
           className={styles.infoModalBody}
           id="dialog-content"
-          data-testid="info-modal-body2"
+          data-testid="error-message-body"
         >
           {message}
         </div>

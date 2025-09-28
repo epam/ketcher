@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectOptionInDropdown,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,

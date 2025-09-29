@@ -1,13 +1,13 @@
 import { Page, Locator } from '@playwright/test';
 import {
-  LeftMonomerConnectionPointButton,
+  LeftMonomerAttachmentPointButton,
   MonomerOverview,
-  RightMonomerConnectionPointButton,
-} from '../constants/connectionPointsDialog/Constants';
+  RightMonomerAttachmentPointButton,
+} from '../constants/attachmentPointsDialog/Constants';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
 type AttachmentPointsDialogLocators = {
-  ConnectionPointsDialogWindow: Locator;
+  attachmentPointsDialogWindow: Locator;
   closeButton: Locator;
   expandWindowButton: Locator;
   leftMonomerOverview: Locator;
@@ -19,7 +19,7 @@ type AttachmentPointsDialogLocators = {
 
 export const AttachmentPointsDialog = (page: Page) => {
   const locators: AttachmentPointsDialogLocators = {
-    ConnectionPointsDialogWindow: page.getByTestId('monomer-connection-modal'),
+    attachmentPointsDialogWindow: page.getByTestId('monomer-connection-modal'),
     closeButton: page.getByTestId('close-window-button'),
     expandWindowButton: page.getByTestId('expand-window-button'),
     leftMonomerOverview: page.getByTestId(MonomerOverview.LeftMonomer),
@@ -33,7 +33,7 @@ export const AttachmentPointsDialog = (page: Page) => {
     ...locators,
 
     async isVisible() {
-      return await locators.ConnectionPointsDialogWindow.isVisible();
+      return await locators.attachmentPointsDialogWindow.isVisible();
     },
 
     async close() {
@@ -49,12 +49,12 @@ export const AttachmentPointsDialog = (page: Page) => {
       leftMonomer?: AttachmentPoint;
       rightMonomer?: AttachmentPoint;
     }) {
-      await this.ConnectionPointsDialogWindow.waitFor({ state: 'visible' });
+      await this.attachmentPointsDialogWindow.waitFor({ state: 'visible' });
       const leftAttachmentPointButton = buttons.leftMonomer
-        ? LeftMonomerConnectionPointButton[buttons.leftMonomer]
+        ? LeftMonomerAttachmentPointButton[buttons.leftMonomer]
         : null;
       const rightAttachmentPointButton = buttons.rightMonomer
-        ? RightMonomerConnectionPointButton[buttons.rightMonomer]
+        ? RightMonomerAttachmentPointButton[buttons.rightMonomer]
         : null;
 
       if (
@@ -92,6 +92,6 @@ export const AttachmentPointsDialog = (page: Page) => {
   };
 };
 
-export type ConnectionPointsDialogLocatorsType = ReturnType<
+export type AttachmentPointsDialogLocatorsType = ReturnType<
   typeof AttachmentPointsDialog
 >;

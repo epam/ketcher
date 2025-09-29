@@ -25,11 +25,7 @@ import {
   getMonomerLocator,
   AttachmentPoint,
 } from '@utils/macromolecules/monomer';
-import {
-  bondTwoMonomersPointToPoint,
-  selectLeftConnectionPointAtSelectConnectionPointDialog,
-  selectRightConnectionPointAtSelectConnectionPointDialog,
-} from '@utils/macromolecules/polymerBond';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -528,18 +524,13 @@ test.describe('Common connection rules: ', () => {
     ];
 
     for (const attachmentPoint of attachmentPoints) {
-      await selectLeftConnectionPointAtSelectConnectionPointDialog(
-        page,
-        attachmentPoint,
-      );
+      await AttachmentPointsDialog(page).selectAttachmentPoints({
+        leftMonomer: attachmentPoint,
+        rightMonomer: attachmentPoint,
+      });
       //         await takeEditorScreenshot(page, {
       //     hideMonomerPreview: true,
       //   });
-
-      await selectRightConnectionPointAtSelectConnectionPointDialog(
-        page,
-        attachmentPoint,
-      );
       //         await takeEditorScreenshot(page, {
       //     hideMonomerPreview: true,
       //   });

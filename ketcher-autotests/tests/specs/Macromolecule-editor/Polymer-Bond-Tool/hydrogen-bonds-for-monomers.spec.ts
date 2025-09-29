@@ -32,7 +32,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 let page: Page;
 test.setTimeout(40000);
@@ -457,7 +457,7 @@ async function chooseConnectionPointsInConnectionDialog(
       ? await page.getByTitle(rightMonomerConnectionPointName).nth(1).click()
       : await page.getByTitle(rightMonomerConnectionPointName).first().click();
 
-    await ConnectionPointsDialog(page).connect();
+    await AttachmentPointsDialog(page).connect();
   }
 }
 

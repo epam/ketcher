@@ -100,7 +100,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -786,18 +786,18 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await ConnectionPointsDialog(page).selectAttachmentPoints({
+    await AttachmentPointsDialog(page).selectAttachmentPoints({
       leftMonomer: AttachmentPoint.R2,
       rightMonomer: AttachmentPoint.R1,
     });
-    await ConnectionPointsDialog(page).reconnect();
+    await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await ConnectionPointsDialog(page).reconnect();
+    await AttachmentPointsDialog(page).reconnect();
   });
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {

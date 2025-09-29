@@ -10,7 +10,7 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { AttachmentPoint } from './monomer';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 export enum BondType {
   None = 0,
@@ -47,17 +47,17 @@ export async function bondTwoMonomers(
   await secondMonomer.hover({ force: true });
   await page.mouse.up();
   await hideMonomerPreview(page);
-  const connectionPointsDialog = ConnectionPointsDialog(page);
+  const attachmentPointsDialog = AttachmentPointsDialog(page);
   if (
     (attachmentPoint1 || attachmentPoint2) &&
-    (await connectionPointsDialog.isVisible())
+    (await attachmentPointsDialog.isVisible())
   ) {
-    await connectionPointsDialog.selectAttachmentPoints({
+    await attachmentPointsDialog.selectAttachmentPoints({
       leftMonomer: attachmentPoint1,
       rightMonomer: attachmentPoint2,
     });
 
-    await connectionPointsDialog.connect();
+    await attachmentPointsDialog.connect();
   }
 
   return getBondLocator(page, {
@@ -150,7 +150,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
         : await page.getByTitle(secondMonomerAttachmentPoint).first().click();
     }
 
-    await ConnectionPointsDialog(page).connect();
+    await AttachmentPointsDialog(page).connect();
 
     return {
       leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,

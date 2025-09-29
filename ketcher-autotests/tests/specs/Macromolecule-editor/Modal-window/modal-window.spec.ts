@@ -10,7 +10,7 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
@@ -41,7 +41,7 @@ test.describe('Modal window', () => {
     await page.mouse.up();
     await hideMonomerPreview(page);
     expect(
-      await ConnectionPointsDialog(page).connectButton.isDisabled(),
+      await AttachmentPointsDialog(page).connectButton.isDisabled(),
     ).toBeTruthy();
   });
 
@@ -58,13 +58,13 @@ test.describe('Modal window', () => {
     await chem2.hover({ force: true });
     await page.mouse.up();
     await hideMonomerPreview(page);
-    await ConnectionPointsDialog(page).selectAttachmentPoints({
+    await AttachmentPointsDialog(page).selectAttachmentPoints({
       leftMonomer: AttachmentPoint.R1,
       rightMonomer: AttachmentPoint.R2,
     });
 
     expect(
-      await ConnectionPointsDialog(page).connectButton.isEnabled(),
+      await AttachmentPointsDialog(page).connectButton.isEnabled(),
     ).toBeTruthy();
   });
 });

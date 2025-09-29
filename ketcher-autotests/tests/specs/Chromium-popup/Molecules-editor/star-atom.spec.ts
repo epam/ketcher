@@ -508,10 +508,7 @@ test('18. Verify export/import of structures containing the star atom in the SMI
    * Version 3.7
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C1=C*=CC=C1 |$;;star_e;;;$|',
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=*C=1 |$;;;;;$|');
   await verifyFileExport(
     page,
     'SMILES/Star-Atom/Export to SMILES-expected.smi',
@@ -537,10 +534,7 @@ test('19. Verify export/import of structures containing the star atom in the Ext
    * Version 3.7
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C1=C*=CC=C1 |$;;star_e;;;$|',
-  );
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=*C=1 |$;;;;;$|');
   await verifyFileExport(
     page,
     'SMILES/Star-Atom/Export to Extended SMILES-expected.cxsmi',

@@ -182,7 +182,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 

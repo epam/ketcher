@@ -376,9 +376,14 @@ export class DrawingEntitiesManager {
   public deleteDrawingEntity(
     drawingEntity: DrawingEntity,
     needToDeleteConnectedEntities = true,
+    force = false,
   ) {
     if (drawingEntity instanceof BaseMonomer) {
-      return this.deleteMonomer(drawingEntity, needToDeleteConnectedEntities);
+      return this.deleteMonomer(
+        drawingEntity,
+        needToDeleteConnectedEntities,
+        force,
+      );
     } else if (
       drawingEntity instanceof PolymerBond ||
       drawingEntity instanceof HydrogenBond
@@ -670,6 +675,7 @@ export class DrawingEntitiesManager {
   public deleteMonomer(
     monomer: BaseMonomer,
     needToDeleteConnectedBonds = true,
+    force = false,
   ) {
     const command = new Command();
 
@@ -692,7 +698,7 @@ export class DrawingEntitiesManager {
       monomer.forEachBond((bond) => {
         // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
         // This check helps to avoid operations duplication
-        if (bond.selected) return;
+        if (bond.selected && !force) return;
 
         if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
           // We need to remove connected bond when doing a group selection even if it is not selected

@@ -11,9 +11,7 @@ test.describe('Open and validate Extended table', () => {
     /* 
       Test cases: EPMLSOPKET-1494
       */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 });

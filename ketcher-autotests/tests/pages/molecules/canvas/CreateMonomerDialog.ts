@@ -7,6 +7,10 @@ import {
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { LeftToolbar } from '../LeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { clickOnCanvas } from '@utils/clicks';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
@@ -80,6 +84,29 @@ export async function createMonomer(
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
   await createMonomerDialog.submit();
+}
+
+export async function prepareMoleculeForMonomerCreation(
+  page: Page,
+  AtomIDsToExclude?: string[],
+  BondIDsToExclude?: string[],
+) {
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await page.keyboard.down('Shift');
+  if (AtomIDsToExclude) {
+    for (const atomId of AtomIDsToExclude) {
+      await getAtomLocator(page, { atomId: Number(atomId) }).click({
+        force: true,
+      });
+    }
+  }
+  if (BondIDsToExclude) {
+    for (const bondId of BondIDsToExclude) {
+      await getBondLocator(page, { bondId: Number(bondId) }).click();
+    }
+  }
+  await page.keyboard.up('Shift');
 }
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

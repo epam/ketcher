@@ -114,7 +114,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await waitForRender(page, async () => {
       await page.getByText('R5').click();
     });

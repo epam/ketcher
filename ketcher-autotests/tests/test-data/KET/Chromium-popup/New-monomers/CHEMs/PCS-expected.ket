@@ -1,0 +1,441 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-PCS___PC Spacer"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "PCS",
+        "templateId": "PCS___PC Spacer"
+    },
+    "monomerTemplate-PCS___PC Spacer": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "P",
+                "location": [
+                    3.492,
+                    -2.187,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.492,
+                    -1.066,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.622,
+                    -0.563,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.853,
+                    -1.04,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.744,
+                    1.68,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.482,
+                    1.681,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.615,
+                    2.183,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.482,
+                    0.675,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.744,
+                    0.671,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.617,
+                    0.174,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.874,
+                    2.182,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.005,
+                    1.68,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.865,
+                    2.182,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.735,
+                    1.68,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.605,
+                    2.182,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.475,
+                    1.68,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.345,
+                    2.182,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -5.214,
+                    1.679,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.865,
+                    3.187,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.358,
+                    -2.687,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.626,
+                    -2.687,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.492,
+                    -3.187,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.349,
+                    0.176,
+                    0
+                ],
+                "charge": 1
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.35,
+                    -0.824,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.214,
+                    0.677,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    23
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    22,
+                    24
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "PCS___PC Spacer",
+        "fullName": "PC Spacer",
+        "alias": "PCS",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 16,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "SpPC",
+            "modifications": {
+                "endpoint5": "5SpPC",
+                "internal": "iSpPC"
+            }
+        }
+    }
+}

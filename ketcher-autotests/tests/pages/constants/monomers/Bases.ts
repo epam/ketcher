@@ -16,6 +16,10 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     alias: 'Base',
     testId: 'Base___Base Test monomer',
   },
+  NoBase: {
+    alias: 'No Base On The Canvas',
+    testId: 'No Such Base In The Library',
+  },
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' },
   C: { alias: 'C', testId: 'C___Cytosine' },
   cpmA: {
@@ -38,6 +42,8 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     testId: 'dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine',
   },
   G: { alias: 'G', testId: 'G___Guanine' },
+  In: { alias: 'In', testId: 'In___Inosine' },
+  isoG: { alias: 'isoG', testId: 'isoG___Isoguanine' },
   oC64m5: {
     alias: 'oC64m5',
     testId: 'oC64m5___4-Hexan-6-ol-5-methylcytosine',

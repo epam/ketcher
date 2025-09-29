@@ -11,9 +11,7 @@ test.describe('Open and validate Extended table', () => {
     /* 
       Test cases: EPMLSOPKET-1507, EPMLSOPKET-1509, EPMLSOPKET-1515, EPMLSOPKET-1519, EPMLSOPKET-1525, EPMLSOPKET-1504, EPMLSOPKET-1501
       */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 });

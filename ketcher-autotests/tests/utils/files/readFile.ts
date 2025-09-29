@@ -156,7 +156,7 @@ export async function openImageAndAddToCanvas(
 
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
   if (x !== undefined && y !== undefined) {
@@ -281,7 +281,7 @@ async function setupStructureFormatComboboxes(
  * @param {Page} page - The Playwright page instance where the button is located.
  * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceMonomerType., if SequenceMonomerType.=== Peptide - requre [MacroFileType, [SequenceMonomerType, PeptideLetterCodeType]]
  * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
- * @param {errorExpected}  errorExpected - have to be true if you know if error should occure
+ * @param {errorExpected}  errorMessageExpected - have to be true if you know if error should occure
  */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,

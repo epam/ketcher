@@ -11,6 +11,7 @@ import {
   pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils/files/readFile';
 import {
+  delay,
   MacroFileType,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -734,7 +735,10 @@ for (const [index, eligableName] of eligableNames.entries()) {
     await monomer.hover({ force: true });
     await dragTo(page, monomer, { x: 100, y: 100 });
     await monomer.hover({ force: true });
-    await waitForMonomerPreview(page);
+    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
+    await delay(1);
+    // await waitForMonomerPreview(page);
+    await expect(page.getByTestId('preview-tooltip')).toBeVisible();
     await expect(page.getByTestId('preview-tooltip-title')).toContainText(
       eligableName.value,
     );
@@ -1285,7 +1289,10 @@ for (const monomerToCreate of monomersToCreate) {
 
       await dragTo(page, monomer, { x: 450, y: 250 });
       await monomer.hover({ force: true });
-      await waitForMonomerPreview(page);
+      // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
+      await delay(1);
+      // await waitForMonomerPreview(page);
+      await expect(page.getByTestId('preview-tooltip')).toBeVisible();
       await expect(page.getByTestId('preview-tooltip-title')).toContainText(
         monomerToCreate.name,
       );

@@ -26,7 +26,6 @@ import {
   MolFileFormat,
   SdfFileFormat,
   SequenceFileFormat,
-  waitForMonomerPreview,
 } from '@utils/index';
 import {
   createMonomer,

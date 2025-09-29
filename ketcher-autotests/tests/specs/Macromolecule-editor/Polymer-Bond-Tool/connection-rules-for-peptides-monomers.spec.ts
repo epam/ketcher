@@ -1093,7 +1093,7 @@ test.describe('Connection rules for peptides: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 7
        *  Description: User can connect any Peptide to any OrdinaryMolecule using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),

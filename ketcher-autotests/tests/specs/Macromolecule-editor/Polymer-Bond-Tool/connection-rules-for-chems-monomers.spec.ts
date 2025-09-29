@@ -871,7 +871,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 1
        *  Description: User can connect any CHEM to any CHEM using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
         test.setTimeout(30000);
@@ -901,7 +901,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 2
        *  Description: User can connect any CHEM to any Peptide using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
         test.setTimeout(30000);
@@ -1128,7 +1128,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 6
        *  Description: User can connect any CHEM to any OrdinaryMolecule using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),

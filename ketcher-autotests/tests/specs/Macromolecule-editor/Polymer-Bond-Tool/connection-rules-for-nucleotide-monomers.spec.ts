@@ -991,7 +991,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/5211 - Case 8
        *  Description: Validate that unsplit nucleotide could be connected with micromolecule (center-to-center way)
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordnryMlcleName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),

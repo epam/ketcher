@@ -943,7 +943,7 @@ test.describe('Connection rules for sugars: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 8
        *  Description: User can connect any Sugar to any OrdinaryMolecule using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),

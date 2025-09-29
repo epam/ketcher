@@ -600,7 +600,7 @@ test.describe('Connection rules for RNAs: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 1
        *  Sugar could be connected with base using R3 of sugar and R1 of base. (Center-to-center connection)
-       *  If no R3 available - open Select Connection Points dialog
+       *  If no R3 available - open Select Attachment Points dialog
        */
       test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
         test.setTimeout(40000);

@@ -758,18 +758,18 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async () => {
+  test('Case 26: Edit Attachment Points dialog cant cause invalid connection between monomers', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5205
-     * Description: Edit Connection points dialog cant cause invalid connection between monomers
+     * Description: Edit Attachment Points dialog cant cause invalid connection between monomers
      * Scenario:
      * 1. Go to Macro mode
      * 2. Load from file
-     * 3. Open Edit Connection points dialog
+     * 3. Open Edit Attachment Points dialog
      * 4. Click on ALREADY selected connection points
      * 5. Press Reconnect button
-     * 6. Open Edit Connection points dialog again
+     * 6. Open Edit Attachment Points dialog again
      * 7. Take screenshot
      */
     const bondLine = getBondLocator(page, {});
@@ -781,7 +781,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/two-nucleotides.ket',
     );
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -792,7 +792,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
     await ConnectionPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

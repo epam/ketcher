@@ -8,7 +8,7 @@ export enum MonomerOption {
   CreateAntisenseRNAStrand = 'create_antisense_rna_chain',
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',
-  EditConnectionPoints = 'edit_connection_points',
+  EditAttachmentPoints = 'edit_attachment_points',
   Delete = 'delete',
 }
 
@@ -36,7 +36,7 @@ export enum SuperatomOption {
 }
 
 export enum MacroBondOption {
-  EditConnectionPoints = 'edit_connection_points',
+  EditAttachmentPoints = 'edit_attachment_points',
 }
 
 export enum SequenceSymbolOption {

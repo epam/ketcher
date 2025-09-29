@@ -255,7 +255,7 @@ Object.values(monomers).forEach((leftMonomer) => {
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: 1. Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
      *               2. Verify that hydrogen bonds are highlighted along with monomers when hovered over
-     *               3. Verify that no "Edit Connection Points" dialog appears for hydrogen bonds
+     *               3. Verify that no "Edit Attachment Points" dialog appears for hydrogen bonds
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas

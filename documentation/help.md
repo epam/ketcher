@@ -722,7 +722,7 @@ Covalent bonds can be **created** by connecting monomers with the _Bond tool_ ei
 
 <img src=images/Center-to-Center-3.0..gif width = "400"/>
 
-If a default bond cannot be established a _Select Connection Points_ dialog will open. Default bonds are:
+If a default bond cannot be established a _Select Attachment Points_ dialog will open. Default bonds are:
 - R1-R2 between amino acids;
 - R1-R2 between sugars and phosphates;
 - R3-R1 between sugars and bases;
@@ -735,7 +735,7 @@ _Select Connection Point_ dialog contains structures of both monomers and allows
 <img src=images/Select-Connection-Points-3.0..gif width = "400"/>
 <img src=images/Select-Connectio-Points-2-3.0..png width = "350"/>
 
-Covalent bonds can be **eddited** by choosing _Edit Connection Points..._ from the right-click menu. _Edit Connection Points..._ allows the user to change the attachment points and reestablish the bond.
+Covalent bonds can be **eddited** by choosing _Edit Attachment Points..._ from the right-click menu. _Edit Attachment Points..._ allows the user to change the attachment points and reestablish the bond.
 
 <img src=images/Edit-CP-3.6..png width = "250"/>
 <img src=images/Edit-CP-2-3.0..png width = "350"/>
@@ -746,7 +746,7 @@ Hydrogen bonds can only be **created** between monomer centers as they do not re
 
 <img src=images/H-Bond-3.0..gif width = "150"/>
 
-Bond preview and _Edit Connection Points..._ dialog are not available for hydrogen bonds.
+Bond preview and _Edit Attachment Points..._ dialog are not available for hydrogen bonds.
 
 ### Monomer modification and replacement
 

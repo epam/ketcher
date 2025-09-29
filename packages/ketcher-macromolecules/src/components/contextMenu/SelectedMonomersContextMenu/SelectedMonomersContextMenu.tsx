@@ -100,8 +100,8 @@ export const SelectedMonomersContextMenu = ({
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
-      name: 'edit_connection_points',
-      title: 'Edit Connection Points...',
+      name: 'edit_attachment_points',
+      title: 'Edit Attachment Points...',
       disabled: ({
         props,
       }: {
@@ -138,7 +138,7 @@ export const SelectedMonomersContextMenu = ({
       case menuItemId === 'paste':
         editor?.events.pasteFromClipboard.dispatch();
         break;
-      case menuItemId === 'edit_connection_points': {
+      case menuItemId === 'edit_attachment_points': {
         const polymerBond = props?.polymerBondRenderer?.polymerBond;
         if (!polymerBond) return;
 

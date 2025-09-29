@@ -277,7 +277,7 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
+const monomersWithNoFreeAttachmentPoint: { [monomerName: string]: IMonomer } = {
   Peptide: {
     monomerType: 'peptide',
     fileName:
@@ -352,8 +352,8 @@ const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
   },
 };
 
-Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
-  Object.values(monomersWithNoFreeConnectionPoint).forEach((rightMonomer) => {
+Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
+  Object.values(monomersWithNoFreeAttachmentPoint).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: Verify that hydrogen bonds don't require attachment points and can be established multiple times for one monomer
@@ -429,18 +429,18 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function chooseConnectionPointsInConnectionDialog(
+async function chooseAttachmentPointsInConnectionDialog(
   page: Page,
-  leftMonomerConnectionPointName: string,
-  rightMonomerConnectionPointName: string,
+  leftMonomerAttachmentPointName: string,
+  rightMonomerAttachmentPointName: string,
 ) {
   const connectionPointDialog = page.getByRole('dialog');
   if (await connectionPointDialog.isVisible()) {
-    await page.getByTitle(leftMonomerConnectionPointName).first().click();
+    await page.getByTitle(leftMonomerAttachmentPointName).first().click();
 
-    (await page.getByTitle(rightMonomerConnectionPointName).count()) > 1
-      ? await page.getByTitle(rightMonomerConnectionPointName).nth(1).click()
-      : await page.getByTitle(rightMonomerConnectionPointName).first().click();
+    (await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1
+      ? await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click()
+      : await page.getByTitle(rightMonomerAttachmentPointName).first().click();
 
     await AttachmentPointsDialog(page).connect();
   }
@@ -480,7 +480,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Single,
       );
 
-      await chooseConnectionPointsInConnectionDialog(
+      await chooseAttachmentPointsInConnectionDialog(
         page,
         AttachmentPoint.R1,
         AttachmentPoint.R1,

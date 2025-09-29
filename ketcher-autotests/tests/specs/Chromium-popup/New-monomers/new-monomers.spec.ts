@@ -1789,7 +1789,7 @@ test(`45.1 Check that newly added two phosphates can be connected to any monomer
     }
     const bond = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
-      toConnectionPoint: AttachmentPoint.R1,
+      toAttachmentPoint: AttachmentPoint.R1,
       toMonomerId: (
         (await monomerConnectTo.getAttribute('data-monomerid')) || ''
       ).toString(),

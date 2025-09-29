@@ -294,7 +294,7 @@ test.describe('Connection rules for chems: ', () => {
   async function prepareCanvasOneFreeAPLeft(
     page: Page,
     CHEM: IMonomer,
-    freeCHEMConnectionPoint: string,
+    freeCHEMAttachmentPoint: string,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
       page,
@@ -309,17 +309,17 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(550, 370, page);
     await moveMouseAway(page);
 
-    for await (const CHEMConnectionPoint of Object.values(
+    for await (const CHEMAttachmentPoint of Object.values(
       CHEM.attachmentPoints,
     )) {
-      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMConnectionPoint[1]}`];
-      if (CHEMConnectionPoint !== freeCHEMConnectionPoint) {
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
+      if (CHEMAttachmentPoint !== freeCHEMAttachmentPoint) {
         await bondTwoMonomersByPointToPoint(
           page,
           CHEM,
           tmpCHEM,
-          CHEMConnectionPoint,
-          CHEMConnectionPoint,
+          CHEMAttachmentPoint,
+          CHEMAttachmentPoint,
         );
       }
     }
@@ -360,16 +360,16 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(550, 370, page);
     await moveMouseAway(page);
 
-    for await (const CHEMConnectionPoint of Object.values(
+    for await (const CHEMAttachmentPoint of Object.values(
       CHEM.attachmentPoints,
     )) {
-      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMConnectionPoint[1]}`];
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
       await bondTwoMonomersByPointToPoint(
         page,
         CHEM,
         tmpCHEM,
-        CHEMConnectionPoint,
-        CHEMConnectionPoint,
+        CHEMAttachmentPoint,
+        CHEMAttachmentPoint,
       );
     }
 
@@ -433,8 +433,8 @@ test.describe('Connection rules for chems: ', () => {
     page: Page,
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: AttachmentPoint,
-    rightMonomersConnectionPoint?: AttachmentPoint,
+    leftMonomersAttachmentPoint?: AttachmentPoint,
+    rightMonomersAttachmentPoint?: AttachmentPoint,
   ) {
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
@@ -448,24 +448,24 @@ test.describe('Connection rules for chems: ', () => {
       page,
       leftMonomerLocator,
       rightMonomerLocator,
-      leftMonomersConnectionPoint,
-      rightMonomersConnectionPoint,
+      leftMonomersAttachmentPoint,
+      rightMonomersAttachmentPoint,
     );
   }
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
       Object.values(leftCHEM.attachmentPoints).forEach(
-        (leftCHEMConnectionPoint) => {
+        (leftCHEMAttachmentPoint) => {
           Object.values(rightCHEM.attachmentPoints).forEach(
-            (rightCHEMConnectionPoint) => {
-              if (leftCHEMConnectionPoint === rightCHEMConnectionPoint) {
+            (rightCHEMAttachmentPoint) => {
+              if (leftCHEMAttachmentPoint === rightCHEMAttachmentPoint) {
                 /*
                  *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 1
                  *  Description: If a user tries to connect 2 monomers that have only identical free attachment
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
-                test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
+                test(`Case 1: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
                   test.setTimeout(30000);
 
                   const {
@@ -477,8 +477,8 @@ test.describe('Connection rules for chems: ', () => {
                     page,
                     leftMonomerLocator,
                     rightMonomerLocator,
-                    leftCHEMConnectionPoint,
-                    rightCHEMConnectionPoint,
+                    leftCHEMAttachmentPoint,
+                    rightCHEMAttachmentPoint,
                   );
 
                   await expect(bondLine).toBeVisible();
@@ -499,9 +499,9 @@ test.describe('Connection rules for chems: ', () => {
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
     Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
-      (leftCHEMConnectionPoint) => {
+      (leftCHEMAttachmentPoint) => {
         Object.values(rightCHEM.attachmentPoints).forEach(
-          (rightCHEMConnectionPoint) => {
+          (rightCHEMAttachmentPoint) => {
             /*
              *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 2
              *  Description: If there is only one free attachment point (R1…Rn), a bond is created by default
@@ -509,11 +509,11 @@ test.describe('Connection rules for chems: ', () => {
              *   For each %CHEMSType% from chemMonomers:
              *     For each %MonomerConnection% (avaliable connections of monomer)
              *       left it unoccupied and occupy the rest
-             *       For each %Test-6-Ch-ConnectionPoint% of Test-6-P from (R1, R2, R3, R4, R5)
-             *         Establish connection between Test-6-Ch(%ConnectionPoint%) and %CHEMSType%(%MonomerConnection%)
+             *       For each %Test-6-Ch-AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+             *         Establish connection between Test-6-Ch(%AttachmentPoint%) and %CHEMSType%(%MonomerConnection%)
              *         Validate canvas
              */
-            test(`Case 2: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+            test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
               test.setTimeout(35000);
 
               const {
@@ -522,15 +522,15 @@ test.describe('Connection rules for chems: ', () => {
               } = await prepareCanvasOneFreeAPLeft(
                 page,
                 rightCHEM,
-                rightCHEMConnectionPoint,
+                rightCHEMAttachmentPoint,
               );
 
               const bondLine = await bondTwoMonomersPointToPoint(
                 page,
                 leftMonomerLocator,
                 rightMonomerLocator,
-                leftCHEMConnectionPoint,
-                rightCHEMConnectionPoint,
+                leftCHEMAttachmentPoint,
+                rightCHEMAttachmentPoint,
               );
               await expect(bondLine).toBeVisible();
             });
@@ -542,18 +542,18 @@ test.describe('Connection rules for chems: ', () => {
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
     Object.values(rightCHEM.attachmentPoints).forEach(
-      (rightCHEMConnectionPoint) => {
+      (rightCHEMAttachmentPoint) => {
         /*
          *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 3
          *  Description: User drags a bond from the center of the first monomer to the specific AP of the second monomer.
          *   For each %CHEMSType% from chemMonomers:
-         *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
-         *       Establish connection between Test-6-Ch(center) and %CHENMSType%(%Test-6-Ch-ConnectionPoint%)
+         *     For each %Test-6-Ch-AttachmentPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
+         *       Establish connection between Test-6-Ch(center) and %CHENMSType%(%Test-6-Ch-AttachmentPoint%)
          *       Validate canvas (Dialog should appear)
          *       Select R1 of Test-6-Ch and establish connection
          *       Validate canvas (Connection should appear)
          */
-        test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+        test(`Case 3: Connect Center to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(30000);
 
           const {
@@ -570,7 +570,7 @@ test.describe('Connection rules for chems: ', () => {
             leftMonomerLocator,
             rightMonomerLocator,
             undefined,
-            rightCHEMConnectionPoint,
+            rightCHEMAttachmentPoint,
             undefined,
             true,
           );
@@ -582,18 +582,18 @@ test.describe('Connection rules for chems: ', () => {
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
     Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
-      (leftCHEMConnectionPoint) => {
+      (leftCHEMAttachmentPoint) => {
         /*
          *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4
          *  Description: If selected attachment point is occupied, no bond is created, and warning message appears.
          *   For each %CHEMSType% from chemMonomers:
          *     For each %MonomerConnection% (avaliable connections of monomer)
          *       occupy all connections
-         *       For each %ConnectionPoint% of Test-6-P from (R1, R2, R3, R4, R5)
-         *         Establish connection between Test-6-P(%ConnectionPoint%) and %CHEMSType%(center)
+         *       For each %AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+         *         Establish connection between Test-6-P(%AttachmentPoint%) and %CHEMSType%(center)
          *         Validate canvas (No connection established)
          */
-        test(`Case 4: Connect ${leftCHEMConnectionPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+        test(`Case 4: Connect ${leftCHEMAttachmentPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(35000);
 
           const {
@@ -605,7 +605,7 @@ test.describe('Connection rules for chems: ', () => {
             page,
             leftMonomerLocator,
             rightMonomerLocator,
-            leftCHEMConnectionPoint,
+            leftCHEMAttachmentPoint,
           );
           await expect(bondLine).toBeHidden();
         });
@@ -616,22 +616,22 @@ test.describe('Connection rules for chems: ', () => {
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
       Object.values(leftCHEM.attachmentPoints).forEach(
-        (leftCHEMConnectionPoint) => {
+        (leftCHEMAttachmentPoint) => {
           Object.values(rightCHEM.attachmentPoints).forEach(
-            (rightCHEMConnectionPoint) => {
+            (rightCHEMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 1
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM )
                * For each %chemType% from the library (chemMonomers)
                *   For each %chemType2% from the library (chemMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %chemType2%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %chemType2%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %chemType2% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %chemType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %chemType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case5: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
+              test(`Test case5: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -643,8 +643,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightCHEMConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightCHEMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -826,22 +826,22 @@ test.describe('Connection rules for chems: ', () => {
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       Object.values(leftCHEM.attachmentPoints).forEach(
-        (leftCHEMConnectionPoint) => {
+        (leftCHEMAttachmentPoint) => {
           Object.values(rightPeptide.attachmentPoints).forEach(
-            (rightPeptideConnectionPoint) => {
+            (rightPeptideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 2
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Peptides )
                * For each %chemType% from the library (chemMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %peptideType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %peptideType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %peptideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case6: Connect ${leftCHEMConnectionPoint} to ${rightPeptideConnectionPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+              test(`Test case6: Connect ${leftCHEMAttachmentPoint} to ${rightPeptideAttachmentPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -853,8 +853,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightPeptideConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightPeptideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1079,26 +1079,26 @@ test.describe('Connection rules for chems: ', () => {
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
       Object.values(leftCHEM.attachmentPoints).forEach(
-        (leftCHEMConnectionPoint) => {
+        (leftCHEMAttachmentPoint) => {
           Object.values(rightOM.attachmentPoints).forEach(
-            (rightOMConnectionPoint) => {
+            (rightOMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 1
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Ordinary Molecule )
                * For each %chemType% from the library (chemMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %OMType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
               ordinaryMoleculeName = rightOM.fileName.substring(
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case9: Connect ${leftCHEMConnectionPoint} to ${rightOMConnectionPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
+              test(`Test case9: Connect ${leftCHEMAttachmentPoint} to ${rightOMAttachmentPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1110,8 +1110,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightOMConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightOMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();

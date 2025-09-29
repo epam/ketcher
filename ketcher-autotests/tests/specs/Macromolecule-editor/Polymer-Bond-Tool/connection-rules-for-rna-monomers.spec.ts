@@ -575,21 +575,21 @@ test.describe('Connection rules for RNAs: ', () => {
     );
 
     if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
+      const firstAttachmentPointKeyForLeftMonomer = Object.keys(
         leftMonomer.attachmentPoints,
       )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.attachmentPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
+      const leftMonomerAttachmentPoint =
+        leftMonomer.attachmentPoints[firstAttachmentPointKeyForLeftMonomer];
+      await page.getByTitle(leftMonomerAttachmentPoint).first().click();
 
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
+      const firstAttachmentPointKeyForRightMonomer = Object.keys(
         rightMonomer.attachmentPoints,
       )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.attachmentPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
+      const rightMonomerAttachmentPoint =
+        rightMonomer.attachmentPoints[firstAttachmentPointKeyForRightMonomer];
+      (await page.getByTitle(rightMonomerAttachmentPoint).count()) > 1
+        ? await page.getByTitle(rightMonomerAttachmentPoint).nth(1).click()
+        : await page.getByTitle(rightMonomerAttachmentPoint).first().click();
 
       await AttachmentPointsDialog(page).connect();
     }

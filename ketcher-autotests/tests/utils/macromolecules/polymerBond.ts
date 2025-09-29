@@ -159,21 +159,21 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
   const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
   const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
 
-  const firstMonomerAvailableConnectionPoints =
+  const firstMonomerAvailableAttachmentPoints =
     await getAvailableAttachmentPoints(firstMonomer);
-  const secondMonomerAvailableConnectionPoints =
+  const secondMonomerAvailableAttachmentPoints =
     await getAvailableAttachmentPoints(secondMonomer);
 
   if (!firstMonomerAttachmentPoint && !secondMonomerAttachmentPoint) {
     if (
-      firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R2) &&
-      secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
     ) {
       firstMonomerAttachmentPoint = AttachmentPoint.R2;
       secondMonomerAttachmentPoint = AttachmentPoint.R1;
     } else if (
-      firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1) &&
-      secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R2)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
     ) {
       firstMonomerAttachmentPoint = AttachmentPoint.R1;
       secondMonomerAttachmentPoint = AttachmentPoint.R2;
@@ -182,8 +182,8 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     if (
       firstMonomerType === MonomerType.Sugar &&
       secondMonomerType === MonomerType.Base &&
-      firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R3) &&
-      secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
     ) {
       firstMonomerAttachmentPoint = AttachmentPoint.R3;
       secondMonomerAttachmentPoint = AttachmentPoint.R1;
@@ -192,8 +192,8 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     if (
       firstMonomerType === MonomerType.Base &&
       secondMonomerType === MonomerType.Sugar &&
-      firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1) &&
-      secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R3)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
     ) {
       firstMonomerAttachmentPoint = AttachmentPoint.R1;
       secondMonomerAttachmentPoint = AttachmentPoint.R3;
@@ -208,7 +208,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
   if (
     firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
     !secondMonomerAttachmentPoint &&
-    secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R2)
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
   ) {
     secondMonomerAttachmentPoint = AttachmentPoint.R2;
   }
@@ -216,14 +216,14 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
   if (
     firstMonomerAttachmentPoint === AttachmentPoint.R2 &&
     !secondMonomerAttachmentPoint &&
-    secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1)
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
   ) {
     secondMonomerAttachmentPoint = AttachmentPoint.R1;
   }
 
   if (
     !firstMonomerAttachmentPoint &&
-    firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R2) &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
     secondMonomerAttachmentPoint === AttachmentPoint.R1
   ) {
     firstMonomerAttachmentPoint = AttachmentPoint.R2;
@@ -231,7 +231,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
 
   if (
     !firstMonomerAttachmentPoint &&
-    firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1) &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
     secondMonomerAttachmentPoint === AttachmentPoint.R2
   ) {
     firstMonomerAttachmentPoint = AttachmentPoint.R1;
@@ -242,7 +242,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     secondMonomerType === MonomerType.Sugar &&
     firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
     !secondMonomerAttachmentPoint &&
-    secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R3)
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
   ) {
     secondMonomerAttachmentPoint = AttachmentPoint.R3;
   }
@@ -251,7 +251,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     firstMonomerType === MonomerType.Base &&
     secondMonomerType === MonomerType.Sugar &&
     !firstMonomerAttachmentPoint &&
-    firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1) &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
     secondMonomerAttachmentPoint === AttachmentPoint.R3
   ) {
     firstMonomerAttachmentPoint = AttachmentPoint.R1;
@@ -262,7 +262,7 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     secondMonomerType === MonomerType.Base &&
     firstMonomerAttachmentPoint === AttachmentPoint.R3 &&
     !secondMonomerAttachmentPoint &&
-    secondMonomerAvailableConnectionPoints.includes(AttachmentPoint.R1)
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
   ) {
     secondMonomerAttachmentPoint = AttachmentPoint.R1;
   }
@@ -271,17 +271,17 @@ async function chooseFreeAttachmentPointsInDialogIfAppeared(
     firstMonomerType === MonomerType.Sugar &&
     secondMonomerType === MonomerType.Base &&
     !firstMonomerAttachmentPoint &&
-    firstMonomerAvailableConnectionPoints.includes(AttachmentPoint.R3) &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
     secondMonomerAttachmentPoint === AttachmentPoint.R1
   ) {
     firstMonomerAttachmentPoint = AttachmentPoint.R3;
   }
 
-  if (firstMonomerAvailableConnectionPoints.length === 1) {
-    firstMonomerAttachmentPoint = firstMonomerAvailableConnectionPoints[0];
+  if (firstMonomerAvailableAttachmentPoints.length === 1) {
+    firstMonomerAttachmentPoint = firstMonomerAvailableAttachmentPoints[0];
   }
-  if (secondMonomerAvailableConnectionPoints.length === 1) {
-    secondMonomerAttachmentPoint = secondMonomerAvailableConnectionPoints[0];
+  if (secondMonomerAvailableAttachmentPoints.length === 1) {
+    secondMonomerAttachmentPoint = secondMonomerAvailableAttachmentPoints[0];
   }
 
   return {
@@ -298,7 +298,7 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomerAttachmentPoint?: AttachmentPoint,
   bondType?: MacroBondType,
   // if true - first free from left connection point will be selected in the dialog for both monomers
-  chooseConnectionPointsInDialogIfAppeared = false,
+  chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
     await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -360,7 +360,7 @@ export async function bondTwoMonomersPointToPoint(
 
   await moveMouseAway(page);
 
-  if (chooseConnectionPointsInDialogIfAppeared) {
+  if (chooseAttachmentPointsInDialogIfAppeared) {
     const { leftMonomerAttachmentPoint, rightMonomerAttachmentPoint } =
       await chooseFreeAttachmentPointsInDialogIfAppeared(
         page,
@@ -402,16 +402,16 @@ export async function bondMonomerPointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,
-  monomerConnectionPoint?: string,
+  monomerAttachmentPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await monomer.hover({ force: true });
 
-  if (monomerConnectionPoint) {
+  if (monomerAttachmentPoint) {
     const connectionPoint = page
       .locator('g')
-      .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
+      .filter({ hasText: new RegExp(`^${monomerAttachmentPoint}$`) })
       .locator('circle');
 
     const connectionPointBoundingBox = await connectionPoint.boundingBox();

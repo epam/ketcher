@@ -279,22 +279,22 @@ test.describe('Connection rules for Base monomers: ', () => {
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       Object.values(leftBase.attachmentPoints).forEach(
-        (leftBaseConnectionPoint) => {
+        (leftBaseAttachmentPoint) => {
           Object.values(rightBase.attachmentPoints).forEach(
-            (rightBaseConnectionPoint) => {
+            (rightBaseAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/3805
                *  Description: These bunch of tests validates that system able to establish connections for Base monomers.
                * For each %BaseType% from the library (baseMonomers)
                *   For each %BaseType2% from the library (baseMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %BaseType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %BaseType2%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %BaseType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %BaseType2%) do:
                *  1. Clear canvas
                *  2. Load %BaseType% and %BaseType2% and put them on the canvas
-               *  3. Establish connection between %BaseType%(%ConnectionPoint%) and %BaseType%(%ConnectionPoint2%)
+               *  3. Establish connection between %BaseType%(%AttachmentPoint%) and %BaseType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
+              test(`Connect ${leftBaseAttachmentPoint} to ${rightBaseAttachmentPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -306,8 +306,8 @@ test.describe('Connection rules for Base monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftBaseConnectionPoint,
-                  rightBaseConnectionPoint,
+                  leftBaseAttachmentPoint,
+                  rightBaseAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -489,22 +489,22 @@ test.describe('Connection rules for Base monomers: ', () => {
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       Object.values(leftBase.attachmentPoints).forEach(
-        (leftBaseConnectionPoint) => {
+        (leftBaseAttachmentPoint) => {
           Object.values(rightPeptide.attachmentPoints).forEach(
-            (rightPeptideConnectionPoint) => {
+            (rightPeptideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 3 (Base - Peptide)
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Base - Peptides )
                * For each %baseType% from the library (baseMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %baseType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %peptideType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %baseType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
                *  1. Clear canvas
                *  2. Load %baseType% and %peptideType% and put them on the canvas
-               *  3. Establish connection between %baseType%(%ConnectionPoint%) and %peptideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %baseType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case3: Cnnct ${leftBaseConnectionPoint} to ${rightPeptideConnectionPoint} of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+              test(`Case3: Cnnct ${leftBaseAttachmentPoint} to ${rightPeptideAttachmentPoint} of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -516,8 +516,8 @@ test.describe('Connection rules for Base monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftBaseConnectionPoint,
-                  rightPeptideConnectionPoint,
+                  leftBaseAttachmentPoint,
+                  rightPeptideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -680,22 +680,22 @@ test.describe('Connection rules for Base monomers: ', () => {
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
       Object.values(leftBase.attachmentPoints).forEach(
-        (leftBaseConnectionPoint) => {
+        (leftBaseAttachmentPoint) => {
           Object.values(rightCHEM.attachmentPoints).forEach(
-            (rightCHEMConnectionPoint) => {
+            (rightCHEMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 4 (Base - CHEM)
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Base - CHEM )
                * For each %baseType% from the library (baseMonomers)
                *   For each %CHEMType% from the library (CHEMMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %baseType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %CHEMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %baseType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %CHEMType%) do:
                *  1. Clear canvas
                *  2. Load %baseType% and %CHEMType% and put them on the canvas
-               *  3. Establish connection between %baseType%(%ConnectionPoint%) and %CHEMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %baseType%(%AttachmentPoint%) and %CHEMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case4: Cnnct ${leftBaseConnectionPoint} to ${rightCHEMConnectionPoint} of Base(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+              test(`Case4: Cnnct ${leftBaseAttachmentPoint} to ${rightCHEMAttachmentPoint} of Base(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -707,8 +707,8 @@ test.describe('Connection rules for Base monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftBaseConnectionPoint,
-                  rightCHEMConnectionPoint,
+                  leftBaseAttachmentPoint,
+                  rightCHEMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -943,26 +943,26 @@ test.describe('Connection rules for Base monomers: ', () => {
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
       Object.values(leftBase.attachmentPoints).forEach(
-        (leftBaseConnectionPoint) => {
+        (leftBaseAttachmentPoint) => {
           Object.values(rightOM.attachmentPoints).forEach(
-            (rightOMConnectionPoint) => {
+            (rightOMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 4
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Base - Ordinary Molecule )
                * For each %chemType% from the library (baseMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %OMType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
               ordinaryMoleculeName = rightOM.fileName.substring(
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case8: Connect ${leftBaseConnectionPoint} to ${rightOMConnectionPoint} of Base(${leftBase.alias}) and OM(${ordinaryMoleculeName})`, async () => {
+              test(`Test case8: Connect ${leftBaseAttachmentPoint} to ${rightOMAttachmentPoint} of Base(${leftBase.alias}) and OM(${ordinaryMoleculeName})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -974,8 +974,8 @@ test.describe('Connection rules for Base monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftBaseConnectionPoint,
-                  rightOMConnectionPoint,
+                  leftBaseAttachmentPoint,
+                  rightOMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();

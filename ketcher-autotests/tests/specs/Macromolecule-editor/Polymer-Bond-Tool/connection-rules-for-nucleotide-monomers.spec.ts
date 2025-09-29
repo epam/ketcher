@@ -274,22 +274,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(nucleotideMonomers).forEach((rightNucleotide) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightNucleotide.attachmentPoints).forEach(
-            (rightNucleotideConnectionPoint) => {
+            (rightNucleotideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 2
                *  Description: User can connect any nucleotide to any nucleotide using point-to-point way
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %nucleotideType2% from the library (nucleotideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %nucleotideType2%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %nucleotideType2%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %nucleotideType2% and put them on the canvas
-               *  3. Establish connection between %nucleotideType%(%ConnectionPoint%) and %nucleotideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %nucleotideType%(%AttachmentPoint%) and %nucleotideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case2: Cnnct ${leftNucleotideConnectionPoint} to ${rightNucleotideConnectionPoint} of ${leftNucleotide.alias} and ${rightNucleotide.alias}`, async () => {
+              test(`Test case2: Cnnct ${leftNucleotideAttachmentPoint} to ${rightNucleotideAttachmentPoint} of ${leftNucleotide.alias} and ${rightNucleotide.alias}`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -305,8 +305,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightNucleotideConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightNucleotideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -488,22 +488,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightPeptide.attachmentPoints).forEach(
-            (rightPeptideConnectionPoint) => {
+            (rightPeptideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 3 (Nucleotide - Peptide)
                *  Description: Validate that unsplit nucleotide could be connected with peptide (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %peptideType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %peptideType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %peptideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case3: Cnnct ${leftNucleotideConnectionPoint} to ${rightPeptideConnectionPoint} of Nuc(${leftNucleotide.alias}) and Pept(${rightPeptide.alias})`, async () => {
+              test(`Case3: Cnnct ${leftNucleotideAttachmentPoint} to ${rightPeptideAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Pept(${rightPeptide.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -515,8 +515,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightPeptideConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightPeptideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -679,22 +679,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightCHEM.attachmentPoints).forEach(
-            (rightCHEMConnectionPoint) => {
+            (rightCHEMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 4 (Nucleotide - CHEM)
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - CHEMs )
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %CHEMType% from the library (CHEMMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %CHEMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %CHEMType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %CHEMType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %CHEMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %CHEMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case4: Cnnct ${leftNucleotideConnectionPoint} to ${rightCHEMConnectionPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+              test(`Case4: Cnnct ${leftNucleotideAttachmentPoint} to ${rightCHEMAttachmentPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -706,8 +706,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightCHEMConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightCHEMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -942,26 +942,26 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightOM.attachmentPoints).forEach(
-            (rightOMConnectionPoint) => {
+            (rightOMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 7
                *  Description: Validate that unsplit nucleotide could be connected with micromolecule (with every attachment point of unsplit nucleotide)
                * For each %chemType% from the library (nucleotideMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %OMType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
               ordnryMlcleName = rightOM.fileName.substring(
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case7: Cnct ${leftNucleotideConnectionPoint} to ${rightOMConnectionPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
+              test(`Test case7: Cnct ${leftNucleotideAttachmentPoint} to ${rightOMAttachmentPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -973,8 +973,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightOMConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightOMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1172,22 +1172,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(phosphateMonomers).forEach((rightPhosphate) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightPhosphate.attachmentPoints).forEach(
-            (rightPhosphateConnectionPoint) => {
+            (rightPhosphateAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 9 (Nucleotide - Phosphate)
                *  Description: Validate that unsplit nucleotide could be connected with phosphate (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %phosphateType% from the library (phosphateMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %phosphateType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %phosphateType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %phosphateType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %phosphateType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case9: Cnct ${leftNucleotideConnectionPoint} to ${rightPhosphateConnectionPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
+              test(`Case9: Cnct ${leftNucleotideAttachmentPoint} to ${rightPhosphateAttachmentPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1199,8 +1199,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightPhosphateConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightPhosphateAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1415,22 +1415,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightBase.attachmentPoints).forEach(
-            (rightBaseConnectionPoint) => {
+            (rightBaseAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 11 (Nucleotide - Base)
                *  Description: Validate that unsplit nucleotide could be connected with base (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %baseType% from the library (baseMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %baseType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %baseType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %baseType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %baseType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %baseType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case11: Cnnct ${leftNucleotideConnectionPoint} to ${rightBaseConnectionPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
+              test(`Case11: Cnnct ${leftNucleotideAttachmentPoint} to ${rightBaseAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1442,8 +1442,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightBaseConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightBaseAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1641,22 +1641,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(sugarMonomers).forEach((rightSugar) => {
       Object.values(leftNucleotide.attachmentPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
+        (leftNucleotideAttachmentPoint) => {
           Object.values(rightSugar.attachmentPoints).forEach(
-            (rightSugarConnectionPoint) => {
+            (rightSugarAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 13 (Nucleotide - Sugar)
                *  Description: Validate that unsplit nucleotide could be connected with sugar (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %sugarType% from the library (sugarMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %sugarType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %sugarType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %sugarType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %sugarType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %sugarType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case13: Cnnct ${leftNucleotideConnectionPoint} to ${rightSugarConnectionPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
+              test(`Case13: Cnnct ${leftNucleotideAttachmentPoint} to ${rightSugarAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1668,8 +1668,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightSugarConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightSugarAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();

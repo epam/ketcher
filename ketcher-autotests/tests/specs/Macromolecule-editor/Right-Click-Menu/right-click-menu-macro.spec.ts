@@ -530,7 +530,7 @@ test(`10. Verify that context menu works correctly on canvas after panning`, asy
     MacroFileType.HELM,
     'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
   );
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await selectAllStructuresOnCanvas(page);
 
   await page.mouse.move(100, 100);

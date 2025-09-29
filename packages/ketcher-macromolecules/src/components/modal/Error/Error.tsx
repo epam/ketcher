@@ -24,7 +24,7 @@ export const ErrorModal = () => {
       testId="info-modal-window"
     >
       <Modal.Content>
-        <ErrorTextWrapper data-testid="info-modal-body">
+        <ErrorTextWrapper data-testid="error-message-body">
           {errorMessage}
         </ErrorTextWrapper>
       </Modal.Content>

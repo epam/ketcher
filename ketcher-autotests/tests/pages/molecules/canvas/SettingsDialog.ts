@@ -20,6 +20,7 @@ import {
   switcherOptions,
   ThreeDViewerSetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { TopRightToolbar } from '../TopRightToolbar';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
@@ -413,9 +414,8 @@ export async function setSettingsOption(
   await SettingsDialog(page).apply();
 
   // to close "To fully apply these changes, you need to apply the layout." dialog
-  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
-  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
-    await page.getByRole('button', { name: 'OK' }).click();
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
   }
 }
 
@@ -460,9 +460,8 @@ export async function setSettingsOptions(
   await SettingsDialog(page).apply();
 
   // to close "To fully apply these changes, you need to apply the layout." dialog
-  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
-  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
-    await page.getByRole('button', { name: 'OK' }).click();
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
   }
 }
 
@@ -494,9 +493,8 @@ export async function setACSSettings(page: Page) {
   await SettingsDialog(page).setACSSettings();
   await SettingsDialog(page).apply();
 
-  const youNeedToApplyTheLayoutDialog = page.getByTestId('info-modal-dialog');
-  if (await youNeedToApplyTheLayoutDialog.isVisible()) {
-    await page.getByRole('button', { name: 'OK' }).click();
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
   }
 }
 

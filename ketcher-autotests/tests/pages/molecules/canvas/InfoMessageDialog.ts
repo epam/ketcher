@@ -9,7 +9,9 @@ type InfoMessageDialogLocators = {
 export const InfoMessageDialog = (page: Page) => {
   const locators: InfoMessageDialogLocators = {
     infoModalWindow: page.getByTestId('info-modal-window'),
-    infoModalBody: page.getByTestId('info-modal-body'),
+    infoModalBody: page
+      .getByTestId('info-modal-window')
+      .getByTestId('info-modal-body'),
     infoModalOk: page.getByTestId('info-modal-close'),
   };
 

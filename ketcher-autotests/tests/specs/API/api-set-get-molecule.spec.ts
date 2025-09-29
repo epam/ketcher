@@ -247,11 +247,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
     // Called to make sure the page has been fully loaded
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
     await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 

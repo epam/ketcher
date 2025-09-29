@@ -36,6 +36,6 @@ export async function closeOpenStructure(page: Page) {
   const openStructure = page.getByText('Open Structure', {
     exact: true,
   });
-  await OpenStructureDialog(page).close();
+  await OpenStructureDialog(page).closeWindow();
   await openStructure.waitFor({ state: 'hidden' });
 }

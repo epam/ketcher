@@ -42,7 +42,7 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar bonds verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await CommonLeftToolbar(page).selectHandTool();
+    await CommonLeftToolbar(page).handTool();
     await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
     await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
     const selectionToolDropdownWidth = 700;

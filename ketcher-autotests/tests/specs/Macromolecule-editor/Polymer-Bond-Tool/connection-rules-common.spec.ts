@@ -23,7 +23,7 @@ import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -158,7 +158,7 @@ test.describe('Common connection rules: ', () => {
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
 
     await monomerLocator.click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
   }
 
   /*
@@ -434,8 +434,8 @@ test.describe('Common connection rules: ', () => {
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
-  //     MonomerAttachmentPoint.R1,
-  //     MonomerAttachmentPoint.R1,
+  //     AttachmentPoint.R1,
+  //     AttachmentPoint.R1,
   //   );
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
@@ -519,11 +519,11 @@ test.describe('Common connection rules: ', () => {
     );
 
     const connectionPoints = [
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R3,
-      MonomerAttachmentPoint.R4,
-      MonomerAttachmentPoint.R5,
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
+      AttachmentPoint.R5,
       'R6',
     ];
 

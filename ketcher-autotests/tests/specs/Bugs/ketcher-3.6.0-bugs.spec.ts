@@ -435,7 +435,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       goToPeptides: false,
     });
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -658,7 +658,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected symbol ']'.'",
       );
       await ErrorMessageDialog(page).close();
-      await OpenStructureDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
     }
   });
 

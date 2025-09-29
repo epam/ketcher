@@ -121,6 +121,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     <div
       ref={dialogRef}
       role="dialog"
+      data-testid={'info-modal-window'}
       onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
@@ -141,7 +142,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+      <div
+        className={clsx(styles.body, needMargin && styles.withMargin)}
+        data-testid={'info-modal-body'}
+      >
         {children}
       </div>
 

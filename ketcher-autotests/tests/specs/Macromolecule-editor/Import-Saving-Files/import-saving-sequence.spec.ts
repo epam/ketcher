@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectOptionInDropdown,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -117,22 +116,27 @@ test.describe('Import-Saving .seq Files', () => {
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'Sequence/sequence-empty.seq');
     await expect(addToCanvasButton).toBeDisabled();
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Check that system does not let uploading corrupted .seq file', async ({
-    page,
-  }) => {
-    const filename = 'Sequence/sequence-corrupted.seq';
-
-    await CommonTopLeftToolbar(page).openFile();
-    await openFile(page, filename);
-    await selectOptionInDropdown(filename, page);
-    await PasteFromClipboardDialog(page).addToCanvasButton.click();
-
-    const errorDialog = page.getByLabel('Unsupported symbols').first();
-    await errorDialog.waitFor({ state: 'visible' });
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Check that system does not let uploading corrupted .seq file',
+    async ({ page }) => {
+      // Test fails because of https://github.com/epam/Indigo/issues/3210
+      await openFileAndAddToCanvasMacro(
+        page,
+        'Sequence/sequence-corrupted.seq',
+        [MacroFileType.Sequence, SequenceMonomerType.RNA],
+        true,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence:",
+      );
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
+    },
+  );
 
   test('Validate correct displaying of snake viewed RNA chain loaded from .seq file format', async ({
     page,
@@ -735,6 +739,8 @@ const incorrectSequences: ISequenceString[] = [
     ],
     expectedErrorMessage:
       "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3210',
   },
   {
     testCaseDescription:
@@ -810,29 +816,34 @@ const incorrectSequences: ISequenceString[] = [
 ];
 
 for (const incorrectSequence of incorrectSequences) {
-  test(`${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`, async ({
-    page,
-  }) => {
-    /*
-     * Description: Verify import of Sequence files works correct
-     * Case: 1. Load incorrect Sequence file
-     *       2. Validate error message
-     *       3. Close all dialogs
-     */
+  test.fail(
+    `${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`,
+    async ({ page }) => {
+      // Some tests fail because of https://github.com/epam/Indigo/issues/3210
+      /*
+       * Description: Verify import of Sequence files works correct
+       * Case: 1. Load incorrect Sequence file
+       *       2. Validate error message
+       *       3. Close all dialogs
+       */
+      test.skip(
+        incorrectSequence.shouldFail === true,
+        incorrectSequence.issueNumber,
+      );
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        [MacroFileType.Sequence, incorrectSequence.sequenceType],
+        incorrectSequence.sequenceString,
+        true,
+      );
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      [MacroFileType.Sequence, incorrectSequence.sequenceType],
-      incorrectSequence.sequenceString,
-      true,
-    );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
 
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
-
-    await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
-  });
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
+    },
+  );
 }
 
 test(`7. Verify export option includes both single-letter and three-letter sequence codes)`, async ({
@@ -846,13 +857,12 @@ test(`7. Verify export option includes both single-letter and three-letter seque
   await CommonTopLeftToolbar(page).saveFile();
 
   // Click on "File format" dropdown
-  await page.getByRole('combobox').click();
-  const dropdown = page.locator('ul[role="listbox"]');
-  const singleLetter = dropdown.locator('li', {
-    hasText: 'Sequence (1-letter code)',
+  await SaveStructureDialog(page).fileFormatDropdownList.click();
+  const singleLetter = page.getByText('Sequence (1-letter code)', {
+    exact: true,
   });
-  const threeLetter = dropdown.locator('li', {
-    hasText: 'Sequence (3-letter code)',
+  const threeLetter = page.getByText('Sequence (3-letter code)', {
+    exact: true,
   });
 
   await expect(singleLetter).toBeVisible();
@@ -986,7 +996,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     expectedErrorMessage:
       'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
     shouldFail: true,
-    issueNumber: 'Will create once got internet back',
+    issueNumber: 'https://github.com/epam/Indigo/issues/3200',
   },
   {
     testCaseDescription:
@@ -999,11 +1009,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    // todo clean this too
     expectedErrorMessage:
       'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
     shouldFail: true,
-    issueNumber: 'Will create once got internet back',
+    issueNumber: 'https://github.com/epam/Indigo/issues/3200',
   },
   {
     testCaseDescription:

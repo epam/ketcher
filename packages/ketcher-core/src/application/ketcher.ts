@@ -217,6 +217,16 @@ export class Ketcher {
     );
   }
 
+  getAxoLabs(): Promise<string> {
+    return getStructure(
+      this.id,
+      SupportedFormat.axoLabs,
+      this.#formatterFactory,
+      this.editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');

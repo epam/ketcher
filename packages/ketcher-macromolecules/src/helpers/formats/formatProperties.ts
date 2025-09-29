@@ -26,6 +26,7 @@ export type SupportedFormats =
   | 'sequence'
   | 'sequence-3-letter'
   | 'idt'
+  | 'axo-labs'
   | 'helm'
   | 'svg';
 
@@ -73,6 +74,13 @@ const formatProperties: FormatProperties = {
     'IDT',
     ChemicalMimeType.Idt,
     ['.idt'],
+    false,
+    {},
+  ),
+  'axo-labs': new SupportedFormatProperties(
+    'AXO-LABS',
+    ChemicalMimeType.AxoLabs,
+    ['.axolabs'],
     false,
     {},
   ),

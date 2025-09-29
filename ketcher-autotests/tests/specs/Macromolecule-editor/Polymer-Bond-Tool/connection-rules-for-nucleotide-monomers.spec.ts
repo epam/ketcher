@@ -48,7 +48,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: AttachmentPoint };
+    attachmentPoints: { [attachmentPointName: string]: AttachmentPoint };
   }
 
   const nucleotideMonomers: { [monomerName: string]: IMonomer } = {
@@ -56,7 +56,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -64,7 +64,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -72,7 +72,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -80,7 +80,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -89,7 +89,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R3: AttachmentPoint.R3,
       },
@@ -98,7 +98,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
       },
@@ -107,7 +107,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -116,7 +116,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -126,7 +126,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -136,7 +136,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -146,7 +146,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -156,7 +156,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -167,7 +167,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -178,7 +178,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -189,7 +189,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -273,9 +273,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(nucleotideMonomers).forEach((rightNucleotide) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightNucleotide.connectionPoints).forEach(
+          Object.values(rightNucleotide.attachmentPoints).forEach(
             (rightNucleotideConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 2
@@ -323,7 +323,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -331,7 +331,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -339,7 +339,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -347,7 +347,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -356,7 +356,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R3: AttachmentPoint.R3,
       },
@@ -365,7 +365,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
       },
@@ -374,7 +374,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -383,7 +383,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -393,7 +393,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -403,7 +403,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -413,7 +413,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -423,7 +423,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -434,7 +434,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -445,7 +445,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -456,7 +456,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -469,7 +469,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -478,7 +478,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //   },
@@ -487,9 +487,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightPeptide.connectionPoints).forEach(
+          Object.values(rightPeptide.attachmentPoints).forEach(
             (rightPeptideConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 3 (Nucleotide - Peptide)
@@ -533,7 +533,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -541,7 +541,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -549,7 +549,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -557,7 +557,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -566,7 +566,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -575,7 +575,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -584,7 +584,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -593,7 +593,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -603,7 +603,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -613,7 +613,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -623,7 +623,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -633,7 +633,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -644,7 +644,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -655,7 +655,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -666,7 +666,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -678,9 +678,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightCHEM.connectionPoints).forEach(
+          Object.values(rightCHEM.attachmentPoints).forEach(
             (rightCHEMConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 4 (Nucleotide - CHEM)
@@ -794,7 +794,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -802,7 +802,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -810,7 +810,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R3: AttachmentPoint.R3,
       },
     },
@@ -818,7 +818,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -827,7 +827,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R3: AttachmentPoint.R3,
       },
@@ -836,7 +836,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
       },
@@ -845,7 +845,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -854,7 +854,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -864,7 +864,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -874,7 +874,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -884,7 +884,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -894,7 +894,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -905,7 +905,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -916,7 +916,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -927,7 +927,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -941,9 +941,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightOM.connectionPoints).forEach(
+          Object.values(rightOM.attachmentPoints).forEach(
             (rightOMConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 7
@@ -1026,7 +1026,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -1034,7 +1034,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -1042,7 +1042,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -1050,7 +1050,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -1059,7 +1059,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -1068,7 +1068,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -1077,7 +1077,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //        monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -1086,7 +1086,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1096,7 +1096,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1106,7 +1106,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1116,7 +1116,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -1126,7 +1126,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1137,7 +1137,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1148,7 +1148,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1159,7 +1159,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1171,9 +1171,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(phosphateMonomers).forEach((rightPhosphate) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightPhosphate.connectionPoints).forEach(
+          Object.values(rightPhosphate.attachmentPoints).forEach(
             (rightPhosphateConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 9 (Nucleotide - Phosphate)
@@ -1252,7 +1252,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -1260,7 +1260,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -1268,7 +1268,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -1276,7 +1276,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -1285,7 +1285,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -1294,7 +1294,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //   },
@@ -1303,7 +1303,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //        monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -1312,7 +1312,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1322,7 +1322,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1332,7 +1332,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1342,7 +1342,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -1352,7 +1352,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1363,7 +1363,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1374,7 +1374,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1385,7 +1385,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1398,7 +1398,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       fileName:
         'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
       alias: 'W',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -1406,7 +1406,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
     //   alias: '%',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //   },
     // },
@@ -1414,9 +1414,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(baseMonomers).forEach((rightBase) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightBase.connectionPoints).forEach(
+          Object.values(rightBase.attachmentPoints).forEach(
             (rightBaseConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 11 (Nucleotide - Base)
@@ -1495,7 +1495,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
       },
     },
@@ -1503,7 +1503,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
       },
     },
@@ -1511,7 +1511,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //   },
     // },
@@ -1519,7 +1519,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
       },
@@ -1528,7 +1528,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R3: AttachmentPoint.R3,
       },
@@ -1537,7 +1537,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
+      attachmentPoints: {
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
       },
@@ -1546,7 +1546,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //        monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //   },
@@ -1555,7 +1555,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
+      attachmentPoints: {
         R1: AttachmentPoint.R1,
         R2: AttachmentPoint.R2,
         R3: AttachmentPoint.R3,
@@ -1565,7 +1565,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1575,7 +1575,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1585,7 +1585,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
     //     R5: AttachmentPoint.R5,
@@ -1595,7 +1595,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1606,7 +1606,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1617,7 +1617,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
     //     R4: AttachmentPoint.R4,
@@ -1628,7 +1628,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
+    //   attachmentPoints: {
     //     R1: AttachmentPoint.R1,
     //     R2: AttachmentPoint.R2,
     //     R3: AttachmentPoint.R3,
@@ -1640,9 +1640,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(sugarMonomers).forEach((rightSugar) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
+      Object.values(leftNucleotide.attachmentPoints).forEach(
         (leftNucleotideConnectionPoint) => {
-          Object.values(rightSugar.connectionPoints).forEach(
+          Object.values(rightSugar.attachmentPoints).forEach(
             (rightSugarConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 13 (Nucleotide - Sugar)
@@ -1809,7 +1809,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await loadMolecule(page, rightMolecule);
 
         const attachmentPointCount = Object.keys(
-          leftMonomer.connectionPoints,
+          leftMonomer.attachmentPoints,
         ).length;
         const atomCount = Object.keys(
           rightMolecule.atomLocatorSelectors,
@@ -1824,7 +1824,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.connectionPoints)[atomIndex],
+            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

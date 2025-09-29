@@ -27,7 +27,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
-  pressCancelAtSelectConnectionPointDialog,
   selectLeftConnectionPointAtSelectConnectionPointDialog,
   selectRightConnectionPointAtSelectConnectionPointDialog,
 } from '@utils/macromolecules/polymerBond';
@@ -45,6 +44,7 @@ import { pageReload } from '@utils/common/helpers';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -410,7 +410,7 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
 
-    await pressCancelAtSelectConnectionPointDialog(page);
+    await AttachmentPointsDialog(page).cancel();
   });
 
   // test(`Check that preview window of micro structure not shows pieces of macro structures and vice versa`, async () => {
@@ -518,19 +518,19 @@ test.describe('Common connection rules: ', () => {
       Phosphate.Test_6_Ph,
     );
 
-    const connectionPoints = [
+    const attachmentPoints = [
       AttachmentPoint.R1,
       AttachmentPoint.R2,
       AttachmentPoint.R3,
       AttachmentPoint.R4,
       AttachmentPoint.R5,
-      'R6',
+      AttachmentPoint.R6,
     ];
 
-    for (const connectionPoint of connectionPoints) {
+    for (const attachmentPoint of attachmentPoints) {
       await selectLeftConnectionPointAtSelectConnectionPointDialog(
         page,
-        connectionPoint,
+        attachmentPoint,
       );
       //         await takeEditorScreenshot(page, {
       //     hideMonomerPreview: true,
@@ -538,13 +538,13 @@ test.describe('Common connection rules: ', () => {
 
       await selectRightConnectionPointAtSelectConnectionPointDialog(
         page,
-        connectionPoint,
+        attachmentPoint,
       );
       //         await takeEditorScreenshot(page, {
       //     hideMonomerPreview: true,
       //   });
     }
 
-    await pressCancelAtSelectConnectionPointDialog(page);
+    await AttachmentPointsDialog(page).cancel();
   });
 });

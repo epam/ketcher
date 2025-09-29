@@ -534,14 +534,6 @@ export async function bondNucleotidePointToMoleculeAtom(
   await moveMouseAway(page);
 }
 
-export async function pressCancelAtSelectConnectionPointDialog(page: Page) {
-  await page.getByRole('button', { name: 'Cancel' }).click();
-}
-
-export async function pressConnectAtSelectConnectionPointDialog(page: Page) {
-  await page.getByRole('button', { name: 'Connect' }).click();
-}
-
 export async function selectLeftConnectionPointAtSelectConnectionPointDialog(
   page: Page,
   connectionPoint: string,

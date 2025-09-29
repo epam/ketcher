@@ -235,20 +235,6 @@ async function bondTwoMonomersByCenterToCenter(
   );
 }
 
-async function hoverOverConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.hover({ force: true });
-}
-
-async function clickOnConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.click({ force: true });
-}
-
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
@@ -278,11 +264,10 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await zoomWithMouseWheel(page, -600);
-      await hoverOverConnectionLine(page);
-
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Hydrogen,
       }).first();
+      await bondLine.hover({ force: true });
       await ContextMenu(page, bondLine).open();
 
       await takeEditorScreenshot(page, {
@@ -759,7 +744,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       expect(await bondLine.count()).toEqual(1);
 
       await CommonLeftToolbar(page).erase();
-      await clickOnConnectionLine(page);
+      await bondLine.click({ force: true });
 
       expect(await bondLine.count()).toEqual(0);
     });

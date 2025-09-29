@@ -382,16 +382,16 @@ export async function bondTwoMonomersPointToPoint(
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toMonomerId:
         (await secondMonomer.getAttribute('data-monomerid')) || undefined,
-      fromConnectionPoint: firstMonomerAttachmentPoint,
-      toConnectionPoint: secondMonomerAttachmentPoint,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
     });
   } else if (monomerOrAtom === 'atom') {
     bondLocator = getBondLocator(page, {
       fromMonomerId:
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
-      fromConnectionPoint: firstMonomerAttachmentPoint,
-      toConnectionPoint: secondMonomerAttachmentPoint,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
     });
   }
 
@@ -473,8 +473,8 @@ export function getBondLocator(
     fromMonomerId,
     toMonomerId,
     toAtomId,
-    fromConnectionPoint,
-    toConnectionPoint,
+    fromAttachmentPoint,
+    toAttachmentPoint,
     fromAtomId,
     fromSGroupId,
     toSGroupId,
@@ -485,8 +485,8 @@ export function getBondLocator(
     fromMonomerId?: string | number;
     toMonomerId?: string | number;
     toAtomId?: string | number;
-    fromConnectionPoint?: string;
-    toConnectionPoint?: string;
+    fromAttachmentPoint?: string;
+    toAttachmentPoint?: string;
     fromAtomId?: string | number;
     fromSGroupId?: string | number;
     toSGroupId?: string | number;
@@ -508,11 +508,11 @@ export function getBondLocator(
     attributes['data-tomonomerid'] = String(toMonomerId);
   }
   if (toAtomId !== undefined) attributes['data-toatomid'] = String(toAtomId);
-  if (fromConnectionPoint !== undefined) {
-    attributes['data-fromconnectionpoint'] = fromConnectionPoint;
+  if (fromAttachmentPoint !== undefined) {
+    attributes['data-fromattachmentpoint'] = fromAttachmentPoint;
   }
-  if (toConnectionPoint !== undefined) {
-    attributes['data-toconnectionpoint'] = toConnectionPoint;
+  if (toAttachmentPoint !== undefined) {
+    attributes['data-toattachmentpoint'] = toAttachmentPoint;
   }
   if (fromAtomId !== undefined) {
     attributes['data-fromatomid'] = String(fromAtomId);

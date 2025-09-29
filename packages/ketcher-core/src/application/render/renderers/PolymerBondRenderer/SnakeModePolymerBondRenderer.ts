@@ -204,13 +204,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
       .attr(
-        'data-fromconnectionpoint',
+        'data-fromattachmentpoint',
         this.polymerBond.firstMonomer.getAttachmentPointByBond(
           this.polymerBond,
         ),
       )
       .attr(
-        'data-toconnectionpoint',
+        'data-toattachmentpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),
@@ -465,13 +465,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (!this.isHydrogenBond && this.bodyElement) {
       this.bodyElement
         .attr(
-          'data-fromconnectionpoint',
+          'data-fromattachmentpoint',
           this.polymerBond.firstMonomer.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
         )
         .attr(
-          'data-toconnectionpoint',
+          'data-toattachmentpoint',
           this.polymerBond.secondMonomer?.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
@@ -812,13 +812,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (!this.isHydrogenBond && this.bodyElement) {
       this.bodyElement
         .attr(
-          'data-fromconnectionpoint',
+          'data-fromattachmentpoint',
           this.polymerBond.firstMonomer.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
         )
         .attr(
-          'data-toconnectionpoint',
+          'data-toattachmentpoint',
           this.polymerBond.secondMonomer?.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',

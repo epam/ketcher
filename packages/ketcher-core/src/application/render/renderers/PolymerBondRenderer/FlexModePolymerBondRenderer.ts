@@ -237,13 +237,13 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
       .attr(
-        'data-fromconnectionpoint',
+        'data-fromattachmentpoint',
         this.polymerBond.firstMonomer.getAttachmentPointByBond(
           this.polymerBond,
         ),
       )
       .attr(
-        'data-toconnectionpoint',
+        'data-toattachmentpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),

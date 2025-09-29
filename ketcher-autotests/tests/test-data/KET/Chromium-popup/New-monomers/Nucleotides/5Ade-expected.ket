@@ -414,7 +414,7 @@
         "idtAliases": {
             "base": "rApp",
             "modifications": {
-                "endpoint5": "5rApp"
+                "endpoint5": "/5rApp/"
             }
         },
         "naturalAnalogShort": "A"

@@ -655,8 +655,8 @@
         "idtAliases": {
             "base": "Phos",
             "modifications": {
-                "endpoint3": "3Phos",
-                "endpoint5": "5Phos"
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
             }
         },
         "naturalAnalogShort": "P"

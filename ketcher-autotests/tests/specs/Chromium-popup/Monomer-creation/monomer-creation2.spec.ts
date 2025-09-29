@@ -7,14 +7,12 @@ import {
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files/readFile';
-import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { clickOnCanvas } from '@utils/index';
-import { createMonomer } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  createMonomer,
+  prepareMoleculeForMonomerCreation,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   AminoAcidNaturalAnalogue,
   MonomerType,
@@ -36,29 +34,6 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-
-async function prepareMoleculeForMonomerCreation(
-  page: Page,
-  AtomIDsToExclude?: string[],
-  BondIDsToExclude?: string[],
-) {
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await page.keyboard.down('Shift');
-  if (AtomIDsToExclude) {
-    for (const atomId of AtomIDsToExclude) {
-      await getAtomLocator(page, { atomId: Number(atomId) }).click({
-        force: true,
-      });
-    }
-  }
-  if (BondIDsToExclude) {
-    for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
-    }
-  }
-  await page.keyboard.up('Shift');
-}
 
 const monomersToCreate35 = [
   {

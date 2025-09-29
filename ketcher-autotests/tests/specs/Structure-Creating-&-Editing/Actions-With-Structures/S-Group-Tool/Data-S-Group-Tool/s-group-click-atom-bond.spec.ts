@@ -712,7 +712,7 @@ test.describe('S-Group Properties', () => {
       'KET/S-Groups/LayoutCheck.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

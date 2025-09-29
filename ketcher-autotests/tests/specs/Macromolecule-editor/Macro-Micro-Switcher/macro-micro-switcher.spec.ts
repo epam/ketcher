@@ -31,7 +31,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { MacroFileType } from '@utils/canvas';
+import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
@@ -45,7 +45,7 @@ import {
   getMonomerLocator,
   moveMonomerOnMicro,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -374,6 +374,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await delay(1);
     await moveMouseToTheMiddleOfTheScreen(page);
     await zoomWithMouseWheel(page, -400);
 
@@ -948,7 +949,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -1004,7 +1005,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/structure-with-two-attachment-points.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await ContextMenu(page, page.getByText('R2')).open();
     await takeEditorScreenshot(page);
   });
@@ -1134,24 +1135,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1214,8 +1215,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
@@ -1230,24 +1231,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.moen,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1310,8 +1311,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = page.locator('g path').first();
     await bondLine.hover();
@@ -1323,24 +1324,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1371,7 +1372,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Single,
       }).first();
@@ -1404,10 +1405,10 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
     }).first();
@@ -1422,24 +1423,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1471,7 +1472,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1502,11 +1503,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const canvasLocator = page
       .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
@@ -1539,8 +1540,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
@@ -1558,7 +1559,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
     await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1714,7 +1715,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
 
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -2887,5 +2888,8 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
     // error is expected
     true,
   );
-  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
+  const errorMessage = page.getByText(
+    `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: $,F,I,L,E,1,$,1,0,/,0,8,/,2,4,1,6,:,1,1,$,F,$,X,3,0,0,0,-,I,I,O,-,0,9,1,3,2,4,1,8,4,0,3,0,O,2,1,3,0,E,I,E,3,0,E,I,3,0,O,1,6,1,6,0,0,0,3,0,E,I,O,3,0,1,-,3,.,1,2,7,2,1,-,3,.,1,2,7,9,8,0,.,0,0,3,0,2,-,2,.,2,6,0,7,8,-,3,.,6,2,7,2,0,.,0,0,3,0,3,O,-,1,.,3,9,5,1,5,-,3,.,1,2,6,5,8,0,.,0,0,3,0,4,-,2,.,2,5,9,9,8,-,4,.,6,2,7,2,3,0,.,0,0,3,0,5,-,1,.,3,9,3,7,4,-,5,.,1,2,6,6,5,0,.,0,0,3,0,6,-,1,.,3,9,2,9,5,-,6,.,1,2,6,6,9,0,.,0,0,3,0,7,-,0,.,5,2,6,5,1,2,-,6,.,6,2,5,9,1,0,.,0,0,3,0,8,0,.,3,3,9,3,2,-,6,.,1,2,5,2,9,0,.,0,0,3,0,9,O,1,.,2,0,5,5,5,-,6,.,6,2,4,7,1,0,.,0,0,3,0,1,0,1,.,2,0,6,3,5,-,7,.,6,2,4,7,5,0,.,0,0,3,0,1,1,2,.,0,7,2,7,8,-,8,.,1,2,3,9,7,0,.,0,0,3,0,1,2,O,2,.,9,3,8,4,2,-,7,.,6,2,3,3,5,0,.,0,0,3,0,1,3,2,.,0,7,3,5,9,-,9,.,1,2,4,0,.,0,0,3,0,1,4,L,2,.,9,4,0,0,2,-,9,.,6,2,3,4,2,0,.,0,0,3,0,1,5,0,.,3,3,8,5,1,9,-,5,.,1,2,5,2,5,0,.,0,0,3,0,1,6,-,0,.,5,2,7,9,1,2,-,4,.,6,2,6,0,3,0,.,0,0,3,0,E,O,3,0,E,I,O,3,0,1,1,1,2,3,0,2,2,2,3,3,0,3,1,2,4,3,0,4,1,4,5,3,0,5,4,5,6,3,0,6,4,6', 'scanner: readIntFix(3): invalid number representation: "M  "', 'inchi-wrapper: Molecule with pseudoatom (CL) cannot be converted into InChI', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: "M  "', 'scanner: readIntFix(3): invalid number representation: "M  "', 'inchi-wrapper: Molecule with pseudoatom (CL) cannot be converted into InChI'`,
+  );
+  expect(await errorMessage.count()).toEqual(1);
 });

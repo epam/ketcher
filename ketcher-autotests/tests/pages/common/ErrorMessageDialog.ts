@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 type ErrorMessageDialogLocators = {
   errorMessageWindow: Locator;
@@ -9,7 +9,9 @@ type ErrorMessageDialogLocators = {
 export const ErrorMessageDialog = (page: Page) => {
   const locators: ErrorMessageDialogLocators = {
     errorMessageWindow: page.getByTestId('info-modal-window'),
-    errorMessageBody: page.getByTestId('info-modal-body'),
+    errorMessageBody: page
+      .getByTestId('info-modal-window')
+      .getByTestId('error-message-body'),
     errorMessageClose: page.getByTestId('info-modal-close'),
   };
 
@@ -25,6 +27,7 @@ export const ErrorMessageDialog = (page: Page) => {
     },
 
     async getErrorMessage() {
+      await expect(locators.errorMessageBody).toBeVisible();
       const text = await locators.errorMessageBody.textContent();
       return text?.trim() ?? '';
     },

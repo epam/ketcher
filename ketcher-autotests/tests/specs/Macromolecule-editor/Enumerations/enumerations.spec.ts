@@ -95,7 +95,7 @@ test.describe('Enumerations', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Base.baA).click();
     await takeEditorScreenshot(page);
   });
@@ -109,7 +109,7 @@ test.describe('Enumerations', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Base.baA).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -126,7 +126,7 @@ test.describe('Enumerations', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Tml).click();
     await takeEditorScreenshot(page);
   });
@@ -143,7 +143,7 @@ test.describe('Enumerations', () => {
       page,
       'KET/three-peptide-chains-connected-through-chems.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Tml).click();
     await getMonomerLocator(page, Peptide.His1Me).click();
     await getMonomerLocator(page, Peptide.D_Hyp).click();
@@ -160,7 +160,7 @@ test.describe('Enumerations', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Sugar._25R).click();
     await takeEditorScreenshot(page);
   });
@@ -175,7 +175,7 @@ test.describe('Enumerations', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/modified-rna.mol');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Sugar._3A6).click();
     await takeEditorScreenshot(page);
   });
@@ -193,7 +193,7 @@ test.describe('Enumerations', () => {
       'Molfiles-V3000/rna-modified-sugars.mol',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Sugar._5A6).click();
     await takeEditorScreenshot(page);
   });
@@ -210,7 +210,7 @@ test.describe('Enumerations', () => {
       page,
       'KET/three-peptide-chains-connected-through-chems.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Tml).click();
     await getMonomerLocator(page, Peptide.His1Me).click();
     await getMonomerLocator(page, Peptide.D_Hyp).click();
@@ -234,7 +234,7 @@ test.describe('Enumerations', () => {
       page,
       'KET/intersected-monomers-chains.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.Hcy).click();
     await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page);

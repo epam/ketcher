@@ -25,7 +25,7 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -368,7 +368,7 @@ test.describe('Snake Bond Tool', () => {
       phosphate2,
       peptide1,
       undefined,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R1,
     );
 
     await takeEditorScreenshot(page);
@@ -524,8 +524,8 @@ test.describe('Snake Bond Tool', () => {
       page,
       baseOfNucleoside,
       peptide,
-      MonomerAttachmentPoint.R2,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
 
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
@@ -536,7 +536,7 @@ test.describe('Snake Bond Tool', () => {
       phosphate2,
       hcyPeptide,
       undefined,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R1,
     );
     await bondTwoMonomers(page, hcyPeptide1, balPeptide);
     await bondTwoMonomers(
@@ -544,7 +544,7 @@ test.describe('Snake Bond Tool', () => {
       hcyPeptide1,
       balPeptide1,
       undefined,
-      MonomerAttachmentPoint.R1,
+      AttachmentPoint.R1,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -795,7 +795,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.DHis1B).click();
     await takeEditorScreenshot(page);
   });
@@ -811,7 +811,7 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.meR).click();
     await takeEditorScreenshot(page);
   });

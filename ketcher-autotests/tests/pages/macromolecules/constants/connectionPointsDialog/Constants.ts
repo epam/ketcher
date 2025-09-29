@@ -1,29 +1,35 @@
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
+
 export enum MonomerOverview {
   LeftMonomer = 'left-monomer-overview',
   RightMonomer = 'right-monomer-overview',
 }
 
-export enum LeftMonomerConnectionPoint {
-  R1 = 'left-R1',
-  R2 = 'left-R2',
-  R3 = 'left-R3',
-  R4 = 'left-R4',
-  R5 = 'left-R5',
-  R6 = 'left-R6',
-  R7 = 'left-R7',
-  R8 = 'left-R8',
-}
+export const LeftMonomerConnectionPointButton: Record<AttachmentPoint, string> =
+  {
+    [AttachmentPoint.R1]: 'left-R1',
+    [AttachmentPoint.R2]: 'left-R2',
+    [AttachmentPoint.R3]: 'left-R3',
+    [AttachmentPoint.R4]: 'left-R4',
+    [AttachmentPoint.R5]: 'left-R5',
+    [AttachmentPoint.R6]: 'left-R6',
+    [AttachmentPoint.R7]: 'left-R7',
+    [AttachmentPoint.R8]: 'left-R8',
+  };
 
-export enum RightMonomerConnectionPoint {
-  R1 = 'right-R1',
-  R2 = 'right-R2',
-  R3 = 'right-R3',
-  R4 = 'right-R4',
-  R5 = 'right-R5',
-  R6 = 'right-R6',
-  R7 = 'right-R7',
-  R8 = 'right-R8',
-}
+export const RightMonomerConnectionPointButton: Record<
+  AttachmentPoint,
+  string
+> = {
+  [AttachmentPoint.R1]: 'right-R1',
+  [AttachmentPoint.R2]: 'right-R2',
+  [AttachmentPoint.R3]: 'right-R3',
+  [AttachmentPoint.R4]: 'right-R4',
+  [AttachmentPoint.R5]: 'right-R5',
+  [AttachmentPoint.R6]: 'right-R6',
+  [AttachmentPoint.R7]: 'right-R7',
+  [AttachmentPoint.R8]: 'right-R8',
+};
 
 export enum LeftLeavingGroupValue {
   R1 = 'left-R1-leaving-group-value',

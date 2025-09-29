@@ -4,7 +4,7 @@
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -12,7 +12,6 @@ import {
   resetZoomLevelToDefault,
   clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -223,15 +222,17 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopLeftToolbar(page).clearCanvas();
-    await Library(page).selectMonomer(Base.h456UR);
+    await Library(page).hoverMonomer(Base.h456UR);
     await waitForMonomerPreview(page);
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
+    await expect(page.getByTestId('preview-tooltip-title')).toContainText(
+      '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+    );
     await CommonLeftToolbar(page).selectAreaSelectionTool();
-    await Library(page).selectMonomer(Base.e6A);
+    await Library(page).hoverMonomer(Base.e6A);
     await waitForMonomerPreview(page);
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
+    await expect(page.getByTestId('preview-tooltip-title')).toContainText(
+      '2-amino-6-etoxypurine',
+    );
   });
 
   test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async () => {
@@ -562,58 +563,50 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test.fail(
-    'Case 19: Modified bases selected via RNA Builder not revert to natural analogs in all modes',
-
-    async () => {
-      // Fails due to the bug: https://github.com/epam/ketcher/issues/7512
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6937
-       * Bug: https://github.com/epam/ketcher/issues/6774
-       * Description: Modified bases selected via RNA Builder not revert to natural analogs in all modes.
-       * Scenario:
-       * 1. Go to Macro - Sequence mode (clean canvas)
-       * 2. Load from HELM (turn off SYNC mode)
-       * 3. Select a base (e.g. "U") and by right-click select Modify in RNA Builder
-       * 4. From the base list, choose a any modified base instead of U
-       * 5. Observe the preview inside the builder.
-       * 6. Click Update to apply changes and exit the builder.
-       */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{R(A)P.R(U)P.R(G)P.R(C)}$$$$V2.0',
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await getSymbolLocator(page, {
-        symbolAlias: 'U',
-        nodeIndexOverall: 1,
-      }).click();
-      const symbolLocator = getSymbolLocator(page, {
-        symbolAlias: 'U',
-        nodeIndexOverall: 1,
-      });
-      await modifyInRnaBuilder(page, symbolLocator);
-      await Library(page).rnaBuilder.selectBaseSlot();
-      expect(Base.V.testId).toBeInViewport();
-      await Library(page).selectMonomer(Base.V);
-      await Library(page).rnaBuilder.save();
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Flex,
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 19: Modified bases selected via RNA Builder not revert to natural analogs in all modes', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6937
+     * Bug: https://github.com/epam/ketcher/issues/6774
+     * Description: Modified bases selected via RNA Builder not revert to natural analogs in all modes.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM (turn off SYNC mode)
+     * 3. Select a base (e.g. "U") and by right-click select Modify in RNA Builder
+     * 4. From the base list, choose a any modified base instead of U
+     * 5. Observe the preview inside the builder.
+     * 6. Click Update to apply changes and exit the builder.
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(U)P.R(G)P.R(C)}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 1,
+    }).click();
+    const symbolLocator = getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 1,
+    });
+    await modifyInRnaBuilder(page, symbolLocator);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.V);
+    await Library(page).rnaBuilder.save();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 20: Adding RNA/DNA before empty space in sence sequense is possible', async () => {
     /*
@@ -760,48 +753,42 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test.fail(
-    'Case 24: System not replaces A base with always RNA N base (alternatives of A,C,G,U) even if user selected DNA N base (alternatives of A,C,G,T)',
+  test('Case 24: System not replaces A base with always RNA N base (alternatives of A,C,G,U) even if user selected DNA N base (alternatives of A,C,G,T)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6937
+     * Bug: https://github.com/epam/ketcher/issues/6495
+     * Description: System not replaces A base with always RNA N base (alternatives of A,C,G,U) even if user selected DNA N base (alternatives of A,C,G,T).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Select any nucleotide and select Modify in RNA Builder
+     * 4. Select DNA N base from the library and press Update button
+     * 5. Press Save button and select HELM file format
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    const symbolLocator = getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 1,
+    });
+    await symbolLocator.click();
 
-    async () => {
-      // Fails due to the bug: https://github.com/epam/ketcher/issues/7512
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6937
-       * Bug: https://github.com/epam/ketcher/issues/6495
-       * Description: System not replaces A base with always RNA N base (alternatives of A,C,G,U) even if user selected DNA N base (alternatives of A,C,G,T).
-       * Scenario:
-       * 1. Go to Macro - Sequence mode (clean canvas)
-       * 2. Load from HELM
-       * 3. Select any nucleotide and select Modify in RNA Builder
-       * 4. Select DNA N base from the library and press Update button
-       * 5. Press Save button and select HELM file format
-       */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.HELM,
-        'RNA1{R(A)P.R(A)P.R(A)}$$$$V2.0',
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-      const symbolLocator = getSymbolLocator(page, {
-        symbolAlias: 'A',
-        nodeIndexOverall: 1,
-      });
-      await symbolLocator.click();
-
-      await modifyInRnaBuilder(page, symbolLocator);
-      await Library(page).rnaBuilder.selectBaseSlot();
-      expect(Base.DNA_N.testId).toBeInViewport();
-      await Library(page).selectMonomer(Base.DNA_N);
-      await Library(page).rnaBuilder.save();
-      await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
-    },
-  );
+    await modifyInRnaBuilder(page, symbolLocator);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.DNA_N);
+    await Library(page).rnaBuilder.save();
+    await verifyHELMExport(page, 'RNA1{r(A)p.r(A,C,G,T)p.r(A)}$$$$V2.0');
+  });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {
     /*

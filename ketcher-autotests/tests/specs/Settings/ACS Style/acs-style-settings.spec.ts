@@ -7,6 +7,7 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -33,7 +34,7 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await InfoMessageDialog(page).ok();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -56,7 +57,7 @@ test.describe('ACS Style Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
     await SettingsDialog(page).apply();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await InfoMessageDialog(page).ok();
     await takeEditorScreenshot(page);
   });
 });

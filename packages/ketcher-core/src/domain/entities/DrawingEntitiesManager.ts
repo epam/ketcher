@@ -1664,6 +1664,7 @@ export class DrawingEntitiesManager {
     needRedrawBonds = true,
     needRepositionMonomers = true,
     needRecalculateOldAntisense = true,
+    needRepositionMolecules = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -1706,7 +1707,11 @@ export class DrawingEntitiesManager {
       ]);
       chainsCollection.rearrange();
 
-      const snakeLayoutModel = new SnakeLayoutModel(chainsCollection, this);
+      const snakeLayoutModel = new SnakeLayoutModel(
+        chainsCollection,
+        this,
+        needRepositionMolecules,
+      );
       let hasAntisenseInRow = false;
       let hasRnaInRow = false;
       let snakeLayoutNodesInRow: ISnakeLayoutMonomersNode[] = [];
@@ -1879,12 +1884,6 @@ export class DrawingEntitiesManager {
   ) {
     if (bond instanceof MonomerToAtomBond) {
       bond.moveToLinkedEntities();
-
-      return bond;
-    }
-
-    if (bond instanceof Bond) {
-      bond.moveToLinkedAtoms();
 
       return bond;
     }

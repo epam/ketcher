@@ -327,6 +327,10 @@ export class RenderersManager {
   }
 
   public addAtom(atom: Atom) {
+    if (atom.renderer) {
+      atom.renderer.remove();
+    }
+
     const atomRenderer = new AtomRenderer(atom);
 
     this.atoms.set(atom.id, atomRenderer);
@@ -339,6 +343,10 @@ export class RenderersManager {
   }
 
   public addBond(bond: Bond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
     const bondRenderer = new BondRenderer(bond);
 
     this.bonds.set(bond.id, bondRenderer);

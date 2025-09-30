@@ -3,6 +3,8 @@
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
@@ -323,5 +325,26 @@ test.describe('Color of Nucleobases', () => {
       }
       await MacromoleculesTopToolbar(page).calculateProperties();
     }
+  });
+
+  test('Case 8: Check that Adenine, Cytosine, Guanine, Thymine, Uracil, cl6pur and all bases/nucleotides with the natural analogue A, C, G, T, U, X can be saved to SVG Document', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7221
+     * Description: Check that Adenine, Cytosine, Guanine, Thymine, Uracil, cl6pur and all bases/nucleotides with the natural analogue A, C, G, T, U, X can be saved to SVG Document
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Open file with all bases/nucleotides with the natural analogue A, C, G, T, U, X
+     * 3. Save to SVG Document
+     * 4. Check that bases/nucleotides are present on the SVG Document
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/ACGTUX-bases-and-nucleotides.ket',
+    );
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.SVGDocument,
+    );
+    await takeElementScreenshot(page, page.getByTestId('preview-area'));
   });
 });

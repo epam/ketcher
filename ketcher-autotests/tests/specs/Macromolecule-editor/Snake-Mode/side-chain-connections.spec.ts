@@ -20,9 +20,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -1084,13 +1083,7 @@ test.describe('Side chain connections', () => {
       page,
       `KET/Side-Chain-Connections/16.ket`,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    // Closing Save dialog
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {

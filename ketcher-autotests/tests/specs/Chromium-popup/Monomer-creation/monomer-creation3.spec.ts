@@ -5,9 +5,17 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import { clickOnCanvas } from '@utils/index';
-import { prepareMoleculeForMonomerCreation } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { OptionsForDebuggingSetting } from '@tests/pages/constants/settingsDialog/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -335,8 +343,7 @@ test(`3. Check that the number of simple-single bonds to non-selected parts of t
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-   *      4. Press "Create Monomer" button
-   *      5. Take a screenshot of the canvas validate leaving groups and bonds
+   *      4. Validate that Create Monomer button is disabled
    *
    * Version 3.8
    */
@@ -358,4 +365,139 @@ test(`3. Check that the number of simple-single bonds to non-selected parts of t
     '17',
   ]);
   expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
+});
+
+test(`4. Check that every R-group gets replaced with a hydrogen upon entering the wizard, and it is considered a leaving group for an attachment point. The atom it was attached to becomes the attachment atom.
+`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Check that every R-group gets replaced with a hydrogen upon entering the wizard, and it is considered
+   *                 a leaving group for an attachment point. The atom it was attached to becomes the attachment atom.
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that R-groups replaced with Hydrogens
+   *
+   * Version 3.8
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C1%91C%92C%93C%94C%95C%96C%97C%981.[*:2]%97.[*:3]%96.[*:4]%95.[*:5]%94.[*:6]%93.[*:7]%92.[*:8]%91.[*:1]%98 |$;;;;;;;;_R2;_R3;_R4;_R5;_R6;_R7;_R8;_R1$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`5. Check that if the structure contains one and only one R1 group, that R1 is replaced with a hydrogen that becomes a leaving group of AP R1, the atom that R1 was attached to becomes the attachment atom of AP R1
+`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the structure contains one and only one R1 group, that R1 is replaced with a hydrogen
+   *              that becomes a leaving group of AP R1, the atom that R1 was attached to becomes the attachment atom of AP R1
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that R-group replaced with Hydrogen, the atom that R1 was attached to becomes the attachment atom of AP R1
+   *
+   * Version 3.8
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C1(C)C%91C(C)C(C)C(C)C(C)C(C)C1C.[*:1]%91 |$;;;;;;;;;;;;;;;_R1$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`6. Check that if the structure contains one and only one R2 group, that R2 is replaced with a hydrogen that becomes a leaving group of AP R2, the atom that R2 was attached to becomes the attachment atom of AP R2
+`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the structure contains one and only one R2 group, that R2 is replaced with a hydrogen
+   *              that becomes a leaving group of AP R2, the atom that R2 was attached to becomes the attachment atom of AP R2
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that R-group replaced with Hydrogen, the atom that R2 was attached to becomes the attachment atom of AP R2
+   *
+   * Version 3.8
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C1(C)C%91C(C)C(C)C(C)C(C)C(C)C1C.[*:1]%91 |$;;;;;;;;;;;;;;;_R2$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`7. Check that in case of multiple R1 the one whose attachment atom is the first in the KET file gets interpreted as R1`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that in case of multiple R1 the one whose attachment atom is the first in the KET file gets interpreted as R1
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that the correct R-group replaced with Hydrogen, the atom that R1 was attached to becomes the attachment atom of AP R1
+   *
+   * Version 3.8
+   */
+  await setSettingsOption(page, OptionsForDebuggingSetting.ShowAtomIds);
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C1%91C(C)C(C)C(C)C%92C(C)C(C)C1C.[*:1]%92.[*:1]%91 |$;;;;;;;;;;;;;;_R1;_R1$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`8. Check that in case of multiple R1 the one whose attachment atom is the first in the KET file gets interpreted as R2`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that in case of multiple R1 the one whose attachment atom is the first in the KET file gets interpreted as R2
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that the correct R-group replaced with Hydrogen, the atom that R2 was attached to becomes the attachment atom of AP R2
+   *
+   * Version 3.8
+   */
+  await setSettingsOption(page, OptionsForDebuggingSetting.ShowAtomIds);
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C1%91C(C)C(C)C(C)C%92C(C)C(C)C1C.[*:1]%92.[*:1]%91 |$;;;;;;;;;;;;;;_R2;_R2$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
 });

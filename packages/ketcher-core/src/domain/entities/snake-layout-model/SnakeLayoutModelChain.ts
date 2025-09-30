@@ -41,6 +41,10 @@ export class SnakeLayoutModelChain {
     return this.nodes.length;
   }
 
+  public get rowsLength() {
+    return this.rows.length;
+  }
+
   public addRow(row: ISnakeLayoutModelRow) {
     this.rows.push(row);
   }

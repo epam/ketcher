@@ -376,14 +376,19 @@ export class SnakeLayoutModel {
 
   private fillMolecules(drawingEntitiesManager: DrawingEntitiesManager) {
     const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
+    const handledMolecules = new Set<BaseMonomer>();
 
     this.chains.forEach((chain, chainIndex) => {
       const newChain = new SnakeLayoutModelChain();
 
-      chain.forEachRow((row) => {
+      chain.forEachRow((row, rowIndex) => {
         newChain.addRow(row);
 
+        // Collect all molecules in the row
         const nodeIndexToMolecules: Map<number, (Atom | Bond)[][]> = new Map();
+        const isLastRowOfLastChain =
+          chainIndex === this.chains.length - 1 &&
+          rowIndex === chain.rowsLength - 1;
 
         row.snakeLayoutModelItems.forEach((node, nodeIndex) => {
           if (!isTwoStrandedSnakeLayoutNode(node)) {
@@ -402,6 +407,10 @@ export class SnakeLayoutModel {
                 [Atom],
               );
 
+              if (!handledMolecules.has(monomerToAtomBond.atom.monomer)) {
+                handledMolecules.add(monomerToAtomBond.atom.monomer);
+              }
+
               if (!nodeIndexToMolecules.has(nodeIndex)) {
                 nodeIndexToMolecules.set(nodeIndex, []);
               }
@@ -411,6 +420,30 @@ export class SnakeLayoutModel {
           });
         });
 
+        if (isLastRowOfLastChain) {
+          // Add all unhandled molecules in end of the last row of the last chain
+          drawingEntitiesManager.atoms.forEach((atom) => {
+            if (handledMolecules.has(atom.monomer)) {
+              return;
+            }
+
+            const molecule = drawingEntitiesManager.getConnectedMolecule(atom, [
+              Atom,
+            ]);
+
+            handledMolecules.add(atom.monomer);
+
+            if (!nodeIndexToMolecules.has(row.snakeLayoutModelItems.length)) {
+              nodeIndexToMolecules.set(row.snakeLayoutModelItems.length, []);
+            }
+
+            nodeIndexToMolecules
+              .get(row.snakeLayoutModelItems.length)
+              ?.push(molecule);
+          });
+        }
+
+        // Place collected molecules in additional rows below the current one
         const editorSettings = provideEditorSettings();
         const cellSizeInAngstroms =
           SnakeLayoutCellWidth / editorSettings.macroModeScale;

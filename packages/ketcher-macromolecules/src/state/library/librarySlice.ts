@@ -33,6 +33,7 @@ import {
   AmbiguousMonomerType,
   isAmbiguousMonomerLibraryItem,
   IKetIdtAliases,
+  IKetMonomerGroupTemplate,
 } from 'ketcher-core';
 import {
   LibraryNameType,
@@ -48,6 +49,7 @@ import { localStorageWrapper } from 'helpers/localStorage';
 
 interface LibraryState {
   monomers: Group[];
+  defaultRnaPresets: IKetMonomerGroupTemplate[];
   favorites: { [key: string]: Group };
   searchFilter: string;
   selectedTabIndex: number;
@@ -65,6 +67,7 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
 
 const initialState: LibraryState = {
   monomers: [],
+  defaultRnaPresets: [],
   favorites: {},
   searchFilter: '',
   selectedTabIndex: LIBRARY_TAB_INDEX.RNA,
@@ -98,6 +101,17 @@ export const librarySlice: Slice = createSlice({
       });
 
       state.monomers = clonedMonomers;
+    },
+
+    loadDefaultPresets: (
+      state: RootState,
+      action: PayloadAction<IKetMonomerGroupTemplate[]>,
+    ) => {
+      state.defaultRnaPresets = action.payload.map((groupTemplate) => {
+        return {
+          ...groupTemplate,
+        };
+      });
     },
 
     setFavoriteMonomersFromLocalStorage: (state: RootState) => {
@@ -169,6 +183,7 @@ export const librarySlice: Slice = createSlice({
 
 export const {
   loadMonomerLibrary,
+  loadDefaultPresets,
   setFavoriteMonomersFromLocalStorage,
   clearFavorites,
   toggleMonomerFavorites,
@@ -569,3 +584,6 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
 
 export const libraryReducer = librarySlice.reducer;
+
+export const selectDefaultRnaPresets = (state) =>
+  state.library.defaultRnaPresets;

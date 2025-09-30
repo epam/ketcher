@@ -49,6 +49,15 @@ export const SvgPreview = styled('div')(({ theme }) => ({
   height: '100%',
   position: 'relative',
   border: `1px solid ${theme.ketcher.color.input.border.regular}`,
+  '& svg': {
+    width: '100%',
+    height: '100%',
+    '& .drawn-structures': {
+      '& .monomer': {
+        lineHeight: 'initial !important',
+      },
+    },
+  },
 }));
 
 export const PreviewContainer = styled('div')(({ theme }) => ({

@@ -51,7 +51,7 @@ import {
   PreviewType,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
-import { loadMonomerLibrary } from 'state/library';
+import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -68,6 +68,7 @@ export const EditorEvents = () => {
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
+    dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 

@@ -18,7 +18,7 @@ export class KetcherLogger {
     }
 
     if (!window?.ketcher) {
-      throw new Error(
+      console.warn(
         'Ketcher needs to be initialized before KetcherLogger is used',
       );
     }

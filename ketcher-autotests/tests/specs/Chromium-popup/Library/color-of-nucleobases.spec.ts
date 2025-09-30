@@ -3,8 +3,6 @@
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
@@ -18,6 +16,7 @@ import {
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
+import { verifySVGExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -341,10 +340,6 @@ test.describe('Color of Nucleobases', () => {
       page,
       'KET/ACGTUX-bases-and-nucleotides.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.SVGDocument,
-    );
-    await takeElementScreenshot(page, page.getByTestId('preview-area'));
+    await verifySVGExport(page);
   });
 });

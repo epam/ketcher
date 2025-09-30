@@ -733,11 +733,18 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment =
       potentialLeavingAtomForManualAssignment;
 
-    return (
+    const isEnabled =
       terminalRGroupAtoms.length > 0 ||
       potentialLeavingAtomsForAutoAssignment.length > 0 ||
-      potentialLeavingAtomForManualAssignment.length > 0
-    );
+      potentialLeavingAtomForManualAssignment.length > 0;
+
+    if (isEnabled) {
+      window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
+
+      return true;
+    }
+
+    return false;
   }
 
   static isSelectionContinuous(selection: Selection, struct: Struct): boolean {

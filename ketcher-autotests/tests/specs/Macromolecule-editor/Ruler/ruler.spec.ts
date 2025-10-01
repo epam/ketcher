@@ -590,6 +590,7 @@ test.describe('Tests for Ruler', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
+    await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',

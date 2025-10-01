@@ -5,7 +5,10 @@ import {
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { waitForRender } from '@utils/common/loaders/waitForRender';
+import {
+  waitForCustomEvent,
+  waitForRender,
+} from '@utils/common/loaders/waitForRender';
 import { LeftToolbar } from '../LeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { clickOnCanvas } from '@utils/clicks';
@@ -107,6 +110,7 @@ export async function prepareMoleculeForMonomerCreation(
     }
   }
   await page.keyboard.up('Shift');
+  await waitForCustomEvent(page, 'monomerCreationEnabled', 200);
 }
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

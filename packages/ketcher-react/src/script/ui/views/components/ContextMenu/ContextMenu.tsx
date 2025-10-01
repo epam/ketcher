@@ -30,6 +30,7 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
 import { ketcherProvider } from 'ketcher-core';
+import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -248,6 +249,19 @@ const ContextMenu: React.FC = () => {
             }
           >
             <MacromoleculeMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+                visible,
+              )
+            }
+          >
+            <AttachmentPointLabelMenuItems />
           </Menu>
         </>,
         ketcherEditorRootElement,

@@ -7,7 +7,6 @@ import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';

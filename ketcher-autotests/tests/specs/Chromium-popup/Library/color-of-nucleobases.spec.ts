@@ -67,6 +67,7 @@ test.describe('Color of Nucleobases', () => {
   for (const { base, name, color } of baseCases) {
     test(`Case 1: Check that ${name} have their colour changed to ${color} (see mockups)`, async () => {
       /*
+       * Version 3.8
        * Test case: https://github.com/epam/ketcher/issues/7221
        * Description: Check that colour changed to appropriate (see mockups)
        * Scenario:
@@ -119,6 +120,7 @@ test.describe('Color of Nucleobases', () => {
   for (const { nucleotide, name, color } of nucleotideCases) {
     test(`Case 2: Check that ${name} have their colour changed to ${color} (see mockups)`, async () => {
       /*
+       * Version 3.8
        * Test case: https://github.com/epam/ketcher/issues/7221
        * Description: Check that colour changed to appropriate (see mockups)
        * Scenario:
@@ -137,6 +139,7 @@ test.describe('Color of Nucleobases', () => {
 
   test('Case 3: Check that all amino acids with the natural analogue X, have their shade of gray changed to #CAD3DD ( Grey 4 ) (see mockups)', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/7221
      * Description: Check that colour changed to appropriate (see mockups)
      * Scenario:
@@ -188,6 +191,7 @@ test.describe('Color of Nucleobases', () => {
   for (const { base, name, color } of baseCases2) {
     test(`Case 4: Verify that ${name} change the shape on canvas and color to ${color} (see mockups)`, async () => {
       /*
+       * Version 3.8
        * Test case: https://github.com/epam/ketcher/issues/7221
        * Description: Verify change of the colour and the shape on canvas and all bases with the natural analogue.
        * Scenario:
@@ -242,6 +246,7 @@ test.describe('Color of Nucleobases', () => {
   for (const { nucleotide, name, color } of nucleotideCases2) {
     test(`Case 5: Verify that ${name} change the shape on canvas and color to ${color} (see mockups)`, async () => {
       /*
+       * Version 3.8
        * Test case: https://github.com/epam/ketcher/issues/7221
        * Description: Check that colour changed to appropriate (see mockups)
        * Scenario:
@@ -262,6 +267,7 @@ test.describe('Color of Nucleobases', () => {
 
   test('Case 6: Verify change of the colour and the shape on canvas for all amino acids with the natural analogue X', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/7221
      * Description: Check that colour changed to appropriate (see mockups)
      * Scenario:
@@ -281,6 +287,7 @@ test.describe('Color of Nucleobases', () => {
 
   test('Case 7: Check that change of the underline colour for the counter in the Calculate Properties window for bases and nucleotides (A, C, G, T, U, X)', async () => {
     /*
+     * Version 3.8
      * Test cases: https://github.com/epam/ketcher/issues/7221
      * Description:
      *  - Case 1: Underline colour changed for the counter in the Calculate Properties window for Adenine, Cytosine, Guanine, Thymine, Uracil, cl6pur and all bases with the natural analogue A, C, G, T, U, X
@@ -328,6 +335,7 @@ test.describe('Color of Nucleobases', () => {
 
   test('Case 8: Check that Adenine, Cytosine, Guanine, Thymine, Uracil, cl6pur and all bases/nucleotides with the natural analogue A, C, G, T, U, X can be saved to SVG Document', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/7221
      * Description: Check that Adenine, Cytosine, Guanine, Thymine, Uracil, cl6pur and all bases/nucleotides with the natural analogue A, C, G, T, U, X can be saved to SVG Document
      * Scenario:

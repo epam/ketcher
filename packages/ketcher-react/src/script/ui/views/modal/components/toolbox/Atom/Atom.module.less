@@ -153,6 +153,13 @@
     height: 55px;
     resize: none;
   }
+
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+    pointer-events: none;
+  }
 }
 
 .reactionFlags,

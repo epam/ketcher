@@ -9,13 +9,19 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils/canvas';
-import { clickOnCanvas } from '@utils/index';
+import {
+  clickOnCanvas,
+  dragMouseTo,
+  moveMouseToTheMiddleOfTheScreen,
+  waitForRender,
+} from '@utils/index';
 import {
   CreateMonomerDialog,
   prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { OptionsForDebuggingSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -498,6 +504,41 @@ test(`8. Check that in case of multiple R1 the one whose attachment atom is the 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`9. Check that if the structure contains one and only one Rn group (where 2<n<9), that Rn group should be interpreted as belonging to AP Rn if possible`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: 1. Check that if the structure contains one and only one Rn group (where 2<n<9), that Rn
+   *                 group should be interpreted as belonging to AP Rn if possible
+   *              2. Check that for all other attachment points where the R-group number cannot be determined,
+   *                 they are assigned to the smallest available Rn (n>2) if available, or to R1 if available,
+   *                 or to R2 in the end, starting from the first attachment atom in the KET file
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Take screenshot to validate that the R-group assigned to the correct AP
+   *
+   * Version 3.8
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    '[*:6]C%91C%92C%93C%94C%95C%96%97.[*:23]%96.[*:25]%92.[*:5]%93.[*:24]%94.[*:4]%95.[*:26]%91.[*:3]%97 |$_R6;;;;;;;_R23;_R25;_R5;_R24;_R4;_R26;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make screenshot more illustrative drag mouse to show selected atoms
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 200, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });

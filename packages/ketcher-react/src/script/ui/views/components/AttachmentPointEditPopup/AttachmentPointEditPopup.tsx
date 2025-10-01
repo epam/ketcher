@@ -117,6 +117,7 @@ const AttachmentPointEditPopup = ({
       className={clsx(selectStyles.selectContainer, styles.popup)}
       style={{ top: position.y, left: position.x }}
       ref={popupRef}
+      data-testid="attachment-point-edit-popup"
     >
       <p className={styles.title}>Edit connection point</p>
       <AttachmentPointControls

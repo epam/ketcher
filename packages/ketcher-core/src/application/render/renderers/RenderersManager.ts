@@ -7,6 +7,7 @@ import { PolymerBondRendererFactory } from 'application/render/renderers/Polymer
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import {
+  Chem,
   HydrogenBond,
   LinkerSequenceNode,
   MonomerSequenceNode,
@@ -448,15 +449,34 @@ export class RenderersManager {
     }
   }
 
-  public static getRenderedStructuresBbox(monomers?: BaseMonomer[]) {
+  public static getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
     let left;
     let right;
     let top;
     let bottom;
     const editor = CoreEditor.provideEditorInstance();
 
-    (monomers || editor.drawingEntitiesManager.monomers).forEach((monomer) => {
-      const monomerPosition = monomer.renderer?.scaledMonomerPosition;
+    (
+      drawingEntities ||
+      [
+        ...editor.drawingEntitiesManager.monomers.values(),
+        ...editor.drawingEntitiesManager.atoms.values(),
+      ].filter(
+        (drawindEntity) =>
+          !(
+            drawindEntity instanceof Chem &&
+            drawindEntity.monomerItem.props.isMicromoleculeFragment
+          ),
+      )
+    ).forEach((monomer) => {
+      if (
+        !(monomer.baseRenderer instanceof BaseMonomerRenderer) &&
+        !(monomer.baseRenderer instanceof AtomRenderer)
+      ) {
+        return;
+      }
+
+      const monomerPosition = monomer.baseRenderer?.scaledPosition;
 
       assert(monomerPosition);
 

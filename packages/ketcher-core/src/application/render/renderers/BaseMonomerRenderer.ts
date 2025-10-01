@@ -441,6 +441,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
+  public get scaledPosition() {
+    return this.scaledMonomerPosition;
+  }
+
   public appendSelection() {
     if (this.selectionCircle) {
       this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);

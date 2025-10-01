@@ -551,7 +551,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 2. Load from CDXML
      * 3. Save as SVG
      */
-    const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
     await openFileAndAddToCanvasAsNewProject(
       page,
       'CDXML/Bugs/structure-with-stereolabels.cdxml',

@@ -787,6 +787,7 @@ class ReAtom extends ReObject {
               'data-attachment-point-name',
               attachmentPointName,
             );
+            element.node?.setAttribute('data-testid', attachmentPointName);
           });
 
           // Add hover handlers

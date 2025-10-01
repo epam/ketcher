@@ -1040,7 +1040,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       PeptideLetterCodeType.threeLetterCode,
     ],
     expectedErrorMessage:
-      "Convert error! Sequence saver: Can't save chem '4aPEGMal' to sequence format",
+      'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
   },
 ];
 

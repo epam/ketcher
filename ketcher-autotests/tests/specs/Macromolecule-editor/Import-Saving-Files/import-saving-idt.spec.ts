@@ -375,7 +375,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*', 'SEQUENCE loader: Unknown polymer type 'A'.', 'scanner: appendLine(): end of stream', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got A*C', 'scanner: appendLine(): end of stream', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*'",
     );
   });
 

@@ -61,6 +61,7 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   meA: { alias: 'meA', testId: 'meA___N6-methyladenine' },
   U: { alias: 'U', testId: 'U___Uracil' },
   T: { alias: 'T', testId: 'T___Thymine' },
+  cl6pur: { alias: 'cl6pur', testId: 'cl6pur___6-Chloropurine' },
   DNA_N: {
     alias: 'N',
     testId: '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',

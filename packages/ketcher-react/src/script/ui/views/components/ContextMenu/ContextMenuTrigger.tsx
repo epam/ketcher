@@ -34,8 +34,6 @@ import {
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
-import { WizardNotificationId } from '../MonomerCreationWizard/MonomerCreationWizard.types';
-import { MonomerCreationExternalNotificationAction } from '../MonomerCreationWizard/MonomerCreationWizard.constants';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { ketcherId } = useAppContext();
@@ -134,21 +132,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
 
         return;
       } else if (!selection) {
-        if (
-          editor.isMonomerCreationWizardActive &&
-          closestItem.map !== 'atoms'
-        ) {
-          window.dispatchEvent(
-            new CustomEvent<WizardNotificationId>(
-              MonomerCreationExternalNotificationAction,
-              {
-                detail: 'editingIsNotAllowed',
-              },
-            ),
-          );
-          return;
-        }
-
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
         getIsItemInSelection({

@@ -40,6 +40,7 @@ import { MultitailArrowRenderer } from 'application/render/renderers/MultitailAr
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { BaseSequenceItemRenderer } from 'application/render';
+import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -466,7 +467,8 @@ export class RenderersManager {
         (drawindEntity) =>
           !(
             drawindEntity instanceof Chem &&
-            drawindEntity.monomerItem.props.isMicromoleculeFragment
+            (drawindEntity.monomerItem.props.isMicromoleculeFragment ||
+              isMonomerSgroupWithAttachmentPoints(drawindEntity))
           ),
       )
     ).forEach((monomer) => {

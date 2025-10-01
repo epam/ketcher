@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   AttachmentPointAtom,
   AttachmentPointName,
@@ -10,47 +10,51 @@ type EditConnectionPointPopupLocators = {
   connectionPointAtomCombobox: Locator;
 };
 
-export const EditConnectionPointPopup = (page: Page) => {
+export const EditConnectionPointPopup = (
+  page: Page,
+  attachmentPoint?: Locator,
+) => {
   const locators: EditConnectionPointPopupLocators = {
     editConnectionPointPopupWindow: page.getByTestId(
-      'edit-connection-point-popup',
+      'attachment-point-edit-popup',
     ),
     connectionPointNameCombobox: page.getByTestId(
-      'connection-point-name-select',
+      'attachment-point-name-select',
     ),
     connectionPointAtomCombobox: page.getByTestId(
-      'connection-point-atom-select',
+      'attachment-point-atom-select',
     ),
   };
 
   return {
     ...locators,
+
     async isVisible() {
       return await locators.editConnectionPointPopupWindow.isVisible();
     },
 
-    async selectConnectionPointName(
-      attachmentPoint: Locator,
-      name: AttachmentPointName,
-    ) {
-      await attachmentPoint.click();
+    async selectConnectionPointName(name: AttachmentPointName) {
+      if (attachmentPoint) await attachmentPoint.click();
       await locators.editConnectionPointPopupWindow.waitFor({
         state: 'visible',
       });
       await locators.connectionPointNameCombobox.click();
       await page.getByTestId(name).click();
+      await locators.editConnectionPointPopupWindow.waitFor({
+        state: 'hidden',
+      });
     },
 
-    async selectConnectionPointAtom(
-      attachmentPoint: Locator,
-      atomName: AttachmentPointAtom,
-    ) {
-      await attachmentPoint.click();
+    async selectConnectionPointAtom(atomName: AttachmentPointAtom) {
+      if (attachmentPoint) await attachmentPoint.click();
       await locators.editConnectionPointPopupWindow.waitFor({
         state: 'visible',
       });
       await locators.connectionPointAtomCombobox.click();
       await page.getByTestId(atomName).click();
+      await locators.editConnectionPointPopupWindow.waitFor({
+        state: 'hidden',
+      });
     },
 
     async close() {

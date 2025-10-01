@@ -247,6 +247,12 @@ export enum LibraryPresetOption {
   DeletePreset = 'deletepreset',
 }
 
+export enum ConnectionPointOption {
+  EditConnectionPoint = 'edit-connection-point',
+  RemoveAssignment = 'remove-assignment',
+  AssignAsALeavingGroup = 'assign-as-a-leaving-group',
+}
+
 export type ContextMenuOption =
   | MonomerOption
   | ModifyAminoAcidsOption
@@ -269,4 +275,5 @@ export type ContextMenuOption =
   | RingSizeOption
   | ConnectivityOption
   | MultiTailedArrowOption
-  | LibraryPresetOption;
+  | LibraryPresetOption
+  | ConnectionPointOption;

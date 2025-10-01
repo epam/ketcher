@@ -467,8 +467,8 @@ export class RenderersManager {
         (drawindEntity) =>
           !(
             drawindEntity instanceof Chem &&
-            (drawindEntity.monomerItem.props.isMicromoleculeFragment ||
-              isMonomerSgroupWithAttachmentPoints(drawindEntity))
+            drawindEntity.monomerItem.props.isMicromoleculeFragment &&
+            !isMonomerSgroupWithAttachmentPoints(drawindEntity)
           ),
       )
     ).forEach((monomer) => {

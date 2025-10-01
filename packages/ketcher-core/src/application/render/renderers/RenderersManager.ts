@@ -39,6 +39,7 @@ import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import { BaseSequenceItemRenderer } from 'application/render';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -470,6 +471,7 @@ export class RenderersManager {
       )
     ).forEach((monomer) => {
       if (
+        !(monomer.baseRenderer instanceof BaseSequenceItemRenderer) &&
         !(monomer.baseRenderer instanceof BaseMonomerRenderer) &&
         !(monomer.baseRenderer instanceof AtomRenderer)
       ) {

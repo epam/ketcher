@@ -585,7 +585,7 @@ class Editor implements KetcherEditor {
 
   public get isMonomerCreationWizardEnabled() {
     if (this.isMonomerCreationWizardActive) {
-      return true;
+      return false;
     }
 
     const selection = this.selection();

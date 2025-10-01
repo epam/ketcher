@@ -956,31 +956,31 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
-    this.firstMonomerPositionBeforeMove = undefined;
     try {
       if (this.mode === 'moving' && renderer?.drawingEntity?.selected) {
-        if (
-          Vec2.diff(
-            this.mousePositionAfterMove,
-            this.mousePositionBeforeMove,
-          ).length() === 0
-        ) {
+        const firstMonomerCurrentPosition =
+          this.editor.drawingEntitiesManager.selectedMonomers[0]?.position;
+        const actualMovementDelta =
+          this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
+            ? Vec2.diff(
+                firstMonomerCurrentPosition,
+                this.firstMonomerPositionBeforeMove,
+              )
+            : undefined;
+        const epsilon = 1e-12; // Small epsilon to avoid floating point precision issues
+        if (!actualMovementDelta || actualMovementDelta.length() < epsilon) {
           return;
         }
 
         const modelChanges =
           this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
             new Vec2(0, 0),
-            Coordinates.canvasToModel(
-              new Vec2(
-                this.mousePositionAfterMove.x - this.mousePositionBeforeMove.x,
-                this.mousePositionAfterMove.y - this.mousePositionBeforeMove.y,
-              ),
-            ),
+            actualMovementDelta,
           );
         this.history.update(modelChanges);
       }
     } finally {
+      this.firstMonomerPositionBeforeMove = undefined;
       this.stopMovement();
       this.setSelectedEntities();
     }

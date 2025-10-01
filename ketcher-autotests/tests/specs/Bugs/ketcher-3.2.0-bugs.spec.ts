@@ -25,6 +25,7 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   createDNAAntisenseChain,
@@ -899,11 +900,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
       'CDXML/Bugs/stereochemistry.cdxml',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {

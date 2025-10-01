@@ -9,7 +9,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -33,7 +32,6 @@ import {
   RxnFileFormat,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
-  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
@@ -41,6 +39,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -557,11 +556,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'CDXML/Bugs/structure-with-stereolabels.cdxml',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeElementScreenshot(page, saveStructureArea);
+    await verifySVGExport(page);
   });
 
   test('Case 21: Loading monomer chain from SDF file works - bonds between monomers not lost ', async () => {

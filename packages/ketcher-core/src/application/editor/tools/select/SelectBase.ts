@@ -967,7 +967,7 @@ abstract class SelectBase implements BaseTool {
                 this.firstMonomerPositionBeforeMove,
               )
             : undefined;
-        const epsilon = 1e-12; // Small epsilon to avoid floating point precision issues
+        const epsilon = 0.001; // small epsilon at which snapping is not triggered
         if (!actualMovementDelta || actualMovementDelta.length() < epsilon) {
           return;
         }

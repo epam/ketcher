@@ -395,6 +395,10 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
     const bondRenderer = new MonomerToAtomBondRenderer(bond);
     this.redrawDrawingEntity(bond.atom);
 

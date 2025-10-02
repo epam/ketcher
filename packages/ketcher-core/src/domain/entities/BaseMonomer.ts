@@ -40,7 +40,6 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
-  public isMonomerInRnaChainRow = false;
   public hydrogenBonds: HydrogenBond[] = [];
 
   constructor(
@@ -278,6 +277,12 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.covalentBonds.filter(
       (bond) => bond instanceof PolymerBond,
     ) as PolymerBond[];
+  }
+
+  public get monomerToAtomBonds() {
+    return this.bonds.filter(
+      (bond) => bond instanceof MonomerToAtomBond,
+    ) as MonomerToAtomBond[];
   }
 
   public get bonds(): Array<PolymerBond | HydrogenBond | MonomerToAtomBond> {

@@ -65,6 +65,7 @@ import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import {
   MACROMOLECULES_BOND_TYPES,
+  provideEditorSettings,
   SequenceMode,
   SnakeMode,
 } from 'application/editor';
@@ -104,11 +105,11 @@ import {
 } from 'domain/constants/monomers';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
-  SnakeLayoutModel,
-  SnakeLayoutNode,
-  TwoStrandedSnakeLayoutNode,
-} from 'domain/entities/snake-layout-model/SnakeLayoutModel';
+  ISnakeLayoutMonomersNode,
+  isTwoStrandedSnakeLayoutNode,
+} from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
@@ -131,6 +132,7 @@ import {
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
 import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -1662,6 +1664,7 @@ export class DrawingEntitiesManager {
     needRedrawBonds = true,
     needRepositionMonomers = true,
     needRecalculateOldAntisense = true,
+    needRepositionMolecules = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -1676,15 +1679,16 @@ export class DrawingEntitiesManager {
     // not only snake mode???
     if (isSnakeMode) {
       const editor = CoreEditor.provideEditorInstance();
+      const editorSettings = provideEditorSettings();
       const canvasWidth = editor.canvas.width.baseVal.value;
+      const cellWidthInAngstroms =
+        SnakeLayoutCellWidth / editorSettings.macroModeScale;
 
       const lineLengthFromSettings =
         SettingsManager.editorLineLength['snake-layout-mode'];
       const lineLengthFromCanvasWidth = Math.floor(
         (canvasWidth - SnakeLayoutCellWidth) / SnakeLayoutCellWidth,
       );
-      const numberOfCellsInRow =
-        lineLengthFromSettings || lineLengthFromCanvasWidth;
 
       if (lineLengthFromSettings === 0) {
         SettingsManager.editorLineLength = {
@@ -1703,150 +1707,156 @@ export class DrawingEntitiesManager {
       ]);
       chainsCollection.rearrange();
 
-      const snakeLayoutModel = new SnakeLayoutModel(chainsCollection);
-      let hasAntisenseInPreviousRow = false;
-      let hasRnaInPreviousRow = false;
-      let snakeLayoutNodesInRow: SnakeLayoutNode[] = [];
-      let previousSenseNode: SnakeLayoutNode | undefined;
-      let previousAntisenseNode: SnakeLayoutNode | undefined;
-      let previousTwoStrandedSnakeLayoutNode:
-        | TwoStrandedSnakeLayoutNode
-        | undefined;
-      let nodeIndexInChain = -1;
-
-      snakeLayoutModel.forEachNode(
-        (twoStrandedSnakeLayoutNode, twoStrandedSnakeLayoutNodeIndex) => {
-          const senseNode = twoStrandedSnakeLayoutNode.senseNode;
-          const antisenseNode = twoStrandedSnakeLayoutNode.antisenseNode;
-          const senseNodeChain = twoStrandedSnakeLayoutNode.chain;
-          const previousSenseNodeChain =
-            previousTwoStrandedSnakeLayoutNode?.chain;
-          const isFirstNodeOverall = twoStrandedSnakeLayoutNodeIndex === 0;
-          const isNewSenseChain =
-            senseNodeChain &&
-            previousSenseNodeChain &&
-            senseNodeChain !== previousSenseNodeChain;
-          nodeIndexInChain = isNewSenseChain ? 0 : ++nodeIndexInChain;
-          const isNewRow =
-            !isFirstNodeOverall &&
-            (nodeIndexInChain % numberOfCellsInRow === 0 || isNewSenseChain);
-          const newSenseNodePosition = isNewRow
-            ? new Vec2(
-                MONOMER_START_X_POSITION,
-                lastPosition.y +
-                  (hasRnaInPreviousRow || hasAntisenseInPreviousRow // hasAntisenseInPreviousRow used here because currently antisense y reserves space for RNA
-                    ? VERTICAL_OFFSET_FROM_ROW_WITH_RNA
-                    : VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA) +
-                  (hasAntisenseInPreviousRow
-                    ? SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS
-                    : 0),
-              )
-            : new Vec2(
-                lastPosition.x +
-                  (isFirstNodeOverall ? 0 : SnakeLayoutCellWidth),
-                lastPosition.y,
-              );
-
-          if (isNewRow) {
-            if (hasRnaInPreviousRow) {
-              snakeLayoutNodesInRow.forEach((snakeLayoutNode) => {
-                snakeLayoutNode.monomers.forEach((monomer) => {
-                  monomer.isMonomerInRnaChainRow = true;
-                });
-              });
-            }
-
-            if (hasAntisenseInPreviousRow) {
-              const r1BondToPreviousMonomer =
-                senseNode?.monomers[0].attachmentPointsToBonds.R1;
-
-              if (r1BondToPreviousMonomer instanceof PolymerBond) {
-                r1BondToPreviousMonomer.hasAntisenseInRow = true;
-              }
-
-              const r2BondFromPreviousSenseNode =
-                previousSenseNode?.monomers[0].attachmentPointsToBonds.R2;
-              const r1BondFromPreviousAntisenseNode =
-                previousAntisenseNode?.monomers[0].attachmentPointsToBonds.R1;
-              if (r2BondFromPreviousSenseNode instanceof PolymerBond) {
-                r2BondFromPreviousSenseNode.nextRowPositionX =
-                  newSenseNodePosition.x;
-              }
-              if (r1BondFromPreviousAntisenseNode instanceof PolymerBond) {
-                r1BondFromPreviousAntisenseNode.nextRowPositionX =
-                  newSenseNodePosition.x;
-              }
-            }
-
-            hasAntisenseInPreviousRow = false;
-            hasRnaInPreviousRow = false;
-            snakeLayoutNodesInRow = [];
-          }
-
-          if (senseNode) {
-            if (senseNode instanceof SugarWithBaseSnakeLayoutNode) {
-              command.merge(
-                this.rearrangeSugarWithBaseSnakeLayoutNode(
-                  senseNode,
-                  newSenseNodePosition,
-                  rearrangedMonomersSet,
-                  needRepositionMonomers,
-                ),
-              );
-              hasRnaInPreviousRow = true;
-            } else if (senseNode instanceof SingleMonomerSnakeLayoutNode) {
-              command.merge(
-                this.rearrangeSingleMonomerSnakeLayoutNode(
-                  senseNode,
-                  newSenseNodePosition,
-                  rearrangedMonomersSet,
-                  needRepositionMonomers,
-                ),
-              );
-            }
-
-            snakeLayoutNodesInRow.push(senseNode);
-          }
-
-          if (antisenseNode) {
-            if (antisenseNode instanceof SugarWithBaseSnakeLayoutNode) {
-              command.merge(
-                this.rearrangeSugarWithBaseSnakeLayoutNode(
-                  antisenseNode,
-                  new Vec2(
-                    newSenseNodePosition.x,
-                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
-                  ),
-                  rearrangedMonomersSet,
-                  needRepositionMonomers,
-                  true,
-                ),
-              );
-              hasRnaInPreviousRow = true;
-            } else if (antisenseNode instanceof SingleMonomerSnakeLayoutNode) {
-              command.merge(
-                this.rearrangeSingleMonomerSnakeLayoutNode(
-                  antisenseNode,
-                  new Vec2(
-                    newSenseNodePosition.x,
-                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
-                  ),
-                  rearrangedMonomersSet,
-                  needRepositionMonomers,
-                ),
-              );
-            }
-
-            hasAntisenseInPreviousRow = true;
-            snakeLayoutNodesInRow.push(antisenseNode);
-          }
-
-          lastPosition = newSenseNodePosition;
-          previousSenseNode = senseNode || previousSenseNode;
-          previousAntisenseNode = antisenseNode || previousAntisenseNode;
-          previousTwoStrandedSnakeLayoutNode = twoStrandedSnakeLayoutNode;
-        },
+      const snakeLayoutModel = new SnakeLayoutModel(
+        chainsCollection,
+        this,
+        needRepositionMolecules,
       );
+      let hasAntisenseInRow = false;
+      let hasRnaInRow = false;
+      let snakeLayoutNodesInRow: ISnakeLayoutMonomersNode[] = [];
+      let previousSenseNode: ISnakeLayoutMonomersNode | undefined;
+      let previousAntisenseNode: ISnakeLayoutMonomersNode | undefined;
+      let newSenseNodePosition = lastPosition;
+
+      snakeLayoutModel.forEachChain((chain) => {
+        chain.forEachRow((row) => {
+          const firstNodeInRow = row.snakeLayoutModelItems[0];
+
+          if (
+            hasAntisenseInRow &&
+            isTwoStrandedSnakeLayoutNode(firstNodeInRow)
+          ) {
+            const r1BondToPreviousMonomer =
+              firstNodeInRow.senseNode?.monomers[0].attachmentPointsToBonds.R1;
+
+            if (r1BondToPreviousMonomer instanceof PolymerBond) {
+              r1BondToPreviousMonomer.hasAntisenseInRow = true;
+            }
+
+            const r2BondFromPreviousSenseNode =
+              previousSenseNode?.monomers[0].attachmentPointsToBonds.R2;
+            const r1BondFromPreviousAntisenseNode =
+              previousAntisenseNode?.monomers[0].attachmentPointsToBonds.R1;
+            if (r2BondFromPreviousSenseNode instanceof PolymerBond) {
+              r2BondFromPreviousSenseNode.nextRowPositionX =
+                newSenseNodePosition.x;
+            }
+            if (r1BondFromPreviousAntisenseNode instanceof PolymerBond) {
+              r1BondFromPreviousAntisenseNode.nextRowPositionX =
+                newSenseNodePosition.x;
+            }
+          }
+
+          hasAntisenseInRow = false;
+          hasRnaInRow = false;
+          snakeLayoutNodesInRow = [];
+
+          row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
+            if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
+              const moleculeBbox = DrawingEntitiesManager.getStructureBbox(
+                twoStrandedSnakeLayoutNode.molecule,
+              );
+              const offset = Vec2.diff(
+                Coordinates.canvasToModel(newSenseNodePosition),
+                new Vec2(
+                  moleculeBbox.left + cellWidthInAngstroms / 4,
+                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                ),
+              );
+
+              twoStrandedSnakeLayoutNode.molecule.forEach((atom) => {
+                command.merge(
+                  this.createDrawingEntityMovingCommand(atom, offset),
+                );
+              });
+            } else if (
+              isTwoStrandedSnakeLayoutNode(twoStrandedSnakeLayoutNode)
+            ) {
+              const senseNode = twoStrandedSnakeLayoutNode.senseNode;
+              const antisenseNode = twoStrandedSnakeLayoutNode.antisenseNode;
+
+              if (senseNode) {
+                if (senseNode instanceof SugarWithBaseSnakeLayoutNode) {
+                  command.merge(
+                    this.rearrangeSugarWithBaseSnakeLayoutNode(
+                      senseNode,
+                      newSenseNodePosition,
+                      rearrangedMonomersSet,
+                      needRepositionMonomers,
+                    ),
+                  );
+                  hasRnaInRow = true;
+                } else if (senseNode instanceof SingleMonomerSnakeLayoutNode) {
+                  command.merge(
+                    this.rearrangeSingleMonomerSnakeLayoutNode(
+                      senseNode,
+                      newSenseNodePosition,
+                      rearrangedMonomersSet,
+                      needRepositionMonomers,
+                    ),
+                  );
+                }
+
+                snakeLayoutNodesInRow.push(senseNode);
+              }
+
+              if (antisenseNode) {
+                if (antisenseNode instanceof SugarWithBaseSnakeLayoutNode) {
+                  command.merge(
+                    this.rearrangeSugarWithBaseSnakeLayoutNode(
+                      antisenseNode,
+                      new Vec2(
+                        newSenseNodePosition.x,
+                        newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
+                      ),
+                      rearrangedMonomersSet,
+                      needRepositionMonomers,
+                      true,
+                    ),
+                  );
+                  hasRnaInRow = true;
+                } else if (
+                  antisenseNode instanceof SingleMonomerSnakeLayoutNode
+                ) {
+                  command.merge(
+                    this.rearrangeSingleMonomerSnakeLayoutNode(
+                      antisenseNode,
+                      new Vec2(
+                        newSenseNodePosition.x,
+                        newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
+                      ),
+                      rearrangedMonomersSet,
+                      needRepositionMonomers,
+                    ),
+                  );
+                }
+
+                hasAntisenseInRow = true;
+                snakeLayoutNodesInRow.push(antisenseNode);
+              }
+
+              previousSenseNode = senseNode || previousSenseNode;
+              previousAntisenseNode = antisenseNode || previousAntisenseNode;
+            }
+
+            lastPosition = newSenseNodePosition;
+            newSenseNodePosition = new Vec2(
+              lastPosition.x + SnakeLayoutCellWidth,
+              lastPosition.y,
+            );
+          });
+
+          newSenseNodePosition = new Vec2(
+            MONOMER_START_X_POSITION,
+            lastPosition.y +
+              (hasRnaInRow || hasAntisenseInRow // hasAntisenseInPreviousRow used here because currently antisense y reserves space for RNA
+                ? VERTICAL_OFFSET_FROM_ROW_WITH_RNA
+                : VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA) +
+              (hasAntisenseInRow ? SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS : 0),
+          );
+        });
+      });
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
@@ -1868,7 +1878,7 @@ export class DrawingEntitiesManager {
   }
 
   private redrawBondsModelChange(
-    bond: PolymerBond | MonomerToAtomBond,
+    bond: PolymerBond | MonomerToAtomBond | Bond,
     startPosition?: Vec2,
     endPosition?: Vec2,
   ) {
@@ -1894,6 +1904,7 @@ export class DrawingEntitiesManager {
     [
       ...this.polymerBonds.values(),
       ...this.monomerToAtomBonds.values(),
+      ...this.bonds.values(),
     ].forEach((polymerBond) => {
       command.merge(
         this.createDrawingEntityRedrawCommand(
@@ -2895,14 +2906,14 @@ export class DrawingEntitiesManager {
   }
 
   // TODO create separate class for BoundingBox
-  public static getStructureBbox(monomers: BaseMonomer[]) {
+  public static getStructureBbox(drawingEntities: DrawingEntity[]) {
     let left = 0;
     let right = 0;
     let top = 0;
     let bottom = 0;
 
-    monomers.forEach((monomer) => {
-      const monomerPosition = monomer.position;
+    drawingEntities.forEach((drawingEntity) => {
+      const monomerPosition = drawingEntity.position;
 
       left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
       right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
@@ -3687,5 +3698,36 @@ export class DrawingEntitiesManager {
         queue.push(...current.bonds);
       }
     }
+  }
+
+  public getConnectedMolecule(
+    startEntity: DrawingEntity,
+    entitiesToReturn: Array<typeof Atom | typeof Bond> = [Atom, Bond],
+  ) {
+    const connectedMoleculeMonomers: Array<Atom | Bond> = [];
+    const queue = [startEntity];
+    const visited = new Set<number>();
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+
+      if (!current || visited.has(current.id)) continue;
+
+      visited.add(current.id);
+
+      if (current instanceof Bond) {
+        queue.push(current.firstAtom, current.secondAtom);
+        if (entitiesToReturn.includes(Bond)) {
+          connectedMoleculeMonomers.push(current);
+        }
+      } else if (current instanceof Atom) {
+        queue.push(...current.bonds);
+        if (entitiesToReturn.includes(Atom)) {
+          connectedMoleculeMonomers.push(current);
+        }
+      }
+    }
+
+    return connectedMoleculeMonomers;
   }
 }

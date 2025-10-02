@@ -123,6 +123,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
 
   show() {
     // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
+    // TODO refactor this with a more proper solution without checking atom renderer here
     const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
     if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
       setTimeout(() => {
@@ -134,24 +135,26 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       return;
     }
 
-    this.rootElement = this.canvas
-      .insert('g', `.monomer`)
-      .data([this])
-      .attr('data-testid', 'bond')
-      .attr('data-type', 'covalent')
-      .attr('data-bondid', this.monomerToAtomBond.id)
-      .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
-      .attr('data-toatomid', this.monomerToAtomBond.atom.id)
-      .attr(
-        'data-fromattachmentpoint',
-        this.monomerToAtomBond.monomer.getAttachmentPointByBond(
-          this.monomerToAtomBond,
-        ) || '',
-      )
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
+    this.rootElement =
+      this.rootElement ||
+      (this.canvas
+        .insert('g', `.monomer`)
+        .data([this])
+        .attr('data-testid', 'bond')
+        .attr('data-type', 'covalent')
+        .attr('data-bondid', this.monomerToAtomBond.id)
+        .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
+        .attr('data-toatomid', this.monomerToAtomBond.atom.id)
+        .attr(
+          'data-fromconnectionpoint',
+          this.monomerToAtomBond.monomer.getAttachmentPointByBond(
+            this.monomerToAtomBond,
+          ) || '',
+        )
+        .attr(
+          'transform',
+          `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+        ) as never as D3SvgElementSelection<SVGGElement, void>);
 
     this.rootElement
       ?.append('line')

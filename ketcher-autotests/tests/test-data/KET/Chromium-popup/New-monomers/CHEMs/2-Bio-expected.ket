@@ -923,7 +923,7 @@
         "idtAliases": {
             "base": "2-Bio",
             "modifications": {
-                "endpoint5": "52-Bio"
+                "endpoint5": "/52-Bio/"
             }
         }
     }

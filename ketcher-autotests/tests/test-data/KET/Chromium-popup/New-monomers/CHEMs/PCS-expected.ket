@@ -433,8 +433,8 @@
         "idtAliases": {
             "base": "SpPC",
             "modifications": {
-                "endpoint5": "5SpPC",
-                "internal": "iSpPC"
+                "endpoint5": "/5SpPC/",
+                "internal": "/iSpPC/"
             }
         }
     }

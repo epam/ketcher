@@ -1059,8 +1059,8 @@
         "idtAliases": {
             "base": "6-TAMN",
             "modifications": {
-                "internal": "i6-TAMN",
-                "endpoint3": "36-TAMTSp"
+                "internal": "/i6-TAMN/",
+                "endpoint3": "/36-TAMTSp/"
             }
         },
         "naturalAnalogShort": "T"

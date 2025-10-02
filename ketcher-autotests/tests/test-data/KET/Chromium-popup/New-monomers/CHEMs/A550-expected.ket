@@ -743,8 +743,8 @@
         "idtAliases": {
             "base": "ATTO550N",
             "modifications": {
-                "endpoint5": "5ATTO550N",
-                "endpoint3": "3ATTO550N"
+                "endpoint5": "/5ATTO550N/",
+                "endpoint3": "/3ATTO550N/"
             }
         }
     }

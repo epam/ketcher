@@ -894,7 +894,7 @@
         "idtAliases": {
             "base": "IRD700",
             "modifications": {
-                "endpoint5": "5IRD700"
+                "endpoint5": "/5IRD700/"
             }
         }
     }

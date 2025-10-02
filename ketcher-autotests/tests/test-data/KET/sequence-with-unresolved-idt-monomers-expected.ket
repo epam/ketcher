@@ -1774,7 +1774,12 @@
             }
         ],
         "idtAliases": {
-            "base": "iMe-dC2"
+            "base": "iMe-dC2",
+            "modifications": {
+                "endpoint5": "/iMe-dC2/",
+                "internal": "/iMe-dC2/",
+                "endpoint3": "/iMe-dC2/"
+            }
         },
         "unresolved": true,
         "naturalAnalogShort": ""

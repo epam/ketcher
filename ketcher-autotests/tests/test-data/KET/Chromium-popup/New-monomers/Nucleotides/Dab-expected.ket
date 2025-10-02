@@ -899,7 +899,7 @@
         "idtAliases": {
             "base": "Dab",
             "modifications": {
-                "endpoint3": "3Dab"
+                "endpoint3": "/3Dab/"
             }
         },
         "naturalAnalogShort": "C"

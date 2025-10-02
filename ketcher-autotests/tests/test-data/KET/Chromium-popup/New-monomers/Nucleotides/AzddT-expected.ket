@@ -716,7 +716,7 @@
         "idtAliases": {
             "base": "AzideN",
             "modifications": {
-                "internal": "iAzideN"
+                "internal": "/iAzideN/"
             }
         },
         "naturalAnalogShort": "T"

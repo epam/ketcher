@@ -757,8 +757,8 @@
         "idtAliases": {
             "base": "RHO101N",
             "modifications": {
-                "endpoint5": "5RHO101N",
-                "endpoint3": "3RHO101N"
+                "endpoint5": "/5RHO101N/",
+                "endpoint3": "/3RHO101N/"
             }
         }
     }

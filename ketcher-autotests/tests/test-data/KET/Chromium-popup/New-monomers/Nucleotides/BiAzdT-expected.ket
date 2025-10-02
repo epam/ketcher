@@ -900,7 +900,7 @@
         "idtAliases": {
             "base": "BiodUK",
             "modifications": {
-                "internal": "iBiodUK"
+                "internal": "/iBiodUK/"
             }
         },
         "naturalAnalogShort": "T"

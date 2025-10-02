@@ -842,7 +842,7 @@
         "idtAliases": {
             "base": "Dy750N",
             "modifications": {
-                "endpoint5": "5Dy750N"
+                "endpoint5": "/5Dy750N/"
             }
         }
     }

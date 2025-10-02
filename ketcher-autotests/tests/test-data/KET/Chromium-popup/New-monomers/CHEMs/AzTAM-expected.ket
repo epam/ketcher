@@ -692,7 +692,7 @@
         "idtAliases": {
             "base": "5-TAMK",
             "modifications": {
-                "endpoint5": "55-TAMK"
+                "endpoint5": "/55-TAMK/"
             }
         }
     }

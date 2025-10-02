@@ -736,7 +736,7 @@
         "idtAliases": {
             "base": "BHQ-3",
             "modifications": {
-                "endpoint3": "3BHQ-3"
+                "endpoint3": "/3BHQ-3/"
             }
         }
     }

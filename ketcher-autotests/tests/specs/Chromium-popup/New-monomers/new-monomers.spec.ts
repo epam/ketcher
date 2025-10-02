@@ -162,7 +162,7 @@ const newNucleotides = [
   Nucleotide.FAMKdT,
   Nucleotide.Dab,
   Nucleotide.ddC,
-  Nucleotide.InvdT,
+  Nucleotide._3InvdT,
 ];
 
 test(`1. Verify changing the symbol of a CHEM`, async () => {
@@ -1042,7 +1042,7 @@ const threePrimeR1Nucleotides = [
   Nucleotide._5TAMdT,
   Nucleotide.Dab,
   Nucleotide.ddC,
-  Nucleotide.InvdT,
+  Nucleotide._3InvdT,
   Nucleotide._3Puro,
 ];
 const internalR1R2Nucleotides = [

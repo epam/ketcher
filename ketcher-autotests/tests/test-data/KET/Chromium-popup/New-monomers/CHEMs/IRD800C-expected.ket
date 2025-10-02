@@ -1092,7 +1092,7 @@
         "idtAliases": {
             "base": "IRD800CWN",
             "modifications": {
-                "endpoint5": "5IRD800CWN"
+                "endpoint5": "/5IRD800CWN/"
             }
         }
     }

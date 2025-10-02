@@ -1156,7 +1156,7 @@
         "idtAliases": {
             "base": "5-TAMK",
             "modifications": {
-                "internal": "i5-TAMK"
+                "internal": "/i5-TAMK/"
             }
         },
         "naturalAnalogShort": "T"

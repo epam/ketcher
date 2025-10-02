@@ -9,12 +9,7 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils/canvas';
-import {
-  clickOnCanvas,
-  dragMouseTo,
-  moveMouseToTheMiddleOfTheScreen,
-  waitForRender,
-} from '@utils/index';
+import { clickOnCanvas, dragMouseTo } from '@utils/index';
 import {
   CreateMonomerDialog,
   prepareMoleculeForMonomerCreation,
@@ -676,6 +671,42 @@ test(`13. Check that users can set a new AP by selecting a potential AA, and R-n
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
    * Description: Check that users can set a new AP by selecting a potential AA, and R-number got assigned automatically
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Create new AP via context menu
+   *      6. Validate that the R1 is appeared on the canvas
+   *
+   * Version 3.8
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(600, 250, page);
+
+  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
+  await ContextMenu(page, attachmentAtom).click(
+    ConnectionPointOption.AssignAsALeavingGroup,
+  );
+
+  const attachmentPointR3 = page.locator('tspan').filter({ hasText: 'R1' });
+  await expect(attachmentPointR3).toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`14. Check that after an AP is set, it shows up in the Attributes panel with its LGA and R-number`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that after an AP is set, it shows up in the Attributes panel with its LGA and R-number
    *
    * Case:
    *      1. Open Molecules canvas

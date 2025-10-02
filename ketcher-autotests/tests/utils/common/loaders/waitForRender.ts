@@ -30,11 +30,11 @@ export const waitForRender = async (
   }
 };
 
-async function waitForCustomEvent(
+export const waitForCustomEvent = async (
   page: Page,
   eventName: string,
   timeout = 1000,
-): Promise<boolean> {
+): Promise<boolean> => {
   return page.evaluate(
     ({ eventName, timeout }: { eventName: string; timeout: number }) => {
       return new Promise<boolean>((resolve) => {
@@ -54,7 +54,7 @@ async function waitForCustomEvent(
     },
     { eventName, timeout },
   );
-}
+};
 
 export const waitForItemsToMergeInitialization = async (
   page: Page,

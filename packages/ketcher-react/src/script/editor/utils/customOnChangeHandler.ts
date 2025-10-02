@@ -23,7 +23,7 @@ type Position = {
 
 type ArrowPosition = [Position, Position];
 
-type Data = {
+export type ChangeEventData = {
   operation: any;
   id?: number;
   label?: string;
@@ -39,7 +39,7 @@ type Data = {
 };
 
 export function customOnChangeHandler(action, handler) {
-  const data: Data[] = [];
+  const data: ChangeEventData[] = [];
   if (action === undefined) {
     return handler();
   } else {
@@ -94,6 +94,7 @@ export function customOnChangeHandler(action, handler) {
 
         case OperationType.BOND_ADD:
         case OperationType.BOND_DELETE:
+        case OperationType.BOND_ATTR:
           data.push({
             operation: op.type,
             id: op.data.bid,

@@ -74,6 +74,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       (bondData.type === 1 && bondData.stereo === 6) ||
       (bondData.type === 1 && bondData.stereo === 4));
 
+  const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+
   return (
     <>
       <Item
@@ -120,6 +122,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Query bonds-option"
         label="Query bonds"
         className={styles.subMenu}
+        disabled={disabledForMonomerCreation}
       >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
@@ -153,10 +156,14 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Attach S-Group...-option"
         hidden={sGroupAttachHidden}
         onClick={handleSGroupAttach}
+        disabled={disabledForMonomerCreation}
       >
         Attach S-Group...
       </Item>
-      <HighlightMenu onHighlight={highlightBondWithColor} />
+      <HighlightMenu
+        onHighlight={highlightBondWithColor}
+        disabled={disabledForMonomerCreation}
+      />
       <Item
         {...props}
         data-testid="Edit S-Group...-option"

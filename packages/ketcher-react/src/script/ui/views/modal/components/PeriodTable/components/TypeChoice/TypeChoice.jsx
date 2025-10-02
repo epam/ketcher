@@ -23,9 +23,9 @@ const typeSchema = [
   { title: 'Not List', value: 'not-list', testId: 'not-list-radio-button' },
 ];
 
-function TypeChoice({ value, onChange, ...props }) {
+function TypeChoice({ value, onChange, disabled, ...props }) {
   return (
-    <fieldset className={classes.fieldset}>
+    <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
         <label key={type.title}>
           {/* eslint-disable jsx-a11y/label-has-associated-control */}
@@ -35,6 +35,7 @@ function TypeChoice({ value, onChange, ...props }) {
             data-testid={type.testId}
             checked={type.value === value}
             onChange={() => onChange(type.value)}
+            disabled={disabled}
             {...props}
           />
           {/* eslint-enable jsx-a11y/label-has-associated-control */}

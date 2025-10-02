@@ -52,6 +52,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           highlight && styles.highlight,
         )}
         ref={ref}
+        data-testid={`attachment-point-controls-${currentNameOption?.label}`}
       >
         <Select
           className={styles.nameSelect}

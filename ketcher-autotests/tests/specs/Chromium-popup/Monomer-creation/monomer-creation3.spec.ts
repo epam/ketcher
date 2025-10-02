@@ -8,6 +8,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
+  takeElementScreenshot,
 } from '@utils/canvas';
 import { clickOnCanvas, dragMouseTo } from '@utils/index';
 import {
@@ -15,7 +16,10 @@ import {
   prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { OptionsForDebuggingSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  AtomsSetting,
+  OptionsForDebuggingSetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { AttachmentPointName } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
@@ -714,7 +718,7 @@ test(`14. Check that after an AP is set, it shows up in the Attributes panel wit
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press Create Monomer button
    *      5. Create new AP via context menu
-   *      6. Validate that the R1 is appeared on the canvas
+   *      6. Validate that the R1 is appeared at Attributes panel
    *
    * Version 3.8
    */
@@ -730,11 +734,130 @@ test(`14. Check that after an AP is set, it shows up in the Attributes panel wit
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
-    ConnectionPointOption.AssignAsALeavingGroup,
+    ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR3 = page.locator('tspan').filter({ hasText: 'R1' });
-  await expect(attachmentPointR3).toBeVisible();
+  await expect(CreateMonomerDialog(page).r1NameCombobox).toBeVisible();
+  await expect(CreateMonomerDialog(page).r1AtomCombobox).toBeVisible();
+  await expect(CreateMonomerDialog(page).r1DeleteButton).toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`15. Check that hovering over an already set AP on the canvas (over an AA), highlights the corresponding AP in the Attributes panel`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that hovering over an already set AP on the canvas (over an AA),
+   *              highlights the corresponding AP in the Attributes panel
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Create new AP via context menu
+   *      6. Hover mouse over the AA
+   *      7. Validate that the R1 is highlighted in the Attributes panel
+   *
+   * Version 3.8
+   */
+  await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(600, 250, page);
+
+  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
+  await ContextMenu(page, attachmentAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  await attachmentAtom.hover();
+  await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup);
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`16. Check that hovering over an already set AP on the canvas (over an LGA), highlights the corresponding AP in the Attributes panel`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that hovering over an already set AP on the canvas (over an LGA),
+   *              highlights the corresponding AP in the Attributes panel
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Create new AP via context menu
+   *      6. Hover mouse over the LGA
+   *      7. Validate that the R1 is highlighted in the Attributes panel
+   *
+   * Version 3.8
+   */
+  await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(600, 250, page);
+
+  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
+  await ContextMenu(page, attachmentAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const leavingGroupAtom = getAtomLocator(page, { atomId: 9 });
+  await leavingGroupAtom.hover();
+  await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup);
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`17. Check that hovering over an already set AP on the canvas (over the bond connecting them), highlights the corresponding AP in the Attributes panel`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that hovering over an already set AP on the canvas (over the bond connecting them),
+   *              highlights the corresponding AP in the Attributes panel
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Create new AP via context menu
+   *      6. Validate that the R1 is highlighted in the Attributes panel
+   *
+   * Version 3.8
+   */
+  await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(600, 250, page);
+
+  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
+  await ContextMenu(page, attachmentAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const leavingGroupAtom = getAtomLocator(page, { atomId: 9 });
+  await leavingGroupAtom.hover();
+  await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup);
 
   await CreateMonomerDialog(page).discard();
 });

@@ -250,7 +250,8 @@ export enum LibraryPresetOption {
 export enum ConnectionPointOption {
   EditConnectionPoint = 'edit-connection-point',
   RemoveAssignment = 'remove-assignment',
-  AssignAsALeavingGroup = 'assign-as-a-leaving-group',
+  MarkAsLeavingGroup = 'mark-as-leaving-group',
+  MarkAsConnectionPoint = 'mark-as-connection-point',
 }
 
 export type ContextMenuOption =

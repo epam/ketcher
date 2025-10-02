@@ -96,6 +96,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
+  public get scaledPosition() {
+    return this.scaledMonomerPosition;
+  }
+
   public get scaledMonomerPositionForSequence() {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     const indexInRow = this.monomerIndexInChain % lineLength;

@@ -178,6 +178,7 @@ export class SequenceMode extends BaseMode {
           false,
           true,
           !this.isEditMode,
+          false,
         )
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
           !this.isEditMode,

@@ -958,26 +958,46 @@ abstract class SelectBase implements BaseTool {
     const renderer = event.target?.__data__;
     try {
       if (this.mode === 'moving' && renderer?.drawingEntity?.selected) {
-        const firstMonomerCurrentPosition =
-          this.editor.drawingEntitiesManager.selectedMonomers[0]?.position;
-        const actualMovementDelta =
-          this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
-            ? Vec2.diff(
-                firstMonomerCurrentPosition,
-                this.firstMonomerPositionBeforeMove,
-              )
-            : undefined;
-        const epsilon = 0.001; // small epsilon at which snapping is not triggered
-        if (!actualMovementDelta || actualMovementDelta.length() < epsilon) {
-          return;
-        }
+        const selectedMonomers =
+          this.editor.drawingEntitiesManager.selectedMonomers;
+        const hasMonomerSelection = selectedMonomers.length > 0;
+        if (hasMonomerSelection) {
+          const firstMonomerCurrentPosition = selectedMonomers[0]?.position;
+          const actualMovementDelta =
+            this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
+              ? Vec2.diff(
+                  firstMonomerCurrentPosition,
+                  this.firstMonomerPositionBeforeMove,
+                )
+              : undefined;
+          const epsilon = 0.001; // small epsilon at which snapping is not triggered
+          if (!actualMovementDelta || actualMovementDelta.length() < epsilon) {
+            return;
+          }
 
-        const modelChanges =
-          this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-            new Vec2(0, 0),
-            actualMovementDelta,
+          const modelChanges =
+            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+              new Vec2(0, 0),
+              actualMovementDelta,
+            );
+          this.history.update(modelChanges);
+        } else {
+          const canvasDelta = Vec2.diff(
+            this.mousePositionAfterMove,
+            this.mousePositionBeforeMove,
           );
-        this.history.update(modelChanges);
+          if (canvasDelta.length() === 0) {
+            return;
+          }
+
+          const fullMovementOffset = Coordinates.canvasToModel(canvasDelta);
+          const modelChanges =
+            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+              new Vec2(0, 0),
+              fullMovementOffset,
+            );
+          this.history.update(modelChanges);
+        }
       }
     } finally {
       this.firstMonomerPositionBeforeMove = undefined;

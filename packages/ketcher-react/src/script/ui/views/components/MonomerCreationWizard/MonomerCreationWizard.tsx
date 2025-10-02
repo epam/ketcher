@@ -240,6 +240,19 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
   return { notifications, problematicAttachmentPoints };
 };
 
+const validateStructure = (editor: Editor) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const isStructureContinuous = Editor.isStructureContinuous(editor.struct());
+  if (!isStructureContinuous) {
+    notifications.set('incontinuousStructure', {
+      type: 'error',
+      message: NotificationMessages.incontinuousStructure,
+    });
+  }
+
+  return notifications;
+};
+
 const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -404,6 +417,15 @@ const MonomerCreationWizard = () => {
       return;
     }
 
+    const structureNotifications = validateStructure(editor);
+    if (structureNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: structureNotifications,
+      });
+      return;
+    }
+
     editor.saveNewMonomer({
       type,
       symbol,
@@ -528,7 +550,7 @@ const MonomerCreationWizard = () => {
               <p className={styles.attachmentPointsTitle}>Attachment points</p>
               <span
                 className={styles.attachmentPointInfoIcon}
-                title="New attachment points can be added by interacting with attachment atoms and leaving group atoms on the structure."
+                title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
               >
                 <Icon name="about" />
               </span>

@@ -18,8 +18,10 @@ export type AttachmentPointSelectData = {
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
-): AttachmentPointSelectData => {
-  assert(editor.monomerCreationState);
+): AttachmentPointSelectData | null => {
+  if (!editor.monomerCreationState) {
+    return null;
+  }
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 

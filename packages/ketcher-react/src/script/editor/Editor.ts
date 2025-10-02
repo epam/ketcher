@@ -630,9 +630,9 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const isSelectionContinuous = Editor.isSelectionContinuous(
-      selection,
+    const isSelectionContinuous = Editor.isStructureContinuous(
       currentStruct,
+      selection,
     );
     if (!isSelectionContinuous) {
       return false;
@@ -748,18 +748,27 @@ class Editor implements KetcherEditor {
     return false;
   }
 
-  static isSelectionContinuous(selection: Selection, struct: Struct): boolean {
-    const { atoms, bonds } = selection;
+  static isStructureContinuous(struct: Struct, selection?: Selection): boolean {
+    let atomIds: number[];
+    let bondIds: number[];
 
-    if (!atoms || atoms.length === 0 || !bonds || bonds.length === 0) {
+    if (selection) {
+      atomIds = selection.atoms ?? [];
+      bondIds = selection.bonds ?? [];
+    } else {
+      atomIds = Array.from(struct.atoms.keys());
+      bondIds = Array.from(struct.bonds.keys());
+    }
+
+    if (!atomIds || atomIds.length === 0 || !atomIds || atomIds.length === 0) {
       return false;
     }
 
     const adjacencyList: Map<number, number[]> = new Map();
-    for (const atomId of atoms) {
+    for (const atomId of atomIds) {
       adjacencyList.set(atomId, []);
     }
-    bonds.forEach((bondId) => {
+    bondIds.forEach((bondId) => {
       const bond = struct.bonds.get(bondId);
       if (!bond) {
         return;
@@ -773,7 +782,7 @@ class Editor implements KetcherEditor {
     });
 
     const visited = new Set<number>();
-    const queue = [atoms[0]];
+    const queue = [atomIds[0]];
 
     while (queue.length > 0) {
       const nextAtomId = queue.shift();
@@ -787,7 +796,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    return visited.size === atoms.length;
+    return visited.size === atomIds.length;
   }
 
   private originalStruct: Struct = new Struct();
@@ -1529,6 +1538,7 @@ class Editor implements KetcherEditor {
       switch (entry.operation) {
         case OperationType.ATOM_DELETE:
         case OperationType.ATOM_ATTR:
+        case OperationType.BOND_ADD:
         case OperationType.BOND_ATTR: {
           if (entry.id !== undefined) {
             const existingChanges = changesMap.get(entry.operation);
@@ -1632,11 +1642,31 @@ class Editor implements KetcherEditor {
         }
 
         case OperationType.BOND_ADD: {
-          // If new bond from attachment atom – invalidate potential leaving atoms
-          // If new bond from leaving atom – delete the whole AP
-          // If new bond from arbitrary atom – invalidate potential attachment points
+          for (const id of ids.values()) {
+            const bond = this.struct().bonds.get(id);
+            assert(bond);
+
+            const attachmentPointWithBondToLeavingAtom = Array.from(
+              this.monomerCreationState.assignedAttachmentPoints.entries(),
+            ).find(([, [, leavingAtomId]]) => {
+              return bond.begin === leavingAtomId || bond.end === leavingAtomId;
+            });
+
+            if (!attachmentPointWithBondToLeavingAtom) {
+              continue;
+            }
+
+            const [attachmentPointName] = attachmentPointWithBondToLeavingAtom;
+
+            this.monomerCreationState.assignedAttachmentPoints.delete(
+              attachmentPointName,
+            );
+          }
           break;
         }
+
+        default:
+          break;
       }
     }
 

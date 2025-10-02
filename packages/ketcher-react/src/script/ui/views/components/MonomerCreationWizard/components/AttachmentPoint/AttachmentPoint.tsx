@@ -29,7 +29,6 @@ const AttachmentPoint = ({
   onRemove,
 }: Props) => {
   const attachmentPointsContainerRef = useRef<HTMLDivElement>(null);
-  const selectData = useAttachmentPointSelectsData(editor, name);
 
   useEffect(() => {
     const element = attachmentPointsContainerRef.current;
@@ -91,6 +90,12 @@ const AttachmentPoint = ({
     };
   }, [name]);
 
+  const selectsData = useAttachmentPointSelectsData(editor, name);
+
+  if (!selectsData) {
+    return null;
+  }
+
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== name) {
       onNameChange(name, newName);
@@ -107,7 +112,7 @@ const AttachmentPoint = ({
 
   return (
     <AttachmentPointControls
-      data={selectData}
+      data={selectsData}
       onNameChange={handleNameChange}
       onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}

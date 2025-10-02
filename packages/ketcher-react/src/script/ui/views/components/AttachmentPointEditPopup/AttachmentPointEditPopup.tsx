@@ -83,7 +83,14 @@ const AttachmentPointEditPopup = ({
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const selectData = useAttachmentPointSelectsData(editor, attachmentPointName);
+  const selectsData = useAttachmentPointSelectsData(
+    editor,
+    attachmentPointName,
+  );
+
+  if (!selectsData) {
+    return null;
+  }
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== attachmentPointName) {
@@ -113,7 +120,7 @@ const AttachmentPointEditPopup = ({
     >
       <p className={styles.title}>Edit connection point</p>
       <AttachmentPointControls
-        data={selectData}
+        data={selectsData}
         onNameChange={handleNameChange}
         onLeavingAtomChange={handleLeavingAtomChange}
         className={styles.selectsWrapper}

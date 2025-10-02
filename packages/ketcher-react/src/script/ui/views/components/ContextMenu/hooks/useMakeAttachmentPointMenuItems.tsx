@@ -12,7 +12,7 @@ type Props = {
   editor: Editor;
 };
 
-const useMakeLeavingGroupAtomMenuItem = ({
+const useMakeAttachmentPointMenuItems = ({
   props,
   selectedAtomId,
   editor,
@@ -100,4 +100,4 @@ const useMakeLeavingGroupAtomMenuItem = ({
   return menuItems.length > 0 ? menuItems : null;
 };
 
-export default useMakeLeavingGroupAtomMenuItem;
+export default useMakeAttachmentPointMenuItems;

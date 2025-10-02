@@ -116,7 +116,11 @@ class Table extends Component {
         needMargin={false}
         footerContent={
           !this.props.isNestedModal ? (
-            <TypeChoice value={this.state.type} onChange={this.changeType} />
+            <TypeChoice
+              value={this.state.type}
+              onChange={this.changeType}
+              disabled={this.props.isMonomerCreationWizardActive}
+            />
           ) : null
         }
       >
@@ -153,10 +157,18 @@ function mapSelectionToProps(editor) {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  const result = {};
+
+  result.isMonomerCreationWizardActive =
+    state.editor.isMonomerCreationWizardActive;
+
   if (ownProps.values || ownProps.label) {
-    return {};
+    return result;
   }
-  return mapSelectionToProps(state.editor);
+
+  const selectionProps = mapSelectionToProps(state.editor);
+
+  return { ...selectionProps, ...result };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {

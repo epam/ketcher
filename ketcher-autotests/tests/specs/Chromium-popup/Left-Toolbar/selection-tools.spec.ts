@@ -43,6 +43,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
 
   test('Case 1: Check that the tools default shape is a "Rectangle", when no tool is selected', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The tools default shape is a "Rectangle", when no tool is selected
      * Scenario:
@@ -55,6 +56,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
 
   test('Case 2: Check that last selection saves and the icon display the last selected tool', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The last selection saves and the icon display the last selected tool,
      * which will be activated when clicked, similar to the behavior in molecules mode.
@@ -91,6 +93,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Able to draw an irregular selection area on the canvas by clicking and dragging the mouse for Lasso.
      * Scenario:
@@ -118,6 +121,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
 
   test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and Fragment Selection (Shift+Tab), are visible on hover in the sidebar', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The shortcut as in molecules mode Lasso Selection, Fragment Selection (Shift+Tab), are visible on hover in the sidebar.
      * Scenario:
@@ -150,6 +154,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
 
   test('Case 5: Check that by repeatedly pressing the Shift+Tab shortcut will cycle through the rectangle, lasso and fragment selection tool', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: By repeatedly pressing the Shift+Tab shortcut will cycle through the rectangle, lasso and fragment selection tool.
      * Scenario:
@@ -168,6 +173,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The elements (monomers or bonds ) associated with the lasso automatically highlighted ( Flex mode ).
      * Scenario:
@@ -200,6 +206,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The elements (monomers or bonds ) associated with the lasso automatically highlighted ( Snake mode ).
      * Scenario:
@@ -232,6 +239,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The elements (monomers or bonds ) associated with the lasso automatically highlighted ( Sequence mode ).
      * Scenario:
@@ -264,6 +272,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The lasso selection tool select a molecule during its initial pass and then deselect it during the subsequent pass ( Flex mode ).
      * Scenario:
@@ -293,6 +302,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The lasso selection tool select a molecule during its initial pass and then deselect it during the subsequent pass ( Snake mode ).
      * Scenario:
@@ -322,6 +332,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The lasso selection tool select a molecule during its initial pass and then deselect it during the subsequent pass ( Sequence mode ).
      * Scenario:
@@ -351,6 +362,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso and Undo ( Flex mode ).
      * Scenario:
@@ -395,6 +407,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso and Undo ( Snake mode ).
      * Scenario:
@@ -440,6 +453,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso and Undo ( Sequence mode ).
      * Scenario:
@@ -487,6 +501,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso through right-click menu ( Flex mode ).
      * Scenario:
@@ -541,6 +556,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso through right-click menu ( Snake mode ).
      * Scenario:
@@ -593,6 +609,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by lasso through right-click menu ( Sequence mode ).
      * Scenario:
@@ -646,6 +663,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Lasso ( Flex mode ).
      * Scenario:
@@ -683,6 +701,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Lasso ( Snake mode ).
      * Scenario:
@@ -720,6 +739,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Lasso ( Sequence mode ).
      * Scenario:
@@ -757,6 +777,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Flex mode ).
      * Scenario:
@@ -792,6 +813,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Snake mode ).
      * Scenario:
@@ -827,6 +849,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Lasso ( Sequence mode ).
      * Scenario:
@@ -862,6 +885,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Flex mode ).
      * Scenario:
@@ -901,6 +925,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Snake mode ).
      * Scenario:
@@ -940,6 +965,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Lasso ( Sequence mode ).
      * Scenario:
@@ -979,6 +1005,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ).
      * Scenario:
@@ -1017,6 +1044,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ).
      * Scenario:
@@ -1055,6 +1083,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Lasso selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ).
      * Scenario:
@@ -1093,6 +1122,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The user can click on any monomer in the structure to automatically select the entire
      * fragment connected to that element (The term "fragments" refers to any collection to monomers,
@@ -1125,6 +1155,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The user can click on any monomer in the structure to automatically select the entire
      * fragment connected to that element (The term "fragments" refers to any collection to monomers,
@@ -1157,6 +1188,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The user can click on any monomer in the structure to automatically select the entire
      * fragment connected to that element (The term "fragments" refers to any collection to monomers,
@@ -1192,6 +1224,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment and Undo ( Flex mode ).
      * Scenario:
@@ -1234,6 +1267,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment and Undo ( Snake mode ).
      * Scenario:
@@ -1275,6 +1309,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment and Undo ( Sequence mode ).
      * Scenario:
@@ -1319,6 +1354,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment through right-click menu ( Flex mode ).
      * Scenario:
@@ -1368,6 +1404,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment through right-click menu ( Snake mode ).
      * Scenario:
@@ -1417,6 +1454,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: The deletion of selected structure by Fragment through right-click menu ( Sequence mode ).
      * Scenario:
@@ -1469,6 +1507,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Fragment ( Flex mode ).
      * Scenario:
@@ -1500,6 +1539,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Fragment ( Snake mode ).
      * Scenario:
@@ -1531,6 +1571,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Calculate properties works for selection by Fragment ( Sequence mode ).
      * Scenario:
@@ -1565,6 +1606,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Flex mode ).
      * Scenario:
@@ -1594,6 +1636,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Snake mode ).
      * Scenario:
@@ -1623,6 +1666,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (toolbar icon) works for selection by Fragment ( Sequence mode ).
      * Scenario:
@@ -1655,6 +1699,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Flex mode ).
      * Scenario:
@@ -1688,6 +1733,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Snake mode ).
      * Scenario:
@@ -1721,6 +1767,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Create antisence strand (right-click menu) works for selection by Fragment ( Sequence mode ).
      * Scenario:
@@ -1757,6 +1804,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     FlexCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Flex mode ).
      * Scenario:
@@ -1789,6 +1837,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SnakeCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Snake mode ).
      * Scenario:
@@ -1821,6 +1870,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
     SequenceCanvas: _,
   }) => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/6358
      * Description: Fragment selection clearing for micro and macro structures by clicking empty area of canvas (Sequence mode ).
      * Scenario:

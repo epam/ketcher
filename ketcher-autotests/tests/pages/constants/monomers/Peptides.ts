@@ -100,6 +100,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
       'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
       '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
   },
+  _Am: { alias: '-Am', testId: '-Am___C-Terminal amino' },
   Ac_: { alias: 'Ac-', testId: 'Ac-___N-Terminal acetyl' },
   B: { alias: 'B', testId: '_D___Aspartic acid_N___Asparagine' },
   J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' },

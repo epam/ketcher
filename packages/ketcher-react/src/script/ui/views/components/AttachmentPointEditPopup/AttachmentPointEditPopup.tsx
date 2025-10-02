@@ -1,44 +1,34 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import {
-  AtomLabel,
-  AttachmentPointClickData,
-  AttachmentPointName,
-} from 'ketcher-core';
-import Select, { Option } from '../../../component/form/Select';
+import { AttachmentPointClickData, AttachmentPointName } from 'ketcher-core';
+import AttachmentPointControls from '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls';
+import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData';
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
+import { Editor } from '../../../../editor';
+import assert from 'assert';
 
 type Props = {
-  data: AttachmentPointClickData | null;
+  data: AttachmentPointClickData;
   onNameChange: (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
   ) => void;
-  onAtomChange: (atomId: number, atomLabel: string) => void;
+  onLeavingAtomChange: (
+    apName: AttachmentPointName,
+    newLeavingAtomId: number,
+  ) => void;
   onClose: VoidFunction;
+  editor: Editor;
 };
-
-const attachmentPointNameOptions = Array.from({ length: 8 }).map((_, i) => ({
-  value: `R${i + 1}`,
-  label: `R${i + 1}`,
-}));
-
-const attachmentPointAtomOptions: Array<Option> = [
-  { value: AtomLabel.H, label: 'H' },
-  { value: AtomLabel.O, label: 'OH' },
-  { value: AtomLabel.N, label: 'NH2' },
-  { value: AtomLabel.Cl, label: 'Cl' },
-  { value: AtomLabel.F, label: 'F' },
-  { value: AtomLabel.C, label: 'CH3' },
-];
 
 const AttachmentPointEditPopup = ({
   data,
   onNameChange,
-  onAtomChange,
+  onLeavingAtomChange,
   onClose,
+  editor,
 }: Props) => {
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -87,34 +77,33 @@ const AttachmentPointEditPopup = ({
     };
   }, [onClose]);
 
-  if (!data) {
-    return null;
-  }
+  const { attachmentPointName, position } = data;
 
-  const { atomId, atomLabel, attachmentPointName, position } = data;
+  assert(editor.monomerCreationState);
 
-  const handleNameChange = (value: string) => {
-    if (value !== attachmentPointName) {
-      onNameChange(attachmentPointName, value as AttachmentPointName);
+  const { assignedAttachmentPoints } = editor.monomerCreationState;
+
+  const selectData = useAttachmentPointSelectsData(editor, attachmentPointName);
+
+  const handleNameChange = (newName: AttachmentPointName) => {
+    if (newName !== attachmentPointName) {
+      onNameChange(attachmentPointName, newName);
     }
-
     onClose();
   };
 
-  const handleAtomChange = (value: string) => {
-    if (value !== atomLabel) {
-      onAtomChange(atomId, value);
-    }
+  const handleLeavingAtomChange = (newLeavingAtomId: number) => {
+    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointName);
 
+    assert(currentAtomPair);
+
+    const currentLeavingAtomId = currentAtomPair[1];
+
+    if (newLeavingAtomId !== currentLeavingAtomId) {
+      onLeavingAtomChange(attachmentPointName, newLeavingAtomId);
+    }
     onClose();
   };
-
-  const currentNameOption = attachmentPointNameOptions.find(
-    (option) => option.value === attachmentPointName,
-  );
-  const currentAtomOption = attachmentPointAtomOptions.find(
-    (option) => option.value === atomLabel,
-  );
 
   return (
     <div
@@ -123,19 +112,12 @@ const AttachmentPointEditPopup = ({
       ref={popupRef}
     >
       <p className={styles.title}>Edit connection point</p>
-      <div className={styles.selectsWrapper}>
-        <Select
-          className={styles.select}
-          options={attachmentPointNameOptions}
-          value={currentNameOption?.value}
-          onChange={(value) => handleNameChange(value)}
-        />
-        <Select
-          options={attachmentPointAtomOptions}
-          value={currentAtomOption?.value}
-          onChange={(value) => handleAtomChange(value)}
-        />
-      </div>
+      <AttachmentPointControls
+        data={selectData}
+        onNameChange={handleNameChange}
+        onLeavingAtomChange={handleLeavingAtomChange}
+        className={styles.selectsWrapper}
+      />
     </div>
   );
 };

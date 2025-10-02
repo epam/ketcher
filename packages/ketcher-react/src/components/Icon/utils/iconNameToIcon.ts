@@ -247,6 +247,7 @@ import CreateMonomerIcon from '../../../assets/icons/files/create-monomer.svg';
 import CheckFilledIcon from '../../../assets/icons/files/check-filled.svg';
 import WarningFilledIcon from '../../../assets/icons/files/warning-filled.svg';
 import LeavingGroup from '../../../assets/icons/files/leaving-group.svg';
+import ConnectionPoint from '../../../assets/icons/files/connection-point.svg';
 
 export const iconNameToIcon = {
   α,
@@ -496,4 +497,5 @@ export const iconNameToIcon = {
   checkFilled: CheckFilledIcon,
   warningFilled: WarningFilledIcon,
   leavingGroup: LeavingGroup,
+  connectionPoint: ConnectionPoint,
 } as const;

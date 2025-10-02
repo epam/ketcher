@@ -154,6 +154,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.IDT;
       break;
     }
+    case ChemicalMimeType.AXOLABS: {
+      format = SupportedFormat.AXOLABS;
+      break;
+    }
     case ChemicalMimeType.HELM: {
       format = SupportedFormat.HELM;
       break;

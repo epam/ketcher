@@ -207,8 +207,8 @@
         "idtAliases": {
             "base": "AzideN",
             "modifications": {
-                "endpoint5": "5AzideN",
-                "endpoint3": "3AzideN"
+                "endpoint5": "/5AzideN/",
+                "endpoint3": "/3AzideN/"
             }
         }
     }

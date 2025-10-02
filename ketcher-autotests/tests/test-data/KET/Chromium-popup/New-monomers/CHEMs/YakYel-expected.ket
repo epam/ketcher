@@ -760,7 +760,7 @@
         "idtAliases": {
             "base": "YakYel",
             "modifications": {
-                "endpoint5": "5YakYel"
+                "endpoint5": "/5YakYel/"
             }
         }
     }

@@ -436,7 +436,7 @@
         "idtAliases": {
             "base": "BioK",
             "modifications": {
-                "endpoint5": "5BioK"
+                "endpoint5": "/5BioK/"
             }
         }
     }

@@ -745,7 +745,7 @@
         "idtAliases": {
             "base": "HEX",
             "modifications": {
-                "endpoint5": "5HEX"
+                "endpoint5": "/5HEX/"
             }
         }
     }

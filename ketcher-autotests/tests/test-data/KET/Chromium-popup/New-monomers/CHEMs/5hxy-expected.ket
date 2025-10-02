@@ -205,7 +205,7 @@
         "idtAliases": {
             "base": "Hexynyl",
             "modifications": {
-                "endpoint5": "5Hexynyl"
+                "endpoint5": "/5Hexynyl/"
             }
         }
     }

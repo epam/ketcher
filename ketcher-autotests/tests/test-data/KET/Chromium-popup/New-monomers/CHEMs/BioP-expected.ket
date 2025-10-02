@@ -444,7 +444,7 @@
         "idtAliases": {
             "base": "Biosg",
             "modifications": {
-                "endpoint5": "5Biosg"
+                "endpoint5": "/5Biosg/"
             }
         }
     }

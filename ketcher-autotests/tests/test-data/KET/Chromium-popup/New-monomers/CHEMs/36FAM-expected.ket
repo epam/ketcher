@@ -640,7 +640,7 @@
         "idtAliases": {
             "base": "6-FAM",
             "modifications": {
-                "endpoint3": "36-FAM"
+                "endpoint3": "/36-FAM/"
             }
         }
     }

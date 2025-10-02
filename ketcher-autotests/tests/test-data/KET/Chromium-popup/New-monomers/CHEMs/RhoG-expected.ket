@@ -610,8 +610,8 @@
         "idtAliases": {
             "base": "RhoG-XN",
             "modifications": {
-                "endpoint5": "5RhoG-XN",
-                "endpoint3": "3RhodGn-XN"
+                "endpoint5": "/5RhoG-XN/",
+                "endpoint3": "/3RhodGn-XN/"
             }
         }
     }

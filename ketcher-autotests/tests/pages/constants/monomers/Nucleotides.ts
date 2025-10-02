@@ -59,7 +59,7 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
   FAMKdT: { alias: 'FAMKdT', testId: 'FAMKdT___dT 6-FAM Azide' },
   Dab: { alias: 'Dab', testId: 'Dab___d5meC Dabcyl' },
   ddC: { alias: 'ddC', testId: 'ddC___Dideoxycytidine' },
-  InvdT: { alias: 'InvdT', testId: 'InvdT___Inverted dT' },
+  _3InvdT: { alias: '3InvdT', testId: "3InvdT___3' Inverted dT" },
 });
 
 export type NucleotidesType = typeof Nucleotide;

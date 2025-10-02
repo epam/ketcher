@@ -550,7 +550,7 @@
         "idtAliases": {
             "base": "6-TAMN",
             "modifications": {
-                "endpoint5": "56-TAMN"
+                "endpoint5": "/56-TAMN/"
             }
         }
     }

@@ -631,7 +631,7 @@
         "idtAliases": {
             "base": "6-FAMK",
             "modifications": {
-                "endpoint5": "56-FAMK"
+                "endpoint5": "/56-FAMK/"
             }
         }
     }

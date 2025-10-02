@@ -580,8 +580,8 @@
         "idtAliases": {
             "base": "6-JOEN",
             "modifications": {
-                "endpoint5": "56-JOEN",
-                "endpoint3": "3Joe_N"
+                "endpoint5": "/56-JOEN/",
+                "endpoint3": "/3Joe_N/"
             }
         }
     }

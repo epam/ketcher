@@ -648,9 +648,9 @@
         "idtAliases": {
             "base": "Cy3",
             "modifications": {
-                "endpoint5": "5Cy3",
-                "internal": "iCy3",
-                "endpoint3": "3Cy3Sp"
+                "endpoint5": "/5Cy3/",
+                "internal": "/iCy3/",
+                "endpoint3": "/3Cy3Sp/"
             }
         }
     }

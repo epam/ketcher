@@ -1000,8 +1000,8 @@
         "idtAliases": {
             "base": "Alex546N",
             "modifications": {
-                "endpoint5": "5Alex546N",
-                "endpoint3": "3AlexF546N"
+                "endpoint5": "/5Alex546N/",
+                "endpoint3": "/3AlexF546N/"
             }
         }
     }

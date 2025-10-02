@@ -818,7 +818,7 @@
         "idtAliases": {
             "base": "CholTEG",
             "modifications": {
-                "endpoint3": "3CholTEG"
+                "endpoint3": "/3CholTEG/"
             }
         }
     }

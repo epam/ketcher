@@ -848,8 +848,8 @@
         "idtAliases": {
             "base": "TexRd-XN",
             "modifications": {
-                "endpoint5": "5TexRd-XN",
-                "endpoint3": "3TxRed-XN"
+                "endpoint5": "/5TexRd-XN/",
+                "endpoint3": "/3TxRed-XN/"
             }
         }
     }

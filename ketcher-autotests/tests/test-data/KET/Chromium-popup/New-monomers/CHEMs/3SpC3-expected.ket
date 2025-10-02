@@ -130,7 +130,7 @@
         "idtAliases": {
             "base": "SpC3",
             "modifications": {
-                "endpoint3": "3SpC3"
+                "endpoint3": "/3SpC3/"
             }
         }
     }

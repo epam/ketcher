@@ -364,8 +364,8 @@
         "idtAliases": {
             "base": "ThioMC6-D",
             "modifications": {
-                "endpoint5": "5ThioMC6-D",
-                "internal": "iThioMC6-D"
+                "endpoint5": "/5ThioMC6-D/",
+                "internal": "/iThioMC6-D/"
             }
         }
     }

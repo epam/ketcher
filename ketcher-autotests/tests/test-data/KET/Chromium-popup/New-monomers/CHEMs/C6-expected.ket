@@ -175,7 +175,7 @@
         "idtAliases": {
             "base": "C6",
             "modifications": {
-                "endpoint3": "3C6"
+                "endpoint3": "/3C6/"
             }
         }
     }

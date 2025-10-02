@@ -1289,7 +1289,7 @@
         "idtAliases": {
             "base": "MGBEc",
             "modifications": {
-                "endpoint3": "3MGBEc"
+                "endpoint3": "/3MGBEc/"
             }
         }
     }

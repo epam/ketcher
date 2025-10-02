@@ -205,7 +205,7 @@
         "idtAliases": {
             "base": "AmMO",
             "modifications": {
-                "endpoint3": "3AmMO"
+                "endpoint3": "/3AmMO/"
             }
         }
     }

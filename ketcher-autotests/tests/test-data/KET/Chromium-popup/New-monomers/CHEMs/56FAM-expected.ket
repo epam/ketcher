@@ -655,7 +655,7 @@
         "idtAliases": {
             "base": "6-FAM",
             "modifications": {
-                "endpoint5": "56-FAM"
+                "endpoint5": "/56-FAM/"
             }
         }
     }

@@ -220,7 +220,7 @@
         "idtAliases": {
             "base": "AmMC6",
             "modifications": {
-                "endpoint5": "5AmMC6"
+                "endpoint5": "/5AmMC6/"
             }
         },
         "naturalAnalogShort": "P"

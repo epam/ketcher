@@ -94,6 +94,7 @@ export function customOnChangeHandler(action, handler) {
 
         case OperationType.BOND_ADD:
         case OperationType.BOND_DELETE:
+        case OperationType.BOND_ATTR:
           data.push({
             operation: op.type,
             id: op.data.bid,

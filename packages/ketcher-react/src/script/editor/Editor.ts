@@ -1527,9 +1527,9 @@ class Editor implements KetcherEditor {
 
     data.forEach((entry) => {
       switch (entry.operation) {
-        case OperationType.ATOM_ADD:
         case OperationType.ATOM_DELETE:
-        case OperationType.ATOM_ATTR: {
+        case OperationType.ATOM_ATTR:
+        case OperationType.BOND_ATTR: {
           if (entry.id !== undefined) {
             const existingChanges = changesMap.get(entry.operation);
             if (existingChanges) {
@@ -1540,21 +1540,6 @@ class Editor implements KetcherEditor {
           }
           break;
         }
-
-        // case 'BOND_ADD':
-        // case 'BOND_DELETE':
-        // case 'BOND_ATTR':
-        //   if (operation.data?.bid !== undefined) {
-        //     modifiedBondIds.add(operation.data.bid);
-        //   }
-        //   // Also track atoms connected by this bond
-        //   if (operation.data?.begin !== undefined) {
-        //     modifiedAtomIds.add(operation.data.begin);
-        //   }
-        //   if (operation.data?.end !== undefined) {
-        //     modifiedAtomIds.add(operation.data.end);
-        //   }
-        //   break;
       }
     });
 
@@ -1611,6 +1596,47 @@ class Editor implements KetcherEditor {
             );
           }
           break;
+
+        case OperationType.BOND_ATTR: {
+          for (const id of ids.values()) {
+            const bond = this.struct().bonds.get(id);
+            assert(bond);
+
+            const attachmentPointWithBond = Array.from(
+              this.monomerCreationState.assignedAttachmentPoints.entries(),
+            ).find(([, atomPair]) => {
+              return (
+                (bond.begin === atomPair[0] && bond.end === atomPair[1]) ||
+                (bond.begin === atomPair[1] && bond.end === atomPair[0])
+              );
+            });
+
+            if (!attachmentPointWithBond) {
+              continue;
+            }
+
+            if (
+              bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+              bond.stereo !== Bond.PATTERN.STEREO.NONE
+            ) {
+              this.monomerCreationState.problematicAttachmentPoints.add(
+                attachmentPointWithBond[0],
+              );
+            } else {
+              this.monomerCreationState.problematicAttachmentPoints.delete(
+                attachmentPointWithBond[0],
+              );
+            }
+          }
+          break;
+        }
+
+        case OperationType.BOND_ADD: {
+          // If new bond from attachment atom – invalidate potential leaving atoms
+          // If new bond from leaving atom – delete the whole AP
+          // If new bond from arbitrary atom – invalidate potential attachment points
+          break;
+        }
       }
     }
 

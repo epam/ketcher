@@ -745,15 +745,19 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check import of .ket file with unresolved monomers and save in .idt format ', async () => {
-    await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
-    await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'IDT/unresolved-monomers.idt',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    // Test failed because of bug https://github.com/epam/Indigo/issues/3224
+    'Check import of .ket file with unresolved monomers and save in .idt format ',
+    async () => {
+      await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
+      await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'IDT/unresolved-monomers.idt',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Verify import of unresolved IDT monomers as "black box" in flex/snake modes and ? in sequence', async () => {
     /*

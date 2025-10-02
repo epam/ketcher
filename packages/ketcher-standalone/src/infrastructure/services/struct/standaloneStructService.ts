@@ -165,6 +165,9 @@ function convertMimeTypeToOutputFormat(
     case ChemicalMimeType.RDF:
       format = SupportedFormat.RDF;
       break;
+    case ChemicalMimeType.MonomerLibrary:
+      format = SupportedFormat.MonomerLibrary;
+      break;
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');
@@ -362,6 +365,7 @@ class IndigoService implements StructService {
         'input-format': inputFormat,
         'molfile-saving-mode': options?.['molfile-saving-mode'],
         'sequence-type': options?.['sequence-type'],
+        'output-content-type': options?.['output-content-type'],
         monomerLibrary,
       };
 

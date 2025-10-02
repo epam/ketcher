@@ -30,6 +30,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 1: Verify that a KET file for a simple one-step reaction contains the steps array with correct reactants and product', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: A KET file for a simple one-step reaction contains the steps array with correct reactants and product
      * Scenario:
@@ -59,6 +60,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 2: Verify that a KET file for a multi-step reaction contains all intermediate steps with valid transitions between reactants and products', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: A KET file for a multi-step reaction contains all intermediate steps with valid transitions between reactants and products
      * Scenario:
@@ -88,6 +90,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 3: Verify that a KET file supports mixing molecules and blocks in the same reactants array', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: a KET file supports mixing molecules and blocks in the same reactants array
      * Scenario:
@@ -117,6 +120,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 4: Verify that all IDs in the steps section (reactants and products) exist either in blocks or as defined molecules', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: A KET file supports mixing molecules and blocks in the same reactants array
      * Scenario:
@@ -152,6 +156,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 5: Verify that the blocks array exists and each block includes valid components and pluses arrays and a block can contain multiple components and that they are interpreted correctly in steps', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: A KET file supports mixing molecules and blocks in the same reactants array
      * Scenario:
@@ -189,6 +194,7 @@ test.describe('Reaction data support in KET-format', () => {
 
   test('Case 6: Verify that a KET file can be opened with all reaction blocks, saved as RDF V3000, and then reopened successfully', async () => {
     /*
+     * Version 3.8
      * Test case: https://github.com/epam/Indigo/issues/2893
      * Description: A KET file can be opened with all reaction blocks, saved as MOL V3000, and then reopened successfully
      * Scenario:

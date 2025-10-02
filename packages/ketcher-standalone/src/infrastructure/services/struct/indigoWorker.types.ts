@@ -73,6 +73,7 @@ export enum SupportedFormat {
   AXOLABS = 'axo-labs',
   HELM = 'helm',
   RDF = 'rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {

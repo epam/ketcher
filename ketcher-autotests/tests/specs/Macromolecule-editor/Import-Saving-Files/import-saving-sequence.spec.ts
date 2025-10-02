@@ -119,24 +119,22 @@ test.describe('Import-Saving .seq Files', () => {
     await OpenStructureDialog(page).closeWindow();
   });
 
-  test.fail(
-    'Check that system does not let uploading corrupted .seq file',
-    async ({ page }) => {
-      // Test fails because of https://github.com/epam/Indigo/issues/3210
-      await openFileAndAddToCanvasMacro(
-        page,
-        'Sequence/sequence-corrupted.seq',
-        [MacroFileType.Sequence, SequenceMonomerType.RNA],
-        true,
-      );
-      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence:",
-      );
-      await ErrorMessageDialog(page).close();
-      await OpenStructureDialog(page).closeWindow();
-    },
-  );
+  test('Check that system does not let uploading corrupted .seq file', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Sequence/sequence-corrupted.seq',
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence:",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
+  });
 
   test('Validate correct displaying of snake viewed RNA chain loaded from .seq file format', async ({
     page,
@@ -816,34 +814,32 @@ const incorrectSequences: ISequenceString[] = [
 ];
 
 for (const incorrectSequence of incorrectSequences) {
-  test.fail(
-    `${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`,
-    async ({ page }) => {
-      // Some tests fail because of https://github.com/epam/Indigo/issues/3210
-      /*
-       * Description: Verify import of Sequence files works correct
-       * Case: 1. Load incorrect Sequence file
-       *       2. Validate error message
-       *       3. Close all dialogs
-       */
-      test.skip(
-        incorrectSequence.shouldFail === true,
-        incorrectSequence.issueNumber,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        [MacroFileType.Sequence, incorrectSequence.sequenceType],
-        incorrectSequence.sequenceString,
-        true,
-      );
+  test(`${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`, async ({
+    page,
+  }) => {
+    /*
+     * Description: Verify import of Sequence files works correct
+     * Case: 1. Load incorrect Sequence file
+     *       2. Validate error message
+     *       3. Close all dialogs
+     */
+    test.skip(
+      incorrectSequence.shouldFail === true,
+      incorrectSequence.issueNumber,
+    );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      [MacroFileType.Sequence, incorrectSequence.sequenceType],
+      incorrectSequence.sequenceString,
+      true,
+    );
 
-      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
 
-      await ErrorMessageDialog(page).close();
-      await OpenStructureDialog(page).closeWindow();
-    },
-  );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
+  });
 }
 
 test(`7. Verify export option includes both single-letter and three-letter sequence codes)`, async ({

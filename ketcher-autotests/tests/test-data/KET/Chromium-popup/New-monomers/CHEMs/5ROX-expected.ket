@@ -698,8 +698,8 @@
         "idtAliases": {
             "base": "6-ROXN",
             "modifications": {
-                "endpoint5": "56-ROXN",
-                "endpoint3": "3Rox_N"
+                "endpoint5": "/56-ROXN/",
+                "endpoint3": "/3Rox_N/"
             }
         }
     }

@@ -375,7 +375,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got A*C', 'scanner: appendLine(): end of stream', 'scanner: appendLine(): end of stream', 'RXN loader: bad header A*C*G*C*G*C*G*A*C*T*'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.'",
     );
   });
 
@@ -705,7 +705,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(
-      `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Symbol '*' could be placed only between two nucleotides/nucleosides.', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unknown polymer type ''.', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'molecule auto loader: SMILES loader: invalid character within atom description: '/'', 'scanner: BufferScanner::read() error'`,
+      `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Symbol '*' could be placed only between two nucleotides/nucleosides.'`,
     );
     await ErrorMessageDialog(page).close();
   });

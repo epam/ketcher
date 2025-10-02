@@ -729,8 +729,8 @@
         "idtAliases": {
             "base": "Alex532N",
             "modifications": {
-                "endpoint5": "5Alex532N",
-                "endpoint3": "3AlexF532N"
+                "endpoint5": "/5Alex532N/",
+                "endpoint3": "/3AlexF532N/"
             }
         }
     }

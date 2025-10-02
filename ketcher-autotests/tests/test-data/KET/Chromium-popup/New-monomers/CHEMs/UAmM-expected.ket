@@ -274,8 +274,8 @@
         "idtAliases": {
             "base": "UniAmM",
             "modifications": {
-                "endpoint5": "5UniAmM",
-                "internal": "iUniAmM"
+                "endpoint5": "/5UniAmM/",
+                "internal": "/iUniAmM/"
             }
         }
     }

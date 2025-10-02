@@ -490,8 +490,8 @@
         "idtAliases": {
             "base": "6-FAMN",
             "modifications": {
-                "endpoint5": "56-FAMN",
-                "endpoint3": "3FAM_N"
+                "endpoint5": "/56-FAMN/",
+                "endpoint3": "/3FAM_N/"
             }
         }
     }

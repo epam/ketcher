@@ -676,7 +676,7 @@
         "idtAliases": {
             "base": "ATTO700N",
             "modifications": {
-                "endpoint5": "5ATTO700N"
+                "endpoint5": "/5ATTO700N/"
             }
         }
     }

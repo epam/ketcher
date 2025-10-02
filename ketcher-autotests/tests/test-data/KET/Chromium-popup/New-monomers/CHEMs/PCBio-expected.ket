@@ -678,7 +678,7 @@
         "idtAliases": {
             "base": "PCBio",
             "modifications": {
-                "endpoint5": "5PCBio"
+                "endpoint5": "/5PCBio/"
             }
         }
     }

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
 const mac =
   typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
 
@@ -67,17 +65,13 @@ function modifiers(name, event, shift) {
   return name;
 }
 
-function symbolByEvent(event) {
-  return event.shiftKey ? KN.shift[event.keyCode] : KN.base[event.keyCode];
-}
-
-function normalizeKeyEvent(event, base = false) {
-  const name = symbolByEvent(event);
+function normalizeKeyEvent(event: KeyboardEvent, base = false) {
+  const name = event.key;
   const isChar = name.length === 1 && name !== ' ';
 
   return isChar && !base
     ? modifiers(name, event, !isChar)
-    : modifiers(KN.base[event.keyCode], event, true);
+    : modifiers(name, event, true);
 }
 
 export function isControlKey(event) {
@@ -119,16 +113,16 @@ export function initHotKeys(actions) {
   return keyNorm(hotKeys);
 }
 
-function lookup(map, event) {
-  let name = symbolByEvent(event);
+function lookup(map, event: KeyboardEvent) {
+  let name = event.key;
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
   const isChar = name.length === 1 && name !== ' ';
 
   let res = map[modifiers(name, event, !isChar)];
-  let baseName;
+  const baseName = event.key;
 
-  if (event.shiftKey && isChar && (baseName = KN.base[event.keyCode])) {
+  if (event.shiftKey && isChar && Boolean(baseName)) {
     res = map[modifiers(baseName, event, true)] || res;
   }
 

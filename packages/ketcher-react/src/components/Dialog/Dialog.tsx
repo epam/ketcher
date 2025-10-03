@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
 import {
   FC,
+  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
   useLayoutEffect,
@@ -106,8 +105,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event) => {
-    const key = KN.keyName(event);
+  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const { key } = event;
     const active = document.activeElement;
     const activeTextarea = active && active.tagName === 'TEXTAREA';
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {

@@ -358,7 +358,7 @@
         "idtAliases": {
             "base": "InvddT",
             "modifications": {
-                "endpoint5": "5InvddT"
+                "endpoint5": "/5InvddT/"
             }
         },
         "naturalAnalogShort": "T"

@@ -678,8 +678,8 @@
         "idtAliases": {
             "base": "BHQ_1",
             "modifications": {
-                "endpoint5": "5BHQ_1",
-                "endpoint3": "3BHQ_1"
+                "endpoint5": "/5BHQ_1/",
+                "endpoint3": "/3BHQ_1/"
             }
         }
     }

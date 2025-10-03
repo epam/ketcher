@@ -802,7 +802,7 @@
         "idtAliases": {
             "base": "SUN",
             "modifications": {
-                "endpoint5": "5SUN"
+                "endpoint5": "/5SUN/"
             }
         }
     }

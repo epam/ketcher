@@ -399,8 +399,8 @@
         "idtAliases": {
             "base": "Me-isodC",
             "modifications": {
-                "endpoint5": "5Me-isodC",
-                "internal": "iMe-isodC"
+                "endpoint5": "/5Me-isodC/",
+                "internal": "/iMe-isodC/"
             }
         },
         "naturalAnalogShort": "C"

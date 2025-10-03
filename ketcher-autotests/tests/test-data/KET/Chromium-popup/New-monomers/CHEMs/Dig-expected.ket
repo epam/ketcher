@@ -687,8 +687,8 @@
         "idtAliases": {
             "base": "DigN",
             "modifications": {
-                "endpoint5": "5DigN",
-                "endpoint3": "3Dig_N"
+                "endpoint5": "/5DigN/",
+                "endpoint3": "/3Dig_N/"
             }
         }
     }

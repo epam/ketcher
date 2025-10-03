@@ -1808,31 +1808,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 65: System should throw an error in case of wrong IUBcode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2331
-     * Description: System should throw an error in case of wrong IUBcode.
-     * Scenario:
-     * 1. Toggle to Macro - Flex mode
-     * 2. Load IDT from paste from clipboard way: (YY:00330067)
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.IDT,
-      '(YY:00330067)',
-      true,
-    );
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toBe(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unknown polymer type ''.', 'molecule auto loader: SMILES loader: cycle number 0 is not allowed', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error'",
-    );
-    await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).closeWindow();
-  });
+  test.fail(
+    'Case 65: System should throw an error in case of wrong IUBcode',
+    async () => {
+      // Test fail due to https://github.com/epam/indigo/issues/3220
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/Indigo/issues/2331
+       * Description: System should throw an error in case of wrong IUBcode.
+       * Scenario:
+       * 1. Toggle to Macro - Flex mode
+       * 2. Load IDT from paste from clipboard way: (YY:00330067)
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+        enableFlexMode: true,
+      });
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.IDT,
+        '(YY:00330067)',
+        true,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toBe(
+        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unknown polymer type ''.', 'molecule auto loader: SMILES loader: cycle number 0 is not allowed', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error'",
+      );
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
+    },
+  );
 
   test.fail('Case 66: Sugar R should not save in the IDT format', async () => {
     // Test fails due to https://github.com/epam/Indigo/issues/3200

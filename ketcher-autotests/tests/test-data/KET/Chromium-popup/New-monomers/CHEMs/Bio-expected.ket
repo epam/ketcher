@@ -444,7 +444,7 @@
         "idtAliases": {
             "base": "Bio",
             "modifications": {
-                "endpoint3": "3Bio"
+                "endpoint3": "/3Bio/"
             }
         }
     }

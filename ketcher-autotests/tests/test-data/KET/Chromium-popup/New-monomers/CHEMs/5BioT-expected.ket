@@ -534,7 +534,7 @@
         "idtAliases": {
             "base": "BiotinTEG",
             "modifications": {
-                "endpoint5": "5BiotinTEG"
+                "endpoint5": "/5BiotinTEG/"
             }
         }
     }

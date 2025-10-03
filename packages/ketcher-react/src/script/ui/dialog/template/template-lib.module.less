@@ -126,6 +126,12 @@
 
   .saveButton {
     .button-secondary();
+
+    &[disabled] {
+      pointer-events: none;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   }
 
   /* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
@@ -200,6 +206,12 @@
   :global(.MuiTab-root.Mui-selected) {
     font-weight: 600;
     color: @color-text-black;
+  }
+
+  :global(.MuiTab-root.Mui-disabled) {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 
   :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded) {

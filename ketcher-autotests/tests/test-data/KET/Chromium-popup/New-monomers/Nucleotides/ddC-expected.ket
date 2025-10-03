@@ -298,7 +298,7 @@
         "idtAliases": {
             "base": "ddC",
             "modifications": {
-                "endpoint3": "3ddC"
+                "endpoint3": "/3ddC/"
             }
         },
         "naturalAnalogShort": "C"

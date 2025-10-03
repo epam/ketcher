@@ -663,8 +663,8 @@
         "idtAliases": {
             "base": "BHQ_2",
             "modifications": {
-                "endpoint5": "5BHQ_2",
-                "endpoint3": "3BHQ_2"
+                "endpoint5": "/5BHQ_2/",
+                "endpoint3": "/3BHQ_2/"
             }
         }
     }

@@ -295,7 +295,7 @@
         "idtAliases": {
             "base": "Acryd",
             "modifications": {
-                "endpoint5": "5Acryd"
+                "endpoint5": "/5Acryd/"
             }
         }
     }

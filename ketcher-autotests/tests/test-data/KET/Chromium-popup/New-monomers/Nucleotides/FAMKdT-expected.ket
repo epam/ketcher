@@ -1101,7 +1101,7 @@
         "idtAliases": {
             "base": "6-FAMK",
             "modifications": {
-                "internal": "i6-FAMK"
+                "internal": "/i6-FAMK/"
             }
         },
         "naturalAnalogShort": "T"

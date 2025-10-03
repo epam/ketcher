@@ -36,12 +36,6 @@ export * from './action.types';
 const disableIfViewOnly = (editor: Editor): boolean =>
   !!editor.render.options.viewOnlyMode;
 
-const disableIfMonomerCreationWizardActive = (editor: Editor): boolean =>
-  editor.isMonomerCreationWizardActive;
-
-const combinedDisable = (editor: Editor) =>
-  disableIfViewOnly(editor) || disableIfMonomerCreationWizardActive(editor);
-
 const updateConfigItem = (item: UiAction): UiAction => {
   if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
     return item;
@@ -50,14 +44,12 @@ const updateConfigItem = (item: UiAction): UiAction => {
     return {
       ...item,
       disabled: (...props) =>
-        disableIfViewOnly(props[0]) ||
-        disableIfMonomerCreationWizardActive(props[0]) ||
-        originalDisabled(...props),
+        disableIfViewOnly(props[0]) || originalDisabled(...props),
     };
   } else {
     return {
       ...item,
-      disabled: combinedDisable,
+      disabled: disableIfViewOnly,
     };
   }
 };
@@ -75,6 +67,7 @@ const config: Record<string, UiAction> = {
         if (!editor.struct().isBlank()) editor.struct(null);
       },
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'clear'),
   },
   open: {
@@ -82,6 +75,7 @@ const config: Record<string, UiAction> = {
     title: 'Open…',
     enabledInViewOnly: true,
     action: { dialog: 'open' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'open'),
   },
   save: {
@@ -89,6 +83,7 @@ const config: Record<string, UiAction> = {
     title: 'Save As…',
     enabledInViewOnly: true,
     action: { dialog: 'save' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'save'),
   },
   'atom-props': {
@@ -110,7 +105,8 @@ const config: Record<string, UiAction> = {
         editor.undo();
       },
     },
-    disabled: (editor) => editor.historySize().undo === 0,
+    disabled: (editor) =>
+      editor.isMonomerCreationWizardActive || editor.historySize().undo === 0,
     hidden: (options) => isHidden(options, 'undo'),
   },
   redo: {
@@ -122,7 +118,8 @@ const config: Record<string, UiAction> = {
         editor.redo();
       },
     },
-    disabled: (editor) => editor.historySize().redo === 0,
+    disabled: (editor) =>
+      editor.isMonomerCreationWizardActive || editor.historySize().redo === 0,
     hidden: (options) => isHidden(options, 'redo'),
   },
   cut: {
@@ -236,6 +233,7 @@ const config: Record<string, UiAction> = {
   'extended-table': {
     title: 'Extended Table',
     action: { dialog: 'extended-table' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'extended-table'),
   },
   'select-all': {
@@ -285,6 +283,7 @@ const config: Record<string, UiAction> = {
         type: 'gen',
       },
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'any-atom'),
   },
   'info-modal': {

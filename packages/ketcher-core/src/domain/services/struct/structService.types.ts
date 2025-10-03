@@ -36,6 +36,7 @@ export enum ChemicalMimeType {
   DNA = 'chemical/x-dna-sequence',
   PEPTIDE = 'chemical/x-peptide-sequence',
   IDT = 'chemical/x-idt',
+  AXOLABS = 'chemical/x-axo-labs',
   HELM = 'chemical/x-helm',
   RDF = 'chemical/x-rdf',
   MonomerLibrary = 'monomer-library',

@@ -654,8 +654,8 @@
         "idtAliases": {
             "base": "ATTO565N",
             "modifications": {
-                "endpoint5": "5ATTO565N",
-                "endpoint3": "3ATTO565N"
+                "endpoint5": "/5ATTO565N/",
+                "endpoint3": "/3ATTO565N/"
             }
         }
     }

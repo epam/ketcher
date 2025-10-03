@@ -760,8 +760,8 @@
         "idtAliases": {
             "base": "RhoR-XN",
             "modifications": {
-                "endpoint5": "5RhoR-XN",
-                "endpoint3": "3RhodRd-XN"
+                "endpoint5": "/5RhoR-XN/",
+                "endpoint3": "/3RhodRd-XN/"
             }
         }
     }

@@ -2888,8 +2888,9 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
     // error is expected
     true,
   );
-  const errorMessage = page.getByText(
-    `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: $,F,I,L,E,1,$,1,0,/,0,8,/,2,4,1,6,:,1,1,$,F,$,X,3,0,0,0,-,I,I,O,-,0,9,1,3,2,4,1,8,4,0,3,0,O,2,1,3,0,E,I,E,3,0,E,I,3,0,O,1,6,1,6,0,0,0,3,0,E,I,O,3,0,1,-,3,.,1,2,7,2,1,-,3,.,1,2,7,9,8,0,.,0,0,3,0,2,-,2,.,2,6,0,7,8,-,3,.,6,2,7,2,0,.,0,0,3,0,3,O,-,1,.,3,9,5,1,5,-,3,.,1,2,6,5,8,0,.,0,0,3,0,4,-,2,.,2,5,9,9,8,-,4,.,6,2,7,2,3,0,.,0,0,3,0,5,-,1,.,3,9,3,7,4,-,5,.,1,2,6,6,5,0,.,0,0,3,0,6,-,1,.,3,9,2,9,5,-,6,.,1,2,6,6,9,0,.,0,0,3,0,7,-,0,.,5,2,6,5,1,2,-,6,.,6,2,5,9,1,0,.,0,0,3,0,8,0,.,3,3,9,3,2,-,6,.,1,2,5,2,9,0,.,0,0,3,0,9,O,1,.,2,0,5,5,5,-,6,.,6,2,4,7,1,0,.,0,0,3,0,1,0,1,.,2,0,6,3,5,-,7,.,6,2,4,7,5,0,.,0,0,3,0,1,1,2,.,0,7,2,7,8,-,8,.,1,2,3,9,7,0,.,0,0,3,0,1,2,O,2,.,9,3,8,4,2,-,7,.,6,2,3,3,5,0,.,0,0,3,0,1,3,2,.,0,7,3,5,9,-,9,.,1,2,4,0,.,0,0,3,0,1,4,L,2,.,9,4,0,0,2,-,9,.,6,2,3,4,2,0,.,0,0,3,0,1,5,0,.,3,3,8,5,1,9,-,5,.,1,2,5,2,5,0,.,0,0,3,0,1,6,-,0,.,5,2,7,9,1,2,-,4,.,6,2,6,0,3,0,.,0,0,3,0,E,O,3,0,E,I,O,3,0,1,1,1,2,3,0,2,2,2,3,3,0,3,1,2,4,3,0,4,1,4,5,3,0,5,4,5,6,3,0,6,4,6', 'scanner: readIntFix(3): invalid number representation: "M  "', 'inchi-wrapper: Molecule with pseudoatom (CL) cannot be converted into InChI', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: "M  "', 'scanner: readIntFix(3): invalid number representation: "M  "', 'inchi-wrapper: Molecule with pseudoatom (CL) cannot be converted into InChI'`,
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages:',
   );
-  expect(await errorMessage.count()).toEqual(1);
+  await ErrorMessageDialog(page).close();
 });

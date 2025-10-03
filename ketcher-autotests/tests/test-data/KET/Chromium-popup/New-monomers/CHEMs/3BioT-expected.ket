@@ -579,7 +579,7 @@
         "idtAliases": {
             "base": "BioTEG",
             "modifications": {
-                "endpoint3": "3BioTEG"
+                "endpoint3": "/3BioTEG/"
             }
         }
     }

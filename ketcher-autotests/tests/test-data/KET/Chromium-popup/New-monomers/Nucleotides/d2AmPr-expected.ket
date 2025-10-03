@@ -421,9 +421,9 @@
         "idtAliases": {
             "base": "2AmPr",
             "modifications": {
-                "endpoint5": "52AmPr",
-                "internal": "i2AmPr",
-                "endpoint3": "32AmPu"
+                "endpoint5": "/52AmPr/",
+                "internal": "/i2AmPr/",
+                "endpoint3": "/32AmPu/"
             }
         },
         "naturalAnalogShort": "X"

@@ -812,8 +812,8 @@
         "idtAliases": {
             "base": "Cy55",
             "modifications": {
-                "endpoint5": "5Cy55",
-                "endpoint3": "3Cy55Sp"
+                "endpoint5": "/5Cy55/",
+                "endpoint3": "/3Cy55Sp/"
             }
         }
     }

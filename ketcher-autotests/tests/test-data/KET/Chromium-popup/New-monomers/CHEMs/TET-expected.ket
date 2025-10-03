@@ -715,7 +715,7 @@
         "idtAliases": {
             "base": "TET",
             "modifications": {
-                "endpoint5": "5TET"
+                "endpoint5": "/5TET/"
             }
         }
     }

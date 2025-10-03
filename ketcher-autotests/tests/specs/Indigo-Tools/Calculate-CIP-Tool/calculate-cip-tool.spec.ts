@@ -28,6 +28,7 @@ import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   MacroBondType,
@@ -648,11 +649,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in PNG ( rings, chains)', async () => {

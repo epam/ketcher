@@ -39,6 +39,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
@@ -1797,11 +1798,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeEditorScreenshot(page);
+      await verifySVGExport(page);
     },
   );
 

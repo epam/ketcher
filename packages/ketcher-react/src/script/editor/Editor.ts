@@ -1196,9 +1196,11 @@ class Editor implements KetcherEditor {
     );
     assert(originalLeavingAtom);
 
-    originalLeavingAtom.rglabel = null;
-    originalLeavingAtom.label = leavingAtom.label;
-    this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
+    if (originalLeavingAtom.rglabel !== null) {
+      originalLeavingAtom.rglabel = null;
+      originalLeavingAtom.label = leavingAtom.label;
+      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
+    }
   }
 
   saveNewMonomer(data) {
@@ -1443,9 +1445,25 @@ class Editor implements KetcherEditor {
         );
         this.update(action, true);
       }
+
+      this.preservedConnectionPointData.delete(attachmentAtomId);
+    } else {
+      const leavingAtoms = this.findPotentialLeavingAtoms(attachmentAtomId);
+      const leavingAtomIdsSet = new Set<number>();
+
+      leavingAtoms.forEach((atom) => {
+        const atomId = this.struct().atoms.keyOf(atom);
+        if (atomId !== null) {
+          leavingAtomIdsSet.add(atomId);
+        }
+      });
+
+      this.monomerCreationState.potentialAttachmentPoints.set(
+        attachmentAtomId,
+        leavingAtomIdsSet,
+      );
     }
 
-    this.preservedConnectionPointData.delete(attachmentAtomId);
     this.monomerCreationState.assignedAttachmentPoints.delete(name);
 
     this.monomerCreationState = Object.assign({}, this.monomerCreationState);

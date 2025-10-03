@@ -148,3 +148,13 @@
   color: #fff;
 }
 
+.accordion {
+  &:global(.MuiAccordion-root) {
+    background: none;
+  }
+
+  :global(.MuiAccordionDetails-root) {
+    background: none !important;
+    box-shadow: none !important;
+  }
+}

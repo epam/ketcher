@@ -42,6 +42,10 @@ import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 
 const initialWizardState: WizardState = {
   values: {
@@ -571,6 +575,28 @@ const MonomerCreationWizard = () => {
                 )}
               </div>
             )}
+          </div>
+
+          <div className={styles.divider} />
+
+          <div>
+            <Accordion
+              className={clsx(accordionClasses.accordion, styles.accordion)}
+              square={true}
+            >
+              <AccordionSummary
+                className={styles.accordionSummary}
+                expandIcon={
+                  <Icon
+                    className={accordionClasses.expandIcon}
+                    name="chevron"
+                  />
+                }
+              >
+                Modification
+              </AccordionSummary>
+              <AccordionDetails>Hi</AccordionDetails>
+            </Accordion>
           </div>
         </div>
 

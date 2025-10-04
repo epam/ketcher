@@ -125,7 +125,6 @@ const AttachmentPointEditPopup = ({
         onNameChange={handleNameChange}
         onLeavingAtomChange={handleLeavingAtomChange}
         className={styles.selectsWrapper}
-        isPopup
       />
     </div>
   );

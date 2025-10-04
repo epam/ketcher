@@ -21,8 +21,6 @@ import {
   OptionsForDebuggingSetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { AttachmentPointName } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
-import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';

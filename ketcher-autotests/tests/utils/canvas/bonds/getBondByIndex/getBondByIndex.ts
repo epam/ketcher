@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
-import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { BondAttributes, BondXy } from '@utils/canvas/types';
 
 /**

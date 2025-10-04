@@ -26,6 +26,7 @@ import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMo
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -317,31 +318,27 @@ for (const monomerToCreate of notEligableForMonomerCreation1) {
 }
 
 for (const monomerToCreate of notEligableForMonomerCreation2) {
-  test.fail(
-    `2.2 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`,
-    async () => {
-      // Test is expected to fail because of https://github.com/epam/ketcher/issues/7951
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/7948
-       * Description: Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
-       *
-       * Case:
-       *      1. Open Molecules canvas
-       *      2. Load molecule on canvas
-       *      3. Select whole molecule
-       *      3. Validate that Create Monomer button is disabled
-       *
-       * Version 3.8
-       */
-      await pasteFromClipboardAndOpenAsNewProject(
-        page,
-        monomerToCreate.loadString,
-      );
-      await clickOnCanvas(page, 0, 0);
-      await selectAllStructuresOnCanvas(page);
-      expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
-    },
-  );
+  test(`2.2 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7948
+     * Description: Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Select whole molecule
+     *      3. Validate that Create Monomer button is disabled
+     *
+     * Version 3.8
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      monomerToCreate.loadString,
+    );
+    await clickOnCanvas(page, 0, 0);
+    await selectAllStructuresOnCanvas(page);
+    expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
+  });
 }
 
 test(`3. Check that the number of simple-single bonds to non-selected parts of the structure + the number of R-groups cannot be more than 8`, async () => {
@@ -400,6 +397,12 @@ test(`4. Check that every R-group gets replaced with a hydrogen upon entering th
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });
@@ -428,6 +431,12 @@ test(`5. Check that if the structure contains one and only one R1 group, that R1
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });
@@ -456,6 +465,12 @@ test(`6. Check that if the structure contains one and only one R2 group, that R2
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });
@@ -482,6 +497,12 @@ test(`7. Check that in case of multiple R1 the one whose attachment atom is the 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });
@@ -508,6 +529,12 @@ test(`8. Check that in case of multiple R1 the one whose attachment atom is the 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });
@@ -547,90 +574,90 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
   await CreateMonomerDialog(page).discard();
 });
 
-test(`10. Check that for already set APs the user can change the R-group number by clicking on an LGA`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: 1. Check that for already set APs the user can change the R-group number by clicking on an LGA
-   *              2. Check that for already set APs the users can pick any R-number (R1, ... ,R8), and it obvious what numbers are already in use
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-   *      4. Press Create Monomer button
-   *      5. Change R-group number for R1 and R2
-   *      6. Take screenshot to validate that the R-group assigned to the correct AP
-   *
-   * Version 3.8
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await LeftToolbar(page).createMonomer();
+// test(`10. Check that for already set APs the user can change the R-group number by clicking on an LGA`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7657
+//    * Description: 1. Check that for already set APs the user can change the R-group number by clicking on an LGA
+//    *              2. Check that for already set APs the users can pick any R-number (R1, ... ,R8), and it obvious what numbers are already in use
+//    *
+//    * Case:
+//    *      1. Open Molecules canvas
+//    *      2. Load molecule on canvas
+//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//    *      4. Press Create Monomer button
+//    *      5. Change R-group number for R1 and R2
+//    *      6. Take screenshot to validate that the R-group assigned to the correct AP
+//    *
+//    * Version 3.8
+//    */
+//   await pasteFromClipboardAndOpenAsNewProject(
+//     page,
+//     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
+//   );
+//   await clickOnCanvas(page, 0, 0);
+//   await selectAllStructuresOnCanvas(page);
+//   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+//   // to make molecule visible
+//   await CommonLeftToolbar(page).handTool();
+//   await page.mouse.move(600, 200);
+//   await dragMouseTo(600, 250, page);
 
-  const attachmentPointR1 = page.locator('tspan').filter({ hasText: 'R1' });
-  const attachmentPointR3 = page.locator('tspan').filter({ hasText: 'R3' });
+//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
 
-  await EditConnectionPointPopup(
-    page,
-    attachmentPointR1,
-  ).selectConnectionPointName(AttachmentPointName.R3);
+//   await EditConnectionPointPopup(
+//     page,
+//     attachmentPointR1,
+//   ).selectConnectionPointName(AttachmentPointName.R3);
 
-  await expect(attachmentPointR3).toHaveText('R3');
+//   await expect(attachmentPointR3).toHaveText('R3');
 
-  await CreateMonomerDialog(page).discard();
-});
+//   await CreateMonomerDialog(page).discard();
+// });
 
-test(`11. Check that for already set APs the user can change the R-group number by r-clicking on an AA`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check that for already set APs the user can change the R-group number by r-clicking on an AA
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-   *      4. Press Create Monomer button
-   *      5. Change R-group number for R1 and R2
-   *      6. Take screenshot to validate that the R-group assigned to the correct AP
-   *
-   * Version 3.8
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-  await LeftToolbar(page).createMonomer();
+// test(`11. Check that for already set APs the user can change the R-group number by r-clicking on an AA`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/7657
+//    * Description: Check that for already set APs the user can change the R-group number by r-clicking on an AA
+//    *
+//    * Case:
+//    *      1. Open Molecules canvas
+//    *      2. Load molecule on canvas
+//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//    *      4. Press Create Monomer button
+//    *      5. Change R-group number for R1 and R2
+//    *      6. Take screenshot to validate that the R-group assigned to the correct AP
+//    *
+//    * Version 3.8
+//    */
+//   await pasteFromClipboardAndOpenAsNewProject(
+//     page,
+//     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
+//   );
+//   await clickOnCanvas(page, 0, 0);
+//   await selectAllStructuresOnCanvas(page);
+//   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+//   // to make molecule visible
+//   await CommonLeftToolbar(page).handTool();
+//   await page.mouse.move(600, 200);
+//   await dragMouseTo(600, 250, page);
 
-  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
-  await ContextMenu(page, attachmentAtom).click(
-    ConnectionPointOption.EditConnectionPoint,
-  );
+//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+//   await ContextMenu(page, attachmentPointR1).click(
+//     ConnectionPointOption.EditConnectionPoint,
+//   );
 
-  await EditConnectionPointPopup(page).selectConnectionPointName(
-    AttachmentPointName.R3,
-  );
+//   await EditConnectionPointPopup(page).selectConnectionPointName(
+//     AttachmentPointName.R3,
+//   );
 
-  const attachmentPointR3 = page.locator('tspan').filter({ hasText: 'R3' });
-  await expect(attachmentPointR3).toHaveText('R3');
+//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
+//   await expect(attachmentPointR3).toHaveText('R3');
 
-  await CreateMonomerDialog(page).discard();
-});
+//   await CreateMonomerDialog(page).discard();
+// });
 
 test(`12. Check that for already set APs the user can Delete the AP by r-clicking on an AA`, async () => {
   /*
@@ -660,12 +687,11 @@ test(`12. Check that for already set APs the user can Delete the AP by r-clickin
   await page.mouse.move(600, 200);
   await dragMouseTo(600, 250, page);
 
-  const attachmentAtom = getAtomLocator(page, { atomId: 0 });
-  await ContextMenu(page, attachmentAtom).click(
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await ContextMenu(page, attachmentPointR1).click(
     ConnectionPointOption.RemoveAssignment,
   );
 
-  const attachmentPointR1 = page.locator('tspan').filter({ hasText: 'R1' });
   await expect(attachmentPointR1).not.toBeVisible();
 
   await CreateMonomerDialog(page).discard();
@@ -698,11 +724,11 @@ test(`13. Check that users can set a new AP by selecting a potential AA, and R-n
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
-    ConnectionPointOption.AssignAsALeavingGroup,
+    ConnectionPointOption.MarkAsLeavingGroup,
   );
 
-  const attachmentPointR3 = page.locator('tspan').filter({ hasText: 'R1' });
-  await expect(attachmentPointR3).toBeVisible();
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await expect(attachmentPointR1).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
 });

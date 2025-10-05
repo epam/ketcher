@@ -6,7 +6,6 @@ import {
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-import { time } from 'console';
 
 type MacromoleculesTopToolbarLocators = {
   createAntisenseStrandDropdownButton: Locator;

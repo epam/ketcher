@@ -1335,7 +1335,9 @@ test.describe('Calculate Properties tests', () => {
       page,
       'KET/peptide-rna-microstructure-connected.ket',
     );
+
     await MacromoleculesTopToolbar(page).calculateProperties();
+
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H23N6O7P',
     );

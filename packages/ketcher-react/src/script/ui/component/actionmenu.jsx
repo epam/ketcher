@@ -141,6 +141,14 @@ function ActionMenu({ name, menu, className, role, ...props }) {
     return items;
   }, []);
 
+  const handleMenuItemClick = (event) => openHandle(event, props.onOpen);
+  const handleMenuItemKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openHandle(event, props.onOpen);
+    }
+  };
+
   return (
     <menu
       className={className}
@@ -154,7 +162,10 @@ function ActionMenu({ name, menu, className, role, ...props }) {
           className={clsx(props.status[item], {
             opened: item.id === props.opened,
           })}
-          onClick={(ev) => openHandle(ev, props.onOpen)}
+          onClick={handleMenuItemClick}
+          onKeyDown={handleMenuItemKeyDown}
+          role="menuitem"
+          tabIndex={0}
         >
           {showMenuOrButton(action, item, props.status[item], props)}
           {item.menu && props.opened && renderActiveMenuItem(item, props)}

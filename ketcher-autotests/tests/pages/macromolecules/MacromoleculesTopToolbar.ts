@@ -6,6 +6,7 @@ import {
   LayoutMode,
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
+import { time } from 'console';
 
 type MacromoleculesTopToolbarLocators = {
   createAntisenseStrandDropdownButton: Locator;
@@ -85,15 +86,14 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       });
     },
 
-    async calculateProperties(options: { forcedDelay?: number } = {}) {
-      if (options.forcedDelay) {
-        await locators.calculatePropertiesButton.click();
-        await delay(options.forcedDelay);
-      } else {
-        await waitForCalculateProperties(page, async () => {
+    async calculateProperties(options: { timeout?: number } = {}) {
+      await waitForCalculateProperties(
+        page,
+        async () => {
           await locators.calculatePropertiesButton.click();
-        });
-      }
+        },
+        options.timeout,
+      );
     },
 
     async turnSyncEditModeOn() {

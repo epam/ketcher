@@ -32,7 +32,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 let page: Page;
 test.setTimeout(40000);
@@ -235,27 +235,13 @@ async function bondTwoMonomersByCenterToCenter(
   );
 }
 
-async function hoverOverConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.hover({ force: true });
-}
-
-async function clickOnConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.click({ force: true });
-}
-
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: 1. Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
      *               2. Verify that hydrogen bonds are highlighted along with monomers when hovered over
-     *               3. Verify that no "Edit Connection Points" dialog appears for hydrogen bonds
+     *               3. Verify that no "Edit Attachment Points" dialog appears for hydrogen bonds
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas
@@ -278,11 +264,10 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await zoomWithMouseWheel(page, -600);
-      await hoverOverConnectionLine(page);
-
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Hydrogen,
       }).first();
+      await bondLine.hover({ force: true });
       await ContextMenu(page, bondLine).open();
 
       await takeEditorScreenshot(page, {
@@ -292,7 +277,7 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
+const monomersWithNoFreeAttachmentPoint: { [monomerName: string]: IMonomer } = {
   Peptide: {
     monomerType: 'peptide',
     fileName:
@@ -367,8 +352,8 @@ const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
   },
 };
 
-Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
-  Object.values(monomersWithNoFreeConnectionPoint).forEach((rightMonomer) => {
+Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
+  Object.values(monomersWithNoFreeAttachmentPoint).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: Verify that hydrogen bonds don't require attachment points and can be established multiple times for one monomer
@@ -444,20 +429,20 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function chooseConnectionPointsInConnectionDialog(
+async function chooseAttachmentPointsInConnectionDialog(
   page: Page,
-  leftMonomerConnectionPointName: string,
-  rightMonomerConnectionPointName: string,
+  leftMonomerAttachmentPointName: string,
+  rightMonomerAttachmentPointName: string,
 ) {
   const connectionPointDialog = page.getByRole('dialog');
   if (await connectionPointDialog.isVisible()) {
-    await page.getByTitle(leftMonomerConnectionPointName).first().click();
+    await page.getByTitle(leftMonomerAttachmentPointName).first().click();
 
-    (await page.getByTitle(rightMonomerConnectionPointName).count()) > 1
-      ? await page.getByTitle(rightMonomerConnectionPointName).nth(1).click()
-      : await page.getByTitle(rightMonomerConnectionPointName).first().click();
+    (await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1
+      ? await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click()
+      : await page.getByTitle(rightMonomerAttachmentPointName).first().click();
 
-    await ConnectionPointsDialog(page).connect();
+    await AttachmentPointsDialog(page).connect();
   }
 }
 
@@ -495,7 +480,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Single,
       );
 
-      await chooseConnectionPointsInConnectionDialog(
+      await chooseAttachmentPointsInConnectionDialog(
         page,
         AttachmentPoint.R1,
         AttachmentPoint.R1,
@@ -759,7 +744,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       expect(await bondLine.count()).toEqual(1);
 
       await CommonLeftToolbar(page).erase();
-      await clickOnConnectionLine(page);
+      await bondLine.click({ force: true });
 
       expect(await bondLine.count()).toEqual(0);
     });

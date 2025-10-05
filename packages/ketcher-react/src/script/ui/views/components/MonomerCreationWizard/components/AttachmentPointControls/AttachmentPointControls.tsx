@@ -12,6 +12,7 @@ type Props = {
   className?: string;
   additionalControls?: ReactNode;
   highlight?: boolean;
+  isPopup?: boolean;
 };
 
 const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
@@ -23,6 +24,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
       className,
       additionalControls,
       highlight,
+      isPopup,
     },
     ref,
   ) => {
@@ -50,18 +52,29 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           highlight && styles.highlight,
         )}
         ref={ref}
+        data-testid={`attachment-point-controls-${currentNameOption?.label}`}
       >
         <Select
           className={styles.nameSelect}
           options={nameOptions}
           value={currentNameOption?.value}
           onChange={handleNameChange}
+          data-testid={
+            isPopup
+              ? `attachment-point-name-select`
+              : `attachment-point-name-select-${currentNameOption?.label}`
+          }
         />
         <Select
           className={styles.leavingAtomSelect}
           options={leavingAtomOptions}
           value={currentLeavingAtomOption?.value}
           onChange={handleLeavingAtomChange}
+          data-testid={
+            isPopup
+              ? `attachment-point-atom-select`
+              : `attachment-point-atom-select-${currentNameOption?.label}`
+          }
         />
         {additionalControls}
       </div>

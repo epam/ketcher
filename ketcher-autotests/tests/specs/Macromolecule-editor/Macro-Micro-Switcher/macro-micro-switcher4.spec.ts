@@ -17,7 +17,6 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,
-  findAndClickAllCenterBonds,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
@@ -142,8 +141,11 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   await takeEditorScreenshot(page);
 
   await CommonLeftToolbar(page).erase();
-
-  await findAndClickAllCenterBonds(page);
+  // 106 113 120 121
+  await getBondLocator(page, { bondId: 106 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 113 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 120 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 121 }).first().click({ force: true });
 
   await takeEditorScreenshot(page);
 });

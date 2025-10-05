@@ -11,7 +11,6 @@ import {
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
-import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
@@ -268,18 +267,6 @@ export async function clickOnBond(
   });
 }
 
-export async function clickOnBondById(
-  page: Page,
-  bondId: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
-) {
-  const point = await getBondById(page, bondId);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
 export async function clickOnAtom(
   page: Page,
   atomLabel: AtomLabelType,
@@ -360,11 +347,4 @@ export async function applyAutoMapMode(
   if (withScreenshot) {
     await takeEditorScreenshot(page);
   }
-}
-
-export async function selectSequenceTypeMode(
-  page: Page,
-  type: 'PEPTIDE' | 'RNA' | 'DNA',
-) {
-  await page.getByTestId(`${type}Btn`).click();
 }

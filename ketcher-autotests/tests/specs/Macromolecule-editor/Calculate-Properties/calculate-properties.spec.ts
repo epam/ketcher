@@ -1335,7 +1335,9 @@ test.describe('Calculate Properties tests', () => {
       page,
       'KET/peptide-rna-microstructure-connected.ket',
     );
-    await MacromoleculesTopToolbar(page).calculateProperties();
+
+    await MacromoleculesTopToolbar(page).calculateProperties({ timeout: 3000 });
+
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H23N6O7P',
     );
@@ -1361,7 +1363,7 @@ test.describe('Calculate Properties tests', () => {
       page,
       'KET/peptide-dna-microstructure-connected.ket',
     );
-    await MacromoleculesTopToolbar(page).calculateProperties();
+    await MacromoleculesTopToolbar(page).calculateProperties({ timeout: 3000 });
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
       'C19H23N6O6P',
     );

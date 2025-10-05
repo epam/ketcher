@@ -790,7 +790,9 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     await expandMonomer(page, monomer.name);
     await CommonLeftToolbar(page).erase();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    expect(EditAbbreviationDialog(page).editAbbreviationWindow).toBeVisible();
+    await expect(
+      EditAbbreviationDialog(page).editAbbreviationWindow,
+    ).toBeVisible();
     await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
   }

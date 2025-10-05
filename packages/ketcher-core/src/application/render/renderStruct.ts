@@ -48,12 +48,16 @@ export class RenderStruct {
         return;
       }
 
+      const labelNode = atom.label.path.node;
+      if (!labelNode) {
+        return;
+      }
+
       const isSmall =
-        atom.label.path.node.getBoundingClientRect().width <
-        MIN_ATTACHMENT_POINT_SIZE;
+        labelNode.getBoundingClientRect().width < MIN_ATTACHMENT_POINT_SIZE;
 
       if (isSmall) {
-        atom.label.path.node.remove();
+        labelNode.remove();
       }
     });
   }

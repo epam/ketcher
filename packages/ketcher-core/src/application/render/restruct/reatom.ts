@@ -40,6 +40,7 @@ import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
 import {
+  RelativeBox,
   RenderOptions,
   RenderOptionStyles,
   UsageInMacromolecule,
@@ -51,11 +52,58 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 
-interface ElemAttr {
-  text: string;
-  path: any;
-  rbb: { x: number; y: number; width: number; height: number };
+type RaphaelAttributes = Record<
+  string,
+  string | number | boolean | null | undefined
+>;
+
+interface RaphaelElementBase {
+  attr(): Record<string, unknown>;
+  attr(attributes: RaphaelAttributes): this;
+  attr(name: string, value: string | number | boolean | null | undefined): this;
+  getBBox(): DOMRect;
+  hide(): void;
+  hover(
+    onEnter: (...args: unknown[]) => void,
+    onLeave: (...args: unknown[]) => void,
+  ): void;
+  show(): void;
+  translateAbs(x: number, y: number): void;
+  removed?: boolean;
+  node?: SVGElement & { setAttribute(name: string, value: string): void };
 }
+
+interface RaphaelSetLike extends RaphaelElementBase {
+  type: 'set';
+  length: number;
+  [index: number]: RaphaelElementBase | RaphaelSetLike | undefined;
+  push(...elements: Array<RaphaelElementBase | RaphaelSetLike>): this;
+  forEach(
+    callback: (element: RaphaelElementBase | RaphaelSetLike) => void,
+  ): void;
+}
+
+type RaphaelElementLike = RaphaelElementBase | RaphaelSetLike;
+
+interface DrawableElement {
+  path: RaphaelElementLike;
+  rbb: RelativeBox;
+}
+
+interface ElemAttr extends DrawableElement {
+  text: string;
+  background?: RaphaelElementLike;
+}
+
+type ExtendedRenderOptions = RenderOptions & {
+  colorStereogenicCenters?: StereoColoringType;
+  colorOfAndCenters?: string;
+  colorOfOrCenters?: string;
+  colorOfAbsoluteCenters?: string;
+  autoFadeOfStereoLabels?: boolean;
+};
+
+type DrawElement = Parameters<typeof draw.recenterText>[0];
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
@@ -86,13 +134,12 @@ class ReAtom extends ReObject {
   label?: ElemAttr;
   infoLabel?: string;
   cip?: {
-    // Raphael paths
-    path: any;
-    text: any;
-    rectangle: any;
+    path: RaphaelSetLike;
+    text: RaphaelElementBase;
+    rectangle: RaphaelElementBase;
   };
 
-  private expandedMonomerAttachmentPoints?: any; // Raphael paths
+  private expandedMonomerAttachmentPoints?: RaphaelElementLike | null;
 
   constructor(atom: Atom) {
     super('atom');
@@ -130,7 +177,7 @@ class ReAtom extends ReObject {
   }
 
   private attachHighlightTriggerForAttachmentPointAtom(
-    hoverElement: any,
+    hoverElement: RaphaelElementLike,
     render: Render,
   ) {
     if (!render.monomerCreationState) {
@@ -438,7 +485,7 @@ class ReAtom extends ReObject {
     return Boolean(this.a.attachmentPoints);
   }
 
-  show(restruct: ReStruct, aid: number, options: any): void {
+  show(restruct: ReStruct, aid: number, options: ExtendedRenderOptions): void {
     // eslint-disable-line max-statements
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);
@@ -508,7 +555,7 @@ class ReAtom extends ReObject {
     let implh;
     let isHydrogen;
     let label;
-    let index: any = null;
+    let index: ElemAttr | null = null;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -532,26 +579,30 @@ class ReAtom extends ReObject {
     }
 
     if (options.showAtomIds) {
-      index = {};
-      index.text = aid.toString();
+      const indexText = aid.toString();
       let idPos = this.hydrogenOnTheLeft
         ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
         : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
       if (this.showLabel) {
         idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6);
       }
-      index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
+      const indexPath = render.paper.text(idPos.x, idPos.y, indexText).attr({
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill: '#070',
-      });
-      index.rbb = util.relBox(index.path.getBBox());
-      draw.recenterText(index.path, index.rbb);
-      restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
+      }) as unknown as RaphaelElementBase;
+      const indexBox = util.relBox(indexPath.getBBox());
+      draw.recenterText(indexPath as unknown as DrawElement, indexBox);
+      restruct.addReObjectPath(LayerMap.indices, this.visel, indexPath, ps);
+      index = {
+        text: indexText,
+        path: indexPath,
+        rbb: indexBox,
+      };
     }
 
     if (this.showLabel) {
-      let hydroIndex: any = null;
+      let hydroIndex: ElemAttr | null = null;
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin);
         rightMargin += hydroIndex.rbb.width + delta;
@@ -601,19 +652,26 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(this, options.showHydrogenLabels) &&
+        displayHydrogen(
+          this,
+          options.showHydrogenLabels as ShowHydrogenLabels,
+        ) &&
         !shouldHideHydrogenInPreview
       ) {
         const data = showHydrogen(this, render, implh, {
-          hydrogen: {},
           hydroIndex,
           rightMargin,
           leftMargin,
         });
-        const hydrogen = data.hydrogen;
-        hydroIndex = data.hydroIndex;
-        rightMargin = data.rightMargin;
-        leftMargin = data.leftMargin;
+        const {
+          hydrogen,
+          hydroIndex: updatedHydroIndex,
+          rightMargin: updatedRightMargin,
+          leftMargin: updatedLeftMargin,
+        } = data;
+        hydroIndex = updatedHydroIndex;
+        rightMargin = updatedRightMargin;
+        leftMargin = updatedLeftMargin;
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
@@ -986,7 +1044,7 @@ class ReAtom extends ReObject {
         font: options.font,
         'font-size': Math.floor(options.fontszInPx * 0.8),
         'pointer-events': 'none',
-      });
+      }) as unknown as RaphaelElementBase;
       const cipTextBBox = cipText.getBBox();
 
       const rect = paper
@@ -998,9 +1056,9 @@ class ReAtom extends ReObject {
           3,
           3,
         )
-        .attr({ stroke: 'none' });
+        .attr({ stroke: 'none' }) as unknown as RaphaelElementBase;
 
-      const cipGroup = paper.set();
+      const cipGroup = paper.set() as unknown as RaphaelSetLike;
       cipGroup.push(rect, cipText);
       const cipGroupRelBox = util.relBox(cipGroup.getBBox());
 
@@ -1187,24 +1245,40 @@ function getStereoAtomColor(options, stereoLabel) {
   return getColorFromStereoLabel(options, stereoLabel);
 }
 
-export function getColorFromStereoLabel(options, stereoLabel) {
-  const stereoLabelType = stereoLabel.match(/\D+/g)[0];
+export function getColorFromStereoLabel(
+  options: ExtendedRenderOptions,
+  stereoLabel: string,
+) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+  if (!stereoLabelType) {
+    return '#000';
+  }
 
   switch (stereoLabelType) {
     case StereoLabel.And:
-      return options.colorOfAndCenters;
+      return options.colorOfAndCenters ?? '#000';
     case StereoLabel.Or:
-      return options.colorOfOrCenters;
+      return options.colorOfOrCenters ?? '#000';
     case StereoLabel.Abs:
-      return options.colorOfAbsoluteCenters;
+      return options.colorOfAbsoluteCenters ?? '#000';
     default:
       return '#000';
   }
 }
 
-function getStereoAtomOpacity(options, stereoLabel) {
-  const stereoLabelType = stereoLabel.match(/\D+/g)[0];
-  const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '');
+function getStereoAtomOpacity(
+  options: ExtendedRenderOptions,
+  stereoLabel: string,
+) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+  if (!stereoLabelType) {
+    return 1;
+  }
+  const stereoLabelNumber = Number(stereoLabel.replace(stereoLabelType, ''));
+  if (Number.isNaN(stereoLabelNumber)) {
+    return 1;
+  }
   if (
     !options.autoFadeOfStereoLabels ||
     stereoLabelType === StereoLabel.Abs ||
@@ -1357,9 +1431,9 @@ function addTooltip(node, text: string) {
 
 function buildLabel(
   atom: ReAtom,
-  paper: any,
+  paper: Render['paper'],
   ps: Vec2,
-  options: any,
+  options: ExtendedRenderOptions,
   atomId: number,
   sgroup?: SGroup,
 ): {
@@ -1374,66 +1448,67 @@ function buildLabel(
     currentlySelectedMonomerAttachmentPoint,
     connectedMonomerAttachmentPoints,
     usageInMacromolecule,
+    previewOpacity,
+    zoom,
   } = options;
   // eslint-disable-line max-statements
-  const label: any = {
-    text: getLabelText(atom.a, atomId, sgroup, options),
-  };
-
+  let labelText = getLabelText(atom.a, atomId, sgroup, options);
   let tooltip: string | null = null;
-  if (!label.text) {
-    label.text = 'R#';
+
+  if (!labelText) {
+    labelText = 'R#';
   }
 
-  if (label.text === atom.a.label) {
-    const element = Elements.get(label.text);
+  if (labelText === atom.a.label) {
+    const element = Elements.get(labelText);
     if (atomColoring && element) {
-      atom.color = ElementColor[label.text] ?? '#000';
+      atom.color = ElementColor[labelText] ?? '#000';
     }
   }
 
   const shouldStyleLabel = usageInMacromolecule !== undefined;
-  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(labelText);
   const isMonomerAttachmentPointSelected =
-    currentlySelectedMonomerAttachmentPoint === label.text;
-  const isMonomerAttachmentPointUsed =
-    connectedMonomerAttachmentPoints?.includes(label.text);
-
-  const { color, fill, stroke } = util.useLabelStyles(
-    isMonomerAttachmentPointSelected,
-    isMonomerAttachmentPointUsed,
-    usageInMacromolecule,
+    currentlySelectedMonomerAttachmentPoint === labelText;
+  const isMonomerAttachmentPointUsed = Boolean(
+    connectedMonomerAttachmentPoints?.includes(labelText),
   );
 
-  if (isMonomerAttachmentPoint && shouldStyleLabel) {
-    atom.color = color;
+  const labelStyles = shouldStyleLabel
+    ? util.useLabelStyles(
+        isMonomerAttachmentPointSelected,
+        isMonomerAttachmentPointUsed,
+        usageInMacromolecule!,
+      )
+    : null;
+
+  if (isMonomerAttachmentPoint && shouldStyleLabel && labelStyles) {
+    atom.color = labelStyles.color;
   }
 
-  if (label.text?.length > MAX_LABEL_LENGTH) {
-    tooltip = label.text;
-    label.text = `${label.text?.substring(0, 8)}...`;
+  if (labelText.length > MAX_LABEL_LENGTH) {
+    tooltip = labelText;
+    labelText = `${labelText.substring(0, MAX_LABEL_LENGTH)}...`;
   }
-
-  const { previewOpacity } = options;
 
   // not properly centered otherwise
-  if (label.text === '*') {
-    ps.x = ps.x - 1;
-    ps.y = ps.y + 3;
+  if (labelText === '*') {
+    ps.x -= 1;
+    ps.y += 3;
   }
 
-  label.path = paper.text(ps.x, ps.y, label.text).attr({
+  const labelPath = paper.text(ps.x, ps.y, labelText).attr({
     font,
     'font-size': fontszInPx,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-  });
+  }) as unknown as RaphaelElementBase;
 
-  if (isMonomerAttachmentPoint && shouldStyleLabel) {
+  let backgroundElement: RaphaelElementBase | undefined;
+  if (isMonomerAttachmentPoint && shouldStyleLabel && labelStyles) {
     const backgroundSize = fontszInPx * 2;
-
-    label.background = paper
+    backgroundElement = paper
       .rect(
         ps.x - backgroundSize / 2,
         ps.y - backgroundSize / 2,
@@ -1441,41 +1516,50 @@ function buildLabel(
         backgroundSize,
         10,
       )
-      .attr({ fill })
-      .attr({ stroke });
-  }
-  if (tooltip) {
-    addTooltip(label.path.node, tooltip);
+      .attr({ fill: labelStyles.fill })
+      .attr({ stroke: labelStyles.stroke }) as unknown as RaphaelElementBase;
   }
 
-  label.rbb = util.relBox(label.path.getBBox());
-  draw.recenterText(label.path, label.rbb);
-  let rightMargin =
-    (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom); //
-  let leftMargin =
-    (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  if (tooltip && labelPath.node) {
+    addTooltip(labelPath.node, tooltip);
+  }
+
+  const labelRelativeBox = util.relBox(labelPath.getBBox());
+  draw.recenterText(labelPath as unknown as DrawElement, labelRelativeBox);
+
+  let rightMargin = (labelRelativeBox.width / 2) * (zoom > 1 ? 1 : zoom);
+  let leftMargin = (-labelRelativeBox.width / 2) * (zoom > 1 ? 1 : zoom);
 
   if (atom.a.atomList !== null) {
     const xShift =
       ((atom.hydrogenOnTheLeft ? -1 : 1) *
-        (label.rbb.width - label.rbb.height)) /
+        (labelRelativeBox.width - labelRelativeBox.height)) /
       2;
-    pathAndRBoxTranslate(
-      label.path,
-      label.rbb,
-      xShift,
-
-      0,
-    );
+    pathAndRBoxTranslate(labelPath, labelRelativeBox, xShift, 0);
     rightMargin += xShift;
     leftMargin += xShift;
+  }
+
+  const label: ElemAttr = {
+    text: labelText,
+    path: labelPath,
+    rbb: labelRelativeBox,
+  };
+
+  if (backgroundElement) {
+    label.background = backgroundElement;
   }
 
   atom.label = label;
   return { label, rightMargin, leftMargin };
 }
 
-function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
+function getLabelText(
+  atom: Atom,
+  atomId: number,
+  sgroup?: SGroup,
+  options?: ExtendedRenderOptions,
+): string | undefined {
   if (sgroup?.isSuperatomWithoutLabel) {
     const attachmentPoint = sgroup
       .getAttachmentPoints()
@@ -1511,8 +1595,9 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
 
   if (atom.label && atom.rglabel !== null) {
     let text = '';
+    const rglabelValue = Number(atom.rglabel);
     for (let rgi = 0; rgi < 32; rgi++) {
-      if (atom.rglabel & (1 << rgi)) {
+      if (!Number.isNaN(rglabelValue) && rglabelValue & (1 << rgi)) {
         text += 'R' + (rgi + 1).toString();
       }
     }
@@ -1531,65 +1616,70 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const hydroIndex: any = {};
-  hydroIndex.text = (implh + 1).toString();
-  hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
+  const hydroIndexText = (implh + 1).toString();
+  const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
-  });
-  hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
-  draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+  }) as unknown as RaphaelElementBase;
+  const hydroIndexBox = util.relBox(hydroIndexPath.getBBox());
+  draw.recenterText(hydroIndexPath as unknown as DrawElement, hydroIndexBox);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    hydroIndex.path,
-    hydroIndex.rbb,
-    rightMargin + 0.5 * hydroIndex.rbb.width + delta,
+    hydroIndexPath,
+    hydroIndexBox,
+    rightMargin + 0.5 * hydroIndexBox.width + delta,
     0.2 * atom.label.rbb.height,
   );
   /* eslint-enable no-mixed-operators */
-  return hydroIndex;
+  return {
+    text: hydroIndexText,
+    path: hydroIndexPath,
+    rbb: hydroIndexBox,
+  };
 }
 
-function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
+function showRadical(atom: ReAtom, render: Render): DrawableElement {
   const ps: Vec2 = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
-  const paper: any = render.paper;
-  const radical: any = {};
-  let hshift;
+  const radicalPath = render.paper.set() as unknown as RaphaelSetLike;
+  let hshift: number;
+
   switch (atom.a.radical) {
     case 1:
-      radical.path = paper.set();
       hshift = 1.6 * options.lineWidth;
-      radical.path.push(
-        draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-        draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options),
+      radicalPath.push(
+        draw.radicalBullet(render.paper, ps.add(new Vec2(-hshift, 0)), options),
+        draw.radicalBullet(render.paper, ps.add(new Vec2(hshift, 0)), options),
       );
-      radical.path.attr('fill', atom.color);
+      radicalPath.attr('fill', atom.color);
       break;
     case 2:
-      radical.path = paper.set();
-      radical.path.push(draw.radicalBullet(paper, ps, options));
-      radical.path.attr('fill', atom.color);
+      radicalPath.push(draw.radicalBullet(render.paper, ps, options));
+      radicalPath.attr('fill', atom.color);
       break;
     case 3:
-      radical.path = paper.set();
       hshift = 1.6 * options.lineWidth;
-      radical.path.push(
-        draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-        draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options),
+      radicalPath.push(
+        draw.radicalCap(render.paper, ps.add(new Vec2(-hshift, 0)), options),
+        draw.radicalCap(render.paper, ps.add(new Vec2(hshift, 0)), options),
       );
-      radical.path.attr('stroke', atom.color);
+      radicalPath.attr('stroke', atom.color);
       break;
     default:
       break;
   }
-  radical.rbb = util.relBox(radical.path.getBBox());
+
+  const radicalBox = util.relBox(radicalPath.getBBox());
   const labelHeight = atom.label?.rbb.height ?? 0;
-  let vshift = -0.5 * (labelHeight + radical.rbb.height);
+  let vshift = -0.5 * (labelHeight + radicalBox.height);
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2;
-  pathAndRBoxTranslate(radical.path, radical.rbb, 0, vshift);
-  return radical;
+  pathAndRBoxTranslate(radicalPath, radicalBox, 0, vshift);
+
+  return {
+    path: radicalPath,
+    rbb: radicalBox,
+  };
 }
 
 function showIsotope(
@@ -1601,24 +1691,27 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const labelHeight = atom.label?.rbb.height ?? 0;
-  const isotope: any = {};
-  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
-  isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
+  const isotopeText = atom.a.isotope === null ? '' : atom.a.isotope.toString();
+  const isotopePath = render.paper.text(ps.x, ps.y, isotopeText).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
-  });
-  isotope.rbb = util.relBox(isotope.path.getBBox());
-  draw.recenterText(isotope.path, isotope.rbb);
+  }) as unknown as RaphaelElementBase;
+  const isotopeBox = util.relBox(isotopePath.getBBox());
+  draw.recenterText(isotopePath as unknown as DrawElement, isotopeBox);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    isotope.path,
-    isotope.rbb,
-    leftMargin - 0.5 * isotope.rbb.width - delta,
+    isotopePath,
+    isotopeBox,
+    leftMargin - 0.5 * isotopeBox.width - delta,
     -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
-  return isotope;
+  return {
+    text: isotopeText,
+    path: isotopePath,
+    rbb: isotopeBox,
+  };
 }
 
 function showCharge(
@@ -1630,33 +1723,34 @@ function showCharge(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const labelHeight = atom.label?.rbb.height ?? 0;
-  const charge: any = {};
-  charge.text = '';
+  let chargeText = '';
   if (atom.a.charge !== null) {
     const absCharge = Math.abs(atom.a.charge);
-    if (absCharge !== 1) charge.text = absCharge.toString();
-    if (atom.a.charge < 0) charge.text += '\u2013';
-    else charge.text += '+';
-  } else {
-    charge.text = '';
+    if (absCharge !== 1) chargeText = absCharge.toString();
+    if (atom.a.charge < 0) chargeText += '\u2013';
+    else chargeText += '+';
   }
 
-  charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
+  const chargePath = render.paper.text(ps.x, ps.y, chargeText).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
-  });
-  charge.rbb = util.relBox(charge.path.getBBox());
-  draw.recenterText(charge.path, charge.rbb);
+  }) as unknown as RaphaelElementBase;
+  const chargeBox = util.relBox(chargePath.getBBox());
+  draw.recenterText(chargePath as unknown as DrawElement, chargeBox);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    charge.path,
-    charge.rbb,
-    rightMargin + 0.5 * charge.rbb.width + delta,
+    chargePath,
+    chargeBox,
+    rightMargin + 0.5 * chargeBox.width + delta,
     -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
-  return charge;
+  return {
+    text: chargeText,
+    path: chargePath,
+    rbb: chargeBox,
+  };
 }
 
 function showExplicitValence(
@@ -1668,28 +1762,31 @@ function showExplicitValence(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const labelHeight = atom.label?.rbb.height ?? 0;
-  const valence: any = {};
-  valence.text = VALENCE_MAP[atom.a.explicitValence];
-  if (!valence.text) {
+  const valenceTextRaw = VALENCE_MAP[atom.a.explicitValence];
+  if (!valenceTextRaw) {
     throw new Error('invalid valence ' + atom.a.explicitValence.toString());
   }
-  valence.text = '(' + valence.text + ')';
-  valence.path = render.paper.text(ps.x, ps.y, valence.text).attr({
+  const valenceText = `(${valenceTextRaw})`;
+  const valencePath = render.paper.text(ps.x, ps.y, valenceText).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
-  });
-  valence.rbb = util.relBox(valence.path.getBBox());
-  draw.recenterText(valence.path, valence.rbb);
+  }) as unknown as RaphaelElementBase;
+  const valenceBox = util.relBox(valencePath.getBBox());
+  draw.recenterText(valencePath as unknown as DrawElement, valenceBox);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    valence.path,
-    valence.rbb,
-    rightMargin + 0.5 * valence.rbb.width + delta,
+    valencePath,
+    valenceBox,
+    rightMargin + 0.5 * valenceBox.width + delta,
     -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
-  return valence;
+  return {
+    text: valenceText,
+    path: valencePath,
+    rbb: valenceBox,
+  };
 }
 
 function showHydrogen(
@@ -1697,62 +1794,63 @@ function showHydrogen(
   render: Render,
   implh: number,
   data: {
-    hydrogen: any;
-    hydroIndex: number;
+    hydroIndex: ElemAttr | null;
     rightMargin: number;
     leftMargin: number;
   },
 ): {
   hydrogen: ElemAttr;
-  hydroIndex: ElemAttr;
+  hydroIndex: ElemAttr | null;
   rightMargin: number;
   leftMargin: number;
 } {
   // eslint-disable-line max-statements
-  let hydroIndex: any = data.hydroIndex;
+  let hydroIndex = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const labelHeight = atom.label?.rbb.height ?? 0;
-  const hydrogen = data.hydrogen;
-  hydrogen.text = 'H';
-  hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
+  const hydrogenPath = render.paper.text(ps.x, ps.y, 'H').attr({
     font: options.font,
     'font-size': options.fontszInPx,
     fill: atom.color,
-  });
-  hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
-  draw.recenterText(hydrogen.path, hydrogen.rbb);
+  }) as unknown as RaphaelElementBase;
+  const hydrogenBox = util.relBox(hydrogenPath.getBBox());
+  draw.recenterText(hydrogenPath as unknown as DrawElement, hydrogenBox);
   if (!hydrogenLeft) {
     pathAndRBoxTranslate(
-      hydrogen.path,
-      hydrogen.rbb,
-      data.rightMargin + 0.35 * hydrogen.rbb.width + delta,
+      hydrogenPath,
+      hydrogenBox,
+      data.rightMargin + 0.35 * hydrogenBox.width + delta,
       0,
     );
-    data.rightMargin += hydrogen.rbb.width + delta;
+    data.rightMargin += hydrogenBox.width + delta;
   }
   if (implh > 1) {
-    hydroIndex = {};
-    hydroIndex.text = implh.toString();
-    hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
+    const hydroIndexText = implh.toString();
+    const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
       font: options.font,
       'font-size': options.fontszsubInPx,
       fill: atom.color,
-    });
-    hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
-    draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+    }) as unknown as RaphaelElementBase;
+    const hydroIndexBox = util.relBox(hydroIndexPath.getBBox());
+    draw.recenterText(hydroIndexPath as unknown as DrawElement, hydroIndexBox);
+    hydroIndex = {
+      text: hydroIndexText,
+      path: hydroIndexPath,
+      rbb: hydroIndexBox,
+    };
     if (!hydrogenLeft) {
       pathAndRBoxTranslate(
-        hydroIndex.path,
-        hydroIndex.rbb,
+        hydroIndexPath,
+        hydroIndexBox,
         data.rightMargin +
-          0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
+          0.15 * hydroIndexBox.width * (options.zoom > 1 ? 1 : options.zoom) +
           delta,
         0.2 * labelHeight,
       );
-      data.rightMargin += hydroIndex.rbb.width + delta;
+      data.rightMargin += hydroIndexBox.width + delta;
     }
   }
   if (hydrogenLeft) {
@@ -1766,31 +1864,34 @@ function showHydrogen(
       data.leftMargin -= hydroIndex.rbb.width + delta;
     }
     pathAndRBoxTranslate(
-      hydrogen.path,
-      hydrogen.rbb,
+      hydrogenPath,
+      hydrogenBox,
       data.leftMargin -
         0.4 *
-          hydrogen.rbb.width *
+          hydrogenBox.width *
           (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
         delta,
       0,
     );
-    data.leftMargin -= hydrogen.rbb.width + delta;
+    data.leftMargin -= hydrogenBox.width + delta;
   }
-  return Object.assign(data, { hydrogen, hydroIndex });
+  return {
+    hydrogen: {
+      text: 'H',
+      path: hydrogenPath,
+      rbb: hydrogenBox,
+    },
+    hydroIndex: hydroIndex ?? null,
+    rightMargin: data.rightMargin,
+    leftMargin: data.leftMargin,
+  };
 }
 
-function showWarning(
-  atom,
-  render,
-  leftMargin,
-  rightMargin,
-): { rbb: DOMRect; path: any } {
+function showWarning(atom, render, leftMargin, rightMargin): DrawableElement {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
-  const warning: any = {};
   const y = ps.y + atom.label.rbb.height / 2 + delta;
-  warning.path = render.paper
+  const warningPath = render.paper
     .path(
       'M{0},{1}L{2},{3}',
       tfx(ps.x + leftMargin),
@@ -1799,9 +1900,12 @@ function showWarning(
       tfx(y),
     )
     .attr(render.options.lineattr)
-    .attr({ stroke: '#F00' });
-  warning.rbb = util.relBox(warning.path.getBBox());
-  return warning;
+    .attr({ stroke: '#F00' }) as unknown as RaphaelElementBase;
+  const warningBox = util.relBox(warningPath.getBBox());
+  return {
+    path: warningPath,
+    rbb: warningBox,
+  };
 }
 
 function getAamText(atom) {

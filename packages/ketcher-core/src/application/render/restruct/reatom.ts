@@ -282,7 +282,10 @@ class ReAtom extends ReObject {
     const { fontszInPx, radiusScaleFactor } = options;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
-    const box = this.getVBoxObj(restruct.render)!;
+    const box = this.getVBoxObj(restruct.render);
+    if (!box) {
+      return this.getUnlabeledSelectionContour(render, highlightPadding);
+    }
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
@@ -438,7 +441,8 @@ class ReAtom extends ReObject {
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const struct = restruct.molecule;
-    const atom = struct.atoms.get(aid)!;
+    const atom = struct.atoms.get(aid);
+    assert(atom, 'Atom with id ' + aid + ' is not found.');
     const sgroups = struct.sgroups;
     const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
@@ -1581,7 +1585,8 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       break;
   }
   radical.rbb = util.relBox(radical.path.getBBox());
-  let vshift = -0.5 * (atom.label!.rbb.height + radical.rbb.height);
+  const labelHeight = atom.label?.rbb.height ?? 0;
+  let vshift = -0.5 * (labelHeight + radical.rbb.height);
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2;
   pathAndRBoxTranslate(radical.path, radical.rbb, 0, vshift);
   return radical;
@@ -1595,6 +1600,7 @@ function showIsotope(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
+  const labelHeight = atom.label?.rbb.height ?? 0;
   const isotope: any = {};
   isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
@@ -1609,7 +1615,7 @@ function showIsotope(
     isotope.path,
     isotope.rbb,
     leftMargin - 0.5 * isotope.rbb.width - delta,
-    -0.3 * atom.label!.rbb.height,
+    -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
   return isotope;
@@ -1623,6 +1629,7 @@ function showCharge(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
+  const labelHeight = atom.label?.rbb.height ?? 0;
   const charge: any = {};
   charge.text = '';
   if (atom.a.charge !== null) {
@@ -1646,7 +1653,7 @@ function showCharge(
     charge.path,
     charge.rbb,
     rightMargin + 0.5 * charge.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height,
+    -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
   return charge;
@@ -1660,6 +1667,7 @@ function showExplicitValence(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
+  const labelHeight = atom.label?.rbb.height ?? 0;
   const valence: any = {};
   valence.text = VALENCE_MAP[atom.a.explicitValence];
   if (!valence.text) {
@@ -1678,7 +1686,7 @@ function showExplicitValence(
     valence.path,
     valence.rbb,
     rightMargin + 0.5 * valence.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height,
+    -0.3 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
   return valence;
@@ -1706,6 +1714,7 @@ function showHydrogen(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
+  const labelHeight = atom.label?.rbb.height ?? 0;
   const hydrogen = data.hydrogen;
   hydrogen.text = 'H';
   hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
@@ -1741,7 +1750,7 @@ function showHydrogen(
         data.rightMargin +
           0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
           delta,
-        0.2 * atom.label!.rbb.height,
+        0.2 * labelHeight,
       );
       data.rightMargin += hydroIndex.rbb.width + delta;
     }
@@ -1752,7 +1761,7 @@ function showHydrogen(
         hydroIndex.path,
         hydroIndex.rbb,
         data.leftMargin - 0.4 * hydroIndex.rbb.width - delta,
-        0.2 * atom.label!.rbb.height,
+        0.2 * labelHeight,
       );
       data.leftMargin -= hydroIndex.rbb.width + delta;
     }

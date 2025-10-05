@@ -310,7 +310,7 @@ export class SequenceMode extends BaseMode {
       }
       if (labeledNucleoelement.baseLabel) {
         baseMonomerItem =
-          labeledNucleoelement.rnaBaseMonomerItem ||
+          labeledNucleoelement.rnaBaseMonomerItem ??
           getRnaPartLibraryItem(
             editor,
             labeledNucleoelement.baseLabel,
@@ -570,7 +570,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
-      phosphate || RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+      phosphate ?? RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
     );
 
     assert(phosphateLibraryItem);
@@ -885,14 +885,14 @@ export class SequenceMode extends BaseMode {
           getNodeFromTwoStrandedNode(
             twoStrandedNodeBeforeSelection,
             strandType,
-          )) ||
+          )) ??
         undefined;
       const potentialNodeAfterSelection =
         (twoStrandedNodeAfterSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeAfterSelection,
             strandType,
-          )) ||
+          )) ??
         undefined;
       const nodeAfterSelection =
         potentialNodeAfterSelection instanceof BackBoneSequenceNode
@@ -905,14 +905,14 @@ export class SequenceMode extends BaseMode {
           getNodeFromTwoStrandedNode(
             twoStrandedNodeInSameChainBeforeSelection,
             strandType,
-          )) ||
+          )) ??
         undefined;
       const potentialNodeInSameChainAfterSelection =
         (twoStrandedNodeInSameChainAfterSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeInSameChainAfterSelection,
             strandType,
-          )) ||
+          )) ??
         twoStrandedNodeInSameChainAfterSelection;
       const nodeInSameChainAfterSelection =
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
@@ -1457,7 +1457,7 @@ export class SequenceMode extends BaseMode {
             (currentTwoStrandedNode &&
               SequenceRenderer.getPreviousNodeInSameChain(
                 currentTwoStrandedNode,
-              )) ||
+              )) ??
             undefined;
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
@@ -1513,7 +1513,7 @@ export class SequenceMode extends BaseMode {
                     enteredSymbol,
                     isDnaEnteringMode,
                   ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode || null,
+              previousTwoStrandedNodeInSameChain?.antisenseNode ?? null,
               currentTwoStrandedNode?.antisenseNode,
             );
 
@@ -1876,7 +1876,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newMonomerSequenceNode,
-        nextNode?.senseNode || null,
+        nextNode?.senseNode ?? null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -2332,7 +2332,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPresetNode,
-        nextNode?.senseNode || null,
+        nextNode?.senseNode ?? null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -2647,9 +2647,9 @@ export class SequenceMode extends BaseMode {
     const currentNode =
       nextNodeToConnect === null
         ? undefined
-        : nextNodeToConnect || SequenceRenderer.currentEdittingNode?.senseNode;
+        : nextNodeToConnect ?? SequenceRenderer.currentEdittingNode?.senseNode;
     const previousNodeInSameChain =
-      previousNodeToConnect ||
+      previousNodeToConnect ??
       SequenceRenderer.previousNodeInSameChain?.senseNode;
     const modelChanges = new Command();
     const lastNodeOfNewFragment = chainsCollection.lastNode;

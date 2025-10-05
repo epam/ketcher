@@ -136,7 +136,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     }
 
     this.rootElement =
-      this.rootElement ||
+      this.rootElement ??
       (this.canvas
         .insert('g', `.monomer`)
         .data([this])
@@ -149,7 +149,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
           'data-fromconnectionpoint',
           this.monomerToAtomBond.monomer.getAttachmentPointByBond(
             this.monomerToAtomBond,
-          ) || '',
+          ) ?? '',
         )
         .attr(
           'transform',

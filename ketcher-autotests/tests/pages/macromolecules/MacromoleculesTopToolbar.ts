@@ -85,10 +85,15 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       });
     },
 
-    async calculateProperties() {
-      await waitForCalculateProperties(page, async () => {
+    async calculateProperties(options: { forcedDelay?: number } = {}) {
+      if (options.forcedDelay) {
         await locators.calculatePropertiesButton.click();
-      });
+        await delay(options.forcedDelay);
+      } else {
+        await waitForCalculateProperties(page, async () => {
+          await locators.calculatePropertiesButton.click();
+        });
+      }
     },
 
     async turnSyncEditModeOn() {

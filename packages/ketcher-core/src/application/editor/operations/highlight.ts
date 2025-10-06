@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,10 +100,10 @@ export class HighlightDelete extends BaseOperation {
     super(OperationType.REMOVE_HIGHLIGHT, 5);
     this.data = {
       highlightId,
-      atoms: atoms || [],
-      bonds: bonds || [],
-      rgroupAttachmentPoints: rgroupAttachmentPoints || [],
-      color: color || 'white',
+      atoms: atoms ?? [],
+      bonds: bonds ?? [],
+      rgroupAttachmentPoints: rgroupAttachmentPoints ?? [],
+      color: color ?? 'white',
     };
   }
 

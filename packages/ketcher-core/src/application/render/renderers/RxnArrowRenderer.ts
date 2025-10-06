@@ -76,7 +76,7 @@ export class RxnArrowRenderer extends BaseRenderer {
     const { length, angle } = this.getArrowParams();
     const startPosition = new Vec2(0, 0);
     const macroModeScale = provideEditorSettings().macroModeScale;
-    const height = (this.arrow.height || 0) * macroModeScale;
+    const height = (this.arrow.height ?? 0) * macroModeScale;
 
     let paths: SVGPathAttributes[] = [];
 
@@ -221,10 +221,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   private getSelectionContour(startPosition?: Vec2): string {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const { length, angle } = this.getArrowParams();
-    const height = (this.arrow.height || 0) * macroModeScale;
-    const start = startPosition || new Vec2(0, 0);
+    const height = (this.arrow.height ?? 0) * macroModeScale;
+    const start = startPosition ?? new Vec2(0, 0);
     const endX = start.x + length;
-    const [wOffset, hOffset] = [5, height || 8];
+    const normalizedHeight = height === 0 ? undefined : height;
+    const [wOffset, hOffset] = [5, normalizedHeight ?? 8];
 
     const path =
       `M${tfx(start.x - wOffset)},${tfx(start.y)}` +

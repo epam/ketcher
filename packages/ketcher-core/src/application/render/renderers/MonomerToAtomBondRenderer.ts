@@ -149,7 +149,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
           'data-fromconnectionpoint',
           this.monomerToAtomBond.monomer.getAttachmentPointByBond(
             this.monomerToAtomBond,
-          ) || '',
+          ) ?? '',
         )
         .attr(
           'transform',

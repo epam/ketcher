@@ -10,13 +10,13 @@
     box-shadow: none;
   }
 
-  :global(.MuiPaper-root.Mui-expanded) {
-    &::after {
+  &:global(.MuiAccordion-root) {
+    &::before {
       opacity: 0;
     }
   }
 
-  :global(.MuiPaper-root) {
+  &:global(.MuiPaper-root) {
     &:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -28,6 +28,12 @@
       margin: 0 auto;
       background-color: @color-grey-5;
       opacity: 1;
+    }
+  }
+
+  &:global(.MuiPaper-root.Mui-expanded) {
+    &::after {
+      opacity: 0;
     }
   }
 

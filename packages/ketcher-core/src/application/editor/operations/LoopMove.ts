@@ -37,7 +37,7 @@ export class LoopMove extends BaseOperation {
     const { id, d } = this.data;
     const reloop = restruct.reloops.get(id);
 
-    if (reloop && reloop.visel) {
+    if (reloop?.visel) {
       const scaled = Scale.modelToCanvas(d, restruct.render.options);
       reloop.visel.translate(scaled);
     }

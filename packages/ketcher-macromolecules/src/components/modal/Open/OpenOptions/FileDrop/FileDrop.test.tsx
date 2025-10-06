@@ -72,13 +72,13 @@ describe('FileDrop component', () => {
     userEvent.upload(input, mockFile);
 
     await waitFor(() => {
-      expect(input.files && input.files[0]).toBe(mockFile);
+      expect(input.files?.[0]).toBe(mockFile);
     });
     await waitFor(() => {
-      expect(input.files && input.files.item(0)).toBe(mockFile);
+      expect(input.files?.item(0)).toBe(mockFile);
     });
     await waitFor(() => {
-      expect(input.files && input.files).toHaveLength(1);
+      expect(input.files?.length).toBe(1);
     });
   });
 

@@ -309,7 +309,7 @@ class ReAtom extends ReObject {
 
   getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
-      (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
+      (this.a.pseudo?.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
 
     return hasLabel
@@ -1479,7 +1479,7 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
         return attachmentPoint.leaveAtomId === atomId;
       });
 
-    if (attachmentPoint && attachmentPoint.attachmentPointNumber) {
+    if (attachmentPoint?.attachmentPointNumber) {
       const result = getAttachmentPointLabel(
         attachmentPoint.attachmentPointNumber,
       );

@@ -154,6 +154,7 @@ class BondTool implements Tool {
     }
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx;
+      const hasItem = 'item' in dragCtx;
 
       const pos = rnd.page2obj(event);
       let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
@@ -162,13 +163,13 @@ class BondTool implements Tool {
       const degrees = vectorUtils.degrees(angle);
       this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-      if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
+      if (!hasItem || dragCtx.item?.map === 'atoms') {
         if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab);
         let beginAtom;
         let endAtom;
         let beginPos;
         let endPos;
-        if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
+        if (hasItem && dragCtx.item?.map === 'atoms') {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id;
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item);
@@ -206,8 +207,7 @@ class BondTool implements Tool {
           const atomResult: Array<number> = [];
           const result: Array<number> = [];
           if (
-            endAtom &&
-            endAtom.map === 'atoms' &&
+            endAtom?.map === 'atoms' &&
             functionalGroups.size &&
             this.dragCtx
           ) {
@@ -308,12 +308,13 @@ class BondTool implements Tool {
   mouseup(event) {
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx;
+      const hasItem = 'item' in dragCtx;
       const render = this.editor.render;
       const struct = render.ctab.molecule;
       if ('action' in dragCtx) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);
-      } else if (!('item' in dragCtx)) {
+      } else if (!hasItem) {
         const editorOptions = this.editor.options();
         const QUARTER_OF_BOND_WIDTH = 20;
         const QUARTER_OF_BOND_HEIGHT = 5;
@@ -334,7 +335,7 @@ class BondTool implements Tool {
         );
 
         this.editor.update(bondAddition[0]);
-      } else if (dragCtx.item.map === 'atoms') {
+      } else if (hasItem && dragCtx.item.map === 'atoms') {
         // click on atom
         const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
           struct,

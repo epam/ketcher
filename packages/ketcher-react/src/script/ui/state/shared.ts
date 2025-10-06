@@ -34,13 +34,13 @@ import tools from '../action/tools';
 import { isNumber } from 'lodash';
 
 export function onAction(action) {
-  if (action && action.dialog) {
+  if (action?.dialog) {
     return {
       type: 'MODAL_OPEN',
       data: { name: action.dialog, prop: action.prop },
     };
   }
-  if (action && action.thunk) {
+  if (action?.thunk) {
     return action.thunk;
   }
 
@@ -114,7 +114,7 @@ export const getSelectionFromStruct = (struct) => {
     IMAGE_KEY,
     MULTITAIL_ARROW_KEY,
   ].forEach((selectionEntity) => {
-    if (struct && struct[selectionEntity]) {
+    if (struct?.[selectionEntity]) {
       const selected: number[] = [];
       struct[selectionEntity].forEach((value, key) => {
         if (
@@ -216,7 +216,9 @@ export function load(struct: Struct, options?) {
     } catch (e: any) {
       KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      e && errorHandler && errorHandler(e.message);
+      if (e) {
+        errorHandler?.(e.message);
+      }
     } finally {
       notifyRequestCompleted();
     }

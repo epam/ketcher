@@ -30,7 +30,7 @@ type OwnProps = Pick<RightToolbarProps, 'className'>;
 const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
-  active: state.actionState && state.actionState.activeTool,
+  active: state.actionState?.activeTool,
   status: state.actionState || {},
   freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,

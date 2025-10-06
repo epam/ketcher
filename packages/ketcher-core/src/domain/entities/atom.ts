@@ -365,8 +365,10 @@ export class Atom extends BaseMicromoleculeEntity {
 
   clone(fidMap?: Map<number, number>): Atom {
     const ret = new Atom(this);
-    if (fidMap && fidMap.has(this.fragment)) {
-      ret.fragment = fidMap.get(this.fragment)!;
+    const fragmentId = fidMap?.get(this.fragment);
+
+    if (fragmentId !== undefined) {
+      ret.fragment = fragmentId;
     }
     return ret;
   }
@@ -793,18 +795,17 @@ export class Atom extends BaseMicromoleculeEntity {
           atomId,
           searchBySgroups,
         );
-    const attachmentPointAtomBonds =
-      attachmentPoint &&
-      bonds.filter(
-        (_, bond) =>
-          (bond.begin === attachmentPoint.atomId &&
-            bond.end !== attachmentPoint.leaveAtomId) ||
-          (bond.end === attachmentPoint.atomId &&
-            bond.begin !== attachmentPoint.leaveAtomId),
-      );
-    const attachmentAtomExternalConnection =
-      attachmentPointAtomBonds &&
-      attachmentPointAtomBonds.filter((_, bond) => {
+    const attachmentPointAtomBonds = attachmentPoint
+      ? bonds.filter(
+          (_, bond) =>
+            (bond.begin === attachmentPoint.atomId &&
+              bond.end !== attachmentPoint.leaveAtomId) ||
+            (bond.end === attachmentPoint.atomId &&
+              bond.begin !== attachmentPoint.leaveAtomId),
+        )
+      : undefined;
+    const attachmentAtomExternalConnection = attachmentPointAtomBonds?.filter(
+      (_, bond) => {
         const beginAtom = struct.atoms.get(bond.begin);
         const endAtom = struct.atoms.get(bond.end);
         const isExternalBondBetweenMonomers =
@@ -815,7 +816,8 @@ export class Atom extends BaseMicromoleculeEntity {
           beginAtom?.fragment !== atom?.fragment ||
           endAtom?.fragment !== atom?.fragment
         );
-      });
+      },
+    );
 
     return attachmentAtomExternalConnection;
   }
@@ -860,8 +862,7 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return (
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-      attachmentAtomExternalConnections &&
-      attachmentAtomExternalConnections.find((_, bond) =>
+      attachmentAtomExternalConnections?.find((_, bond) =>
         bond.begin === attachmentPoint?.atomId
           ? bond.beginSuperatomAttachmentPointNumber ===
             attachmentPoint?.attachmentPointNumber

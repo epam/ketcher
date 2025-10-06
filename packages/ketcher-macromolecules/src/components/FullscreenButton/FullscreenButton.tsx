@@ -22,17 +22,17 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {
-  (element.requestFullscreen && element.requestFullscreen()) ||
-    (element.msRequestFullscreen && element.msRequestFullscreen()) ||
-    (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
-    (element.webkitRequestFullscreen && element.webkitRequestFullscreen());
+  element.requestFullscreen?.() ||
+    element.msRequestFullscreen?.() ||
+    element.mozRequestFullScreen?.() ||
+    element.webkitRequestFullscreen?.();
 };
 
 const exitFullscreen = () => {
-  (document.exitFullscreen && document.exitFullscreen()) ||
-    (document.msExitFullscreen && document.msExitFullscreen()) ||
-    (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-    (document.webkitExitFullscreen && document.webkitExitFullscreen());
+  document.exitFullscreen?.() ||
+    document.msExitFullscreen?.() ||
+    document.mozCancelFullScreen?.() ||
+    document.webkitExitFullscreen?.();
 };
 
 const isFullScreen = () => {

@@ -81,12 +81,10 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
     if (struct.isAtomFromMacromolecule(aid)) {
       if (
-        sGroup &&
-        sGroup.pp &&
-        sGroup.pp.x > x0 &&
-        sGroup.pp.x < x1 &&
-        sGroup.pp.y > y0 &&
-        sGroup.pp.y < y1
+        sGroup?.pp?.x > x0 &&
+        sGroup.pp?.x < x1 &&
+        sGroup.pp?.y > y0 &&
+        sGroup.pp?.y < y1
       ) {
         atomList.push(aid);
       }
@@ -271,7 +269,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     const sGroup = struct.sgroups.get(relatedFGId as number);
 
     if (struct.isAtomFromMacromolecule(aid)) {
-      if (sGroup && sGroup.pp && isPointInPolygon(r, sGroup.pp)) {
+      if (sGroup?.pp && isPointInPolygon(r, sGroup.pp)) {
         atomList.push(aid);
       }
     } else {

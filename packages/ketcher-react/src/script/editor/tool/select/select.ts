@@ -544,9 +544,9 @@ class SelectTool implements Tool {
   }
 
   mouseleave() {
-    if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping();
+    if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 
-    if (this.dragCtx && this.dragCtx.action) {
+    if (this.dragCtx?.action) {
       const action = this.dragCtx.action;
       this.editor.update(action);
     }
@@ -666,9 +666,7 @@ function closestToSel(ci) {
 }
 
 function isSelected(selection, item) {
-  return (
-    selection && selection[item.map] && selection[item.map].includes(item.id)
-  );
+  return selection?.[item.map]?.includes(item.id) ?? false;
 }
 
 function preventSaltAndSolventsMerge(

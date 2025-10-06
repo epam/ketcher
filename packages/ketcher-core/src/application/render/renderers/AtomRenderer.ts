@@ -113,7 +113,7 @@ export class AtomRenderer extends BaseRenderer {
     const HOVER_PADDING = 4;
 
     const rect = this.rootElement.select('rect');
-    if (rect && rect.node()) {
+    if (rect?.node()) {
       rect
         .attr('x', labelX - HOVER_PADDING)
         .attr('y', -(labelHeight / 2 + HOVER_PADDING))

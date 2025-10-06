@@ -106,11 +106,11 @@ class BaseOperation {
     const halfBond1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const halfBond2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
-    if (halfBond1 && halfBond1.loop >= 0) {
+    if (halfBond1?.loop >= 0) {
       restruct.loopRemove(halfBond1.loop);
     }
 
-    if (halfBond2 && halfBond2.loop >= 0) {
+    if (halfBond2?.loop >= 0) {
       restruct.loopRemove(halfBond2.loop);
     }
   }

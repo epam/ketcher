@@ -109,7 +109,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const keyDown = (event) => {
     const key = KN.keyName(event);
     const active = document.activeElement;
-    const activeTextarea = active && active.tagName === 'TEXTAREA';
+    const activeTextarea = active?.tagName === 'TEXTAREA';
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
       exit(key === 'Enter' ? 'OK' : 'Cancel');
       event.preventDefault();
@@ -164,11 +164,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                     isButtonOk(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={
-                    buttonsNameMap && buttonsNameMap[button]
-                      ? buttonsNameMap[button]
-                      : button
-                  }
+                  value={buttonsNameMap?.[button] ?? button}
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}

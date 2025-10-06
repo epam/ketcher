@@ -140,7 +140,7 @@ function handleAtomPropsDialog({
   const atomsSelected = selection?.atoms;
   const restruct = editor.render.ctab;
 
-  if (atomsSelected && atomsSelected.includes(hoveredItemId)) {
+  if (atomsSelected?.includes(hoveredItemId)) {
     const atoms = getSelectedAtoms(selection, restruct.molecule);
     const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
 

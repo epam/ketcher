@@ -295,7 +295,7 @@ class Editor implements KetcherEditor {
       return this._tool;
     }
 
-    if (this._tool && this._tool.cancel) {
+    if (this._tool?.cancel) {
       this._tool.cancel();
     }
 
@@ -1712,7 +1712,7 @@ class Editor implements KetcherEditor {
         this.explicitSelected().atoms,
       );
       if (stereoFlags.length !== 0) {
-        this._selection && this._selection.enhancedFlags
+        this._selection?.enhancedFlags
           ? (this._selection.enhancedFlags = Array.from(
               new Set([...this._selection.enhancedFlags, ...stereoFlags]),
             ))
@@ -1813,7 +1813,7 @@ class Editor implements KetcherEditor {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
-    if (this._tool && this._tool.cancel) {
+    if (this._tool?.cancel) {
       this._tool.cancel();
     }
 
@@ -1853,7 +1853,7 @@ class Editor implements KetcherEditor {
       throw new Error('Redo stack is empty');
     }
 
-    if (this._tool && this._tool.cancel) {
+    if (this._tool?.cancel) {
       this._tool.cancel();
     }
 

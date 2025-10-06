@@ -201,10 +201,7 @@ const config: Record<string, UiAction> = {
         }
       },
     },
-    selected: ({ actions }) =>
-      actions && // TMP
-      actions.active &&
-      actions.active.tool === 'paste',
+    selected: ({ actions }) => actions?.active?.tool === 'paste',
     hidden: (options) => isHidden(options, 'paste'),
   },
   settings: {

@@ -155,7 +155,7 @@ export class ReImage extends ReObject {
         fill: 'none',
         'stroke-width': strokeWidth,
       });
-      if (element.node && element.node.setAttribute) {
+      if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', `imageResize-${key}`);
       }
 

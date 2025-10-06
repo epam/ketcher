@@ -36,11 +36,12 @@ let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
+test.afterEach(async () => {
+  await CommonTopLeftToolbar(page).clearCanvas();
+});
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.describe('Import-Saving .seq Files', () => {
   test(`Import .seq RNA file`, async () => {

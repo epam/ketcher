@@ -494,15 +494,18 @@ class RotateController {
       }
 
       textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
+      let degreeTextFill = STYLE.INITIAL_COLOR;
+
+      if (diff > 90) {
+        degreeTextFill = 'none';
+      } else if (currentDegree !== 0 && currentDegree === structRotateDegree) {
+        degreeTextFill = STYLE.ACTIVE_COLOR;
+      }
+
       const degreeText = this.paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
-          fill:
-            diff > 90
-              ? 'none'
-              : currentDegree !== 0 && currentDegree === structRotateDegree
-              ? STYLE.ACTIVE_COLOR
-              : STYLE.INITIAL_COLOR,
+          fill: degreeTextFill,
           'font-size': DEGREE_FONT_SIZE,
         });
 
@@ -831,11 +834,13 @@ class RotateController {
     } else {
       const { isSnapping, absoluteAngle, relativeAngle, snapMode } =
         snapAngleDrawingProps;
-      const drawingState: SnapAngleIndicatorState = isSnapping
-        ? 'noLine'
-        : snapMode === 'multiple-bonds'
-        ? 'noText'
-        : 'default';
+      let drawingState: SnapAngleIndicatorState = 'default';
+
+      if (isSnapping) {
+        drawingState = 'noLine';
+      } else if (snapMode === 'multiple-bonds') {
+        drawingState = 'noText';
+      }
       this.drawSnapAngleIndicator(drawingState, absoluteAngle, relativeAngle);
     }
   }

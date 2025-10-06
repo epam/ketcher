@@ -798,17 +798,26 @@ export class CoreEditor {
       selectedMonomersWithFreeR2.length === 1
         ? selectedMonomersWithFreeR2[0]
         : undefined;
-    const newMonomerPosition = selectedMonomerToConnect
-      ? selectedMonomerToConnect.position.add(new Vec2(1.5, 0))
-      : this.drawingEntitiesManager.hasMonomers
-      ? this.nextAutochainPosition && !(this.mode instanceof SnakeMode)
-        ? this.nextAutochainPosition
-        : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+    let newMonomerPosition: Vec2;
+
+    if (selectedMonomerToConnect) {
+      newMonomerPosition = selectedMonomerToConnect.position.add(
+        new Vec2(1.5, 0),
+      );
+    } else if (this.drawingEntitiesManager.hasMonomers) {
+      if (this.nextAutochainPosition && !(this.mode instanceof SnakeMode)) {
+        newMonomerPosition = this.nextAutochainPosition;
+      } else {
+        newMonomerPosition =
+          this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
             new Vec2(0, 1.5),
-          )
-      : Coordinates.canvasToModel(
-          new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
-        );
+          );
+      }
+    } else {
+      newMonomerPosition = Coordinates.canvasToModel(
+        new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
+      );
+    }
 
     return {
       selectedMonomerToConnect,

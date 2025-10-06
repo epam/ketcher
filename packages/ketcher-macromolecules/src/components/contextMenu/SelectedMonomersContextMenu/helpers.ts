@@ -251,13 +251,19 @@ export const getMonomersForAminoAcidModification = (
   const clickedSequenceItemRenderer: BaseSequenceItemRenderer | undefined =
     contextMenuEvent?.target?.__data__;
   const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
-  const monomersForAminoAcidModification = (
-    selectedMonomers.length
-      ? selectedMonomers
-      : clickedMonomer
-      ? [clickedMonomer]
-      : []
-  ).filter((monomer) => monomer instanceof Peptide);
+  let monomerCandidates: BaseMonomer[] = [];
+
+  if (selectedMonomers.length) {
+    monomerCandidates = selectedMonomers;
+  } else if (clickedMonomer) {
+    monomerCandidates = [clickedMonomer];
+  }
+
+  const monomersForAminoAcidModification = monomerCandidates.filter(
+    (monomer) => {
+      return monomer instanceof Peptide;
+    },
+  );
 
   return monomersForAminoAcidModification;
 };

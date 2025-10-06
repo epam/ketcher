@@ -925,11 +925,15 @@ const calculateMassMeasurementUnit = (mass?: number) => {
     return MassMeasurementUnit.Da;
   }
 
-  return mass < 1000
-    ? MassMeasurementUnit.Da
-    : mass < 1000000
-    ? MassMeasurementUnit.kDa
-    : MassMeasurementUnit.MDa;
+  if (mass < 1000) {
+    return MassMeasurementUnit.Da;
+  }
+
+  if (mass < 1000000) {
+    return MassMeasurementUnit.kDa;
+  }
+
+  return MassMeasurementUnit.MDa;
 };
 
 let selectEntitiesHandler: () => void;

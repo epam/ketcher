@@ -315,20 +315,25 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       | D3SvgElementSelection<SVGSVGElement, void>
       | D3SvgElementSelection<SVGGElement, void>,
   ) {
+    let monomerTypeAttribute = '';
+
+    if (this.monomer instanceof AmbiguousMonomer) {
+      monomerTypeAttribute = AmbiguousMonomer.getMonomerClass(
+        this.monomer.monomers,
+      );
+    } else if (this.monomer.monomerItem.props.isMicromoleculeFragment) {
+      monomerTypeAttribute = 'CHEM';
+    } else if (this.monomer.monomerItem.props.MonomerClass) {
+      monomerTypeAttribute = this.monomer.monomerItem.props.MonomerClass;
+    }
+
     const rootElement = canvas
       .append('g')
       .data([this])
       .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr('data-testid', 'monomer')
-      .attr(
-        'data-monomertype',
-        this.monomer instanceof AmbiguousMonomer
-          ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
-          : (this.monomer.monomerItem.props.isMicromoleculeFragment
-              ? 'CHEM'
-              : this.monomer.monomerItem.props.MonomerClass) ?? '',
-      )
+      .attr('data-monomertype', monomerTypeAttribute)
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)
       .attr(

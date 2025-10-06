@@ -45,13 +45,19 @@ function calculateTop(
     relativeTargetTop - preview.gap - height - preview.topPadding;
   const bottomPreviewPosition = relativeTargetBottom + preview.gap;
 
-  return relativeTargetTop > height + preview.gap + preview.topPadding
-    ? topPreviewPosition
-    : target.top + height >
-        (ketcherEditorRootBoundingClientRect?.height ?? 0) &&
-      target.top > (ketcherEditorRootBoundingClientRect?.height ?? 0) / 2
-    ? topPreviewPosition
-    : bottomPreviewPosition;
+  if (relativeTargetTop > height + preview.gap + preview.topPadding) {
+    return topPreviewPosition;
+  }
+
+  const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
+  const exceedsBottomBoundary = target.top + height > editorRootHeight;
+  const isLowerHalf = target.top > editorRootHeight / 2;
+
+  if (exceedsBottomBoundary && isLowerHalf) {
+    return topPreviewPosition;
+  }
+
+  return bottomPreviewPosition;
 }
 
 function createCalculatePreviewTopFunction(
@@ -94,11 +100,15 @@ export function calculateAmbiguousMonomerPreviewLeft(initialLeft: number) {
   const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
   const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left ?? 0;
 
-  return initialLeft + PREVIEW_WIDTH / 2 > canvasWrapperRight
-    ? canvasWrapperRight - PREVIEW_WIDTH
-    : initialLeft - PREVIEW_WIDTH / 2 < canvasWrapperLeft
-    ? canvasWrapperLeft
-    : initialLeft - PREVIEW_WIDTH / 2;
+  if (initialLeft + PREVIEW_WIDTH / 2 > canvasWrapperRight) {
+    return canvasWrapperRight - PREVIEW_WIDTH;
+  }
+
+  if (initialLeft - PREVIEW_WIDTH / 2 < canvasWrapperLeft) {
+    return canvasWrapperLeft;
+  }
+
+  return initialLeft - PREVIEW_WIDTH / 2;
 }
 
 export const calculateBondPreviewPosition = (
@@ -157,16 +167,18 @@ export const calculateBondPreviewPosition = (
       topValue = bottom + preview.gap;
     }
 
+    let horizontalTranslate = '0';
+
+    if (leftValue + preview.width > canvasWrapperRight) {
+      horizontalTranslate = '-100%';
+    } else if (leftValue > preview.width / 2) {
+      horizontalTranslate = '-50%';
+    }
+
     style = {
       top: `${topValue}px`,
       left: `${leftValue}px`,
-      transform: `translate(${
-        leftValue + preview.width > canvasWrapperRight
-          ? '-100%'
-          : leftValue > preview.width / 2
-          ? '-50%'
-          : 0
-      }, 0)`,
+      transform: `translate(${horizontalTranslate}, 0)`,
     };
   } else {
     const topValue = top + height / 2;
@@ -177,16 +189,19 @@ export const calculateBondPreviewPosition = (
       leftValue = right + preview.widthForBond / 2 + preview.gap;
     }
 
+    const horizontalTranslate = leftValue > preview.width / 2 ? '-50%' : '0';
+    let verticalTranslate = '0';
+
+    if (topValue + preview.height / 2 > canvasWrapperBottom) {
+      verticalTranslate = '-100%';
+    } else if (topValue > preview.height / 2) {
+      verticalTranslate = '-50%';
+    }
+
     style = {
       top: `${topValue}px`,
       left: `${leftValue}px`,
-      transform: `translate(${leftValue > preview.width / 2 ? '-50%' : 0}, ${
-        topValue + preview.height / 2 > canvasWrapperBottom
-          ? '-100%'
-          : topValue > preview.height / 2
-          ? '-50%'
-          : 0
-      })`,
+      transform: `translate(${horizontalTranslate}, ${verticalTranslate})`,
     };
   }
 

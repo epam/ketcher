@@ -269,13 +269,15 @@ export class AttachmentPoint {
       const sideConnectionEndpointDirection =
         bondRenderer.getSideConnectionEndpointAngle(this.monomer);
 
-      angleRadians = isAttachmentpointR1
-        ? Math.PI * 2
-        : isAttachmentpointR2
-        ? Math.PI
-        : isNumber(sideConnectionEndpointDirection)
-        ? sideConnectionEndpointDirection
-        : this.rotateToAngle(polymerBond, flip);
+      if (isAttachmentpointR1) {
+        angleRadians = Math.PI * 2;
+      } else if (isAttachmentpointR2) {
+        angleRadians = Math.PI;
+      } else if (isNumber(sideConnectionEndpointDirection)) {
+        angleRadians = sideConnectionEndpointDirection;
+      } else {
+        angleRadians = this.rotateToAngle(polymerBond, flip);
+      }
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       angleRadians = this.rotateToAngle(polymerBond, flip);

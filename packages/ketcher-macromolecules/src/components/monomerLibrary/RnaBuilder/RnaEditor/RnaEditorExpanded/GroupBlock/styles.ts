@@ -20,60 +20,65 @@ import { Icon } from 'ketcher-react';
 export const GroupBlockContainer = styled.div<{
   selected?: boolean;
   isEditMode?: boolean;
-}>((props) => ({
-  height: '40px',
-  position: 'relative',
-  marginLeft: props.isEditMode ? '30px' : '28.5px',
-  display: 'flex',
-  alignItems: 'center',
-  border: props.isEditMode
-    ? 'none'
-    : `1.5px solid ${props.theme.ketcher.outline.color}`,
-  backgroundColor: props.selected
-    ? props.theme.ketcher.color.button.primary.active
-    : props.isEditMode
-    ? props.theme.ketcher.color.background.primary
-    : 'transparent',
-  borderRadius: props.theme.ketcher.border.radius.regular,
-  boxShadow: props.isEditMode ? props.theme.ketcher.shadow.regular : 'none',
-  padding: '5px 10px',
-  color: props.selected ? 'white' : 'black',
-  gap: '8px',
-  cursor: 'pointer',
-  outlineOffset: '1px',
-  boxSizing: 'border-box',
+}>((props) => {
+  const { selected, isEditMode, theme } = props;
+  let backgroundColor = 'transparent';
 
-  ':hover': {
-    outline: props.theme.ketcher.outline.small,
-  },
+  if (selected) {
+    backgroundColor = theme.ketcher.color.button.primary.active;
+  } else if (isEditMode) {
+    backgroundColor = theme.ketcher.color.background.primary;
+  }
 
-  ':not(:last-child)': {
-    ':after': {
-      content: '""',
-      position: 'absolute',
-      right: '100%',
-      bottom: 'calc(50% - 1px)',
-      borderLeft: props.theme.ketcher.outline.medium,
-      borderBottom: props.theme.ketcher.outline.medium,
-      height: '2px',
-      width: '17px',
+  return {
+    height: '40px',
+    position: 'relative',
+    marginLeft: isEditMode ? '30px' : '28.5px',
+    display: 'flex',
+    alignItems: 'center',
+    border: isEditMode ? 'none' : `1.5px solid ${theme.ketcher.outline.color}`,
+    backgroundColor,
+    borderRadius: theme.ketcher.border.radius.regular,
+    boxShadow: isEditMode ? theme.ketcher.shadow.regular : 'none',
+    padding: '5px 10px',
+    color: selected ? 'white' : 'black',
+    gap: '8px',
+    cursor: 'pointer',
+    outlineOffset: '1px',
+    boxSizing: 'border-box',
+
+    ':hover': {
+      outline: theme.ketcher.outline.small,
     },
-  },
 
-  ':last-child': {
-    ':after': {
-      content: '""',
-      position: 'absolute',
-      right: '100%',
-      bottom: 'calc(50% - 1px)',
-      borderLeft: props.theme.ketcher.outline.medium,
-      borderBottom: props.theme.ketcher.outline.medium,
-      borderRadius: '0 0 0 4px',
-      height: '130px',
-      width: '17px',
+    ':not(:last-child)': {
+      ':after': {
+        content: '""',
+        position: 'absolute',
+        right: '100%',
+        bottom: 'calc(50% - 1px)',
+        borderLeft: theme.ketcher.outline.medium,
+        borderBottom: theme.ketcher.outline.medium,
+        height: '2px',
+        width: '17px',
+      },
     },
-  },
-}));
+
+    ':last-child': {
+      ':after': {
+        content: '""',
+        position: 'absolute',
+        right: '100%',
+        bottom: 'calc(50% - 1px)',
+        borderLeft: theme.ketcher.outline.medium,
+        borderBottom: theme.ketcher.outline.medium,
+        borderRadius: '0 0 0 4px',
+        height: '130px',
+        width: '17px',
+      },
+    },
+  };
+});
 
 export const TextContainer = styled.div`
   display: flex;
@@ -92,12 +97,17 @@ export const GroupName = styled.span<{ selected?: boolean }>`
 export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>`
   margin-top: 1px;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
-  color: ${({ selected, empty, theme }) =>
-    selected
-      ? theme.ketcher.color.button.text.primary
-      : empty
-      ? '#b4b9d6'
-      : theme.ketcher.color.text.primary};
+  color: ${({ selected, empty, theme }) => {
+    if (selected) {
+      return theme.ketcher.color.button.text.primary;
+    }
+
+    if (empty) {
+      return '#b4b9d6';
+    }
+
+    return theme.ketcher.color.text.primary;
+  }};
   opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
 `;
 
@@ -114,12 +124,17 @@ export const GroupIcon = styled(Icon)<{
   selected?: boolean;
   empty?: boolean;
 }>`
-  fill: ${({ selected, empty, theme }) =>
-    empty
-      ? 'none'
-      : selected
-      ? theme.ketcher.color.background.primary
-      : theme.ketcher.color.icon.grey};
+  fill: ${({ selected, empty, theme }) => {
+    if (empty) {
+      return 'none';
+    }
+
+    if (selected) {
+      return theme.ketcher.color.background.primary;
+    }
+
+    return theme.ketcher.color.icon.grey;
+  }};
   color: ${({ selected, theme }) =>
     selected
       ? theme.ketcher.color.background.primary
@@ -165,11 +180,16 @@ export const CompactGroupText = styled.p<{
   margin: 0;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
-  color: ${({ selected, empty, theme }) =>
-    selected
-      ? theme.ketcher.color.button.text.primary
-      : empty
-      ? '#b4b9d6'
-      : theme.ketcher.color.text.primary};
+  color: ${({ selected, empty, theme }) => {
+    if (selected) {
+      return theme.ketcher.color.button.text.primary;
+    }
+
+    if (empty) {
+      return '#b4b9d6';
+    }
+
+    return theme.ketcher.color.text.primary;
+  }};
   opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
 `;

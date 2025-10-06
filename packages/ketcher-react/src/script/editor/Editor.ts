@@ -1187,17 +1187,19 @@ class Editor implements KetcherEditor {
     const attachmentPoints: IKetAttachmentPoint[] = [];
     this.monomerCreationState.assignedAttachmentPoints.forEach(
       ([attachmentAtomId, leavingAtomId], attachmentPointName) => {
+        let attachmentPointType: 'left' | 'right' | 'side' = 'side';
+        if (attachmentPointName === AttachmentPointName.R1) {
+          attachmentPointType = 'left';
+        } else if (attachmentPointName === AttachmentPointName.R2) {
+          attachmentPointType = 'right';
+        }
+
         const attachmentPoint: IKetAttachmentPoint = {
           attachmentAtom: attachmentAtomId,
           leavingGroup: {
             atoms: [leavingAtomId],
           },
-          type:
-            attachmentPointName === AttachmentPointName.R1
-              ? 'left'
-              : attachmentPointName === AttachmentPointName.R2
-              ? 'right'
-              : 'side',
+          type: attachmentPointType,
         };
         attachmentPoints.push(attachmentPoint);
       },

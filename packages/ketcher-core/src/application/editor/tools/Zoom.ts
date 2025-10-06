@@ -394,10 +394,15 @@ export class ZoomTool implements BaseTool {
   };
 
   defaultWheelDelta(event) {
-    return (
-      -event.deltaY *
-      (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002)
-    );
+    let wheelDeltaFactor = 0.002;
+
+    if (event.deltaMode === 1) {
+      wheelDeltaFactor = 0.05;
+    } else if (event.deltaMode) {
+      wheelDeltaFactor = 1;
+    }
+
+    return -event.deltaY * wheelDeltaFactor;
   }
 
   scaleCoordinates(position: Vec2) {

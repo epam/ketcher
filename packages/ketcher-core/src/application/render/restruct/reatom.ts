@@ -1861,11 +1861,15 @@ function getSubstitutionCountAttrText(value: number) {
 }
 
 export function getAtomType(atom: Atom) {
-  return atom.atomList
-    ? 'list'
-    : atom.pseudo === atom.label
-    ? 'pseudo'
-    : 'single';
+  if (atom.atomList) {
+    return 'list';
+  }
+
+  if (atom.pseudo === atom.label) {
+    return 'pseudo';
+  }
+
+  return 'single';
 }
 
 export function checkIsSmartPropertiesExist(atom) {

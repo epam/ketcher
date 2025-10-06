@@ -894,12 +894,13 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         undefined;
-      const nodeAfterSelection =
-        potentialNodeAfterSelection instanceof BackBoneSequenceNode
-          ? strandType === STRAND_TYPE.SENSE
+      let nodeAfterSelection = potentialNodeAfterSelection;
+      if (potentialNodeAfterSelection instanceof BackBoneSequenceNode) {
+        nodeAfterSelection =
+          strandType === STRAND_TYPE.SENSE
             ? potentialNodeAfterSelection.secondConnectedNode
-            : potentialNodeAfterSelection.firstConnectedNode
-          : potentialNodeAfterSelection;
+            : potentialNodeAfterSelection.firstConnectedNode;
+      }
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -914,10 +915,14 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         twoStrandedNodeInSameChainAfterSelection;
-      const nodeInSameChainAfterSelection =
+      let nodeInSameChainAfterSelection =
+        potentialNodeInSameChainAfterSelection;
+      if (
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
-          ? potentialNodeInSameChainAfterSelection.secondConnectedNode
-          : potentialNodeInSameChainAfterSelection;
+      ) {
+        nodeInSameChainAfterSelection =
+          potentialNodeInSameChainAfterSelection.secondConnectedNode;
+      }
       const previouseNodeInBackbone =
         strandType === STRAND_TYPE.SENSE
           ? nodeBeforeSelection
@@ -2341,12 +2346,13 @@ export class SequenceMode extends BaseMode {
     );
 
     // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
-    const monomerForSideConnections =
-      newPresetNode instanceof Nucleotide
-        ? newPresetNode.phosphate
-        : newPresetNode instanceof Nucleoside
-        ? newPresetNode.sugar
-        : newPresetNode.monomer;
+    let monomerForSideConnections = newPresetNode.monomer;
+
+    if (newPresetNode instanceof Nucleotide) {
+      monomerForSideConnections = newPresetNode.phosphate;
+    } else if (newPresetNode instanceof Nucleoside) {
+      monomerForSideConnections = newPresetNode.sugar;
+    }
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
@@ -2382,15 +2388,16 @@ export class SequenceMode extends BaseMode {
         newPresetNode instanceof Nucleotide ||
         newPresetNode instanceof Nucleoside
       ) {
-        monomerForHydrogenBond =
-          fromMonomer instanceof RNABase
-            ? newPresetNode.rnaBase
-            : fromMonomer instanceof Sugar
-            ? newPresetNode.sugar
-            : newPresetNode instanceof Nucleotide &&
-              fromMonomer instanceof Phosphate
-            ? newPresetNode.phosphate
-            : undefined;
+        if (fromMonomer instanceof RNABase) {
+          monomerForHydrogenBond = newPresetNode.rnaBase;
+        } else if (fromMonomer instanceof Sugar) {
+          monomerForHydrogenBond = newPresetNode.sugar;
+        } else if (
+          newPresetNode instanceof Nucleotide &&
+          fromMonomer instanceof Phosphate
+        ) {
+          monomerForHydrogenBond = newPresetNode.phosphate;
+        }
       }
 
       if (!monomerForHydrogenBond) {

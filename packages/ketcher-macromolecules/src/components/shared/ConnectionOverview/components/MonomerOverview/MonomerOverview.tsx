@@ -37,35 +37,43 @@ const MonomerOverview = ({
   const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
   const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
 
+  let monomerPreviewContent: ReactNode;
+
+  if (isAmbiguousMonomer) {
+    monomerPreviewContent = (
+      <MonomerMiniature
+        monomer={monomer}
+        expanded={expanded}
+        selectedAttachmentPoint={selectedAttachmentPoint}
+        connectedAttachmentPoints={connectedAttachmentPoints}
+        usage={usage}
+        testId={testId}
+      />
+    );
+  } else if (isUnresolvedMonomer) {
+    monomerPreviewContent = <UnresolvedMonomerPreview testId={testId} />;
+  } else {
+    monomerPreviewContent = (
+      <StyledStructRender
+        struct={monomer.monomerItem.struct}
+        options={{
+          connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+          currentlySelectedMonomerAttachmentPoint:
+            selectedAttachmentPoint ?? undefined,
+          usageInMacromolecule: usage,
+          labelInMonomerConnectionsModal: true,
+          needCache: needCache ?? false,
+        }}
+        update={update}
+        isExpanded={expanded}
+        testId={testId}
+      />
+    );
+  }
+
   return (
     <>
-      {isAmbiguousMonomer ? (
-        <MonomerMiniature
-          monomer={monomer}
-          expanded={expanded}
-          selectedAttachmentPoint={selectedAttachmentPoint}
-          connectedAttachmentPoints={connectedAttachmentPoints}
-          usage={usage}
-          testId={testId}
-        />
-      ) : isUnresolvedMonomer ? (
-        <UnresolvedMonomerPreview testId={testId} />
-      ) : (
-        <StyledStructRender
-          struct={monomer.monomerItem.struct}
-          options={{
-            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-            currentlySelectedMonomerAttachmentPoint:
-              selectedAttachmentPoint ?? undefined,
-            usageInMacromolecule: usage,
-            labelInMonomerConnectionsModal: true,
-            needCache: needCache ?? false,
-          }}
-          update={update}
-          isExpanded={expanded}
-          testId={testId}
-        />
-      )}
+      {monomerPreviewContent}
       <AttachmentPointList>
         <>{attachmentPoints}</>
       </AttachmentPointList>

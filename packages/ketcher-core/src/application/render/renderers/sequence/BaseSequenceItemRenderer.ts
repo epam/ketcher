@@ -338,11 +338,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
     this.chain.subChains.some(caclulateNumberToDisplay);
 
-    return isNumber(numberToDisplay)
-      ? numberToDisplay
-      : this.isAntisenseNode && isNumber(antisenseNodeIndex)
-      ? antisenseNodeIndex + 1
-      : senseNodeIndex + 1;
+    if (isNumber(numberToDisplay)) {
+      return numberToDisplay;
+    }
+
+    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
+      return antisenseNodeIndex + 1;
+    }
+
+    return senseNodeIndex + 1;
   }
 
   private appendCounterElement(

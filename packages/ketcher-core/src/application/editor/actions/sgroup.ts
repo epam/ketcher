@@ -343,13 +343,23 @@ export function setExpandMonomerSGroup(
         sameLine.has(sGroupId) || complementaryLine.has(sGroupId);
       const moveVertically = !moveHorizontally;
 
+      let horizontalDirection = 0;
+      if (moveRight) {
+        horizontalDirection = 1;
+      } else if (moveLeft) {
+        horizontalDirection = -1;
+      }
+
+      let verticalDirection = 0;
+      if (moveDown) {
+        verticalDirection = 1;
+      } else if (moveUp) {
+        verticalDirection = -1;
+      }
+
       const moveVector = new Vec2(
-        (moveHorizontally ? 1 : 0) *
-          (moveRight ? 1 : moveLeft ? -1 : 0) *
-          horizontalOffset,
-        (moveVertically ? 1 : 0) *
-          (moveDown ? 1 : moveUp ? -1 : 0) *
-          baseVerticalOffset,
+        (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
+        (moveVertically ? 1 : 0) * verticalDirection * baseVerticalOffset,
       );
       const finalMoveVector = attrs.expanded
         ? moveVector

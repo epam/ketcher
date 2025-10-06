@@ -158,9 +158,11 @@ function handleMolPropertyLine(line, props, sGroups, rLogic) {
   const type = line.slice(3, 6);
   if (type === 'END') return true;
 
-  if (typeof molPropertyHandlers[type] === 'function') {
+  if (
+    Object.prototype.hasOwnProperty.call(molPropertyHandlers, type) &&
+    typeof molPropertyHandlers[type] === 'function'
+  ) {
     molPropertyHandlers[type]({
-      props,
       propertyData: line.slice(6),
       sGroups,
       rLogic,

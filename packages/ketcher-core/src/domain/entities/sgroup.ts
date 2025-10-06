@@ -51,7 +51,7 @@ export class SGroupBracketParams {
 }
 
 export class SGroup {
-  static TYPES = {
+  static readonly TYPES = {
     SUP: 'SUP',
     MUL: 'MUL',
     SRU: 'SRU',

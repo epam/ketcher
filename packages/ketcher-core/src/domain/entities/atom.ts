@@ -117,7 +117,7 @@ export type AtomPropertiesInContextMenu = SubsetOfFields<
 >;
 
 export class Atom extends BaseMicromoleculeEntity {
-  static PATTERN = {
+  static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
       SINGLET: 1,
@@ -133,7 +133,7 @@ export class Atom extends BaseMicromoleculeEntity {
   };
 
   // TODO: rename
-  static attrlist = {
+  static readonly attrlist = {
     alias: null,
     label: 'C',
     isotope: null,

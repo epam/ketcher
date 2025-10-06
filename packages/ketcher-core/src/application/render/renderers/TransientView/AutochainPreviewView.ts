@@ -21,7 +21,7 @@ export type AutochainPreviewViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class AutochainPreviewView extends TransientView {
-  public static viewName = 'AutochainPreviewView';
+  public static readonly viewName = 'AutochainPreviewView';
 
   private static showSingleMonomerPreview(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

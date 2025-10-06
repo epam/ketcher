@@ -20,7 +20,7 @@ import { Smiles } from './smiles';
 import { Struct } from 'domain/entities';
 
 export class SmiSerializer implements Serializer<Struct> {
-  static DefaultOptions: SmiSerializerOptions = {
+  static readonly DefaultOptions: SmiSerializerOptions = {
     ignoreErrors: false,
   };
 

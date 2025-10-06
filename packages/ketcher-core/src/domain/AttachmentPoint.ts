@@ -19,16 +19,16 @@ import { CoreEditor, SnakeMode } from 'application/editor';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
-  static attachmentPointVector = 6;
-  static attachmentPointLength = Math.hypot(
+  static readonly attachmentPointVector = 6;
+  static readonly attachmentPointLength = Math.hypot(
     AttachmentPoint.attachmentPointVector,
     AttachmentPoint.attachmentPointVector,
   );
 
-  static labelOffset = 3.5;
-  static radius = 3;
-  static labelSize = { x: 3.5, y: 2.5 };
-  static colors = {
+  static readonly labelOffset = 3.5;
+  static readonly radius = 3;
+  static readonly labelSize = { x: 3.5, y: 2.5 };
+  static readonly colors = {
     fillUsed: '#0097A8',
     fill: 'white',
     fillPotentially: '#167782',

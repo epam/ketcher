@@ -48,6 +48,9 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   ];
 
   restruct.visibleBonds.forEach((bond, bid) => {
+    const isSkippedBond = bond.b.isPreview;
+    if (isSkippedBond) return;
+
     let center: Vec2;
     if (bond.b.isExternalBondBetweenMonomers(struct)) {
       const firstMonomer = struct.getGroupFromAtomId(bond.b.begin);

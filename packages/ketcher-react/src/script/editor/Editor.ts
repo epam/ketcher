@@ -585,6 +585,8 @@ class Editor implements KetcherEditor {
       const selectionInvalid = selection.atoms.some((atomId) => {
         const atom = this.render.ctab.molecule.atoms.get(atomId);
 
+        if (!atom) return false;
+
         assert(atom);
 
         // Selection should not contain S-Groups, R-Groups (except for terminal R-groups) or atoms from extended table

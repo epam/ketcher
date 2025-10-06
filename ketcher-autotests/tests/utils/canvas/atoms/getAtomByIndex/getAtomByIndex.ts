@@ -3,6 +3,7 @@ import { Page } from '@playwright/test';
 import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
 import { AtomAttributes, AtomXy } from '@utils/canvas/types';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
+import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '@utils/canvas/constants';
 
 /**
  * Filter atoms by its attributes and then get atom by index.
@@ -40,18 +41,28 @@ type BoundingBox = {
 
 export async function getAtomById(page: Page, id: number): Promise<AtomXy> {
   const { atoms, scale, offset, zoom } = await page.evaluate(() => {
+    const editor = window.ketcher?.editor;
+    const struct =
+      typeof editor?.struct === 'function' ? editor.struct() : null;
+    const options =
+      typeof editor?.options === 'function' ? editor.options() : null;
+    const atomsIterator = struct?.atoms?.entries();
+
     return {
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      atoms: [...window.ketcher?.editor?.struct()?.atoms.entries()],
-      scale: window.ketcher?.editor?.options()?.microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
-      zoom: window.ketcher?.editor?.options()?.zoom,
+      atoms: atomsIterator ? [...atomsIterator] : [],
+      scale: options?.microModeScale ?? null,
+      offset: options?.offset ?? null,
+      zoom: options?.zoom ?? null,
     };
   });
   const atom = atoms.find(([atomId]) => atomId === id)?.[1];
 
   if (!atom) {
     throw Error('Incorrect atom id');
+  }
+
+  if (scale === null || offset === null || zoom === null) {
+    throw Error(NO_STRUCTURE_AT_THE_CANVAS_ERROR);
   }
 
   const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);

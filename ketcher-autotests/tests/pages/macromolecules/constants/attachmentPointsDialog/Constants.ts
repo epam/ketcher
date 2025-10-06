@@ -5,7 +5,7 @@ export enum MonomerOverview {
   RightMonomer = 'right-monomer-overview',
 }
 
-export const LeftMonomerConnectionPointButton: Record<AttachmentPoint, string> =
+export const LeftMonomerAttachmentPointButton: Record<AttachmentPoint, string> =
   {
     [AttachmentPoint.R1]: 'left-R1',
     [AttachmentPoint.R2]: 'left-R2',
@@ -17,7 +17,7 @@ export const LeftMonomerConnectionPointButton: Record<AttachmentPoint, string> =
     [AttachmentPoint.R8]: 'left-R8',
   };
 
-export const RightMonomerConnectionPointButton: Record<
+export const RightMonomerAttachmentPointButton: Record<
   AttachmentPoint,
   string
 > = {

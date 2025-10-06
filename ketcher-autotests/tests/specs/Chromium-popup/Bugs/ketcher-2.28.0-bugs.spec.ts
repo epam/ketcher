@@ -12,6 +12,7 @@ import {
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   MacroFileType,
+  moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -629,6 +630,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   await hydrogenBond.click({ force: true });
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

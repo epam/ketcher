@@ -26,15 +26,24 @@ export async function getAtomsCoordinatesByAttributes(
   sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
 ): Promise<AtomXy[] | []> {
   const { atoms, scale, offset } = await page.evaluate(() => {
+    const editor = window.ketcher?.editor;
+    const struct =
+      typeof editor?.struct === 'function' ? editor.struct() : null;
+    const options =
+      typeof editor?.options === 'function' ? editor.options() : null;
+    const atomsIterator = struct?.atoms?.values();
+
     return {
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      atoms: [...window.ketcher?.editor?.struct()?.atoms?.values()],
-      scale: window.ketcher?.editor?.options()?.microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
+      atoms: atomsIterator ? [...atomsIterator] : [],
+      scale: options?.microModeScale ?? null,
+      offset: options?.offset ?? null,
     };
   });
 
   if (atoms.length === 0) {
+    throw new Error(NO_STRUCTURE_AT_THE_CANVAS_ERROR);
+  }
+  if (scale === null || offset === null) {
     throw new Error(NO_STRUCTURE_AT_THE_CANVAS_ERROR);
   }
 

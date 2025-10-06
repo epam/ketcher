@@ -8,7 +8,7 @@ export enum MonomerOption {
   CreateAntisenseRNAStrand = 'create_antisense_rna_chain',
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',
-  EditConnectionPoints = 'edit_connection_points',
+  EditAttachmentPoints = 'edit_attachment_points',
   Delete = 'delete',
 }
 
@@ -36,7 +36,7 @@ export enum SuperatomOption {
 }
 
 export enum MacroBondOption {
-  EditConnectionPoints = 'edit_connection_points',
+  EditAttachmentPoints = 'edit_attachment_points',
 }
 
 export enum SequenceSymbolOption {
@@ -247,6 +247,13 @@ export enum LibraryPresetOption {
   DeletePreset = 'deletepreset',
 }
 
+export enum ConnectionPointOption {
+  EditConnectionPoint = 'edit-connection-point',
+  RemoveAssignment = 'remove-assignment',
+  MarkAsLeavingGroup = 'mark-as-leaving-group',
+  MarkAsConnectionPoint = 'mark-as-connection-point',
+}
+
 export type ContextMenuOption =
   | MonomerOption
   | ModifyAminoAcidsOption
@@ -269,4 +276,5 @@ export type ContextMenuOption =
   | RingSizeOption
   | ConnectivityOption
   | MultiTailedArrowOption
-  | LibraryPresetOption;
+  | LibraryPresetOption
+  | ConnectionPointOption;

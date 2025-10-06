@@ -44,7 +44,7 @@ import {
   getAvailableAttachmentPoints,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { ConnectionPointsDialog } from '@tests/pages/macromolecules/canvas/ConnectionPointsDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -1780,16 +1780,16 @@ test(`45.1 Check that newly added two phosphates can be connected to any monomer
     const monomerConnectTo = getMonomerLocator(page, Nucleotide._2_damdA);
 
     await bondTwoMonomers(page, monomer, monomerConnectTo);
-    if (await ConnectionPointsDialog(page).isVisible()) {
-      await ConnectionPointsDialog(page).selectAttachmentPoints({
+    if (await AttachmentPointsDialog(page).isVisible()) {
+      await AttachmentPointsDialog(page).selectAttachmentPoints({
         leftMonomer: (await getAvailableAttachmentPoints(monomer))[0],
         rightMonomer: AttachmentPoint.R1,
       });
-      await ConnectionPointsDialog(page).connect();
+      await AttachmentPointsDialog(page).connect();
     }
     const bond = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
-      toConnectionPoint: AttachmentPoint.R1,
+      toAttachmentPoint: AttachmentPoint.R1,
       toMonomerId: (
         (await monomerConnectTo.getAttribute('data-monomerid')) || ''
       ).toString(),

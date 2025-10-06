@@ -24,7 +24,6 @@ import {
   copyToClipboardByKeyboard,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  selectSequenceTypeMode,
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
@@ -833,7 +832,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await MacromoleculesTopToolbar(page).peptides();
     await takePageScreenshot(page);
   });
 
@@ -853,8 +852,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'PEPTIDE');
-    await selectSequenceTypeMode(page, 'RNA');
+    await MacromoleculesTopToolbar(page).peptides();
+    await MacromoleculesTopToolbar(page).rna();
     await takePageScreenshot(page);
   });
 
@@ -873,7 +872,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'DNA');
+    await MacromoleculesTopToolbar(page).dna();
     await takePageScreenshot(page);
   });
 
@@ -893,9 +892,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'DNA');
+    await MacromoleculesTopToolbar(page).dna();
     await takePageScreenshot(page);
-    await selectSequenceTypeMode(page, 'RNA');
+    await MacromoleculesTopToolbar(page).rna();
     await takePageScreenshot(page);
   });
 

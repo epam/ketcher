@@ -380,7 +380,7 @@ class ReAtom extends ReObject {
   ): number {
     const DEFAULT_BOND_LENGTH = 40;
     const DEFAULT_SUB_FONT_SIZE = 13;
-    const subFontSize = renderOptions.fontszsubInPx || DEFAULT_SUB_FONT_SIZE;
+    const subFontSize = renderOptions.fontszsubInPx ?? DEFAULT_SUB_FONT_SIZE;
     if (!bondLen) return 1;
     const showCharge = renderOptions.showCharge;
 
@@ -408,7 +408,7 @@ class ReAtom extends ReObject {
     bondLen: number | null = null,
   ): Vec2 {
     const atomPosition = Scale.modelToCanvas(
-      _atomPosition || this.a.pp,
+      _atomPosition ?? this.a.pp,
       renderOptions,
     );
     let atomSymbolShift = 0;
@@ -466,7 +466,7 @@ class ReAtom extends ReObject {
           options.font.length,
         );
         const sGroupName =
-          sgroup.data.name || SUPERATOM_CLASS_TEXT[sgroup.data.class] || '';
+          sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class] ?? '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({
@@ -1384,7 +1384,7 @@ function buildLabel(
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
     if (atomColoring && element) {
-      atom.color = ElementColor[label.text] || '#000';
+      atom.color = ElementColor[label.text] ?? '#000';
     }
   }
 
@@ -1516,7 +1516,7 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
       sgroup instanceof MonomerMicromolecule &&
       Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)
     ) {
-      text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] || text;
+      text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] ?? text;
     }
     return text;
   }

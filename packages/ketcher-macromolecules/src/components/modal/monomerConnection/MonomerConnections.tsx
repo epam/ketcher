@@ -149,8 +149,8 @@ const MonomerConnection = ({
     <StyledModal
       title={
         isReconnectionDialog
-          ? 'Edit Connection Points'
-          : 'Select connection points'
+          ? 'Edit Attachment Points'
+          : 'Select Attachment Points'
       }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}

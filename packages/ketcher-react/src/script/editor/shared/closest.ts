@@ -597,8 +597,10 @@ function findCloseMerge(
   const struct = restruct.molecule;
 
   selected.atoms.forEach((aid) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pos.atoms.set(aid, struct.atoms.get(aid)!.pp);
+    const atom = struct.atoms.get(aid);
+    if (!atom) return;
+
+    pos.atoms.set(aid, atom.pp);
   });
 
   selected.bonds.forEach((bid) => {

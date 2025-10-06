@@ -33,8 +33,8 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const Header = styled(DialogTitle)<{ hideBorder?: boolean }>(
-  ({ theme, hideBorder }) => ({
+const Header = styled(DialogTitle)<{ hideborder?: boolean }>(
+  ({ theme, hideborder }) => ({
     padding: '2px 4px 2px 12px',
     display: 'flex',
     alignItems: 'center',
@@ -43,7 +43,7 @@ const Header = styled(DialogTitle)<{ hideBorder?: boolean }>(
     fontSize: `${theme.ketcher.font.size.medium}`,
     fontWeight: 500,
     textTransform: 'capitalize',
-    borderBottom: hideBorder ? 'none' : '1px solid rgba(202, 211, 221, 1)',
+    borderBottom: hideborder ? 'none' : '1px solid rgba(202, 211, 221, 1)',
   }),
 );
 
@@ -104,7 +104,7 @@ export const Modal = ({
 
   const paperProps = useMemo(
     () => ({
-      testId,
+      ...(testId ? { testid: testId } : {}),
       'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
@@ -120,6 +120,7 @@ export const Modal = ({
       },
     }),
     [
+      testId,
       theme.ketcher.color.text.primary,
       theme.ketcher.color.background.canvas,
       expanded,
@@ -163,7 +164,7 @@ export const Modal = ({
       sx={{ padding: '24px' }}
     >
       {title || showCloseButton || showExpandButton ? (
-        <Header hideBorder={hideHeaderBorder}>
+        <Header hideborder={hideHeaderBorder}>
           <Title>{title}</Title>
           <span>
             {showExpandButton && (

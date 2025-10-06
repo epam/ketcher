@@ -24,7 +24,6 @@ import {
   copyToClipboardByKeyboard,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  selectSequenceTypeMode,
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
@@ -274,7 +273,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-with-oxygen.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -631,7 +630,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -639,7 +638,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedoInMacro(page);
     await takeEditorScreenshot(page);
@@ -836,7 +835,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await MacromoleculesTopToolbar(page).peptides();
     await takePageScreenshot(page);
   });
 
@@ -856,8 +855,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'PEPTIDE');
-    await selectSequenceTypeMode(page, 'RNA');
+    await MacromoleculesTopToolbar(page).peptides();
+    await MacromoleculesTopToolbar(page).rna();
     await takePageScreenshot(page);
   });
 
@@ -876,7 +875,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'DNA');
+    await MacromoleculesTopToolbar(page).dna();
     await takePageScreenshot(page);
   });
 
@@ -896,9 +895,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectSequenceTypeMode(page, 'DNA');
+    await MacromoleculesTopToolbar(page).dna();
     await takePageScreenshot(page);
-    await selectSequenceTypeMode(page, 'RNA');
+    await MacromoleculesTopToolbar(page).rna();
     await takePageScreenshot(page);
   });
 
@@ -1188,7 +1187,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1487,7 +1486,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

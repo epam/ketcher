@@ -373,6 +373,7 @@
         "id": "meL___N-Methyl-Leucine",
         "fullName": "N-Methyl-Leucine",
         "alias": "meL",
+        "aliasHELM": "meL",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

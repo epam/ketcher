@@ -58,6 +58,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
+  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -99,6 +100,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -638,7 +640,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       SelectionToolType.Fragment,
     );
     await enableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectHandTool();
+    await CommonLeftToolbar(page).handTool();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -756,18 +758,18 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async () => {
+  test('Case 26: Edit Attachment Points dialog cant cause invalid connection between monomers', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5205
-     * Description: Edit Connection points dialog cant cause invalid connection between monomers
+     * Description: Edit Attachment Points dialog cant cause invalid connection between monomers
      * Scenario:
      * 1. Go to Macro mode
      * 2. Load from file
-     * 3. Open Edit Connection points dialog
+     * 3. Open Edit Attachment Points dialog
      * 4. Click on ALREADY selected connection points
      * 5. Press Reconnect button
-     * 6. Open Edit Connection points dialog again
+     * 6. Open Edit Attachment Points dialog again
      * 7. Take screenshot
      */
     const bondLine = getBondLocator(page, {});
@@ -779,21 +781,23 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/two-nucleotides.ket',
     );
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await page.getByRole('button', { name: 'R2' }).first().click();
-    await page.getByRole('button', { name: 'R1' }).nth(1).click();
-    await pressButton(page, 'Reconnect');
+    await AttachmentPointsDialog(page).selectAttachmentPoints({
+      leftMonomer: AttachmentPoint.R2,
+      rightMonomer: AttachmentPoint.R1,
+    });
+    await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await pressButton(page, 'Reconnect');
+    await AttachmentPointsDialog(page).reconnect();
   });
 
   test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
@@ -980,7 +984,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
     await expandMonomer(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1250,7 +1254,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1399,10 +1403,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
@@ -1818,25 +1822,38 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 65: System should throw an error in case of wrong IUBcode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2331
-     * Description: System should throw an error in case of wrong IUBcode.
-     * Scenario:
-     * 1. Toggle to Macro - Flex mode
-     * 2. Load IDT from paste from clipboard way: (YY:00330067)
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
-    await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
-    await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).close();
-  });
+  test.fail(
+    'Case 65: System should throw an error in case of wrong IUBcode',
+    async () => {
+      // Test fail due to https://github.com/epam/indigo/issues/3220
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/Indigo/issues/2331
+       * Description: System should throw an error in case of wrong IUBcode.
+       * Scenario:
+       * 1. Toggle to Macro - Flex mode
+       * 2. Load IDT from paste from clipboard way: (YY:00330067)
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+        enableFlexMode: true,
+      });
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.IDT,
+        '(YY:00330067)',
+        true,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toBe(
+        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unknown polymer type ''.', 'molecule auto loader: SMILES loader: cycle number 0 is not allowed', 'molecule auto loader: SMILES loader: probably misplaced '('', 'scanner: BufferScanner::read() error'",
+      );
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
+    },
+  );
 
-  test('Case 66: Sugar R should not save in the IDT format', async () => {
+  test.fail('Case 66: Sugar R should not save in the IDT format', async () => {
+    // Test fails due to https://github.com/epam/Indigo/issues/3200
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2122
@@ -1859,10 +1876,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+    );
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

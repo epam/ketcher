@@ -19,8 +19,11 @@ export const OpenStructureDialog = (page: Page) => {
 
   return {
     ...locators,
+    async isVisible() {
+      return await locators.window.isVisible();
+    },
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

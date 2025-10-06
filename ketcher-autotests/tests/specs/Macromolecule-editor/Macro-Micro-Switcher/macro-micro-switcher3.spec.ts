@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import path from 'path';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   dragMouseTo,
   takeEditorScreenshot,
@@ -23,7 +23,6 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -40,6 +39,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -788,12 +788,12 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await pressCancelAtEditAbbreviationDialog(page);
+    await expect(
+      EditAbbreviationDialog(page).editAbbreviationWindow,
+    ).toBeVisible();
+    await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
   }
 });
@@ -927,7 +927,7 @@ test(
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
       await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

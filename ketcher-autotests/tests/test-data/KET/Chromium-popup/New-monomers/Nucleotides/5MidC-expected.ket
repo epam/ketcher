@@ -1,0 +1,408 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-5MidC___5-methylisocytosine-2'-deoxyriboside"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "5MidC",
+        "templateId": "5MidC___5-methylisocytosine-2'-deoxyriboside"
+    },
+    "monomerTemplate-5MidC___5-methylisocytosine-2'-deoxyriboside": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -1.622,
+                    0.166,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.708,
+                    0.573,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.04,
+                    -0.169,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.539,
+                    -1.035,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.518,
+                    -0.827,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.488,
+                    0.666,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.488,
+                    1.666,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.354,
+                    2.166,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.261,
+                    -1.497,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    -3.212,
+                    -1.188,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.954,
+                    -1.857,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.419,
+                    -0.209,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.004,
+                    -2.166,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.954,
+                    -0.065,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.455,
+                    -0.932,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.455,
+                    -0.932,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.954,
+                    -0.065,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    2.454,
+                    0.801,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.454,
+                    0.801,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.954,
+                    1.667,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.954,
+                    -0.065,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.955,
+                    -1.798,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    13
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    21
+                ]
+            }
+        ],
+        "class": "RNA",
+        "classHELM": "RNA",
+        "id": "5MidC___5-methylisocytosine-2'-deoxyriboside",
+        "fullName": "5-methylisocytosine-2'-deoxyriboside",
+        "alias": "5MidC",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "Me-isodC",
+            "modifications": {
+                "endpoint5": "/5Me-isodC/",
+                "internal": "/iMe-isodC/"
+            }
+        },
+        "naturalAnalogShort": "C"
+    }
+}

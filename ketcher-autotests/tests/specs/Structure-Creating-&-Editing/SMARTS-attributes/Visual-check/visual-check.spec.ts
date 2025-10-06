@@ -26,6 +26,7 @@ import {
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');
@@ -45,7 +46,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 3;
     await waitForPageInit(page);
-    await page.getByRole('button', { name: 'Cyclooctane (T)' }).click();
+    await BottomToolbar(page).Cyclooctane();
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);

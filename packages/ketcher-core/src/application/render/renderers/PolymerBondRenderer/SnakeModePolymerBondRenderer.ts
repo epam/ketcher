@@ -31,6 +31,7 @@ import {
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
 } from './helpers';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -39,7 +40,6 @@ enum LineDirection {
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
-const RNA_CHAIN_VERTICAL_LINE_LENGTH = 74;
 const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 
@@ -204,13 +204,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
       .attr(
-        'data-fromconnectionpoint',
+        'data-fromattachmentpoint',
         this.polymerBond.firstMonomer.getAttachmentPointByBond(
           this.polymerBond,
         ),
       )
       .attr(
-        'data-toconnectionpoint',
+        'data-toattachmentpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),
@@ -465,13 +465,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (!this.isHydrogenBond && this.bodyElement) {
       this.bodyElement
         .attr(
-          'data-fromconnectionpoint',
+          'data-fromattachmentpoint',
           this.polymerBond.firstMonomer.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
         )
         .attr(
-          'data-toconnectionpoint',
+          'data-toattachmentpoint',
           this.polymerBond.secondMonomer?.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
@@ -513,18 +513,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isAntisense = this.polymerBond.firstMonomer.monomerItem.isAntisense;
     const startPosition = isAntisense ? _endPosition : _startPosition;
     const endPosition = isAntisense ? _startPosition : _endPosition;
-
-    // check if there is nucleotide in current row
-    const isBondConnectedWithNucleotide =
-      this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
+    const distanceY = Math.abs(endPosition.y - startPosition.y);
     const verticalLineLength = isAntisense
       ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
       : this.polymerBond.firstMonomer.monomerItem.isSense &&
         this.polymerBond.hasAntisenseInRow
       ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
-      : isBondConnectedWithNucleotide
-      ? RNA_CHAIN_VERTICAL_LINE_LENGTH
-      : VERTICAL_LINE_LENGTH + 5;
+      : distanceY - SnakeLayoutCellWidth / 2 - 5;
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       if (
@@ -812,13 +807,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (!this.isHydrogenBond && this.bodyElement) {
       this.bodyElement
         .attr(
-          'data-fromconnectionpoint',
+          'data-fromattachmentpoint',
           this.polymerBond.firstMonomer.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',
         )
         .attr(
-          'data-toconnectionpoint',
+          'data-toattachmentpoint',
           this.polymerBond.secondMonomer?.getAttachmentPointByBond(
             this.polymerBond,
           ) || '',

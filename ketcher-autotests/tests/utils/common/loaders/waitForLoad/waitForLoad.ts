@@ -3,6 +3,7 @@ import { Page } from '@playwright/test';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 /**
  * Waits till event REQUEST_IS_FINISHED emits
@@ -18,27 +19,23 @@ import { waitForRender } from '@utils/common';
  * @returns Promise<string>
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
-  const openStructureDialogWindow = OpenStructureDialog(page).window;
-  const loadingSpinner = page.getByTestId('loading-spinner');
-  const errorMessageBox = page.getByText('Error Message', {
-    exact: true,
-  });
+  const loadingSpinner = page.getByTestId('loading-spinner').first();
 
   callback();
   await delay(0.3);
-  if (await loadingSpinner.isVisible()) {
+  while (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }
 
-  if (await openStructureDialogWindow.isVisible()) {
+  if (await OpenStructureDialog(page).isVisible()) {
     // this spinner appear in Macro mode (before openStructureDialog close)
     if (await loadingSpinner.isVisible()) {
       await loadingSpinner.waitFor({ state: 'detached' });
     }
-    if (await errorMessageBox.isVisible()) {
+    if (await ErrorMessageDialog(page).isVisible()) {
       return;
     }
-    await openStructureDialogWindow.waitFor({
+    await OpenStructureDialog(page).window.waitFor({
       state: 'detached',
     });
   }

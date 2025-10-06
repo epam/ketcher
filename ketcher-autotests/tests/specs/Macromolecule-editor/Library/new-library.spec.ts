@@ -18,7 +18,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -588,8 +588,8 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 2,
-      box.y + box.height / 2 - 2,
+      box.x + box.width / 2 - 4,
+      box.y + box.height / 2 - 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -639,8 +639,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 2,
-      box.y + box.height / 2 - 2,
+      box.x + box.width / 2 - 4,
+      box.y + box.height / 2 - 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1121,13 +1121,14 @@ for (const monomer of monomerToDrag) {
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
       const monomersOnCanvas = getMonomerLocator(page, monomer);
-      await bondTwoMonomers(
+      const resultedBond = await bondTwoMonomers(
         page,
         monomersOnCanvas.nth(0),
         monomersOnCanvas.nth(1),
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
+      await expect(resultedBond).toHaveCount(1);
     } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
@@ -1135,18 +1136,15 @@ for (const monomer of monomerToDrag) {
       const sugarOnCanvas = getMonomerLocator(page, {
         monomerType: MonomerType.Sugar,
       }).nth(1);
-      await bondTwoMonomers(
+      const resultedBond = await bondTwoMonomers(
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
+      await expect(resultedBond).toHaveCount(1);
     }
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 }
 
@@ -1179,8 +1177,8 @@ for (const monomer of monomerToDrag) {
         page,
         monomersOnCanvas.nth(0),
         monomersOnCanvas.nth(1),
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     } else {
       const phopsphateOnCanvas = getMonomerLocator(page, {
@@ -1193,8 +1191,8 @@ for (const monomer of monomerToDrag) {
         page,
         phopsphateOnCanvas,
         sugarOnCanvas,
-        MonomerAttachmentPoint.R2,
-        MonomerAttachmentPoint.R1,
+        AttachmentPoint.R2,
+        AttachmentPoint.R1,
       );
     }
     await takeEditorScreenshot(page, {
@@ -1452,7 +1450,7 @@ for (const monomer of monomerToDrag) {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await expect(monomerOnCanvas).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).undo();
@@ -1503,7 +1501,7 @@ for (const monomer of monomerToDrag) {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await expect(monomerOnCanvas).toHaveCount(0);
 
     await CommonTopLeftToolbar(page).undo();

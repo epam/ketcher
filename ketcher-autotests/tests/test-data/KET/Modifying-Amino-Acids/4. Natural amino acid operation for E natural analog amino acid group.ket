@@ -296,6 +296,7 @@
         "id": "E___Glutamic acid",
         "fullName": "Glutamic acid",
         "alias": "E",
+        "aliasHELM": "E",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

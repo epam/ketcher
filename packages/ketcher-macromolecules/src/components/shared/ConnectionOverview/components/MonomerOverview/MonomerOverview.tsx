@@ -20,6 +20,7 @@ interface Props {
   needCache?: boolean;
   update?: boolean;
   expanded?: boolean;
+  testId?: string;
 }
 
 const MonomerOverview = ({
@@ -31,6 +32,7 @@ const MonomerOverview = ({
   needCache,
   update,
   expanded,
+  testId,
 }: Props) => {
   const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
   const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
@@ -44,9 +46,10 @@ const MonomerOverview = ({
           selectedAttachmentPoint={selectedAttachmentPoint}
           connectedAttachmentPoints={connectedAttachmentPoints}
           usage={usage}
+          testId={testId}
         />
       ) : isUnresolvedMonomer ? (
-        <UnresolvedMonomerPreview />
+        <UnresolvedMonomerPreview testId={testId} />
       ) : (
         <StyledStructRender
           struct={monomer.monomerItem.struct}
@@ -60,6 +63,7 @@ const MonomerOverview = ({
           }}
           update={update}
           isExpanded={expanded}
+          testId={testId}
         />
       )}
       <AttachmentPointList>

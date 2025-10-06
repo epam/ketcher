@@ -4,7 +4,6 @@ import {
   FavoriteStarSymbol,
   LibraryTab,
   monomerLibraryTypeLocation,
-  MonomerTypeLocation,
   RNASection,
   rnaSectionArea,
   rnaTabPresetsSection,
@@ -14,6 +13,7 @@ import { ContextMenu } from '../common/ContextMenu';
 import { waitForRender } from '@utils/common';
 import { getCoordinatesOfTheMiddleOfTheCanvas, moveMouseAway } from '@utils';
 import { KETCHER_CANVAS } from '../constants/canvas/Constants';
+import { Preset } from '../constants/monomers/Presets';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -156,8 +156,19 @@ export const Library = (page: Page) => {
       }
     },
 
-    async goToMonomerLocation(monomerTypeLocation: MonomerTypeLocation) {
-      const { libraryTab, rnaSection } = monomerTypeLocation;
+    async getMonomerLibraryLocation(monomer: Monomer | PresetType) {
+      return monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+    },
+
+    /**
+     * Navigates to the tab and section (if applicable) where the monomer is located.
+     */
+    async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
+      const { libraryTab, rnaSection } = await this.getMonomerLibraryLocation(
+        monomer,
+      );
 
       await this.openTab(libraryTab);
 
@@ -174,14 +185,10 @@ export const Library = (page: Page) => {
       monomer: Monomer | PresetType,
       selectOnFavoritesTab = false,
     ) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
       const monomerCard = getElement(monomer.testId);
@@ -205,17 +212,30 @@ export const Library = (page: Page) => {
       monomer: Monomer | PresetType,
       selectOnFavoritesTab = false,
     ) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
       await getElement(monomer.testId).hover();
+    },
+
+    getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId);
+    },
+
+    async isMonomerExist(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ): Promise<boolean> {
+      if (selectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLibraryLocation(monomer);
+      }
+
+      return await getElement(monomer.testId).isVisible();
     },
 
     /** Locator of the arrow button (autochain) on the monomer card */
@@ -225,11 +245,7 @@ export const Library = (page: Page) => {
 
     /** Hover over the arrow button on the monomer card */
     async hoverMonomerAutochain(monomer: Monomer) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
-      await this.goToMonomerLocation(location);
+      await this.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);
       await card.hover();
@@ -241,11 +257,7 @@ export const Library = (page: Page) => {
 
     /** Click on the arrow button on the monomer card */
     async clickMonomerAutochain(monomer: Monomer) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
-      await this.goToMonomerLocation(location);
+      await this.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);
       await card.hover();
@@ -289,7 +301,7 @@ export const Library = (page: Page) => {
      * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
      */
     async selectCustomPreset(presetTestId: string) {
-      await this.goToMonomerLocation(rnaTabPresetsSection);
+      await this.goToMonomerLibraryLocation(Preset.A);
 
       const presetCard = getElement(presetTestId);
       const presetCardBbox = await presetCard.boundingBox();
@@ -310,7 +322,7 @@ export const Library = (page: Page) => {
           `Given monomer with alias ${preset.alias} is not a Preset`,
         );
       } else {
-        await this.goToMonomerLocation(rnaTabPresetsSection);
+        await this.goToMonomerLibraryLocation(Preset.A);
         await ContextMenu(page, getElement(preset.testId)).open();
       }
     },
@@ -320,10 +332,7 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async addMonomerToFavorites(monomer: Monomer | PresetType) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-      await this.goToMonomerLocation(location);
+      await this.goToMonomerLibraryLocation(monomer);
 
       const favoritesStar = page
         .getByTestId(monomer.testId)
@@ -347,10 +356,7 @@ export const Library = (page: Page) => {
       if (removeFromFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        const location = monomer.monomerType
-          ? monomerLibraryTypeLocation[monomer.monomerType]
-          : rnaTabPresetsSection;
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
       const favoritesStar = page

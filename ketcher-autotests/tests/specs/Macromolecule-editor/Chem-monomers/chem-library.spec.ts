@@ -3,6 +3,7 @@ import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,7 +25,7 @@ test.describe('Open Ketcher', () => {
     Description: Open Chem tab in library
     */
     await Library(page).switchToCHEMTab();
-    await expect(page.getByText('A6OH')).toBeVisible();
+    expect(await Library(page).isMonomerExist(Chem.A6OH)).toBeTruthy();
     await takeMonomerLibraryScreenshot(page);
   });
 });

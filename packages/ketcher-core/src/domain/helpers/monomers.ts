@@ -384,7 +384,7 @@ export const getAminoAcidsToModify = (
   const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
 
   monomersLibrary.forEach((libraryItem) => {
-    if (libraryItem.props?.modificationType !== modificationType) {
+    if (!libraryItem.props?.modificationTypes?.includes(modificationType)) {
       return;
     }
     const monomerNaturalAnalogCode = libraryItem.props.MonomerNaturalAnalogCode;

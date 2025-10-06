@@ -1,28 +1,37 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
-type ErrorMessageLocators = {
-  infoModalWindow: Locator;
-  infoModalBody: Locator;
-  infoModalClose: Locator;
+type ErrorMessageDialogLocators = {
+  errorMessageWindow: Locator;
+  errorMessageBody: Locator;
+  errorMessageClose: Locator;
 };
 
 export const ErrorMessageDialog = (page: Page) => {
-  const locators: ErrorMessageLocators = {
-    infoModalWindow: page.getByTestId('info-modal-window'),
-    infoModalBody: page.getByTestId('info-modal-body'),
-    infoModalClose: page.getByTestId('info-modal-close'),
+  const locators: ErrorMessageDialogLocators = {
+    errorMessageWindow: page.getByTestId('info-modal-window'),
+    errorMessageBody: page
+      .getByTestId('info-modal-window')
+      .getByTestId('error-message-body'),
+    errorMessageClose: page.getByTestId('info-modal-close'),
   };
 
   return {
     ...locators,
+    async isVisible() {
+      return await locators.errorMessageWindow.isVisible();
+    },
 
     async close() {
-      await locators.infoModalClose.click();
-      await locators.infoModalClose.waitFor({ state: 'detached' });
+      await locators.errorMessageClose.click();
+      await locators.errorMessageClose.waitFor({ state: 'detached' });
     },
 
     async getErrorMessage() {
-      await locators.infoModalBody.textContent();
+      await expect(locators.errorMessageBody).toBeVisible();
+      const text = await locators.errorMessageBody.textContent();
+      return text?.trim() ?? '';
     },
   };
 };
+
+export type ErrorMessageDialogType = ReturnType<typeof ErrorMessageDialog>;

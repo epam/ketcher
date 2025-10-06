@@ -15,6 +15,7 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 test.describe('Calculated Values Tools', () => {
@@ -364,19 +365,13 @@ test.describe('Calculated Values Tools', () => {
     Description: Regardless of the method of selection all fields contain
     'Cannot calculate properties for RGroups' message.
     */
-
-    const errorMessage = page.getByTestId('info-modal-body');
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for RGroups',
-    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot calculate properties for RGroups');
   });
 
   test('Calculations for Rgroup member (select part of structure)', async () => {
-    const errorMessage = page.getByTestId('info-modal-body');
-
     /*
     Test case: EPMLSOPKET-2005
     Description: Regardless of the method of selection all fields contain
@@ -388,9 +383,8 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for RGroups',
-    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot calculate properties for RGroups');
   });
 
   test('Calculations for the structure with R-group Attachment points', async () => {
@@ -399,16 +393,13 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the attachment points (or nothing is selected)
     all fields contain the 'Cannot calculate properties for RGroups' message.
     */
-    const errorMessage = page.getByTestId('info-modal-body');
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/attachment-points-structure.mol',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for RGroups',
-    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot calculate properties for RGroups');
   });
 
   test('Calculations for the structure with R-group Attachment points (select part of structure)', async () => {
@@ -417,8 +408,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Rgroup attachment point is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    const errorMessage = page.getByTestId('info-modal-body');
-
     const xDelta = 100;
     const yDelta = 100;
     await openFileAndAddToCanvas(
@@ -428,9 +417,8 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await expect(errorMessage).toHaveText(
-      'Cannot calculate properties for RGroups',
-    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Cannot calculate properties for RGroups');
   });
 
   test('Calculation for structure with S-group - SRU polymer', async () => {

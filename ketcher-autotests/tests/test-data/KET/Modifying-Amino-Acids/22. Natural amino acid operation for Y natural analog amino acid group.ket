@@ -689,6 +689,7 @@
         "id": "Y___Tyrosine",
         "fullName": "Tyrosine",
         "alias": "Y",
+        "aliasHELM": "Y",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

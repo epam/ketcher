@@ -1,4 +1,4 @@
-import { Page, test } from '@fixtures';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -29,17 +29,10 @@ import {
   setSettingsOption,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-
-async function selectExtendedTableElements(page: Page, element: string) {
-  const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-  await extendedTableButton.click();
-  await page.getByRole('button', { name: element, exact: true }).click();
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 test.describe('Atom Settings', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,9 +58,9 @@ test.describe('Atom Settings', () => {
     // Verify if hydrogen labels appear on 'D' and 'T' -> (DH, TH) when default settings are set
     const pointX = 250;
     const pointY = 250;
-    await selectExtendedTableElements(page, 'D');
+    await selectExtendedTableElement(page, ExtendedTableButton.D);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
-    await selectExtendedTableElements(page, 'T');
+    await selectExtendedTableElement(page, ExtendedTableButton.T);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

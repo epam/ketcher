@@ -352,6 +352,7 @@
         "id": "meH___N-Methyl-Histidine",
         "fullName": "N-Methyl-Histidine",
         "alias": "meH",
+        "aliasHELM": "meH",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

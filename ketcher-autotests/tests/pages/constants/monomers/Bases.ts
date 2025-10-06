@@ -12,6 +12,14 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     testId: '4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine',
   },
   _5meC: { alias: '5meC', testId: '5meC___5-methylcytosine' },
+  Base: {
+    alias: 'Base',
+    testId: 'Base___Base Test monomer',
+  },
+  NoBase: {
+    alias: 'No Base On The Canvas',
+    testId: 'No Such Base In The Library',
+  },
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' },
   C: { alias: 'C', testId: 'C___Cytosine' },
   cpmA: {
@@ -34,6 +42,8 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     testId: 'dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine',
   },
   G: { alias: 'G', testId: 'G___Guanine' },
+  In: { alias: 'In', testId: 'In___Inosine' },
+  isoG: { alias: 'isoG', testId: 'isoG___Isoguanine' },
   oC64m5: {
     alias: 'oC64m5',
     testId: 'oC64m5___4-Hexan-6-ol-5-methylcytosine',
@@ -51,6 +61,7 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   meA: { alias: 'meA', testId: 'meA___N6-methyladenine' },
   U: { alias: 'U', testId: 'U___Uracil' },
   T: { alias: 'T', testId: 'T___Thymine' },
+  cl6pur: { alias: 'cl6pur', testId: 'cl6pur___6-Chloropurine' },
   DNA_N: {
     alias: 'N',
     testId: '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',

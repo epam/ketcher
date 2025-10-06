@@ -23,15 +23,17 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import { ContextMenuProps, ContextMenuTriggerType } from './contextMenu.types';
+import {
+  ContextMenuProps,
+  ContextMenuTriggerType,
+  CONTEXT_MENU_ID,
+} from './contextMenu.types';
 import {
   getIsItemInSelection,
   getMenuPropsForClosestItem,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
-import { WizardNotificationId } from '../MonomerCreationWizard/MonomerCreationWizard.types';
-import { MonomerCreationExternalNotificationAction } from '../MonomerCreationWizard/MonomerCreationWizard.constants';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { ketcherId } = useAppContext();
@@ -90,6 +92,28 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         currentTool.cancel();
       }
 
+      // TODO: Consider a better approach to handle context menus for auxiliary UI elements
+      const target = event.target as Element;
+      if (editor.isMonomerCreationWizardActive) {
+        const rLabelElement = target.closest('[data-attachment-point-name]');
+        if (rLabelElement) {
+          const attachmentPointName = rLabelElement.getAttribute(
+            'data-attachment-point-name',
+          );
+          if (attachmentPointName) {
+            show({
+              id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+              event,
+              props: {
+                attachmentPointName,
+                ketcherId,
+              },
+            });
+            return;
+          }
+        }
+      }
+
       const closestItem = editor.findItem(event, null);
       const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
@@ -108,21 +132,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
 
         return;
       } else if (!selection) {
-        if (
-          editor.isMonomerCreationWizardActive &&
-          closestItem.map !== 'atoms'
-        ) {
-          window.dispatchEvent(
-            new CustomEvent<WizardNotificationId>(
-              MonomerCreationExternalNotificationAction,
-              {
-                detail: 'editingIsNotAllowed',
-              },
-            ),
-          );
-          return;
-        }
-
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
         getIsItemInSelection({

@@ -386,27 +386,31 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 12: DNA/RNA sequences should NOT accept * symbols', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7243
-     * Bug: https://github.com/epam/ketcher/issues/4358
-     * Description: DNA/RNA sequences should NOT accept * symbols.
-     * Error message should appear: "*" symbol is not allowed for DNA sequence.
-     * Scenario:
-     * 1. Open Macro mode
-     * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
-     */
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.FASTA,
-      'AAAA*AAAA',
-      true,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
+  test.fail(
+    'Case 12: DNA/RNA sequences should NOT accept * symbols',
+    async () => {
+      // This test fails because of https://github.com/epam/Indigo/issues/3210
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7243
+       * Bug: https://github.com/epam/ketcher/issues/4358
+       * Description: DNA/RNA sequences should NOT accept * symbols.
+       * Error message should appear: "*" symbol is not allowed for DNA sequence.
+       * Scenario:
+       * 1. Open Macro mode
+       * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.FASTA,
+        'AAAA*AAAA',
+        true,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    },
+  );
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
     /*
@@ -1226,33 +1230,27 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
   });
 
-  test.fail(
-    'Case 46: Calculated values work for "rich" monomer chain',
-    async () => {
-      // Test fails because of the bug: https://github.com/epam/Indigo/issues/3053
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7243
-       * Bug: https://github.com/epam/Indigo/issues/2931
-       * Description: Calculated values work for "rich" monomer chain.
-       * Scenario:
-       * 1. Go to Macro
-       * 2. Load from KET
-       * 3. Open the "Calculate Properties" window
-       * 4. Verify that the properties are calculated correctly for the Peptides tab
-       */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
-      );
-      await MacromoleculesTopToolbar(page).calculateProperties();
-      expect(
-        await CalculateVariablesPanel(
-          page,
-        ).getNucleotideNaturalAnalogCountList(),
-      ).toEqual(['A0', 'C3', 'G0', 'T0', 'U3', 'Other37']);
-      await MacromoleculesTopToolbar(page).calculateProperties();
-    },
-  );
+  test('Case 46: Calculated values work for "rich" monomer chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/Indigo/issues/2931
+     * Description: Calculated values work for "rich" monomer chain.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from KET
+     * 3. Open the "Calculate Properties" window
+     * 4. Verify that the properties are calculated correctly for the Peptides tab
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Calculated values work for _rich_ monomer chain.ket',
+    );
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
+    ).toEqual(['A6', 'C6', 'G6', 'T6', 'U12', 'Other168']);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+  });
 
   test('Case 47: Molecular mass and Molecular formula are calculated for Molecule (custom CHEM)', async () => {
     /*

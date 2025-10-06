@@ -178,7 +178,7 @@ export interface IKetMonomerTemplate {
   unresolved?: boolean;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
-  modificationType?: string;
+  modificationTypes?: string[];
 }
 
 export interface IKetAmbiguousMonomerTemplate {

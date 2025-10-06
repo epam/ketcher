@@ -156,7 +156,7 @@ export async function openImageAndAddToCanvas(
 
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
-  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
   if (x !== undefined && y !== undefined) {
@@ -281,7 +281,7 @@ async function setupStructureFormatComboboxes(
  * @param {Page} page - The Playwright page instance where the button is located.
  * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceMonomerType., if SequenceMonomerType.=== Peptide - requre [MacroFileType, [SequenceMonomerType, PeptideLetterCodeType]]
  * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
- * @param {errorExpected}  errorExpected - have to be true if you know if error should occure
+ * @param {errorExpected}  errorMessageExpected - have to be true if you know if error should occure
  */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
@@ -294,6 +294,19 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   await setupStructureFormatComboboxes(page, structureFormat);
   await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
   await PasteFromClipboardDialog(page).addToCanvas({ errorMessageExpected });
+}
+
+export async function pasteFromClipboardAndOpenAsNewProjectMacro(
+  page: Page,
+  structureFormat: StructureFormat,
+  fillStructure: string,
+  errorMessageExpected = false,
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await OpenStructureDialog(page).pasteFromClipboard();
+  await setupStructureFormatComboboxes(page, structureFormat);
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
+  await PasteFromClipboardDialog(page).openAsNew({ errorMessageExpected });
 }
 
 export async function receiveMolFileComparisonData(
@@ -347,6 +360,9 @@ export async function saveToFile(filename: string, data: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   if (process.env.GENERATE_DATA === 'true') {
+    await fs.promises.mkdir(path.dirname(resolvedFilePath), {
+      recursive: true,
+    });
     return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
 }

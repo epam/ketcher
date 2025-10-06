@@ -149,8 +149,8 @@ const MonomerConnection = ({
     <StyledModal
       title={
         isReconnectionDialog
-          ? 'Edit Connection Points'
-          : 'Select connection points'
+          ? 'Edit Attachment Points'
+          : 'Select Attachment Points'
       }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
@@ -158,6 +158,7 @@ const MonomerConnection = ({
       modalWidth="358px"
       expanded={modalExpanded}
       setExpanded={setModalExpanded}
+      testId="monomer-connection-modal"
     >
       <Modal.Content>
         <ModalContent>
@@ -171,6 +172,7 @@ const MonomerConnection = ({
                 selectedAttachmentPoint={firstSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
                 expanded={modalExpanded}
+                position="left"
               />
             }
             secondMonomerOverview={
@@ -179,6 +181,7 @@ const MonomerConnection = ({
                 selectedAttachmentPoint={secondSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
                 expanded={modalExpanded}
+                position="right"
               />
             }
           />
@@ -188,11 +191,15 @@ const MonomerConnection = ({
       <Modal.Footer>
         <ActionButtonLeft
           label="Cancel"
+          data-testid={'cancel-button'}
           styleType="secondary"
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
           label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
+          data-testid={
+            isReconnectionDialog ? 'Reconnect-button' : 'Connect-button'
+          }
           disabled={
             !firstSelectedAttachmentPoint ||
             !secondSelectedAttachmentPoint ||
@@ -210,6 +217,7 @@ interface AttachmentPointSelectionPanelProps {
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
   expanded?: boolean;
+  position: 'left' | 'right';
 }
 
 function AttachmentPointSelectionPanel({
@@ -217,6 +225,7 @@ function AttachmentPointSelectionPanel({
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
   expanded = false,
+  position,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
   const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
@@ -288,9 +297,11 @@ function AttachmentPointSelectionPanel({
                   handleSelectAttachmentPoint(attachmentPoint)
                 }
                 disabled={disabled}
+                data-testid={`${position}-${attachmentPoint}`}
+                data-isActive={attachmentPoint === selectedAttachmentPoint}
               />
               <AttachmentPointNameComponent
-                data-testid="leaving-group-value"
+                data-testid={`leaving-group-value`}
                 disabled={disabled}
               >
                 {getLeavingGroup(attachmentPoint)}
@@ -299,6 +310,7 @@ function AttachmentPointSelectionPanel({
           );
         },
       )}
+      testId={`${position}-monomer-preview`}
     />
   );
 }

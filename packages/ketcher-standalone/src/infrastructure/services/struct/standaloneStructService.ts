@@ -154,12 +154,19 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.IDT;
       break;
     }
+    case ChemicalMimeType.AXOLABS: {
+      format = SupportedFormat.AXOLABS;
+      break;
+    }
     case ChemicalMimeType.HELM: {
       format = SupportedFormat.HELM;
       break;
     }
     case ChemicalMimeType.RDF:
       format = SupportedFormat.RDF;
+      break;
+    case ChemicalMimeType.MonomerLibrary:
+      format = SupportedFormat.MonomerLibrary;
       break;
     case ChemicalMimeType.UNKNOWN:
     default: {
@@ -358,6 +365,7 @@ class IndigoService implements StructService {
         'input-format': inputFormat,
         'molfile-saving-mode': options?.['molfile-saving-mode'],
         'sequence-type': options?.['sequence-type'],
+        'output-content-type': options?.['output-content-type'],
         monomerLibrary,
       };
 

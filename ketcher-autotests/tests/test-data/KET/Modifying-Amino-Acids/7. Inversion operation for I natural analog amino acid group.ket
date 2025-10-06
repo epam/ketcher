@@ -279,6 +279,7 @@
         "id": "dI___D-Isoleucine",
         "fullName": "D-Isoleucine",
         "alias": "dI",
+        "aliasHELM": "dI",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

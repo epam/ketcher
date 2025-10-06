@@ -1,14 +1,15 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { clickOnCanvas, MonomerType, moveMouseAway } from '..';
+import { MonomerType, moveMouseAway } from '..';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,
   MacroBondType,
+  MicroBondDataIds,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { MonomerAttachmentPoint } from './monomer';
+import { AttachmentPoint } from './monomer';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 export enum BondType {
   None = 0,
@@ -33,37 +34,42 @@ export enum BondStereo {
 
 export async function bondTwoMonomers(
   page: Page,
-  firstMonomerElement: Locator,
-  secondMonomerElement: Locator,
-  connectTitle1?: MonomerAttachmentPoint,
-  connectTitle2?: MonomerAttachmentPoint,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
+  attachmentPoint1?: AttachmentPoint,
+  attachmentPoint2?: AttachmentPoint,
   bondType: MacroBondType = MacroBondType.Single,
-  needSelectAttachmentPoint = true,
-  needConnect = true,
 ) {
   await CommonLeftToolbar(page).selectBondTool(bondType);
-  await firstMonomerElement.hover({ force: true });
+  await firstMonomer.hover({ force: true });
   await page.mouse.down();
-  await secondMonomerElement.hover({ force: true });
+  await secondMonomer.hover({ force: true });
   await page.mouse.up();
   await hideMonomerPreview(page);
-  const dialog = page.getByRole('dialog');
-  if ((await dialog.isVisible()) && needSelectAttachmentPoint) {
-    if (connectTitle1) {
-      await page.locator(`button[title='${connectTitle1}']`).nth(0).click();
-    }
-    if (connectTitle2) {
-      await page.locator(`button[title='${connectTitle2}']`).nth(1).click();
-    }
-    if (needConnect) {
-      await page.locator('button[title=Connect]').click();
-    }
+  const attachmentPointsDialog = AttachmentPointsDialog(page);
+  if (
+    (attachmentPoint1 || attachmentPoint2) &&
+    (await attachmentPointsDialog.isVisible())
+  ) {
+    await attachmentPointsDialog.selectAttachmentPoints({
+      leftMonomer: attachmentPoint1,
+      rightMonomer: attachmentPoint2,
+    });
+
+    await attachmentPointsDialog.connect();
   }
+
+  return getBondLocator(page, {
+    fromMonomerId:
+      (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+    toMonomerId:
+      (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+  });
 }
 
-async function getMinFreeConnectionPoint(
+async function getMinFreeAttachmentPoint(
   monomer: Locator,
-): Promise<MonomerAttachmentPoint | undefined> {
+): Promise<AttachmentPoint | undefined> {
   // Find the attribute with the minimum index that has a value of "false"
   const minIndexWithFalse = await monomer.evaluate((el) => {
     // Get all attributes of a monomer
@@ -85,24 +91,20 @@ async function getMinFreeConnectionPoint(
   });
 
   if (minIndexWithFalse) {
-    return MonomerAttachmentPoint[
-      `R${minIndexWithFalse.toString()}` as keyof typeof MonomerAttachmentPoint
+    return AttachmentPoint[
+      `R${minIndexWithFalse.toString()}` as keyof typeof AttachmentPoint
     ];
   }
   return undefined;
 }
 
-function isMonomerAttachmentPoint(
-  value: string,
-): value is MonomerAttachmentPoint {
-  return Object.values(MonomerAttachmentPoint).includes(
-    value as MonomerAttachmentPoint,
-  );
+function isMonomerAttachmentPoint(value: string): value is AttachmentPoint {
+  return Object.values(AttachmentPoint).includes(value as AttachmentPoint);
 }
 
-async function getAvailableConnectionPoints(
+export async function getAvailableAttachmentPoints(
   monomer: Locator,
-): Promise<MonomerAttachmentPoint[]> {
+): Promise<AttachmentPoint[]> {
   const attributes = await monomer.evaluate((element) =>
     Array.from(element.attributes)
       .filter((attr) => attr.name.startsWith('data-R'))
@@ -117,182 +119,174 @@ async function getAvailableConnectionPoints(
   return falseAttributes;
 }
 
-async function chooseFreeConnectionPointsInDialogIfAppeared(
+async function chooseFreeAttachmentPointsInDialogIfAppeared(
   page: Page,
   firstMonomer: Locator,
   secondMonomer: Locator,
-  firstMonomerConnectionPoint?: MonomerAttachmentPoint,
-  secondMonomerConnectionPoint?: MonomerAttachmentPoint,
+  firstMonomerAttachmentPoint?: AttachmentPoint,
+  secondMonomerAttachmentPoint?: AttachmentPoint,
 ): Promise<{
-  leftMonomerConnectionPoint: MonomerAttachmentPoint | undefined;
-  rightMonomerConnectionPoint: MonomerAttachmentPoint | undefined;
+  leftMonomerAttachmentPoint: AttachmentPoint | undefined;
+  rightMonomerAttachmentPoint: AttachmentPoint | undefined;
 }> {
   if (await page.getByRole('dialog').isVisible()) {
-    if (!firstMonomerConnectionPoint) {
-      firstMonomerConnectionPoint = await getMinFreeConnectionPoint(
+    if (!firstMonomerAttachmentPoint) {
+      firstMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
         firstMonomer,
       );
     }
-    if (!secondMonomerConnectionPoint) {
-      secondMonomerConnectionPoint = await getMinFreeConnectionPoint(
+    if (!secondMonomerAttachmentPoint) {
+      secondMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
         secondMonomer,
       );
     }
 
-    if (firstMonomerConnectionPoint && secondMonomerConnectionPoint) {
-      await page.getByTitle(firstMonomerConnectionPoint).first().click();
+    if (firstMonomerAttachmentPoint && secondMonomerAttachmentPoint) {
+      await page.getByTitle(firstMonomerAttachmentPoint).first().click();
 
-      (await page.getByTitle(secondMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(secondMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(secondMonomerConnectionPoint).first().click();
+      (await page.getByTitle(secondMonomerAttachmentPoint).count()) > 1
+        ? await page.getByTitle(secondMonomerAttachmentPoint).nth(1).click()
+        : await page.getByTitle(secondMonomerAttachmentPoint).first().click();
     }
 
-    await page.getByTitle('Connect').first().click();
+    await AttachmentPointsDialog(page).connect();
 
     return {
-      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
-      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+      leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+      rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
     };
   }
   const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
   const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
 
-  const firstMonomerAvailableConnectionPoints =
-    await getAvailableConnectionPoints(firstMonomer);
-  const secondMonomerAvailableConnectionPoints =
-    await getAvailableConnectionPoints(secondMonomer);
+  const firstMonomerAvailableAttachmentPoints =
+    await getAvailableAttachmentPoints(firstMonomer);
+  const secondMonomerAvailableAttachmentPoints =
+    await getAvailableAttachmentPoints(secondMonomer);
 
-  if (!firstMonomerConnectionPoint && !secondMonomerConnectionPoint) {
+  if (!firstMonomerAttachmentPoint && !secondMonomerAttachmentPoint) {
     if (
-      firstMonomerAvailableConnectionPoints.includes(
-        MonomerAttachmentPoint.R2,
-      ) &&
-      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
     ) {
-      firstMonomerConnectionPoint = MonomerAttachmentPoint.R2;
-      secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+      firstMonomerAttachmentPoint = AttachmentPoint.R2;
+      secondMonomerAttachmentPoint = AttachmentPoint.R1;
     } else if (
-      firstMonomerAvailableConnectionPoints.includes(
-        MonomerAttachmentPoint.R1,
-      ) &&
-      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
     ) {
-      firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
-      secondMonomerConnectionPoint = MonomerAttachmentPoint.R2;
+      firstMonomerAttachmentPoint = AttachmentPoint.R1;
+      secondMonomerAttachmentPoint = AttachmentPoint.R2;
     }
 
     if (
       firstMonomerType === MonomerType.Sugar &&
       secondMonomerType === MonomerType.Base &&
-      firstMonomerAvailableConnectionPoints.includes(
-        MonomerAttachmentPoint.R3,
-      ) &&
-      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
     ) {
-      firstMonomerConnectionPoint = MonomerAttachmentPoint.R3;
-      secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+      firstMonomerAttachmentPoint = AttachmentPoint.R3;
+      secondMonomerAttachmentPoint = AttachmentPoint.R1;
     }
 
     if (
       firstMonomerType === MonomerType.Base &&
       secondMonomerType === MonomerType.Sugar &&
-      firstMonomerAvailableConnectionPoints.includes(
-        MonomerAttachmentPoint.R1,
-      ) &&
-      secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3)
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
     ) {
-      firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
-      secondMonomerConnectionPoint = MonomerAttachmentPoint.R3;
+      firstMonomerAttachmentPoint = AttachmentPoint.R1;
+      secondMonomerAttachmentPoint = AttachmentPoint.R3;
     }
 
     return {
-      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
-      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+      leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+      rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
     };
   }
 
   if (
-    firstMonomerConnectionPoint === MonomerAttachmentPoint.R1 &&
-    !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2)
+    firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
   ) {
-    secondMonomerConnectionPoint = MonomerAttachmentPoint.R2;
+    secondMonomerAttachmentPoint = AttachmentPoint.R2;
   }
 
   if (
-    firstMonomerConnectionPoint === MonomerAttachmentPoint.R2 &&
-    !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
+    firstMonomerAttachmentPoint === AttachmentPoint.R2 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
   ) {
-    secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+    secondMonomerAttachmentPoint = AttachmentPoint.R1;
   }
 
   if (
-    !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R2) &&
-    secondMonomerConnectionPoint === MonomerAttachmentPoint.R1
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R1
   ) {
-    firstMonomerConnectionPoint = MonomerAttachmentPoint.R2;
+    firstMonomerAttachmentPoint = AttachmentPoint.R2;
   }
 
   if (
-    !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1) &&
-    secondMonomerConnectionPoint === MonomerAttachmentPoint.R2
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R2
   ) {
-    firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
-  }
-
-  if (
-    firstMonomerType === MonomerType.Base &&
-    secondMonomerType === MonomerType.Sugar &&
-    firstMonomerConnectionPoint === MonomerAttachmentPoint.R1 &&
-    !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3)
-  ) {
-    secondMonomerConnectionPoint = MonomerAttachmentPoint.R3;
+    firstMonomerAttachmentPoint = AttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Base &&
     secondMonomerType === MonomerType.Sugar &&
-    !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1) &&
-    secondMonomerConnectionPoint === MonomerAttachmentPoint.R3
+    firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
   ) {
-    firstMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+    secondMonomerAttachmentPoint = AttachmentPoint.R3;
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R3
+  ) {
+    firstMonomerAttachmentPoint = AttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Sugar &&
     secondMonomerType === MonomerType.Base &&
-    firstMonomerConnectionPoint === MonomerAttachmentPoint.R3 &&
-    !secondMonomerConnectionPoint &&
-    secondMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R1)
+    firstMonomerAttachmentPoint === AttachmentPoint.R3 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
   ) {
-    secondMonomerConnectionPoint = MonomerAttachmentPoint.R1;
+    secondMonomerAttachmentPoint = AttachmentPoint.R1;
   }
 
   if (
     firstMonomerType === MonomerType.Sugar &&
     secondMonomerType === MonomerType.Base &&
-    !firstMonomerConnectionPoint &&
-    firstMonomerAvailableConnectionPoints.includes(MonomerAttachmentPoint.R3) &&
-    secondMonomerConnectionPoint === MonomerAttachmentPoint.R1
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R1
   ) {
-    firstMonomerConnectionPoint = MonomerAttachmentPoint.R3;
+    firstMonomerAttachmentPoint = AttachmentPoint.R3;
   }
 
-  if (firstMonomerAvailableConnectionPoints.length === 1) {
-    firstMonomerConnectionPoint = firstMonomerAvailableConnectionPoints[0];
+  if (firstMonomerAvailableAttachmentPoints.length === 1) {
+    firstMonomerAttachmentPoint = firstMonomerAvailableAttachmentPoints[0];
   }
-  if (secondMonomerAvailableConnectionPoints.length === 1) {
-    secondMonomerConnectionPoint = secondMonomerAvailableConnectionPoints[0];
+  if (secondMonomerAvailableAttachmentPoints.length === 1) {
+    secondMonomerAttachmentPoint = secondMonomerAvailableAttachmentPoints[0];
   }
 
   return {
-    leftMonomerConnectionPoint: firstMonomerConnectionPoint,
-    rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+    leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+    rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
   };
 }
 
@@ -300,11 +294,11 @@ export async function bondTwoMonomersPointToPoint(
   page: Page,
   firstMonomer: Locator,
   secondMonomer: Locator,
-  firstMonomerConnectionPoint?: MonomerAttachmentPoint,
-  secondMonomerConnectionPoint?: MonomerAttachmentPoint,
+  firstMonomerAttachmentPoint?: AttachmentPoint,
+  secondMonomerAttachmentPoint?: AttachmentPoint,
   bondType?: MacroBondType,
   // if true - first free from left connection point will be selected in the dialog for both monomers
-  chooseConnectionPointsInDialogIfAppeared = false,
+  chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
     await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -314,21 +308,22 @@ export async function bondTwoMonomersPointToPoint(
 
   await firstMonomer.hover({ force: true });
 
-  if (firstMonomerConnectionPoint) {
-    const firstConnectionPoint = firstMonomer.locator(
-      `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
+  if (firstMonomerAttachmentPoint) {
+    const firstAttachmentPoint = firstMonomer.getByTestId(
+      firstMonomerAttachmentPoint,
     );
-    const firstConnectionPointBoundingBox =
-      await firstConnectionPoint.boundingBox();
 
-    if (firstConnectionPointBoundingBox) {
+    const firstAttachmentPointBoundingBox =
+      await firstAttachmentPoint.boundingBox();
+
+    if (firstAttachmentPointBoundingBox) {
       await page.mouse.move(
         // if we click on the center of R5 connection point - it replace R5 connection point with R1
         // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        firstConnectionPointBoundingBox.x +
-          firstConnectionPointBoundingBox.width / 4,
-        firstConnectionPointBoundingBox.y +
-          firstConnectionPointBoundingBox.height / 4,
+        firstAttachmentPointBoundingBox.x +
+          firstAttachmentPointBoundingBox.width / 4,
+        firstAttachmentPointBoundingBox.y +
+          firstAttachmentPointBoundingBox.height / 4,
       );
     } else {
       console.log(
@@ -339,22 +334,21 @@ export async function bondTwoMonomersPointToPoint(
   await page.mouse.down();
 
   await secondMonomer.hover({ force: true });
-  if (secondMonomerConnectionPoint) {
-    const secondConnectionPoint = secondMonomer.locator(
-      `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,
+  if (secondMonomerAttachmentPoint) {
+    const secondAttachmentPoint = secondMonomer.getByTestId(
+      secondMonomerAttachmentPoint,
     );
+    const secondAttachmentPointBoundingBox =
+      await secondAttachmentPoint.boundingBox();
 
-    const secondConnectionPointBoundingBox =
-      await secondConnectionPoint.boundingBox();
-
-    if (secondConnectionPointBoundingBox) {
+    if (secondAttachmentPointBoundingBox) {
       await page.mouse.move(
         // if we click on the center of R5 connection point - it replace R5 connection point with R1
         // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        secondConnectionPointBoundingBox.x +
-          secondConnectionPointBoundingBox.width / 4,
-        secondConnectionPointBoundingBox.y +
-          secondConnectionPointBoundingBox.height / 4,
+        secondAttachmentPointBoundingBox.x +
+          secondAttachmentPointBoundingBox.width / 4,
+        secondAttachmentPointBoundingBox.y +
+          secondAttachmentPointBoundingBox.height / 4,
       );
     } else {
       console.log(
@@ -366,17 +360,17 @@ export async function bondTwoMonomersPointToPoint(
 
   await moveMouseAway(page);
 
-  if (chooseConnectionPointsInDialogIfAppeared) {
-    const { leftMonomerConnectionPoint, rightMonomerConnectionPoint } =
-      await chooseFreeConnectionPointsInDialogIfAppeared(
+  if (chooseAttachmentPointsInDialogIfAppeared) {
+    const { leftMonomerAttachmentPoint, rightMonomerAttachmentPoint } =
+      await chooseFreeAttachmentPointsInDialogIfAppeared(
         page,
         firstMonomer,
         secondMonomer,
-        firstMonomerConnectionPoint,
-        secondMonomerConnectionPoint,
+        firstMonomerAttachmentPoint,
+        secondMonomerAttachmentPoint,
       );
-    firstMonomerConnectionPoint = leftMonomerConnectionPoint;
-    secondMonomerConnectionPoint = rightMonomerConnectionPoint;
+    firstMonomerAttachmentPoint = leftMonomerAttachmentPoint;
+    secondMonomerAttachmentPoint = rightMonomerAttachmentPoint;
   }
 
   const monomerOrAtom = await secondMonomer.getAttribute('data-testid');
@@ -388,16 +382,16 @@ export async function bondTwoMonomersPointToPoint(
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toMonomerId:
         (await secondMonomer.getAttribute('data-monomerid')) || undefined,
-      fromConnectionPoint: firstMonomerConnectionPoint,
-      toConnectionPoint: secondMonomerConnectionPoint,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
     });
   } else if (monomerOrAtom === 'atom') {
     bondLocator = getBondLocator(page, {
       fromMonomerId:
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
-      fromConnectionPoint: firstMonomerConnectionPoint,
-      toConnectionPoint: secondMonomerConnectionPoint,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
     });
   }
 
@@ -408,16 +402,16 @@ export async function bondMonomerPointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,
-  monomerConnectionPoint?: string,
+  monomerAttachmentPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await monomer.hover({ force: true });
 
-  if (monomerConnectionPoint) {
+  if (monomerAttachmentPoint) {
     const connectionPoint = page
       .locator('g')
-      .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
+      .filter({ hasText: new RegExp(`^${monomerAttachmentPoint}$`) })
       .locator('circle');
 
     const connectionPointBoundingBox = await connectionPoint.boundingBox();
@@ -470,186 +464,6 @@ export async function bondMonomerPointToMoleculeAtom(
   await moveMouseAway(page);
 }
 
-export async function bondNucleotidePointToMoleculeAtom(
-  page: Page,
-  monomer: Locator,
-  atom: Locator,
-  monomerConnectionPoint?: string,
-  connectionPointShift?: { x: number; y: number },
-) {
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-  await monomer.hover({ force: true });
-
-  if (monomerConnectionPoint) {
-    // const connectionPoint = monomer.locator(
-    //   `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
-    // );
-    const connectionPoint = page
-      .locator('g')
-      .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
-      .locator('circle');
-
-    // await connectionPoint.hover({ force: true });
-    const connectionPointBoundingBox = await connectionPoint.boundingBox();
-
-    if (connectionPointBoundingBox) {
-      let multiplier = 2;
-      switch (monomerConnectionPoint) {
-        case MonomerAttachmentPoint.R2:
-          multiplier = 3 / 4;
-          break;
-        // if we click on the center of R5 connection point - it replace R5 connection point with R1
-        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        case 'R5':
-          multiplier = 4;
-          break;
-      }
-      await page.mouse.move(
-        connectionPointBoundingBox.x +
-          connectionPointBoundingBox.width / multiplier,
-        connectionPointBoundingBox.y +
-          connectionPointBoundingBox.height / multiplier,
-      );
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
-  }
-  await page.mouse.down();
-
-  // await atom.hover({ force: true });
-  if (connectionPointShift) {
-    const atomBoundingBox = await atom.boundingBox();
-
-    if (atomBoundingBox) {
-      await page.mouse.move(
-        atomBoundingBox.x + atomBoundingBox.width / 2 + connectionPointShift.x,
-        atomBoundingBox.y + atomBoundingBox.height / 2 + connectionPointShift.y,
-      );
-    } else {
-      await atom.hover({ force: true });
-      console.log(
-        'Failed to locate atom on the canvas - using Center instead.',
-      );
-    }
-  }
-  await page.mouse.up();
-
-  await moveMouseAway(page);
-}
-
-export async function pressCancelAtSelectConnectionPointDialog(page: Page) {
-  await page.getByRole('button', { name: 'Cancel' }).click();
-}
-
-export async function pressConnectAtSelectConnectionPointDialog(page: Page) {
-  await page.getByRole('button', { name: 'Connect' }).click();
-}
-
-export async function selectLeftConnectionPointAtSelectConnectionPointDialog(
-  page: Page,
-  connectionPoint: string,
-) {
-  await page.getByRole('button', { name: connectionPoint }).first().click();
-}
-
-export async function selectRightConnectionPointAtSelectConnectionPointDialog(
-  page: Page,
-  connectionPoint: string,
-) {
-  const rightMonomerLocator =
-    (await page.getByRole('button', { name: connectionPoint }).count()) > 1
-      ? page.getByRole('button', { name: connectionPoint }).nth(1)
-      : page.getByRole('button', { name: connectionPoint }).first();
-
-  await rightMonomerLocator.click();
-}
-
-export async function clickOnBondByLocator(page: Page, bondLocator: Locator) {
-  const boundingBox = await bondLocator.boundingBox();
-
-  await bondLocator.click({ force: true });
-
-  // Simple click on element doesn't work always because only black pixels of bond are clickable (what? YES!)
-  // So, bonds with empty space in the center (for example - double bond) are not clickable
-  if (boundingBox) {
-    await clickOnCanvas(
-      page,
-      boundingBox.x + boundingBox.width / 2 + 2,
-      boundingBox.y + boundingBox.height / 2 + 2,
-    );
-  }
-}
-
-export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
-  const bondLocator = page
-    .getByTestId(KETCHER_CANVAS)
-    .locator(`g:nth-child(${bondIndex.toString()}) > path`)
-    .first();
-
-  await clickOnBondByLocator(page, bondLocator);
-}
-
-export async function findAndClickAllCenterBonds(page: Page) {
-  const allClickedBonds: Locator[] = [];
-
-  async function findAndClickNextCenterBond(): Promise<void> {
-    const bondElements = page
-      .getByTestId(KETCHER_CANVAS)
-      .locator('g[data-testid="bond"]');
-
-    const atomBondCount: { [key: string]: number } = {};
-
-    // Step 1: Count bonds for each atom
-    const bondCount = await bondElements.count();
-    for (let i = 0; i < bondCount; i++) {
-      const bond = bondElements.nth(i);
-      const from = await bond.getAttribute('data-fromatomid');
-      const to = await bond.getAttribute('data-toatomid');
-
-      if (from) {
-        atomBondCount[from] = (atomBondCount[from] || 0) + 1;
-      }
-      if (to) {
-        atomBondCount[to] = (atomBondCount[to] || 0) + 1;
-      }
-    }
-
-    // Step 2: Find atoms with exactly 4 bonds
-    const atomsWith4Bonds = Object.keys(atomBondCount).filter(
-      (atomId) => atomBondCount[atomId] === 4,
-    );
-
-    // Step 3: Find first bond where both atoms are in the list
-    for (let i = 0; i < bondCount; i++) {
-      const bond = bondElements.nth(i);
-      const from = await bond.getAttribute('data-fromatomid');
-      const to = await bond.getAttribute('data-toatomid');
-
-      if (
-        from &&
-        to &&
-        atomsWith4Bonds.includes(from) &&
-        atomsWith4Bonds.includes(to)
-      ) {
-        // Click on the found bond
-        await clickOnBondByLocator(page, bond);
-        allClickedBonds.push(bond);
-
-        // Wait a bit for the UI to update after the click
-        await page.waitForTimeout(100);
-
-        // Recursively search for more center bonds
-        await findAndClickNextCenterBond();
-        return;
-      }
-    }
-  }
-
-  await findAndClickNextCenterBond();
-}
-
 export function getBondLocator(
   page: Page,
   {
@@ -659,17 +473,23 @@ export function getBondLocator(
     fromMonomerId,
     toMonomerId,
     toAtomId,
-    fromConnectionPoint,
-    toConnectionPoint,
+    fromAttachmentPoint,
+    toAttachmentPoint,
+    fromAtomId,
+    fromSGroupId,
+    toSGroupId,
   }: {
-    bondType?: MacroBondDataIds | number;
+    bondType?: MacroBondDataIds | MicroBondDataIds | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
     fromMonomerId?: string | number;
     toMonomerId?: string | number;
     toAtomId?: string | number;
-    fromConnectionPoint?: string;
-    toConnectionPoint?: string;
+    fromAttachmentPoint?: string;
+    toAttachmentPoint?: string;
+    fromAtomId?: string | number;
+    fromSGroupId?: string | number;
+    toSGroupId?: string | number;
   },
 ): Locator {
   const attributes: { [key: string]: string } = {};
@@ -688,11 +508,20 @@ export function getBondLocator(
     attributes['data-tomonomerid'] = String(toMonomerId);
   }
   if (toAtomId !== undefined) attributes['data-toatomid'] = String(toAtomId);
-  if (fromConnectionPoint !== undefined) {
-    attributes['data-fromconnectionpoint'] = fromConnectionPoint;
+  if (fromAttachmentPoint !== undefined) {
+    attributes['data-fromattachmentpoint'] = fromAttachmentPoint;
   }
-  if (toConnectionPoint !== undefined) {
-    attributes['data-toconnectionpoint'] = toConnectionPoint;
+  if (toAttachmentPoint !== undefined) {
+    attributes['data-toattachmentpoint'] = toAttachmentPoint;
+  }
+  if (fromAtomId !== undefined) {
+    attributes['data-fromatomid'] = String(fromAtomId);
+  }
+  if (fromSGroupId !== undefined) {
+    attributes['data-fromsgroupid'] = String(fromSGroupId);
+  }
+  if (toSGroupId !== undefined) {
+    attributes['data-tosgroupid'] = String(toSGroupId);
   }
 
   const attributeSelectors = Object.entries(attributes)

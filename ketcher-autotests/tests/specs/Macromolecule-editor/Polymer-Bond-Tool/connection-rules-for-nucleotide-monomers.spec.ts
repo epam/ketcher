@@ -11,7 +11,7 @@ import {
 } from '@utils';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -48,7 +48,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
+    attachmentPoints: { [attachmentPointName: string]: AttachmentPoint };
   }
 
   const nucleotideMonomers: { [monomerName: string]: IMonomer } = {
@@ -56,145 +56,145 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Nucleotide,
       fileName: 'KET/Nucleotide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Nucleotide,
     //   fileName: 'KET/Nucleotide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
@@ -273,23 +273,23 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(nucleotideMonomers).forEach((rightNucleotide) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightNucleotide.connectionPoints).forEach(
-            (rightNucleotideConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightNucleotide.attachmentPoints).forEach(
+            (rightNucleotideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 2
                *  Description: User can connect any nucleotide to any nucleotide using point-to-point way
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %nucleotideType2% from the library (nucleotideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %nucleotideType2%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %nucleotideType2%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %nucleotideType2% and put them on the canvas
-               *  3. Establish connection between %nucleotideType%(%ConnectionPoint%) and %nucleotideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %nucleotideType%(%AttachmentPoint%) and %nucleotideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case2: Cnnct ${leftNucleotideConnectionPoint} to ${rightNucleotideConnectionPoint} of ${leftNucleotide.alias} and ${rightNucleotide.alias}`, async () => {
+              test(`Test case2: Cnnct ${leftNucleotideAttachmentPoint} to ${rightNucleotideAttachmentPoint} of ${leftNucleotide.alias} and ${rightNucleotide.alias}`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -305,8 +305,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightNucleotideConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightNucleotideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -323,145 +323,145 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     J: {
@@ -469,41 +469,41 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '%': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
     //   },
     // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightPeptide.connectionPoints).forEach(
-            (rightPeptideConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightPeptide.attachmentPoints).forEach(
+            (rightPeptideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 3 (Nucleotide - Peptide)
                *  Description: Validate that unsplit nucleotide could be connected with peptide (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %peptideType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %peptideType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %peptideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case3: Cnnct ${leftNucleotideConnectionPoint} to ${rightPeptideConnectionPoint} of Nuc(${leftNucleotide.alias}) and Pept(${rightPeptide.alias})`, async () => {
+              test(`Case3: Cnnct ${leftNucleotideAttachmentPoint} to ${rightPeptideAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Pept(${rightPeptide.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -515,8 +515,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightPeptideConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightPeptideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -533,168 +533,168 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R2,R3) - R1 gap': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightCHEM.connectionPoints).forEach(
-            (rightCHEMConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightCHEM.attachmentPoints).forEach(
+            (rightCHEMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 4 (Nucleotide - CHEM)
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - CHEMs )
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %CHEMType% from the library (CHEMMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %CHEMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %CHEMType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %CHEMType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %CHEMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %CHEMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case4: Cnnct ${leftNucleotideConnectionPoint} to ${rightCHEMConnectionPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+              test(`Case4: Cnnct ${leftNucleotideAttachmentPoint} to ${rightCHEMAttachmentPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -706,8 +706,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightCHEMConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightCHEMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -794,145 +794,145 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     '(R3) - Side only': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R3: AttachmentPoint.R3,
       },
     },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
       },
     },
   };
@@ -941,27 +941,27 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightOM.connectionPoints).forEach(
-            (rightOMConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightOM.attachmentPoints).forEach(
+            (rightOMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 7
                *  Description: Validate that unsplit nucleotide could be connected with micromolecule (with every attachment point of unsplit nucleotide)
                * For each %chemType% from the library (nucleotideMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %OMType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
               ordnryMlcleName = rightOM.fileName.substring(
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case7: Cnct ${leftNucleotideConnectionPoint} to ${rightOMConnectionPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
+              test(`Test case7: Cnct ${leftNucleotideAttachmentPoint} to ${rightOMAttachmentPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -973,8 +973,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightOMConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightOMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -991,7 +991,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/5211 - Case 8
        *  Description: Validate that unsplit nucleotide could be connected with micromolecule (center-to-center way)
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordnryMlcleName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),
@@ -1026,168 +1026,168 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R2,R3) - R1 gap': {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R3,R4)': {
     //        monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R2,R3)': {
     //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R1,R3,R4)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(phosphateMonomers).forEach((rightPhosphate) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightPhosphate.connectionPoints).forEach(
-            (rightPhosphateConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightPhosphate.attachmentPoints).forEach(
+            (rightPhosphateAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 9 (Nucleotide - Phosphate)
                *  Description: Validate that unsplit nucleotide could be connected with phosphate (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %phosphateType% from the library (phosphateMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %phosphateType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %phosphateType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %phosphateType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %phosphateType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case9: Cnct ${leftNucleotideConnectionPoint} to ${rightPhosphateConnectionPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
+              test(`Case9: Cnct ${leftNucleotideAttachmentPoint} to ${rightPhosphateAttachmentPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1199,8 +1199,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightPhosphateConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightPhosphateAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1252,145 +1252,145 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R2,R3) - R1 gap': {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R3,R4)': {
     //        monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R2,R3)': {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R1,R3,R4)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     W: {
@@ -1398,39 +1398,39 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       fileName:
         'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
       alias: 'W',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     // '%': {
     //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
     //   alias: '%',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
     //   },
     // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(baseMonomers).forEach((rightBase) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightBase.connectionPoints).forEach(
-            (rightBaseConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightBase.attachmentPoints).forEach(
+            (rightBaseAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 11 (Nucleotide - Base)
                *  Description: Validate that unsplit nucleotide could be connected with base (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %baseType% from the library (baseMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %baseType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %baseType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %baseType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %baseType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %baseType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case11: Cnnct ${leftNucleotideConnectionPoint} to ${rightBaseConnectionPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
+              test(`Case11: Cnnct ${leftNucleotideAttachmentPoint} to ${rightBaseAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1442,8 +1442,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightBaseConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightBaseAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1495,168 +1495,168 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //        monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(sugarMonomers).forEach((rightSugar) => {
-      Object.values(leftNucleotide.connectionPoints).forEach(
-        (leftNucleotideConnectionPoint) => {
-          Object.values(rightSugar.connectionPoints).forEach(
-            (rightSugarConnectionPoint) => {
+      Object.values(leftNucleotide.attachmentPoints).forEach(
+        (leftNucleotideAttachmentPoint) => {
+          Object.values(rightSugar.attachmentPoints).forEach(
+            (rightSugarAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 13 (Nucleotide - Sugar)
                *  Description: Validate that unsplit nucleotide could be connected with sugar (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %sugarType% from the library (sugarMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %sugarType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %nucleotideType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %sugarType%) do:
                *  1. Clear canvas
                *  2. Load %nucleotideType% and %sugarType% and put them on the canvas
-               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %sugarType%(%ConnectionPoint2%)
+               *  3. Establish connection between %snucleotideType%(%AttachmentPoint%) and %sugarType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case13: Cnnct ${leftNucleotideConnectionPoint} to ${rightSugarConnectionPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
+              test(`Case13: Cnnct ${leftNucleotideAttachmentPoint} to ${rightSugarAttachmentPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1668,8 +1668,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftNucleotideConnectionPoint,
-                  rightSugarConnectionPoint,
+                  leftNucleotideAttachmentPoint,
+                  rightSugarAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1809,7 +1809,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await loadMolecule(page, rightMolecule);
 
         const attachmentPointCount = Object.keys(
-          leftMonomer.connectionPoints,
+          leftMonomer.attachmentPoints,
         ).length;
         const atomCount = Object.keys(
           rightMolecule.atomLocatorSelectors,
@@ -1824,7 +1824,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.connectionPoints)[atomIndex],
+            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

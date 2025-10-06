@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 import Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -74,6 +74,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       (bondData.type === 1 && bondData.stereo === 6) ||
       (bondData.type === 1 && bondData.stereo === 4));
 
+  const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+
   return (
     <>
       <Item
@@ -93,12 +95,10 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             : 'Edit...'}
         </span>
       </Item>
-
-      {bondNamesWithoutEmptyValue.map((name, i) => {
+      <Separator />
+      {bondNamesWithoutEmptyValue.map((name) => {
         const iconName = getIconName(name);
-        const classNames =
-          styles.sameGroup +
-          (i === bondNamesWithoutEmptyValue.length - 1 ? styles.devider : '');
+        const classNames = styles.sameGroup;
 
         return (
           <Item
@@ -115,12 +115,14 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           </Item>
         );
       })}
+      <Separator />
 
       <Submenu
         {...props}
         data-testid="Query bonds-option"
         label="Query bonds"
         className={styles.subMenu}
+        disabled={disabledForMonomerCreation}
       >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
@@ -154,10 +156,14 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Attach S-Group...-option"
         hidden={sGroupAttachHidden}
         onClick={handleSGroupAttach}
+        disabled={disabledForMonomerCreation}
       >
         Attach S-Group...
       </Item>
-      <HighlightMenu onHighlight={highlightBondWithColor} />
+      <HighlightMenu
+        onHighlight={highlightBondWithColor}
+        disabled={disabledForMonomerCreation}
+      />
       <Item
         {...props}
         data-testid="Edit S-Group...-option"
@@ -167,6 +173,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       >
         Edit S-Group...
       </Item>
+      <Separator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>

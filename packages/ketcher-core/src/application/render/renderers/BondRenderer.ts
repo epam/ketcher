@@ -521,7 +521,7 @@ export class BondRenderer extends BaseRenderer {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
 
-    this.rootElement = this.appendRootElement();
+    this.rootElement = this.rootElement || this.appendRootElement();
 
     const bondVectors = this.bondVectors;
     if (!bondVectors) {

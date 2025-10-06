@@ -411,7 +411,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
 
     await CommonLeftToolbar(page).selectAreaSelectionTool();
@@ -419,7 +419,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await CommonTopLeftToolbar(page).undo();
     await getAbbreviationLocator(page, { name: 'Boc' }).first().click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await openFileAndAddToCanvas(
@@ -732,7 +732,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     await commonLeftToolbar.areaSelectionDropdownButton.click();
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);

@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -17,7 +17,6 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,
-  findAndClickAllCenterBonds,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
@@ -141,9 +140,12 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   );
   await takeEditorScreenshot(page);
 
-  await CommonLeftToolbar(page).selectEraseTool();
-
-  await findAndClickAllCenterBonds(page);
+  await CommonLeftToolbar(page).erase();
+  // 106 113 120 121
+  await getBondLocator(page, { bondId: 106 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 113 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 120 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 121 }).first().click({ force: true });
 
   await takeEditorScreenshot(page);
 });
@@ -266,7 +268,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (1-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -279,8 +281,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  await takeEditorScreenshot(page);
-
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+  );
   await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
 });
@@ -293,7 +297,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (3-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -306,7 +310,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
-  await takeEditorScreenshot(page);
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
+  );
 
   await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
@@ -426,7 +433,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -471,7 +478,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },

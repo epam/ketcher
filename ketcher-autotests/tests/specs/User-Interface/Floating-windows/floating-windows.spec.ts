@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
@@ -153,9 +154,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4010
       Description: verify visual representation of "Extended" table 
     */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 
@@ -212,8 +211,12 @@ test.describe('Floating windows', () => {
       Description: Bad data via paste from clipboard 
     */
     await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', 'molecule auto loader: SMILES loader: unexpected end of input', 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error'",
+    );
     await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {

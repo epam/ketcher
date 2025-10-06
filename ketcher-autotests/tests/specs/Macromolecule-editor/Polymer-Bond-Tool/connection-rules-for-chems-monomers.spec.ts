@@ -11,7 +11,7 @@ import {
 } from '@utils';
 import {
   getMonomerLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -47,7 +47,7 @@ test.describe('Connection rules for chems: ', () => {
     monomerType: MonomerType;
     fileName: string;
     alias: string;
-    connectionPoints: { [connectionPointName: string]: MonomerAttachmentPoint };
+    attachmentPoints: { [attachmentPointName: string]: AttachmentPoint };
   }
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
@@ -55,145 +55,145 @@ test.describe('Connection rules for chems: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R1,R3) - R2 gap': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R2,R3) - R1 gap': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     // '(R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
   };
@@ -203,90 +203,90 @@ test.describe('Connection rules for chems: ', () => {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/Test-6-Ch.ket',
       alias: 'Test-6-Ch',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
       },
     },
     'Test-6-Ch-Main': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
     'Test-6-Ch-1': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
     'Test-6-Ch-2': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-2',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
     'Test-6-Ch-3': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-3',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
     'Test-6-Ch-4': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-4',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
     'Test-6-Ch-5': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-5',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
-        R6: MonomerAttachmentPoint.R6,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
+        R6: AttachmentPoint.R6,
       },
     },
   };
@@ -294,7 +294,7 @@ test.describe('Connection rules for chems: ', () => {
   async function prepareCanvasOneFreeAPLeft(
     page: Page,
     CHEM: IMonomer,
-    freeCHEMConnectionPoint: string,
+    freeCHEMAttachmentPoint: string,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
       page,
@@ -309,17 +309,17 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(550, 370, page);
     await moveMouseAway(page);
 
-    for await (const CHEMConnectionPoint of Object.values(
-      CHEM.connectionPoints,
+    for await (const CHEMAttachmentPoint of Object.values(
+      CHEM.attachmentPoints,
     )) {
-      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMConnectionPoint[1]}`];
-      if (CHEMConnectionPoint !== freeCHEMConnectionPoint) {
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
+      if (CHEMAttachmentPoint !== freeCHEMAttachmentPoint) {
         await bondTwoMonomersByPointToPoint(
           page,
           CHEM,
           tmpCHEM,
-          CHEMConnectionPoint,
-          CHEMConnectionPoint,
+          CHEMAttachmentPoint,
+          CHEMAttachmentPoint,
         );
       }
     }
@@ -360,16 +360,16 @@ test.describe('Connection rules for chems: ', () => {
     await dragMouseTo(550, 370, page);
     await moveMouseAway(page);
 
-    for await (const CHEMConnectionPoint of Object.values(
-      CHEM.connectionPoints,
+    for await (const CHEMAttachmentPoint of Object.values(
+      CHEM.attachmentPoints,
     )) {
-      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMConnectionPoint[1]}`];
+      const tmpCHEM = tmpChemMonomers[`Test-6-Ch-${CHEMAttachmentPoint[1]}`];
       await bondTwoMonomersByPointToPoint(
         page,
         CHEM,
         tmpCHEM,
-        CHEMConnectionPoint,
-        CHEMConnectionPoint,
+        CHEMAttachmentPoint,
+        CHEMAttachmentPoint,
       );
     }
 
@@ -433,8 +433,8 @@ test.describe('Connection rules for chems: ', () => {
     page: Page,
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: MonomerAttachmentPoint,
-    rightMonomersConnectionPoint?: MonomerAttachmentPoint,
+    leftMonomersAttachmentPoint?: AttachmentPoint,
+    rightMonomersAttachmentPoint?: AttachmentPoint,
   ) {
     const leftMonomerLocator = getMonomerLocator(page, {
       monomerAlias: leftMonomer.alias,
@@ -448,24 +448,24 @@ test.describe('Connection rules for chems: ', () => {
       page,
       leftMonomerLocator,
       rightMonomerLocator,
-      leftMonomersConnectionPoint,
-      rightMonomersConnectionPoint,
+      leftMonomersAttachmentPoint,
+      rightMonomersAttachmentPoint,
     );
   }
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
-      Object.values(leftCHEM.connectionPoints).forEach(
-        (leftCHEMConnectionPoint) => {
-          Object.values(rightCHEM.connectionPoints).forEach(
-            (rightCHEMConnectionPoint) => {
-              if (leftCHEMConnectionPoint === rightCHEMConnectionPoint) {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightCHEM.attachmentPoints).forEach(
+            (rightCHEMAttachmentPoint) => {
+              if (leftCHEMAttachmentPoint === rightCHEMAttachmentPoint) {
                 /*
                  *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 1
                  *  Description: If a user tries to connect 2 monomers that have only identical free attachment
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
-                test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
+                test(`Case 1: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
                   test.setTimeout(30000);
 
                   const {
@@ -477,8 +477,8 @@ test.describe('Connection rules for chems: ', () => {
                     page,
                     leftMonomerLocator,
                     rightMonomerLocator,
-                    leftCHEMConnectionPoint,
-                    rightCHEMConnectionPoint,
+                    leftCHEMAttachmentPoint,
+                    rightCHEMAttachmentPoint,
                   );
 
                   await expect(bondLine).toBeVisible();
@@ -498,10 +498,10 @@ test.describe('Connection rules for chems: ', () => {
   });
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
-    Object.values(tmpChemMonomers['Test-6-Ch'].connectionPoints).forEach(
-      (leftCHEMConnectionPoint) => {
-        Object.values(rightCHEM.connectionPoints).forEach(
-          (rightCHEMConnectionPoint) => {
+    Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
+      (leftCHEMAttachmentPoint) => {
+        Object.values(rightCHEM.attachmentPoints).forEach(
+          (rightCHEMAttachmentPoint) => {
             /*
              *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 2
              *  Description: If there is only one free attachment point (R1…Rn), a bond is created by default
@@ -509,11 +509,11 @@ test.describe('Connection rules for chems: ', () => {
              *   For each %CHEMSType% from chemMonomers:
              *     For each %MonomerConnection% (avaliable connections of monomer)
              *       left it unoccupied and occupy the rest
-             *       For each %Test-6-Ch-ConnectionPoint% of Test-6-P from (R1, R2, R3, R4, R5)
-             *         Establish connection between Test-6-Ch(%ConnectionPoint%) and %CHEMSType%(%MonomerConnection%)
+             *       For each %Test-6-Ch-AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+             *         Establish connection between Test-6-Ch(%AttachmentPoint%) and %CHEMSType%(%MonomerConnection%)
              *         Validate canvas
              */
-            test(`Case 2: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+            test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
               test.setTimeout(35000);
 
               const {
@@ -522,15 +522,15 @@ test.describe('Connection rules for chems: ', () => {
               } = await prepareCanvasOneFreeAPLeft(
                 page,
                 rightCHEM,
-                rightCHEMConnectionPoint,
+                rightCHEMAttachmentPoint,
               );
 
               const bondLine = await bondTwoMonomersPointToPoint(
                 page,
                 leftMonomerLocator,
                 rightMonomerLocator,
-                leftCHEMConnectionPoint,
-                rightCHEMConnectionPoint,
+                leftCHEMAttachmentPoint,
+                rightCHEMAttachmentPoint,
               );
               await expect(bondLine).toBeVisible();
             });
@@ -541,19 +541,19 @@ test.describe('Connection rules for chems: ', () => {
   });
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
-    Object.values(rightCHEM.connectionPoints).forEach(
-      (rightCHEMConnectionPoint) => {
+    Object.values(rightCHEM.attachmentPoints).forEach(
+      (rightCHEMAttachmentPoint) => {
         /*
          *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 3
          *  Description: User drags a bond from the center of the first monomer to the specific AP of the second monomer.
          *   For each %CHEMSType% from chemMonomers:
-         *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
-         *       Establish connection between Test-6-Ch(center) and %CHENMSType%(%Test-6-Ch-ConnectionPoint%)
+         *     For each %Test-6-Ch-AttachmentPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
+         *       Establish connection between Test-6-Ch(center) and %CHENMSType%(%Test-6-Ch-AttachmentPoint%)
          *       Validate canvas (Dialog should appear)
          *       Select R1 of Test-6-Ch and establish connection
          *       Validate canvas (Connection should appear)
          */
-        test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+        test(`Case 3: Connect Center to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(30000);
 
           const {
@@ -570,7 +570,7 @@ test.describe('Connection rules for chems: ', () => {
             leftMonomerLocator,
             rightMonomerLocator,
             undefined,
-            rightCHEMConnectionPoint,
+            rightCHEMAttachmentPoint,
             undefined,
             true,
           );
@@ -581,19 +581,19 @@ test.describe('Connection rules for chems: ', () => {
   });
 
   Object.values(chemMonomers).forEach((rightCHEM) => {
-    Object.values(tmpChemMonomers['Test-6-Ch'].connectionPoints).forEach(
-      (leftCHEMConnectionPoint) => {
+    Object.values(tmpChemMonomers['Test-6-Ch'].attachmentPoints).forEach(
+      (leftCHEMAttachmentPoint) => {
         /*
          *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4
          *  Description: If selected attachment point is occupied, no bond is created, and warning message appears.
          *   For each %CHEMSType% from chemMonomers:
          *     For each %MonomerConnection% (avaliable connections of monomer)
          *       occupy all connections
-         *       For each %ConnectionPoint% of Test-6-P from (R1, R2, R3, R4, R5)
-         *         Establish connection between Test-6-P(%ConnectionPoint%) and %CHEMSType%(center)
+         *       For each %AttachmentPoint% of Test-6-P from (R1, R2, R3, R4, R5)
+         *         Establish connection between Test-6-P(%AttachmentPoint%) and %CHEMSType%(center)
          *         Validate canvas (No connection established)
          */
-        test(`Case 4: Connect ${leftCHEMConnectionPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+        test(`Case 4: Connect ${leftCHEMAttachmentPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(35000);
 
           const {
@@ -605,7 +605,7 @@ test.describe('Connection rules for chems: ', () => {
             page,
             leftMonomerLocator,
             rightMonomerLocator,
-            leftCHEMConnectionPoint,
+            leftCHEMAttachmentPoint,
           );
           await expect(bondLine).toBeHidden();
         });
@@ -615,23 +615,23 @@ test.describe('Connection rules for chems: ', () => {
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
-      Object.values(leftCHEM.connectionPoints).forEach(
-        (leftCHEMConnectionPoint) => {
-          Object.values(rightCHEM.connectionPoints).forEach(
-            (rightCHEMConnectionPoint) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightCHEM.attachmentPoints).forEach(
+            (rightCHEMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 1
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM )
                * For each %chemType% from the library (chemMonomers)
                *   For each %chemType2% from the library (chemMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %chemType2%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %chemType2%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %chemType2% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %chemType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %chemType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case5: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
+              test(`Test case5: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -643,8 +643,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightCHEMConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightCHEMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -661,145 +661,145 @@ test.describe('Connection rules for chems: ', () => {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     // '(R3) - Side only': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
     //   },
     // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     J: {
@@ -807,41 +807,41 @@ test.describe('Connection rules for chems: ', () => {
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     // '%': {
     //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R2: MonomerAttachmentPoint.R2,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
     //   },
     // },
   };
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
-      Object.values(leftCHEM.connectionPoints).forEach(
-        (leftCHEMConnectionPoint) => {
-          Object.values(rightPeptide.connectionPoints).forEach(
-            (rightPeptideConnectionPoint) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightPeptide.attachmentPoints).forEach(
+            (rightPeptideAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 2
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Peptides )
                * For each %chemType% from the library (chemMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %peptideType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %peptideType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %peptideType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %peptideType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %peptideType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case6: Connect ${leftCHEMConnectionPoint} to ${rightPeptideConnectionPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+              test(`Test case6: Connect ${leftCHEMAttachmentPoint} to ${rightPeptideAttachmentPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -853,8 +853,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightPeptideConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightPeptideAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -871,7 +871,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 1
        *  Description: User can connect any CHEM to any CHEM using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
         test.setTimeout(30000);
@@ -901,7 +901,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 2
        *  Description: User can connect any CHEM to any Peptide using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
         test.setTimeout(30000);
@@ -931,145 +931,145 @@ test.describe('Connection rules for chems: ', () => {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
       },
     },
     '(R2) - Right only': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
       },
     },
     '(R3) - Side only': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
-      connectionPoints: {
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R3: AttachmentPoint.R3,
       },
     },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
       },
     },
     '(R1,R3) - R2 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
       },
     },
     '(R2,R3) - R1 gap': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
-      connectionPoints: {
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
       },
     },
     // '(R1,R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R2,R3,R4)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
     //   },
     // },
     // '(R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
       },
     },
     // '(R1,R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: MonomerAttachmentPoint.R1,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     // '(R2,R3,R4,R5)': {
     //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
-    //   connectionPoints: {
-    //     R2: MonomerAttachmentPoint.R2,
-    //     R3: MonomerAttachmentPoint.R3,
-    //     R4: MonomerAttachmentPoint.R4,
-    //     R5: MonomerAttachmentPoint.R5,
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
-      connectionPoints: {
-        R1: MonomerAttachmentPoint.R1,
-        R2: MonomerAttachmentPoint.R2,
-        R3: MonomerAttachmentPoint.R3,
-        R4: MonomerAttachmentPoint.R4,
-        R5: MonomerAttachmentPoint.R5,
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+        R4: AttachmentPoint.R4,
+        R5: AttachmentPoint.R5,
       },
     },
   };
@@ -1078,27 +1078,27 @@ test.describe('Connection rules for chems: ', () => {
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
-      Object.values(leftCHEM.connectionPoints).forEach(
-        (leftCHEMConnectionPoint) => {
-          Object.values(rightOM.connectionPoints).forEach(
-            (rightOMConnectionPoint) => {
+      Object.values(leftCHEM.attachmentPoints).forEach(
+        (leftCHEMAttachmentPoint) => {
+          Object.values(rightOM.attachmentPoints).forEach(
+            (rightOMAttachmentPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 1
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( CHEM - Ordinary Molecule )
                * For each %chemType% from the library (chemMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
-               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
-               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *      For each %AttachmentPoint% (avaliable connections of %chemType%)
+               *         For each %AttachmentPoint2% (avaliable connections of %OMType%) do:
                *  1. Clear canvas
                *  2. Load %chemType% and %OMType% and put them on the canvas
-               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  3. Establish connection between %chemType%(%AttachmentPoint%) and %OMType%(%AttachmentPoint2%)
                *  4. Validate canvas (connection should appear)
                */
               ordinaryMoleculeName = rightOM.fileName.substring(
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case9: Connect ${leftCHEMConnectionPoint} to ${rightOMConnectionPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
+              test(`Test case9: Connect ${leftCHEMAttachmentPoint} to ${rightOMAttachmentPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
                 test.setTimeout(30000);
 
                 const {
@@ -1110,8 +1110,8 @@ test.describe('Connection rules for chems: ', () => {
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
-                  leftCHEMConnectionPoint,
-                  rightOMConnectionPoint,
+                  leftCHEMAttachmentPoint,
+                  rightOMAttachmentPoint,
                 );
 
                 await expect(bondLine).toBeVisible();
@@ -1128,7 +1128,7 @@ test.describe('Connection rules for chems: ', () => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 6
        *  Description: User can connect any CHEM to any OrdinaryMolecule using center-to-center way.
-       *               Select Connection Points dialog opened.
+       *               Select Attachment Points dialog opened.
        */
       ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
         rightOrdinaryMolecule.fileName.indexOf(' - '),
@@ -1250,7 +1250,7 @@ test.describe('Connection rules for chems: ', () => {
         await loadMolecule(page, rightMolecule);
 
         const attachmentPointCount = Object.keys(
-          leftMonomer.connectionPoints,
+          leftMonomer.attachmentPoints,
         ).length;
         const atomCount = Object.keys(
           rightMolecule.atomLocatorSelectors,
@@ -1265,7 +1265,7 @@ test.describe('Connection rules for chems: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.connectionPoints)[atomIndex],
+            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

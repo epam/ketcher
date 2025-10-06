@@ -1,5 +1,5 @@
 /* eslint-disable no-inline-comments */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { MacroFileType } from '@utils/canvas/types';
 import {
   SequenceMonomerType,
@@ -65,7 +65,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
     },
 
     async fillTextArea(text: string) {
-      locators.openStructureTextarea.fill(text);
+      await locators.openStructureTextarea.fill(text);
     },
 
     async addToCanvas(
@@ -91,10 +91,16 @@ export const PasteFromClipboardDialog = (page: Page) => {
     ) {
       if (option.errorMessageExpected) {
         await waitForLoad(page, async () => {
+          await expect(
+            PasteFromClipboardDialog(page).openAsNewButton,
+          ).toBeEnabled();
           await PasteFromClipboardDialog(page).openAsNewButton.click();
         });
       } else {
         await waitForLoadAndRender(page, async () => {
+          await expect(
+            PasteFromClipboardDialog(page).openAsNewButton,
+          ).toBeEnabled();
           await PasteFromClipboardDialog(page).openAsNewButton.click();
         });
       }

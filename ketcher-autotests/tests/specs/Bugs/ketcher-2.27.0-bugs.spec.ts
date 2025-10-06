@@ -531,7 +531,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide._1Nal).click();
     await getMonomerLocator(page, Peptide.A).click();
     await getMonomerLocator(page, Peptide.D).first().click();
@@ -589,7 +589,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, 570, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 360, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 420, { from: 'pageTopLeft' });

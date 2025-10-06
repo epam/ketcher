@@ -339,6 +339,7 @@
         "id": "S___Serine",
         "fullName": "Serine",
         "alias": "S",
+        "aliasHELM": "S",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

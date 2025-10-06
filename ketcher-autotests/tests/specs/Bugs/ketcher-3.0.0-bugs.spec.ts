@@ -436,7 +436,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -568,7 +568,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/Undo_Redo operation for bonds and molecules (multi-select) works wrong.ket',
     );
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

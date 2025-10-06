@@ -435,7 +435,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       goToPeptides: false,
     });
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -653,12 +653,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
         MacroFileType.HELM,
         helm,
       );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected symbol ']'.'",
+      );
       await ErrorMessageDialog(page).close();
-      await OpenStructureDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
     }
   });
 
@@ -720,10 +720,11 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
+    );
     await ErrorMessageDialog(page).close();
   });
 

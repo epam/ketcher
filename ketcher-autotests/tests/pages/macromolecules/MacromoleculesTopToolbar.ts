@@ -85,10 +85,14 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       });
     },
 
-    async calculateProperties() {
-      await waitForCalculateProperties(page, async () => {
-        await locators.calculatePropertiesButton.click();
-      });
+    async calculateProperties(options: { timeout?: number } = {}) {
+      await waitForCalculateProperties(
+        page,
+        async () => {
+          await locators.calculatePropertiesButton.click();
+        },
+        options.timeout,
+      );
     },
 
     async turnSyncEditModeOn() {
@@ -134,12 +138,14 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
     async selectLayoutModeTool(layoutMode: LayoutMode) {
       const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
-
-      await this.expandSwitchLayoutModeDropdown();
-      await page.getByTestId(layoutMode).first().click();
-      await switchLayoutModeDropdown.waitFor({
-        state: 'hidden',
-      });
+      const layoutModeButton = page.getByTestId(layoutMode).first();
+      if (!(await layoutModeButton.isVisible())) {
+        await this.expandSwitchLayoutModeDropdown();
+        await layoutModeButton.click();
+        await switchLayoutModeDropdown.waitFor({
+          state: 'hidden',
+        });
+      }
     },
 
     async rna() {

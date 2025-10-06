@@ -62,6 +62,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       isOpen={isModalOpen}
       title="Delete RNA Preset"
       onClose={onCloseCallback}
+      data-testid="delete-preset-modal"
     >
       <Modal.Content>
         <DeleteTextWrapper data-testid="delete-preset-popup-content">
@@ -76,11 +77,13 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
           clickHandler={cancelHandler}
           label="Cancel"
           styleType="secondary"
+          data-testid="cancel-delete-preset-button"
         />
         <StyledActionButton
           key="delete"
           clickHandler={deleteHandler}
           label="Delete"
+          data-testid="delete-preset-button"
         />
       </Modal.Footer>
     </Modal>

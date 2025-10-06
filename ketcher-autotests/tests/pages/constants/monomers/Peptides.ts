@@ -8,6 +8,10 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     alias: 'Ala-al',
     testId: 'Ala-al___(2S)-2-aminopropanal',
   },
+  AminoAcid: {
+    alias: 'AminoAcid',
+    testId: 'AminoAcid___Amino Acid Test monomer',
+  },
   _1Nal: { alias: '1Nal', testId: '1Nal___3-(1-naphthyl)-alanine' },
   _2Nal: { alias: '2Nal', testId: '2Nal___3-(2-naphthyl)-alanine' },
   _NHBn: {
@@ -24,6 +28,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' },
   Chg: { alias: 'Chg', testId: 'Chg___Alpha-cyclohexylglycine' },
   D: { alias: 'D', testId: 'D___Aspartic acid' },
+  DACys: { alias: 'DACys', testId: 'DACys___Deamino-Cysteine' },
   dA: { alias: 'dA', testId: 'dA___D-Alanine' },
   dC: { alias: 'dC', testId: 'dC___D-Cysteine' },
   D_aIle: { alias: 'D-aIle', testId: 'D-aIle___D-allo-Isoleucine' },
@@ -55,6 +60,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   meM: { alias: 'meM', testId: 'meM___N-Methyl-Methionine' },
   meR: { alias: 'meR', testId: 'meR___N-Methyl-Arginine' },
   meS: { alias: 'meS', testId: 'meS___N-Methyl-Serine' },
+  Me_: { alias: 'Me-', testId: 'Me-___N-Terminal methyl' },
   Nal: { alias: 'Nal', testId: '' },
   LysiPr: {
     alias: 'LysiPr',
@@ -94,6 +100,7 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
       'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
       '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
   },
+  _Am: { alias: '-Am', testId: '-Am___C-Terminal amino' },
   Ac_: { alias: 'Ac-', testId: 'Ac-___N-Terminal acetyl' },
   B: { alias: 'B', testId: '_D___Aspartic acid_N___Asparagine' },
   J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' },

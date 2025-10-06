@@ -105,6 +105,7 @@ export const Modal = ({
   const paperProps = useMemo(
     () => ({
       testId,
+      'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -168,6 +169,7 @@ export const Modal = ({
             {showExpandButton && (
               <IconButton
                 title={'expand window'}
+                test-dataid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {
                   setExpanded(!expanded);

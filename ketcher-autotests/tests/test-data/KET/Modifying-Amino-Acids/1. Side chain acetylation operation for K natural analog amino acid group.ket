@@ -494,6 +494,7 @@
         "id": "Lys_Ac___N-epsilon-acetyl-L-lysine",
         "fullName": "N-epsilon-acetyl-L-lysine",
         "alias": "Lys_Ac",
+        "aliasHELM": "Lys_Ac",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,

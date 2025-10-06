@@ -1,40 +1,28 @@
 import { Chem } from '@tests/pages/constants/monomers/Chem';
-import { Locator, test } from '@fixtures';
+import { Locator, test, expect } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
-  takeEditorScreenshot,
+  hideMonomerPreview,
   waitForPageInit,
 } from '@utils';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { MonomerAttachmentPoint } from '@utils/macromolecules/monomer';
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
-  let peptide1: Locator;
-  let peptide2: Locator;
+  let chem1: Locator;
+  let chem2: Locator;
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToCHEMTab();
 
-    peptide1 = await addSingleMonomerToCanvas(
-      page,
-      Chem.Test_6_Ch,
-      200,
-      200,
-      0,
-    );
-    peptide2 = await addSingleMonomerToCanvas(
-      page,
-      Chem.Test_6_Ch,
-      400,
-      400,
-      1,
-    );
+    chem1 = await addSingleMonomerToCanvas(page, Chem.Test_6_Ch, 200, 200, 0);
+    chem2 = await addSingleMonomerToCanvas(page, Chem.Test_6_Ch, 400, 400, 1);
 
     // Select bond tool
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -46,18 +34,15 @@ test.describe('Modal window', () => {
       "Connect" button is disabled
       */
 
-    // Create bonds between peptides
-    await bondTwoMonomers(
-      page,
-      peptide1,
-      peptide2,
-      undefined,
-      undefined,
-      MacroBondType.Single,
-      false,
-      false,
-    );
-    await takeEditorScreenshot(page);
+    // Create bonds between CHEMs
+    await chem1.hover({ force: true });
+    await page.mouse.down();
+    await chem2.hover({ force: true });
+    await page.mouse.up();
+    await hideMonomerPreview(page);
+    expect(
+      await AttachmentPointsDialog(page).connectButton.isDisabled(),
+    ).toBeTruthy();
   });
 
   test('"Connect" button is active', async ({ page }) => {
@@ -67,17 +52,19 @@ test.describe('Modal window', () => {
       "Connect" button is active
       */
 
-    // Create bonds between peptides
-    await bondTwoMonomers(
-      page,
-      peptide1,
-      peptide2,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R2,
-      MacroBondType.Single,
-      true,
-      false,
-    );
-    await takeEditorScreenshot(page);
+    // Create bonds between CHEMs
+    await chem1.hover({ force: true });
+    await page.mouse.down();
+    await chem2.hover({ force: true });
+    await page.mouse.up();
+    await hideMonomerPreview(page);
+    await AttachmentPointsDialog(page).selectAttachmentPoints({
+      leftMonomer: AttachmentPoint.R1,
+      rightMonomer: AttachmentPoint.R2,
+    });
+
+    expect(
+      await AttachmentPointsDialog(page).connectButton.isEnabled(),
+    ).toBeTruthy();
   });
 });

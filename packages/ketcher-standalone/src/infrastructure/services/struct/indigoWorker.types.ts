@@ -70,8 +70,10 @@ export enum SupportedFormat {
   SEQUENCE = 'sequence',
   SEQUENCE_3_LETTER = 'peptide-sequence-3-letter',
   IDT = 'idt',
+  AXOLABS = 'axo-labs',
   HELM = 'helm',
   RDF = 'rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {

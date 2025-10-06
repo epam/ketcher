@@ -19,6 +19,7 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
+  selectLastSelectedSelectionMenuItem,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -50,7 +51,7 @@ import {
   PreviewType,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
-import { loadMonomerLibrary } from 'state/library';
+import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -61,9 +62,13 @@ export const EditorEvents = () => {
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const lastSelectedSelectionMenuItem = useAppSelector(
+    selectLastSelectedSelectionMenuItem,
+  );
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
+    dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
@@ -74,6 +79,21 @@ export const EditorEvents = () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
   }, [editor]);
+
+  useEffect(() => {
+    const onSelectSelectionTool = () => {
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      dispatch(selectTool(lastSelectedSelectionMenuItem));
+    };
+
+    if (editor) {
+      editor.events.selectSelectionTool.add(onSelectSelectionTool);
+    }
+
+    return () => {
+      editor?.events.selectSelectionTool.remove(onSelectSelectionTool);
+    };
+  }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
     const handler = ([toolName]: [string]) => {

@@ -31,7 +31,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { MacroFileType } from '@utils/canvas';
+import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
@@ -45,7 +45,7 @@ import {
   getMonomerLocator,
   moveMonomerOnMicro,
   getSymbolLocator,
-  MonomerAttachmentPoint,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -108,6 +108,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -373,6 +374,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await delay(1);
     await moveMouseToTheMiddleOfTheScreen(page);
     await zoomWithMouseWheel(page, -400);
 
@@ -947,7 +949,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -1003,7 +1005,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/structure-with-two-attachment-points.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await ContextMenu(page, page.getByText('R2')).open();
     await takeEditorScreenshot(page);
   });
@@ -1133,24 +1135,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1213,8 +1215,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
@@ -1229,24 +1231,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.moen,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1309,8 +1311,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = page.locator('g path').first();
     await bondLine.hover();
@@ -1322,24 +1324,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1370,7 +1372,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Single,
       }).first();
@@ -1403,10 +1405,10 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
     }).first();
@@ -1421,24 +1423,24 @@ test.describe('Macro-Micro-Switcher', () => {
       description: 'Sugar',
       monomer: Sugar._25R,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
     {
       description: 'Base',
       monomer: Base.meA,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R1,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
       },
     },
     {
       description: 'Phosphate',
       monomer: Phosphate.sP_,
       bondEndpoints: {
-        first: MonomerAttachmentPoint.R1,
-        second: MonomerAttachmentPoint.R2,
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
       },
     },
   ];
@@ -1470,7 +1472,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1501,11 +1503,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const canvasLocator = page
       .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
@@ -1538,8 +1540,8 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       firstMonomer,
       secondMonomer,
-      MonomerAttachmentPoint.R1,
-      MonomerAttachmentPoint.R3,
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
@@ -1557,7 +1559,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
     await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -1707,10 +1709,13 @@ test.describe('Macro-Micro-Switcher', () => {
       true,
     );
 
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error'",
+    );
+
     await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -2883,5 +2888,9 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
     // error is expected
     true,
   );
-  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages:',
+  );
+  await ErrorMessageDialog(page).close();
 });

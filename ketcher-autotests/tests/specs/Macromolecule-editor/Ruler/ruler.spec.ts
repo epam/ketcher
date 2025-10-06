@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -590,6 +590,7 @@ test.describe('Tests for Ruler', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
+    await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
@@ -623,5 +624,21 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7245
+     * Description: Not missing tooltip for standalone input field in ruler control
+     * Scenario:
+     * 1. Go to Macro mode - Snake mode
+     * 2. Drag the ruler slider outside the visible canvas so that the input field becomes standalone
+     * 3. Hover over the input field
+     */
+    await Ruler(page).setLength('100');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await Ruler(page).hoverOnInputField();
+    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
   });
 });

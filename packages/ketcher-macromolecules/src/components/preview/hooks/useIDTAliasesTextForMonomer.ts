@@ -7,6 +7,8 @@ import {
 } from 'ketcher-core';
 import { useMemo } from 'react';
 
+import { removeSlashesFromIdtAlias } from 'helpers';
+
 type Props = {
   idtAliases: IKetIdtAliases | undefined;
   attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
@@ -25,14 +27,13 @@ const useIDTAliasesTextForMonomer = ({
 
     const { base, modifications } = idtAliases;
 
+    if (!modifications) {
+      return removeSlashesFromIdtAlias(base);
+    }
+    const { endpoint5, internal, endpoint3 } = modifications;
+
     // For preview on canvas
     if (attachmentPointsToBonds) {
-      if (!modifications) {
-        return base;
-      }
-
-      const { endpoint5, internal, endpoint3 } = modifications;
-
       const { R1, R2 } = attachmentPointsToBonds;
       // Handle phosphate exclusively
       if (monomerClass === KetMonomerClass.Phosphate) {
@@ -46,32 +47,33 @@ const useIDTAliasesTextForMonomer = ({
       }
 
       if (R1 !== null && R2 === null) {
-        return endpoint3 ?? internal;
+        return removeSlashesFromIdtAlias(endpoint3 ?? internal);
       } else if (R1 === null && R2 !== null) {
-        return endpoint5 ?? internal;
+        return removeSlashesFromIdtAlias(endpoint5 ?? internal);
       } else if (R1 !== null && R2 !== null) {
-        return internal ?? endpoint5 ?? endpoint3;
+        return removeSlashesFromIdtAlias(internal ?? endpoint5 ?? endpoint3);
       } else {
-        return endpoint5 ?? internal ?? endpoint3;
+        return removeSlashesFromIdtAlias(endpoint5 ?? internal ?? endpoint3);
       }
     }
 
     // For preview in library
-    if (!modifications) {
-      return base;
-    }
 
     const allModificationsHaveSameBase = Object.values(modifications).every(
       (modification) => modification.includes(base),
     );
 
-    if (allModificationsHaveSameBase) {
-      return base;
+    if (endpoint3 && endpoint5 && internal && allModificationsHaveSameBase) {
+      return removeSlashesFromIdtAlias(base);
     }
 
     const baseToPositionsMap: Record<string, string[]> = {};
     Object.values(modifications).forEach((modification) => {
-      const [position, base] = [modification.charAt(0), modification.slice(1)];
+      const cleanModification = removeSlashesFromIdtAlias(modification) || '';
+      const [position, base] = [
+        cleanModification.charAt(0),
+        cleanModification.slice(1),
+      ];
       baseToPositionsMap[base] = baseToPositionsMap[base]
         ? [...baseToPositionsMap[base], position]
         : [position];

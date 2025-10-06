@@ -244,6 +244,7 @@
         "id": "meQ___N-Methyl-Glutamine",
         "fullName": "N-Methyl-Glutamine",
         "alias": "meQ",
+        "aliasHELM": "meQ",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

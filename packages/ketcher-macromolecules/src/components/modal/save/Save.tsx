@@ -61,6 +61,7 @@ const options: Array<Option> = [
   { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
+  { id: 'axo-labs', label: 'AXO-LABS' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
 ];
@@ -71,6 +72,7 @@ const formatDetector = {
   sequence: ChemicalMimeType.SEQUENCE,
   'sequence-3-letter': ChemicalMimeType.PeptideSequenceThreeLetter,
   idt: ChemicalMimeType.IDT,
+  'axo-labs': ChemicalMimeType.AXOLABS,
   helm: ChemicalMimeType.HELM,
 };
 

@@ -101,6 +101,7 @@
         "id": "bP___Boranophosphate",
         "fullName": "Boranophosphate",
         "alias": "bP",
+        "aliasHELM": "bp",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

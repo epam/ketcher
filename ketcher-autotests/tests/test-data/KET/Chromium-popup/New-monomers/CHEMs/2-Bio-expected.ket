@@ -1,0 +1,930 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-2-Bio___Dual Biotin"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "2-Bio",
+        "templateId": "2-Bio___Dual Biotin"
+    },
+    "monomerTemplate-2-Bio___Dual Biotin": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.156,
+                    5.273,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.482,
+                    4.535,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.976,
+                    3.665,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.955,
+                    3.866,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    6.067,
+                    4.86,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.864,
+                    2.672,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    5.775,
+                    2.258,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.449,
+                    2.997,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.956,
+                    6.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.994,
+                    2.178,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.132,
+                    2.684,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.262,
+                    2.19,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.4,
+                    2.697,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.53,
+                    2.203,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.332,
+                    2.709,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.523,
+                    1.203,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.202,
+                    2.215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.064,
+                    2.722,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.934,
+                    2.228,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.796,
+                    2.734,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.666,
+                    2.24,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.528,
+                    2.746,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.673,
+                    1.24,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.521,
+                    3.746,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.542,
+                    0.747,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    -5.55,
+                    -0.253,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.583,
+                    -1.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.583,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.717,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.717,
+                    -3.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.851,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.583,
+                    -4.253,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    -5.583,
+                    -5.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.985,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.119,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.253,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.387,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.479,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.345,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.479,
+                    -3.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.211,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.077,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.943,
+                    -2.753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.809,
+                    -2.253,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    5.723,
+                    -2.66,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.392,
+                    -1.916,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.892,
+                    -1.05,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.914,
+                    -1.258,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    5.996,
+                    -0.056,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.083,
+                    0.351,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.414,
+                    -0.392,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.875,
+                    1.329,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -6.416,
+                    -0.753,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.684,
+                    -0.753,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -6.449,
+                    -5.753,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.717,
+                    -5.753,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.583,
+                    -6.253,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    13,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    22,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    25
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    26,
+                    27
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    27,
+                    28
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    29
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    28,
+                    30
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    29,
+                    31
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    31,
+                    32
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    30,
+                    33
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    33,
+                    34
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    34,
+                    35
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    35,
+                    36
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    36,
+                    37
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    37,
+                    38
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    37,
+                    39
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    38,
+                    40
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    40,
+                    41
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    41,
+                    42
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    42,
+                    43
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    43,
+                    47
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    47,
+                    46
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    46,
+                    45
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    45,
+                    44
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    44,
+                    43
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    47,
+                    50
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    50,
+                    49
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    49,
+                    48
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    48,
+                    46
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    49,
+                    51
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    52
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    25,
+                    53
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    26
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    32,
+                    54
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    32,
+                    55
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    32,
+                    56
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "2-Bio___Dual Biotin",
+        "fullName": "Dual Biotin",
+        "alias": "2-Bio",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 32,
+                "leavingGroup": {
+                    "atoms": [
+                        56
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "2-Bio",
+            "modifications": {
+                "endpoint5": "/52-Bio/"
+            }
+        }
+    }
+}

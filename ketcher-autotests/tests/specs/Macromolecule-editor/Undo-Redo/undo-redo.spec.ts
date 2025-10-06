@@ -159,7 +159,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const entitiesToDelete = [
       Peptide.D_aIle,
       Peptide.SertBu,
@@ -265,7 +265,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-entities.ket');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const entitiesToDelete = [
       Peptide.SertBu,
       Peptide.TyrabD,
@@ -459,7 +459,7 @@ test.describe('Undo-Redo tests', () => {
     await takeEditorScreenshot(page);
 
     await getMonomerLocator(page, Peptide.X).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await takeEditorScreenshot(page);
 
@@ -503,7 +503,7 @@ test.describe('Undo-Redo tests', () => {
     await takeEditorScreenshot(page);
 
     await getMonomerLocator(page, Base.DNA_N).click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
 
     await takeEditorScreenshot(page);
 

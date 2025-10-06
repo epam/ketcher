@@ -134,9 +134,9 @@ test.describe('Functional Groups', () => {
 
   test('Copy/Paste action with expanded functional group', async () => {
     /*
-    Test case: EPMLSOPKET-2897
-    Description: Functional group is copied and pasted as expanded.
-    */
+     *Test case: EPMLSOPKET-2897
+     *Description: Functional group is copied and pasted as expanded.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-groups-expanded.mol',
@@ -384,7 +384,7 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

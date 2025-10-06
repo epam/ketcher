@@ -12,6 +12,7 @@ import {
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   MacroFileType,
+  moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -548,7 +549,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
@@ -635,10 +636,11 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await hydrogenBond.click({ force: true });
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

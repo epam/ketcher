@@ -1,0 +1,451 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Bio___3' Biotin"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "Bio",
+        "templateId": "Bio___3' Biotin"
+    },
+    "monomerTemplate-Bio___3' Biotin": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -5.568,
+                    -0.94,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.75,
+                    -1.463,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.886,
+                    -0.957,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.152,
+                    -0.947,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.282,
+                    -1.442,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.418,
+                    -0.936,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.452,
+                    -1.432,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.316,
+                    -0.926,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.186,
+                    -1.421,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.276,
+                    -2.443,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.05,
+                    -0.915,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.92,
+                    -1.411,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.784,
+                    -0.905,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.654,
+                    -1.4,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.518,
+                    -0.895,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -5.778,
+                    0.953,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -5.98,
+                    -0.028,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.975,
+                    -0.138,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -7.388,
+                    0.774,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -6.308,
+                    -1.614,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -7.178,
+                    -1.119,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -6.648,
+                    1.448,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -6.759,
+                    2.443,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.016,
+                    -1.452,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.778,
+                    0.096,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.388,
+                    -1.39,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    18,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    21,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    23,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    25
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Bio___3' Biotin",
+        "fullName": "3' Biotin",
+        "alias": "Bio",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 14,
+                "leavingGroup": {
+                    "atoms": [
+                        25
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "Bio",
+            "modifications": {
+                "endpoint3": "/3Bio/"
+            }
+        }
+    }
+}

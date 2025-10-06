@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -31,6 +31,11 @@ import {
   usePortalStyle,
 } from 'ketcher-react';
 import { createPortal } from 'react-dom';
+import {
+  selectSelectedMenuGroupItem,
+  setSelectedMenuGroupItem,
+} from 'state/common';
+import { useAppDispatch, useAppSelector } from 'hooks';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -41,6 +46,7 @@ type SubMenuProps = {
   layoutModeButton?: boolean;
   generalTitle?: string;
   activeItem?: IconName;
+  subMenuId?: string;
 };
 
 const SubMenu = ({
@@ -53,7 +59,9 @@ const SubMenu = ({
   layoutModeButton = false,
   generalTitle,
   activeItem,
+  subMenuId,
 }: React.PropsWithChildren<SubMenuProps>) => {
+  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -64,6 +72,13 @@ const SubMenu = ({
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   ]);
 
+  const selectedMenuGroupItem = useAppSelector(
+    // Need to fix typing for selectors with parameters
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    selectSelectedMenuGroupItem(subMenuId),
+  );
+  const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
   const handleDropDownClick = () => {
     if (disabled) return;
     setOpen((prev) => !prev);
@@ -83,9 +98,22 @@ const SubMenu = ({
   const options = subComponents
     .map((item) => item.props.itemId)
     .filter((item) => item);
-  const activeOption = options.filter((itemKey) => isActive(itemKey));
+  const activeOptions = options.filter((itemKey) => isActive(itemKey));
+  const activeOption = activeOptions[0];
+
+  useEffect(() => {
+    if (subMenuId && activeOption && activeOption !== lastActiveOption) {
+      dispatch(
+        setSelectedMenuGroupItem({
+          groupName: subMenuId,
+          activeItemName: activeOption,
+        }),
+      );
+    }
+  }, [dispatch, subMenuId, activeOption, lastActiveOption]);
+
   const visibleItemId =
-    activeItem ?? (activeOption.length ? activeOption[0] : options[0]);
+    activeItem ?? (activeOption || lastActiveOption || options[0]);
   const visibleItem = subComponents.find(
     (option) => option.props.itemId === visibleItemId,
   );

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
@@ -22,7 +22,7 @@ import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
-import useMakeLeavingGroupAtomMenuItem from '../hooks/useMakeLeavingGroupAtomMenuItem';
+import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 
 const {
   ringBondCount,
@@ -157,7 +157,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     });
   };
 
-  const MakeLeavingGroupAtomMenuItem = useMakeLeavingGroupAtomMenuItem({
+  const makeAttachmentPointMenuItems = useMakeAttachmentPointMenuItems({
     props,
     selectedAtomId,
     editor,
@@ -167,6 +167,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
+        <Separator />
         <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
           <Icon name="deleteMenu" className={styles.icon} />
           <span className={styles.contextMenuText}>Delete</span>
@@ -175,30 +176,27 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
-  if (MakeLeavingGroupAtomMenuItem !== null) {
-    return MakeLeavingGroupAtomMenuItem;
-  }
+  const editMenuItemTitle = props.propsFromTrigger?.extraItemsSelected
+    ? 'Edit selected atoms...'
+    : 'Edit...';
 
-  const disabled = editor.isMonomerCreationWizardActive;
+  const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
 
   return (
     <>
+      {makeAttachmentPointMenuItems && (
+        <>
+          {makeAttachmentPointMenuItems}
+          <Separator />
+        </>
+      )}
       <Item
         {...props}
-        data-testid={
-          props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected atoms...-option'
-            : 'Edit...-option'
-        }
+        data-testid={editMenuItemTitle.concat('-option')}
         onClick={handleEdit}
-        disabled={disabled}
       >
         <Icon name="editMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>
-          {props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected atoms...'
-            : 'Edit...'}
-        </span>
+        <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
       </Item>
       <Item
         {...props}
@@ -208,42 +206,40 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       >
         Enhanced stereochemistry...
       </Item>
-      {!disabled && (
-        <Submenu
-          {...props}
-          label="Query properties"
-          data-testid="Query properties-option"
-          style={{ overflow: 'visible' }}
-        >
-          {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
-            return (
-              <Submenu
-                {...props}
-                label={title}
-                data-testid={`${title}-option`}
-                key={key}
-                className={styles.sameGroup}
-              >
-                <ButtonGroup<AtomAllAttributeValue>
-                  buttons={buttons}
-                  defaultValue={getPropertyValue(key)}
-                  title={title}
-                  onClick={(value: AtomAllAttributeValue) =>
-                    updateAtomProperty(key, value)
-                  }
-                />
-              </Submenu>
-            );
-          })}
-        </Submenu>
-      )}
-      {!disabled && <HighlightMenu onHighlight={highlightAtomWithColor} />}
-      <Item
+      <Submenu
         {...props}
-        data-testid="Delete-option"
-        onClick={handleDelete}
-        disabled={disabled}
+        label="Query properties"
+        data-testid="Query properties-option"
+        style={{ overflow: 'visible' }}
+        disabled={disabledForMonomerCreation}
       >
+        {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
+          return (
+            <Submenu
+              {...props}
+              label={title}
+              data-testid={`${title}-option`}
+              key={key}
+              className={styles.sameGroup}
+            >
+              <ButtonGroup<AtomAllAttributeValue>
+                buttons={buttons}
+                defaultValue={getPropertyValue(key)}
+                title={title}
+                onClick={(value: AtomAllAttributeValue) =>
+                  updateAtomProperty(key, value)
+                }
+              />
+            </Submenu>
+          );
+        })}
+      </Submenu>
+      <HighlightMenu
+        onHighlight={highlightAtomWithColor}
+        disabled={disabledForMonomerCreation}
+      />
+      <Separator />
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>
       </Item>

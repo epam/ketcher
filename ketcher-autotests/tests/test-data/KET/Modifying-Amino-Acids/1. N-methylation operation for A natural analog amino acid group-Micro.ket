@@ -653,6 +653,7 @@
         "id": "meA___N-Methyl-Alanine",
         "fullName": "N-Methyl-Alanine",
         "alias": "meA",
+        "aliasHELM": "meA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

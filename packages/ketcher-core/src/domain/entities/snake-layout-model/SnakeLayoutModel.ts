@@ -12,31 +12,44 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { CoreEditor } from 'application/editor';
-
-export interface SnakeLayoutNode {
-  monomers: BaseMonomer[];
-}
-
-export interface TwoStrandedSnakeLayoutNode {
-  senseNode?: SnakeLayoutNode;
-  antisenseNode?: SnakeLayoutNode;
-  chain: Chain;
-}
+import { CoreEditor, provideEditorSettings } from 'application/editor';
+import { SettingsManager } from 'utilities';
+import {
+  ISnakeLayoutModelRow,
+  ISnakeLayoutMonomersNode,
+  isTwoStrandedSnakeLayoutNode,
+  ITwoStrandedSnakeLayoutNode,
+} from 'domain/entities/snake-layout-model/types';
+import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import { Atom } from 'domain/entities/CoreAtom';
+import { Bond } from 'domain/entities/CoreBond';
+import { SnakeLayoutCellWidth } from 'domain/constants';
+import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModel {
-  private nodes: TwoStrandedSnakeLayoutNode[] = [];
+  private nodes: ITwoStrandedSnakeLayoutNode[] = [];
+  public chains: SnakeLayoutModelChain[] = [];
   private monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
-    TwoStrandedSnakeLayoutNode
+    ITwoStrandedSnakeLayoutNode
   > = new Map();
 
-  constructor(chainsCollection: ChainsCollection) {
+  constructor(
+    chainsCollection: ChainsCollection,
+    drawingEntitiesManager: DrawingEntitiesManager,
+    needFillMolecules = true,
+  ) {
     this.fillNodes(chainsCollection);
+    this.fillChains();
+    if (needFillMolecules) {
+      this.fillMolecules(drawingEntitiesManager);
+    }
   }
 
-  private addNode(snakeLayoutNode: SnakeLayoutNode, chain) {
-    const twoStrandedSnakeLayoutNode: TwoStrandedSnakeLayoutNode = {
+  private addNode(snakeLayoutNode: ISnakeLayoutMonomersNode, chain) {
+    const twoStrandedSnakeLayoutNode: ITwoStrandedSnakeLayoutNode = {
       senseNode: snakeLayoutNode,
       chain,
     };
@@ -55,7 +68,7 @@ export class SnakeLayoutModel {
     node: SubChainNode,
     isAntisense = false,
   ) {
-    const nodes: SnakeLayoutNode[] = [];
+    const nodes: ISnakeLayoutMonomersNode[] = [];
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
@@ -109,9 +122,9 @@ export class SnakeLayoutModel {
       if (!chain.isAntisense) {
         return;
       }
-      let nodesBeforeHydrogenConnectionToBase: SnakeLayoutNode[] = [];
+      let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutMonomersNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | TwoStrandedSnakeLayoutNode
+        | ITwoStrandedSnakeLayoutNode
         | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
@@ -260,7 +273,7 @@ export class SnakeLayoutModel {
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | TwoStrandedSnakeLayoutNode
+            | ITwoStrandedSnakeLayoutNode
             | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
@@ -321,8 +334,216 @@ export class SnakeLayoutModel {
   }
 
   public forEachNode(
-    callback: (node: TwoStrandedSnakeLayoutNode, index: number) => void,
+    callback: (node: ITwoStrandedSnakeLayoutNode, index: number) => void,
   ) {
     this.nodes.forEach(callback);
+  }
+
+  public forEachChain(
+    callback: (chain: SnakeLayoutModelChain, index: number) => void,
+  ) {
+    this.chains.forEach(callback);
+  }
+
+  private fillChains() {
+    const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
+    let currentIndexInSequenceModelChain = 0;
+    let currentSequenceModelChain = new SnakeLayoutModelChain();
+    let currentSequenceModelRow: ISnakeLayoutModelRow = {
+      snakeLayoutModelItems: [],
+    };
+    let previousSenseNodeChain: Chain;
+
+    this.nodes.forEach((sequenceModelItem) => {
+      const currentSenseChain = sequenceModelItem.chain;
+
+      if (previousSenseNodeChain !== currentSenseChain) {
+        currentSequenceModelChain = new SnakeLayoutModelChain();
+        this.chains.push(currentSequenceModelChain);
+        currentIndexInSequenceModelChain = 0;
+      }
+
+      if (currentIndexInSequenceModelChain % lineLength === 0) {
+        currentSequenceModelRow = {
+          snakeLayoutModelItems: [],
+        };
+        currentSequenceModelChain.addRow(currentSequenceModelRow);
+      }
+
+      currentSequenceModelRow.snakeLayoutModelItems.push(sequenceModelItem);
+
+      previousSenseNodeChain = currentSenseChain;
+      currentIndexInSequenceModelChain++;
+    });
+  }
+
+  private fillMolecules(drawingEntitiesManager: DrawingEntitiesManager) {
+    const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
+    const handledMolecules = new Set<BaseMonomer>();
+
+    this.chains.forEach((chain, chainIndex) => {
+      const newChain = new SnakeLayoutModelChain();
+
+      chain.forEachRow((row, rowIndex) => {
+        newChain.addRow(row);
+
+        // Collect all molecules in the row
+        const nodeIndexToMolecules: Map<number, (Atom | Bond)[][]> = new Map();
+        const isLastRowOfLastChain =
+          chainIndex === this.chains.length - 1 &&
+          rowIndex === chain.rowsLength - 1;
+
+        row.snakeLayoutModelItems.forEach((node, nodeIndex) => {
+          if (!isTwoStrandedSnakeLayoutNode(node)) {
+            return;
+          }
+
+          const monomers = [
+            ...(node.senseNode?.monomers ?? []),
+            ...(node.antisenseNode?.monomers ?? []),
+          ];
+
+          monomers.forEach((monomer) => {
+            monomer.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+              const molecule = drawingEntitiesManager.getConnectedMolecule(
+                monomerToAtomBond.atom,
+                [Atom],
+              );
+
+              if (!handledMolecules.has(monomerToAtomBond.atom.monomer)) {
+                handledMolecules.add(monomerToAtomBond.atom.monomer);
+              }
+
+              if (!nodeIndexToMolecules.has(nodeIndex)) {
+                nodeIndexToMolecules.set(nodeIndex, []);
+              }
+
+              nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
+            });
+          });
+        });
+
+        if (isLastRowOfLastChain) {
+          // Add all unhandled molecules in end of the last row of the last chain
+          drawingEntitiesManager.atoms.forEach((atom) => {
+            if (handledMolecules.has(atom.monomer)) {
+              return;
+            }
+
+            const molecule = drawingEntitiesManager.getConnectedMolecule(atom, [
+              Atom,
+            ]);
+
+            handledMolecules.add(atom.monomer);
+
+            if (!nodeIndexToMolecules.has(row.snakeLayoutModelItems.length)) {
+              nodeIndexToMolecules.set(row.snakeLayoutModelItems.length, []);
+            }
+
+            nodeIndexToMolecules
+              .get(row.snakeLayoutModelItems.length)
+              ?.push(molecule);
+          });
+        }
+
+        // Place collected molecules in additional rows below the current one
+        const editorSettings = provideEditorSettings();
+        const cellSizeInAngstroms =
+          SnakeLayoutCellWidth / editorSettings.macroModeScale;
+        let currentRowToHandle: ISnakeLayoutModelRow = {
+          snakeLayoutModelItems: [],
+        };
+
+        let nextCellIndexToFill = 0;
+        let emptyRowsToAdd = 0;
+
+        nodeIndexToMolecules.forEach((molecules) => {
+          molecules.forEach((molecule) => {
+            const moleculeBbox =
+              DrawingEntitiesManager.getStructureBbox(molecule);
+            const cellsNeededHorizontally = Math.ceil(
+              (moleculeBbox.width + cellSizeInAngstroms / 2) /
+                cellSizeInAngstroms,
+            );
+            const cellsNeededVertically = Math.ceil(
+              (moleculeBbox.height + cellSizeInAngstroms / 2) /
+                cellSizeInAngstroms,
+            );
+            const isThereEnoughSpaceInCurrentRow =
+              nextCellIndexToFill + cellsNeededHorizontally <= lineLength;
+            const freeCellsInCurrentRow = lineLength - nextCellIndexToFill;
+
+            if (!isThereEnoughSpaceInCurrentRow) {
+              // Fill the rest of the row with empty nodes
+              for (let i = 0; i < freeCellsInCurrentRow; i++) {
+                currentRowToHandle.snakeLayoutModelItems.push(
+                  new EmptySnakeLayoutNode(),
+                );
+              }
+
+              // Add the current row to the chain and start a new one
+              newChain.addRow(currentRowToHandle);
+              currentRowToHandle = { snakeLayoutModelItems: [] };
+              nextCellIndexToFill = 0;
+
+              // Add empty rows if needed (for high molecules)
+              for (let i = 0; i < emptyRowsToAdd; i++) {
+                newChain.addRow({
+                  snakeLayoutModelItems: row.snakeLayoutModelItems.map(
+                    (_) => new EmptySnakeLayoutNode(),
+                  ),
+                });
+              }
+              emptyRowsToAdd = 0;
+            }
+
+            // Add the molecule node
+            currentRowToHandle.snakeLayoutModelItems.push(
+              new MoleculeSnakeLayoutNode(molecule),
+            );
+
+            // Fill the rest of cells needed for the molecule with empty nodes
+            for (let i = 1; i < cellsNeededHorizontally; i++) {
+              currentRowToHandle.snakeLayoutModelItems.push(
+                new EmptySnakeLayoutNode(),
+              );
+            }
+
+            nextCellIndexToFill += cellsNeededHorizontally;
+            emptyRowsToAdd = Math.max(
+              emptyRowsToAdd,
+              cellsNeededVertically - 1,
+            );
+          });
+        });
+
+        // Fill the rest of the last row with empty nodes
+        if (currentRowToHandle.snakeLayoutModelItems.length) {
+          for (
+            let i = currentRowToHandle.snakeLayoutModelItems.length;
+            i < lineLength;
+            i++
+          ) {
+            currentRowToHandle.snakeLayoutModelItems.push(
+              new EmptySnakeLayoutNode(),
+            );
+          }
+          newChain.addRow(currentRowToHandle);
+        }
+
+        // Add empty rows if needed (for high molecules)
+        if (emptyRowsToAdd > 0) {
+          for (let i = 0; i < emptyRowsToAdd; i++) {
+            newChain.addRow({
+              snakeLayoutModelItems: row.snakeLayoutModelItems.map(
+                (_) => new EmptySnakeLayoutNode(),
+              ),
+            });
+          }
+        }
+      });
+
+      this.chains.splice(chainIndex, 1, newChain);
+    });
   }
 }

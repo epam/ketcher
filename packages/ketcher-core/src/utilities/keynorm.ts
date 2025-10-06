@@ -65,8 +65,31 @@ function modifiers(name, event, shift) {
   return name;
 }
 
+const normalizeCode = (code: string) => {
+  console.log(code);
+
+  if (code.startsWith('Key')) {
+    return code.slice(3).toLowerCase();
+  }
+
+  if (code.startsWith('Digit')) {
+    return code.slice(5);
+  }
+
+  if (code === 'Add' || code === 'NumpadAdd') {
+    return '+';
+  }
+
+  if (code === 'Subtract' || code === 'NumpadSubtract') {
+    return '-';
+  }
+
+  return code;
+};
+
 function normalizeKeyEvent(event: KeyboardEvent, base = false) {
-  const name = event.key;
+  const name = normalizeCode(event.code);
+  // const isChar = /^[A-Z0-9]$/i.test(name);
   const isChar = name.length === 1 && name !== ' ';
 
   return isChar && !base
@@ -114,13 +137,13 @@ export function initHotKeys(actions) {
 }
 
 function lookup(map, event: KeyboardEvent) {
-  let name = event.key;
+  let name = normalizeCode(event.code);
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
   const isChar = name.length === 1 && name !== ' ';
 
   let res = map[modifiers(name, event, !isChar)];
-  const baseName = event.key;
+  const baseName = normalizeCode(event.code);
 
   if (event.shiftKey && isChar && Boolean(baseName)) {
     res = map[modifiers(baseName, event, true)] || res;

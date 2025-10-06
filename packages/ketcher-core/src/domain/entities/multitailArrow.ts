@@ -55,21 +55,24 @@ interface TailDistance {
 }
 
 export class MultitailArrow extends BaseMicromoleculeEntity {
-  static KET_MIN_DISTANCE =
+  static readonly KET_MIN_DISTANCE =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.01);
 
-  static MIN_TAIL_DISTANCE =
+  static readonly MIN_TAIL_DISTANCE =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.35);
 
-  static MIN_HEAD_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
-  static MIN_TAIL_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
-  static MIN_TOP_BOTTOM_OFFSET =
+  static readonly MIN_HEAD_LENGTH =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+  static readonly MIN_TAIL_LENGTH =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
+  static readonly MIN_TOP_BOTTOM_OFFSET =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.15);
 
-  static MIN_HEIGHT = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
-  static TOP_TAIL_NAME = 'topTail';
-  static BOTTOM_TAIL_NAME = 'bottomTail';
-  static TAILS_NAME = 'tails';
+  static readonly MIN_HEIGHT =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+  static readonly TOP_TAIL_NAME = 'topTail';
+  static readonly BOTTOM_TAIL_NAME = 'bottomTail';
+  static readonly TAILS_NAME = 'tails';
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return (

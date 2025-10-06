@@ -11,7 +11,7 @@ export type DistanceSnapViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class DistanceSnapView extends TransientView {
-  public static viewName = 'DistanceSnapView';
+  public static readonly viewName = 'DistanceSnapView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

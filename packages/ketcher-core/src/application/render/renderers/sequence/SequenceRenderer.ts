@@ -62,12 +62,54 @@ export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
-  public static caretPosition: SequencePointer = -1;
-  public static lastUserDefinedCaretPosition: SequenceLastCaretPosition = 0;
-  public static chainsCollection: ChainsCollection;
-  public static lastChainStartPosition: Vec2;
+  private static caretPositionValue: SequencePointer = -1;
+  private static lastUserDefinedCaretPositionValue: SequenceLastCaretPosition = 0;
+  private static chainsCollectionValue: ChainsCollection;
+  private static lastChainStartPositionValue: Vec2;
+  private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
-  public static sequenceViewModel: SequenceViewModel;
+
+  public static get caretPosition(): SequencePointer {
+    return this.caretPositionValue;
+  }
+
+  private static set caretPosition(value: SequencePointer) {
+    this.caretPositionValue = value;
+  }
+
+  public static get lastUserDefinedCaretPosition(): SequenceLastCaretPosition {
+    return this.lastUserDefinedCaretPositionValue;
+  }
+
+  private static set lastUserDefinedCaretPosition(
+    value: SequenceLastCaretPosition,
+  ) {
+    this.lastUserDefinedCaretPositionValue = value;
+  }
+
+  public static get chainsCollection(): ChainsCollection {
+    return this.chainsCollectionValue;
+  }
+
+  private static set chainsCollection(value: ChainsCollection) {
+    this.chainsCollectionValue = value;
+  }
+
+  public static get lastChainStartPosition(): Vec2 {
+    return this.lastChainStartPositionValue;
+  }
+
+  private static set lastChainStartPosition(value: Vec2) {
+    this.lastChainStartPositionValue = value;
+  }
+
+  public static get sequenceViewModel(): SequenceViewModel {
+    return this.sequenceViewModelValue;
+  }
+
+  private static set sequenceViewModel(value: SequenceViewModel) {
+    this.sequenceViewModelValue = value;
+  }
 
   public static show(
     chainsCollection: ChainsCollection,

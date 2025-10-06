@@ -46,7 +46,7 @@ interface SavedOptions {
 }
 
 export class SettingsManager {
-  static _disableCustomQuery?: boolean;
+  private static disableCustomQueryValue?: boolean;
 
   static getSettings(): SavedSettings {
     try {
@@ -141,11 +141,11 @@ export class SettingsManager {
   }
 
   static get disableCustomQuery() {
-    return this._disableCustomQuery;
+    return this.disableCustomQueryValue;
   }
 
   static set disableCustomQuery(disableCustomQuery: boolean | undefined) {
-    this._disableCustomQuery = disableCustomQuery;
+    this.disableCustomQueryValue = disableCustomQuery;
   }
 
   static get ignoreChiralFlag() {

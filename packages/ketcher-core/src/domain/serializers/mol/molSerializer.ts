@@ -22,7 +22,7 @@ import { KetcherLogger } from 'utilities';
 import { KetSerializer } from 'domain/serializers';
 
 export class MolSerializer implements Serializer<Struct> {
-  static DefaultOptions: MolSerializerOptions = {
+  static readonly DefaultOptions: MolSerializerOptions = {
     badHeaderRecover: false,
     ignoreErrors: false,
     noRgroups: false,

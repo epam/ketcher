@@ -63,13 +63,16 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   static readonly MIN_HEAD_LENGTH =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+
   static readonly MIN_TAIL_LENGTH =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
+
   static readonly MIN_TOP_BOTTOM_OFFSET =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.15);
 
   static readonly MIN_HEIGHT =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+
   static readonly TOP_TAIL_NAME = 'topTail';
   static readonly BOTTOM_TAIL_NAME = 'bottomTail';
   static readonly TAILS_NAME = 'tails';

@@ -585,7 +585,7 @@ class Editor implements KetcherEditor {
       const selectionInvalid = selection.atoms.some((atomId) => {
         const atom = this.render.ctab.molecule.atoms.get(atomId);
 
-        if (!atom) return false;
+        if (!atom) return true;
 
         assert(atom);
 

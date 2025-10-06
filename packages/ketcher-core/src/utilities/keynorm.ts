@@ -56,46 +56,98 @@ function normalizeKeyMap(map) {
   return copy;
 }
 
-function modifiers(name, event, shift) {
-  if (event.altKey) name = 'Alt+' + name;
-  if (event.ctrlKey) name = 'Ctrl+' + name;
-  if (event.metaKey) name = 'Meta+' + name;
-  if (shift !== false && event.shiftKey) name = 'Shift+' + name;
+// function modifiers(name, event, shift) {
+//   if (event.altKey) name = 'Alt+' + name;
+//   if (event.ctrlKey) name = 'Ctrl+' + name;
+//   if (event.metaKey) name = 'Meta+' + name;
+//   if (shift !== false && event.shiftKey) name = 'Shift+' + name;
+//
+//   return name;
+// }
 
-  return name;
-}
+// const normalizeCode = (code: string) => {
+//   console.log(code);
+//
+//   if (code.startsWith('Key')) {
+//     return code.slice(3).toLowerCase();
+//   }
+//
+//   if (code.startsWith('Digit')) {
+//     return code.slice(5);
+//   }
+//
+//   if (code === 'Add' || code === 'NumpadAdd') {
+//     return '+';
+//   }
+//
+//   if (code === 'Subtract' || code === 'NumpadSubtract') {
+//     return '-';
+//   }
+//
+//   return code;
+// };
 
-const normalizeCode = (code: string) => {
-  console.log(code);
+// function normalizeKeyEvent(event: KeyboardEvent, base = false) {
+//   const name = normalizeCode(event.code);
+//   // const isChar = /^[A-Z0-9]$/i.test(name);
+//   const isChar = name.length === 1 && name !== ' ';
+//
+//   return isChar && !base
+//     ? modifiers(name, event, !isChar)
+//     : modifiers(name, event, true);
+// }
 
+const normalizeCode = (code) => {
   if (code.startsWith('Key')) {
     return code.slice(3).toLowerCase();
   }
-
   if (code.startsWith('Digit')) {
     return code.slice(5);
   }
 
-  if (code === 'Add' || code === 'NumpadAdd') {
+  if (code === 'NumpadAdd') {
     return '+';
   }
-
-  if (code === 'Subtract' || code === 'NumpadSubtract') {
+  if (code === 'NumpadSubtract') {
     return '-';
   }
 
   return code;
 };
 
-function normalizeKeyEvent(event: KeyboardEvent, base = false) {
-  const name = normalizeCode(event.code);
-  // const isChar = /^[A-Z0-9]$/i.test(name);
-  const isChar = name.length === 1 && name !== ' ';
+const normalizeShortcut = (event: KeyboardEvent) => {
+  const key = normalizeCode(event.code);
 
-  return isChar && !base
-    ? modifiers(name, event, !isChar)
-    : modifiers(name, event, true);
-}
+  if (event.code.includes('Control')) {
+    return 'Ctrl';
+  }
+  if (event.code.includes('Alt')) {
+    return 'Alt';
+  }
+  if (event.code.includes('Meta')) {
+    return 'Meta';
+  }
+  if (event.code.includes('Shift')) {
+    return 'Shift';
+  }
+
+  const parts: string[] = [];
+  if (event.ctrlKey) {
+    parts.push('Ctrl');
+  }
+  if (event.altKey) {
+    parts.push('Alt');
+  }
+  if (event.metaKey) {
+    parts.push('Meta');
+  }
+  if (event.shiftKey) {
+    parts.push('Shift');
+  }
+  parts.push(key);
+
+  return parts.join('+');
+};
 
 export function isControlKey(event) {
   return mac ? event.metaKey : event.ctrlKey;
@@ -105,7 +157,7 @@ export function isControlKey(event) {
 //  to handle all events in same way and to have same structure for all hotkey configs
 function keyNorm(obj) {
   if (obj instanceof KeyboardEvent) {
-    return normalizeKeyEvent(obj);
+    return normalizeShortcut(obj);
   }
 
   return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
@@ -136,21 +188,9 @@ export function initHotKeys(actions) {
   return keyNorm(hotKeys);
 }
 
-function lookup(map, event: KeyboardEvent) {
-  let name = normalizeCode(event.code);
-  if (name === 'Add') name = '+'; // numpad '+' and '-'
-  if (name === 'Subtract') name = '-';
-  const isChar = name.length === 1 && name !== ' ';
-
-  let res = map[modifiers(name, event, !isChar)];
-  const baseName = normalizeCode(event.code);
-
-  if (event.shiftKey && isChar && Boolean(baseName)) {
-    res = map[modifiers(baseName, event, true)] || res;
-  }
-
-  return res;
-}
+const lookup = (map: Record<string, string>, event: KeyboardEvent) => {
+  return map[normalizeShortcut(event)];
+};
 
 keyNorm.lookup = lookup;
 

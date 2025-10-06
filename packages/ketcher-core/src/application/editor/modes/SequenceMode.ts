@@ -1310,7 +1310,7 @@ export class SequenceMode extends BaseMode {
         },
       },
       'break-complimentary-chain': {
-        shortcut: ['-', '—'],
+        shortcut: ['Minus', 'NumpadSubtract'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
           const modelChanges = new Command();

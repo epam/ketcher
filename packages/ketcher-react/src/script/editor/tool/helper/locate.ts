@@ -80,11 +80,13 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     const sGroup = struct.sgroups.get(relatedFGId as number);
 
     if (struct.isAtomFromMacromolecule(aid)) {
+      const sGroupPosition = sGroup?.pp;
       if (
-        sGroup?.pp?.x > x0 &&
-        sGroup.pp?.x < x1 &&
-        sGroup.pp?.y > y0 &&
-        sGroup.pp?.y < y1
+        sGroupPosition &&
+        sGroupPosition.x > x0 &&
+        sGroupPosition.x < x1 &&
+        sGroupPosition.y > y0 &&
+        sGroupPosition.y < y1
       ) {
         atomList.push(aid);
       }

@@ -715,7 +715,7 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
         renderOptions,
       );
       if (distanceToPoint <= maxDistance) {
-        if (acc?.dist < distanceToPoint) {
+        if (acc && acc.dist < distanceToPoint) {
           return acc;
         }
         // We would like to grab items under the images and those items should have higher priority then images

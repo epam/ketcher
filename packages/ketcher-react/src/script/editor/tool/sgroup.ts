@@ -408,7 +408,7 @@ class SGroupTool implements Tool {
       bondsResult = null;
     }
 
-    if (atomsResult?.length > 0) {
+    if (atomsResult && atomsResult.length > 0) {
       for (const id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
@@ -420,7 +420,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (bondsResult?.length > 0) {
+    if (bondsResult && bondsResult.length > 0) {
       for (const id of bondsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
@@ -546,10 +546,10 @@ class SGroupTool implements Tool {
             return;
           }
 
-          const isDataSg =
+          const canReplaceExistingDataSg =
             sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
 
-          if (isDataSg) {
+          if (sg && canReplaceExistingDataSg) {
             const action = fromSeveralSgroupAddition(
               restruct,
               newSg.type,

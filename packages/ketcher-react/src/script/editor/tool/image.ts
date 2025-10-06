@@ -186,7 +186,7 @@ export class ImageTool implements Tool {
         }
       };
 
-      reader.readAsDataURL(this.element.files[0]);
+      reader.readAsDataURL(file);
     }
   }
 

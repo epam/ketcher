@@ -123,7 +123,7 @@ const normalizeKeyMap = (map) => {
   return copy;
 };
 
-export const isControlKey = (event: KeyboardEvent) => {
+export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
   return isMac ? event.metaKey : event.ctrlKey;
 };
 

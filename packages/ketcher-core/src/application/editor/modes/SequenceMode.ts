@@ -900,6 +900,7 @@ export class SequenceMode extends BaseMode {
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
+
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -918,11 +919,6 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
-      const previouseNodeInBackbone =
-        strandType === STRAND_TYPE.SENSE
-          ? nodeBeforeSelection
-          : nodeAfterSelection;
-
       // Сase delete A (for sense) and empty node (for antisense) in sync mode:
       // G | A | G
       // C |   | C
@@ -944,7 +940,6 @@ export class SequenceMode extends BaseMode {
       ) {
         return;
       }
-
       // Сase delete "-":
       // G | - | G
       // C |   | C
@@ -957,26 +952,35 @@ export class SequenceMode extends BaseMode {
           selectionStartNode instanceof BackBoneSequenceNode
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
-        const polymerBondToDelete =
-          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
-            .attachmentPointsToBonds.R2;
 
-        if (!(polymerBondToDelete instanceof PolymerBond)) {
-          return;
+        const firstConnected = backBoneSequenceNode.firstConnectedNode;
+        const secondConnected = backBoneSequenceNode.secondConnectedNode;
+
+        let polymerBondToDelete: PolymerBond | undefined;
+
+        if (
+          firstConnected instanceof Nucleotide &&
+          firstConnected.lastMonomerInNode?.attachmentPointsToBonds
+            ?.R2 instanceof PolymerBond
+        ) {
+          polymerBondToDelete =
+            firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
+        } else if (
+          secondConnected instanceof Nucleotide &&
+          secondConnected.firstMonomerInNode?.attachmentPointsToBonds
+            ?.R1 instanceof PolymerBond
+        ) {
+          polymerBondToDelete =
+            secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
         }
 
-        modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
-        );
-
-        if (previouseNodeInBackbone instanceof Nucleotide) {
+        if (polymerBondToDelete) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(
-              previouseNodeInBackbone.lastMonomerInNode,
+            editor.drawingEntitiesManager.deletePolymerBond(
+              polymerBondToDelete,
             ),
           );
         }
-
         return;
       }
 
@@ -1051,7 +1055,7 @@ export class SequenceMode extends BaseMode {
             ),
           );
         }
-      } else {
+      } else if (nodeBeforeSelection && nodeAfterSelection) {
         if (
           !nodeAfterSelection ||
           nodeAfterSelection instanceof EmptySequenceNode
@@ -1098,7 +1102,7 @@ export class SequenceMode extends BaseMode {
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );
-        } else if (nodeBeforeSelection && nodeAfterSelection) {
+        } else {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
               isPhosphateAdditionalyDeleted
@@ -1236,20 +1240,23 @@ export class SequenceMode extends BaseMode {
       }
     };
 
+    const deleteHandler = (direction: Direction) => {
+      if (this.isEditInRNABuilderMode) return;
+      if (SequenceRenderer.selections.length > 0) {
+        this.deleteSelection();
+      } else {
+        deleteNode(direction);
+      }
+    };
+
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Right);
-        },
+        handler: () => deleteHandler(Direction.Right),
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => {
-          if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Left);
-        },
+        handler: () => deleteHandler(Direction.Left),
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

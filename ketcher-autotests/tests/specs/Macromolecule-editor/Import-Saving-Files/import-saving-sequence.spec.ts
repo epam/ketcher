@@ -36,8 +36,8 @@ let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
+  // this empty function is needed
 });
 test.afterAll(async ({ closePage }) => {
   await closePage();

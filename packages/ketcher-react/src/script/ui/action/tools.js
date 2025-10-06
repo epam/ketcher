@@ -79,7 +79,7 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {
-    shortcut: ['Equal', 'NumpadAdd'],
+    shortcut: ['Equal', 'Shift+Equal', 'NumpadAdd'],
     title: 'Charge Plus',
     action: { tool: 'charge', opts: 1 },
     hidden: (options) => isHidden(options, 'charge-plus'),

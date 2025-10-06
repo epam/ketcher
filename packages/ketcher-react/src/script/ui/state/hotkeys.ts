@@ -147,7 +147,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     }
   }
 
-  if (key && key.length === 1 && key.match('/')) {
+  if (key === 'Slash') {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
       bonds: actions['bond-props'].action,

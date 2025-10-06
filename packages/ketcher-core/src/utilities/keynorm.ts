@@ -37,9 +37,17 @@ export const CanonicalModifiersOrder = [
   KeyboardModifiers.Meta,
 ];
 
+export const ModifiersRegex = {
+  Mod: /^mod$/i,
+  Meta: /^(meta|cmd|m)$/i,
+  Ctrl: /^(ctrl|control|c)$/i,
+  Alt: /^(alt|a)$/i,
+  Shift: /^(shift|s)$/i,
+};
+
 const normalizeCode = (code: string) => {
   if (code.startsWith(KeyCodePrefixes.Key)) {
-    return code.slice(3).toLowerCase();
+    return code.slice(3);
   }
   if (code.startsWith(KeyCodePrefixes.Digit)) {
     return code.slice(5);
@@ -53,24 +61,27 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
   let key: string;
 
   if (typeof input === 'string') {
-    const tokens = input.split(/\+(?!$)/).map((p) => p.trim().toLowerCase());
+    const tokens = input.split(/\+(?!$)/).map((p) => p.trim());
     key = tokens.pop() ?? '';
+    if (key.length === 1) {
+      key = key.toUpperCase();
+    }
 
-    if (tokens.includes('mod')) {
+    if (tokens.some((mod) => ModifiersRegex.Mod.test(mod))) {
       activeModifiers.add(
         isMac ? KeyboardModifiers.Meta : KeyboardModifiers.Ctrl,
       );
     }
-    if (tokens.some((mod) => /^meta|cmd|m$/.test(mod))) {
+    if (tokens.some((mod) => ModifiersRegex.Meta.test(mod))) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (tokens.some((mod) => /^ctrl|control|c$/.test(mod))) {
+    if (tokens.some((mod) => ModifiersRegex.Ctrl.test(mod))) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (tokens.some((mod) => /^alt|a$/.test(mod))) {
+    if (tokens.some((mod) => ModifiersRegex.Alt.test(mod))) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (tokens.some((mod) => /^shift|s$/.test(mod))) {
+    if (tokens.some((mod) => ModifiersRegex.Shift.test(mod))) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
   } else if (input instanceof KeyboardEvent) {
@@ -102,7 +113,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
 
-    key = normalizeCode(e.code).toLowerCase();
+    key = normalizeCode(e.code);
   } else {
     throw new Error('normalizeShortcut expects string or KeyboardEvent');
   }

@@ -27,6 +27,8 @@ async function copyImageToClipboard() {
   const options = state.options;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
+  const bondThickness =
+    options?.settings?.bondThickness ?? defaultBondThickness;
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
@@ -34,7 +36,7 @@ async function copyImageToClipboard() {
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
-      bondThickness: options.settings.bondThickness || defaultBondThickness,
+      bondThickness,
     });
     const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
     await navigator.clipboard.write([item]);

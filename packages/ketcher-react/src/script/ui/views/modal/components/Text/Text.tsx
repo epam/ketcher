@@ -159,6 +159,13 @@ const Text = (props: TextProps) => {
     refEditor.current?.editor?.setAttribute('data-testid', 'text-editor');
   }, [refEditor]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setFocusInEditor();
+    }
+  };
+
   // set focut on component mount
   useEffect(() => {
     setFocusInEditor();
@@ -175,7 +182,13 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div className={classes.controlPanel} onClick={setFocusInEditor}>
+      <div
+        className={classes.controlPanel}
+        onClick={setFocusInEditor}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+      >
         {buttons.map((button) => {
           return (
             <TextButton

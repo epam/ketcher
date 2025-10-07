@@ -74,6 +74,13 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     renderOptions,
   } = props;
 
+  const handleKeyDown = (tmpl) => (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onSelect(tmpl);
+    }
+  };
+
   return (
     <div
       className={`${classes.tableContent} ${
@@ -96,6 +103,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            onKeyDown={handleKeyDown(tmpl)}
+            role="button"
+            tabIndex={0}
           >
             <StructRender
               testId={tmpl.struct.name}

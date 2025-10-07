@@ -36,10 +36,10 @@ function formatDate(isoDate = ''): string {
 export function About({
   isOpen,
   onClose,
-}: {
+}: Readonly<{
   isOpen: boolean;
   onClose: () => void;
-}) {
+}>) {
   const dispatch = useAppDispatch();
   useIndigoVersionToRedux();
   const { buildDate, indigoVersion, version } = useAppSelector(selectAppMeta);

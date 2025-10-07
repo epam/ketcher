@@ -37,7 +37,7 @@ function GenSet({
   className,
   group,
   disabledQueryElements,
-}: GenSetProps) {
+}: Readonly<GenSetProps>) {
   return (
     <>
       {labels.map((item, index) => {

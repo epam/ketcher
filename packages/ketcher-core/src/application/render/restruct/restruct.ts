@@ -923,7 +923,10 @@ function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
 function scaleRPath(path, scaleFactor: number): void {
   if (path.type === 'set') {
     // TODO: rework scaling
-    const pathItems = Array.from({ length: path.length }, (_, index) => path[index]);
+    const pathItems = Array.from(
+      { length: path.length },
+      (_, index) => path[index],
+    );
     for (const pathItem of pathItems) {
       scaleRPath(pathItem, scaleFactor);
     }
